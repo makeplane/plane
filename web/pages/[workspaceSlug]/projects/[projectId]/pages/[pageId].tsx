@@ -29,7 +29,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const readOnlyEditorRef = useRef<EditorRefApi>(null);
-  console.log("PageDetailsPage: Initialized editorRef", editorRef.current);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
@@ -77,11 +76,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
 
   const handleEditorReady = (value: boolean) => {
-    console.log("11111111111");
     setEditorReady(value);
   };
+
   const handleReadOnlyEditorReady = () => {
-    console.log("sssssssssss");
     setReadOnlyEditorReady(true);
   };
 
@@ -126,7 +124,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     }
   };
 
-  console.log("PageDetailsPage: Rendering with editorRef", editorRef.current);
   return (
     <>
       <PageHead title={pageTitle} />

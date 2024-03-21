@@ -11,7 +11,7 @@ interface IDocumentReadOnlyEditor {
   customClassName: string;
   tabIndex?: number;
   title: string;
-  handleEditorReady: (value: boolean) => void;
+  handleEditorReady?: (value: boolean) => void;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
 }
 
@@ -30,7 +30,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     if (editor) {
       updateMarkings(editor.getHTML());
     }
-  }, [editor]);
+  }, [editor, updateMarkings]);
 
   if (!editor) {
     return null;

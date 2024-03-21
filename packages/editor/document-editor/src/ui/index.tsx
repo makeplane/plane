@@ -20,7 +20,7 @@ interface IDocumentEditor {
     upload: UploadImage;
     restore: RestoreImage;
   };
-  handleEditorReady: () => void;
+  handleEditorReady?: (value: boolean) => void;
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: object, html: string) => void;
@@ -42,8 +42,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
     updatePageTitle,
     tabIndex,
   } = props;
-
-  console.log("DocumentEditor: Received forwardedRef", forwardedRef?.current);
 
   const { updateMarkings } = useEditorMarkings();
 
@@ -97,10 +95,8 @@ const DocumentEditor = (props: IDocumentEditor) => {
   );
 };
 
-const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => {
-  console.log("DocumentEditorWithRef: Forwarding ref", ref);
-  return <DocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />;
-});
+const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => 
+  <DocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
 
 DocumentEditorWithRef.displayName = "DocumentEditorWithRef";
 

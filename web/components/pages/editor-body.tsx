@@ -1,19 +1,22 @@
+// constants
 import { EUserProjectRoles } from "constants/project";
 import { useEffect } from "react";
 import { PageContentBrowser } from "components/pages";
+// helpers
 import { cn } from "helpers/common.helper";
+// hooks
 import { useUser, useWorkspace } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
+
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Control, Controller } from "react-hook-form";
-import { FileService } from "services/file.service";
-import { IPageStore } from "store/page.store";
-// hooks
+
 // services
+import { FileService } from "services/file.service";
+
 // components
-// helpers
-// types
+import { IPageStore } from "store/page.store";
 import {
   DocumentEditorWithRef,
   DocumentReadOnlyEditorWithRef,
@@ -21,10 +24,10 @@ import {
   EditorRefApi,
   IMarking,
 } from "@plane/document-editor";
-import { IPage } from "@plane/types";
-// constants
 
-// services
+// types
+import { IPage } from "@plane/types";
+
 const fileService = new FileService();
 
 type Props = {
@@ -36,12 +39,11 @@ type Props = {
   pageStore: IPageStore;
   sidePeekVisible: boolean;
   handleEditorReady: (value: boolean) => void;
-  handleReadOnlyEditorReady: () => void;
+  handleReadOnlyEditorReady: (value: boolean) => void;
   updateMarkings: (description_html: string) => void;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
-  console.log("PageEditorBody: Received editorRef", props.editorRef.current);
   const {
     control,
     handleReadOnlyEditorReady,
@@ -72,7 +74,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
-    console.log(pageStore.description_html);
     updateMarkings(pageStore.description_html);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -109,33 +110,29 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           <Controller
             name="description_html"
             control={control}
-            render={({ field: { onChange } }) => {
-              console.log("PageEditorBody: Passing editorRef to DocumentEditorWithRef", props.editorRef.current);
-
-              return (
-                <DocumentEditorWithRef
-                  title={pageTitle}
-                  fileHandler={{
-                    cancel: fileService.cancelUpload,
-                    delete: fileService.getDeleteImageFunction(workspaceId),
-                    restore: fileService.getRestoreImageFunction(workspaceId),
-                    upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
-                  }}
-                  handleEditorReady={handleEditorReady}
-                  value={pageDescription}
-                  ref={editorRef}
-                  updatePageTitle={updateName}
-                  customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
-                  onChange={(_description_json, description_html) => {
-                    setIsSubmitting("submitting");
-                    setShowAlert(true);
-                    onChange(description_html);
-                    handleSubmit();
-                    updateMarkings(description_html);
-                  }}
-                />
-              );
-            }}
+            render={({ field: { onChange } }) => (
+              <DocumentEditorWithRef
+                title={pageTitle}
+                fileHandler={{
+                  cancel: fileService.cancelUpload,
+                  delete: fileService.getDeleteImageFunction(workspaceId),
+                  restore: fileService.getRestoreImageFunction(workspaceId),
+                  upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
+                }}
+                handleEditorReady={handleEditorReady}
+                value={pageDescription}
+                ref={editorRef}
+                updatePageTitle={updateName}
+                customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
+                onChange={(_description_json, description_html) => {
+                  setIsSubmitting("submitting");
+                  setShowAlert(true);
+                  onChange(description_html);
+                  handleSubmit();
+                  updateMarkings(description_html);
+                }}
+              />
+            )}
           />
         )}
       </div>

@@ -27,7 +27,6 @@ export const PageSummaryPopover: React.FC<Props> = (props) => {
     }
   );
 
-  console.log("-----------------:aaaaaaaa", sidePeekVisible);
   return (
     <div className="group/summary-popover w-min whitespace-nowrap">
       <button
