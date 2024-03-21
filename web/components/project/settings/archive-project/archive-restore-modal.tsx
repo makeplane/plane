@@ -24,6 +24,7 @@ export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
   const { getProjectById, archiveProject, restoreProject } = useProject();
 
   const projectDetails = getProjectById(projectId);
+  if (!projectDetails) return null;
 
   const handleClose = () => {
     setIsLoading(false);
@@ -37,7 +38,7 @@ export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Archive success",
-          message: "Your archives can be found using archived project filter.",
+          message: `${projectDetails.name} has been archived successfully`,
         });
         onClose();
         router.push(`/${workspaceSlug}/projects/`);
@@ -59,7 +60,7 @@ export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Restore success",
-          message: "Your project can be found in projects.",
+          message: `You can find ${projectDetails.name} in your projects.`,
         });
         onClose();
         router.push(`/${workspaceSlug}/projects/`);
@@ -73,8 +74,6 @@ export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
       )
       .finally(() => setIsLoading(false));
   };
-
-  if (!projectDetails) return null;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
