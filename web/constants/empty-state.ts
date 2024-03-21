@@ -125,9 +125,9 @@ const emptyStateDetails = {
   },
   [EmptyStateType.WORKSPACE_PROJECTS]: {
     key: EmptyStateType.WORKSPACE_PROJECTS,
-    title: "Start a Project",
+    title: "No active projects",
     description:
-      "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal.",
+      "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
     path: "/empty-state/onboarding/projects",
     primaryButton: {
       text: "Start your first project",

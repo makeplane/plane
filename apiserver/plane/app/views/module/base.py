@@ -621,7 +621,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             "backlog_issues",
             "created_at",
             "updated_at",
-            "archived_at"
+            "archived_at",
         )
         return Response(modules, status=status.HTTP_200_OK)
 
@@ -631,7 +631,10 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
         )
         module.archived_at = timezone.now()
         module.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"archived_at": str(module.archived_at)},
+            status=status.HTTP_200_OK,
+        )
 
     def delete(self, request, slug, project_id, module_id):
         module = Module.objects.get(
