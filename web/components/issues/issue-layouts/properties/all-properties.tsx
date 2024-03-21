@@ -257,8 +257,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* basic properties */}
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-        <div className="h-5 truncate">
+        <div className="h-5">
           <StateDropdown
+            buttonContainerClassName="truncate max-w-40"
             value={issue.state_id}
             onChange={handleState}
             projectId={issue.project_id}
@@ -348,6 +349,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
         <div className="h-5">
           <ModuleDropdown
+            buttonContainerClassName="truncate max-w-40"
             projectId={issue?.project_id}
             value={issue?.module_ids ?? []}
             onChange={handleModule}
@@ -362,8 +364,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* cycles */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-        <div className="h-5 truncate">
+        <div className="h-5">
           <CycleDropdown
+            buttonContainerClassName="truncate max-w-40"
             projectId={issue?.project_id}
             value={issue?.cycle_id}
             onChange={handleCycle}
