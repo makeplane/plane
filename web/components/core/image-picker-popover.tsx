@@ -40,13 +40,14 @@ type Props = {
   onChange: (data: string) => void;
   disabled?: boolean;
   tabIndex?: number;
+  isProfileCover?: boolean;
 };
 
 // services
 const fileService = new FileService();
 
 export const ImagePickerPopover: React.FC<Props> = observer((props) => {
-  const { label, value, control, onChange, disabled = false, tabIndex } = props;
+  const { label, value, control, onChange, disabled = false, tabIndex, isProfileCover = false } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
@@ -97,31 +98,47 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const handleSubmit = async () => {
     setIsImageUploading(true);
 
-    if (!image || !workspaceSlug) return;
+    if (!image) return;
 
     const formData = new FormData();
     formData.append("asset", image);
     formData.append("attributes", JSON.stringify({}));
 
-    fileService
-      .uploadFile(workspaceSlug.toString(), formData)
-      .then((res) => {
-        const oldValue = value;
-        const isUnsplashImage = oldValue?.split("/")[2] === "images.unsplash.com";
+    const oldValue = value;
+    const isUnsplashImage = oldValue?.split("/")[2] === "images.unsplash.com";
 
-        const imageUrl = res.asset;
-        onChange(imageUrl);
-        setIsImageUploading(false);
-        setImage(null);
-        setIsOpen(false);
+    const uploadCallback = (res: any) => {
+      const imageUrl = res.asset;
+      onChange(imageUrl);
+      setIsImageUploading(false);
+      setImage(null);
+      setIsOpen(false);
+    };
 
-        if (isUnsplashImage) return;
-
-        if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    if (isProfileCover) {
+      fileService
+        .uploadUserFile(formData)
+        .then((res) => {
+          uploadCallback(res);
+          if (isUnsplashImage) return;
+          if (oldValue && currentWorkspace) fileService.deleteUserFile(oldValue);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      if (!workspaceSlug) return;
+      fileService
+        .uploadFile(workspaceSlug.toString(), formData)
+        .then((res) => {
+          uploadCallback(res);
+          if (isUnsplashImage) return;
+          if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
   };
 
   useEffect(() => {
