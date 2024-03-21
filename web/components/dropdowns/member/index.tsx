@@ -37,6 +37,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     onChange,
     onClose,
     placeholder = "Members",
+    tooltipContent,
     placement,
     projectId,
     showTooltip = false,
@@ -123,7 +124,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
               className={buttonClassName}
               isActive={isOpen}
               tooltipHeading={placeholder}
-              tooltipContent={`${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
+              tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
               showTooltip={showTooltip}
               variant={buttonVariant}
             >
