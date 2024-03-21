@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@plane/editor-core": "*",
+    "@plane/editor-document-core": "*",
     "@tiptap/core": "^2.1.13",
     "@tiptap/pm": "^2.1.13",
     "@tiptap/react": "^2.1.13",
