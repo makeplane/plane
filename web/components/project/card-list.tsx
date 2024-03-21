@@ -16,10 +16,10 @@ export const ProjectCardList = observer(() => {
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const { totalProjectIds, filteredProjectIds, getProjectById } = useProject();
-  const { searchQuery } = useProjectFilter();
+  const { workspaceProjectIds, filteredProjectIds, getProjectById } = useProject();
+  const { searchQuery, currentWorkspaceDisplayFilters } = useProjectFilter();
 
-  if (totalProjectIds?.length === 0)
+  if (workspaceProjectIds?.length === 0 && !currentWorkspaceDisplayFilters?.archived_projects)
     return (
       <EmptyState
         type={EmptyStateType.WORKSPACE_PROJECTS}
