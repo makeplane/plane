@@ -1,11 +1,12 @@
 from django.urls import path
 
-
 from plane.space.views import (
-    IssueRetrievePublicEndpoint,
+    CommentAssetPublicEndpoint,
+    CommentReactionPublicViewSet,
+    IssueAttachmentPublicEndpoint,
     IssueCommentPublicViewSet,
     IssueReactionPublicViewSet,
-    CommentReactionPublicViewSet,
+    IssueRetrievePublicEndpoint,
 )
 
 urlpatterns = [
@@ -72,5 +73,25 @@ urlpatterns = [
             }
         ),
         name="comment-reactions-project-board",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/",
+        IssueAttachmentPublicEndpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:workspace_id>/<str:asset_key>/",
+        IssueAttachmentPublicEndpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/attachments/",
+        CommentAssetPublicEndpoint.as_view(),
+        name="issue-comments-project-board-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/attachments/<uuid:workspace_id>/<str:asset_key>/",
+        CommentAssetPublicEndpoint.as_view(),
+        name="issue-comments-project-board-attachments",
     ),
 ]

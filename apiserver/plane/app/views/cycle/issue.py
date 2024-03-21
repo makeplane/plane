@@ -29,12 +29,7 @@ from plane.app.serializers import (
     IssueSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.db.models import (
-    Cycle,
-    CycleIssue,
-    Issue,
-    IssueLink,
-)
+from plane.db.models import Cycle, CycleIssue, FileAsset, Issue, IssueLink
 from plane.utils.issue_filters import issue_filters
 
 # Module imports
@@ -118,6 +113,15 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

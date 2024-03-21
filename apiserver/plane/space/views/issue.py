@@ -2,55 +2,58 @@
 import json
 
 # Django imports
-from django.utils import timezone
-from django.db.models import (
-    Prefetch,
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Case,
-    Value,
-    CharField,
-    When,
-    Exists,
-    Max,
-    IntegerField,
-)
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import (
+    Case,
+    CharField,
+    Exists,
+    F,
+    Func,
+    IntegerField,
+    Max,
+    OuterRef,
+    Prefetch,
+    Q,
+    Value,
+    When,
+)
+from django.http import HttpResponseRedirect
+from django.utils import timezone
 
 # Third Party imports
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
 # Module imports
-from .base import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
-    IssueCommentSerializer,
-    IssueReactionSerializer,
     CommentReactionSerializer,
-    IssueVoteSerializer,
+    FileAssetSerializer,
+    IssueCommentSerializer,
     IssuePublicSerializer,
-)
-
-from plane.db.models import (
-    Issue,
-    IssueComment,
-    Label,
-    IssueLink,
-    FileAsset,
-    State,
-    ProjectMember,
-    IssueReaction,
-    CommentReaction,
-    ProjectDeployBoard,
-    IssueVote,
-    ProjectPublicMember,
+    IssueReactionSerializer,
+    IssueVoteSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (
+    CommentReaction,
+    FileAsset,
+    Issue,
+    IssueComment,
+    IssueLink,
+    IssueReaction,
+    IssueVote,
+    Label,
+    ProjectDeployBoard,
+    ProjectMember,
+    ProjectPublicMember,
+    State,
+)
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
+from plane.utils.presigned_url_generator import generate_download_presigned_url
+
+from .base import BaseAPIView, BaseViewSet
 
 
 class IssueCommentPublicViewSet(BaseViewSet):
@@ -687,3 +690,73 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class IssueAttachmentPublicEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(
+        self,
+        request,
+        slug,
+        project_id,
+        issue_id,
+        workspace_id=None,
+        asset_key=None,
+    ):
+        if workspace_id and asset_key:
+            key = f"{workspace_id}/{asset_key}"
+            url = generate_download_presigned_url(
+                key=key,
+                host=request.get_host(),
+                scheme=request.scheme,
+            )
+            return HttpResponseRedirect(url)
+
+        # For listing
+        issue_attachments = FileAsset.objects.filter(
+            entity_type="issue_attachment",
+            entity_identifier=issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        serializer = FileAssetSerializer(issue_attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CommentAssetPublicEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(
+        self,
+        request,
+        slug,
+        project_id,
+        comment_id,
+        workspace_id=None,
+        asset_key=None,
+    ):
+        if workspace_id and asset_key:
+            key = f"{workspace_id}/{asset_key}"
+            url = generate_download_presigned_url(
+                key=key,
+                host=request.get_host(),
+                scheme=request.scheme,
+            )
+            return HttpResponseRedirect(url)
+
+        # For listing
+        comment_assets = FileAsset.objects.filter(
+            entity_type="comment",
+            entity_identifier=comment_id,
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        serializer = FileAssetSerializer(comment_assets, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

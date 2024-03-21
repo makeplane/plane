@@ -6,6 +6,7 @@ from .project.base import (
     ProjectPublicCoverImagesEndpoint,
     ProjectDeployBoardViewSet,
     ProjectArchiveUnarchiveEndpoint,
+    ProjectCoverImageEndpoint,
 )
 
 from .project.invite import (
@@ -41,6 +42,7 @@ from .workspace.base import (
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
     ExportWorkspaceUserActivityEndpoint,
+    WorkspaceLogoEndpoint,
 )
 
 from .workspace.member import (
@@ -116,10 +118,12 @@ from .issue.archive import (
     IssueArchiveViewSet,
 )
 
+from .issue.attachment import IssueAttachmentEndpoint
 
 from .issue.comment import (
     IssueCommentViewSet,
     CommentReactionViewSet,
+    CommentAssetEndpoint,
 )
 
 from .issue.draft import IssueDraftViewSet

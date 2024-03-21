@@ -1,18 +1,15 @@
-# Python import
-from uuid import uuid4
-
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 # Module imports
-from . import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
+
+from .project import ProjectBaseModel
 
 
 def get_default_properties():
@@ -93,6 +90,17 @@ class IssueManager(models.Manager):
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
         )
+
+
+def get_upload_path(instance, filename):
+    if instance.workspace_id is not None:
+        return f"{instance.workspace.id}/{uuid4().hex}"
+    return f"user-{uuid4().hex}"
+
+
+def file_size(value):
+    if value.size > settings.FILE_SIZE_LIMIT:
+        raise ValidationError("File too large. Size should not exceed 5 MB.")
 
 
 class Issue(ProjectBaseModel):
@@ -335,15 +343,6 @@ class IssueLink(ProjectBaseModel):
     def __str__(self):
         return f"{self.issue.name} {self.url}"
 
-
-def get_upload_path(instance, filename):
-    return f"{instance.workspace.id}/{uuid4().hex}"
-
-
-def file_size(value):
-    # File limit check is only for cloud hosted
-    if value.size > settings.FILE_SIZE_LIMIT:
-        raise ValidationError("File too large. Size should not exceed 5 MB.")
 
 class IssueActivity(ProjectBaseModel):
     issue = models.ForeignKey(

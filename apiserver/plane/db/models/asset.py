@@ -2,13 +2,15 @@
 from uuid import uuid4
 
 # Django import
-from django.db import models
-from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.db import models
 
 # Module import
-from . import BaseModel
 from plane.settings.storage import S3PrivateBucketStorage
+
+from .base import BaseModel
+
 
 def get_upload_path(instance, filename):
     if instance.workspace_id is not None:

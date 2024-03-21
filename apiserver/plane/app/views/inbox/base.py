@@ -146,6 +146,15 @@ class InboxIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
                         "labels__id",

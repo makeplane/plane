@@ -2,54 +2,57 @@
 import boto3
 
 # Django imports
+from django.conf import settings
 from django.db import IntegrityError
 from django.db.models import (
-    Prefetch,
-    Q,
     Exists,
-    OuterRef,
     F,
     Func,
+    OuterRef,
+    Prefetch,
+    Q,
     Subquery,
 )
-from django.conf import settings
+from django.http import HttpResponseRedirect
 from django.utils import timezone
 
 # Third Party imports
+from rest_framework import serializers, status
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import serializers
-from rest_framework.permissions import AllowAny
 
 # Module imports
-from plane.app.views.base import BaseViewSet, BaseAPIView, WebhookMixin
-from plane.app.serializers import (
-    ProjectSerializer,
-    ProjectListSerializer,
-    ProjectFavoriteSerializer,
-    ProjectDeployBoardSerializer,
-)
-
 from plane.app.permissions import (
     ProjectBasePermission,
     ProjectMemberPermission,
 )
-
+from plane.app.serializers import (
+    FileAssetSerializer,
+    ProjectDeployBoardSerializer,
+    ProjectFavoriteSerializer,
+    ProjectListSerializer,
+    ProjectLiteSerializer,
+    ProjectSerializer,
+)
+from plane.app.views.base import BaseAPIView, BaseViewSet, WebhookMixin
 from plane.db.models import (
+    Cycle,
+    FileAsset,
+    Inbox,
+    Issue,
+    IssueProperty,
+    Module,
     Project,
-    ProjectMember,
-    Workspace,
-    State,
+    ProjectDeployBoard,
     ProjectFavorite,
     ProjectIdentifier,
-    Module,
-    Cycle,
-    Inbox,
-    ProjectDeployBoard,
-    IssueProperty,
-    Issue,
+    ProjectMember,
+    State,
+    Workspace,
 )
 from plane.utils.cache import cache_response
+from plane.utils.presigned_url_generator import generate_download_presigned_url
 
 
 class ProjectViewSet(WebhookMixin, BaseViewSet):
@@ -372,7 +375,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 return Response(
                     {"error": "Archived projects cannot be updated"},
                     status=status.HTTP_400_BAD_REQUEST,
-                )  
+                )
 
             serializer = ProjectSerializer(
                 project,
@@ -433,11 +436,12 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
     permission_classes = [
         ProjectBasePermission,
     ]
+
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = timezone.now()
         project.save()
-        return Response(status=status.HTTP_204_NO_CONTENT) 
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
@@ -646,3 +650,51 @@ class ProjectDeployBoardViewSet(BaseViewSet):
 
         serializer = ProjectDeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProjectCoverImageEndpoint(BaseAPIView):
+
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
+
+    def get_permissions(self):
+        if self.request.method == "POST" or self.request.method == "DELETE":
+            return [
+                IsAuthenticated(),
+            ]
+        return [
+            AllowAny(),
+        ]
+
+    def get(self, request, slug, project_id, workspace_id, cover_image_key):
+        key = f"{workspace_id}/{cover_image_key}"
+        url = generate_download_presigned_url(
+            key=key,
+            host=request.get_host(),
+            scheme=request.scheme,
+        )
+        return HttpResponseRedirect(url)
+
+    def post(self, request, slug, project_id):
+        serializer = FileAssetSerializer(data=request.data)
+        workspace = Workspace.objects.get(slug=slug)
+        if serializer.is_valid():
+            serializer.save(workspace=workspace)
+            project = Project.objects.get(pk=project_id)
+            project.cover_image = f"/api/workspaces/{slug}/projects/{project_id}/cover-image/{serializer.data['asset']}/"
+            project.save()
+            project_serializer = ProjectLiteSerializer(project)
+            return Response(
+                project_serializer.data, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, project_id, workspace_id, cover_image_key):
+        key = f"{workspace_id}/{cover_image_key}"
+        file_asset = FileAsset.objects.get(asset=key)
+        file_asset.is_deleted = True
+        file_asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
