@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import { Disclosure, Popover, Transition } from "@headlessui/react";
 import {
   AlertCircle,
-  CalendarCheck2,
+  ArchiveRestoreIcon,
   CalendarClock,
   ChevronDown,
   ChevronRight,
@@ -15,30 +14,45 @@ import {
   Trash2,
   UserCircle2,
 } from "lucide-react";
-// hooks
-import { useModule, useUser, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
-import { DeleteModuleModal } from "components/modules";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { ProjectMemberDropdown } from "components/dropdowns";
-// ui
-import { CustomRangeDatePicker } from "components/ui";
-import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
-// helpers
-import { isDateGreaterThanToday, renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
-// types
+import { Disclosure, Transition } from "@headlessui/react";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
+// ui
+import {
+  CustomMenu,
+  Loader,
+  LayersIcon,
+  CustomSelect,
+  ModuleStatusIcon,
+  UserGroupIcon,
+  TOAST_TYPE,
+  setToast,
+  ArchiveIcon,
+  TextArea,
+} from "@plane/ui";
+// components
+import { LinkModal, LinksList, SidebarProgressStats } from "@/components/core";
+import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
+import { ArchiveModuleModal, DeleteModuleModal } from "@/components/modules";
 // constant
-import { MODULE_STATUS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
-import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
+import {
+  MODULE_LINK_CREATED,
+  MODULE_LINK_DELETED,
+  MODULE_LINK_UPDATED,
+  MODULE_UPDATED,
+} from "@/constants/event-tracker";
+import { MODULE_STATUS } from "@/constants/module";
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useModule, useUser, useEventTracker } from "@/hooks/store";
+// types
 
 const defaultValues: Partial<IModule> = {
-  lead: "",
-  members: [],
+  lead_id: "",
+  member_ids: [],
   start_date: null,
   target_date: null,
   status: "backlog",
@@ -47,18 +61,17 @@ const defaultValues: Partial<IModule> = {
 type Props = {
   moduleId: string;
   handleClose: () => void;
+  isArchived?: boolean;
 };
 
 // TODO: refactor this component
 export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
-  const { moduleId, handleClose } = props;
+  const { moduleId, handleClose, isArchived } = props;
   // states
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
+  const [archiveModuleModal, setArchiveModuleModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
-  // refs
-  const startDateButtonRef = useRef<HTMLButtonElement | null>(null);
-  const endDateButtonRef = useRef<HTMLButtonElement | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
@@ -66,13 +79,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
+  const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
+    useModule();
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
-  const { setToastAlert } = useToast();
+  const moduleState = moduleDetails?.status.toLocaleLowerCase();
+  const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
 
-  const { setValue, watch, reset, control } = useForm({
+  const { reset, control } = useForm({
     defaultValues,
   });
 
@@ -85,7 +100,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
         });
       })
-      .catch((_) => {
+      .catch(() => {
         captureModuleEvent({
           eventName: MODULE_UPDATED,
           payload: { ...data, state: "FAILED" },
@@ -104,15 +119,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link created",
           message: "Module link created successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -130,15 +145,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link updated",
           message: "Module link updated successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -154,15 +169,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link deleted",
           message: "Module link deleted successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -172,55 +187,55 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Link copied",
           message: "Module link copied to clipboard",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
       });
   };
 
-  const handleStartDateChange = async (date: string) => {
-    setValue("start_date", date);
-
-    if (!watch("target_date") || watch("target_date") === "") endDateButtonRef.current?.click();
-
-    if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      submitChanges({
-        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-        target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
-      });
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Module updated successfully.",
-      });
-    }
+  const handleDateChange = async (startDate: Date | undefined, targetDate: Date | undefined) => {
+    submitChanges({
+      start_date: startDate ? renderFormattedPayloadDate(startDate) : null,
+      target_date: targetDate ? renderFormattedPayloadDate(targetDate) : null,
+    });
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: "Success!",
+      message: "Module updated successfully.",
+    });
   };
 
-  const handleEndDateChange = async (date: string) => {
-    setValue("target_date", date);
+  const handleRestoreModule = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-    if (!watch("start_date") || watch("start_date") === "") endDateButtonRef.current?.click();
+    if (!workspaceSlug || !projectId || !moduleId) return;
 
-    if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      submitChanges({
-        target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
-        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-      });
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Module updated successfully.",
-      });
-    }
+    await restoreModule(workspaceSlug.toString(), projectId.toString(), moduleId)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Restore success",
+          message: "Your module can be found in project modules.",
+        });
+        router.push(`/${workspaceSlug}/projects/${projectId}/modules/${moduleId}`);
+      })
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Module could not be restored. Please try again.",
+        })
+      );
   };
 
   useEffect(() => {
@@ -230,8 +245,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
   }, [moduleDetails, reset]);
 
-  const isStartValid = new Date(`${moduleDetails?.start_date}`) <= new Date();
-  const isEndValid = new Date(`${moduleDetails?.target_date}`) >= new Date(`${moduleDetails?.start_date}`);
+  const startDate = getDate(moduleDetails?.start_date);
+  const endDate = getDate(moduleDetails?.target_date);
+  const isStartValid = startDate && startDate <= new Date();
+  const isEndValid = startDate && endDate && endDate >= startDate;
 
   const progressPercentage = moduleDetails
     ? Math.round((moduleDetails.completed_issues / moduleDetails.total_issues) * 100)
@@ -257,9 +274,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       </Loader>
     );
 
-  const startDate = new Date(watch("start_date") ?? moduleDetails.start_date ?? "");
-  const endDate = new Date(watch("target_date") ?? moduleDetails.target_date ?? "");
-
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
   const issueCount =
@@ -268,7 +282,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
-    <>
+    <div className="relative">
       <LinkModal
         isOpen={moduleLinkModal}
         handleClose={() => {
@@ -280,10 +294,18 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         createIssueLink={handleCreateLink}
         updateIssueLink={handleUpdateLink}
       />
+      {workspaceSlug && projectId && (
+        <ArchiveModuleModal
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          moduleId={moduleId}
+          isOpen={archiveModuleModal}
+          handleClose={() => setArchiveModuleModal(false)}
+        />
+      )}
       <DeleteModuleModal isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} data={moduleDetails} />
-
       <>
-        <div className="flex w-full items-center justify-between">
+        <div className="sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 py-5">
           <div>
             <button
               className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
@@ -293,11 +315,41 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </button>
           </div>
           <div className="flex items-center gap-3.5">
-            <button onClick={handleCopyText}>
-              <LinkIcon className="h-3 w-3 text-custom-text-300" />
-            </button>
+            {!isArchived && (
+              <button onClick={handleCopyText}>
+                <LinkIcon className="h-3 w-3 text-custom-text-300" />
+              </button>
+            )}
             {isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
+                {!isArchived && (
+                  <CustomMenu.MenuItem onClick={() => setArchiveModuleModal(true)} disabled={!isInArchivableGroup}>
+                    {isInArchivableGroup ? (
+                      <div className="flex items-center gap-2">
+                        <ArchiveIcon className="h-3 w-3" />
+                        Archive module
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2">
+                        <ArchiveIcon className="h-3 w-3" />
+                        <div className="-mt-1">
+                          <p>Archive module</p>
+                          <p className="text-xs text-custom-text-400">
+                            Only completed or cancelled <br /> module can be archived.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CustomMenu.MenuItem>
+                )}
+                {isArchived && (
+                  <CustomMenu.MenuItem onClick={handleRestoreModule}>
+                    <span className="flex items-center justify-start gap-2">
+                      <ArchiveRestoreIcon className="h-3 w-3" />
+                      <span>Restore module</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )}
                 <CustomMenu.MenuItem
                   onClick={() => {
                     setTrackElement("Module peek-overview");
@@ -319,12 +371,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             <Controller
               control={control}
               name="status"
-              render={({ field: { value, onChange } }) => (
+              render={({ field: { value } }) => (
                 <CustomSelect
                   customButton={
                     <span
                       className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                        isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
@@ -338,7 +390,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   onChange={(value: any) => {
                     submitChanges({ status: value });
                   }}
-                  disabled={!isEditingAllowed}
+                  disabled={!isEditingAllowed || isArchived}
                 >
                   {MODULE_STATUS.map((status) => (
                     <CustomSelect.Option key={status.value} value={status.value}>
@@ -356,189 +408,114 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         {moduleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {moduleDetails.description}
-          </span>
+          <TextArea
+            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-custom-text-200"
+            value={moduleDetails.description}
+            disabled
+          />
         )}
 
-        <div className="flex flex-col gap-5 pb-6 pt-2.5">
-          <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
-              <CalendarClock className="h-4 w-4" />
-
-              <span className="text-base">Start date</span>
-            </div>
-            <div className="relative flex w-1/2 items-center rounded-sm">
-              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
-                {({ close }) => (
-                  <>
-                    <Popover.Button
-                      ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
-                      disabled={!isEditingAllowed}
-                    >
-                      <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("start_date") ? "" : "text-custom-text-400"
-                        }`}
-                      >
-                        {renderFormattedDate(startDate) ?? "No date selected"}
-                      </span>
-                    </Popover.Button>
-
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute right-0 top-10 z-20  transform overflow-hidden">
-                        <CustomRangeDatePicker
-                          value={watch("start_date") ? watch("start_date") : moduleDetails?.start_date}
-                          onChange={(val) => {
-                            if (val) {
-                              handleStartDateChange(val);
-                              close();
-                            }
-                          }}
-                          startDate={watch("start_date") ?? watch("target_date") ?? null}
-                          endDate={watch("target_date") ?? watch("start_date") ?? null}
-                          maxDate={new Date(`${watch("target_date")}`)}
-                          selectsStart={watch("target_date") ? true : false}
-                        />
-                      </Popover.Panel>
-                    </Transition>
-                  </>
-                )}
-              </Popover>
-            </div>
+        <div className="flex items-center justify-start gap-1">
+          <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <CalendarClock className="h-4 w-4" />
+            <span className="text-base">Date range</span>
           </div>
-
-          <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
-              <CalendarCheck2 className="h-4 w-4" />
-              <span className="text-base">Target date</span>
-            </div>
-            <div className="relative flex w-1/2 items-center rounded-sm">
-              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
-                {({ close }) => (
-                  <>
-                    <Popover.Button
-                      ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
-                      disabled={!isEditingAllowed}
-                    >
-                      <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("target_date") ? "" : "text-custom-text-400"
-                        }`}
-                      >
-                        {renderFormattedDate(endDate) ?? "No date selected"}
-                      </span>
-                    </Popover.Button>
-
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute right-0 top-10 z-20 transform overflow-hidden">
-                        <CustomRangeDatePicker
-                          value={watch("target_date") ? watch("target_date") : moduleDetails?.target_date}
-                          onChange={(val) => {
-                            if (val) {
-                              handleEndDateChange(val);
-                              close();
-                            }
-                          }}
-                          startDate={watch("start_date") ?? watch("target_date") ?? null}
-                          endDate={watch("target_date") ?? watch("start_date") ?? null}
-                          minDate={new Date(`${watch("start_date")}`)}
-                          selectsEnd={watch("start_date") ? true : false}
-                        />
-                      </Popover.Panel>
-                    </Transition>
-                  </>
-                )}
-              </Popover>
-            </div>
+          <div className="h-7 w-3/5">
+            <Controller
+              control={control}
+              name="start_date"
+              render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                <Controller
+                  control={control}
+                  name="target_date"
+                  render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => {
+                    const startDate = getDate(startDateValue);
+                    const endDate = getDate(endDateValue);
+                    return (
+                      <DateRangeDropdown
+                        buttonContainerClassName="w-full"
+                        buttonVariant="background-with-text"
+                        minDate={new Date()}
+                        value={{
+                          from: startDate,
+                          to: endDate,
+                        }}
+                        onSelect={(val) => {
+                          onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                          onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                          handleDateChange(val?.from, val?.to);
+                        }}
+                        placeholder={{
+                          from: "Start date",
+                          to: "Target date",
+                        }}
+                        disabled={isArchived}
+                      />
+                    );
+                  }}
+                />
+              )}
+            />
           </div>
         </div>
 
-        {moduleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {moduleDetails.description}
-          </span>
-        )}
-
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <UserCircle2 className="h-4 w-4" />
               <span className="text-base">Lead</span>
             </div>
             <Controller
               control={control}
-              name="lead"
+              name="lead_id"
               render={({ field: { value } }) => (
-                <div className="w-1/2">
-                  <ProjectMemberDropdown
+                <div className="h-7 w-3/5">
+                  <MemberDropdown
                     value={value ?? null}
                     onChange={(val) => {
-                      submitChanges({ lead: val });
+                      submitChanges({ lead_id: val });
                     }}
                     projectId={projectId?.toString() ?? ""}
                     multiple={false}
                     buttonVariant="background-with-text"
                     placeholder="Lead"
+                    disabled={isArchived}
                   />
                 </div>
               )}
             />
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <UserGroupIcon className="h-4 w-4" />
               <span className="text-base">Members</span>
             </div>
             <Controller
               control={control}
-              name="members"
+              name="member_ids"
               render={({ field: { value } }) => (
-                <div className="w-1/2">
-                  <ProjectMemberDropdown
+                <div className="h-7 w-3/5">
+                  <MemberDropdown
                     value={value ?? []}
                     onChange={(val: string[]) => {
-                      submitChanges({ members: val });
+                      submitChanges({ member_ids: val });
                     }}
                     multiple
                     projectId={projectId?.toString() ?? ""}
                     buttonVariant={value && value?.length > 0 ? "transparent-without-text" : "background-with-text"}
                     buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
-                    disabled={!isEditingAllowed}
+                    disabled={!isEditingAllowed || isArchived}
                   />
                 </div>
               )}
             />
           </div>
-
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <LayersIcon className="h-4 w-4" />
               <span className="text-base">Issues</span>
             </div>
-            <div className="flex w-1/2 items-center">
+            <div className="flex h-7 w-3/5 items-center">
               <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
             </div>
           </div>
@@ -596,7 +573,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-80">
+                            <div className="relative h-40 w-full max-w-80">
                               <ProgressChart
                                 distribution={moduleDetails.distribution?.completion_chart ?? {}}
                                 startDate={moduleDetails.start_date}
@@ -651,7 +628,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                       <div className="mt-2 flex h-72 w-full flex-col space-y-3 overflow-y-auto">
                         {currentProjectRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
-                            {isEditingAllowed && (
+                            {isEditingAllowed && !isArchived && (
                               <div className="flex w-full items-center justify-end">
                                 <button
                                   className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
@@ -673,6 +650,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 isMember: currentProjectRole === EUserProjectRoles.MEMBER,
                                 isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
                               }}
+                              disabled={isArchived}
                             />
                           </>
                         ) : (
@@ -681,13 +659,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
                               <span className="p-0.5 text-xs text-custom-text-300">No links added yet</span>
                             </div>
-                            <button
-                              className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
-                              onClick={() => setModuleLinkModal(true)}
-                            >
-                              <Plus className="h-3 w-3" />
-                              Add link
-                            </button>
+                            {isEditingAllowed && !isArchived && (
+                              <button
+                                className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                onClick={() => setModuleLinkModal(true)}
+                              >
+                                <Plus className="h-3 w-3" />
+                                Add link
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
@@ -699,6 +679,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </>
-    </>
+    </div>
   );
 });

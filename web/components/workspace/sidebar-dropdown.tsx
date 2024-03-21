@@ -1,20 +1,20 @@
 import { Fragment, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { Menu, Transition } from "@headlessui/react";
-import { mutate } from "swr";
-import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 import { usePopper } from "react-popper";
-// hooks
-import { useApplication, useEventTracker, useUser, useWorkspace } from "hooks/store";
-// hooks
-import useToast from "hooks/use-toast";
+import { mutate } from "swr";
 // ui
-import { Avatar, Loader } from "@plane/ui";
-// types
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
+import { Menu, Transition } from "@headlessui/react";
+// icons
 import { IWorkspace } from "@plane/types";
+// plane ui
+import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useApplication, useUser, useWorkspace } from "@/hooks/store";
+// types
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
   {
@@ -24,8 +24,8 @@ const userLinks = (workspaceSlug: string, userId: string) => [
     icon: Mails,
   },
   {
-    key: "view_profile",
-    name: "View profile",
+    key: "my_activity",
+    name: "My activity",
     href: `/${workspaceSlug}/profile/${userId}`,
     icon: CircleUserRound,
   },
@@ -38,7 +38,7 @@ const userLinks = (workspaceSlug: string, userId: string) => [
 ];
 const profileLinks = (workspaceSlug: string, userId: string) => [
   {
-    name: "View profile",
+    name: "My activity",
     icon: UserCircle2,
     link: `/${workspaceSlug}/profile/${userId}`,
   },
@@ -56,11 +56,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const {
     theme: { sidebarCollapsed, toggleSidebar },
   } = useApplication();
-  const { setTrackElement } = useEventTracker();
   const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
-  // hooks
-  const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -89,8 +86,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
         router.push("/");
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })
@@ -156,8 +153,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
             >
               <Menu.Items as={Fragment}>
                 <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg divide-y divide-custom-border-100 outline-none">
-                  <div className="flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll mb-2 px-4">
-                    <h6 className="sticky top-0 z-10 h-full w-full bg-custom-background-100 pt-3 text-sm font-medium text-custom-sidebar-text-400">
+                  <div className="flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll mb-2 px-4 vertical-scrollbar scrollbar-sm">
+                    <h6 className="sticky top-0 z-10 h-full w-full pt-3 pb-1 text-sm font-medium text-custom-sidebar-text-400 bg-custom-sidebar-background-100">
                       {currentUser?.email}
                     </h6>
                     {workspacesList ? (
@@ -220,10 +217,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     )}
                   </div>
                   <div className="flex w-full flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
-                    <Link
-                      href="/create-workspace"
-                      className="w-full"
-                    >
+                    <Link href="/create-workspace" className="w-full">
                       <Menu.Item
                         as="div"
                         className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80 font-medium"

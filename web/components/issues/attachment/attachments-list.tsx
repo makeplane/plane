@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueAttachmentsDetail } from "./attachment-detail";
 // types
@@ -21,22 +21,21 @@ export const IssueAttachmentsList: FC<TIssueAttachmentsList> = observer((props) 
   const {
     attachment: { getAttachmentsByIssueId },
   } = useIssueDetail();
-
+  // derived values
   const issueAttachments = getAttachmentsByIssueId(issueId);
 
   if (!issueAttachments) return <></>;
 
   return (
     <>
-      {issueAttachments &&
-        issueAttachments.length > 0 &&
-        issueAttachments.map((attachmentId) => (
-          <IssueAttachmentsDetail
-            attachmentId={attachmentId}
-            disabled={disabled}
-            handleAttachmentOperations={handleAttachmentOperations}
-          />
-        ))}
+      {issueAttachments?.map((attachmentId) => (
+        <IssueAttachmentsDetail
+          key={attachmentId}
+          attachmentId={attachmentId}
+          disabled={disabled}
+          handleAttachmentOperations={handleAttachmentOperations}
+        />
+      ))}
     </>
   );
 });

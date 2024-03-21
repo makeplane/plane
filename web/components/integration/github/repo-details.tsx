@@ -2,18 +2,17 @@ import { FC, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
-
 // react-hook-form
 import { UseFormSetValue } from "react-hook-form";
+import useSWR from "swr";
 // services
-import { GithubIntegrationService } from "services/integrations";
 // ui
 import { Button, Loader } from "@plane/ui";
 // types
-import { IUserDetails, TFormValues, TIntegrationSteps } from "components/integration";
+import { IUserDetails, TFormValues, TIntegrationSteps } from "@/components/integration";
 // fetch-keys
-import { GITHUB_REPOSITORY_INFO } from "constants/fetch-keys";
+import { GITHUB_REPOSITORY_INFO } from "@/constants/fetch-keys";
+import { GithubIntegrationService } from "@/services/integrations";
 
 type Props = {
   selectedRepo: any;

@@ -1,10 +1,12 @@
 import React from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
+// ui
+import { Loader } from "@plane/ui";
 // hooks
-import { useUser } from "hooks/store";
+import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
+import { useUser } from "@/hooks/store";
 // constants
-import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "constants/project";
 
 export const ProjectSettingsSidebar = () => {
   const router = useRouter();
@@ -15,6 +17,21 @@ export const ProjectSettingsSidebar = () => {
   } = useUser();
 
   const projectMemberInfo = currentProjectRole || EUserProjectRoles.GUEST;
+
+  if (!currentProjectRole) {
+    return (
+      <div className="flex w-80 flex-col gap-6 px-5">
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-semibold text-custom-sidebar-text-400">SETTINGS</span>
+          <Loader className="flex w-full flex-col gap-2">
+            {[...Array(8)].map((index) => (
+              <Loader.Item key={index} height="34px" />
+            ))}
+          </Loader>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-80 flex-col gap-6 px-5">

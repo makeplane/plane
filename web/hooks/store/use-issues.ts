@@ -1,19 +1,19 @@
 import { useContext } from "react";
 import merge from "lodash/merge";
 // mobx store
-import { StoreContext } from "contexts/store-context";
+import { EIssuesStoreType } from "@/constants/issue";
+import { StoreContext } from "@/contexts/store-context";
 // types
-import { IWorkspaceIssues, IWorkspaceIssuesFilter } from "store/issue/workspace";
-import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
-import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
-import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
-import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
-import { IArchivedIssues, IArchivedIssuesFilter } from "store/issue/archived";
-import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
+import { IArchivedIssues, IArchivedIssuesFilter } from "@/store/issue/archived";
+import { ICycleIssues, ICycleIssuesFilter } from "@/store/issue/cycle";
+import { IDraftIssues, IDraftIssuesFilter } from "@/store/issue/draft";
+import { IModuleIssues, IModuleIssuesFilter } from "@/store/issue/module";
+import { IProfileIssues, IProfileIssuesFilter } from "@/store/issue/profile";
+import { IProjectIssues, IProjectIssuesFilter } from "@/store/issue/project";
+import { IProjectViewIssues, IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import { IWorkspaceIssues, IWorkspaceIssuesFilter } from "@/store/issue/workspace";
 import { TIssueMap } from "@plane/types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
 
 type defaultIssueStore = {
   issueMap: TIssueMap;

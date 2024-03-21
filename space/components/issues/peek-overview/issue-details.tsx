@@ -1,8 +1,8 @@
-import { IssueReactions } from "components/issues/peek-overview";
 import { RichReadOnlyEditor } from "@plane/rich-text-editor";
+import { IssueReactions } from "@/components/issues/peek-overview";
 // types
-import { IIssue } from "types/issue";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
+import { IIssue } from "types/issue";
 
 type Props = {
   issueDetails: IIssue;

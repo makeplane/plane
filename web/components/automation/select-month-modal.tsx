@@ -4,10 +4,10 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
+import type { IProject } from "@plane/types";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IProject } from "@plane/types";
 
 // types
 type Props = {
@@ -72,7 +72,7 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                      Customise Time Range
+                      Customize time range
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">
                       <div className="flex w-full flex-col justify-center gap-1">

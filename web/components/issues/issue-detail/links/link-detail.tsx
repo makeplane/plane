@@ -1,16 +1,16 @@
 import { FC, useState } from "react";
 // hooks
-import useToast from "hooks/use-toast";
-import { useIssueDetail } from "hooks/store";
 // ui
-import { ExternalLinkIcon, Tooltip } from "@plane/ui";
-// icons
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
+import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// icons
 // types
-import { IssueLinkCreateUpdateModal, TLinkOperationsModal } from "./create-update-link-modal";
 // helpers
-import { calculateTimeAgo } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+import { useIssueDetail, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { IssueLinkCreateUpdateModal, TLinkOperationsModal } from "./create-update-link-modal";
 
 export type TIssueLinkDetail = {
   linkId: string;
@@ -26,7 +26,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
     toggleIssueLinkModal: toggleIssueLinkModalStore,
     link: { getLinkById },
   } = useIssueDetail();
-  const { setToastAlert } = useToast();
+  const { getUserDetails } = useMember();
 
   // state
   const [isIssueLinkModalOpen, setIsIssueLinkModalOpen] = useState(false);
@@ -34,9 +34,11 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
     toggleIssueLinkModalStore(modalToggle);
     setIsIssueLinkModalOpen(modalToggle);
   };
-
+  const { isMobile } = usePlatformOS();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
+
+  const createdByDetails = getUserDetails(linkDetail.created_by_id);
 
   return (
     <div key={linkId}>
@@ -49,11 +51,11 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
 
       <div className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
         <div
-          className="flex w-full items-start justify-between gap-2 cursor-pointer"
+          className="flex w-full cursor-pointer items-start justify-between gap-2"
           onClick={() => {
             copyTextToClipboard(linkDetail.url);
-            setToastAlert({
-              type: "success",
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
               title: "Link copied!",
               message: "Link copied to clipboard",
             });
@@ -63,7 +65,10 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
             <span className="py-1">
               <LinkIcon className="h-3 w-3 flex-shrink-0" />
             </span>
-            <Tooltip tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}>
+            <Tooltip
+              tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
+              isMobile={isMobile}
+            >
               <span className="truncate text-xs">
                 {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
               </span>
@@ -110,10 +115,11 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
           <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
             Added {calculateTimeAgo(linkDetail.created_at)}
             <br />
-            by{" "}
-            {linkDetail.created_by_detail.is_bot
-              ? linkDetail.created_by_detail.first_name + " Bot"
-              : linkDetail.created_by_detail.display_name}
+            {createdByDetails && (
+              <>
+                by {createdByDetails?.is_bot ? createdByDetails?.first_name + " Bot" : createdByDetails?.display_name}
+              </>
+            )}
           </p>
         </div>
       </div>

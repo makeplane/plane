@@ -1,22 +1,22 @@
 from django.urls import path
 
 from plane.app.views import (
-    ProjectViewSet,
-    ProjectInvitationsViewset,
-    ProjectMemberViewSet,
-    ProjectMemberUserEndpoint,
-    ProjectJoinEndpoint,
     AddTeamToProjectEndpoint,
-    ProjectUserViewsEndpoint,
-    ProjectIdentifierEndpoint,
-    ProjectFavoritesViewSet,
-    UserProjectInvitationsViewset,
-    ProjectPublicCoverImagesEndpoint,
-    ProjectDeployBoardViewSet,
-    UserProjectRolesEndpoint,
+    ProjectArchiveUnarchiveEndpoint,
     ProjectCoverImageEndpoint,
+    ProjectDeployBoardViewSet,
+    ProjectFavoritesViewSet,
+    ProjectIdentifierEndpoint,
+    ProjectInvitationsViewset,
+    ProjectJoinEndpoint,
+    ProjectMemberUserEndpoint,
+    ProjectMemberViewSet,
+    ProjectPublicCoverImagesEndpoint,
+    ProjectUserViewsEndpoint,
+    ProjectViewSet,
+    UserProjectInvitationsViewset,
+    UserProjectRolesEndpoint,
 )
-
 
 urlpatterns = [
     path(
@@ -185,5 +185,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/cover-image/",
         ProjectCoverImageEndpoint.as_view(),
         name="project-cover-image",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archive/",
+        ProjectArchiveUnarchiveEndpoint.as_view(),
+        name="project-archive-unarchive",
     ),
 ]

@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useMobxStore } from "@/lib/mobx/store-provider";
 // types
 import { IUser } from "types/user";
 

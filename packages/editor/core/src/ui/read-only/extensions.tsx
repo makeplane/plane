@@ -5,7 +5,6 @@ import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
-import Gapcursor from "@tiptap/extension-gapcursor";
 
 import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
 import { Table } from "src/ui/extensions/table/table";
@@ -17,6 +16,11 @@ import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { CustomLinkExtension } from "src/ui/extensions/custom-link";
+import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
+import { CustomQuoteExtension } from "src/ui/extensions/quote";
+import { CustomTypographyExtension } from "src/ui/extensions/typography";
+import { CustomCodeBlockExtension } from "src/ui/extensions/code";
+import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
 
 export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   mentionSuggestions: IMentionSuggestion[];
@@ -38,36 +42,31 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
         class: "leading-normal -mb-2",
       },
     },
-    blockquote: {
-      HTMLAttributes: {
-        class: "border-l-4 border-custom-border-300",
-      },
-    },
-    code: {
-      HTMLAttributes: {
-        class: "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
-        spellcheck: "false",
-      },
-    },
+    code: false,
     codeBlock: false,
-    horizontalRule: {
-      HTMLAttributes: { class: "mt-4 mb-4" },
-    },
-    dropcursor: {
-      color: "rgba(var(--color-text-100))",
-      width: 2,
-    },
+    horizontalRule: false,
+    blockquote: false,
+    dropcursor: false,
     gapcursor: false,
   }),
-  Gapcursor,
+  CustomQuoteExtension.configure({
+    HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
+  }),
+  CustomHorizontalRule.configure({
+    HTMLAttributes: { class: "mt-4 mb-4" },
+  }),
   CustomLinkExtension.configure({
+    openOnClick: true,
+    autolink: true,
+    linkOnPaste: true,
     protocols: ["http", "https"],
-    validate: (url) => isValidHttpUrl(url),
+    validate: (url: string) => isValidHttpUrl(url),
     HTMLAttributes: {
       class:
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
+  CustomTypographyExtension,
   ReadOnlyImageExtension.configure({
     HTMLAttributes: {
       class: "rounded-lg border border-custom-border-300",
@@ -87,6 +86,8 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     },
     nested: true,
   }),
+  CustomCodeBlockExtension,
+  CustomCodeInlineExtension,
   Markdown.configure({
     html: true,
     transformCopiedText: true,

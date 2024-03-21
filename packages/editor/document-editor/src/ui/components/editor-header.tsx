@@ -7,6 +7,7 @@ import { AlertLabel } from "src/ui/components/alert-label";
 import { IVerticalDropdownItemProps, VerticalDropdownMenu } from "src/ui/components/vertical-dropdown-menu";
 import { SummaryPopover } from "src/ui/components/summary-popover";
 import { InfoPopover } from "src/ui/components/info-popover";
+import { getDate } from "src/utils/date-utils";
 
 interface IEditorHeader {
   editor: Editor;
@@ -42,8 +43,8 @@ export const EditorHeader = (props: IEditorHeader) => {
   } = props;
 
   return (
-    <div className="flex items-center border-b border-custom-border-200 px-5 py-2">
-      <div className="w-56 flex-shrink-0 lg:w-72">
+    <div className="flex items-center border-b border-custom-border-200 md:px-5 px-3 py-2">
+      <div className="md:w-56 flex-shrink-0 lg:w-72 w-fit">
         <SummaryPopover
           editor={editor}
           markings={markings}
@@ -52,7 +53,7 @@ export const EditorHeader = (props: IEditorHeader) => {
         />
       </div>
 
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 hidden md:flex">
         {!readonly && uploadFile && (
           <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />
         )}
@@ -72,7 +73,7 @@ export const EditorHeader = (props: IEditorHeader) => {
             Icon={Archive}
             backgroundColor="bg-blue-500/20"
             textColor="text-blue-500"
-            label={`Archived at ${new Date(archivedAt).toLocaleString()}`}
+            label={`Archived at ${getDate(archivedAt)?.toLocaleString()}`}
           />
         )}
 

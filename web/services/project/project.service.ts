@@ -1,6 +1,6 @@
-import { API_BASE_URL } from "helpers/common.helper";
+import { API_BASE_URL } from "@/helpers/common.helper";
 // services
-import { APIService } from "services/api.service";
+import { APIService } from "@/services/api.service";
 // types
 import type {
   GithubRepositoriesResponse,
@@ -72,9 +72,6 @@ export class ProjectService extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: {
-      view_props?: IProjectViewProps;
-      default_props?: IProjectViewProps;
-      preferences?: ProjectPreferences;
       sort_order?: number;
     }
   ): Promise<any> {

@@ -1,14 +1,12 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
-import pickBy from "lodash/pickBy";
 import isArray from "lodash/isArray";
+import isEmpty from "lodash/isEmpty";
+import pickBy from "lodash/pickBy";
+import set from "lodash/set";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
-// helpers
-import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
-// types
-import { IIssueRootStore } from "../root.store";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { IssueFiltersService } from "@/services/issue_filter.service";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -17,10 +15,12 @@ import {
   IIssueFilters,
   TIssueParams,
 } from "@plane/types";
+import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+// helpers
+// types
+import { IIssueRootStore } from "../root.store";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 // services
-import { IssueFiltersService } from "services/issue_filter.service";
 
 export interface ICycleIssuesFilter {
   // observables
@@ -35,7 +35,7 @@ export interface ICycleIssuesFilter {
     projectId: string,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    cycleId?: string | undefined
+    cycleId: string
   ) => Promise<void>;
 }
 
@@ -84,13 +84,13 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
     if (!filteredParams) return undefined;
 
+    if (filteredParams.includes("cycle")) filteredParams.splice(filteredParams.indexOf("cycle"), 1);
+
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
       userFilters?.filters as IIssueFilterOptions,
       userFilters?.displayFilters as IIssueDisplayFilterOptions,
       filteredParams
     );
-
-    if (userFilters?.displayFilters?.layout === "spreadsheet") filteredRouteParams.sub_issue = false;
 
     return filteredRouteParams;
   }
@@ -136,10 +136,9 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     projectId: string,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    cycleId: string | undefined = undefined
+    cycleId: string
   ) => {
     try {
-      if (!cycleId) throw new Error("Cycle id is required");
       if (isEmpty(this.filters) || isEmpty(this.filters[cycleId]) || isEmpty(filters)) return;
 
       const _filters = {
@@ -193,12 +192,6 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
           if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null) {
             _filters.displayFilters.group_by = "state";
             updatedDisplayFilters.group_by = "state";
-          }
-
-          // set sub_issue to false if layout is switched to spreadsheet and sub_issue is true
-          if (_filters.displayFilters.layout === "spreadsheet" && _filters.displayFilters.sub_issue === true) {
-            _filters.displayFilters.sub_issue = false;
-            updatedDisplayFilters.sub_issue = false;
           }
 
           runInAction(() => {

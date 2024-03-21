@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-import { Menu, Transition } from "@headlessui/react";
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
+import { Menu, Transition } from "@headlessui/react";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { LiteReadOnlyEditorWithRef, LiteTextEditorWithRef } from "@plane/lite-text-editor";
 
-import { CommentReactions } from "components/issues/peek-overview";
+import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { timeAgo } from "@/helpers/date-time.helper";
+import { useMobxStore } from "@/lib/mobx/store-provider";
 // types
-import { Comment } from "types/issue";
 // services
-import fileService from "services/file.service";
+import fileService from "@/services/file.service";
+import { RootStore } from "@/store/root";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
 
-import { RootStore } from "store/root";
+import { Comment } from "types/issue";
 type Props = {
   workspaceSlug: string;
   comment: Comment;
@@ -115,7 +115,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     value={value}
                     debouncedUpdatesEnabled={false}
                     customClassName="min-h-[50px] p-3 shadow-sm"
-                    onChange={(comment_json: Object, comment_html: string) => {
+                    onChange={(comment_json: unknown, comment_html: string) => {
                       onChange(comment_html);
                     }}
                   />

@@ -1,21 +1,22 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
 import { Camera, User2 } from "lucide-react";
-// hooks
-import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-// components
-import { Button, Input } from "@plane/ui";
-import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboarding";
-import { UserImageUploadModal } from "components/core";
-// types
 import { IUser } from "@plane/types";
-// services
-import { FileService } from "services/file.service";
+import { Button, Input } from "@plane/ui";
+// components
+import { UserImageUploadModal } from "@/components/core";
+import { OnboardingSidebar, OnboardingStepIndicator } from "@/components/onboarding";
+// constants
+import { USER_DETAILS } from "@/constants/event-tracker";
+// hooks
+import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
 // assets
+import { FileService } from "@/services/file.service";
 import IssuesSvg from "public/onboarding/onboarding-issues.webp";
-import { USER_DETAILS } from "constants/event-tracker";
+// services
+// types
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -62,6 +63,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
     formState: { errors, isSubmitting, isValid },
   } = useForm<IUser>({
     defaultValues,
+    mode: "onChange",
   });
 
   const onSubmit = async (formData: IUser) => {
@@ -164,35 +166,38 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                 )}
               </button>
 
-              <div className="my-2 mr-10 flex w-full rounded-md bg-onboarding-background-200 text-sm">
-                <Controller
-                  control={control}
-                  name="first_name"
-                  rules={{
-                    required: "First name is required",
-                    maxLength: {
-                      value: 24,
-                      message: "First name cannot exceed the limit of 24 characters",
-                    },
-                  }}
-                  render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="first_name"
-                      name="first_name"
-                      type="text"
-                      value={value}
-                      autoFocus={true}
-                      onChange={(event) => {
-                        setUserName(event.target.value);
-                        onChange(event);
-                      }}
-                      ref={ref}
-                      hasError={Boolean(errors.first_name)}
-                      placeholder="Enter your full name..."
-                      className="w-full border-onboarding-border-100 focus:border-custom-primary-100"
-                    />
-                  )}
-                />
+              <div className="flex flex-col gap-1">
+                <div className="my-2 mr-10 flex w-full rounded-md bg-onboarding-background-200 text-sm">
+                  <Controller
+                    control={control}
+                    name="first_name"
+                    rules={{
+                      required: "Name is required",
+                      maxLength: {
+                        value: 24,
+                        message: "Name must be within 24 characters.",
+                      },
+                    }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="first_name"
+                        name="first_name"
+                        type="text"
+                        value={value}
+                        autoFocus
+                        onChange={(event) => {
+                          setUserName(event.target.value);
+                          onChange(event);
+                        }}
+                        ref={ref}
+                        hasError={Boolean(errors.first_name)}
+                        placeholder="Enter your full name..."
+                        className="w-full border-onboarding-border-100 focus:border-custom-primary-100"
+                      />
+                    )}
+                  />
+                </div>
+                {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
               </div>
             </div>
             <div className="mb-10 mt-14">
@@ -216,6 +221,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                   <div className="flex flex-wrap overflow-auto break-all">
                     {USE_CASES.map((useCase) => (
                       <div
+                        key={useCase}
                         className={`mb-3 flex-shrink-0 border hover:cursor-pointer hover:bg-onboarding-background-300/30 ${
                           value === useCase ? "border-custom-primary-100" : "border-onboarding-border-100"
                         } mr-3 rounded-sm p-3 text-sm font-medium`}

@@ -1,21 +1,21 @@
-import { Fragment, ReactNode, useRef, useState } from "react";
+import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
+import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react-lite";
-import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Triangle } from "lucide-react";
-import sortBy from "lodash/sortBy";
+import { Combobox } from "@headlessui/react";
 // hooks
-import { useApplication, useEstimate } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useEstimate } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -60,6 +60,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -110,19 +111,18 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
 
   const onOpen = () => {
     if (!activeEstimate && workspaceSlug) fetchProjectEstimates(workspaceSlug, projectId);
-    if (referenceElement) referenceElement.focus();
   };
 
   const handleClose = () => {
     if (!isOpen) return;
     setIsOpen(false);
-    if (referenceElement) referenceElement.blur();
     onClose && onClose();
   };
 
   const toggleDropdown = () => {
     if (!isOpen) onOpen();
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
   };
 
   const dropdownOnChange = (val: number | null) => {
@@ -138,7 +138,20 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     toggleDropdown();
   };
 
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
   useOutsideClickDetector(dropdownRef, handleClose);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
 
   return (
     <Combobox
@@ -205,11 +218,14 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
+                as="input"
+                ref={inputRef}
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

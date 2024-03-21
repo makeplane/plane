@@ -1,19 +1,20 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
-import set from "lodash/set";
-import update from "lodash/update";
 import concat from "lodash/concat";
 import find from "lodash/find";
 import pull from "lodash/pull";
+import set from "lodash/set";
+import update from "lodash/update";
+import { action, makeObservable, observable, runInAction } from "mobx";
 // services
-import { IssueReactionService } from "services/issue";
 // types
-import { IIssueDetail } from "./root.store";
-import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap } from "@plane/types";
 // helpers
-import { groupReactions } from "helpers/emoji.helper";
+import { groupReactions } from "@/helpers/emoji.helper";
+import { IssueReactionService } from "@/services/issue";
+import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap } from "@plane/types";
+import { IIssueDetail } from "./root.store";
 
 export interface IIssueReactionStoreActions {
   // actions
+  addReactions: (issueId: string, reactions: TIssueReaction[]) => void;
   fetchReactions: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueReaction[]>;
   createReaction: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<any>;
   removeReaction: (
@@ -50,6 +51,7 @@ export class IssueReactionStore implements IIssueReactionStore {
       reactions: observable,
       reactionMap: observable,
       // actions
+      addReactions: action.bound,
       fetchReactions: action,
       createReaction: action,
       removeReaction: action,
@@ -89,23 +91,28 @@ export class IssueReactionStore implements IIssueReactionStore {
     return _userReactions;
   };
 
+  addReactions = (issueId: string, reactions: TIssueReaction[]) => {
+    const groupedReactions = groupReactions(reactions || [], "reaction");
+
+    const issueReactionIdsMap: { [reaction: string]: string[] } = {};
+
+    Object.keys(groupedReactions).map((reactionId) => {
+      const reactionIds = (groupedReactions[reactionId] || []).map((reaction) => reaction.id);
+      issueReactionIdsMap[reactionId] = reactionIds;
+    });
+
+    runInAction(() => {
+      set(this.reactions, issueId, issueReactionIdsMap);
+      reactions.forEach((reaction) => set(this.reactionMap, reaction.id, reaction));
+    });
+  };
+
   // actions
   fetchReactions = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       const response = await this.issueReactionService.listIssueReactions(workspaceSlug, projectId, issueId);
-      const groupedReactions = groupReactions(response || [], "reaction");
 
-      const issueReactionIdsMap: { [reaction: string]: string[] } = {};
-
-      Object.keys(groupedReactions).map((reactionId) => {
-        const reactionIds = (groupedReactions[reactionId] || []).map((reaction) => reaction.id);
-        issueReactionIdsMap[reactionId] = reactionIds;
-      });
-
-      runInAction(() => {
-        set(this.reactions, issueId, issueReactionIdsMap);
-        response.forEach((reaction) => set(this.reactionMap, reaction.id, reaction));
-      });
+      this.addReactions(issueId, response);
 
       return response;
     } catch (error) {

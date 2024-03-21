@@ -1,10 +1,6 @@
 import { MutableRefObject } from "react";
 import { Droppable } from "@hello-pangea/dnd";
 // hooks
-import { useProjectState } from "hooks/store";
-//components
-import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
-//types
 import {
   TGroupedIssues,
   TIssue,
@@ -13,7 +9,10 @@ import {
   TSubGroupedIssues,
   TUnGroupedIssues,
 } from "@plane/types";
-import { EIssueActions } from "../types";
+import { useProjectState } from "@/hooks/store";
+//components
+//types
+import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {
   groupId: string;
@@ -25,7 +24,7 @@ interface IKanbanGroup {
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
@@ -37,7 +36,7 @@ interface IKanbanGroup {
   viewId?: string;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
-  groupByVisibilityToggle: boolean;
+  groupByVisibilityToggle?: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   isDragStarted?: boolean;
 }
@@ -53,7 +52,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     issueIds,
     peekIssueId,
     isDragDisabled,
-    handleIssues,
+    updateIssue,
     quickActions,
     canEditProperties,
     enableQuickIssueCreate,
@@ -80,6 +79,10 @@ export const KanbanGroup = (props: IKanbanGroup) => {
         preloadedData = { ...preloadedData, state_id: groupValue };
       } else if (groupByKey === "priority") {
         preloadedData = { ...preloadedData, priority: groupValue };
+      } else if (groupByKey === "cycle") {
+        preloadedData = { ...preloadedData, cycle_id: groupValue };
+      } else if (groupByKey === "module") {
+        preloadedData = { ...preloadedData, module_ids: [groupValue] };
       } else if (groupByKey === "labels" && groupValue != "None") {
         preloadedData = { ...preloadedData, label_ids: [groupValue] };
       } else if (groupByKey === "assignees" && groupValue != "None") {
@@ -96,6 +99,10 @@ export const KanbanGroup = (props: IKanbanGroup) => {
         preloadedData = { ...preloadedData, state_id: subGroupValue };
       } else if (subGroupByKey === "priority") {
         preloadedData = { ...preloadedData, priority: subGroupValue };
+      } else if (groupByKey === "cycle") {
+        preloadedData = { ...preloadedData, cycle_id: subGroupValue };
+      } else if (groupByKey === "module") {
+        preloadedData = { ...preloadedData, module_ids: [subGroupValue] };
       } else if (subGroupByKey === "labels" && subGroupValue != "None") {
         preloadedData = { ...preloadedData, label_ids: [subGroupValue] };
       } else if (subGroupByKey === "assignees" && subGroupValue != "None") {
@@ -115,9 +122,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       <Droppable droppableId={`${groupId}__${sub_group_id}`}>
         {(provided: any, snapshot: any) => (
           <div
-            className={`relative h-full w-full transition-all ${
-              snapshot.isDraggingOver ? `bg-custom-background-80` : ``
-            }`}
+            className={`relative h-full transition-all ${snapshot.isDraggingOver ? `bg-custom-background-80` : ``}`}
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
@@ -129,7 +134,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
               displayProperties={displayProperties}
               isDragDisabled={isDragDisabled}
-              handleIssues={handleIssues}
+              updateIssue={updateIssue}
               quickActions={quickActions}
               canEditProperties={canEditProperties}
               scrollableContainerRef={scrollableContainerRef}

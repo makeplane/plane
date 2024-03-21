@@ -1,13 +1,14 @@
-import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import pull from "lodash/pull";
 import set from "lodash/set";
+import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
+import { IssueService, IssueArchiveService } from "@/services/issue";
+import { WorkspaceService } from "@/services/workspace.service";
+import { TIssue, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
-import { WorkspaceService } from "services/workspace.service";
-import { IssueService } from "services/issue";
 // types
 import { IIssueRootStore } from "../root.store";
-import { TIssue, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 
 export interface IWorkspaceIssues {
   // observable
@@ -22,21 +23,23 @@ export interface IWorkspaceIssues {
     workspaceSlug: string,
     projectId: string,
     data: Partial<TIssue>,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    viewId?: string | undefined
-  ) => Promise<TIssue | undefined>;
-  removeIssue: (
+    viewId: string
+  ) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => Promise<void>;
+  archiveIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     viewId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
+  quickAddIssue: undefined;
 }
 
 export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssues {
@@ -52,6 +55,9 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
   // service
   workspaceService;
   issueService;
+  issueArchiveService;
+
+  quickAddIssue = undefined;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
@@ -67,28 +73,33 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
       createIssue: action,
       updateIssue: action,
       removeIssue: action,
+      archiveIssue: action,
     });
     // root store
     this.rootIssueStore = _rootStore;
     // services
     this.workspaceService = new WorkspaceService();
     this.issueService = new IssueService();
+    this.issueArchiveService = new IssueArchiveService();
   }
 
   get groupedIssueIds() {
     const viewId = this.rootIssueStore.globalViewId;
-    if (!viewId) return { dataViewId: "", issueIds: undefined };
+    const workspaceSlug = this.rootIssueStore.workspaceSlug;
+    if (!workspaceSlug || !viewId) return { dataViewId: "", issueIds: undefined };
+
+    const uniqueViewId = `${workspaceSlug}_${viewId}`;
 
     const displayFilters = this.rootIssueStore?.workspaceIssuesFilter?.filters?.[viewId]?.displayFilters;
     if (!displayFilters) return { dataViewId: viewId, issueIds: undefined };
 
     const orderBy = displayFilters?.order_by;
 
-    const viewIssueIds = this.issues[viewId];
+    const viewIssueIds = this.issues[uniqueViewId];
 
     if (!viewIssueIds) return { dataViewId: viewId, issueIds: undefined };
 
-    const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds);
+    const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds, "un-archived");
     if (!_issues) return { dataViewId: viewId, issueIds: [] };
 
     let issueIds: TIssue | TUnGroupedIssues | undefined = undefined;
@@ -102,13 +113,15 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     try {
       this.loader = loadType;
 
+      const uniqueViewId = `${workspaceSlug}_${viewId}`;
+
       const params = this.rootIssueStore?.workspaceIssuesFilter?.getAppliedFilters(viewId);
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 
       runInAction(() => {
         set(
           this.issues,
-          [viewId],
+          [uniqueViewId],
           response.map((issue) => issue.id)
         );
         this.loader = undefined;
@@ -124,19 +137,14 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     }
   };
 
-  createIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<TIssue>,
-    viewId: string | undefined = undefined
-  ) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, viewId: string) => {
     try {
-      if (!viewId) throw new Error("View id is required");
+      const uniqueViewId = `${workspaceSlug}_${viewId}`;
 
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
-        this.issues[viewId].push(response.id);
+        this.issues[uniqueViewId].push(response.id);
       });
 
       this.rootStore.issues.addIssue([response]);
@@ -152,21 +160,36 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    viewId: string | undefined = undefined
+    viewId: string
   ) => {
     try {
-      if (!viewId) throw new Error("View id is required");
-
       this.rootStore.issues.updateIssue(issueId, data);
-      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
-      return response;
+      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
     } catch (error) {
       if (viewId) this.fetchIssues(workspaceSlug, viewId, "mutation");
       throw error;
     }
   };
 
-  removeIssue = async (
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => {
+    try {
+      const uniqueViewId = `${workspaceSlug}_${viewId}`;
+
+      await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
+
+      const issueIndex = this.issues[uniqueViewId].findIndex((_issueId) => _issueId === issueId);
+      if (issueIndex >= 0)
+        runInAction(() => {
+          this.issues[uniqueViewId].splice(issueIndex, 1);
+        });
+
+      this.rootStore.issues.removeIssue(issueId);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  archiveIssue = async (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
@@ -175,17 +198,16 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     try {
       if (!viewId) throw new Error("View id is required");
 
-      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
+      const uniqueViewId = `${workspaceSlug}_${viewId}`;
 
-      const issueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[viewId].splice(issueIndex, 1);
+      const response = await this.issueArchiveService.archiveIssue(workspaceSlug, projectId, issueId);
+
+      runInAction(() => {
+        this.rootStore.issues.updateIssue(issueId, {
+          archived_at: response.archived_at,
         });
-
-      this.rootStore.issues.removeIssue(issueId);
-
-      return response;
+        pull(this.issues[uniqueViewId], issueId);
+      });
     } catch (error) {
       throw error;
     }

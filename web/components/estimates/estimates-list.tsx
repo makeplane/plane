@@ -1,21 +1,19 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
-// store hooks
-import { useEstimate, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
-// ui
-import { Button, Loader } from "@plane/ui";
-import { EmptyState } from "components/common";
-// images
-import emptyEstimate from "public/empty-state/estimate.svg";
-// types
+import { useRouter } from "next/router";
 import { IEstimate } from "@plane/types";
+// store hooks
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "@/components/estimates";
+import { EmptyStateType } from "@/constants/empty-state";
+import { orderArrayBy } from "@/helpers/array.helper";
+import { useEstimate, useProject } from "@/hooks/store";
+// components
+// ui
+// types
 // helpers
-import { orderArrayBy } from "helpers/array.helper";
+// constants
 
 export const EstimatesList: React.FC = observer(() => {
   // states
@@ -28,8 +26,6 @@ export const EstimatesList: React.FC = observer(() => {
   // store hooks
   const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -47,8 +43,8 @@ export const EstimatesList: React.FC = observer(() => {
       const error = err?.error;
       const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: errorString ?? "Estimate could not be disabled. Please try again",
       });
@@ -108,20 +104,8 @@ export const EstimatesList: React.FC = observer(() => {
             ))}
           </section>
         ) : (
-          <div className="w-full py-8">
-            <EmptyState
-              title="No estimates yet"
-              description="Estimates help you communicate the complexity of an issue."
-              image={emptyEstimate}
-              primaryButton={{
-                icon: <Plus className="h-4 w-4" />,
-                text: "Add Estimate",
-                onClick: () => {
-                  setEstimateFormOpen(true);
-                  setEstimateToUpdate(undefined);
-                },
-              }}
-            />
+          <div className="h-full w-full py-8">
+            <EmptyState type={EmptyStateType.PROJECT_SETTINGS_ESTIMATE} />
           </div>
         )
       ) : (

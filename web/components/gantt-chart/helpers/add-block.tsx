@@ -1,21 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { addDays } from "date-fns";
+import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
-// hooks
-import { useChart } from "../hooks";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
-import { renderFormattedDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { renderFormattedDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useGanttChart } from "../hooks/use-gantt-chart";
 import { IBlockUpdateData, IGanttBlock } from "../types";
+// hooks
 
 type Props = {
   block: IGanttBlock;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
 };
 
-export const ChartAddBlock: React.FC<Props> = (props) => {
+export const ChartAddBlock: React.FC<Props> = observer((props) => {
   const { block, blockUpdateHandler } = props;
   // states
   const [isButtonVisible, setIsButtonVisible] = useState(false);
@@ -23,8 +25,10 @@ export const ChartAddBlock: React.FC<Props> = (props) => {
   const [buttonStartDate, setButtonStartDate] = useState<Date | null>(null);
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
+  // hooks
+  const { isMobile } = usePlatformOS();
   // chart hook
-  const { currentViewData } = useChart();
+  const { currentViewData } = useGanttChart();
 
   const handleButtonClick = () => {
     if (!currentViewData) return;
@@ -73,7 +77,7 @@ export const ChartAddBlock: React.FC<Props> = (props) => {
     >
       <div ref={containerRef} className="h-full w-full" />
       {isButtonVisible && (
-        <Tooltip tooltipContent={buttonStartDate && renderFormattedDate(buttonStartDate)}>
+        <Tooltip tooltipContent={buttonStartDate && renderFormattedDate(buttonStartDate)} isMobile={isMobile}>
           <button
             type="button"
             className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-8 bg-custom-background-80 p-1.5 rounded border border-custom-border-300 grid place-items-center text-custom-text-200 hover:text-custom-text-100"
@@ -88,4 +92,4 @@ export const ChartAddBlock: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+});

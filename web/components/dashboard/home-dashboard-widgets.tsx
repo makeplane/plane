@@ -1,7 +1,6 @@
 import { observer } from "mobx-react-lite";
+import { TWidgetKeys } from "@plane/types";
 // hooks
-import { useApplication, useDashboard } from "hooks/store";
-// components
 import {
   AssignedIssuesWidget,
   CreatedIssuesWidget,
@@ -12,9 +11,10 @@ import {
   RecentCollaboratorsWidget,
   RecentProjectsWidget,
   WidgetProps,
-} from "components/dashboard";
+} from "@/components/dashboard";
+import { useApplication, useDashboard } from "@/hooks/store";
+// components
 // types
-import { TWidgetKeys } from "@plane/types";
 
 const WIDGETS_LIST: {
   [key in TWidgetKeys]: { component: React.FC<WidgetProps>; fullWidth: boolean };

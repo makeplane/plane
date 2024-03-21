@@ -1,18 +1,18 @@
 import React from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
-// hooks
-import { useIssueDetail, useIssues, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { ExistingIssuesListModal } from "components/core";
-// ui
-import { RelatedIcon, Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "helpers/common.helper";
-// types
 import { TIssueRelationTypes, ISearchIssueResponse } from "@plane/types";
+// hooks
+import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { ExistingIssuesListModal } from "@/components/core";
+import { cn } from "@/helpers/common.helper";
+import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// components
+// ui
+// helpers
+// types
 
 export type TRelationObject = { className: string; icon: (size: number) => React.ReactElement; placeholder: string };
 
@@ -60,15 +60,13 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
     toggleRelationModal,
   } = useIssueDetail();
   const { issueMap } = useIssues();
-  // toast alert
-  const { setToastAlert } = useToast();
-
+  const { isMobile } = usePlatformOS();
   const relationIssueIds = getRelationByIssueIdRelationType(issueId, relationKey);
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one issue.",
       });
@@ -102,7 +100,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
       <button
         type="button"
         className={cn(
-          "group flex items-center gap-2 px-2 py-0.5 rounded outline-none",
+          "group flex items-center gap-2 rounded px-2 py-0.5 outline-none",
           {
             "cursor-not-allowed": disabled,
             "hover:bg-custom-background-80": !disabled,
@@ -113,9 +111,9 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
         onClick={() => toggleRelationModal(relationKey)}
         disabled={disabled}
       >
-        <div className="flex items-start justify-between w-full">
+        <div className="flex w-full items-start justify-between">
           {relationIssueIds.length > 0 ? (
-            <div className="flex items-center gap-2 py-0.5 flex-wrap">
+            <div className="flex flex-wrap items-center gap-2 py-0.5">
               {relationIssueIds.map((relationIssueId) => {
                 const currentIssue = issueMap[relationIssueId];
                 if (!currentIssue) return;
@@ -125,9 +123,9 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                 return (
                   <div
                     key={relationIssueId}
-                    className={`group flex items-center gap-1 rounded px-1.5 pt-1 pb-1 leading-3 hover:bg-custom-background-90 ${issueRelationObject[relationKey].className}`}
+                    className={`group flex items-center gap-1 rounded px-1.5 pb-1 pt-1 leading-3 hover:bg-custom-background-90 ${issueRelationObject[relationKey].className}`}
                   >
-                    <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name}>
+                    <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name} isMobile={isMobile}>
                       <Link
                         href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${currentIssue.id}`}
                         target="_blank"
@@ -139,7 +137,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                       </Link>
                     </Tooltip>
                     {!disabled && (
-                      <Tooltip tooltipContent="Remove" position="bottom">
+                      <Tooltip tooltipContent="Remove" position="bottom" isMobile={isMobile}>
                         <span
                           onClick={(e) => {
                             e.preventDefault();
@@ -160,7 +158,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
           )}
           {!disabled && (
             <span
-              className={cn("p-1 flex-shrink-0 opacity-0 group-hover:opacity-100", {
+              className={cn("flex-shrink-0 p-1 opacity-0 group-hover:opacity-100", {
                 "text-custom-text-400": relationIssueIds.length === 0,
               })}
             >

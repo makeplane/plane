@@ -1,8 +1,9 @@
 import React from "react";
+import { observer } from "mobx-react";
 // hooks
-import { useInboxIssues } from "hooks/store";
+import { INBOX_STATUS } from "@/constants/inbox";
+import { useInboxIssues } from "@/hooks/store";
 // constants
-import { INBOX_STATUS } from "constants/inbox";
 
 type Props = {
   workspaceSlug: string;
@@ -13,7 +14,7 @@ type Props = {
   showDescription?: boolean;
 };
 
-export const InboxIssueStatus: React.FC<Props> = (props) => {
+export const InboxIssueStatus: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, inboxId, issueId, iconSize = 18, showDescription = false } = props;
   // hooks
   const {
@@ -27,7 +28,7 @@ export const InboxIssueStatus: React.FC<Props> = (props) => {
   if (!inboxIssueStatusDetail) return <></>;
 
   const isSnoozedDatePassed =
-    inboxIssueDetail.status === 0 && new Date(inboxIssueDetail.snoozed_till ?? "") < new Date();
+    inboxIssueDetail.status === 0 && !!inboxIssueDetail.snoozed_till && inboxIssueDetail.snoozed_till < new Date();
 
   return (
     <div
@@ -45,11 +46,11 @@ export const InboxIssueStatus: React.FC<Props> = (props) => {
           workspaceSlug,
           projectId,
           inboxIssueDetail.duplicate_to ?? "",
-          new Date(inboxIssueDetail.snoozed_till ?? "")
+          inboxIssueDetail.snoozed_till
         )
       ) : (
         <span>{inboxIssueStatusDetail.title}</span>
       )}
     </div>
   );
-};
+});

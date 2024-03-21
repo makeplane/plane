@@ -1,9 +1,9 @@
 // components
-import { WebhookSecretKey } from "./form";
 // ui
+import { IWebhook } from "@plane/types";
 import { Button } from "@plane/ui";
 // types
-import { IWebhook } from "@plane/types";
+import { WebhookSecretKey } from "./form";
 
 type Props = {
   handleClose: () => void;

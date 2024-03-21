@@ -1,8 +1,8 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMember } from "hooks/store";
-// ui
 import { Avatar, AvatarGroup, UserGroupIcon } from "@plane/ui";
+import { useMember } from "@/hooks/store";
+// ui
 
 type AvatarProps = {
   showTooltip: boolean;

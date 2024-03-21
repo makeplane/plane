@@ -1,20 +1,22 @@
 """Global Settings"""
+
 # Python imports
 import os
 import ssl
-import certifi
 from datetime import timedelta
 from urllib.parse import urlparse
 
-# Django imports
-from django.core.management.utils import get_random_secret_key
+import certifi
 
 # Third party imports
 import dj_database_url
 import sentry_sdk
+
+# Django imports
+from django.core.management.utils import get_random_secret_key
+from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
-from sentry_sdk.integrations.celery import CeleryIntegration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -22,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
@@ -307,7 +309,9 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
         traces_sample_rate=1,
         send_default_pii=True,
         environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
-        profiles_sample_rate=1.0,
+        profiles_sample_rate=float(
+            os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0.5)
+        ),
     )
 
 

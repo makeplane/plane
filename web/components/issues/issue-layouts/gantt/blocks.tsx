@@ -1,92 +1,110 @@
+import { observer } from "mobx-react";
+// hooks
 // ui
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-// types
-import { TIssue } from "@plane/types";
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
-export const IssueGanttBlock = ({ data }: { data: TIssue }) => {
-  // hooks
+type Props = {
+  issueId: string;
+};
+
+export const IssueGanttBlock: React.FC<Props> = observer((props) => {
+  const { issueId } = props;
+  // store hooks
   const {
     router: { workspaceSlug },
   } = useApplication();
   const { getProjectStates } = useProjectState();
-  const { setPeekIssue } = useIssueDetail();
+  const {
+    issue: { getIssueById },
+    setPeekIssue,
+  } = useIssueDetail();
+  // derived values
+  const issueDetails = getIssueById(issueId);
+  const stateDetails =
+    issueDetails && getProjectStates(issueDetails?.project_id)?.find((state) => state?.id == issueDetails?.state_id);
 
   const handleIssuePeekOverview = () =>
     workspaceSlug &&
-    data &&
-    data.project_id &&
-    data.id &&
-    setPeekIssue({ workspaceSlug, projectId: data.project_id, issueId: data.id });
-
-  const stateColor = getProjectStates(data?.project_id)?.find((state) => state?.id == data?.state_id)?.color || "";
+    issueDetails &&
+    !issueDetails.tempId &&
+    setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
+  const { isMobile } = usePlatformOS();
 
   return (
     <div
       className="relative flex h-full w-full cursor-pointer items-center rounded"
       style={{
-        backgroundColor: stateColor,
+        backgroundColor: stateDetails?.color,
       }}
       onClick={handleIssuePeekOverview}
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
+        isMobile={isMobile}
         tooltipContent={
           <div className="space-y-1">
-            <h5>{data?.name}</h5>
+            <h5>{issueDetails?.name}</h5>
             <div>
-              {renderFormattedDate(data?.start_date ?? "")} to {renderFormattedDate(data?.target_date ?? "")}
+              {renderFormattedDate(issueDetails?.start_date ?? "")} to{" "}
+              {renderFormattedDate(issueDetails?.target_date ?? "")}
             </div>
           </div>
         }
         position="top-left"
       >
-        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{data?.name}</div>
+        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100 overflow-hidden">
+          {issueDetails?.name}
+        </div>
       </Tooltip>
     </div>
   );
-};
+});
 
 // rendering issues on gantt sidebar
-export const IssueGanttSidebarBlock = ({ data }: { data: TIssue }) => {
-  // hooks
-  const { getProjectStates } = useProjectState();
-  const { getProjectById } = useProject();
+export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
+  const { issueId } = props;
+  // store hooks
+  const { getStateById } = useProjectState();
+  const { getProjectIdentifierById } = useProject();
   const {
     router: { workspaceSlug },
   } = useApplication();
-  const { setPeekIssue } = useIssueDetail();
+  const {
+    issue: { getIssueById },
+    setPeekIssue,
+  } = useIssueDetail();
+  // derived values
+  const issueDetails = getIssueById(issueId);
+  const projectIdentifier = issueDetails && getProjectIdentifierById(issueDetails?.project_id);
+  const stateDetails = issueDetails && getStateById(issueDetails?.state_id);
 
   const handleIssuePeekOverview = () =>
     workspaceSlug &&
-    data &&
-    data.project_id &&
-    data.id &&
-    setPeekIssue({ workspaceSlug, projectId: data.project_id, issueId: data.id });
-
-  const currentStateDetails =
-    getProjectStates(data?.project_id)?.find((state) => state?.id == data?.state_id) || undefined;
+    issueDetails &&
+    setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
+  const { isMobile } = usePlatformOS();
 
   return (
     <ControlLink
-      href={`/${workspaceSlug}/projects/${data.project_id}/issues/${data.id}`}
+      href={`/${workspaceSlug}/projects/${issueDetails?.project_id}/issues/${issueDetails?.id}`}
       target="_blank"
       onClick={handleIssuePeekOverview}
       className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+      disabled={!!issueDetails?.tempId}
     >
-      <div className="relative flex h-full w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
-        {currentStateDetails != undefined && (
-          <StateGroupIcon stateGroup={currentStateDetails?.group} color={currentStateDetails?.color} />
-        )}
+      <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
+        {stateDetails && <StateGroupIcon stateGroup={stateDetails?.group} color={stateDetails?.color} />}
         <div className="flex-shrink-0 text-xs text-custom-text-300">
-          {getProjectById(data?.project_id)?.identifier} {data?.sequence_id}
+          {projectIdentifier} {issueDetails?.sequence_id}
         </div>
-        <Tooltip tooltipHeading="Title" tooltipContent={data.name}>
-          <span className="flex-grow truncate text-sm font-medium">{data?.name}</span>
+        <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>
+          <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
         </Tooltip>
       </div>
     </ControlLink>
   );
-};
+});

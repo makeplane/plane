@@ -1,9 +1,16 @@
 import { useCallback, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // hooks
+import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import { ProjectLogo } from "@/components/project";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
 import {
   useApplication,
   useEventTracker,
@@ -11,25 +18,15 @@ import {
   useProject,
   useProjectState,
   useUser,
-  useInbox,
   useMember,
-} from "hooks/store";
+} from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 // components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
 // ui
-import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helper
-import { renderEmoji } from "helpers/emoji.helper";
-import { EUserProjectRoles } from "constants/project";
-import { useIssues } from "hooks/store/use-issues";
-import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
   // states
@@ -54,8 +51,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
-  const { getInboxesByProjectId, getInboxById } = useInbox();
-
+  const { isMobile } = usePlatformOS();
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleFiltersUpdate = useCallback(
@@ -101,12 +97,15 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, updateFilters]
   );
 
-  const inboxesMap = currentProjectDetails?.inbox_view ? getInboxesByProjectId(currentProjectDetails.id) : undefined;
-  const inboxDetails = inboxesMap && inboxesMap.length > 0 ? getInboxById(inboxesMap[0]) : undefined;
-
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+
+  const issueCount = currentProjectDetails
+    ? issueFilters?.displayFilters?.sub_issue
+      ? currentProjectDetails?.total_issues + currentProjectDetails?.sub_issues
+      : currentProjectDetails?.total_issues
+    : undefined;
 
   return (
     <>
@@ -115,48 +114,52 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className=" relative z-10 items-center gap-x-2 gap-y-4">
-        <div className="flex items-center gap-2 p-4 border-b border-custom-border-200 bg-custom-sidebar-background-100">
+      <div className="relative z-[15] items-center gap-x-2 gap-y-4">
+        <div className="flex items-center gap-2 p-4 bg-custom-sidebar-background-100">
           <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-            <SidebarHamburgerToggle />
-            <div>
-              <Breadcrumbs>
+            <div className="flex items-center gap-2.5">
+              <Breadcrumbs onBack={() => router.back()}>
                 <Breadcrumbs.BreadcrumbItem
                   type="text"
                   link={
-                      <BreadcrumbLink
-                        href={`/${workspaceSlug}/projects`}
-                        label={currentProjectDetails?.name ?? "Project"}
-                        icon={
-                          currentProjectDetails ? (
-                            currentProjectDetails?.emoji ? (
-                              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                                {renderEmoji(currentProjectDetails.emoji)}
-                              </span>
-                            ) : currentProjectDetails?.icon_prop ? (
-                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                                {renderEmoji(currentProjectDetails.icon_prop)}
-                              </div>
-                            ) : (
-                              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                                {currentProjectDetails?.name.charAt(0)}
-                              </span>
-                            )
-                          ) : (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                              <Briefcase className="h-4 w-4" />
+                    <BreadcrumbLink
+                      href={`/${workspaceSlug}/projects`}
+                      label={currentProjectDetails?.name ?? "Project"}
+                      icon={
+                        currentProjectDetails ? (
+                          currentProjectDetails && (
+                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                              <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
-                        }
-                      />
+                        ) : (
+                          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                            <Briefcase className="h-4 w-4" />
+                          </span>
+                        )
+                      }
+                    />
                   }
                 />
 
                 <Breadcrumbs.BreadcrumbItem
                   type="text"
-                  link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
+                  link={
+                    <BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
+                  }
                 />
               </Breadcrumbs>
+              {issueCount && issueCount > 0 ? (
+                <Tooltip
+                  isMobile={isMobile}
+                  tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in this project`}
+                  position="bottom"
+                >
+                  <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                    {issueCount}
+                  </span>
+                </Tooltip>
+              ) : null}
             </div>
             {currentProjectDetails?.is_deployed && deployUrl && (
               <a
@@ -201,23 +204,15 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               />
             </FiltersDropdown>
           </div>
-          {currentProjectDetails?.inbox_view && inboxDetails && (
-              <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
-                <span>
-                  <Button variant="neutral-primary" size="sm" className="relative">
-                    Inbox
-                    {inboxDetails?.pending_issue_count > 0 && (
-                      <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
-                        {inboxDetails?.pending_issue_count}
-                      </span>
-                    )}
-                  </Button>
-                </span>
-              </Link>
-          )}
+
           {canUserCreateIssue && (
             <>
-              <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+              <Button
+                className="hidden md:block"
+                onClick={() => setAnalyticsModal(true)}
+                variant="neutral-primary"
+                size="sm"
+              >
                 Analytics
               </Button>
               <Button
@@ -228,13 +223,10 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 size="sm"
                 prependIcon={<Plus />}
               >
-                Add Issue
+                <div className="hidden sm:block">Add</div> Issue
               </Button>
             </>
           )}
-        </div>
-        <div className="block md:hidden">
-          <IssuesMobileHeader />
         </div>
       </div>
     </>

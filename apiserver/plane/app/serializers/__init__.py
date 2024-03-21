@@ -67,9 +67,14 @@ from .issue import (
     IssueRelationSerializer,
     RelatedIssueSerializer,
     IssuePublicSerializer,
+    IssueDetailSerializer,
+    IssueReactionLiteSerializer,
+    IssueAttachmentLiteSerializer,
+    IssueLinkLiteSerializer,
 )
 
 from .module import (
+    ModuleDetailSerializer,
     ModuleWriteSerializer,
     ModuleSerializer,
     ModuleIssueSerializer,
@@ -79,16 +84,6 @@ from .module import (
 )
 
 from .api import APITokenSerializer, APITokenReadSerializer
-
-from .integration import (
-    IntegrationSerializer,
-    WorkspaceIntegrationSerializer,
-    GithubIssueSyncSerializer,
-    GithubRepositorySerializer,
-    GithubRepositorySyncSerializer,
-    GithubCommentSyncSerializer,
-    SlackProjectSyncSerializer,
-)
 
 from .importer import ImporterSerializer
 
@@ -115,7 +110,10 @@ from .inbox import (
 
 from .analytic import AnalyticViewSerializer
 
-from .notification import NotificationSerializer, UserNotificationPreferenceSerializer
+from .notification import (
+    NotificationSerializer,
+    UserNotificationPreferenceSerializer,
+)
 
 from .exporter import ExporterHistorySerializer
 

@@ -10,6 +10,7 @@ import { DocumentDetails } from "src/types/editor-types";
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { getMenuOptions } from "src/utils/menu-options";
 import { useRouter } from "next/router";
+import { FixedMenu } from "src";
 
 interface IDocumentEditor {
   // document info
@@ -46,6 +47,8 @@ interface IDocumentEditor {
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
+
+  tabIndex?: number;
 }
 interface DocumentEditorProps extends IDocumentEditor {
   forwardedRef?: React.Ref<EditorHandle>;
@@ -54,6 +57,7 @@ interface DocumentEditorProps extends IDocumentEditor {
 interface EditorHandle {
   clearEditor: () => void;
   setEditorValue: (content: string) => void;
+  setEditorValueAtCursorPosition: (content: string) => void;
 }
 
 const DocumentEditor = ({
@@ -77,6 +81,7 @@ const DocumentEditor = ({
   cancelUploadImage,
   onActionCompleteHandler,
   rerenderOnPropsChange,
+  tabIndex,
 }: IDocumentEditor) => {
   const { markings, updateMarkings } = useEditorMarkings();
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
@@ -149,12 +154,16 @@ const DocumentEditor = ({
         documentDetails={documentDetails}
         isSubmitting={isSubmitting}
       />
+      <div className="flex-shrink-0 md:hidden border-b border-custom-border-200 pl-3 py-2">
+        {uploadFile && <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />}
+      </div>
       <div className="flex h-full w-full overflow-y-auto frame-renderer">
-        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72">
+        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72 hidden md:block">
           <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
-        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
+        <div className="h-full w-full md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
           <PageRenderer
+            tabIndex={tabIndex}
             onActionCompleteHandler={onActionCompleteHandler}
             hideDragHandle={hideDragHandleOnMouseLeave}
             readonly={false}

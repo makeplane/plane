@@ -1,19 +1,19 @@
-import React from "react";
-import { useRouter } from "next/router";
+import React, { Fragment } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
-import { useIssues } from "hooks/store";
 // components
 import {
   ArchivedIssueListLayout,
   ArchivedIssueAppliedFiltersRoot,
   ProjectArchivedEmptyState,
   IssuePeekOverview,
-} from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
+} from "@/components/issues";
+import { ListLayoutLoader } from "@/components/ui";
+import { EIssuesStoreType } from "@/constants/issue";
 // ui
-import { Spinner } from "@plane/ui";
+import { useIssues } from "@/hooks/store";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -33,34 +33,30 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
           issues?.groupedIssueIds ? "mutation" : "init-loader"
         );
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <ListLayoutLoader />;
+  }
 
   if (!workspaceSlug || !projectId) return <></>;
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden">
+    <>
       <ArchivedIssueAppliedFiltersRoot />
-
-      {issues?.loader === "init-loader" ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ProjectArchivedEmptyState />
         </div>
       ) : (
-        <>
-          {!issues?.groupedIssueIds ? (
-            <ProjectArchivedEmptyState />
-          ) : (
-            <>
-              <div className="relative h-full w-full overflow-auto">
-                <ArchivedIssueListLayout />
-              </div>
-
-              {/* peek overview */}
-              <IssuePeekOverview is_archived />
-            </>
-          )}
-        </>
+        <Fragment>
+          <div className="relative h-full w-full overflow-auto">
+            <ArchivedIssueListLayout />
+          </div>
+          <IssuePeekOverview is_archived />
+        </Fragment>
       )}
-    </div>
+    </>
   );
 });

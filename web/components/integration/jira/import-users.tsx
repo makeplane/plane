@@ -1,15 +1,15 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// ui
-import { Avatar, CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
-// types
+import useSWR from "swr";
 import { IJiraImporterForm } from "@plane/types";
+// services
+import { Avatar, CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
+import { WORKSPACE_MEMBERS } from "@/constants/fetch-keys";
+import { WorkspaceService } from "@/services/workspace.service";
+// ui
+// types
 // fetch keys
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 const workspaceService = new WorkspaceService();
 
@@ -33,16 +33,27 @@ export const JiraImportUsers: FC = () => {
     workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug?.toString() ?? "") : null
   );
 
-  const options = members?.map((member) => ({
-    value: member.member.email,
-    query: member.member.display_name ?? "",
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
+  const options = members
+    ?.map((member) => {
+      if (!member?.member) return;
+      return {
+        value: member.member.email,
+        query: member.member.display_name ?? "",
+        content: (
+          <div className="flex items-center gap-2">
+            <Avatar name={member?.member.display_name} src={member?.member.avatar} />
+            {member.member.display_name}
+          </div>
+        ),
+      };
+    })
+    .filter((member) => !!member) as
+    | {
+        value: string;
+        query: string;
+        content: JSX.Element;
+      }[]
+    | undefined;
 
   return (
     <div className="h-full w-full space-y-10 divide-y-2 divide-custom-border-200 overflow-y-auto">

@@ -1,8 +1,8 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // types
+import { InstanceService } from "@/services/instance.service";
 import { IInstance, IInstanceConfiguration, IFormattedInstanceConfiguration, IInstanceAdmin } from "@plane/types";
 // services
-import { InstanceService } from "services/instance.service";
 
 export interface IInstanceStore {
   // issues

@@ -15,6 +15,7 @@ import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
 
 export type IRichTextEditor = {
   value: string;
+  initialValue?: string;
   dragDropEnabled?: boolean;
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
@@ -36,6 +37,7 @@ export type IRichTextEditor = {
   debouncedUpdatesEnabled?: boolean;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
+  tabIndex?: number;
 };
 
 export interface RichTextEditorProps extends IRichTextEditor {
@@ -45,6 +47,7 @@ export interface RichTextEditorProps extends IRichTextEditor {
 interface EditorHandle {
   clearEditor: () => void;
   setEditorValue: (content: string) => void;
+  setEditorValueAtCursorPosition: (content: string) => void;
 }
 
 const RichTextEditor = ({
@@ -55,6 +58,7 @@ const RichTextEditor = ({
   setShouldShowAlert,
   editorContentCustomClassNames,
   value,
+  initialValue,
   uploadFile,
   getAsset,
   deleteFile,
@@ -67,6 +71,7 @@ const RichTextEditor = ({
   mentionHighlights,
   rerenderOnPropsChange,
   mentionSuggestions,
+  tabIndex,
 }: RichTextEditorProps) => {
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
 
@@ -100,13 +105,21 @@ const RichTextEditor = ({
     customClassName,
   });
 
+  // React.useEffect(() => {
+  //   if (editor && initialValue && editor.getHTML() != initialValue) editor.commands.setContent(initialValue);
+  // }, [editor, initialValue]);
+  //
   if (!editor) return null;
 
   return (
     <EditorContainer hideDragHandle={hideDragHandleOnMouseLeave} editor={editor} editorClassNames={editorClassNames}>
       {editor && <EditorBubbleMenu editor={editor} />}
       <div className="flex flex-col">
-        <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
+        <EditorContentWrapper
+          tabIndex={tabIndex}
+          editor={editor}
+          editorContentCustomClassNames={editorContentCustomClassNames}
+        />
       </div>
     </EditorContainer>
   );

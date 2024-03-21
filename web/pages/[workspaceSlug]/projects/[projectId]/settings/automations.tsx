@@ -1,28 +1,30 @@
 import React, { ReactElement } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useProject, useUser } from "hooks/store";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
-// hooks
-import useToast from "hooks/use-toast";
-// components
-import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
-import { ProjectSettingHeader } from "components/headers";
-// types
-import { NextPageWithLayout } from "lib/types";
+import { useRouter } from "next/router";
 import { IProject } from "@plane/types";
+// hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
+// layouts
+// ui
+// components
+import { PageHead } from "@/components/core";
+import { ProjectSettingHeader } from "@/components/headers";
+import { EUserProjectRoles } from "@/constants/project";
+import { useProject, useUser } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+// layouts
+import { ProjectSettingLayout } from "@/layouts/settings-layout";
+// hooks
+// components
+// types
+import { NextPageWithLayout } from "@/lib/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 const AutomationSettingsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -33,24 +35,29 @@ const AutomationSettingsPage: NextPageWithLayout = observer(() => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
 
     await updateProject(workspaceSlug.toString(), projectId.toString(), formData).catch(() => {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Something went wrong. Please try again.",
       });
     });
   };
 
+  // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const pageTitle = projectDetails?.name ? `${projectDetails?.name} - Automations` : undefined;
 
   return (
-    <section className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
-      <div className="flex items-center border-b border-custom-border-100 py-3.5">
-        <h3 className="text-xl font-medium">Automations</h3>
-      </div>
-      <AutoArchiveAutomation handleChange={handleChange} />
-      <AutoCloseAutomation handleChange={handleChange} />
-    </section>
+    <>
+      <PageHead title={pageTitle} />
+      <section className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+        <div className="flex items-center border-b border-custom-border-100 py-3.5">
+          <h3 className="text-xl font-medium">Automations</h3>
+        </div>
+        <AutoArchiveAutomation handleChange={handleChange} />
+        <AutoCloseAutomation handleChange={handleChange} />
+      </section>
+    </>
   );
 });
 

@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef, Fragment } from "react";
+import { Placement } from "@popperjs/core";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form"; // services
-import { AIService } from "services/ai.service";
-// hooks
-import useToast from "hooks/use-toast";
 import { usePopper } from "react-popper";
 // ui
-import { Button, Input } from "@plane/ui";
-// components
-import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
+import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
-// types
-import { Placement } from "@popperjs/core";
+import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// icons
+// components
+// hooks
+import { AIService } from "@/services/ai.service";
 
 type Props = {
   isOpen: boolean;
@@ -44,8 +44,6 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "auto",
@@ -78,8 +76,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
         ? error || "You have reached the maximum number of requests of 50 requests per month per user."
         : error || "Some error occurred. Please try again.";
 
-    setToastAlert({
-      type: "error",
+    setToast({
+      type: TOAST_TYPE.ERROR,
       title: "Error!",
       message: errorMessage,
     });
@@ -104,8 +102,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   };
 
   const handleInvalidTask = () => {
-    setToastAlert({
-      type: "error",
+    setToast({
+      type: TOAST_TYPE.ERROR,
       title: "Error!",
       message: "Please enter some task to get AI assistance.",
     });
@@ -175,8 +173,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const generateResponseButtonText = isSubmitting
     ? "Generating response..."
     : response === ""
-    ? "Generate response"
-    : "Generate again";
+      ? "Generate response"
+      : "Generate again";
 
   return (
     <Popover as="div" className={`relative w-min text-left`}>
@@ -195,7 +193,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
       >
         <Popover.Panel
           as="div"
-          className={`fixed z-10 flex flex-col w-full max-w-full min-w-[50rem] space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${className}`}
+          className={`fixed z-10 flex w-full min-w-[50rem] max-w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${className}`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -214,7 +212,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
               </div>
             )}
             {response !== "" && (
-              <div className="page-block-section text-sm max-h-[8rem]">
+              <div className="page-block-section max-h-[8rem] text-sm">
                 Response:
                 <RichReadOnlyEditorWithRef
                   value={`<p>${response}</p>`}
@@ -250,8 +248,17 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
               />
             )}
           />
-          <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
-            {responseActionButton}
+          <div className="flex gap-2 justify-between">
+            {responseActionButton ? (
+              <>{responseActionButton}</>
+            ) : (
+              <>
+                <div className="flex items-center justify-center gap-2 text-sm text-custom-primary">
+                  <AlertCircle className="h-4 w-4" />
+                  <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
+                </div>
+              </>
+            )}
             <div className="flex items-center gap-2">
               <Button variant="neutral-primary" size="sm" onClick={onClose}>
                 Close

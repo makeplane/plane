@@ -2,10 +2,10 @@ import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
 import { Check, Search, Tag } from "lucide-react";
-// hooks
-import { useIssueDetail, useLabel } from "hooks/store";
-// components
 import { Combobox } from "@headlessui/react";
+// hooks
+import { useIssueDetail, useLabel } from "@/hooks/store";
+// components
 
 export interface IIssueLabelSelect {
   workspaceSlug: string;
@@ -24,7 +24,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [query, setQuery] = useState("");
 
   const issue = getIssueById(issueId);
@@ -56,7 +56,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: "bottom-end",
     modifiers: [
       {
         name: "preventOverflow",
@@ -71,7 +71,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
 
   const label = (
     <div
-      className={`flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer rounded-full text-xs p-0.5 px-2 hover:bg-custom-background-90 py-0.5 text-custom-text-300 hover:text-custom-text-200 border border-custom-border-100`}
+      className={`relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-custom-border-100 p-0.5 px-2 py-0.5 text-xs text-custom-text-300 transition-all hover:bg-custom-background-90 hover:text-custom-text-200`}
     >
       <div className="flex-shrink-0">
         <Tag className="h-2.5 w-2.5" />
@@ -79,6 +79,13 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
       <div className="flex-shrink-0">Select Label</div>
     </div>
   );
+
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
 
   if (!issue) return <></>;
 
@@ -95,7 +102,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
           <button
             ref={setReferenceElement}
             type="button"
-            className="rounded cursor-pointer"
+            className="cursor-pointer rounded"
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}
@@ -104,22 +111,25 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
 
         <Combobox.Options className="fixed z-10">
           <div
-            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none`}
+            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none`}
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-300" />
-              <Combobox.Input
-                className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
-                displayValue={(assigned: any) => assigned?.name}
-              />
+            <div className="px-2">
+              <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
+                <Search className="h-3.5 w-3.5 text-custom-text-300" />
+                <Combobox.Input
+                  className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search"
+                  displayValue={(assigned: any) => assigned?.name}
+                  onKeyDown={searchInputKeyDown}
+                />
+              </div>
             </div>
-            <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
+            <div className={`vertical-scrollbar scrollbar-sm mt-2 max-h-48 space-y-1 overflow-y-scroll px-2 pr-0`}>
               {isLoading ? (
                 <p className="text-center text-custom-text-200">Loading...</p>
               ) : filteredOptions.length > 0 ? (

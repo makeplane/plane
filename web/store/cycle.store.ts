@@ -1,19 +1,23 @@
-import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
-import { isFuture, isPast } from "date-fns";
+import { isFuture, isPast, isToday } from "date-fns";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import { action, computed, observable, makeObservable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // types
 import { ICycle, CycleDateCheckData } from "@plane/types";
-// mobx
-import { RootStore } from "store/root.store";
+// helpers
+import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
+import { getDate } from "@/helpers/date-time.helper";
 // services
-import { ProjectService } from "services/project";
-import { IssueService } from "services/issue";
-import { CycleService } from "services/cycle.service";
+import { CycleService } from "@/services/cycle.service";
+import { CycleArchiveService } from "@/services/cycle_archive.service";
+import { IssueService } from "@/services/issue";
+import { ProjectService } from "@/services/project";
+// store
+import { RootStore } from "@/store/root.store";
 
 export interface ICycleStore {
-  //Loaders
+  // loaders
   loader: boolean;
   // observables
   fetchedMap: Record<string, boolean>;
@@ -26,15 +30,22 @@ export interface ICycleStore {
   currentProjectIncompleteCycleIds: string[] | null;
   currentProjectDraftCycleIds: string[] | null;
   currentProjectActiveCycleId: string | null;
+  currentProjectArchivedCycleIds: string[] | null;
   // computed actions
+  getFilteredCycleIds: (projectId: string) => string[] | null;
+  getFilteredCompletedCycleIds: (projectId: string) => string[] | null;
+  getFilteredArchivedCycleIds: (projectId: string) => string[] | null;
   getCycleById: (cycleId: string) => ICycle | null;
+  getCycleNameById: (cycleId: string) => string | undefined;
   getActiveCycleById: (cycleId: string) => ICycle | null;
   getProjectCycleIds: (projectId: string) => string[] | null;
   // actions
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   // fetch
+  fetchWorkspaceCycles: (workspaceSlug: string) => Promise<ICycle[]>;
   fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchActiveCycle: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
+  fetchArchivedCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   // crud
   createCycle: (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => Promise<ICycle>;
@@ -48,6 +59,9 @@ export interface ICycleStore {
   // favorites
   addCycleToFavorites: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<any>;
   removeCycleFromFavorites: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
+  // archive
+  archiveCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
+  restoreCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
 }
 
 export class CycleStore implements ICycleStore {
@@ -63,6 +77,7 @@ export class CycleStore implements ICycleStore {
   projectService;
   issueService;
   cycleService;
+  cycleArchiveService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -78,21 +93,29 @@ export class CycleStore implements ICycleStore {
       currentProjectIncompleteCycleIds: computed,
       currentProjectDraftCycleIds: computed,
       currentProjectActiveCycleId: computed,
+      currentProjectArchivedCycleIds: computed,
       // actions
+      fetchWorkspaceCycles: action,
       fetchAllCycles: action,
       fetchActiveCycle: action,
+      fetchArchivedCycles: action,
       fetchCycleDetails: action,
       createCycle: action,
       updateCycleDetails: action,
       deleteCycle: action,
       addCycleToFavorites: action,
       removeCycleFromFavorites: action,
+      archiveCycle: action,
+      restoreCycle: action,
     });
 
     this.rootStore = _rootStore;
+
+    // services
     this.projectService = new ProjectService();
     this.issueService = new IssueService();
     this.cycleService = new CycleService();
+    this.cycleArchiveService = new CycleArchiveService();
   }
 
   // computed
@@ -102,7 +125,7 @@ export class CycleStore implements ICycleStore {
   get currentProjectCycleIds() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
-    let allCycles = Object.values(this.cycleMap ?? {}).filter((c) => c?.project === projectId);
+    let allCycles = Object.values(this.cycleMap ?? {}).filter((c) => c?.project_id === projectId && !c?.archived_at);
     allCycles = sortBy(allCycles, [(c) => c.sort_order]);
     const allCycleIds = allCycles.map((c) => c.id);
     return allCycleIds;
@@ -115,8 +138,10 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let completedCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
-      const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
-      return c.project === projectId && hasEndDatePassed;
+      const endDate = getDate(c.end_date);
+      const hasEndDatePassed = endDate && isPast(endDate);
+      const isEndDateToday = endDate && isToday(endDate);
+      return c.project_id === projectId && hasEndDatePassed && !isEndDateToday && !c?.archived_at;
     });
     completedCycles = sortBy(completedCycles, [(c) => c.sort_order]);
     const completedCycleIds = completedCycles.map((c) => c.id);
@@ -130,8 +155,9 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let upcomingCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
-      const isStartDateUpcoming = isFuture(new Date(c.start_date ?? ""));
-      return c.project === projectId && isStartDateUpcoming;
+      const startDate = getDate(c.start_date);
+      const isStartDateUpcoming = startDate && isFuture(startDate);
+      return c.project_id === projectId && isStartDateUpcoming && !c?.archived_at;
     });
     upcomingCycles = sortBy(upcomingCycles, [(c) => c.sort_order]);
     const upcomingCycleIds = upcomingCycles.map((c) => c.id);
@@ -145,8 +171,9 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let incompleteCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
-      const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
-      return c.project === projectId && !hasEndDatePassed;
+      const endDate = getDate(c.end_date);
+      const hasEndDatePassed = endDate && isPast(endDate);
+      return c.project_id === projectId && !hasEndDatePassed && !c?.archived_at;
     });
     incompleteCycles = sortBy(incompleteCycles, [(c) => c.sort_order]);
     const incompleteCycleIds = incompleteCycles.map((c) => c.id);
@@ -160,7 +187,7 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let draftCycles = Object.values(this.cycleMap ?? {}).filter(
-      (c) => c.project === projectId && !c.start_date && !c.end_date
+      (c) => c.project_id === projectId && !c.start_date && !c.end_date && !c?.archived_at
     );
     draftCycles = sortBy(draftCycles, [(c) => c.sort_order]);
     const draftCycleIds = draftCycles.map((c) => c.id);
@@ -174,10 +201,90 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return null;
     const activeCycle = Object.keys(this.activeCycleIdMap ?? {}).find(
-      (cycleId) => this.cycleMap?.[cycleId]?.project === projectId
+      (cycleId) => this.cycleMap?.[cycleId]?.project_id === projectId
     );
     return activeCycle || null;
   }
+
+  /**
+   * returns all archived cycle ids for a project
+   */
+  get currentProjectArchivedCycleIds() {
+    const projectId = this.rootStore.app.router.projectId;
+    if (!projectId || !this.fetchedMap[projectId]) return null;
+    let archivedCycles = Object.values(this.cycleMap ?? {}).filter(
+      (c) => c.project_id === projectId && !!c.archived_at
+    );
+    archivedCycles = sortBy(archivedCycles, [(c) => c.sort_order]);
+    const archivedCycleIds = archivedCycles.map((c) => c.id);
+    return archivedCycleIds;
+  }
+
+  /**
+   * @description returns filtered cycle ids based on display filters and filters
+   * @param {TCycleDisplayFilters} displayFilters
+   * @param {TCycleFilters} filters
+   * @returns {string[] | null}
+   */
+  getFilteredCycleIds = computedFn((projectId: string) => {
+    const filters = this.rootStore.cycleFilter.getFiltersByProjectId(projectId);
+    const searchQuery = this.rootStore.cycleFilter.searchQuery;
+    if (!this.fetchedMap[projectId]) return null;
+    let cycles = Object.values(this.cycleMap ?? {}).filter(
+      (c) =>
+        c.project_id === projectId &&
+        !c.archived_at &&
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        shouldFilterCycle(c, filters ?? {})
+    );
+    cycles = orderCycles(cycles);
+    const cycleIds = cycles.map((c) => c.id);
+    return cycleIds;
+  });
+
+  /**
+   * @description returns filtered cycle ids based on display filters and filters
+   * @param {TCycleDisplayFilters} displayFilters
+   * @param {TCycleFilters} filters
+   * @returns {string[] | null}
+   */
+  getFilteredCompletedCycleIds = computedFn((projectId: string) => {
+    const filters = this.rootStore.cycleFilter.getFiltersByProjectId(projectId);
+    const searchQuery = this.rootStore.cycleFilter.searchQuery;
+    if (!this.fetchedMap[projectId]) return null;
+    let cycles = Object.values(this.cycleMap ?? {}).filter(
+      (c) =>
+        c.project_id === projectId &&
+        !c.archived_at &&
+        c.status.toLowerCase() === "completed" &&
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        shouldFilterCycle(c, filters ?? {})
+    );
+    cycles = sortBy(cycles, [(c) => !c.start_date]);
+    const cycleIds = cycles.map((c) => c.id);
+    return cycleIds;
+  });
+
+  /**
+   * @description returns filtered archived cycle ids based on display filters and filters
+   * @param {string} projectId
+   * @returns {string[] | null}
+   */
+  getFilteredArchivedCycleIds = computedFn((projectId: string) => {
+    const filters = this.rootStore.cycleFilter.getArchivedFiltersByProjectId(projectId);
+    const searchQuery = this.rootStore.cycleFilter.archivedCyclesSearchQuery;
+    if (!this.fetchedMap[projectId]) return null;
+    let cycles = Object.values(this.cycleMap ?? {}).filter(
+      (c) =>
+        c.project_id === projectId &&
+        !!c.archived_at &&
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        shouldFilterCycle(c, filters ?? {})
+    );
+    cycles = sortBy(cycles, [(c) => !c.start_date]);
+    const cycleIds = cycles.map((c) => c.id);
+    return cycleIds;
+  });
 
   /**
    * @description returns cycle details by cycle id
@@ -185,6 +292,13 @@ export class CycleStore implements ICycleStore {
    * @returns
    */
   getCycleById = computedFn((cycleId: string): ICycle | null => this.cycleMap?.[cycleId] ?? null);
+
+  /**
+   * @description returns cycle name by cycle id
+   * @param cycleId
+   * @returns
+   */
+  getCycleNameById = computedFn((cycleId: string): string => this.cycleMap?.[cycleId]?.name);
 
   /**
    * @description returns active cycle details by cycle id
@@ -202,7 +316,7 @@ export class CycleStore implements ICycleStore {
   getProjectCycleIds = computedFn((projectId: string): string[] | null => {
     if (!this.fetchedMap[projectId]) return null;
 
-    let cycles = Object.values(this.cycleMap ?? {}).filter((c) => c.project === projectId);
+    let cycles = Object.values(this.cycleMap ?? {}).filter((c) => c.project_id === projectId && !c?.archived_at);
     cycles = sortBy(cycles, [(c) => c.sort_order]);
     const cycleIds = cycles.map((c) => c.id);
     return cycleIds || null;
@@ -217,6 +331,22 @@ export class CycleStore implements ICycleStore {
    */
   validateDate = async (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) =>
     await this.cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
+
+  /**
+   * @description fetch all cycles
+   * @param workspaceSlug
+   * @returns ICycle[]
+   */
+  fetchWorkspaceCycles = async (workspaceSlug: string) =>
+    await this.cycleService.getWorkspaceCycles(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((cycle) => {
+          set(this.cycleMap, [cycle.id], { ...this.cycleMap[cycle.id], ...cycle });
+          set(this.fetchedMap, cycle.project_id, true);
+        });
+      });
+      return response;
+    });
 
   /**
    * @description fetches all cycles for a project
@@ -241,6 +371,31 @@ export class CycleStore implements ICycleStore {
       this.loader = false;
       return undefined;
     }
+  };
+
+  /**
+   * @description fetches archived cycles for a project
+   * @param workspaceSlug
+   * @param projectId
+   * @returns
+   */
+  fetchArchivedCycles = async (workspaceSlug: string, projectId: string) => {
+    this.loader = true;
+    return await this.cycleArchiveService
+      .getArchivedCycles(workspaceSlug, projectId)
+      .then((response) => {
+        runInAction(() => {
+          response.forEach((cycle) => {
+            set(this.cycleMap, [cycle.id], cycle);
+          });
+          this.loader = false;
+        });
+        return response;
+      })
+      .catch(() => {
+        this.loader = false;
+        return undefined;
+      });
   };
 
   /**
@@ -337,7 +492,6 @@ export class CycleStore implements ICycleStore {
    */
   addCycleToFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const currentCycle = this.getCycleById(cycleId);
-    const currentActiveCycle = this.getActiveCycleById(cycleId);
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
@@ -362,7 +516,6 @@ export class CycleStore implements ICycleStore {
    */
   removeCycleFromFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const currentCycle = this.getCycleById(cycleId);
-    const currentActiveCycle = this.getActiveCycleById(cycleId);
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);
@@ -375,5 +528,49 @@ export class CycleStore implements ICycleStore {
       });
       throw error;
     }
+  };
+
+  /**
+   * @description archives a cycle
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @returns
+   */
+  archiveCycle = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    const cycleDetails = this.getCycleById(cycleId);
+    if (cycleDetails?.archived_at) return;
+    await this.cycleArchiveService
+      .archiveCycle(workspaceSlug, projectId, cycleId)
+      .then((response) => {
+        runInAction(() => {
+          set(this.cycleMap, [cycleId, "archived_at"], response.archived_at);
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to archive cycle in cycle store", error);
+      });
+  };
+
+  /**
+   * @description restores a cycle
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @returns
+   */
+  restoreCycle = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    const cycleDetails = this.getCycleById(cycleId);
+    if (!cycleDetails?.archived_at) return;
+    await this.cycleArchiveService
+      .restoreCycle(workspaceSlug, projectId, cycleId)
+      .then(() => {
+        runInAction(() => {
+          set(this.cycleMap, [cycleId, "archived_at"], null);
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to restore cycle in cycle store", error);
+      });
   };
 }

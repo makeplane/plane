@@ -1,33 +1,31 @@
-import { FC, Fragment, useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/router";
+import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react-lite";
-// hooks
-import useToast from "hooks/use-toast";
-import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
-// components
-import { IssueView } from "components/issues";
-// types
+import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
+// hooks
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { IssueView } from "@/components/issues";
+// ui
+// components
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
+// components
+// types
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
-import { ISSUE_UPDATED, ISSUE_DELETED } from "constants/event-tracker";
 
 interface IIssuePeekOverview {
   is_archived?: boolean;
-  onIssueUpdate?: (issue: Partial<TIssue>) => Promise<void>;
+  is_draft?: boolean;
 }
 
 export type TIssuePeekOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  update: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
-    showToast?: boolean
-  ) => Promise<void>;
+  update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  archive: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  restore: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
@@ -46,21 +44,20 @@ export type TIssuePeekOperations = {
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { is_archived = false, onIssueUpdate } = props;
-  // hooks
-  const { setToastAlert } = useToast();
+  const { is_archived = false, is_draft = false } = props;
   // router
   const router = useRouter();
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
   const {
-    issues: { removeIssue: removeArchivedIssue },
+    issues: { restoreIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const {
     peekIssue,
     updateIssue,
     removeIssue,
+    archiveIssue,
     issue: { getIssueById, fetchIssue },
   } = useIssueDetail();
   const { addIssueToCycle, removeIssueFromCycle, addModulesToIssue, removeIssueFromModule, removeModulesFromIssue } =
@@ -69,70 +66,52 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // state
   const [loader, setLoader] = useState(false);
 
-  useEffect(() => {
-    if (peekIssue) {
-      setLoader(true);
-      fetchIssue(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId).finally(() => {
-        setLoader(false);
-      });
-    }
-  }, [peekIssue, fetchIssue]);
-
   const issueOperations: TIssuePeekOperations = useMemo(
     () => ({
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          await fetchIssue(workspaceSlug, projectId, issueId);
+          await fetchIssue(
+            workspaceSlug,
+            projectId,
+            issueId,
+            is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
+          );
         } catch (error) {
           console.error("Error fetching the parent issue");
         }
       },
-      update: async (
-        workspaceSlug: string,
-        projectId: string,
-        issueId: string,
-        data: Partial<TIssue>,
-        showToast: boolean = true
-      ) => {
-        try {
-          const response = await updateIssue(workspaceSlug, projectId, issueId, data);
-          if (onIssueUpdate) await onIssueUpdate(response);
-          if (showToast)
-            setToastAlert({
-              title: "Issue updated successfully",
-              type: "success",
-              message: "Issue updated successfully",
+      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+        await updateIssue(workspaceSlug, projectId, issueId, data)
+          .then(() => {
+            captureIssueEvent({
+              eventName: ISSUE_UPDATED,
+              payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
+              updates: {
+                changed_property: Object.keys(data).join(","),
+                change_details: Object.values(data).join(","),
+              },
+              path: router.asPath,
             });
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
-            updates: {
-              changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
-            },
-            path: router.asPath,
+          })
+          .catch(() => {
+            captureIssueEvent({
+              eventName: ISSUE_UPDATED,
+              payload: { state: "FAILED", element: "Issue peek-overview" },
+              path: router.asPath,
+            });
+            setToast({
+              title: "Issue update failed",
+              type: TOAST_TYPE.ERROR,
+              message: "Issue update failed",
+            });
           });
-        } catch (error) {
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { state: "FAILED", element: "Issue peek-overview" },
-            path: router.asPath,
-          });
-          setToastAlert({
-            title: "Issue update failed",
-            type: "error",
-            message: "Issue update failed",
-          });
-        }
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          let response;
-          if (is_archived) response = await removeArchivedIssue(workspaceSlug, projectId, issueId);
-          else response = await removeIssue(workspaceSlug, projectId, issueId);
-          setToastAlert({
+          removeIssue(workspaceSlug, projectId, issueId);
+          setToast({
             title: "Issue deleted successfully",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Issue deleted successfully",
           });
           captureIssueEvent({
@@ -141,9 +120,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             path: router.asPath,
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Issue delete failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Issue delete failed",
           });
           captureIssueEvent({
@@ -153,17 +132,76 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         }
       },
-      addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
+      archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          const response = await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
-          setToastAlert({
-            title: "Cycle added to issue successfully",
-            type: "success",
-            message: "Issue added to issue successfully",
+          await archiveIssue(workspaceSlug, projectId, issueId);
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: "Issue archived successfully.",
           });
           captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be archived. Please try again.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        }
+      },
+      restore: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await restoreIssue(workspaceSlug, projectId, issueId);
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: "Issue restored successfully.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_RESTORED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be restored. Please try again.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_RESTORED,
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        }
+      },
+      addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
+        try {
+          const addToCyclePromise = addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          setPromiseToast(addToCyclePromise, {
+            loading: "Adding cycle to issue...",
+            success: {
+              title: "Success!",
+              message: () => "Cycle added to issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Cycle add to issue failed",
+            },
+          });
+          await addToCyclePromise;
+          captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { ...issueIds, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
               change_details: cycleId,
@@ -180,24 +218,26 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
-            title: "Cycle add to issue failed",
-            type: "error",
-            message: "Cycle add to issue failed",
-          });
         }
       },
       removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          const response = await removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
-          setToastAlert({
-            title: "Cycle removed from issue successfully",
-            type: "success",
-            message: "Cycle removed from issue successfully",
+          const removeFromCyclePromise = removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+          setPromiseToast(removeFromCyclePromise, {
+            loading: "Removing cycle from issue...",
+            success: {
+              title: "Success!",
+              message: () => "Cycle removed from issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Cycle remove from issue failed",
+            },
           });
+          await removeFromCyclePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
               change_details: "",
@@ -205,11 +245,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             path: router.asPath,
           });
         } catch (error) {
-          setToastAlert({
-            title: "Cycle remove from issue failed",
-            type: "error",
-            message: "Cycle remove from issue failed",
-          });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue peek-overview" },
@@ -223,12 +258,19 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       addModulesToIssue: async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
         try {
-          const response = await addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
-          setToastAlert({
-            title: "Module added to issue successfully",
-            type: "success",
-            message: "Module added to issue successfully",
+          const addToModulePromise = addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
+          setPromiseToast(addToModulePromise, {
+            loading: "Adding module to issue...",
+            success: {
+              title: "Success!",
+              message: () => "Module added to issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Module add to issue failed",
+            },
           });
+          const response = await addToModulePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
@@ -248,21 +290,23 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
-            title: "Module add to issue failed",
-            type: "error",
-            message: "Module add to issue failed",
-          });
         }
       },
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
         try {
-          await removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
-          setToastAlert({
-            title: "Module removed from issue successfully",
-            type: "success",
-            message: "Module removed from issue successfully",
+          const removeFromModulePromise = removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+          setPromiseToast(removeFromModulePromise, {
+            loading: "Removing module from issue...",
+            success: {
+              title: "Success!",
+              message: () => "Module removed from issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Module remove from issue failed",
+            },
           });
+          await removeFromModulePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -282,11 +326,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
-            title: "Module remove from issue failed",
-            type: "error",
-            message: "Module remove from issue failed",
-          });
         }
       },
       removeModulesFromIssue: async (
@@ -295,37 +334,47 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         issueId: string,
         moduleIds: string[]
       ) => {
-        try {
-          await removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
-          setToastAlert({
-            title: "Module removed from issue successfully",
-            type: "success",
-            message: "Module removed from issue successfully",
-          });
-        } catch (error) {
-          setToastAlert({
-            title: "Module remove from issue failed",
-            type: "error",
-            message: "Module remove from issue failed",
-          });
-        }
+        const removeModulesFromIssuePromise = removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
+        setPromiseToast(removeModulesFromIssuePromise, {
+          loading: "Removing module from issue...",
+          success: {
+            title: "Success!",
+            message: () => "Module removed from issue successfully",
+          },
+          error: {
+            title: "Error!",
+            message: () => "Module remove from issue failed",
+          },
+        });
+        await removeModulesFromIssuePromise;
       },
     }),
     [
       is_archived,
+      is_draft,
       fetchIssue,
       updateIssue,
       removeIssue,
-      removeArchivedIssue,
+      archiveIssue,
+      restoreIssue,
       addIssueToCycle,
       removeIssueFromCycle,
       addModulesToIssue,
       removeIssueFromModule,
       removeModulesFromIssue,
-      setToastAlert,
-      onIssueUpdate,
+      captureIssueEvent,
+      router.asPath,
     ]
   );
+
+  useEffect(() => {
+    if (peekIssue) {
+      setLoader(true);
+      issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId).finally(() => {
+        setLoader(false);
+      });
+    }
+  }, [peekIssue, issueOperations]);
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 
@@ -337,16 +386,14 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const isLoading = !issue || loader ? true : false;
 
   return (
-    <Fragment>
-      <IssueView
-        workspaceSlug={peekIssue.workspaceSlug}
-        projectId={peekIssue.projectId}
-        issueId={peekIssue.issueId}
-        isLoading={isLoading}
-        is_archived={is_archived}
-        disabled={is_archived || !is_editable}
-        issueOperations={issueOperations}
-      />
-    </Fragment>
+    <IssueView
+      workspaceSlug={peekIssue.workspaceSlug}
+      projectId={peekIssue.projectId}
+      issueId={peekIssue.issueId}
+      isLoading={isLoading}
+      is_archived={is_archived}
+      disabled={!is_editable}
+      issueOperations={issueOperations}
+    />
   );
 });

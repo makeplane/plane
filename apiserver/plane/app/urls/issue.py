@@ -1,31 +1,33 @@
 from django.urls import path
 
-
 from plane.app.views import (
-    IssueViewSet,
-    LabelViewSet,
     BulkCreateIssueLabelsEndpoint,
     BulkDeleteIssuesEndpoint,
-    BulkImportIssuesEndpoint,
-    UserWorkSpaceIssues,
-    SubIssuesEndpoint,
-    IssueLinkViewSet,
-    IssueAttachmentEndpoint,
+    CommentAssetEndpoint,
+    CommentReactionViewSet,
     ExportIssuesEndpoint,
     IssueActivityEndpoint,
-    IssueCommentViewSet,
-    IssueSubscriberViewSet,
-    IssueReactionViewSet,
-    CommentReactionViewSet,
-    IssueUserDisplayPropertyEndpoint,
     IssueArchiveViewSet,
-    IssueRelationViewSet,
+    IssueAttachmentEndpoint,
+    IssueCommentViewSet,
     IssueDraftViewSet,
-    CommentAssetEndpoint,
+    IssueLinkViewSet,
+    IssueListEndpoint,
+    IssueReactionViewSet,
+    IssueRelationViewSet,
+    IssueSubscriberViewSet,
+    IssueUserDisplayPropertyEndpoint,
+    IssueViewSet,
+    LabelViewSet,
+    SubIssuesEndpoint,
 )
 
-
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/list/",
+        IssueListEndpoint.as_view(),
+        name="project-issue",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
         IssueViewSet.as_view(
@@ -80,16 +82,7 @@ urlpatterns = [
         BulkDeleteIssuesEndpoint.as_view(),
         name="project-issues-bulk",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-issues/<str:service>/",
-        BulkImportIssuesEndpoint.as_view(),
-        name="project-issues-bulk",
-    ),
-    path(
-        "workspaces/<str:slug>/my-issues/",
-        UserWorkSpaceIssues.as_view(),
-        name="workspace-issues",
-    ),
+    ##
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/sub-issues/",
         SubIssuesEndpoint.as_view(),
@@ -252,23 +245,15 @@ urlpatterns = [
         name="project-issue-archive",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/archive/",
         IssueArchiveViewSet.as_view(
             {
                 "get": "retrieve",
-                "delete": "destroy",
+                "post": "archive",
+                "delete": "unarchive",
             }
         ),
-        name="project-issue-archive",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/unarchive/<uuid:pk>/",
-        IssueArchiveViewSet.as_view(
-            {
-                "post": "unarchive",
-            }
-        ),
-        name="project-issue-archive",
+        name="project-issue-archive-unarchive",
     ),
     ## End Issue Archives
     ## Issue Relation

@@ -1,15 +1,15 @@
 import { Fragment } from "react";
+
+import { DayPicker } from "react-day-picker";
 import { Controller, useForm } from "react-hook-form";
-import DatePicker from "react-datepicker";
-import { Dialog, Transition } from "@headlessui/react";
-// components
-import { DateFilterSelect } from "./date-filter-select";
-// ui
-import { Button } from "@plane/ui";
-// icons
+
 import { X } from "lucide-react";
-// helpers
-import { renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
+import { Dialog, Transition } from "@headlessui/react";
+
+import { Button } from "@plane/ui";
+
+import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
+import { DateFilterSelect } from "./date-filter-select";
 
 type Props = {
   title: string;
@@ -38,16 +38,17 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
   const handleFormSubmit = (formData: TFormValues) => {
     const { filterType, date1, date2 } = formData;
 
-    if (filterType === "range") onSelect([`${renderFormattedPayloadDate(date1)};after`, `${renderFormattedPayloadDate(date2)};before`]);
+    if (filterType === "range")
+      onSelect([`${renderFormattedPayloadDate(date1)};after`, `${renderFormattedPayloadDate(date2)};before`]);
     else onSelect([`${renderFormattedPayloadDate(date1)};${filterType}`]);
 
     handleClose();
   };
 
-  const isInvalid = watch("filterType") === "range" ? new Date(watch("date1")) > new Date(watch("date2")) : false;
+  const date1 = getDate(watch("date1"));
+  const date2 = getDate(watch("date1"));
 
-  const nextDay = new Date(watch("date1"));
-  nextDay.setDate(nextDay.getDate() + 1);
+  const isInvalid = watch("filterType") === "range" && date1 && date2 ? date1 > date2 : false;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -90,30 +91,45 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                     <Controller
                       control={control}
                       name="date1"
-                      render={({ field: { value, onChange } }) => (
-                        <DatePicker
-                          selected={value}
-                          onChange={(val) => onChange(val)}
-                          dateFormat="dd-MM-yyyy"
-                          calendarClassName="h-full"
-                          inline
-                        />
-                      )}
+                      render={({ field: { value, onChange } }) => {
+                        const dateValue = getDate(value);
+                        const date2Value = getDate(watch("date2"));
+                        return (
+                          <DayPicker
+                            selected={dateValue}
+                            defaultMonth={dateValue}
+                            onSelect={(date) => {
+                              if (!date) return;
+                              onChange(date);
+                            }}
+                            mode="single"
+                            disabled={date2Value ? [{ after: date2Value }] : undefined}
+                            className="border border-custom-border-200 p-3 rounded-md"
+                          />
+                        );
+                      }}
                     />
                     {watch("filterType") === "range" && (
                       <Controller
                         control={control}
                         name="date2"
-                        render={({ field: { value, onChange } }) => (
-                          <DatePicker
-                            selected={value}
-                            onChange={onChange}
-                            dateFormat="dd-MM-yyyy"
-                            calendarClassName="h-full"
-                            minDate={nextDay}
-                            inline
-                          />
-                        )}
+                        render={({ field: { value, onChange } }) => {
+                          const dateValue = getDate(value);
+                          const date1Value = getDate(watch("date1"));
+                          return (
+                            <DayPicker
+                              selected={dateValue}
+                              defaultMonth={dateValue}
+                              onSelect={(date) => {
+                                if (!date) return;
+                                onChange(date);
+                              }}
+                              mode="single"
+                              disabled={date1Value ? [{ before: date1Value }] : undefined}
+                              className="border border-custom-border-200 p-3 rounded-md"
+                            />
+                          );
+                        }}
                       />
                     )}
                   </div>

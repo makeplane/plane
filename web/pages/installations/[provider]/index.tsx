@@ -1,11 +1,11 @@
 import React, { useEffect, ReactElement } from "react";
 import { useRouter } from "next/router";
 // services
-import { AppInstallationService } from "services/app_installation.service";
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
+import { AppInstallationService } from "@/services/app_installation.service";
 
 // services
 const appInstallationService = new AppInstallationService();

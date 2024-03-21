@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
+import { TIssueOrderByOptions } from "@plane/types";
 
 // components
-import { FilterHeader, FilterOption } from "components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues";
 // types
-import { TIssueOrderByOptions } from "@plane/types";
+import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
 // constants
-import { ISSUE_ORDER_BY_OPTIONS } from "constants/issue";
 
 type Props = {
   selectedOrderBy: TIssueOrderByOptions | undefined;

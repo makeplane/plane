@@ -12,9 +12,16 @@ import {
   CalendarCheck2,
 } from "lucide-react";
 // hooks
-import { useIssueDetail, useProject } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon, RelatedIcon } from "@plane/ui";
+// components
+import {
+  DateDropdown,
+  EstimateDropdown,
+  PriorityDropdown,
+  MemberDropdown,
+  StateDropdown,
+} from "@/components/dropdowns";
 import {
   IssueLinkRoot,
   IssueCycleSelect,
@@ -23,16 +30,12 @@ import {
   IssueLabel,
   TIssueOperations,
   IssueRelationSelect,
-} from "components/issues";
-import {
-  DateDropdown,
-  EstimateDropdown,
-  PriorityDropdown,
-  ProjectMemberDropdown,
-  StateDropdown,
-} from "components/dropdowns";
-// components
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+} from "@/components/issues";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -49,20 +52,22 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  const { getStateById } = useProjectState();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
   const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
+  const stateDetails = getStateById(issue.state_id);
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
 
   return (
-    <div className="mt-1">
+    <div>
       <h6 className="text-sm font-medium">Properties</h6>
       {/* TODO: render properties using a common component */}
       <div className={`w-full space-y-2 mt-3 ${disabled ? "opacity-60" : ""}`}>
@@ -92,7 +97,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
             <span>Assignees</span>
           </div>
-          <ProjectMemberDropdown
+          <MemberDropdown
             value={issue?.assignee_ids ?? undefined}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
             disabled={disabled}
@@ -102,7 +107,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm justify-between ${issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"}`}
+            buttonClassName={`text-sm justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"}`}
             hideIcon={issue.assignee_ids?.length === 0}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -172,9 +177,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             disabled={disabled}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
+            buttonClassName={cn("text-sm", {
+              "text-custom-text-400": !issue.target_date,
+              "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+            })}
             hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
             // TODO: add this logic
             // showPlaceholderIcon
           />

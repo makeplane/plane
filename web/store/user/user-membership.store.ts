@@ -1,15 +1,16 @@
-import { action, observable, runInAction, makeObservable, computed } from "mobx";
 import { set } from "lodash";
-// services
-import { ProjectMemberService } from "services/project";
-import { UserService } from "services/user.service";
-import { WorkspaceService } from "services/workspace.service";
-// interfaces
+import { action, observable, runInAction, makeObservable, computed } from "mobx";
+// types
 import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole } from "@plane/types";
-import { RootStore } from "../root.store";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "@/constants/project";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+// services
+import { ProjectMemberService } from "@/services/project";
+import { UserService } from "@/services/user.service";
+import { WorkspaceService } from "@/services/workspace.service";
+// store
+import { RootStore } from "../root.store";
 
 export interface IUserMembershipStore {
   // observables
@@ -61,6 +62,7 @@ export class UserMembershipStore implements IUserMembershipStore {
   workspaceProjectsRole: { [workspaceSlug: string]: IUserProjectsRole } = {};
   // stores
   router;
+  store;
   // services
   userService;
   workspaceService;
@@ -91,6 +93,7 @@ export class UserMembershipStore implements IUserMembershipStore {
       fetchUserWorkspaceProjectsRole: action,
     });
     this.router = _rootStore.app.router;
+    this.store = _rootStore;
     // services
     this.userService = new UserService();
     this.workspaceService = new WorkspaceService();
@@ -193,13 +196,16 @@ export class UserMembershipStore implements IUserMembershipStore {
    * @param workspaceSlug
    * @returns Promise<void>
    */
-  leaveWorkspace = async (workspaceSlug: string) =>
+  leaveWorkspace = async (workspaceSlug: string) => {
+    const currentWorksSpace = this.store.workspaceRoot?.currentWorkspace;
     await this.userService.leaveWorkspace(workspaceSlug).then(() => {
       runInAction(() => {
+        if (currentWorksSpace) delete this.store.workspaceRoot?.workspaces?.[currentWorksSpace?.id];
         delete this.workspaceMemberInfo[workspaceSlug];
         delete this.hasPermissionToWorkspace[workspaceSlug];
       });
     });
+  };
 
   /**
    * Joins a project

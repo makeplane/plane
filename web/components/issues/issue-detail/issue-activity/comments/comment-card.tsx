@@ -1,19 +1,21 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
-// hooks
-import { useIssueDetail, useMention, useUser, useWorkspace } from "hooks/store";
-// components
-import { IssueCommentBlock } from "./comment-block";
 import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
-import { IssueCommentReaction } from "../../reactions/issue-comment";
-// ui
-import { CustomMenu } from "@plane/ui";
-// services
-import { FileService } from "services/file.service";
-// types
 import { TIssueComment } from "@plane/types";
+// hooks
+import { CustomMenu } from "@plane/ui";
+import { isEmptyHtmlString } from "@/helpers/string.helper";
+import { useIssueDetail, useMention, useUser, useWorkspace } from "@/hooks/store";
+// components
+// ui
+// services
+import { FileService } from "@/services/file.service";
+// types
+import { IssueCommentReaction } from "../../reactions/issue-comment";
 import { TActivityOperations } from "../root";
+import { IssueCommentBlock } from "./comment-block";
+// helpers
 
 const fileService = new FileService();
 
@@ -67,6 +69,12 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
     isEditing && setFocus("comment_html");
   }, [isEditing, setFocus]);
 
+  const isEmpty =
+    watch("comment_html") === "" ||
+    watch("comment_html")?.trim() === "" ||
+    watch("comment_html") === "<p></p>" ||
+    isEmptyHtmlString(watch("comment_html") ?? "");
+
   if (!comment || !currentUser) return <></>;
   return (
     <IssueCommentBlock
@@ -115,9 +123,14 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
     >
       <>
         <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
-          <div>
+          <div
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey && !isEmpty) {
+                handleSubmit(onEnter)(e);
+              }
+            }}
+          >
             <LiteTextEditorWithRef
-              onEnterKeyPress={handleSubmit(onEnter)}
               cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(comment?.workspace_detail?.slug as string)}
               deleteFile={fileService.getDeleteImageFunction(workspaceId)}
@@ -126,7 +139,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
               value={watch("comment_html") ?? ""}
               debouncedUpdatesEnabled={false}
               customClassName="min-h-[50px] p-3 shadow-sm"
-              onChange={(comment_json: Object, comment_html: string) => setValue("comment_html", comment_html)}
+              onChange={(comment_json: any, comment_html: string) => setValue("comment_html", comment_html)}
               mentionSuggestions={mentionSuggestions}
               mentionHighlights={mentionHighlights}
             />
@@ -135,10 +148,14 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
             <button
               type="button"
               onClick={handleSubmit(onEnter)}
-              disabled={isSubmitting}
-              className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
+              disabled={isSubmitting || isEmpty}
+              className={`group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
+                isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
+              }`}
             >
-              <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
+              <Check
+                className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-white"}`}
+              />
             </button>
             <button
               type="button"

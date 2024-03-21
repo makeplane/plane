@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from plane.settings.storage import S3PrivateBucketStorage
 
 
@@ -52,16 +53,19 @@ class DynamicBaseSerializer(BaseSerializer):
         for field in allowed:
             if field not in self.fields:
                 from . import (
-                    WorkspaceLiteSerializer,
-                    ProjectLiteSerializer,
-                    UserLiteSerializer,
-                    StateLiteSerializer,
+                    CycleIssueSerializer,
+                    InboxIssueLiteSerializer,
+                    IssueAttachmentLiteSerializer,
+                    IssueLinkLiteSerializer,
+                    IssueLiteSerializer,
+                    IssueReactionLiteSerializer,
+                    IssueRelationSerializer,
                     IssueSerializer,
                     LabelSerializer,
-                    CycleIssueSerializer,
-                    IssueFlatSerializer,
-                    IssueRelationSerializer,
-                    InboxIssueLiteSerializer,
+                    ProjectLiteSerializer,
+                    StateLiteSerializer,
+                    UserLiteSerializer,
+                    WorkspaceLiteSerializer,
                 )
 
                 # Expansion mapper
@@ -80,23 +84,33 @@ class DynamicBaseSerializer(BaseSerializer):
                     "assignees": UserLiteSerializer,
                     "labels": LabelSerializer,
                     "issue_cycle": CycleIssueSerializer,
-                    "parent": IssueSerializer,
+                    "parent": IssueLiteSerializer,
                     "issue_relation": IssueRelationSerializer,
                     "issue_inbox": InboxIssueLiteSerializer,
+                    "issue_reactions": IssueReactionLiteSerializer,
+                    "issue_attachment": IssueAttachmentLiteSerializer,
+                    "issue_link": IssueLinkLiteSerializer,
+                    "sub_issues": IssueLiteSerializer,
                 }
 
                 self.fields[field] = expansion[field](
-                    many=True
-                    if field
-                    in [
-                        "members",
-                        "assignees",
-                        "labels",
-                        "issue_cycle",
-                        "issue_relation",
-                        "issue_inbox",
-                    ]
-                    else False
+                    many=(
+                        True
+                        if field
+                        in [
+                            "members",
+                            "assignees",
+                            "labels",
+                            "issue_cycle",
+                            "issue_relation",
+                            "issue_inbox",
+                            "issue_reactions",
+                            "issue_attachment",
+                            "issue_link",
+                            "sub_issues",
+                        ]
+                        else False
+                    )
                 )
 
         return self.fields
@@ -110,15 +124,19 @@ class DynamicBaseSerializer(BaseSerializer):
                 if expand in self.fields:
                     # Import all the expandable serializers
                     from . import (
-                        WorkspaceLiteSerializer,
-                        ProjectLiteSerializer,
-                        UserLiteSerializer,
-                        StateLiteSerializer,
+                        CycleIssueSerializer,
+                        InboxIssueLiteSerializer,
+                        IssueAttachmentLiteSerializer,
+                        IssueLinkLiteSerializer,
+                        IssueLiteSerializer,
+                        IssueReactionLiteSerializer,
+                        IssueRelationSerializer,
                         IssueSerializer,
                         LabelSerializer,
-                        CycleIssueSerializer,
-                        IssueRelationSerializer,
-                        InboxIssueLiteSerializer,
+                        ProjectLiteSerializer,
+                        StateLiteSerializer,
+                        UserLiteSerializer,
+                        WorkspaceLiteSerializer,
                     )
 
                     # Expansion mapper
@@ -137,9 +155,13 @@ class DynamicBaseSerializer(BaseSerializer):
                         "assignees": UserLiteSerializer,
                         "labels": LabelSerializer,
                         "issue_cycle": CycleIssueSerializer,
-                        "parent": IssueSerializer,
+                        "parent": IssueLiteSerializer,
                         "issue_relation": IssueRelationSerializer,
                         "issue_inbox": InboxIssueLiteSerializer,
+                        "issue_reactions": IssueReactionLiteSerializer,
+                        "issue_attachment": IssueAttachmentLiteSerializer,
+                        "issue_link": IssueLinkLiteSerializer,
+                        "sub_issues": IssueLiteSerializer,
                     }
                     # Check if field in expansion then expand the field
                     if expand in expansion:
@@ -171,9 +193,7 @@ class BaseFileSerializer(DynamicBaseSerializer):
         Object instance -> Dict of primitive datatypes.
         """
         response = super().to_representation(instance)
-        response[
-            "asset"
-        ] = (
+        response["asset"] = (
             instance.asset.name
         )  # Ensure 'asset' field is consistently serialized
         # Apply custom method to get download URL

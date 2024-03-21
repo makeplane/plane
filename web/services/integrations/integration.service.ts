@@ -1,8 +1,8 @@
-import { APIService } from "services/api.service";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "@/services/api.service";
 // types
 import { IAppIntegration, IImporterService, IWorkspaceIntegration, IExportServiceResponse } from "@plane/types";
 // helper
-import { API_BASE_URL } from "helpers/common.helper";
 
 export class IntegrationService extends APIService {
   constructor() {
