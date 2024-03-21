@@ -22,7 +22,6 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
     IssueLink,
-    FileAsset,
     IssueReaction,
     CommentReaction,
     IssueVote,

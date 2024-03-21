@@ -1,11 +1,10 @@
 # Python imports
 import boto3
-import json
 from botocore.exceptions import ClientError
+from django.conf import settings
 
 # Django imports
 from django.core.management import BaseCommand
-from django.conf import settings
 
 
 class Command(BaseCommand):
@@ -21,9 +20,7 @@ class Command(BaseCommand):
             )
         except ClientError as e:
             self.stdout.write(
-                self.style.ERROR(
-                    f"Error removing public access policy: {e}"
-                )
+                self.style.ERROR(f"Error removing public access policy: {e}")
             )
 
     def handle(self, *args, **options):

@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from plane.settings.storage import S3PrivateBucketStorage
-
 
 class BaseSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
