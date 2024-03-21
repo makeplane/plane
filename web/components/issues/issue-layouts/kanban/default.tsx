@@ -25,7 +25,7 @@ import {
 } from "@/hooks/store";
 // types
 // parent components
-import { getGroupByColumns } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 // components
 import { KanbanStoreType } from "./base-kanban-root";
 import { HeaderGroupByCard } from "./headers/group-by-card";
@@ -102,7 +102,9 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     moduleInfo,
     label,
     projectState,
-    member
+    member,
+    true,
+    isWorkspaceLevel(storeType)
   );
 
   if (!list) return null;

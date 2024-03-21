@@ -13,9 +13,8 @@ import { IssueBlocksList, ListQuickAddIssueForm } from "@/components/issues";
 // hooks
 import { EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
-// constants
-// types
-import { getGroupByColumns } from "../utils";
+// utils
+import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 
 export interface IGroupByList {
@@ -78,7 +77,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     projectState,
     member,
     true,
-    true
+    isWorkspaceLevel(storeType)
   );
 
   if (!groups) return null;
