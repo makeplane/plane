@@ -195,35 +195,38 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
               : `Created on ${renderFormattedDate(project.created_at)}`}
           </p>
           <div className="item-center flex justify-between">
-            <Tooltip
-              isMobile={isMobile}
-              tooltipHeading="Members"
-              tooltipContent={
-                project.members && project.members.length > 0 ? `${project.members.length} Members` : "No Member"
-              }
-              position="top"
-            >
-              {projectMembersIds && projectMembersIds.length > 0 ? (
-                <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
-                  <AvatarGroup showTooltip={false}>
-                    {projectMembersIds.map((memberId) => {
-                      const member = project.members?.find((m) => m.member_id === memberId);
-
-                      if (!member) return null;
-
-                      return <Avatar key={member.id} name={member.member__display_name} src={member.member__avatar} />;
-                    })}
-                  </AvatarGroup>
-                </div>
-              ) : (
-                <span className="text-sm italic text-custom-text-400">No Member Yet</span>
-              )}
-            </Tooltip>
+            <div className="flex items-center justify-center gap-2">
+              <Tooltip
+                isMobile={isMobile}
+                tooltipHeading="Members"
+                tooltipContent={
+                  project.members && project.members.length > 0 ? `${project.members.length} Members` : "No Member"
+                }
+                position="top"
+              >
+                {projectMembersIds && projectMembersIds.length > 0 ? (
+                  <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
+                    <AvatarGroup showTooltip={false}>
+                      {projectMembersIds.map((memberId) => {
+                        const member = project.members?.find((m) => m.member_id === memberId);
+                        if (!member) return null;
+                        return (
+                          <Avatar key={member.id} name={member.member__display_name} src={member.member__avatar} />
+                        );
+                      })}
+                    </AvatarGroup>
+                  </div>
+                ) : (
+                  <span className="text-sm italic text-custom-text-400">No Member Yet</span>
+                )}
+              </Tooltip>
+              {isArchived && <div className="text-xs text-custom-text-400 font-medium">Archived</div>}
+            </div>
             {isArchived ? (
               isOwner && (
                 <div className="flex items-center justify-center gap-2">
                   <div
-                    className="flex items-center justify-center text-sm text-custom-text-400 hover:text-custom-text-200"
+                    className="flex items-center justify-center text-xs text-custom-text-400 font-medium hover:text-custom-text-200"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -236,7 +239,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                     </div>
                   </div>
                   <div
-                    className="flex items-center justify-center text-sm text-custom-text-400 hover:text-custom-text-200"
+                    className="flex items-center justify-center text-xs text-custom-text-400 font-medium hover:text-custom-text-200"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
