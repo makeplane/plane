@@ -53,7 +53,6 @@ class DynamicBaseSerializer(BaseSerializer):
                 from . import (
                     CycleIssueSerializer,
                     InboxIssueLiteSerializer,
-                    IssueAttachmentLiteSerializer,
                     IssueLinkLiteSerializer,
                     IssueLiteSerializer,
                     IssueReactionLiteSerializer,
@@ -86,7 +85,6 @@ class DynamicBaseSerializer(BaseSerializer):
                     "issue_relation": IssueRelationSerializer,
                     "issue_inbox": InboxIssueLiteSerializer,
                     "issue_reactions": IssueReactionLiteSerializer,
-                    "issue_attachment": IssueAttachmentLiteSerializer,
                     "issue_link": IssueLinkLiteSerializer,
                     "sub_issues": IssueLiteSerializer,
                 }
@@ -124,7 +122,6 @@ class DynamicBaseSerializer(BaseSerializer):
                     from . import (
                         CycleIssueSerializer,
                         InboxIssueLiteSerializer,
-                        IssueAttachmentLiteSerializer,
                         IssueLinkLiteSerializer,
                         IssueLiteSerializer,
                         IssueReactionLiteSerializer,
@@ -157,7 +154,6 @@ class DynamicBaseSerializer(BaseSerializer):
                         "issue_relation": IssueRelationSerializer,
                         "issue_inbox": InboxIssueLiteSerializer,
                         "issue_reactions": IssueReactionLiteSerializer,
-                        "issue_attachment": IssueAttachmentLiteSerializer,
                         "issue_link": IssueLinkLiteSerializer,
                         "sub_issues": IssueLiteSerializer,
                     }

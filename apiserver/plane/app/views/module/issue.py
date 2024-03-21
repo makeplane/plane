@@ -1,36 +1,36 @@
 # Python imports
 import json
 
-# Django Imports
-from django.utils import timezone
-from django.db.models import F, OuterRef, Func, Q
-from django.utils.decorators import method_decorator
-from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.db.models import F, Func, OuterRef, Q, UUIDField, Value
 from django.db.models.functions import Coalesce
+
+# Django Imports
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
+from rest_framework import status
 
 # Third party imports
 from rest_framework.response import Response
-from rest_framework import status
+
+from plane.app.permissions import ProjectEntityPermission
+from plane.app.serializers import (
+    IssueSerializer,
+    ModuleIssueSerializer,
+)
+from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (
+    Issue,
+    IssueLink,
+    ModuleIssue,
+    Project,
+)
+from plane.utils.issue_filters import issue_filters
 
 # Module imports
 from .. import BaseViewSet, WebhookMixin
-from plane.app.serializers import (
-    ModuleIssueSerializer,
-    IssueSerializer,
-)
-from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import (
-    ModuleIssue,
-    Project,
-    Issue,
-    IssueLink,
-    IssueAttachment,
-)
-from plane.bgtasks.issue_activites_task import issue_activity
-from plane.utils.issue_filters import issue_filters
 
 
 class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
@@ -60,14 +60,6 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
-                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

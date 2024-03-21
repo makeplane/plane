@@ -1,43 +1,44 @@
 # Python imports
 import json
 
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.core import serializers
+
 # Django imports
 from django.db.models import (
-    Func,
     F,
-    Q,
+    Func,
     OuterRef,
-    Value,
+    Q,
     UUIDField,
+    Value,
 )
-from django.core import serializers
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models.functions import Coalesce
+from rest_framework import status
 
 # Third party imports
 from rest_framework.response import Response
-from rest_framework import status
 
-# Module imports
-from .. import BaseViewSet, WebhookMixin
-from plane.app.serializers import (
-    IssueSerializer,
-    CycleIssueSerializer,
-)
 from plane.app.permissions import ProjectEntityPermission
+from plane.app.serializers import (
+    CycleIssueSerializer,
+    IssueSerializer,
+)
+from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Cycle,
     CycleIssue,
     Issue,
     IssueLink,
-    IssueAttachment,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.issue_filters import issue_filters
+
+# Module imports
+from .. import BaseViewSet, WebhookMixin
 
 
 class CycleIssueViewSet(WebhookMixin, BaseViewSet):
@@ -110,14 +111,6 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
-                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

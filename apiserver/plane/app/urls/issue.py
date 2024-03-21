@@ -3,12 +3,10 @@ from django.urls import path
 from plane.app.views import (
     BulkCreateIssueLabelsEndpoint,
     BulkDeleteIssuesEndpoint,
-    CommentAssetEndpoint,
     CommentReactionViewSet,
     ExportIssuesEndpoint,
     IssueActivityEndpoint,
     IssueArchiveViewSet,
-    IssueAttachmentEndpoint,
     IssueCommentViewSet,
     IssueDraftViewSet,
     IssueLinkViewSet,
@@ -109,16 +107,6 @@ urlpatterns = [
             }
         ),
         name="project-issue-links",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/",
-        IssueAttachmentEndpoint.as_view(),
-        name="project-issue-attachments",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:workspace_id>/<str:asset_key>/",
-        IssueAttachmentEndpoint.as_view(),
-        name="project-issue-attachments",
     ),
     path(
         "workspaces/<str:slug>/export-issues/",
@@ -299,16 +287,4 @@ urlpatterns = [
         ),
         name="project-issue-draft",
     ),
-    # Comment Assets
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/attachments/",
-        CommentAssetEndpoint.as_view(),
-        name="project-comment-attachments",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/attachments/<uuid:workspace_id>/<str:asset_key>/",
-        CommentAssetEndpoint.as_view(),
-        name="project-comment-attachments",
-    ),
-    ## End Comments
 ]

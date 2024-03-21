@@ -19,7 +19,6 @@ from .project.member import (
     AddTeamToProjectEndpoint,
     ProjectMemberUserEndpoint,
     UserProjectRolesEndpoint,
-    ProjectCoverImageEndpoint,
 )
 
 from .user.base import (
@@ -74,7 +73,6 @@ from .workspace.user import (
 )
 from .workspace.estimate import (
     WorkspaceEstimatesEndpoint,
-    WorkspaceLogoEndpoint,
 )
 from .workspace.module import (
     WorkspaceModulesEndpoint,
@@ -102,7 +100,7 @@ from .cycle.issue import (
     CycleIssueViewSet,
 )
 
-from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
+from .asset.base import FileAssetEndpoint, FileAssetViewSet
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
@@ -118,9 +116,6 @@ from .issue.archive import (
     IssueArchiveViewSet,
 )
 
-from .issue.attachment import (
-    IssueAttachmentEndpoint,
-)
 
 from .issue.comment import (
     IssueCommentViewSet,

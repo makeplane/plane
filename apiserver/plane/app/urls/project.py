@@ -3,7 +3,6 @@ from django.urls import path
 from plane.app.views import (
     AddTeamToProjectEndpoint,
     ProjectArchiveUnarchiveEndpoint,
-    ProjectCoverImageEndpoint,
     ProjectDeployBoardViewSet,
     ProjectFavoritesViewSet,
     ProjectIdentifierEndpoint,
@@ -175,16 +174,6 @@ urlpatterns = [
             }
         ),
         name="project-deploy-board",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cover-image/<str:workspace_id>/<str:cover_image_key>/",
-        ProjectCoverImageEndpoint.as_view(),
-        name="project-cover-image",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cover-image/",
-        ProjectCoverImageEndpoint.as_view(),
-        name="project-cover-image",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archive/",

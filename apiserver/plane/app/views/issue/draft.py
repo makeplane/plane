@@ -39,7 +39,6 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
     IssueLink,
     IssueReaction,
     IssueSubscriber,
@@ -68,14 +67,6 @@ class IssueDraftViewSet(BaseViewSet):
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
-                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -312,12 +303,6 @@ class IssueDraftViewSet(BaseViewSet):
                     queryset=IssueReaction.objects.select_related(
                         "issue", "actor"
                     ),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
                 )
             )
             .prefetch_related(
