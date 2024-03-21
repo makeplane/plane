@@ -56,3 +56,22 @@ class DynamicBaseSerializer(BaseSerializer):
             self.fields.pop(field_name)
 
         return self.fields
+
+
+class BaseFileSerializer(DynamicBaseSerializer):
+
+    class Meta:
+        abstract = True  # Make this serializer abstract
+
+    def to_representation(self, instance):
+        """
+        Object instance -> Dict of primitive datatypes.
+        """
+        response = super().to_representation(instance)
+        response[
+            "asset"
+        ] = (
+            instance.asset.name
+        )  # Ensure 'asset' field is consistently serialized
+        # Apply custom method to get download URL
+        return response
