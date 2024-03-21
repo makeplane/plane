@@ -104,7 +104,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             title={pageTitle}
             value={pageDescription}
             handleEditorReady={handleReadOnlyEditorReady}
-            customClassName="tracking-tight w-full px-0"
+            customClassName="tracking-tight w-full px-0 !border-none"
           />
         ) : (
           <Controller
