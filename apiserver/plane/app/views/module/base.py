@@ -633,7 +633,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
         module.save()
         return Response(
             {"archived_at": str(module.archived_at)},
-            status=status.HTTP_204_NO_CONTENT,
+            status=status.HTTP_200_OK,
         )
 
     def delete(self, request, slug, project_id, module_id):
