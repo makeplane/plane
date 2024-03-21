@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { MoveRight, MoveDiagonal, Link2, Trash2, RotateCcw } from "lucide-react";
+import { MoveRight, MoveDiagonal, Link2, Trash2, ArchiveRestoreIcon } from "lucide-react";
 // ui
 import {
   ArchiveIcon,
@@ -86,7 +86,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
-  const issueLink = `${workspaceSlug}/projects/${projectId}/${isArchived ? "archived-issues" : "issues"}/${issueId}`;
+  const issueLink = `${workspaceSlug}/projects/${projectId}/${isArchived ? "archives/" : ""}issues/${issueId}`;
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -182,7 +182,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           {isRestoringAllowed && (
             <Tooltip tooltipContent="Restore" isMobile={isMobile}>
               <button type="button" onClick={handleRestoreIssue}>
-                <RotateCcw className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+                <ArchiveRestoreIcon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
               </button>
             </Tooltip>
           )}

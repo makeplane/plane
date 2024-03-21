@@ -86,6 +86,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 ),
             )
             .annotate(
@@ -96,6 +97,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -106,6 +108,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -116,6 +119,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -126,6 +130,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -136,6 +141,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -492,10 +498,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             workspace__slug=self.kwargs.get("slug"),
         )
         return (
-            super()
-            .get_queryset()
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
+            Module.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(archived_at__isnull=False)
             .annotate(is_favorite=Exists(favorite_subquery))
             .select_related("project")
@@ -517,6 +520,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 ),
             )
             .annotate(
@@ -527,6 +531,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -537,6 +542,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -547,6 +553,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -557,6 +564,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -567,6 +575,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -582,7 +591,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             .order_by("-is_favorite", "-created_at")
         )
 
-    def list(self, request, slug, project_id):
+    def get(self, request, slug, project_id):
         queryset = self.get_queryset()
         modules = queryset.values(  # Required fields
             "id",
@@ -612,6 +621,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             "backlog_issues",
             "created_at",
             "updated_at",
+            "archived_at"
         )
         return Response(modules, status=status.HTTP_200_OK)
 

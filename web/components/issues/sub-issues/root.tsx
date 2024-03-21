@@ -57,6 +57,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
     toggleCreateIssueModal,
     isSubIssuesModalOpen,
     toggleSubIssuesModal,
+    toggleDeleteIssueModal,
   } = useIssueDetail();
   const { setTrackElement, captureIssueEvent } = useEventTracker();
   // state
@@ -496,6 +497,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                 isOpen={issueCrudState?.update?.toggle}
                 onClose={() => {
                   handleIssueCrudState("update", null, null);
+                  toggleCreateIssueModal(false);
                 }}
                 data={issueCrudState?.update?.issue ?? undefined}
                 onSubmit={async (_issue: TIssue) => {
@@ -521,6 +523,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                 isOpen={issueCrudState?.delete?.toggle}
                 handleClose={() => {
                   handleIssueCrudState("delete", null, null);
+                  toggleDeleteIssueModal(false);
                 }}
                 data={issueCrudState?.delete?.issue as TIssue}
                 onSubmit={async () =>

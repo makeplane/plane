@@ -9,9 +9,10 @@ import { CycleDetailsSidebar } from "./sidebar";
 type Props = {
   projectId: string;
   workspaceSlug: string;
+  isArchived?: boolean;
 };
 
-export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspaceSlug }) => {
+export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspaceSlug, isArchived = false }) => {
   // router
   const router = useRouter();
   const { peekCycle } = router.query;
@@ -29,9 +30,9 @@ export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspa
   };
 
   useEffect(() => {
-    if (!peekCycle) return;
+    if (!peekCycle || isArchived) return;
     fetchCycleDetails(workspaceSlug, projectId, peekCycle.toString());
-  }, [fetchCycleDetails, peekCycle, projectId, workspaceSlug]);
+  }, [fetchCycleDetails, isArchived, peekCycle, projectId, workspaceSlug]);
 
   return (
     <>
@@ -44,7 +45,11 @@ export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspa
               "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
           }}
         >
-          <CycleDetailsSidebar cycleId={peekCycle?.toString() ?? ""} handleClose={handleClose} />
+          <CycleDetailsSidebar
+            cycleId={peekCycle?.toString() ?? ""}
+            handleClose={handleClose}
+            isArchived={isArchived}
+          />
         </div>
       )}
     </>

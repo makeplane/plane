@@ -149,6 +149,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
           if (!isOpen) handleKeyDown(e);
         } else handleKeyDown(e);
       }}
+      disabled={disabled}
     >
       <Combobox.Button as={React.Fragment}>
         <button

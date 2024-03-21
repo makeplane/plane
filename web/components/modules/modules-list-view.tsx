@@ -10,6 +10,7 @@ import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from
 // assets
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { useApplication, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
 import AllFiltersImage from "public/empty-state/module/all-filters.svg";
 import NameFilterImage from "public/empty-state/module/name-filter.svg";
@@ -22,9 +23,11 @@ export const ModulesListView: React.FC = observer(() => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { getFilteredModuleIds, loader } = useModule();
-  const { currentProjectDisplayFilters: displayFilters, searchQuery } = useModuleFilter();
+  const { currentProjectDisplayFilters: displayFilters, searchQuery, currentProjectFilters } = useModuleFilter();
   // derived values
   const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
+
+  const totalFilters = calculateTotalFilters(currentProjectFilters ?? {});
 
   if (loader || !filteredModuleIds)
     return (
@@ -35,7 +38,7 @@ export const ModulesListView: React.FC = observer(() => {
       </>
     );
 
-  if (filteredModuleIds.length === 0)
+  if (totalFilters > 0 || searchQuery.trim() !== "")
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">

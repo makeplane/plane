@@ -16,6 +16,7 @@ import { IssueDraftService } from "@/services/issue";
 export interface DraftIssueProps {
   changesMade: Partial<TIssue> | null;
   data?: Partial<TIssue>;
+  issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange: (formData: Partial<TIssue> | null) => void;
@@ -31,6 +32,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const {
     changesMade,
     data,
+    issueTitleRef,
     onChange,
     onClose,
     onSubmit,
@@ -107,6 +109,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         isCreateMoreToggleEnabled={isCreateMoreToggleEnabled}
         onCreateMoreToggleChange={onCreateMoreToggleChange}
         data={data}
+        issueTitleRef={issueTitleRef}
         onChange={onChange}
         onClose={handleClose}
         onSubmit={onSubmit}
