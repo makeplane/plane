@@ -7,14 +7,14 @@ import { IPageStore } from "store/page.store";
 import { Clipboard, Copy, Link, Lock } from "lucide-react";
 // hooks
 // ui
-import { EditorRefApi } from "@plane/document-editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 // types
 // constants
 
 type Props = {
-  editorRef: EditorRefApi;
+  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   handleDuplicatePage: () => void;
   pageStore: IPageStore;
 };
@@ -99,6 +99,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     {
       key: "copy-markdown",
       action: () => {
+        if (!editorRef) return;
         copyTextToClipboard(editorRef.getMarkDown()).then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,

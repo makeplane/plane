@@ -69,14 +69,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const pageDescription = pageStore?.description_html;
   const { is_locked, archived_at, updateName, isSubmitting, setIsSubmitting } = pageStore;
 
-  const { setShowAlert } = useReloadConfirmations(pageStore?.isSubmitting === "submitting");
+  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
     console.log(pageStore.description_html);
     updateMarkings(pageStore.description_html);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log("markings", markings);
 
   // auth
   const isPageReadOnly =
@@ -115,14 +114,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
               return (
                 <DocumentEditorWithRef
-                  isSubmitting={isSubmitting}
                   title={pageTitle}
-                  uploadFile={fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting)}
+                  fileHandler={{
+                    cancel: fileService.cancelUpload,
+                    delete: fileService.getDeleteImageFunction(workspaceId),
+                    restore: fileService.getRestoreImageFunction(workspaceId),
+                    upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
+                  }}
                   handleEditorReady={handleEditorReady}
-                  deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                  restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                   value={pageDescription}
-                  cancelUploadImage={fileService.cancelUpload}
                   ref={editorRef}
                   updatePageTitle={updateName}
                   customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"

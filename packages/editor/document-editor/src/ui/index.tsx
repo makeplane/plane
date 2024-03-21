@@ -14,17 +14,18 @@ import { PageRenderer } from "src/ui/components/page-renderer";
 interface IDocumentEditor {
   title: string;
   value: string;
-  uploadFile: UploadImage;
-  deleteFile: DeleteImage;
-  restoreFile: RestoreImage;
-  cancelUploadImage: () => any;
-  handleEditorReady: (value: boolean) => void;
+  fileHandler: {
+    cancel: () => void;
+    delete: DeleteImage;
+    upload: UploadImage;
+    restore: RestoreImage;
+  };
+  handleEditorReady: () => void;
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: object, html: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   updatePageTitle: (title: string) => void;
-  isSubmitting: "submitting" | "submitted" | "saved";
   tabIndex?: number;
 }
 
@@ -34,14 +35,11 @@ const DocumentEditor = (props: IDocumentEditor) => {
     onChange,
     editorContentCustomClassNames,
     value,
-    uploadFile,
-    deleteFile,
-    restoreFile,
+    fileHandler,
     customClassName,
     handleEditorReady,
     forwardedRef,
     updatePageTitle,
-    cancelUploadImage,
     tabIndex,
   } = props;
 
@@ -63,14 +61,14 @@ const DocumentEditor = (props: IDocumentEditor) => {
     onStart(_json, html) {
       updateMarkings(html);
     },
-    restoreFile,
+    restoreFile: fileHandler.restore,
     value,
-    uploadFile,
+    uploadFile: fileHandler.upload,
     handleEditorReady,
-    deleteFile,
-    cancelUploadImage,
+    deleteFile: fileHandler.delete,
+    cancelUploadImage: fileHandler.cancel,
     forwardedRef,
-    extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction),
+    extensions: DocumentEditorExtensions(fileHandler.upload, setHideDragHandleFunction),
   });
 
   if (!editor) {
