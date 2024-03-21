@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { EditorContainer, EditorContentWrapper } from "@plane/editor-document-core";
+import { EditorContainer, EditorContentWrapper, cn } from "@plane/editor-document-core";
 import { Node } from "@tiptap/pm/model";
 import { EditorView } from "@tiptap/pm/view";
 import { Editor, ReactRenderer } from "@tiptap/react";
@@ -149,19 +149,25 @@ export const PageRenderer = (props: IPageRenderer) => {
   );
 
   return (
-    <div className="h-full w-full pb-20 pt-5 page-renderer">
-      {readonly ? (
-        <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{pageTitle}</h6>
-      ) : (
-        <TextArea
-          onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none rounded-none"
-          placeholder="Untitled Page"
-          value={pageTitle}
-        />
-      )}
-      <div className="flex relative h-full w-full flex-col pr-5" onMouseOver={handleLinkHover}>
-        <EditorContainer hideDragHandle={hideDragHandle} editor={editor} editorClassNames={editorClassNames}>
+    <div className="frame-renderer h-full w-full flex flex-col overflow-y-auto">
+      <div className="w-full flex-shrink-0">
+        {readonly ? (
+          <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{pageTitle}</h6>
+        ) : (
+          <TextArea
+            onChange={(e) => handlePageTitleChange(e.target.value)}
+            className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none rounded-none"
+            placeholder="Untitled Page"
+            value={pageTitle}
+          />
+        )}
+      </div>
+      <div className="relative flex-grow w-full pr-5" onMouseOver={handleLinkHover}>
+        <EditorContainer
+          hideDragHandle={hideDragHandle}
+          editor={editor}
+          editorClassNames={cn(editorClassNames, "pb-64")}
+        >
           <EditorContentWrapper
             tabIndex={tabIndex}
             editor={editor}

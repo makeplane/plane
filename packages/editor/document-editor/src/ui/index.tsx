@@ -80,18 +80,16 @@ const DocumentEditor = (props: IDocumentEditor) => {
   });
 
   return (
-    <div className="frame-renderer h-full w-full">
-      <PageRenderer
-        tabIndex={tabIndex}
-        hideDragHandle={hideDragHandleOnMouseLeave}
-        readonly={false}
-        editor={editor}
-        editorContentCustomClassNames={editorContentCustomClassNames}
-        editorClassNames={editorClassNames}
-        title={title}
-        updatePageTitle={updatePageTitle}
-      />
-    </div>
+    <PageRenderer
+      tabIndex={tabIndex}
+      hideDragHandle={hideDragHandleOnMouseLeave}
+      readonly={false}
+      editor={editor}
+      editorContentCustomClassNames={editorContentCustomClassNames}
+      editorClassNames={editorClassNames}
+      title={title}
+      updatePageTitle={updatePageTitle}
+    />
   );
 };
 

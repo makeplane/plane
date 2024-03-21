@@ -83,7 +83,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     is_locked || archived_at || (!!currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER);
 
   return (
-    <>
+    <div className="flex items-center h-full w-full overflow-y-auto">
       <div
         className={cn(
           "sticky top-0 hidden h-full w-56 flex-shrink-0 -translate-x-full p-5 duration-200 md:block lg:w-72",
@@ -97,7 +97,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           markings={markings}
         />
       </div>
-      <div className="h-full w-full pl-5 pr-5 md:w-[calc(100%-14rem)] md:pr-0 lg:w-[calc(100%-18rem-18rem)]">
+      <div className="h-full w-full pt-5 px-5 md:w-[calc(100%-14rem)] md:pr-0 lg:w-[calc(100%-18rem-18rem)]">
         {isPageReadOnly ? (
           <DocumentReadOnlyEditorWithRef
             ref={readOnlyEditorRef}
@@ -137,6 +137,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         )}
       </div>
       <div className="hidden h-full w-56 flex-shrink-0 lg:block lg:w-72" />
-    </>
+    </div>
   );
 });

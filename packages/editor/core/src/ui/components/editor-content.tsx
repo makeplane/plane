@@ -14,7 +14,7 @@ export const EditorContentWrapper: FC<EditorContentProps> = (props) => {
 
   return (
     <div
-      className={`contentEditor ${editorContentCustomClassNames}`}
+      className={`${editorContentCustomClassNames}`}
       tabIndex={tabIndex}
       onFocus={() => {
         editor?.chain().focus(undefined, { scrollIntoView: false }).run();

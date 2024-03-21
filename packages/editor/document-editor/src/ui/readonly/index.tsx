@@ -41,16 +41,14 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   });
 
   return (
-    <div className="frame-renderer h-full w-full">
-      <PageRenderer
-        tabIndex={tabIndex}
-        updatePageTitle={() => Promise.resolve()}
-        readonly
-        editor={editor}
-        editorClassNames={editorClassNames}
-        title={title}
-      />
-    </div>
+    <PageRenderer
+      tabIndex={tabIndex}
+      updatePageTitle={() => Promise.resolve()}
+      readonly
+      editor={editor}
+      editorClassNames={editorClassNames}
+      title={title}
+    />
   );
 };
 

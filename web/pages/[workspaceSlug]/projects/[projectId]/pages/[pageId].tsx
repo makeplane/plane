@@ -143,20 +143,18 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               setSidePeekVisible={(state) => setSidePeekVisible(state)}
             />
           )}
-          <div className="flex items-center h-full w-full overflow-y-auto">
-            <PageEditorBody
-              control={control}
-              editorRef={editorRef}
-              handleEditorReady={handleEditorReady}
-              readOnlyEditorRef={readOnlyEditorRef}
-              handleReadOnlyEditorReady={handleReadOnlyEditorReady}
-              handleSubmit={() => handleSubmit(handleUpdatePage)()}
-              markings={markings}
-              pageStore={pageStore}
-              sidePeekVisible={sidePeekVisible}
-              updateMarkings={updateMarkings}
-            />
-          </div>
+          <PageEditorBody
+            control={control}
+            editorRef={editorRef}
+            handleEditorReady={handleEditorReady}
+            readOnlyEditorRef={readOnlyEditorRef}
+            handleReadOnlyEditorReady={handleReadOnlyEditorReady}
+            handleSubmit={() => handleSubmit(handleUpdatePage)()}
+            markings={markings}
+            pageStore={pageStore}
+            sidePeekVisible={sidePeekVisible}
+            updateMarkings={updateMarkings}
+          />
           <IssuePeekOverview />
         </div>
       </div>
