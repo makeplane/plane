@@ -7,7 +7,7 @@ import { PageContentBrowser } from "./content-browser";
 // types
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi;
+  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   markings: IMarking[];
   sidePeekVisible: boolean;
   setSidePeekVisible: (sidePeekState: boolean) => void;

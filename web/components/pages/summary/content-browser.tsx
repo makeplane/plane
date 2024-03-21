@@ -1,9 +1,9 @@
 // types
-import { EditorRefApi, IMarking } from "@plane/document-editor";
-import { HeadingComp, HeadingThreeComp, SubheadingComp } from "./heading-components";
+import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
+import { OutlineHeading1, OutlineHeading2, OutlineHeading3 } from "./heading-components";
 
 type Props = {
-  editorRef: EditorRefApi;
+  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   markings: IMarking[];
   setSidePeekVisible?: (sidePeekState: boolean) => void;
 };
@@ -15,7 +15,6 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
     editorRef?.scrollSummary(marking);
     if (setSidePeekVisible) setSidePeekVisible(false);
   };
-  console.log("length of markings", markings.length);
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -24,21 +23,21 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
         {markings.length !== 0 ? (
           markings.map((marking) =>
             marking.level === 1 ? (
-              <HeadingComp
+              <OutlineHeading1
                 key={`${marking.level}-${marking.sequence}`}
+                marking={marking}
                 onClick={() => handleOnClick(marking)}
-                heading={marking.text}
               />
             ) : marking.level === 2 ? (
-              <SubheadingComp
+              <OutlineHeading2
                 key={`${marking.level}-${marking.sequence}`}
+                marking={marking}
                 onClick={() => handleOnClick(marking)}
-                subHeading={marking.text}
               />
             ) : (
-              <HeadingThreeComp
+              <OutlineHeading3
                 key={`${marking.level}-${marking.sequence}`}
-                heading={marking.text}
+                marking={marking}
                 onClick={() => handleOnClick(marking)}
               />
             )

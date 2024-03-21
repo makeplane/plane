@@ -63,7 +63,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
 
-  console.log("editorRef in pages root", editorRef.current); // null
   if (!editorRef.current && !readOnlyEditorRef.current) return null;
 
   // auth
@@ -72,7 +71,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     pageStore.archived_at ||
     (!!currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER);
 
-  console.log("is this true?", (editorReady || readOnlyEditorReady) && !isPageReadOnly);
   return (
     <div className="flex items-center border-b border-custom-border-200 px-3 py-2 md:px-5">
       <div className="flex-shrink-0 md:w-56 lg:w-72">
