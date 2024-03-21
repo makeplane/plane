@@ -1,7 +1,7 @@
-// helper
-import { cn } from "helpers/common.helper";
 import Link from "next/link";
 import router from "next/router";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 export const PreferencesMobileHeader = () => {
   const profilePreferenceLinks: Array<{
