@@ -178,6 +178,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           id: data.id,
           description_html: formData.description_html ?? "<p></p>",
         };
+
+    // this condition helps to move the issues from draft to project issues
+    if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
+
     await onSubmit(submitData, is_draft_issue);
 
     setGptAssistantModal(false);
@@ -716,19 +720,24 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           </div>
         </div>
         <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-100 px-5 pt-5">
-          <div
-            className="flex cursor-default items-center gap-1.5"
-            onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
-            }}
-            tabIndex={getTabIndex("create_more")}
-          >
-            <div className="flex cursor-pointer items-center justify-center">
-              <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-            </div>
-            <span className="text-xs">Create more</span>
+          <div>
+            {!data?.id && (
+              <div
+                className="inline-flex cursor-default items-center gap-1.5"
+                onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
+                }}
+                tabIndex={getTabIndex("create_more")}
+              >
+                <div className="flex cursor-pointer items-center justify-center">
+                  <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
+                </div>
+                <span className="text-xs">Create more</span>
+              </div>
+            )}
           </div>
+
           <div className="flex items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={getTabIndex("discard_button")}>
               Discard

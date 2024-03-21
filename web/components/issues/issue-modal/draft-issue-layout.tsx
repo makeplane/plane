@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import type { TIssue } from "@plane/types";
@@ -6,12 +7,10 @@ import type { TIssue } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { ConfirmIssueDiscard } from "@/components/issues";
 import { IssueFormRoot } from "@/components/issues/issue-modal/form";
+import { isEmptyHtmlString } from "@/helpers/string.helper";
 import { useEventTracker } from "@/hooks/store";
 // services
 import { IssueDraftService } from "@/services/issue";
-// ui
-// components
-// types
 
 export interface DraftIssueProps {
   changesMade: Partial<TIssue> | null;
@@ -50,8 +49,24 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const { captureIssueEvent } = useEventTracker();
 
   const handleClose = () => {
-    if (changesMade) setIssueDiscardModal(true);
-    else onClose(false);
+    if (changesMade) {
+      Object.entries(changesMade).forEach(([key, value]) => {
+        const issueKey = key as keyof TIssue;
+        if (value === null || value === undefined || value === "") delete changesMade[issueKey];
+        if (typeof value === "object" && !value) delete changesMade[issueKey];
+        if (Array.isArray(value) && value.length === 0) delete changesMade[issueKey];
+        if (issueKey === "project_id") delete changesMade.project_id;
+        if (issueKey === "priority" && value && value === "none") delete changesMade.priority;
+        if (
+          issueKey === "description_html" &&
+          changesMade.description_html &&
+          isEmptyHtmlString(changesMade.description_html)
+        )
+          delete changesMade.description_html;
+      });
+      if (isEmpty(changesMade)) onClose(false);
+      else setIssueDiscardModal(true);
+    }
   };
 
   const handleCreateDraftIssue = async () => {
