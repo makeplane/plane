@@ -95,8 +95,9 @@ const DocumentEditor = (props: IDocumentEditor) => {
   );
 };
 
-const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => 
+const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => (
   <DocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
+));
 
 DocumentEditorWithRef.displayName = "DocumentEditorWithRef";
 

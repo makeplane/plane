@@ -14,7 +14,7 @@ interface CustomReadOnlyEditorProps {
   editorProps?: EditorProps;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
-  handleEditorReady: (value: boolean) => void;
+  handleEditorReady?: (value: boolean) => void;
 }
 
 export const useReadOnlyEditor = ({
