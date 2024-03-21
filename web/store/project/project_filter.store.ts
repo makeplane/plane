@@ -74,6 +74,7 @@ export class ProjectFilterStore implements IProjectFilterStore {
 
   /**
    * @description get project state applied display filter of the current workspace
+   * @returns {TProjectAppliedDisplayFilterKeys[] | undefined} // An array of keys of applied display filters
    */
   // TODO: Figure out a better approach for this
   get currentWorkspaceAppliedDisplayFilters() {
@@ -168,10 +169,9 @@ export class ProjectFilterStore implements IProjectFilterStore {
    */
   clearAllAppliedDisplayFilters = (workspaceSlug: string) => {
     runInAction(() => {
-      set(this.displayFilters, [workspaceSlug], {
-        ...this.displayFilters[workspaceSlug],
-        my_projects: false,
-        archived_projects: false,
+      if (!this.currentWorkspaceAppliedDisplayFilters) return;
+      Object.keys(this.currentWorkspaceAppliedDisplayFilters).forEach((key) => {
+        set(this.displayFilters, [workspaceSlug, key], false);
       });
     });
   };
