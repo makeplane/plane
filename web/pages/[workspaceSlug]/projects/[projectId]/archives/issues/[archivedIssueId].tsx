@@ -2,23 +2,23 @@ import { useState, ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// hooks
-import { RotateCcw } from "lucide-react";
+// icons
+import { ArchiveRestoreIcon } from "lucide-react";
+// ui
 import { ArchiveIcon, Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { PageHead } from "@/components/core";
 import { ProjectArchivedIssueDetailsHeader } from "@/components/headers";
 import { IssueDetailRoot } from "@/components/issues";
+// constants
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useIssueDetail, useIssues, useProject, useUser } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
-// components
-// ui
-// icons
 // types
 import { NextPageWithLayout } from "@/lib/types";
-// constants
 
 const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
@@ -112,7 +112,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
             {issue?.archived_at && canRestoreIssue && (
               <div className="flex items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-2.5 py-2 text-sm text-custom-text-200">
                 <div className="flex items-center gap-2">
-                  <ArchiveIcon className="h-3.5 w-3.5" />
+                  <ArchiveIcon className="h-4 w-4" />
                   <p>This issue has been archived.</p>
                 </div>
                 <Button
@@ -121,7 +121,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
                   disabled={isRestoring}
                   variant="neutral-primary"
                 >
-                  <RotateCcw className="h-3 w-3" />
+                  <ArchiveRestoreIcon className="h-3.5 w-3.5" />
                   <span>{isRestoring ? "Restoring" : "Restore"}</span>
                 </Button>
               </div>

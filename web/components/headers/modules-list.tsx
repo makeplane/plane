@@ -23,8 +23,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
 export const ModulesListHeader: React.FC = observer(() => {
-  // states
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // router
@@ -49,6 +47,8 @@ export const ModulesListHeader: React.FC = observer(() => {
     updateFilters,
     updateSearchQuery,
   } = useModuleFilter();
+  // states
+  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);

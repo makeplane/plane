@@ -1,6 +1,7 @@
 import sortBy from "lodash/sortBy";
 // helpers
 import { satisfiesDateFilter } from "@/helpers/filter.helper";
+import { getDate } from "@/helpers/date-time.helper";
 // types
 import { IProject, TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 // constants
@@ -85,8 +86,9 @@ export const shouldFilterProject = (
       fallsInFilters = fallsInFilters && filters.members.some((memberId) => memberIds.includes(memberId));
     }
     if (filterKey === "created_at" && filters.created_at && filters.created_at.length > 0) {
+      const createdDate = getDate(project.created_at);
       filters.created_at.forEach((dateFilter) => {
-        fallsInFilters = fallsInFilters && satisfiesDateFilter(new Date(project.created_at), dateFilter);
+        fallsInFilters = fallsInFilters && !!createdDate && satisfiesDateFilter(createdDate, dateFilter);
       });
     }
   });

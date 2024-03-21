@@ -12,16 +12,22 @@ export interface ICyclesList {
   cycleIds: string[];
   workspaceSlug: string;
   projectId: string;
+  isArchived?: boolean;
 }
 
 export const CyclesList: FC<ICyclesList> = observer((props) => {
-  const { completedCycleIds, cycleIds, workspaceSlug, projectId } = props;
+  const { completedCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
 
   return (
     <div className="h-full overflow-y-auto">
       <div className="flex h-full w-full justify-between">
         <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
-          <CyclesListMap cycleIds={cycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
+          <CyclesListMap
+            cycleIds={cycleIds}
+            projectId={projectId}
+            workspaceSlug={workspaceSlug}
+            isArchived={isArchived}
+          />
           {completedCycleIds.length !== 0 && (
             <Disclosure as="div" className="mt-4 space-y-4">
               <Disclosure.Button className="bg-custom-background-80 font-semibold text-sm py-1 px-2 rounded ml-5 flex items-center gap-1">
@@ -37,12 +43,17 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
                 )}
               </Disclosure.Button>
               <Disclosure.Panel>
-                <CyclesListMap cycleIds={completedCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
+                <CyclesListMap
+                  cycleIds={completedCycleIds}
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                  isArchived={isArchived}
+                />
               </Disclosure.Panel>
             </Disclosure>
           )}
         </div>
-        <CyclePeekOverview projectId={projectId} workspaceSlug={workspaceSlug} />
+        <CyclePeekOverview projectId={projectId} workspaceSlug={workspaceSlug} isArchived={isArchived} />
       </div>
     </div>
   );

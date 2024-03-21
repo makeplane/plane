@@ -19,8 +19,6 @@ export const ProjectCardList = observer(() => {
   const { workspaceProjectIds, filteredProjectIds, getProjectById } = useProject();
   const { searchQuery } = useProjectFilter();
 
-  if (!filteredProjectIds) return <ProjectsLoader />;
-
   if (workspaceProjectIds?.length === 0)
     return (
       <EmptyState
@@ -31,6 +29,9 @@ export const ProjectCardList = observer(() => {
         }}
       />
     );
+
+  if (!filteredProjectIds) return <ProjectsLoader />;
+
   if (filteredProjectIds.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">

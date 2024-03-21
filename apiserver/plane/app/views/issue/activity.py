@@ -44,6 +44,7 @@ class IssueActivityEndpoint(BaseAPIView):
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
                 workspace__slug=slug,
             )
             .filter(**filters)
@@ -54,6 +55,7 @@ class IssueActivityEndpoint(BaseAPIView):
             .filter(
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
                 workspace__slug=slug,
             )
             .filter(**filters)

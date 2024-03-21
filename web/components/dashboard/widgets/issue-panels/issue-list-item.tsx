@@ -155,6 +155,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
   if (!issue) return null;
 
   const projectDetails = getProjectById(issue.project_id);
+  const targetDate = getDate(issue.target_date);
 
   return (
     <ControlLink
@@ -170,11 +171,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
         <h6 className="text-sm flex-grow truncate">{issue.name}</h6>
       </div>
       <div className="text-xs text-center">
-        {issue.target_date
-          ? isToday(new Date(issue.target_date))
-            ? "Today"
-            : renderFormattedDate(issue.target_date)
-          : "-"}
+        {targetDate ? (isToday(targetDate) ? "Today" : renderFormattedDate(targetDate)) : "-"}
       </div>
       <div className="text-xs flex justify-center">
         {issue.assignee_ids && issue.assignee_ids?.length > 0 ? (
@@ -210,7 +207,7 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
 
   const projectDetails = getProjectById(issue.project_id);
 
-  const dueBy = findTotalDaysInRange(getDate(issue.target_date), new Date(), false) ?? 0;
+  const dueBy: number = findTotalDaysInRange(getDate(issue.target_date), new Date(), false) ?? 0;
 
   return (
     <ControlLink

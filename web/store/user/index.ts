@@ -1,9 +1,9 @@
 import { action, observable, runInAction, makeObservable } from "mobx";
+// interfaces
+import { IUser, IUserSettings } from "@plane/types";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
-// interfaces
-import { IUser, IUserSettings } from "@plane/types";
 // store
 import { RootStore } from "../root.store";
 import { IUserMembershipStore, UserMembershipStore } from "./user-membership.store";

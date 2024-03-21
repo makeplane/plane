@@ -1,15 +1,16 @@
 import { set } from "lodash";
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
-// services
+// types
+import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole } from "@plane/types";
+// constants
 import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// services
 import { ProjectMemberService } from "@/services/project";
 import { UserService } from "@/services/user.service";
 import { WorkspaceService } from "@/services/workspace.service";
-// interfaces
-import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole } from "@plane/types";
+// store
 import { RootStore } from "../root.store";
-// constants
 
 export interface IUserMembershipStore {
   // observables
@@ -61,6 +62,7 @@ export class UserMembershipStore implements IUserMembershipStore {
   workspaceProjectsRole: { [workspaceSlug: string]: IUserProjectsRole } = {};
   // stores
   router;
+  store;
   // services
   userService;
   workspaceService;
@@ -91,6 +93,7 @@ export class UserMembershipStore implements IUserMembershipStore {
       fetchUserWorkspaceProjectsRole: action,
     });
     this.router = _rootStore.app.router;
+    this.store = _rootStore;
     // services
     this.userService = new UserService();
     this.workspaceService = new WorkspaceService();
@@ -193,13 +196,16 @@ export class UserMembershipStore implements IUserMembershipStore {
    * @param workspaceSlug
    * @returns Promise<void>
    */
-  leaveWorkspace = async (workspaceSlug: string) =>
+  leaveWorkspace = async (workspaceSlug: string) => {
+    const currentWorksSpace = this.store.workspaceRoot?.currentWorkspace;
     await this.userService.leaveWorkspace(workspaceSlug).then(() => {
       runInAction(() => {
+        if (currentWorksSpace) delete this.store.workspaceRoot?.workspaces?.[currentWorksSpace?.id];
         delete this.workspaceMemberInfo[workspaceSlug];
         delete this.hasPermissionToWorkspace[workspaceSlug];
       });
     });
+  };
 
   /**
    * Joins a project
