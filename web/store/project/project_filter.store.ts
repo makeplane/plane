@@ -81,9 +81,10 @@ export class ProjectFilterStore implements IProjectFilterStore {
     const workspaceSlug = this.rootStore.app.router.workspaceSlug;
     if (!workspaceSlug) return;
     const displayFilters = this.displayFilters[workspaceSlug];
-    return Object.keys(displayFilters)
-      .filter((key): key is TProjectAppliedDisplayFilterKeys => ["my_projects", "archived_projects"].includes(key))
-      .filter((key) => !!displayFilters[key as keyof TProjectDisplayFilters]);
+    return Object.keys(displayFilters).filter(
+      (key): key is TProjectAppliedDisplayFilterKeys =>
+        ["my_projects", "archived_projects"].includes(key) && !!displayFilters[key as keyof TProjectDisplayFilters]
+    );
   }
 
   /**
