@@ -13,6 +13,7 @@ from django.db.models import (
     Subquery,
 )
 from django.conf import settings
+from django.utils import timezone
 
 # Third Party imports
 from rest_framework.response import Response
@@ -179,6 +180,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
+            .filter(archived_at__isnull=True)
             .filter(pk=pk)
             .annotate(
                 total_issues=Issue.issue_objects.filter(
@@ -366,6 +368,12 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
 
             project = Project.objects.get(pk=pk)
 
+            if project.archived_at:
+                return Response(
+                    {"error": "Archived projects cannot be updated"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )  
+
             serializer = ProjectSerializer(
                 project,
                 data={**request.data},
@@ -418,6 +426,24 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
             )
+
+
+class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+    def post(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.archived_at = timezone.now()
+        project.save()
+        return Response(status=status.HTTP_204_NO_CONTENT) 
+
+    def delete(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.archived_at = None
+        project.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectIdentifierEndpoint(BaseAPIView):

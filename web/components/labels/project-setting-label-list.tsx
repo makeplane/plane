@@ -96,7 +96,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           Add label
         </Button>
       </div>
-      <div className="h-full w-full py-8">
+      <div className="w-full py-8">
         {showLabelForm && (
           <div className="my-2 w-full rounded border border-custom-border-200 px-3.5 py-2">
             <CreateUpdateLabelInline

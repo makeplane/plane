@@ -10,6 +10,8 @@ import { DateDropdown } from "@/components/dropdowns";
 import { allTimeIn30MinutesInterval12HoursFormat } from "@/constants/notification";
 // ui
 // types
+// helpers
+import { getDate } from "helpers/date-time.helper";
 
 type SnoozeModalProps = {
   isOpen: boolean;
@@ -56,7 +58,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
 
     if (!formDataDate) return timeStamps;
 
-    const isToday = today.toDateString() === formDataDate.toDateString();
+    const isToday = today.toDateString() === getDate(formDataDate)?.toDateString();
 
     if (!isToday) return timeStamps;
 
@@ -89,9 +91,9 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
     );
     const minutes = parseInt(time[1]);
 
-    const dateTime = formData.date;
-    dateTime.setHours(hours);
-    dateTime.setMinutes(minutes);
+    const dateTime: Date | undefined = getDate(formData?.date);
+    dateTime?.setHours(hours);
+    dateTime?.setMinutes(minutes);
 
     await handleSubmitSnooze(notification.id, dateTime).then(() => {
       handleClose();

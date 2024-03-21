@@ -83,7 +83,8 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),

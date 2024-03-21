@@ -90,7 +90,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
     // if never expires is toggled on, set expired_at to null
     if (neverExpires) payload.expired_at = null;
     // if never expires is toggled off, and the user has selected a custom date, set expired_at to the custom date
-    else if (data.expired_at === "custom") payload.expired_at = renderFormattedPayloadDate(customDate ?? new Date());
+    else if (data.expired_at === "custom") payload.expired_at = renderFormattedPayloadDate(customDate);
     // if never expires is toggled off, and the user has selected a predefined date, set expired_at to the predefined date
     else {
       const expiryDate = getExpiryDate(data.expired_at ?? "");

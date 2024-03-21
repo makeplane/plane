@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
-import { EditorRefApi } from "@plane/document-editor";
+import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
 import { IPage } from "@plane/types";
 // hooks
 
@@ -38,6 +38,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     useProjectPages();
   const pageStore = usePage(pageId as string);
 
+  // editor markings hook
+  const { markings, updateMarkings } = useEditorMarkings();
   // form info
   const { handleSubmit, getValues, control, reset } = useForm<IPage>({
     defaultValues: {
@@ -137,6 +139,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               editorReady={editorReady}
               readOnlyEditorReady={readOnlyEditorReady}
               handleDuplicatePage={handleDuplicatePage}
+              markings={markings}
               pageStore={pageStore}
               projectId={projectId.toString()}
               sidePeekVisible={sidePeekVisible}
@@ -151,8 +154,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               readOnlyEditorRef={readOnlyEditorRef}
               handleReadOnlyEditorReady={handleReadOnlyEditorReady}
               handleSubmit={() => handleSubmit(handleUpdatePage)()}
+              markings={markings}
               pageStore={pageStore}
               sidePeekVisible={sidePeekVisible}
+              updateMarkings={updateMarkings}
             />
           </div>
           <IssuePeekOverview />

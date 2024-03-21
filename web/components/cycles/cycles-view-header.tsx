@@ -2,21 +2,21 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ListFilter, Search, X } from "lucide-react";
 import { Tab } from "@headlessui/react";
+// types
 import { TCycleFilters } from "@plane/types";
-// hooks
+// ui
 import { Tooltip } from "@plane/ui";
+// components
 import { CycleFiltersSelection } from "@/components/cycles";
 import { FiltersDropdown } from "@/components/issues";
+// constants
 import { CYCLE_TABS_LIST, CYCLE_VIEW_LAYOUTS } from "@/constants/cycle";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useCycleFilter } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// components
-// ui
-// helpers
-// types
-// constants
 
 type Props = {
   projectId: string;
@@ -24,8 +24,6 @@ type Props = {
 
 export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   const { projectId } = props;
-  // states
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // hooks
@@ -38,6 +36,8 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
     updateSearchQuery,
   } = useCycleFilter();
   const { isMobile } = usePlatformOS();
+  // states
+  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);

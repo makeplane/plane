@@ -192,14 +192,15 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                     <p className="text-sm text-custom-text-200">{renderFormattedTime(archived_at)}</p>
                   </Tooltip>
                 ) : (
-                  <Tooltip
-                    isMobile={isMobile}
-                    tooltipContent={`Last updated at ${renderFormattedTime(updated_at)} on ${renderFormattedDate(
-                      updated_at
-                    )}`}
-                  >
-                    <p className="text-sm text-custom-text-200">{renderFormattedTime(updated_at)}</p>
-                  </Tooltip>
+                  updated_at && (
+                    <Tooltip
+                      tooltipContent={`Last updated at ${renderFormattedTime(updated_at)} on ${renderFormattedDate(
+                        updated_at
+                      )}`}
+                    >
+                      <p className="text-sm text-custom-text-200">{renderFormattedTime(updated_at)}</p>
+                    </Tooltip>
+                  )
                 )}
                 {isEditingAllowed && (
                   <Tooltip

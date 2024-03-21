@@ -121,7 +121,10 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
     <form className="space-y-6 sm:space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
       <div className="space-y-6 sm:space-y-7">
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceName">Workspace Name</label>
+          <label htmlFor="workspaceName">
+            Workspace Name
+            <span className="ml-0.5 text-red-500">*</span>
+          </label>
           <Controller
             control={control}
             name="name"
@@ -153,7 +156,10 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           />
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceUrl">Workspace URL</label>
+          <label htmlFor="workspaceUrl">
+            Workspace URL
+            <span className="ml-0.5 text-red-500">*</span>
+          </label>
           <div className="flex w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
             <span className="whitespace-nowrap text-sm text-custom-text-200">{window && window.location.host}/</span>
             <Controller
@@ -185,7 +191,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <span>What size is your organization?</span>
+          <span>
+            What size is your organization?<span className="ml-0.5 text-red-500">*</span>
+          </span>
           <div className="w-full">
             <Controller
               name="organization_size"

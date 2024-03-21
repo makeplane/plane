@@ -2,9 +2,9 @@ import { useState } from "react";
 import { usePopper } from "react-popper";
 import { List } from "lucide-react";
 // components
+import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
 import { PageContentBrowser } from "./content-browser";
 // types
-import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
 
 type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi;

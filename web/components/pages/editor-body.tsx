@@ -1,28 +1,28 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
-// hooks
+import { EUserProjectRoles } from "constants/project";
+import { useEffect } from "react";
+import { PageContentBrowser } from "components/pages";
+import { cn } from "helpers/common.helper";
 import { useUser, useWorkspace } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-// services
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
+import { Control, Controller } from "react-hook-form";
 import { FileService } from "services/file.service";
+import { IPageStore } from "store/page.store";
+// hooks
+// services
 // components
-import { PageContentBrowser } from "components/pages";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
 import {
   DocumentEditorWithRef,
   DocumentReadOnlyEditorWithRef,
-  EditorRefApi,
-  useEditorMarkings,
   EditorReadOnlyRefApi,
+  EditorRefApi,
+  IMarking,
 } from "@plane/document-editor";
-import { IPageStore } from "store/page.store";
 import { IPage } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { useEffect } from "react";
 
 // services
 const fileService = new FileService();
@@ -32,10 +32,12 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleSubmit: () => void;
+  markings: IMarking[];
   pageStore: IPageStore;
   sidePeekVisible: boolean;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: () => void;
+  updateMarkings: (description_html: string) => void;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -45,10 +47,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handleReadOnlyEditorReady,
     handleEditorReady,
     editorRef,
+    markings,
     readOnlyEditorRef,
     handleSubmit,
     pageStore,
     sidePeekVisible,
+    updateMarkings,
   } = props;
 
   // router
@@ -64,8 +68,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const pageTitle = pageStore?.name;
   const pageDescription = pageStore?.description_html;
   const { is_locked, archived_at, updateName, isSubmitting, setIsSubmitting } = pageStore;
-  // editor markings hook
-  const { markings, updateMarkings } = useEditorMarkings();
 
   const { setShowAlert } = useReloadConfirmations(pageStore?.isSubmitting === "submitting");
 

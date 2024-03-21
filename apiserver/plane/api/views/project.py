@@ -1,4 +1,5 @@
 # Django imports
+from django.utils import timezone
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q, F, Func, Subquery, Prefetch
 
@@ -39,7 +40,10 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
         return (
             Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(
-                Q(project_projectmember__member=self.request.user)
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
                 | Q(network=2)
             )
             .select_related(
@@ -260,6 +264,12 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
             workspace = Workspace.objects.get(slug=slug)
             project = Project.objects.get(pk=project_id)
 
+            if project.archived_at:
+                return Response(
+                    {"error": "Archived project cannot be updated"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             serializer = ProjectSerializer(
                 project,
                 data={**request.data},
@@ -315,4 +325,23 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+
+    def post(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.archived_at = timezone.now()
+        project.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def delete(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.archived_at = None
+        project.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
