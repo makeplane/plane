@@ -89,25 +89,21 @@ export const useEditor = ({
 
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
 
-  useImperativeHandle(forwardedRef, () => {
-    return {
-      clearEditor: () => {
-        editorRef.current?.commands.clearContent();
-      },
-      setEditorValue: (content: string) => {
-        editorRef.current?.commands.setContent(content);
-      },
-      setEditorValueAtCursorPosition: (content: string) => {
-        if (savedSelection) {
-          insertContentAtSavedSelection(editorRef, content, savedSelection);
-        }
-      },
-    };
-  });
+  useImperativeHandle(forwardedRef, () => ({
+    clearEditor: () => {
+      editorRef.current?.commands.clearContent();
+    },
+    setEditorValue: (content: string) => {
+      editorRef.current?.commands.setContent(content);
+    },
+    setEditorValueAtCursorPosition: (content: string) => {
+      if (savedSelection) {
+        insertContentAtSavedSelection(editorRef, content, savedSelection);
+      }
+    },
+  }));
 
-  if (!editor) {
-    return null;
-  }
+  if (!editor) return null;
 
   return editor;
 };

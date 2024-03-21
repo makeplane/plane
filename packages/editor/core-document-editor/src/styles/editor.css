@@ -12,6 +12,10 @@
   display: none;
 }
 
+.ProseMirror code {
+  caret-color: rgba(var(--color-primary-100));
+}
+
 .ProseMirror code::before,
 .ProseMirror code::after {
   display: none;
