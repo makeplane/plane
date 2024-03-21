@@ -185,7 +185,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
           </div>
         </div>
 
-        <div className="relative flex w-full items-center justify-between gap-2.5 overflow-hidden sm:w-auto sm:flex-shrink-0 sm:justify-end ">
+        <div className="relative flex w-full items-center justify-between gap-2.5 sm:w-auto sm:flex-shrink-0 sm:justify-end ">
           <div className="text-xs text-custom-text-300">
             {renderDate && (
               <span className=" text-xs text-custom-text-300">
