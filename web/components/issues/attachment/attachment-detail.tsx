@@ -1,18 +1,19 @@
-import { FC, useState } from "react";
+import { FC } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
-// hooks
-// ui
 import { Tooltip } from "@plane/ui";
-// components
-// icons
 import { getFileIcon } from "@/components/icons";
-// helper
 import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/attachment.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { truncateText } from "@/helpers/string.helper";
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// hooks
+// ui
+// components
+// icons
+// helper
 import { IssueAttachmentDeleteModal } from "./delete-attachment-confirmation-modal";
 // types
 import { TAttachmentOperations } from "./root";
@@ -25,16 +26,17 @@ type TIssueAttachmentsDetail = {
   disabled?: boolean;
 };
 
-export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
+export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((props) => {
   // props
   const { attachmentId, handleAttachmentOperations, disabled } = props;
   // store hooks
   const { getUserDetails } = useMember();
   const {
     attachment: { getAttachmentById },
+    isDeleteAttachmentModalOpen,
+    toggleDeleteAttachmentModal,
   } = useIssueDetail();
   // states
-  const [attachmentDeleteModal, setAttachmentDeleteModal] = useState<boolean>(false);
   const { isMobile } = usePlatformOS();
   const attachment = attachmentId && getAttachmentById(attachmentId);
 
@@ -42,8 +44,8 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
   return (
     <>
       <IssueAttachmentDeleteModal
-        isOpen={attachmentDeleteModal}
-        setIsOpen={setAttachmentDeleteModal}
+        isOpen={isDeleteAttachmentModalOpen}
+        setIsOpen={() => toggleDeleteAttachmentModal(false)}
         handleAttachmentOperations={handleAttachmentOperations}
         data={attachment}
       />
@@ -81,15 +83,11 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
         </Link>
 
         {!disabled && (
-          <button
-            onClick={() => {
-              setAttachmentDeleteModal(true);
-            }}
-          >
+          <button onClick={() => toggleDeleteAttachmentModal(true)}>
             <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
           </button>
         )}
       </div>
     </>
   );
-};
+});

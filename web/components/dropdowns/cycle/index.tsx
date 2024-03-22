@@ -41,7 +41,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     hideIcon = false,
     onChange,
     onClose,
-    placeholder = "Cycle",
+    placeholder = "",
     placement,
     projectId,
     showTooltip = false,
@@ -132,7 +132,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
               variant={buttonVariant}
             >
               {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
-              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
                 <span className="flex-grow truncate max-w-40">{selectedName ?? placeholder}</span>
               )}
               {dropdownArrow && (

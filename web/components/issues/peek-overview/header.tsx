@@ -53,7 +53,7 @@ export type PeekOverviewHeaderProps = {
   issueId: string;
   isArchived: boolean;
   disabled: boolean;
-  toggleDeleteIssueModal: (value: boolean) => void;
+  toggleDeleteIssueModal: (issueId: string | null) => void;
   toggleArchiveIssueModal: (value: boolean) => void;
   handleRestoreIssue: () => void;
   isSubmitting: "submitting" | "submitted" | "saved";
@@ -188,7 +188,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           )}
           {!disabled && (
             <Tooltip tooltipContent="Delete" isMobile={isMobile}>
-              <button type="button" onClick={() => toggleDeleteIssueModal(true)}>
+              <button type="button" onClick={() => toggleDeleteIssueModal(issueId)}>
                 <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
               </button>
             </Tooltip>
