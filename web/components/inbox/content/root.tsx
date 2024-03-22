@@ -1,11 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// hooks
-import { useInboxIssues, useIssueDetail, useProjectInbox, useUser } from "hooks/store";
-// components
-import { InboxIssueActionsHeader, InboxIssueMainContent } from "components/inbox";
 import useSWR from "swr";
-import { EUserProjectRoles } from "constants/project";
+import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
+import { EUserProjectRoles } from "@/constants/project";
+import { useInboxIssues, useIssueDetail, useUser } from "@/hooks/store";
 
 type TInboxContentRoot = {
   workspaceSlug: string;
@@ -16,7 +14,6 @@ type TInboxContentRoot = {
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId } = props;
   // hooks
-  const { fetchInboxIssuesByIssueId } = useProjectInbox();
   const inboxIssue = useInboxIssues(inboxIssueId);
   const {
     membership: { currentProjectRole },
@@ -41,7 +38,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
 
   const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  if (!inboxIssue) return;
+  if (!inboxIssue) return <></>;
   return (
     <>
       <div className="w-full h-full overflow-hidden relative flex flex-col">

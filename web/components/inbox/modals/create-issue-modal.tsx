@@ -5,6 +5,8 @@ import { Controller, useForm } from "react-hook-form";
 import { Sparkle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { TIssue } from "@plane/types";
 import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { GptAssistantPopover } from "@/components/core";

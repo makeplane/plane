@@ -1,18 +1,14 @@
 import { FC, useCallback, useEffect, useRef, useState } from "react";
-import { Tab } from "@headlessui/react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
-// hooks
-import { useIntersectionObserver } from "hooks/use-intersection-observer";
-import { useLabel, useMember, useProject, useProjectInbox } from "hooks/store";
-// components
+import { Tab } from "@headlessui/react";
+import { TInboxIssueFilterOptions } from "@plane/types";
+import { Loader } from "@plane/ui";
+import { FiltersDropdown } from "@/components/issues";
+import { useLabel, useMember, useProject, useProjectInbox } from "@/hooks/store";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { InboxIssueFilterSelection, InboxIssueOrderByDropdown } from "../filter";
 import { InboxIssueList } from "./inbox-list";
-import { FiltersDropdown } from "components/issues";
-// ui
-import { Loader } from "@plane/ui";
-// types
-import { TInboxIssueFilterOptions } from "@plane/types";
 
 type IInboxSidebarProps = {
   workspaceSlug: string;

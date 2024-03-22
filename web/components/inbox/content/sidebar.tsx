@@ -6,13 +6,13 @@ import { CalendarCheck2, Signal, Tag } from "lucide-react";
 
 // hooks
 // components
-import { DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
+import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
 import { IssueLabel, TIssueOperations } from "@/components/issues";
 // icons
 // helper
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { useIssueDetail, useProject, useProjectInbox, useProjectState } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -25,33 +25,16 @@ type Props = {
 export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, is_editable } = props;
   // store hooks
-  const { getProjectById } = useProject();
-  const { projectStates } = useProjectState();
   const { getIssueInboxByIssueId } = useProjectInbox();
 
   const issue = getIssueInboxByIssueId(issueId)?.issue;
   if (!issue) return <></>;
 
-  const projectDetails = issue ? getProjectById(issue.project_id) : null;
-
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
-
   return (
     <div className="flex h-min w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
-      {/* <div className="flex items-center justify-between px-5 pb-3">
-        <div className="flex items-center gap-x-2">
-          {currentIssueState && (
-            <StateGroupIcon className="h-4 w-4" stateGroup={currentIssueState.group} color={currentIssueState.color} />
-          )}
-          <h4 className="text-lg font-medium text-custom-text-300">
-            {projectDetails?.identifier}-{issue?.sequence_id}
-          </h4>
-        </div>
-      </div> */}
-
       <div className="h-min w-full overflow-y-auto px-5">
         <h5 className="text-sm font-medium my-4">Properties</h5>
         <div className={`divide-y-2 divide-custom-border-200 ${!is_editable ? "opacity-60" : ""}`}>

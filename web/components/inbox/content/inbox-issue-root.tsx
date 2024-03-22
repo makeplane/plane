@@ -2,9 +2,9 @@ import React, { FC } from "react";
 // icons
 import { Inbox } from "lucide-react";
 // components
+import { IInboxIssueStore } from "@/store/inbox-issue.store";
 import { InboxContentRoot } from "./root";
 // types
-import { IInboxIssueStore } from "store/inbox-issue.store";
 
 type IInboxIssueRootProps = {
   workspaceSlug: string;

@@ -2,13 +2,13 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
 // hooks
+import { IIssueLabel, TInboxIssueFilterOptions, TInboxIssueStatus } from "@plane/types";
+import { FilterAssignees, FilterCreatedBy, FilterLabels, FilterPriority } from "@/components/issues";
+import { FilterCreatedDate } from "./created-at";
 import { FilterStatus } from "./status";
 // components
-import { FilterAssignees, FilterCreatedBy, FilterLabels, FilterPriority } from "components/issues";
-import { FilterCreatedDate } from "./created-at";
 import { FilterUpdatedDate } from "./updated-at";
 // types
-import { IIssueLabel, TInboxIssueFilterOptions, TInboxIssueStatus } from "@plane/types";
 
 type TInboxIssueFilterSelection = {
   inboxFilters: Partial<TInboxIssueFilterOptions>;

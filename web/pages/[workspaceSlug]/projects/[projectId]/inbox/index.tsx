@@ -1,16 +1,16 @@
 import { ReactElement } from "react";
+// components
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// components
-import { PageHead } from "components/core";
-import { ProjectInboxHeader } from "components/headers";
-import { InboxSidebar, InboxIssueRoot } from "components/inbox";
-import { InboxLayoutLoader } from "components/ui";
+import { PageHead } from "@/components/core";
+import { ProjectInboxHeader } from "@/components/headers";
+import { InboxSidebar, InboxIssueRoot } from "@/components/inbox";
+import { InboxLayoutLoader } from "@/components/ui";
+import { useProject, useProjectInbox } from "@/hooks/store";
 // hooks
-import { useProject, useProjectInbox } from "hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { AppLayout } from "@/layouts/app-layout";
 // types
 import { NextPageWithLayout } from "@/lib/types";
 

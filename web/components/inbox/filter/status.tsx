@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { FilterHeader, FilterOption } from "components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
-import { INBOX_STATUS } from "constants/inbox";
+import { INBOX_STATUS } from "@/constants/inbox";
 
 type Props = {
   appliedFilters: number[] | null;

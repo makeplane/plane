@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // components
-import { InboxIssueListItem } from "components/inbox";
+import { InboxIssueListItem } from "@/components/inbox";
 // store
-import { IInboxIssueStore } from "store/inbox-issue.store";
+import { IInboxIssueStore } from "@/store/inbox-issue.store";
 
 export type InboxIssueListProps = {
   workspaceSlug: string;

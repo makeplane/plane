@@ -70,9 +70,11 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSub
                   <span>
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to accept issue{" "}
-                      <span className="break-all font-medium text-custom-text-100">
-                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
-                      </span>
+                      {data?.project_id && (
+                        <span className="break-words font-medium text-custom-text-100">
+                          {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
+                        </span>
+                      )}
                       {""}? Once accepted, this issue will be added to the project issues list.
                     </p>
                   </span>

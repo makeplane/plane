@@ -5,10 +5,10 @@ import update from "lodash/update";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // services
+import { TInboxDetailMap, TInboxDetailIdMap, TInbox } from "@plane/types";
 import { InboxService } from "@/services/inbox/inbox.service";
 // types
 import { RootStore } from "@/store/root.store";
-import { TInboxDetailMap, TInboxDetailIdMap, TInbox } from "@plane/types";
 
 export interface IInbox {
   // observables

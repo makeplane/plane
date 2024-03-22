@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { DateFilterModal } from "components/core";
-import { FilterHeader, FilterOption } from "components/issues";
+import { DateFilterModal } from "@/components/core";
+import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
-import { DATE_BEFORE_FILTER_OPTIONS } from "constants/filters";
+import { DATE_BEFORE_FILTER_OPTIONS } from "@/constants/filters";
 
 type Props = {
   appliedFilters: string[] | null;

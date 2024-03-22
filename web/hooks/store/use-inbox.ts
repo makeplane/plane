@@ -1,8 +1,8 @@
 import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/contexts/store-context";
+import { IInbox } from "@/store/inbox_legacy/inbox.store";
 // types
-import { IInbox } from "@/store/inbox/inbox.store";
 
 export const useInbox = (): IInbox => {
   const context = useContext(StoreContext);

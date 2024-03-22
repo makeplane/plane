@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // icons
 import { ChevronDown, ChevronUp, Clock, ExternalLink, FileStack, Link, Trash2 } from "lucide-react";
 // ui
@@ -13,14 +13,14 @@ import {
   InboxIssueSnoozeModal,
   InboxIssueStatus,
   SelectDuplicateInboxIssueModal,
-} from "components/inbox";
-import { EUserProjectRoles } from "constants/project";
+} from "@/components/inbox";
+import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useUser, useProjectInbox, useProject } from "hooks/store";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useUser, useProjectInbox, useProject } from "@/hooks/store";
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
 // store types
-import type { IInboxIssueStore } from "store/inbox-issue.store";
+import type { IInboxIssueStore } from "@/store/inbox-issue.store";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;

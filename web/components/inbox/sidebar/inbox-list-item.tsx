@@ -1,22 +1,15 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-import { useLabel } from "hooks/store";
-// icons
 import { CalendarDays } from "lucide-react";
-import { usePlatformOS } from "hooks/use-platform-os";
-// ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
-// components
-import { InboxIssueStatus } from "components/inbox";
-// helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-// store
-import { IInboxIssueStore } from "store/inbox-issue.store";
-// helpers
-import { cn } from "helpers/common.helper";
+import { InboxIssueStatus } from "@/components/inbox";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useLabel } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { IInboxIssueStore } from "@/store/inbox-issue.store";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;

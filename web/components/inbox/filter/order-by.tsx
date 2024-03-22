@@ -1,12 +1,12 @@
 import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
 // ui
+import { TInboxIssueOrderByOptions } from "@plane/types";
 import { CustomMenu, getButtonStyling } from "@plane/ui";
 // helpers
-import { cn } from "helpers/common.helper";
+import { INBOX_ISSUE_ORDER_BY_OPTIONS } from "@/constants/inbox";
+import { cn } from "@/helpers/common.helper";
 // types
-import { TInboxIssueOrderByOptions } from "@plane/types";
 // constants
-import { INBOX_ISSUE_ORDER_BY_OPTIONS } from "constants/inbox";
 
 type Props = {
   onChange: (value: TInboxIssueOrderByOptions) => void;

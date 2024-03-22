@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 // ui
+import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
-// components
 import {
   IssueDescriptionInput,
   IssueTitleInput,
   IssueActivity,
   IssueReaction,
   TIssueOperations,
-} from "components/issues";
-import { IInboxIssueStore } from "store/inbox-issue.store";
-import { TIssue } from "@plane/types";
+} from "@/components/issues";
+import { useUser } from "@/hooks/store";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+// components
+import { IInboxIssueStore } from "@/store/inbox-issue.store";
 import { InboxIssueDetailsSidebar } from "./sidebar";
 
 type Props = {
@@ -55,7 +55,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
-      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
+      fetch: async () => {
         try {
           await inboxIssue.fetchInboxIssue();
         } catch (error) {
@@ -91,7 +91,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           // });
         }
       },
-      remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
+      remove: async () => {
         try {
           await inboxIssue.deleteInboxIssue();
           setToast({
