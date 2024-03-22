@@ -38,7 +38,7 @@ export const ModulesListView: React.FC = observer(() => {
       </>
     );
 
-  if (totalFilters > 0 || searchQuery.trim() !== "")
+  if (totalFilters > 0 && filteredModuleIds.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
