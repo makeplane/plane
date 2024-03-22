@@ -188,7 +188,11 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                     # group and sub group pagination
                     return self.paginate(
                         request=request,
-                        order_by=order_by_param,
+                        order_by=(
+                            "priority_order"
+                            if order_by_param in ["priority", "-priority"]
+                            else order_by_param
+                        ),
                         queryset=issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by,
@@ -224,7 +228,11 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                 # Group paginate
                 return self.paginate(
                     request=request,
-                    order_by=order_by_param,
+                    order_by=(
+                        "priority_order"
+                        if order_by_param in ["priority", "-priority"]
+                        else order_by_param
+                    ),
                     queryset=issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by,

@@ -26,8 +26,8 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
     }
 
     annotations_map = {
-        "label_ids": ("assignees__id", ~Q(assignees__id__isnull=True)),
-        "assignee_ids": ("labels__id", ~Q(labels__id__isnull=True)),
+        "assignee_ids": ("assignees__id", ~Q(assignees__id__isnull=True)),
+        "label_ids": ("labels__id", ~Q(labels__id__isnull=True)),
         "module_ids": (
             "issue_module__module_id",
             ~Q(issue_module__module_id__isnull=True),
