@@ -47,7 +47,7 @@ export interface IIssueDetail
   isCreateIssueModalOpen: boolean;
   isIssueLinkModalOpen: boolean;
   isParentIssueModalOpen: boolean;
-  isDeleteIssueModalOpen: boolean;
+  isDeleteIssueModalOpen: string | null;
   isArchiveIssueModalOpen: boolean;
   isRelationModalOpen: TIssueRelationTypes | null;
   isSubIssuesModalOpen: boolean;
@@ -59,9 +59,9 @@ export interface IIssueDetail
   toggleCreateIssueModal: (value: boolean) => void;
   toggleIssueLinkModal: (value: boolean) => void;
   toggleParentIssueModal: (value: boolean) => void;
-  toggleDeleteIssueModal: (value: boolean) => void;
+  toggleDeleteIssueModal: (issueId: string | null) => void;
   toggleArchiveIssueModal: (value: boolean) => void;
-  toggleRelationModal: (value: TIssueRelationTypes | null) => void;
+  toggleRelationModal: (relationType: TIssueRelationTypes | null) => void;
   toggleSubIssuesModal: (value: boolean) => void;
   toggleDeleteAttachmentModal: (value: boolean) => void;
   // store
@@ -84,7 +84,7 @@ export class IssueDetail implements IIssueDetail {
   isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
   isParentIssueModalOpen: boolean = false;
-  isDeleteIssueModalOpen: boolean = false;
+  isDeleteIssueModalOpen: string | null = null;
   isArchiveIssueModalOpen: boolean = false;
   isRelationModalOpen: TIssueRelationTypes | null = null;
   isSubIssuesModalOpen: boolean = false;
@@ -148,9 +148,9 @@ export class IssueDetail implements IIssueDetail {
       this.isCreateIssueModalOpen ||
       this.isIssueLinkModalOpen ||
       this.isParentIssueModalOpen ||
-      this.isDeleteIssueModalOpen ||
+      !!this.isDeleteIssueModalOpen ||
       this.isArchiveIssueModalOpen ||
-      Boolean(this.isRelationModalOpen) ||
+      !!this.isRelationModalOpen ||
       this.isSubIssuesModalOpen ||
       this.isDeleteAttachmentModalOpen
     );
@@ -161,9 +161,9 @@ export class IssueDetail implements IIssueDetail {
   toggleCreateIssueModal = (value: boolean) => (this.isCreateIssueModalOpen = value);
   toggleIssueLinkModal = (value: boolean) => (this.isIssueLinkModalOpen = value);
   toggleParentIssueModal = (value: boolean) => (this.isParentIssueModalOpen = value);
-  toggleDeleteIssueModal = (value: boolean) => (this.isDeleteIssueModalOpen = value);
+  toggleDeleteIssueModal = (issueId: string | null) => (this.isDeleteIssueModalOpen = issueId);
   toggleArchiveIssueModal = (value: boolean) => (this.isArchiveIssueModalOpen = value);
-  toggleRelationModal = (value: TIssueRelationTypes | null) => (this.isRelationModalOpen = value);
+  toggleRelationModal = (relationType: TIssueRelationTypes | null) => (this.isRelationModalOpen = relationType);
   toggleSubIssuesModal = (value: boolean) => (this.isSubIssuesModalOpen = value);
   toggleDeleteAttachmentModal = (value: boolean) => (this.isDeleteAttachmentModalOpen = value);
 
