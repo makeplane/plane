@@ -1,7 +1,7 @@
 import { FC, useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
-import { usePopper } from "react-popper";
 import { Controller, useForm } from "react-hook-form";
+import { usePopper } from "react-popper";
 import { Plus, X, Loader } from "lucide-react";
 import { Popover } from "@headlessui/react";
 import { IIssueLabel } from "@plane/types";
@@ -30,7 +30,6 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
   // hooks
   const {
     issue: { getIssueById },
-    peekIssue,
   } = useIssueDetail();
   // state
   const [isCreateToggle, setIsCreateToggle] = useState(false);
