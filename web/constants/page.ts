@@ -1,54 +1,35 @@
-import { Globe2, LayoutGrid, List, Lock } from "lucide-react";
+import { Globe2, Lock, LucideIcon } from "lucide-react";
+// types
+import { TPageFiltersSortKey, TPageFiltersSortBy } from "@plane/types";
 
-export const PAGE_VIEW_LAYOUTS = [
-  {
-    key: "list",
-    icon: List,
-    title: "List layout",
-  },
-  {
-    key: "detailed",
-    icon: LayoutGrid,
-    title: "Detailed layout",
-  },
+export enum EPageAccess {
+  PUBLIC = 0,
+  PRIVATE = 1,
+}
+
+export const PAGE_ACCESS_SPECIFIERS: {
+  key: EPageAccess;
+  label: string;
+  icon: LucideIcon;
+}[] = [
+  { key: EPageAccess.PUBLIC, label: "Public", icon: Globe2 },
+  { key: EPageAccess.PRIVATE, label: "Private", icon: Lock },
 ];
 
-export const PAGE_TABS_LIST: { key: string; title: string }[] = [
-  {
-    key: "recent",
-    title: "Recent",
-  },
-  {
-    key: "all",
-    title: "All",
-  },
-  {
-    key: "favorites",
-    title: "Favorites",
-  },
-  {
-    key: "private",
-    title: "Private",
-  },
-  {
-    key: "shared",
-    title: "Shared",
-  },
-  {
-    key: "archived-pages",
-    title: "Archived",
-  },
+export const PAGE_SORTING_KEY_OPTIONS: {
+  key: TPageFiltersSortKey;
+  label: string;
+}[] = [
+  { key: "name", label: "Name" },
+  { key: "created_at", label: "Date created" },
+  { key: "updated_at", label: "Date modified" },
+  { key: "opened_at", label: "Last opened" },
 ];
 
-export const PAGE_ACCESS_SPECIFIERS: { key: number; label: string; icon: any }[] = [
-  {
-    key: 0,
-    label: "Public",
-    icon: Globe2,
-  },
-  {
-    key: 1,
-    label: "Private",
-    icon: Lock,
-  },
+export const PAGE_SORT_BY_OPTIONS: {
+  key: TPageFiltersSortBy;
+  label: string;
+}[] = [
+  { key: "asc", label: "Ascending" },
+  { key: "desc", label: "Descending" },
 ];

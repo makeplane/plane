@@ -1,27 +1,17 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { PageEditorBody, PageEditorHeaderRoot } from "components/pages";
+import { AppLayout } from "layouts/app-layout";
+import { NextPageWithLayout } from "lib/types";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import useSWR from "swr";
 import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
-import { IPage } from "@plane/types";
-// hooks
-
+import { TPage } from "@plane/types";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { PageDetailsHeader } from "@/components/headers/page-details";
 import { IssuePeekOverview } from "@/components/issues";
-import { usePage } from "@/hooks/store";
-import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
-// services
-import { AppLayout } from "@/layouts/app-layout";
-import { NextPageWithLayout } from "@/lib/types";
-// layouts
-// components
-// types
-// fetch-keys
-// constants
+import { usePage, useProjectPages } from "@/hooks/store";
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
@@ -33,37 +23,18 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
-  const { createPage, projectPageMap, projectArchivedPageMap, fetchProjectPages, fetchArchivedProjectPages } =
-    useProjectPages();
-  const pageStore = usePage(pageId as string);
+  const { createPage } = useProjectPages(projectId?.toString() ?? "");
+  const pageStore = usePage(projectId?.toString() ?? "", pageId?.toString() ?? "");
 
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
   // form info
-  const { handleSubmit, getValues, control, reset } = useForm<IPage>({
+  const { handleSubmit, getValues, control, reset } = useForm<TPage>({
     defaultValues: {
       name: "",
       description_html: "",
     },
   });
-  // fetch all pages from API
-  useSWR(
-    workspaceSlug && projectId && !projectPageMap[projectId as string] && !projectArchivedPageMap[projectId as string]
-      ? `ALL_PAGES_LIST_${projectId}`
-      : null,
-    workspaceSlug && projectId && !projectPageMap[projectId as string] && !projectArchivedPageMap[projectId as string]
-      ? () => fetchProjectPages(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-  // fetch all archived pages from API
-  useSWR(
-    workspaceSlug && projectId && !projectArchivedPageMap[projectId as string] && !projectPageMap[projectId as string]
-      ? `ALL_ARCHIVED_PAGES_LIST_${projectId}`
-      : null,
-    workspaceSlug && projectId && !projectArchivedPageMap[projectId as string] && !projectPageMap[projectId as string]
-      ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
 
   useEffect(
     () => () => {
@@ -93,12 +64,13 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // we need to get the values of title and description from the page store but we don't have to subscribe to those values
   const pageTitle = pageStore?.name;
 
-  const handleCreatePage = async (payload: Partial<IPage>) => {
+  const handleCreatePage = async (payload: Partial<TPage>) => {
     if (!workspaceSlug || !projectId) return;
-    await createPage(workspaceSlug.toString(), projectId.toString(), payload);
+    await createPage(payload);
   };
 
-  const handleUpdatePage = async (formData: IPage) => pageStore.updateDescription(formData.description_html);
+  const handleUpdatePage = async (formData: TPage) =>
+    pageStore.updateDescription(formData.description_html ?? "<p></p>");
 
   const handleDuplicatePage = async () => {
     const currentPageValues = getValues();
@@ -108,7 +80,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       currentPageValues.description_html = pageStore.description_html;
     }
 
-    const formData: Partial<IPage> = {
+    const formData: Partial<TPage> = {
       name: "Copy of " + pageStore.name,
       description_html: currentPageValues.description_html,
     };

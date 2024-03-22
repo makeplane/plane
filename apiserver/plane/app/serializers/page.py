@@ -17,22 +17,32 @@ from plane.db.models import (
 
 class PageSerializer(BaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
-    label_details = LabelLiteSerializer(
-        read_only=True, source="labels", many=True
-    )
     labels = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
         write_only=True,
         required=False,
     )
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(
-        source="workspace", read_only=True
-    )
 
     class Meta:
         model = Page
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "owned_by",
+            "access",
+            "color",
+            "labels",
+            "parent",
+            "is_favorite",
+            "is_locked", 
+            "archived_at",
+            "workspace",
+            "project",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
         read_only_fields = [
             "workspace",
             "project",
@@ -89,6 +99,13 @@ class PageSerializer(BaseSerializer):
             )
 
         return super().update(instance, validated_data)
+
+
+class PageDetailSerializer(PageSerializer):
+    description_html = serializers.CharField() 
+
+    class Meta(PageSerializer.Meta):
+        fields = PageSerializer.Meta.fields + ['description_html']
 
 
 class SubPageSerializer(BaseSerializer):
