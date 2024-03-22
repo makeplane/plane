@@ -11,7 +11,6 @@ import {
   IIssueMap,
   TSubGroupedIssues,
   TIssueKanbanFilters,
-  TGroupedIssueCount,
   TPaginationData,
 } from "@plane/types";
 import { getGroupByColumns } from "../utils";
@@ -23,7 +22,11 @@ import { KanbanStoreType } from "./base-kanban-root";
 // constants
 
 interface ISubGroupSwimlaneHeader {
-  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
+  getGroupIssueCount: (
+    groupId: string | undefined,
+    subGroupId: string | undefined,
+    isSubGroupCumulative: boolean
+  ) => number | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   list: IGroupByColumn[];
@@ -32,42 +35,40 @@ interface ISubGroupSwimlaneHeader {
   storeType: KanbanStoreType;
 }
 
-const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
-  getGroupIssueCount,
-  sub_group_by,
-  group_by,
-  storeType,
-  list,
-  kanbanFilters,
-  handleKanbanFilters,
-}) => (
-  <div className="relative flex h-max min-h-full w-full items-center gap-2">
-    {list &&
-      list.length > 0 &&
-      list.map((_list: IGroupByColumn) => (
-        <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
-          <HeaderGroupByCard
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            column_id={_list.id}
-            icon={_list.icon}
-            title={_list.name}
-            count={getGroupIssueCount(_list?.id) ?? 0}
-            kanbanFilters={kanbanFilters}
-            handleKanbanFilters={handleKanbanFilters}
-            issuePayload={_list.payload}
-            storeType={storeType}
-          />
-        </div>
-      ))}
-  </div>
+const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
+  ({ getGroupIssueCount, sub_group_by, group_by, storeType, list, kanbanFilters, handleKanbanFilters }) => (
+    <div className="relative flex h-max min-h-full w-full items-center gap-2">
+      {list &&
+        list.length > 0 &&
+        list.map((_list: IGroupByColumn) => (
+          <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
+            <HeaderGroupByCard
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              column_id={_list.id}
+              icon={_list.icon}
+              title={_list.name}
+              count={getGroupIssueCount(_list?.id, undefined, false) ?? 0}
+              kanbanFilters={kanbanFilters}
+              handleKanbanFilters={handleKanbanFilters}
+              issuePayload={_list.payload}
+              storeType={storeType}
+            />
+          </div>
+        ))}
+    </div>
+  )
 );
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   issuesMap: IIssueMap;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
-  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
-  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
+  getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
+  getGroupIssueCount: (
+    groupId: string | undefined,
+    subGroupId: string | undefined,
+    isSubGroupCumulative: boolean
+  ) => number | undefined;
   showEmptyGroup: boolean;
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue:
@@ -123,7 +124,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
       {list &&
         list.length > 0 &&
         list.map((_list: any) => {
-          const issueCount = getGroupIssueCount(_list.id) ?? 0;
+          const issueCount = getGroupIssueCount(undefined, _list.id, true) ?? 0;
           return (
             <div key={_list.id} className="flex flex-shrink-0 flex-col">
               <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
@@ -178,8 +179,12 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
 export interface IKanBanSwimLanes {
   issuesMap: IIssueMap;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
-  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
-  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
+  getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
+  getGroupIssueCount: (
+    groupId: string | undefined,
+    subGroupId: string | undefined,
+    isSubGroupCumulative: boolean
+  ) => number | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;

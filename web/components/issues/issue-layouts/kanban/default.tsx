@@ -34,8 +34,12 @@ import { KanbanStoreType } from "./base-kanban-root";
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
-  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
-  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
+  getGroupIssueCount: (
+    groupId: string | undefined,
+    subGroupId: string | undefined,
+    isSubGroupCumulative: boolean
+  ) => number | undefined;
+  getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
@@ -113,7 +117,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   if (!list) return null;
 
-  const groupWithIssues = list.filter((_list) => (getGroupIssueCount(_list.id) ?? 0) > 0);
+  const groupWithIssues = list.filter((_list) => (getGroupIssueCount(_list.id, undefined, false) ?? 0) > 0);
 
   const groupList = showEmptyGroup ? list : groupWithIssues;
 
@@ -149,7 +153,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                     column_id={_list.id}
                     icon={_list.icon}
                     title={_list.name}
-                    count={getGroupIssueCount(_list.id) ?? 0}
+                    count={getGroupIssueCount(_list.id, undefined, false) ?? 0}
                     issuePayload={_list.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     storeType={storeType}
@@ -196,8 +200,12 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 export interface IKanBan {
   issuesMap: IIssueMap;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
-  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
-  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
+  getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
+  getGroupIssueCount: (
+    groupId: string | undefined,
+    subGroupId: string | undefined,
+    isSubGroupCumulative: boolean
+  ) => number | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;

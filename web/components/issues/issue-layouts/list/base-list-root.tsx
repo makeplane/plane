@@ -105,6 +105,20 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [fetchNextIssues]
   );
 
+  const getPaginationData = useCallback(
+    (groupId?: string) => {
+      return issues?.getPaginationData(groupId, undefined);
+    },
+    [issues?.getPaginationData]
+  );
+
+  const getGroupIssueCount = useCallback(
+    (groupId?: string) => {
+      return issues?.getGroupIssueCount(groupId, undefined, false);
+    },
+    [issues?.getGroupIssueCount]
+  );
+
   return (
     <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.LIST}>
       <div className={`relative h-full w-full bg-custom-background-90`}>
@@ -118,8 +132,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
           viewId={viewId}
-          getPaginationData={issues.getPaginationData}
-          getGroupIssueCount={issues.getGroupIssueCount}
+          getPaginationData={getPaginationData}
+          getGroupIssueCount={getGroupIssueCount}
           quickAddCallback={issues?.quickAddIssue}
           enableIssueQuickAdd={!!enableQuickAdd}
           canEditProperties={canEditProperties}

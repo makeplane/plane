@@ -161,7 +161,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   }
 
   const issueIds = groupedIssueIds[ALL_ISSUES];
-  const nextPageResults = getPaginationData(ALL_ISSUES)?.nextPageResults;
+  const nextPageResults = getPaginationData(ALL_ISSUES, undefined)?.nextPageResults;
 
   const emptyStateType =
     (workspaceProjectIds ?? []).length > 0 ? `workspace-${globalViewId}` : EmptyStateType.WORKSPACE_NO_PROJECTS;

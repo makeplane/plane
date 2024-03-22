@@ -122,7 +122,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
   };
 
   fetchNextIssues = async (workspaceSlug: string, userId: string, groupId?: string, subGroupId?: string) => {
-    const cursorObject = this.getPaginationData(subGroupId ?? groupId);
+    const cursorObject = this.getPaginationData(groupId, subGroupId);
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
       this.loader = "pagination";
