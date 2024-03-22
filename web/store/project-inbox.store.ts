@@ -39,6 +39,7 @@ export interface IProjectInboxStore {
     params?: Partial<TInboxIssueFilterOptions & TPaginationInfo>
   ) => Promise<TInboxIssue[]>;
   fetchInboxIssuesNextPage: (workspaceSlug: string, projectId: string) => Promise<void>;
+  fetchInboxIssuesByIssueId: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TInboxIssue>;
   createInboxIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TInboxIssue>;
   deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
 
@@ -86,6 +87,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       getIssueInboxByIssueId: action,
       fetchInboxIssues: action,
       fetchInboxIssuesNextPage: action,
+      fetchInboxIssuesByIssueId: action,
       createInboxIssue: action,
       deleteInboxIssue: action,
       updateDisplayFilters: action,
@@ -195,6 +197,24 @@ export class ProjectInboxStore implements IProjectInboxStore {
           ...paginationInfo,
         };
       });
+    }
+  };
+
+  fetchInboxIssuesByIssueId = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      runInAction(() => {
+        this.isLoading = true;
+      });
+      const response = await this.inboxIssueService.retrieve(workspaceSlug, projectId, issueId);
+      runInAction(() => {
+        this.isLoading = false;
+        this.inboxIssues[response.id] = new InboxIssueStore(workspaceSlug, projectId, response);
+      });
+      return response;
+    } catch (error) {
+      console.error("Error fetching the inbox issues", error);
+      this.isLoading = false;
+      throw error;
     }
   };
 

@@ -73,9 +73,6 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
             <h3 className="text-sm truncate w-full">{issue.name}</h3>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`} isMobile={isMobile}>
-              <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
-            </Tooltip>
             <Tooltip
               tooltipHeading="Created on"
               tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}

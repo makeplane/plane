@@ -7,7 +7,7 @@ import { TIssue, TInboxIssue, TInboxIssueStatus } from "@plane/types";
 export interface IInboxIssueStore {
   id: string;
   status: TInboxIssueStatus;
-  issue: Partial<TIssue>;
+  issue: TIssue;
   snoozed_till: Date | undefined;
   duplicate_to: string | undefined;
   created_by: string | undefined;
@@ -16,7 +16,7 @@ export interface IInboxIssueStore {
   updateDuplicateTo: (issueId: string) => void;
   updateSnoozeTill: (date: Date) => void;
   updateStatus: (status: TInboxIssueStatus) => void;
-  updateInboxIssue: (data: Partial<TIssue>) => void;
+  updateInboxIssue: (data: Partial<TInboxIssue>) => void;
   deleteInboxIssue: () => void;
 }
 
@@ -26,7 +26,7 @@ export class InboxIssueStore implements IInboxIssueStore {
   // inbox issue observables
   id: string;
   status: TInboxIssueStatus;
-  issue: Partial<TIssue> = {};
+  issue: TIssue;
   snoozed_till: Date | undefined;
   duplicate_to: string | undefined;
   created_by: string | undefined;
@@ -125,7 +125,7 @@ export class InboxIssueStore implements IInboxIssueStore {
       runInAction(() => {
         this.issue = { ...this.issue, ...data };
       });
-      await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.id, data);
+      await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.id, { issue: this.issue });
     } catch (error) {
       throw error;
     }

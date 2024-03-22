@@ -12,7 +12,7 @@ import { IssueLabel, TIssueOperations } from "@/components/issues";
 // icons
 // helper
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useProject, useProjectInbox, useProjectState } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -27,11 +27,9 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
   // store hooks
   const { getProjectById } = useProject();
   const { projectStates } = useProjectState();
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
+  const { getIssueInboxByIssueId } = useProjectInbox();
 
-  const issue = getIssueById(issueId);
+  const issue = getIssueInboxByIssueId(issueId)?.issue;
   if (!issue) return <></>;
 
   const projectDetails = issue ? getProjectById(issue.project_id) : null;
@@ -42,8 +40,8 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
 
   return (
-    <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
-      <div className="flex items-center justify-between px-5 pb-3">
+    <div className="flex h-min w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
+      {/* <div className="flex items-center justify-between px-5 pb-3">
         <div className="flex items-center gap-x-2">
           {currentIssueState && (
             <StateGroupIcon className="h-4 w-4" stateGroup={currentIssueState.group} color={currentIssueState.color} />
@@ -52,9 +50,9 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
             {projectDetails?.identifier}-{issue?.sequence_id}
           </h4>
         </div>
-      </div>
+      </div> */}
 
-      <div className="h-full w-full overflow-y-auto px-5">
+      <div className="h-min w-full overflow-y-auto px-5">
         <h5 className="text-sm font-medium my-4">Properties</h5>
         <div className={`divide-y-2 divide-custom-border-200 ${!is_editable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
@@ -94,7 +92,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm justify-between ${
-                  issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
+                  issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"
                 }`}
                 hideIcon={issue.assignee_ids?.length === 0}
                 dropdownArrow
