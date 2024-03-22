@@ -22,7 +22,7 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
       (m) => {
         let progress = (m.completed_issues + m.cancelled_issues) / m.total_issues;
         if (isNaN(progress)) progress = 0;
-        return orderByKey === "progress" ? progress : !progress;
+        return orderByKey === "progress" ? progress : -progress;
       },
       "name",
     ]);
