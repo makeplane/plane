@@ -523,7 +523,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                 isOpen={issueCrudState?.delete?.toggle}
                 handleClose={() => {
                   handleIssueCrudState("delete", null, null);
-                  toggleDeleteIssueModal(false);
+                  toggleDeleteIssueModal(null);
                 }}
                 data={issueCrudState?.delete?.issue as TIssue}
                 onSubmit={async () =>
