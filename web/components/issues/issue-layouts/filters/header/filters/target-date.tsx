@@ -25,6 +25,17 @@ export const FilterTargetDate: React.FC<Props> = observer((props) => {
     d.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const isCustomDateSelected = () => {
+    const isCustomFateApplied = appliedFilters?.filter((f) => f.includes("-")) || [];
+    return isCustomFateApplied.length > 0 ? true : false;
+  };
+  const handleCustomDate = () => {
+    if (isCustomDateSelected()) {
+      const updateAppliedFilters = appliedFilters?.filter((f) => f.includes("-")) || [];
+      handleUpdate(updateAppliedFilters);
+    } else setIsDateFilterModalOpen(true);
+  };
+
   return (
     <>
       {isDateFilterModalOpen && (
@@ -53,7 +64,7 @@ export const FilterTargetDate: React.FC<Props> = observer((props) => {
                   multiple
                 />
               ))}
-              <FilterOption isChecked={false} onClick={() => setIsDateFilterModalOpen(true)} title="Custom" multiple />
+              <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title="Custom" multiple />
             </>
           ) : (
             <p className="text-xs italic text-custom-text-400">No matches found</p>
