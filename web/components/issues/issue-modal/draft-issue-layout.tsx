@@ -49,28 +49,33 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const { captureIssueEvent } = useEventTracker();
 
   const handleClose = () => {
-    if (changesMade) {
-      Object.entries(changesMade).forEach(([key, value]) => {
-        const issueKey = key as keyof TIssue;
-        if (value === null || value === undefined || value === "") delete changesMade[issueKey];
-        if (typeof value === "object" && isEmpty(value)) delete changesMade[issueKey];
-        if (Array.isArray(value) && value.length === 0) delete changesMade[issueKey];
-        if (issueKey === "project_id") delete changesMade.project_id;
-        if (issueKey === "priority" && value && value === "none") delete changesMade.priority;
-        if (
-          issueKey === "description_html" &&
-          changesMade.description_html &&
-          isEmptyHtmlString(changesMade.description_html)
-        )
-          delete changesMade.description_html;
-      });
-      if (isEmpty(changesMade)) {
-        onClose(false);
-        setIssueDiscardModal(false);
-      } else setIssueDiscardModal(true);
-    } else {
+    if (data?.id) {
       onClose(false);
       setIssueDiscardModal(false);
+    } else {
+      if (changesMade) {
+        Object.entries(changesMade).forEach(([key, value]) => {
+          const issueKey = key as keyof TIssue;
+          if (value === null || value === undefined || value === "") delete changesMade[issueKey];
+          if (typeof value === "object" && isEmpty(value)) delete changesMade[issueKey];
+          if (Array.isArray(value) && value.length === 0) delete changesMade[issueKey];
+          if (issueKey === "project_id") delete changesMade.project_id;
+          if (issueKey === "priority" && value && value === "none") delete changesMade.priority;
+          if (
+            issueKey === "description_html" &&
+            changesMade.description_html &&
+            isEmptyHtmlString(changesMade.description_html)
+          )
+            delete changesMade.description_html;
+        });
+        if (isEmpty(changesMade)) {
+          onClose(false);
+          setIssueDiscardModal(false);
+        } else setIssueDiscardModal(true);
+      } else {
+        onClose(false);
+        setIssueDiscardModal(false);
+      }
     }
   };
 
