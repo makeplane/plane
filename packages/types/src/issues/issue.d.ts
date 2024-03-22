@@ -61,7 +61,14 @@ type TIssueResponseResults =
   | TBaseIssue[]
   | {
       [key: string]: {
-        results: TBaseIssue[];
+        results:
+          | TBaseIssue[]
+          | {
+              [key: string]: {
+                results: TBaseIssue[];
+                total_results: number;
+              };
+            };
         total_results: number;
       };
     };
@@ -72,6 +79,7 @@ export type TIssuesResponse = {
   prev_cursor: string;
   next_page_results: boolean;
   prev_page_results: boolean;
+  total_count: number;
   count: number;
   total_pages: number;
   extra_stats: null;

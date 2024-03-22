@@ -20,7 +20,7 @@ import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-
 // types
 import { IIssueRootStore } from "../root.store";
 // constants
-import { EIssueFilterType, EIssuesStoreType, IssueGroupByOptions } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { computedFn } from "mobx-utils";
 // services
 
@@ -28,7 +28,9 @@ export interface IProjectIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
-    cursor: string | undefined
+    cursor: string | undefined,
+    groupId: string | undefined,
+    subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -94,25 +96,18 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     return filteredRouteParams;
   }
 
-  getFilterParams = computedFn((options: IssuePaginationOptions, cursor: string | undefined) => {
-    const filterParams = this.appliedFilters;
-
-    const paginationOptions: Partial<Record<TIssueParams, string | boolean>> = {
-      ...filterParams,
-      cursor: cursor ? cursor : `${options.perPageCount}:0:0`,
-      per_page: options.perPageCount.toString(),
-    };
-
-    if (options.groupedBy) {
-      paginationOptions.group_by = options.groupedBy;
+  getFilterParams = computedFn(
+    (
+      options: IssuePaginationOptions,
+      cursor: string | undefined,
+      groupId: string | undefined,
+      subGroupId: string | undefined
+    ) => {
+      const filterParams = this.appliedFilters;
+      const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
+      return paginationParams;
     }
-
-    if (options.after && options.before) {
-      paginationOptions["target_date"] = `${options.after};after,${options.before};before`;
-    }
-
-    return paginationOptions;
-  });
+  );
 
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
     try {
@@ -221,7 +216,8 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
-          this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
+          if (this.requiresServerUpdate(updatedDisplayFilters))
+            this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
 
           await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
             display_filters: _filters.displayFilters,

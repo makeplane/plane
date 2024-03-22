@@ -28,7 +28,13 @@ export interface IModuleIssues extends IBaseIssuesStore {
     loadType: TLoader,
     moduleId: string
   ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => Promise<TIssuesResponse | undefined>;
 
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>, moduleId: string) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
@@ -111,7 +117,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
 
       this.moduleId = moduleId;
 
-      const params = this.issueFilterStore?.getFilterParams(options, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
 
       this.onfetchIssues(response, options);
@@ -122,15 +128,27 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     }
   };
 
-  fetchNextIssues = async (workspaceSlug: string, projectId: string, moduleId: string) => {
-    if (!this.paginationOptions || !this.next_page_results) return;
+  fetchNextIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => {
+    const cursorObject = this.getPaginationData(subGroupId ?? groupId);
+    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
       this.loader = "pagination";
 
-      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions, this.nextCursor);
+      const params = this.issueFilterStore?.getFilterParams(
+        this.paginationOptions,
+        cursorObject?.nextCursor,
+        groupId,
+        subGroupId
+      );
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
 
-      this.onfetchNexIssues(response);
+      this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
       this.loader = undefined;
@@ -177,11 +195,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
 
       runInAction(() => {
-        this.moduleId === moduleId &&
-          update(this, "issues", (moduleIssueIds = []) => {
-            if (!moduleIssueIds) return [...issueIds];
-            else return uniq(concat(moduleIssueIds, issueIds));
-          });
+        this.moduleId === moduleId && issueIds.forEach((issueId) => this.addIssueToList(issueId));
       });
 
       issueIds.forEach((issueId) => {
@@ -207,10 +221,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       );
 
       runInAction(() => {
-        this.moduleId === moduleId &&
-          issueIds.forEach((issueId) => {
-            this.issues && pull(this.issues, issueId);
-          });
+        this.moduleId === moduleId && issueIds.forEach((issueId) => this.removeIssueFromList(issueId));
       });
 
       runInAction(() => {
@@ -238,11 +249,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
 
       runInAction(() => {
         moduleIds.forEach((moduleId) => {
-          this.moduleId === moduleId &&
-            update(this, "issues", (moduleIssueIds = []) => {
-              if (moduleIssueIds.includes(issueId)) return moduleIssueIds;
-              else return uniq(concat(moduleIssueIds, [issueId]));
-            });
+          this.moduleId === moduleId && this.addIssueToList(issueId);
         });
         update(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
           uniq(concat(issueModuleIds, moduleIds))
@@ -259,11 +266,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     try {
       runInAction(() => {
         moduleIds.forEach((moduleId) => {
-          this.moduleId === moduleId &&
-            update(this, "issues", (moduleIssueIds = []) => {
-              if (moduleIssueIds.includes(issueId)) return pull(moduleIssueIds, issueId);
-              else return uniq(concat(moduleIssueIds, [issueId]));
-            });
+          this.moduleId === moduleId && this.removeIssueFromList(issueId);
           update(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
             pull(issueModuleIds, moduleId)
           );
@@ -286,7 +289,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
   removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
     try {
       runInAction(() => {
-        this.issues && this.moduleId === this.moduleId && pull(this.issues, issueId);
+        this.moduleId === this.moduleId && this.removeIssueFromList(issueId);
         update(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
           pull(issueModuleIds, moduleId)
         );

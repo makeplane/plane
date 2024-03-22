@@ -13,7 +13,9 @@ import { IssueProperties } from "../properties/all-properties";
 interface IssueBlockProps {
   issueId: string;
   issuesMap: TIssueMap;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;

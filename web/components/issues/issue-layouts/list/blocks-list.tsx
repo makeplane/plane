@@ -3,19 +3,22 @@ import { FC, MutableRefObject } from "react";
 import RenderIfVisible from "components/core/render-if-visible-HOC";
 import { IssueBlock } from "components/issues";
 // types
-import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
+import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import { observer } from "mobx-react";
 
 interface Props {
-  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issueIds: TGroupedIssues | any;
   issuesMap: TIssueMap;
   canEditProperties: (projectId: string | undefined) => boolean;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   containerRef: MutableRefObject<HTMLDivElement | null>;
 }
 
-export const IssueBlocksList: FC<Props> = (props) => {
+export const IssueBlocksList: FC<Props> = observer((props) => {
   const { issueIds, issuesMap, updateIssue, quickActions, displayProperties, canEditProperties, containerRef } = props;
 
   return (
@@ -47,4 +50,4 @@ export const IssueBlocksList: FC<Props> = (props) => {
       )}
     </div>
   );
-};
+});

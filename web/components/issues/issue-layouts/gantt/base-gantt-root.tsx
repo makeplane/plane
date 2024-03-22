@@ -11,12 +11,13 @@ import { useIssuesActions } from "hooks/use-issues-actions";
 // components
 // helpers
 // types
-import { TIssue, TIssueGroup } from "@plane/types";
+import { TIssue } from "@plane/types";
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import useSWR from "swr";
 import { getMonthChartItemPositionWidthInMonth } from "components/gantt-chart/views";
+import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
 
 type GanttStoreType =
   | EIssuesStoreType.PROJECT
@@ -47,7 +48,9 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     revalidateOnReconnect: false,
   });
 
-  const issuesObject = issues.groupedIssueIds?.["All Issues"] as TIssueGroup;
+  const issuesIds = (issues.groupedIssueIds?.[ALL_ISSUES] as string[]) ?? [];
+  const nextPageResults = issues.getPaginationData(ALL_ISSUES)?.nextPageResults;
+
   const { enableIssueCreation } = issues?.viewFlags || {};
 
   const loadMoreIssues = useCallback(() => {
@@ -87,7 +90,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           border={false}
           title="Issues"
           loaderTitle="Issues"
-          blockIds={issuesObject?.issueIds}
+          blockIds={issuesIds}
           getBlockById={getBlockById}
           blockUpdateHandler={updateIssueBlockStructure}
           blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
@@ -103,6 +106,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
             ) : undefined
           }
           loadMoreBlocks={loadMoreIssues}
+          canLoadMoreBlocks={nextPageResults}
           showAllBlocks
         />
       </div>

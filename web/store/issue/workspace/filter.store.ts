@@ -43,7 +43,9 @@ export interface IWorkspaceIssuesFilter extends IBaseIssueFilterStore {
   getFilterParams: (
     viewId: string,
     options: IssuePaginationOptions,
-    cursor?: string
+    cursor: string | undefined,
+    groupId: string | undefined,
+    subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
 }
 
@@ -102,21 +104,20 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     return filteredRouteParams;
   };
 
-  getFilterParams = computedFn((viewId: string, options: IssuePaginationOptions, cursor: string | undefined) => {
-    const filterParams = this.getAppliedFilters(viewId);
+  getFilterParams = computedFn(
+    (
+      viewId: string,
+      options: IssuePaginationOptions,
+      cursor: string | undefined,
+      groupId: string | undefined,
+      subGroupId: string | undefined
+    ) => {
+      const filterParams = this.getAppliedFilters(viewId);
 
-    const paginationOptions: Partial<Record<TIssueParams, string | boolean>> = {
-      ...filterParams,
-      cursor: cursor ? cursor : `${options.perPageCount}:0:0`,
-      per_page: options.perPageCount.toString(),
-    };
-
-    if (options.groupedBy) {
-      paginationOptions.group_by = options.groupedBy;
+      const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
+      return paginationParams;
     }
-
-    return paginationOptions;
-  });
+  );
 
   get issueFilters() {
     const viewId = this.rootIssueStore.globalViewId;
@@ -237,7 +238,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             });
           });
 
-            this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+          this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
 
           if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {

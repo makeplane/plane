@@ -32,6 +32,7 @@ type ChartViewRootProps = {
   showAllBlocks: boolean;
   getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
   loadMoreBlocks?: () => void;
+  canLoadMoreBlocks?: boolean;
   quickAdd?: React.JSX.Element | undefined;
 };
 
@@ -46,6 +47,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     blockUpdateHandler,
     sidebarToRender,
     blockToRender,
+    canLoadMoreBlocks,
     enableBlockLeftResize,
     enableBlockRightResize,
     enableBlockMove,
@@ -163,6 +165,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
         blockIds={blockIds}
         getBlockById={getBlockById}
         loadMoreBlocks={loadMoreBlocks}
+        canLoadMoreBlocks={canLoadMoreBlocks}
         blockToRender={blockToRender}
         blockUpdateHandler={blockUpdateHandler}
         bottomSpacing={bottomSpacing}

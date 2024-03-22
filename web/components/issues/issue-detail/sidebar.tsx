@@ -223,7 +223,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm justify-between ${
-                  issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
+                  issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"
                 }`}
                 hideIcon={issue.assignee_ids?.length === 0}
                 dropdownArrow

@@ -10,23 +10,28 @@ import {
   IIssueDisplayProperties,
   IIssueMap,
   TSubGroupedIssues,
-  TUnGroupedIssues,
+  TPaginationData,
 } from "@plane/types";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 import { KanbanIssueBlockLoader } from "components/ui/loader";
 import { useIntersectionObserver } from "hooks/use-intersection-observer";
+import { observer } from "mobx-react";
 
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
   peekIssueId?: string;
-  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
+  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
@@ -35,7 +40,7 @@ interface IKanbanGroup {
     data: TIssue,
     viewId?: string
   ) => Promise<TIssue | undefined>;
-  loadMoreIssues: (() => void) | undefined;
+  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   viewId?: string;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -44,7 +49,7 @@ interface IKanbanGroup {
   isDragStarted?: boolean;
 }
 
-export const KanbanGroup = (props: IKanbanGroup) => {
+export const KanbanGroup = observer((props: IKanbanGroup) => {
   const {
     groupId,
     sub_group_id,
@@ -52,7 +57,9 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     sub_group_by,
     issuesMap,
     displayProperties,
-    issueIds,
+    groupedIssueIds,
+    getGroupIssueCount,
+    getPaginationData,
     peekIssueId,
     isDragDisabled,
     updateIssue,
@@ -125,6 +132,23 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     return preloadedData;
   };
 
+  const isSubGroup = !!sub_group_id && sub_group_id !== "null";
+
+  const issueIds = isSubGroup
+    ? (groupedIssueIds as TSubGroupedIssues)[groupId][sub_group_id]
+    : (groupedIssueIds as TGroupedIssues)[groupId];
+
+  const groupIssueCount = isSubGroup ? getGroupIssueCount(sub_group_id) : getGroupIssueCount(groupId);
+
+  const nextPageResults = isSubGroup
+    ? getPaginationData(sub_group_id)?.nextPageResults
+    : getPaginationData(groupId)?.nextPageResults;
+
+  const shouldLoadMore =
+    nextPageResults === undefined && groupIssueCount !== undefined
+      ? issueIds?.length < groupIssueCount
+      : !!nextPageResults;
+
   return (
     <div className={`relative w-full h-full transition-all`}>
       <Droppable droppableId={`${groupId}__${sub_group_id}`}>
@@ -139,7 +163,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               columnId={groupId}
               issuesMap={issuesMap}
               peekIssueId={peekIssueId}
-              issueIds={(issueIds as TGroupedIssues)?.[groupId]?.issueIds || []}
+              issueIds={issueIds}
               displayProperties={displayProperties}
               isDragDisabled={isDragDisabled}
               updateIssue={updateIssue}
@@ -151,7 +175,17 @@ export const KanbanGroup = (props: IKanbanGroup) => {
 
             {provided.placeholder}
 
-            {loadMoreIssues && <KanbanIssueBlockLoader ref={intersectionRef} />}
+            {shouldLoadMore && isSubGroup ? (
+              <div
+                className="w-full sticky bottom-0 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
+                onClick={() => loadMoreIssues(groupId, sub_group_id)}
+              >
+                {" "}
+                Load more &darr;
+              </div>
+            ) : (
+              <KanbanIssueBlockLoader ref={intersectionRef} />
+            )}
 
             {enableQuickIssueCreate && !disableIssueCreation && (
               <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
@@ -172,4 +206,4 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       </Droppable>
     </div>
   );
-};
+});

@@ -6,12 +6,18 @@ import {
   IIssueFilterOptions,
   IIssueFilters,
   IIssueFiltersResponse,
+  IssuePaginationOptions,
   TIssueKanbanFilters,
   TIssueParams,
   TStaticViewTypes,
 } from "@plane/types";
 // constants
-import { EIssueFilterType, EIssuesStoreType, IssueGroupByOptions } from "constants/issue";
+import {
+  EIssueFilterType,
+  EIssuesStoreType,
+  EIssueGroupByToServerOptions,
+  EServerGroupByToFilterOptions,
+} from "constants/issue";
 // lib
 import { storage } from "lib/local-storage";
 
@@ -89,7 +95,10 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       project: filters?.project || undefined,
       subscriber: filters?.subscriber || undefined,
       // display filters
-      group_by: displayFilters?.group_by ? IssueGroupByOptions[displayFilters.group_by] : undefined,
+      group_by: displayFilters?.group_by ? EIssueGroupByToServerOptions[displayFilters.group_by] : undefined,
+      sub_group_by: displayFilters?.sub_group_by
+        ? EIssueGroupByToServerOptions[displayFilters.sub_group_by]
+        : undefined,
       order_by: displayFilters?.order_by || undefined,
       type: displayFilters?.type || undefined,
       sub_issue: displayFilters?.sub_issue ?? true,
@@ -209,7 +218,6 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     cycle: displayProperties?.cycle ?? true,
   });
 
-
   handleIssuesLocalFilters = {
     fetchFiltersFromStorage: () => {
       const _filters = storage.get("issue_local_filters");
@@ -272,4 +280,64 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       storage.set("issue_local_filters", JSON.stringify(storageFilters));
     },
   };
+
+  /**
+   * This Method returns true if the display properties changed requires a server side update
+   * @param displayFilters
+   * @returns
+   */
+  requiresServerUpdate = (displayFilters: IIssueDisplayFilterOptions) => {
+    const NON_SERVER_DISPLAY_FILTERS = ["order_by", "sub_issue", "type"];
+    const displayFilterKeys = Object.keys(displayFilters);
+
+    return NON_SERVER_DISPLAY_FILTERS.some((serverDisplayfilter: string) =>
+      displayFilterKeys.includes(serverDisplayfilter)
+    );
+  };
+
+  getPaginationParams(
+    filterParams: Partial<Record<TIssueParams, string | boolean>> | undefined,
+    options: IssuePaginationOptions,
+    cursor: string | undefined,
+    groupId?: string,
+    subGroupId?: string
+  ) {
+    const pageCursor = cursor ? cursor : groupId ? `${options.perPageCount * 2}:0:0` : `${options.perPageCount}:0:0`;
+
+    const paginationParams: Partial<Record<TIssueParams, string | boolean>> = {
+      ...filterParams,
+      cursor: pageCursor,
+      per_page: (groupId ? options.perPageCount * 2 : options.perPageCount).toString(),
+    };
+
+    if (options.groupedBy) {
+      paginationParams.group_by = options.groupedBy;
+    }
+
+    if (options.after && options.before) {
+      paginationParams["target_date"] = `${options.after};after,${options.before};before`;
+    }
+
+    if (groupId) {
+      const groupBy = paginationParams["group_by"] as EIssueGroupByToServerOptions | undefined;
+      delete paginationParams["group_by"];
+
+      if (groupBy) {
+        const groupByFilterOption = EServerGroupByToFilterOptions[groupBy];
+        paginationParams[groupByFilterOption] = groupId;
+      }
+    }
+
+    if (subGroupId) {
+      const subGroupBy = paginationParams["sub_group_by"] as EIssueGroupByToServerOptions | undefined;
+      delete paginationParams["sub_group_by"];
+
+      if (subGroupBy) {
+        const subGroupByFilterOption = EServerGroupByToFilterOptions[subGroupBy];
+        paginationParams[subGroupByFilterOption] = subGroupId;
+      }
+    }
+
+    return paginationParams;
+  }
 }

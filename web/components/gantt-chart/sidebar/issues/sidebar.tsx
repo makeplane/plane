@@ -7,23 +7,34 @@ import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
 import { observer } from "mobx-react";
 import { IssueDraggableBlock } from "./issue-draggable-block";
 import { useIntersectionObserver } from "hooks/use-intersection-observer";
-import { useRef } from "react";
+import { RefObject, useRef } from "react";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   getBlockById: (id: string) => IGanttBlock;
+  canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
+  ganttContainerRef: RefObject<HTMLDivElement>;
   blockIds: string[];
   enableReorder: boolean;
   showAllBlocks?: boolean;
 };
 
 export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
-  const { blockUpdateHandler, blockIds, getBlockById, enableReorder, loadMoreBlocks, showAllBlocks = false } = props;
+  const {
+    blockUpdateHandler,
+    blockIds,
+    getBlockById,
+    enableReorder,
+    loadMoreBlocks,
+    canLoadMoreBlocks,
+    ganttContainerRef,
+    showAllBlocks = false,
+  } = props;
 
   const intersectionRef = useRef<HTMLSpanElement | null>(null);
 
-  useIntersectionObserver(undefined, intersectionRef, loadMoreBlocks);
+  useIntersectionObserver(ganttContainerRef, intersectionRef, loadMoreBlocks, "50% 0% 50% 0%");
 
   const handleOrderChange = (result: DropResult) => {
     if (!blockIds) return;
@@ -85,7 +96,9 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
                       getBlockById={getBlockById}
                     />
                   ))}
-                  <span ref={intersectionRef} className="h-5 w-10 bg-custom-background-80 rounded animate-pulse" />
+                  {canLoadMoreBlocks && (
+                    <span ref={intersectionRef} className="h-5 w-10 bg-custom-background-80 rounded animate-pulse" />
+                  )}
                 </>
               ) : (
                 <Loader className="space-y-3 pr-2">

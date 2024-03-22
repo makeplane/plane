@@ -24,6 +24,7 @@ import { useGanttChart } from "../hooks/use-gantt-chart";
 type Props = {
   blockIds: string[];
   getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
+  canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
@@ -58,6 +59,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
     showAllBlocks,
     sidebarToRender,
     title,
+    canLoadMoreBlocks,
     updateCurrentViewRenderPayload,
     quickAdd,
   } = props;
@@ -110,6 +112,8 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
         blockIds={blockIds}
         getBlockById={getBlockById}
         loadMoreBlocks={loadMoreBlocks}
+        canLoadMoreBlocks={canLoadMoreBlocks}
+        ganttContainerRef={ganttContainerRef}
         blockUpdateHandler={blockUpdateHandler}
         enableReorder={enableReorder}
         sidebarToRender={sidebarToRender}

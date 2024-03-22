@@ -31,7 +31,8 @@ type Props = {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
-  onEndOfListTrigger: () => void;
+  canLoadMoreIssues: boolean;
+  loadMoreIssues: () => void;
   enableQuickCreateIssue?: boolean;
   disableIssueCreation?: boolean;
 };
@@ -49,7 +50,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     canEditProperties,
     enableQuickCreateIssue,
     disableIssueCreation,
-    onEndOfListTrigger,
+    canLoadMoreIssues,
+    loadMoreIssues,
   } = props;
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
@@ -81,7 +83,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           updateIssue={updateIssue}
           canEditProperties={canEditProperties}
           containerRef={containerRef}
-          onEndOfListTrigger={onEndOfListTrigger}
+          canLoadMoreIssues={canLoadMoreIssues}
+          loadMoreIssues={loadMoreIssues}
         />
       </div>
       <div className="border-t border-custom-border-100">

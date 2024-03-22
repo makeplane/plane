@@ -2,11 +2,14 @@
 import { ChartDataType, IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
 // constants
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
+import { RefObject } from "react";
 
 type Props = {
   blockIds: string[];
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
+  canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
+  ganttContainerRef: RefObject<HTMLDivElement>;
   enableReorder: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
@@ -22,6 +25,8 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
     sidebarToRender,
     getBlockById,
     loadMoreBlocks,
+    canLoadMoreBlocks,
+    ganttContainerRef,
     title,
     quickAdd,
   } = props;
@@ -47,7 +52,16 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
 
       <div className="min-h-full h-max bg-custom-background-100 overflow-x-hidden overflow-y-auto">
         {sidebarToRender &&
-          sidebarToRender({ title, blockUpdateHandler, blockIds, getBlockById, enableReorder, loadMoreBlocks })}
+          sidebarToRender({
+            title,
+            blockUpdateHandler,
+            blockIds,
+            getBlockById,
+            enableReorder,
+            canLoadMoreBlocks,
+            ganttContainerRef,
+            loadMoreBlocks,
+          })}
       </div>
       {quickAdd ? quickAdd : null}
     </div>

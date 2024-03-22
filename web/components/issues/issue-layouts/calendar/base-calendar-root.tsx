@@ -12,7 +12,7 @@ import { useCalendarView, useIssues, useUser } from "hooks/store";
 import { useIssuesActions } from "hooks/use-issues-actions";
 // ui
 // types
-import { EIssueLayoutTypes, EIssuesStoreType, IssueGroupByOptions } from "constants/issue";
+import { EIssueLayoutTypes, EIssuesStoreType, EIssueGroupByToServerOptions } from "constants/issue";
 import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";
 import { EUserProjectRoles } from "constants/project";
@@ -68,14 +68,14 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   useSWR(
     startDate && endDate && layout ? `ISSUE_CALENDAR_LAYOUT_${storeType}_${startDate}_${endDate}_${layout}` : null,
-    startDate && endDate
+    startDate && endDate && layout
       ? () =>
           fetchIssues("init-loader", {
             canGroup: true,
             perPageCount: layout === "month" ? 4 : 30,
             before: endDate,
             after: startDate,
-            groupedBy: IssueGroupByOptions["target_date"],
+            groupedBy: EIssueGroupByToServerOptions["target_date"],
           })
       : null,
     {
@@ -112,9 +112,12 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     }
   };
 
-  const loadMoreIssues = useCallback(() => {
-    fetchNextIssues();
-  }, [fetchNextIssues]);
+  const loadMoreIssues = useCallback(
+    (dateString: string) => {
+      fetchNextIssues(dateString);
+    },
+    [fetchNextIssues]
+  );
 
   return (
     <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.CALENDAR}>
@@ -142,6 +145,8 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
               />
             )}
             loadMoreIssues={loadMoreIssues}
+            getPaginationData={issues.getPaginationData}
+            getGroupIssueCount={issues.getGroupIssueCount}
             addIssuesToView={addIssuesToView}
             quickAddCallback={issues.quickAddIssue}
             viewId={viewId}

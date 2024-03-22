@@ -17,8 +17,15 @@ import { SpreadsheetLayoutLoader } from "components/ui";
 import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import {
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+} from "constants/issue";
 import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
+import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -30,7 +37,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },
-    issues: { loader, issueCount: totalIssueCount, groupedIssueIds, fetchIssues, fetchNextIssues },
+    issues: { loader, getPaginationData, groupedIssueIds, fetchIssues, fetchNextIssues },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue, removeIssue, archiveIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
 
@@ -153,53 +160,28 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     return <SpreadsheetLayoutLoader />;
   }
 
-  const {
-    "All Issues": { issueIds, issueCount },
-  } = groupedIssueIds;
+  const issueIds = groupedIssueIds[ALL_ISSUES];
+  const nextPageResults = getPaginationData(ALL_ISSUES)?.nextPageResults;
 
   const emptyStateType =
     (workspaceProjectIds ?? []).length > 0 ? `workspace-${globalViewId}` : EmptyStateType.WORKSPACE_NO_PROJECTS;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden">
-      <div className="relative h-full w-full flex flex-col">
-        <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId.toString()} />
-        {!totalIssueCount ? (
-          <EmptyState
-            type={emptyStateType as keyof typeof EMPTY_STATE_DETAILS}
-            size="sm"
-            primaryButtonOnClick={
-              (workspaceProjectIds ?? []).length > 0
-                ? globalViewId !== "custom-view" && globalViewId !== "subscribed"
-                  ? () => {
-                      setTrackElement("All issues empty state");
-                      commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
-                    }
-                  : undefined
-                : () => {
-                    setTrackElement("All issues empty state");
-                    commandPaletteStore.toggleCreateProjectModal(true);
-                  }
-            }
-          />
-        ) : (
-          <Fragment>
-            <SpreadsheetView
-              displayProperties={issueFilters?.displayProperties ?? {}}
-              displayFilters={issueFilters?.displayFilters ?? {}}
-              handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-              issueIds={Array.isArray(issueIds) ? issueIds : []}
-              quickActions={renderQuickActions}
-              updateIssue={updateIssue}
-              canEditProperties={canEditProperties}
-              viewId={globalViewId.toString()}
-              onEndOfListTrigger={fetchNextPages}
-            />
-            {/* peek overview */}
-            <IssuePeekOverview />
-          </Fragment>
-        )}
-      </div>
-    </div>
+    <IssueLayoutHOC storeType={EIssuesStoreType.GLOBAL} layout={EIssueLayoutTypes.SPREADSHEET}>
+      <SpreadsheetView
+        displayProperties={issueFilters?.displayProperties ?? {}}
+        displayFilters={issueFilters?.displayFilters ?? {}}
+        handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+        issueIds={Array.isArray(issueIds) ? issueIds : []}
+        quickActions={renderQuickActions}
+        updateIssue={updateIssue}
+        canEditProperties={canEditProperties}
+        viewId={globalViewId.toString()}
+        canLoadMoreIssues={!!nextPageResults}
+        loadMoreIssues={fetchNextPages}
+      />
+      {/* peek overview */}
+      <IssuePeekOverview />
+    </IssueLayoutHOC>
   );
 });

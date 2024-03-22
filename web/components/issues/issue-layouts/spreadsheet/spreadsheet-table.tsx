@@ -25,7 +25,8 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
-  onEndOfListTrigger: () => void;
+  canLoadMoreIssues: boolean;
+  loadMoreIssues: () => void;
 };
 
 export const SpreadsheetTable = observer((props: Props) => {
@@ -39,8 +40,9 @@ export const SpreadsheetTable = observer((props: Props) => {
     quickActions,
     updateIssue,
     canEditProperties,
+    canLoadMoreIssues,
     containerRef,
-    onEndOfListTrigger,
+    loadMoreIssues,
   } = props;
 
   // states
@@ -80,27 +82,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     };
   }, [handleScroll, containerRef]);
 
-  // useEffect(() => {
-  //   if (intersectionRef.current) {
-  //     const observer = new IntersectionObserver(
-  //       (entries) => {
-  //         if (entries[0].isIntersecting) onEndOfListTrigger();
-  //       },
-  //       {
-  //         root: containerRef?.current,
-  //         rootMargin: `50% 0% 50% 0%`,
-  //       }
-  //     );
-  //     observer.observe(intersectionRef.current);
-  //     return () => {
-  //       if (intersectionRef.current) {
-  //         // eslint-disable-next-line react-hooks/exhaustive-deps
-  //         observer.unobserve(intersectionRef.current);
-  //       }
-  //     };
-  //   }
-  // }, [intersectionRef, containerRef]);
-  useIntersectionObserver(containerRef, intersectionRef, onEndOfListTrigger, `50% 0% 50% 0%`);
+  useIntersectionObserver(containerRef, intersectionRef, loadMoreIssues, `50% 0% 50% 0%`);
 
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
@@ -130,7 +112,7 @@ export const SpreadsheetTable = observer((props: Props) => {
           />
         ))}
       </tbody>
-      <tfoot ref={intersectionRef}>Loading...</tfoot>
+      {canLoadMoreIssues && <tfoot ref={intersectionRef}>Loading...</tfoot>}
     </table>
   );
 });

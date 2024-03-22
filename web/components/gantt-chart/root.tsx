@@ -14,6 +14,7 @@ type GanttChartRootProps = {
   sidebarToRender: (props: any) => React.ReactNode;
   quickAdd?: React.JSX.Element | undefined;
   getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
+  canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
   enableBlockLeftResize?: boolean;
   enableBlockRightResize?: boolean;
@@ -35,6 +36,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
     blockToRender,
     getBlockById,
     loadMoreBlocks,
+    canLoadMoreBlocks,
     enableBlockLeftResize = false,
     enableBlockRightResize = false,
     enableBlockMove = false,
@@ -53,6 +55,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
         blockIds={blockIds}
         getBlockById={getBlockById}
         loadMoreBlocks={loadMoreBlocks}
+        canLoadMoreBlocks={canLoadMoreBlocks}
         loaderTitle={loaderTitle}
         blockUpdateHandler={blockUpdateHandler}
         sidebarToRender={sidebarToRender}

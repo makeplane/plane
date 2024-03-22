@@ -9,6 +9,7 @@ import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 import { observer } from "mobx-react";
 import { IssueLayoutEmptyState } from "./empty-states";
+import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
 
 const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
   const { layout } = props;
@@ -43,7 +44,7 @@ export const IssueLayoutHOC = observer((props: Props) => {
     return <ActiveLoader layout={layout} />;
   }
 
-  if (issues.issueCount === 0) {
+  if (issues.getGroupIssueCount(ALL_ISSUES) === 0) {
     return <IssueLayoutEmptyState storeType={storeType} />;
   }
 
