@@ -91,22 +91,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
         />
       )}
 
-      {issue && !is_archived && (
+      {issue && isDeleteIssueModalOpen === issue.id && (
         <DeleteIssueModal
-          isOpen={isDeleteIssueModalOpen}
+          isOpen={!!isDeleteIssueModalOpen}
           handleClose={() => {
-            toggleDeleteIssueModal(false);
+            toggleDeleteIssueModal(null);
+            removeRoutePeekId();
           }}
           data={issue}
-          onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId)}
-        />
-      )}
-
-      {issue && is_archived && (
-        <DeleteIssueModal
-          data={issue}
-          isOpen={isDeleteIssueModalOpen}
-          handleClose={() => toggleDeleteIssueModal(false)}
           onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId)}
         />
       )}
