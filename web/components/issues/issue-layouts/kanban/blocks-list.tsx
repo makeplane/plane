@@ -2,6 +2,7 @@ import { MutableRefObject, memo } from "react";
 //types
 import { KanbanIssueBlock } from "components/issues";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+import { observer } from "mobx-react";
 // components
 
 interface IssueBlocksListProps {
@@ -21,7 +22,7 @@ interface IssueBlocksListProps {
   isDragStarted?: boolean;
 }
 
-const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
+export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((props) => {
   const {
     sub_group_id,
     columnId,
@@ -71,6 +72,4 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
       ) : null}
     </>
   );
-};
-
-export const KanbanIssueBlocksList = memo(KanbanIssueBlocksListMemo);
+});

@@ -58,8 +58,12 @@ export interface IBaseIssuesStore {
   issueDisplayFiltersDefaultData(groupBy: string | null): string[];
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
   getGroupArray(value: boolean | number | string | string[] | null, isDate?: boolean): string[];
-  getPaginationData(groupId: string | undefined): TPaginationData | undefined;
-  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
+  getPaginationData(groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined;
+  getGroupIssueCount: (
+    groupId: string | undefined,
+    subGroupId: string | undefined,
+    isSubGroupCumulative: boolean
+  ) => number | undefined;
 }
 
 const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
@@ -144,14 +148,20 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
     if (!displayFilters) return;
 
-    return displayFilters?.group_by;
+    const layout = displayFilters?.layout;
+
+    return layout === "calendar"
+      ? "target_date"
+      : ["list", "kanban"]?.includes(layout)
+      ? displayFilters?.group_by
+      : undefined;
   }
 
   get subGroupBy() {
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
     if (!displayFilters || displayFilters.group_by === displayFilters.sub_group_by) return;
 
-    return displayFilters?.sub_group_by;
+    return displayFilters?.layout === "kanban" ? displayFilters?.sub_group_by : undefined;
   }
 
   get issueGroupKey() {
@@ -208,19 +218,22 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       const issueGroupCount = groupedIssueCount[ALL_ISSUES];
       const issuesPath = [groupId];
 
-      if (!subGroupId) {
-        set(this.groupedIssueCount, [groupId], issueGroupCount);
-      }
+      if (subGroupId) issuesPath.push(subGroupId);
+
+      set(this.groupedIssueCount, [this.getGroupKey(groupId, subGroupId)], issueGroupCount);
 
       this.updateIssueGroup(issueGroup, issuesPath);
       return;
     }
+
+    set(this.groupedIssueCount, [ALL_ISSUES], groupedIssueCount[ALL_ISSUES]);
 
     for (const groupId in groupedIssues) {
       const issueGroup = groupedIssues[groupId];
       const issueGroupCount = groupedIssueCount[groupId];
 
       set(this.groupedIssueCount, [groupId], issueGroupCount);
+
       const shouldContinue = this.updateIssueGroup(issueGroup, [groupId]);
       if (shouldContinue) continue;
 
@@ -228,7 +241,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
         const issueSubGroup = (issueGroup as TGroupedIssues)[subGroupId];
         const issueSubGroupCount = groupedIssueCount[subGroupId];
 
-        set(this.groupedIssueCount, [subGroupId], issueSubGroupCount);
+        set(this.groupedIssueCount, [this.getGroupKey(groupId, subGroupId)], issueSubGroupCount);
         this.updateIssueGroup(issueSubGroup, [groupId, subGroupId]);
       }
     }
@@ -421,22 +434,23 @@ export class BaseIssuesStore implements IBaseIssuesStore {
   updateIssueCount(path: string[], increment: number) {
     const [groupId, subGroupId] = path;
 
-    if (subGroupId) {
-      const subGroupIssueCount = get(this.groupedIssueCount, [subGroupId]);
+    if (subGroupId && groupId) {
+      const groupKey = this.getGroupKey(groupId, subGroupId);
+      const subGroupIssueCount = get(this.groupedIssueCount, groupKey);
 
-      set(this.groupedIssueCount, [subGroupId], subGroupIssueCount + increment);
+      set(this.groupedIssueCount, groupKey, subGroupIssueCount + increment);
     }
 
     if (groupId) {
       const groupIssueCount = get(this.groupedIssueCount, [groupId]);
 
-      set(this.groupedIssueCount, [groupId], groupIssueCount + increment);
+      set(this.groupedIssueCount, groupId, groupIssueCount + increment);
     }
 
     if (groupId !== ALL_ISSUES) {
       const totalIssueCount = get(this.groupedIssueCount, [ALL_ISSUES]);
 
-      set(this.groupedIssueCount, [ALL_ISSUES], totalIssueCount + increment);
+      set(this.groupedIssueCount, ALL_ISSUES, totalIssueCount + increment);
     }
   }
 
@@ -909,6 +923,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     const groupedIssues: TGroupedIssues | TSubGroupedIssues = {};
     const groupedIssueCount: TGroupedIssueCount = {};
 
+    set(groupedIssueCount, [ALL_ISSUES], issueResponse.total_count);
+
     for (const groupId in issueResult) {
       const groupIssuesObject = issueResult[groupId];
       const groupIssueResult = groupIssuesObject?.results;
@@ -933,7 +949,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
         if (!subGroupIssueResult) continue;
 
-        set(groupedIssueCount, [subGroupId], subGroupIssuesObject.total_results);
+        set(groupedIssueCount, [this.getGroupKey(groupId, subGroupId)], subGroupIssuesObject.total_results);
 
         if (Array.isArray(subGroupIssueResult)) {
           issueList.push(...subGroupIssueResult);
@@ -964,32 +980,39 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       nextPageResults,
     };
 
-    if (groupId && subGroupId) {
-      set(this.issuePaginationData, [subGroupId], cursorObject);
-      return;
-    }
-
-    if (groupId) {
-      set(this.issuePaginationData, [groupId], cursorObject);
-      return;
-    }
-
-    set(this.issuePaginationData, [ALL_ISSUES], cursorObject);
+    set(this.issuePaginationData, [this.getGroupKey(groupId, subGroupId)], cursorObject);
   }
 
-  getPaginationData = computedFn((groupId: string | undefined): TPaginationData | undefined => {
-    if (groupId) {
-      return get(this.issuePaginationData, [groupId]);
+  getGroupKey(groupId?: string, subGroupId?: string) {
+    if (groupId && subGroupId) return `${groupId}_${subGroupId}`;
+
+    if (groupId) return groupId;
+
+    return ALL_ISSUES;
+  }
+
+  getPaginationData = computedFn(
+    (groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined => {
+      return get(this.issuePaginationData, [this.getGroupKey(groupId, subGroupId)]);
     }
+  );
 
-    return get(this.issuePaginationData, [ALL_ISSUES]);
-  });
+  getGroupIssueCount = computedFn(
+    (
+      groupId: string | undefined,
+      subGroupId: string | undefined,
+      isSubGroupCumulative: boolean
+    ): number | undefined => {
+      if (isSubGroupCumulative && subGroupId) {
+        const groupIssuesKeys = Object.keys(this.groupedIssueCount);
+        let subGroupCumulativeCount = 0;
 
-  getGroupIssueCount = computedFn((groupId: string | undefined): number | undefined => {
-    if (groupId) {
-      return get(this.groupedIssueCount, [groupId]);
+        for (const groupKey of groupIssuesKeys) {
+          if (groupKey.includes(subGroupId)) subGroupCumulativeCount += this.groupedIssueCount[groupKey];
+        }
+      }
+
+      return get(this.groupedIssueCount, [this.getGroupKey(groupId, subGroupId)]);
     }
-
-    return get(this.groupedIssueCount, [ALL_ISSUES]);
-  });
+  );
 }

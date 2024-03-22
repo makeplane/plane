@@ -74,7 +74,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   );
 
   const issueIds = issues.groupedIssueIds?.[ALL_ISSUES] ?? [];
-  const nextPageResults = issues.getPaginationData(ALL_ISSUES)?.nextPageResults;
+  const nextPageResults = issues.getPaginationData(ALL_ISSUES, undefined)?.nextPageResults;
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {

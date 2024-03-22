@@ -44,7 +44,7 @@ export const IssueLayoutHOC = observer((props: Props) => {
     return <ActiveLoader layout={layout} />;
   }
 
-  if (issues.getGroupIssueCount(ALL_ISSUES) === 0) {
+  if (issues.getGroupIssueCount(undefined, undefined, false) === 0) {
     return <IssueLayoutEmptyState storeType={storeType} />;
   }
 

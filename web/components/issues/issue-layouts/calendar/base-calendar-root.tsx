@@ -119,6 +119,20 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     [fetchNextIssues]
   );
 
+  const getPaginationData = useCallback(
+    (groupId: string | undefined) => {
+      return issues?.getPaginationData(groupId, undefined);
+    },
+    [issues?.getPaginationData]
+  );
+
+  const getGroupIssueCount = useCallback(
+    (groupId: string | undefined) => {
+      return issues?.getGroupIssueCount(groupId, undefined, false);
+    },
+    [issues?.getGroupIssueCount]
+  );
+
   return (
     <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.CALENDAR}>
       <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
@@ -145,8 +159,8 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
               />
             )}
             loadMoreIssues={loadMoreIssues}
-            getPaginationData={issues.getPaginationData}
-            getGroupIssueCount={issues.getGroupIssueCount}
+            getPaginationData={getPaginationData}
+            getGroupIssueCount={getGroupIssueCount}
             addIssuesToView={addIssuesToView}
             quickAddCallback={issues.quickAddIssue}
             viewId={viewId}

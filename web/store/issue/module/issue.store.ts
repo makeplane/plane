@@ -135,7 +135,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     groupId?: string,
     subGroupId?: string
   ) => {
-    const cursorObject = this.getPaginationData(subGroupId ?? groupId);
+    const cursorObject = this.getPaginationData(groupId, subGroupId);
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
       this.loader = "pagination";

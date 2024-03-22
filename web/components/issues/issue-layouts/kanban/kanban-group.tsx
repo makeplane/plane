@@ -22,8 +22,12 @@ interface IKanbanGroup {
   issuesMap: IIssueMap;
   peekIssueId?: string;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
-  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
-  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
+  getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
+  getGroupIssueCount: (
+    groupId: string | undefined,
+    subGroupId: string | undefined,
+    isSubGroupCumulative: boolean
+  ) => number | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
@@ -135,14 +139,14 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   const issueIds = isSubGroup
-    ? (groupedIssueIds as TSubGroupedIssues)[groupId][sub_group_id]
-    : (groupedIssueIds as TGroupedIssues)[groupId];
+    ? (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[sub_group_id]
+    : (groupedIssueIds as TGroupedIssues)?.[groupId];
 
-  const groupIssueCount = isSubGroup ? getGroupIssueCount(sub_group_id) : getGroupIssueCount(groupId);
+  if (!issueIds) return null;
 
-  const nextPageResults = isSubGroup
-    ? getPaginationData(sub_group_id)?.nextPageResults
-    : getPaginationData(groupId)?.nextPageResults;
+  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false);
+
+  const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
 
   const shouldLoadMore =
     nextPageResults === undefined && groupIssueCount !== undefined
