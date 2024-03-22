@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Sparkle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Sparkle } from "lucide-react";
 // ui
 import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
