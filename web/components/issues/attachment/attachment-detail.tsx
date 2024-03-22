@@ -1,16 +1,16 @@
 import { FC } from "react";
-import { getFileIcon } from "components/icons";
-import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { truncateText } from "helpers/string.helper";
-import { useIssueDetail, useMember } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
+import { Tooltip } from "@plane/ui";
+import { getFileIcon } from "@/components/icons";
+import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/attachment.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { truncateText } from "@/helpers/string.helper";
+import { useIssueDetail, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
 // ui
-import { Tooltip } from "@plane/ui";
 // components
 // icons
 // helper
