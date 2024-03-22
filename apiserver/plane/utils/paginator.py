@@ -457,7 +457,9 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         )
 
     def __get_subgroup_total_queryset(self):
-        return self.queryset.values(self.sub_group_by_field_name).annotate(
+        return self.queryset.values(
+            self.group_by_field_name, self.sub_group_by_field_name
+        ).annotate(
             count=Count(
                 "id",
                 filter=self.count_filter,
