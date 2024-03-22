@@ -601,6 +601,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChange(cycleId);
                             handleFormChange();
                           }}
+                          placeholder="Cycle"
                           value={value}
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("cycle_id")}
@@ -622,6 +623,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChange(moduleIds);
                             handleFormChange();
                           }}
+                          placeholder="Modules"
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("module_ids")}
                           multiple
