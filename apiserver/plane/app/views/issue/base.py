@@ -385,7 +385,11 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 )
         else:
             return self.paginate(
-                order_by=order_by_param,
+                order_by=(
+                    "priority_order"
+                    if order_by_param in ["priority", "-priority"]
+                    else order_by_param
+                ),
                 request=request,
                 queryset=issue_queryset,
                 on_results=lambda issues: issue_on_results(
