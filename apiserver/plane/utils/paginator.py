@@ -6,9 +6,9 @@ from collections.abc import Sequence
 # Django imports
 from django.db.models import Count, F, Window
 from django.db.models.functions import RowNumber
-from rest_framework.exceptions import ParseError
 
 # Third party imports
+from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
 # Module imports
@@ -115,7 +115,9 @@ class OffsetPaginator:
 
         queryset = self.queryset
         if self.key:
-            queryset = queryset.order_by(*self.key)
+            queryset = queryset.order_by(
+                *self.key,
+            )
 
         page = cursor.offset
         offset = cursor.offset * cursor.value
@@ -505,12 +507,6 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             }
             for group in self.group_by_fields
         }
-
-    def __result_already_added(self, result, group):
-        for existing_issue in group:
-            if existing_issue["id"] == result["id"]:
-                return True
-        return False
 
     def __query_multi_grouper(self, results):
         processed_results = self.__get_field_dict()
