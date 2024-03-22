@@ -161,7 +161,11 @@ export const PageRenderer = (props: IPageRenderer) => {
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                editor.chain().focus("start").run();
+                editor
+                  .chain()
+                  .insertContentAt(0, [{ type: "paragraph" }])
+                  .focus()
+                  .run();
               }
             }}
             value={pageTitle}
