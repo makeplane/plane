@@ -34,12 +34,14 @@ import { IssueArchiveService, IssueDraftService, IssueService } from "services/i
 import set from "lodash/set";
 import { get } from "lodash";
 import { computedFn } from "mobx-utils";
+import isEqual from "date-fns/isEqual";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
 export enum EIssueGroupedAction {
   ADD,
   DELETE,
+  REORDER,
 }
 
 export const ALL_ISSUES = "All Issues";
@@ -77,6 +79,38 @@ const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue
   target_date: "target_date",
   cycle: "cycle_id",
   module: "module_ids",
+};
+
+const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
+  created_at: "created_at",
+  "-created_at": "created_at",
+  updated_at: "updated_at",
+  "-updated_at": "updated_at",
+  priority: "priority",
+  "-priority": "priority",
+  sort_order: "sort_order",
+  state__name: "state_id",
+  "-state__name": "state_id",
+  assignees__first_name: "assignee_ids",
+  "-assignees__first_name": "assignee_ids",
+  labels__name: "label_ids",
+  "-labels__name": "label_ids",
+  modules__name: "module_ids",
+  "-modules__name": "module_ids",
+  cycle__name: "cycle_id",
+  "-cycle__name": "cycle_id",
+  target_date: "target_date",
+  "-target_date": "target_date",
+  estimate_point: "estimate_point",
+  "-estimate_point": "estimate_point",
+  start_date: "start_date",
+  "-start_date": "start_date",
+  link_count: "link_count",
+  "-link_count": "link_count",
+  attachment_count: "attachment_count",
+  "-attachment_count": "attachment_count",
+  sub_issues_count: "sub_issues_count",
+  "-sub_issues_count": "sub_issues_count",
 };
 
 export class BaseIssuesStore implements IBaseIssuesStore {
@@ -162,6 +196,13 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     if (!displayFilters || displayFilters.group_by === displayFilters.sub_group_by) return;
 
     return displayFilters?.layout === "kanban" ? displayFilters?.sub_group_by : undefined;
+  }
+
+  get orderByKey() {
+    const orderBy = this.orderBy;
+    if (!orderBy) return;
+
+    return ISSUE_ORDERBY_KEY[orderBy];
   }
 
   get issueGroupKey() {
@@ -427,6 +468,13 @@ export class BaseIssuesStore implements IBaseIssuesStore {
           });
           this.updateIssueCount(issueUpdate.path, -1);
         }
+
+        //if update is reorder, reorder it at a particular path
+        if (issueUpdate.action === EIssueGroupedAction.REORDER) {
+          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) => {
+            return this.issuesSortWithOrderBy(issueIds, this.orderBy);
+          });
+        }
       }
     });
   }
@@ -459,7 +507,9 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     issueBeforeUpdate?: Partial<TIssue>,
     action?: EIssueGroupedAction
   ): { path: string[]; action: EIssueGroupedAction }[] => {
-    if (!this.issueGroupKey || !issue) return action ? [{ path: [ALL_ISSUES], action }] : [];
+    const orderByUpdates = this.getOrderByUpdateDetails(issue, issueBeforeUpdate);
+    if (!this.issueGroupKey || !issue)
+      return action ? [{ path: [ALL_ISSUES], action }, ...orderByUpdates] : orderByUpdates;
 
     const groupActionsArray = this.getDifference(
       this.getArrayStringArray(issue[this.issueGroupKey], this.groupBy),
@@ -467,32 +517,71 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     );
 
     if (!this.issueSubGroupKey)
-      return this.getGroupIssueKeyActions(
-        groupActionsArray[EIssueGroupedAction.ADD],
-        groupActionsArray[EIssueGroupedAction.DELETE]
-      );
+      return [
+        ...this.getGroupIssueKeyActions(
+          groupActionsArray[EIssueGroupedAction.ADD],
+          groupActionsArray[EIssueGroupedAction.DELETE]
+        ),
+        ...orderByUpdates,
+      ];
 
     const subGroupActionsArray = this.getDifference(
       this.getArrayStringArray(issue[this.issueSubGroupKey], this.subGroupBy),
       this.getArrayStringArray(issueBeforeUpdate?.[this.issueSubGroupKey], this.subGroupBy)
     );
 
-    return this.getSubGroupIssueKeyActions(
-      groupActionsArray,
-      subGroupActionsArray,
-      this.getArrayStringArray(issueBeforeUpdate?.[this.issueGroupKey] ?? issue[this.issueGroupKey], this.groupBy),
-      this.getArrayStringArray(issue[this.issueGroupKey], this.groupBy),
-      this.getArrayStringArray(
-        issueBeforeUpdate?.[this.issueSubGroupKey] ?? issue[this.issueSubGroupKey],
-        this.subGroupBy
+    return [
+      ...this.getSubGroupIssueKeyActions(
+        groupActionsArray,
+        subGroupActionsArray,
+        this.getArrayStringArray(issueBeforeUpdate?.[this.issueGroupKey] ?? issue[this.issueGroupKey], this.groupBy),
+        this.getArrayStringArray(issue[this.issueGroupKey], this.groupBy),
+        this.getArrayStringArray(
+          issueBeforeUpdate?.[this.issueSubGroupKey] ?? issue[this.issueSubGroupKey],
+          this.subGroupBy
+        ),
+        this.getArrayStringArray(issue[this.issueSubGroupKey], this.subGroupBy)
       ),
-      this.getArrayStringArray(issue[this.issueSubGroupKey], this.subGroupBy)
-    );
+      ...orderByUpdates,
+    ];
   };
+
+  getOrderByUpdateDetails(issue: Partial<TIssue> | undefined, issueBeforeUpdate: Partial<TIssue> | undefined) {
+    if (
+      !issue ||
+      !issueBeforeUpdate ||
+      !this.orderByKey ||
+      isEqual(issue[this.orderByKey], issueBeforeUpdate[this.orderByKey])
+    )
+      return [];
+
+    if (!this.issueGroupKey) return [{ path: [ALL_ISSUES], action: EIssueGroupedAction.REORDER }];
+
+    const issueKeyActions = [];
+    const groupByValues = this.getArrayStringArray(issue[this.issueGroupKey]);
+
+    if (!this.issueSubGroupKey) {
+      for (const groupKey of groupByValues) {
+        issueKeyActions.push({ path: [groupKey], action: EIssueGroupedAction.REORDER });
+      }
+
+      return issueKeyActions;
+    }
+
+    const subGroupByValues = this.getArrayStringArray(issue[this.issueSubGroupKey]);
+
+    for (const groupKey of groupByValues) {
+      for (const subGroupKey of subGroupByValues) {
+        issueKeyActions.push({ path: [groupKey, subGroupKey], action: EIssueGroupedAction.REORDER });
+      }
+    }
+
+    return issueKeyActions;
+  }
 
   getArrayStringArray = (
     value: string | string[] | undefined | null,
-    groupByKey: TIssueGroupByOptions | undefined
+    groupByKey?: TIssueGroupByOptions | undefined
   ): string[] => {
     if (!value) return [];
     if (Array.isArray(value)) return value;
