@@ -1,8 +1,8 @@
 import React from "react";
 // components
-import { CalendarIssueBlock } from "components/issues";
-// types
 import { TIssue, TIssueMap } from "@plane/types";
+import { CalendarIssueBlock } from "@/components/issues";
+// types
 
 type Props = {
   issues: TIssueMap | undefined;

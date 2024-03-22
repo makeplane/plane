@@ -3,17 +3,17 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
 import { Button } from "@plane/ui";
-import { UserProfileHeader } from "components/headers";
-import { DownloadActivityButton, WorkspaceActivityListPage } from "components/profile";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { useUser } from "hooks/store";
+import { UserProfileHeader } from "@/components/headers";
+import { DownloadActivityButton, WorkspaceActivityListPage } from "@/components/profile";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { useUser } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProfileAuthWrapper } from "layouts/user-profile-layout";
+import { AppLayout } from "@/layouts/app-layout";
+import { ProfileAuthWrapper } from "@/layouts/user-profile-layout";
 // components
 // ui
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
 
 const PER_PAGE = 100;

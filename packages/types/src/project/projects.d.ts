@@ -1,4 +1,4 @@
-import { EUserProjectRoles } from "constants/project";
+import { EUserProjectRoles } from "@/constants/project";
 import type {
   IProjectViewProps,
   IUser,
@@ -23,6 +23,7 @@ export type TProjectLogoProps = {
 
 export interface IProject {
   archive_in: number;
+  archived_at: string | null;
   archived_issues: number;
   archived_sub_issues: number;
   close_in: number;

@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
-// hooks
-import useSize from "hooks/use-window-size";
-// components
-// ui
-import { Spinner } from "@plane/ui";
-import { CalendarHeader, CalendarIssueBlocks, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
-// types
-import {
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
@@ -16,20 +9,27 @@ import {
   TIssueKanbanFilters,
   TIssueMap,
 } from "@plane/types";
-import { ICalendarWeek } from "./types";
+// hooks
+import { Spinner } from "@plane/ui";
+import { CalendarHeader, CalendarIssueBlocks, CalendarWeekDays, CalendarWeekHeader } from "@/components/issues";
+import { MONTHS_LIST } from "@/constants/calendar";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { useIssues, useUser } from "@/hooks/store";
+import { useCalendarView } from "@/hooks/store/use-calendar-view";
+import useSize from "@/hooks/use-window-size";
+// components
+// ui
+// types
+import { ICycleIssuesFilter } from "@/store/issue/cycle";
+import { IModuleIssuesFilter } from "@/store/issue/module";
+import { IProjectIssuesFilter } from "@/store/issue/project";
+import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { ICalendarWeek } from "./types";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { cn } from "helpers/common.helper";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useIssues, useUser } from "hooks/store";
-import { useCalendarView } from "hooks/store/use-calendar-view";
-import { ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssuesFilter } from "store/issue/project-views";
-import { MONTHS_LIST } from "constants/calendar";
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;

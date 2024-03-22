@@ -3,8 +3,6 @@ import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Disclosure, Transition } from "@headlessui/react";
-// icons
 import {
   MoreVertical,
   PenSquare,
@@ -18,6 +16,8 @@ import {
   MoreHorizontal,
   Inbox,
 } from "lucide-react";
+import { Disclosure, Transition } from "@headlessui/react";
+// icons
 // ui
 import {
   CustomMenu,
@@ -29,14 +29,14 @@ import {
   LayersIcon,
   setPromiseToast,
 } from "@plane/ui";
-import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "components/project";
-import { EUserProjectRoles } from "constants/project";
-import { cn } from "helpers/common.helper";
-import { getNumberCount } from "helpers/string.helper";
+import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "@/components/project";
+import { EUserProjectRoles } from "@/constants/project";
+import { cn } from "@/helpers/common.helper";
+import { getNumberCount } from "@/helpers/string.helper";
 // hooks
-import { useApplication, useEventTracker, useInbox, useProject } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useApplication, useEventTracker, useInbox, useProject } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // helpers
 
 // components
@@ -282,13 +282,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </span>
                     </CustomMenu.MenuItem>
                   )}
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                      <span>Copy project link</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-
                   {/* publish project settings */}
                   {isAdmin && (
                     <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
@@ -300,16 +293,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  {!isViewerOrGuest && (
-                    <CustomMenu.MenuItem>
-                      <Link href={`/${workspaceSlug}/projects/${project?.id}/archived-issues/`}>
-                        <div className="flex items-center justify-start gap-2">
-                          <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                          <span>Archived issues</span>
-                        </div>
-                      </Link>
-                    </CustomMenu.MenuItem>
-                  )}
                   <CustomMenu.MenuItem>
                     <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                       <div className="flex items-center justify-start gap-2">
@@ -318,6 +301,23 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </Link>
                   </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={handleCopyText}>
+                    <span className="flex items-center justify-start gap-2">
+                      <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                      <span>Copy link</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+
+                  {!isViewerOrGuest && (
+                    <CustomMenu.MenuItem>
+                      <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                          <span>Archives</span>
+                        </div>
+                      </Link>
+                    </CustomMenu.MenuItem>
+                  )}
                   <CustomMenu.MenuItem>
                     <Link href={`/${workspaceSlug}/projects/${project?.id}/settings`}>
                       <div className="flex items-center justify-start gap-2">

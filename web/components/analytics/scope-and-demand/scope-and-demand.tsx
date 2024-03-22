@@ -5,11 +5,11 @@ import useSWR from "swr";
 // services
 // components
 import { Button, Loader } from "@plane/ui";
-import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "components/analytics";
+import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "@/components/analytics";
 // ui
 // fetch-keys
-import { DEFAULT_ANALYTICS } from "constants/fetch-keys";
-import { AnalyticsService } from "services/analytics.service";
+import { DEFAULT_ANALYTICS } from "@/constants/fetch-keys";
+import { AnalyticsService } from "@/services/analytics.service";
 
 type Props = {
   fullScreen?: boolean;

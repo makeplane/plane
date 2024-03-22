@@ -2,7 +2,7 @@ import { Command } from "cmdk";
 import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
 // hooks
 import { DiscordIcon } from "@plane/ui";
-import { useApplication } from "hooks/store";
+import { useApplication } from "@/hooks/store";
 // ui
 
 type Props = {

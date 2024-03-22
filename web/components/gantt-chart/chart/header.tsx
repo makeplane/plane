@@ -2,8 +2,8 @@ import { observer } from "mobx-react";
 import { Expand, Shrink } from "lucide-react";
 // hooks
 // helpers
-import { VIEWS_LIST } from "components/gantt-chart/data";
-import { cn } from "helpers/common.helper";
+import { VIEWS_LIST } from "@/components/gantt-chart/data";
+import { cn } from "@/helpers/common.helper";
 // types
 import { useGanttChart } from "../hooks/use-gantt-chart";
 import { IGanttBlock, TGanttViews } from "../types";

@@ -17,3 +17,4 @@ export * from "./peek-overview";
 
 // archived issue
 export * from "./archive-issue-modal";
+export * from "./archived-issues-header";

@@ -12,7 +12,7 @@ import { useProject, useProjectInbox } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
   /// router

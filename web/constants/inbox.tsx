@@ -1,7 +1,7 @@
 // icons
 import { AlertTriangle, CheckCircle2, Clock, Copy, LucideIcon, XCircle } from "lucide-react";
 // helpers
-import { findHowManyDaysLeft } from "helpers/date-time.helper";
+import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 // types
 import { TInboxIssueOrderByOptions } from "@plane/types";
 

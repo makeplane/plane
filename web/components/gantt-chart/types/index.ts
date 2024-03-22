@@ -6,8 +6,8 @@ export interface IGanttBlock {
     width: number;
   };
   sort_order: number;
-  start_date: Date | null;
-  target_date: Date | null;
+  start_date: Date | undefined;
+  target_date: Date | undefined;
 }
 
 export interface IBlockUpdateData {

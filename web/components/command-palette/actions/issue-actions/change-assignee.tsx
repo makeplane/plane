@@ -2,13 +2,13 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Check } from "lucide-react";
+import { TIssue } from "@plane/types";
 // mobx store
 import { Avatar } from "@plane/ui";
-import { EIssuesStoreType } from "constants/issue";
-import { useIssues, useMember } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues, useMember } from "@/hooks/store";
 // ui
 // types
-import { TIssue } from "@plane/types";
 
 type Props = {
   closePalette: () => void;

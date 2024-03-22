@@ -3,17 +3,17 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // ui
+import { Check, CircleDot, Globe2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { Check, CircleDot, Globe2 } from "lucide-react";
+import { IProject } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProjectPublish } from "hooks/store";
+import { useProjectPublish } from "@/hooks/store";
 // store
-import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project-publish.store";
+import { IProjectPublishSettings, TProjectPublishViews } from "@/store/project/project-publish.store";
 // types
-import { IProject } from "@plane/types";
 // local components
 import { CustomPopover } from "./popover";
 

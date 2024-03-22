@@ -1,16 +1,16 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
-// components
-import { CreateUpdateIssueModal } from "components/issues";
-// constants
-import { EIssuesStoreType } from "constants/issue";
-import { EUserWorkspaceRoles } from "constants/workspace";
-// hooks
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
-// types
 import { TIssue } from "@plane/types";
+// components
+import { CreateUpdateIssueModal } from "@/components/issues";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+// hooks
+import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
+// types
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states

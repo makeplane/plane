@@ -3,8 +3,8 @@ import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 // components
 import { Loader, DiceIcon } from "@plane/ui";
-import { FilterHeader, FilterOption } from "components/issues";
-import { useApplication, useModule } from "hooks/store";
+import { FilterHeader, FilterOption } from "@/components/issues";
+import { useApplication, useModule } from "@/hooks/store";
 // ui
 
 type Props = {

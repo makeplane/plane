@@ -5,12 +5,12 @@ import { ChevronDown, XCircle } from "lucide-react";
 // ui
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ConfirmWorkspaceMemberRemove } from "components/workspace";
+import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 // hooks
-import { useMember, useUser } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useMember, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   invitationId: string;

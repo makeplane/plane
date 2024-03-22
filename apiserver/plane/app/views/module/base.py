@@ -86,6 +86,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 ),
             )
             .annotate(
@@ -96,6 +97,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -106,6 +108,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -116,6 +119,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -126,6 +130,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -136,6 +141,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -196,7 +202,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, slug, project_id):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().filter(archived_at__isnull=True)
         if self.fields:
             modules = ModuleSerializer(
                 queryset,
@@ -238,6 +244,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
             self.get_queryset()
+            .filter(archived_at__isnull=True)
             .filter(pk=pk)
             .annotate(
                 total_issues=Issue.issue_objects.filter(
@@ -374,14 +381,20 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def partial_update(self, request, slug, project_id, pk):
-        queryset = self.get_queryset().filter(pk=pk)
+        module = self.get_queryset().filter(pk=pk)
+
+        if module.first().archived_at:
+            return Response(
+                {"error": "Archived module cannot be updated"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = ModuleWriteSerializer(
-            queryset.first(), data=request.data, partial=True
+            module.first(), data=request.data, partial=True
         )
 
         if serializer.is_valid():
             serializer.save()
-            module = queryset.values(
+            module = module.values(
                 # Required fields
                 "id",
                 "workspace_id",
@@ -464,10 +477,172 @@ class ModuleLinkViewSet(BaseViewSet):
             .filter(
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
             )
             .order_by("-created_at")
             .distinct()
         )
+
+
+class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get_queryset(self):
+        favorite_subquery = ModuleFavorite.objects.filter(
+            user=self.request.user,
+            module_id=OuterRef("pk"),
+            project_id=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"),
+        )
+        return (
+            Module.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(archived_at__isnull=False)
+            .annotate(is_favorite=Exists(favorite_subquery))
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("lead")
+            .prefetch_related("members")
+            .prefetch_related(
+                Prefetch(
+                    "link_module",
+                    queryset=ModuleLink.objects.select_related(
+                        "module", "created_by"
+                    ),
+                )
+            )
+            .annotate(
+                total_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                    distinct=True,
+                ),
+            )
+            .annotate(
+                completed_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="completed",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="cancelled",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="started",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="unstarted",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="backlog",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                member_ids=Coalesce(
+                    ArrayAgg(
+                        "members__id",
+                        distinct=True,
+                        filter=~Q(members__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+            .order_by("-is_favorite", "-created_at")
+        )
+
+    def get(self, request, slug, project_id):
+        queryset = self.get_queryset()
+        modules = queryset.values(  # Required fields
+            "id",
+            "workspace_id",
+            "project_id",
+            # Model fields
+            "name",
+            "description",
+            "description_text",
+            "description_html",
+            "start_date",
+            "target_date",
+            "status",
+            "lead_id",
+            "member_ids",
+            "view_props",
+            "sort_order",
+            "external_source",
+            "external_id",
+            # computed fields
+            "total_issues",
+            "is_favorite",
+            "cancelled_issues",
+            "completed_issues",
+            "started_issues",
+            "unstarted_issues",
+            "backlog_issues",
+            "created_at",
+            "updated_at",
+            "archived_at",
+        )
+        return Response(modules, status=status.HTTP_200_OK)
+
+    def post(self, request, slug, project_id, module_id):
+        module = Module.objects.get(
+            pk=module_id, project_id=project_id, workspace__slug=slug
+        )
+        module.archived_at = timezone.now()
+        module.save()
+        return Response(
+            {"archived_at": str(module.archived_at)},
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, slug, project_id, module_id):
+        module = Module.objects.get(
+            pk=module_id, project_id=project_id, workspace__slug=slug
+        )
+        module.archived_at = None
+        module.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ModuleFavoriteViewSet(BaseViewSet):

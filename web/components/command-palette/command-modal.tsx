@@ -3,20 +3,12 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { FolderPlus, Search, Settings } from "lucide-react";
+import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
-import { useApplication, useEventTracker, useProject } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
-import useDebounce from "hooks/use-debounce";
-// services
-import { IssueService } from "services/issue";
-import { WorkspaceService } from "services/workspace.service";
-// ui
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-// components
-import { EmptyState } from "components/empty-state";
 import {
   CommandPaletteThemeActions,
   ChangeIssueAssignee,
@@ -27,13 +19,21 @@ import {
   CommandPaletteProjectActions,
   CommandPaletteWorkspaceSettingsActions,
   CommandPaletteSearchResults,
-} from "components/command-palette";
+} from "@/components/command-palette";
+import { EmptyState } from "@/components/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
+import { ISSUE_DETAILS } from "@/constants/fetch-keys";
+import { useApplication, useEventTracker, useProject } from "@/hooks/store";
+import useDebounce from "@/hooks/use-debounce";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// services
+import { IssueService } from "@/services/issue";
+import { WorkspaceService } from "@/services/workspace.service";
+// ui
+// components
 // types
-import { IWorkspaceSearchResults } from "@plane/types";
 // fetch-keys
 // constants
-import { EmptyStateType } from "constants/empty-state";
-import { ISSUE_DETAILS } from "constants/fetch-keys";
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();

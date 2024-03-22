@@ -5,8 +5,8 @@ import useSWR from "swr";
 // hooks
 // components
 import { Spinner } from "@plane/ui";
-import { JoinProject } from "components/auth-screens";
-import { EmptyState } from "components/common";
+import { JoinProject } from "@/components/auth-screens";
+import { EmptyState } from "@/components/common";
 import {
   useApplication,
   useEventTracker,
@@ -20,7 +20,7 @@ import {
   useProjectView,
   useUser,
   useInbox,
-} from "hooks/store";
+} from "@/hooks/store";
 // images
 import emptyProject from "public/empty-state/project.svg";
 

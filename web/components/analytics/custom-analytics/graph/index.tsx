@@ -1,14 +1,14 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // components
+import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // ui
-import { BarGraph } from "components/ui";
+import { BarGraph } from "@/components/ui";
 // helpers
-import { generateBarColor, generateDisplayName } from "helpers/analytics.helper";
-import { findStringWithMostCharacters } from "helpers/array.helper";
+import { generateBarColor, generateDisplayName } from "@/helpers/analytics.helper";
+import { findStringWithMostCharacters } from "@/helpers/array.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 import { CustomTooltip } from "./custom-tooltip";
 
 type Props = {

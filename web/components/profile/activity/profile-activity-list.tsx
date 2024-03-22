@@ -1,17 +1,17 @@
 import { useEffect } from "react";
-import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { History, MessageSquare } from "lucide-react";
+import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // hooks
-import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
-import { ActivitySettingsLoader } from "components/ui";
-import { USER_ACTIVITY } from "constants/fetch-keys";
-import { calculateTimeAgo } from "helpers/date-time.helper";
-import { useUser } from "hooks/store";
+import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
+import { ActivitySettingsLoader } from "@/components/ui";
+import { USER_ACTIVITY } from "@/constants/fetch-keys";
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { useUser } from "@/hooks/store";
 // services
-import { UserService } from "services/user.service";
+import { UserService } from "@/services/user.service";
 // editor
 // components
 // ui

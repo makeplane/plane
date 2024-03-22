@@ -1,18 +1,18 @@
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 // hooks
 //ui
 import { Button } from "@plane/ui";
 // components
-import { AppliedFiltersList } from "components/issues";
+import { AppliedFiltersList } from "@/components/issues";
 // types
-import { GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
+import { GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "@/constants/workspace";
 // constants
-import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
-import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
+import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "@/hooks/store";
 
 type Props = {
   globalViewId: string;

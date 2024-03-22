@@ -2,13 +2,13 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Check } from "lucide-react";
+import { TIssue, TIssuePriorities } from "@plane/types";
 // mobx store
 import { PriorityIcon } from "@plane/ui";
-import { EIssuesStoreType, ISSUE_PRIORITIES } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { EIssuesStoreType, ISSUE_PRIORITIES } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 // ui
 // types
-import { TIssue, TIssuePriorities } from "@plane/types";
 // constants
 
 type Props = {

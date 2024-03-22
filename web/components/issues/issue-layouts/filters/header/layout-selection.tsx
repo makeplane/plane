@@ -1,12 +1,12 @@
 import React from "react";
 
 // ui
+import { TIssueLayouts } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // types
-import { ISSUE_LAYOUTS } from "constants/issue";
-import { TIssueLayouts } from "@plane/types";
+import { ISSUE_LAYOUTS } from "@/constants/issue";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 
 type Props = {
   layouts: TIssueLayouts[];

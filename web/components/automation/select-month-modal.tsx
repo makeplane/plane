@@ -4,10 +4,10 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
+import type { IProject } from "@plane/types";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IProject } from "@plane/types";
 
 // types
 type Props = {
@@ -98,6 +98,8 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                     hasError={Boolean(errors.close_in)}
                                     placeholder="Enter Months"
                                     className="w-full border-custom-border-200"
+                                    min={1}
+                                    max={12}
                                   />
                                   <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
                                 </div>
@@ -130,6 +132,8 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                     hasError={Boolean(errors.archive_in)}
                                     placeholder="Enter Months"
                                     className="w-full border-custom-border-200"
+                                    min={1}
+                                    max={12}
                                   />
                                   <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
                                 </div>

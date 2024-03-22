@@ -1,8 +1,8 @@
 import { FC, ReactNode } from "react";
 // layout
-import { CommandPalette } from "components/command-palette";
-import { UserAuthWrapper } from "layouts/auth-layout";
-import { ProfileLayoutSidebar } from "layouts/settings-layout";
+import { CommandPalette } from "@/components/command-palette";
+import { UserAuthWrapper } from "@/layouts/auth-layout";
+import { ProfileLayoutSidebar } from "@/layouts/settings-layout";
 // components
 
 interface IProfileSettingsLayout {

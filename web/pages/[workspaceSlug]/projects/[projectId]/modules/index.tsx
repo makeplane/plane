@@ -1,19 +1,19 @@
 import { ReactElement, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+import { TModuleFilters } from "@plane/types";
 // layouts
 // components
-import { PageHead } from "components/core";
-import { ModulesListHeader } from "components/headers";
-import { ModuleAppliedFiltersList, ModulesListView } from "components/modules";
+import { PageHead } from "@/components/core";
+import { ModulesListHeader } from "@/components/headers";
+import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
 // types
 // hooks
-import { useModuleFilter, useProject } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
-import { calculateTotalFilters } from "helpers/filter.helper";
-import { TModuleFilters } from "@plane/types";
-import ModulesListMobileHeader from "components/modules/moduels-list-mobile-header";
+import ModulesListMobileHeader from "@/components/modules/moduels-list-mobile-header";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { useModuleFilter, useProject } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectModulesPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
@@ -60,7 +60,7 @@ const ProjectModulesPage: NextPageWithLayout = observer(() => {
 
 ProjectModulesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ModulesListHeader />} mobileHeader={<ModulesListMobileHeader/>} withProjectWrapper>
+    <AppLayout header={<ModulesListHeader />} mobileHeader={<ModulesListMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

@@ -2,22 +2,22 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // hooks
-import { useDashboard } from "hooks/store";
 // components
 import {
   DurationFilterDropdown,
   IssuesByPriorityEmptyState,
   WidgetLoader,
   WidgetProps,
-} from "components/dashboard/widgets";
+} from "@/components/dashboard/widgets";
 // helpers
-import { getCustomDates } from "helpers/dashboard.helper";
 // types
-import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
-import { IssuesByPriorityGraph } from "components/graphs";
-import { EDurationFilters } from "constants/dashboard";
+import { IssuesByPriorityGraph } from "@/components/graphs";
+import { EDurationFilters } from "@/constants/dashboard";
+import { getCustomDates } from "@/helpers/dashboard.helper";
+import { useDashboard } from "@/hooks/store";
 
 const WIDGET_KEY = "issues_by_priority";
 

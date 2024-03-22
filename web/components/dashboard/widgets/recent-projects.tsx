@@ -2,18 +2,18 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { TRecentProjectsWidgetResponse } from "@plane/types";
 // hooks
 import { Avatar, AvatarGroup } from "@plane/ui";
-import { WidgetLoader, WidgetProps } from "components/dashboard/widgets";
-import { PROJECT_BACKGROUND_COLORS } from "constants/dashboard";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
+import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
+import { ProjectLogo } from "@/components/project";
+import { PROJECT_BACKGROUND_COLORS } from "@/constants/dashboard";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
 // components
 // ui
 // helpers
 // types
-import { TRecentProjectsWidgetResponse } from "@plane/types";
-import { ProjectLogo } from "components/project";
 // constants
 
 const WIDGET_KEY = "recent_projects";

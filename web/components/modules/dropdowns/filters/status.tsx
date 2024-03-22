@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-// components
-import { FilterHeader, FilterOption } from "components/issues";
-// ui
-import { ModuleStatusIcon } from "@plane/ui";
-// types
 import { TModuleStatus } from "@plane/types";
+// components
+import { ModuleStatusIcon } from "@plane/ui";
+import { FilterHeader, FilterOption } from "@/components/issues";
+// ui
+// types
+import { MODULE_STATUS } from "@/constants/module";
 // constants
-import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   appliedFilters: TModuleStatus[] | null;

@@ -1,8 +1,8 @@
 // icons
 import { Triangle } from "lucide-react";
-// types
-import { STATE_GROUPS } from "constants/state";
 import { IDefaultAnalyticsResponse, TStateGroups } from "@plane/types";
+// types
+import { STATE_GROUPS } from "@/constants/state";
 // constants
 
 type Props = {

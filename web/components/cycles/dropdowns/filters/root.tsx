@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
-// components
-import { FilterEndDate, FilterStartDate, FilterStatus } from "components/cycles";
-// types
 import { TCycleFilters, TCycleGroups } from "@plane/types";
+// components
+import { FilterEndDate, FilterStartDate, FilterStatus } from "@/components/cycles";
+// types
 
 type Props = {
   filters: TCycleFilters;
   handleFiltersUpdate: (key: keyof TCycleFilters, value: string | string[]) => void;
+  isArchived?: boolean;
 };
 
 export const CycleFiltersSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate } = props;
+  const { filters, handleFiltersUpdate, isArchived = false } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -38,13 +39,15 @@ export const CycleFiltersSelection: React.FC<Props> = observer((props) => {
       </div>
       <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
         {/* cycle status */}
-        <div className="py-2">
-          <FilterStatus
-            appliedFilters={(filters.status as TCycleGroups[]) ?? null}
-            handleUpdate={(val) => handleFiltersUpdate("status", val)}
-            searchQuery={filtersSearchQuery}
-          />
-        </div>
+        {!isArchived && (
+          <div className="py-2">
+            <FilterStatus
+              appliedFilters={(filters.status as TCycleGroups[]) ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("status", val)}
+              searchQuery={filtersSearchQuery}
+            />
+          </div>
+        )}
 
         {/* start date */}
         <div className="py-2">

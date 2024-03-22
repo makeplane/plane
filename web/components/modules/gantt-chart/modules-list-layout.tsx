@@ -1,12 +1,13 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { IModule } from "@plane/types";
 // mobx store
 // components
-import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
-import { ModuleGanttBlock } from "components/modules";
-import { useModule, useProject } from "hooks/store";
+import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "@/components/gantt-chart";
+import { ModuleGanttBlock } from "@/components/modules";
+import { getDate } from "@/helpers/date-time.helper";
+import { useModule, useProject } from "@/hooks/store";
 // types
-import { IModule } from "@plane/types";
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
   // router
@@ -34,8 +35,8 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
         data: block,
         id: block.id,
         sort_order: block.sort_order,
-        start_date: block.start_date ? new Date(block.start_date) : null,
-        target_date: block.target_date ? new Date(block.target_date) : null,
+        start_date: getDate(block.start_date),
+        target_date: getDate(block.target_date),
       };
     });
 

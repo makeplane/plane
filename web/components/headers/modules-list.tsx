@@ -2,29 +2,27 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { ListFilter, Plus, Search, X } from "lucide-react";
-// hooks
-import { useApplication, useEventTracker, useMember, useModuleFilter, useProject, useUser } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// components
-import { BreadcrumbLink } from "components/common";
-import { ProjectLogo } from "components/project";
-// constants
-import { MODULE_VIEW_LAYOUTS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
-// hooks
-import { usePlatformOS } from "hooks/use-platform-os";
-import { ModuleFiltersSelection, ModuleOrderByDropdown } from "components/modules";
-import { FiltersDropdown } from "components/issues";
-// ui
-import { Breadcrumbs, Button, Tooltip, DiceIcon } from "@plane/ui";
-// helpers
-import { cn } from "helpers/common.helper";
-// types
 import { TModuleFilters } from "@plane/types";
+// hooks
+import { Breadcrumbs, Button, Tooltip, DiceIcon } from "@plane/ui";
+import { BreadcrumbLink } from "@/components/common";
+import { FiltersDropdown } from "@/components/issues";
+import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
+import { ProjectLogo } from "@/components/project";
+import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
+import { EUserProjectRoles } from "@/constants/project";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useEventTracker, useMember, useModuleFilter, useProject, useUser } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// components
+// constants
+// hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// ui
+// helpers
+// types
 
 export const ModulesListHeader: React.FC = observer(() => {
-  // states
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // router
@@ -49,6 +47,8 @@ export const ModulesListHeader: React.FC = observer(() => {
     updateFilters,
     updateSearchQuery,
   } = useModuleFilter();
+  // states
+  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);

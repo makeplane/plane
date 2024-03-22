@@ -1,24 +1,23 @@
 import { Fragment, useRef, useState } from "react";
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+import { Sparkle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Sparkle } from "lucide-react";
 // ui
 import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { GptAssistantPopover } from "components/core";
-import { PriorityDropdown } from "components/dropdowns";
+import { GptAssistantPopover } from "@/components/core";
+import { PriorityDropdown } from "@/components/dropdowns";
 // constants
-import { ISSUE_CREATED } from "constants/event-tracker";
+import { ISSUE_CREATED } from "@/constants/event-tracker";
 // hooks
-import { useApplication, useEventTracker, useWorkspace, useMention, useProjectInbox } from "hooks/store";
+import { useApplication, useEventTracker, useWorkspace, useMention, useProjectInbox } from "@/hooks/store";
 // services
-import { AIService } from "services/ai.service";
-import { FileService } from "services/file.service";
+import { AIService } from "@/services/ai.service";
+import { FileService } from "@/services/file.service";
 // types
-import { TIssue } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

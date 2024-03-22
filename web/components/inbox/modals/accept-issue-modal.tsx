@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-// icons
 import { CheckCircle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import type { TIssue } from "@plane/types";
+// icons
 // ui
 import { Button } from "@plane/ui";
 // hooks
-import { useProject } from "hooks/store";
+import { useProject } from "@/hooks/store";
 // types
-import type { TIssue } from "@plane/types";
 
 type Props = {
   data: Partial<TIssue>;

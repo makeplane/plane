@@ -14,19 +14,19 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
+import { IIssueLabel } from "@plane/types";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
-import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
+import { CreateUpdatePageModal, DeletePageModal } from "@/components/pages";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
+import { EUserProjectRoles } from "@/constants/project";
+import { renderFormattedTime, renderFormattedDate } from "@/helpers/date-time.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useMember, usePage, useUser } from "hooks/store";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import { usePlatformOS } from "hooks/use-platform-os";
-import { IIssueLabel } from "@plane/types";
+import { useMember, usePage, useUser } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export interface IPagesListItem {
   pageId: string;
@@ -192,14 +192,15 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                     <p className="text-sm text-custom-text-200">{renderFormattedTime(archived_at)}</p>
                   </Tooltip>
                 ) : (
-                  <Tooltip
-                    isMobile={isMobile}
-                    tooltipContent={`Last updated at ${renderFormattedTime(updated_at)} on ${renderFormattedDate(
-                      updated_at
-                    )}`}
-                  >
-                    <p className="text-sm text-custom-text-200">{renderFormattedTime(updated_at)}</p>
-                  </Tooltip>
+                  updated_at && (
+                    <Tooltip
+                      tooltipContent={`Last updated at ${renderFormattedTime(updated_at)} on ${renderFormattedDate(
+                        updated_at
+                      )}`}
+                    >
+                      <p className="text-sm text-custom-text-200">{renderFormattedTime(updated_at)}</p>
+                    </Tooltip>
+                  )
                 )}
                 {isEditingAllowed && (
                   <Tooltip

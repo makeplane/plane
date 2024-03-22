@@ -2,16 +2,16 @@
 
 // mobx react lite
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useRouter } from "next/router";
+import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
+import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
+import { IssueBlockState } from "@/components/issues/board-views/block-state";
+import { useMobxStore } from "@/lib/mobx/store-provider";
 
 // components
-import { IssueBlockPriority } from "components/issues/board-views/block-priority";
-import { IssueBlockState } from "components/issues/board-views/block-state";
-import { IssueBlockDueDate } from "components/issues/board-views/block-due-date";
 // interfaces
+import { RootStore } from "@/store/root";
 import { IIssue } from "types/issue";
-import { RootStore } from "store/root";
-import { useRouter } from "next/router";
 
 export const IssueKanBanBlock = observer(({ issue }: { issue: IIssue }) => {
   const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();

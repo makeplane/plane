@@ -1,7 +1,7 @@
 // helpers
-import { cn } from "helpers/common.helper";
-// types
 import { TProjectLogoProps } from "@plane/types";
+import { cn } from "@/helpers/common.helper";
+// types
 
 type Props = {
   className?: string;

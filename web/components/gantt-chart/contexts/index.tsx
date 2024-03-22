@@ -1,6 +1,6 @@
 import React, { FC, createContext } from "react";
 // mobx store
-import { GanttStore } from "store/issue/issue_gantt_view.store";
+import { GanttStore } from "@/store/issue/issue_gantt_view.store";
 
 let ganttViewStore = new GanttStore();
 
