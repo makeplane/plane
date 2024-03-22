@@ -1,4 +1,3 @@
-import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
@@ -60,7 +59,7 @@ export const CoreEditorExtensions = (
     blockquote: false,
     dropcursor: {
       color: "rgba(var(--color-text-100))",
-      width: 2,
+      width: 1,
     },
   }),
   CustomQuoteExtension.configure({
@@ -90,7 +89,6 @@ export const CoreEditorExtensions = (
   }),
   TiptapUnderline,
   TextStyle,
-  Color,
   TaskList.configure({
     HTMLAttributes: {
       class: "not-prose pl-2",
@@ -98,7 +96,7 @@ export const CoreEditorExtensions = (
   }),
   TaskItem.configure({
     HTMLAttributes: {
-      class: "flex items-start my-4",
+      class: "flex items-start gap-1 my-4",
     },
     nested: true,
   }),
@@ -106,7 +104,6 @@ export const CoreEditorExtensions = (
   CustomCodeInlineExtension,
   Markdown.configure({
     html: true,
-    transformCopiedText: true,
     transformPastedText: true,
   }),
   Table,

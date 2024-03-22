@@ -149,7 +149,7 @@ export const PageRenderer = (props: IPageRenderer) => {
   );
 
   return (
-    <div className="frame-renderer h-full w-full flex flex-col overflow-y-auto">
+    <div className="frame-renderer h-full w-full flex flex-col overflow-y-auto overflow-x-hidden">
       <div className="w-full flex-shrink-0">
         {readonly ? (
           <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{pageTitle}</h6>
@@ -158,6 +158,12 @@ export const PageRenderer = (props: IPageRenderer) => {
             onChange={(e) => handlePageTitleChange(e.target.value)}
             className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none rounded-none"
             placeholder="Untitled Page"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                editor.chain().focus("start").run();
+              }
+            }}
             value={pageTitle}
           />
         )}
@@ -166,7 +172,7 @@ export const PageRenderer = (props: IPageRenderer) => {
         <EditorContainer
           hideDragHandle={hideDragHandle}
           editor={editor}
-          editorClassNames={cn(editorClassNames, "pb-64")}
+          editorClassNames={cn(editorClassNames, "pb-64 break-words")}
         >
           <EditorContentWrapper
             tabIndex={tabIndex}
