@@ -1,5 +1,5 @@
 import { DraggableLocation } from "@hello-pangea/dnd";
-import { TGroupedIssues, IIssueMap, TSubGroupedIssues, TUnGroupedIssues, TIssue } from "@plane/types";
+import { TGroupedIssues, IIssueMap, TSubGroupedIssues, TIssue } from "@plane/types";
 
 const handleSortOrder = (destinationIssues: string[], destinationIndex: number, issueMap: IIssueMap) => {
   const sortOrderDefaultValue = 65535;
@@ -44,7 +44,7 @@ export const handleDragDrop = async (
   subGroupBy: string | null,
   groupBy: string | null,
   issueMap: IIssueMap,
-  issueWithIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined,
+  issueWithIds: TGroupedIssues | TSubGroupedIssues | undefined,
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined,
   removeIssue: (projectId: string, issueId: string) => Promise<void> | undefined
 ) => {

@@ -6,7 +6,7 @@ import { TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@pl
 // types
 import { IIssueRootStore } from "../root.store";
 import { IArchivedIssuesFilter } from "./filter.store";
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore, EIssueGroupedAction, IBaseIssuesStore } from "../helpers/base-issues.store";
 
 export interface IArchivedIssues extends IBaseIssuesStore {
   // observable
@@ -23,7 +23,12 @@ export interface IArchivedIssues extends IBaseIssuesStore {
     projectId: string,
     loadType: TLoader
   ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (workspaceSlug: string, projectId: string) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => Promise<TIssuesResponse | undefined>;
 
   restoreIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 
@@ -66,7 +71,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
         this.loader = loadType;
       });
       this.clear();
-      const params = this.issueFilterStore?.getFilterParams(options, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       const response = await this.issueArchiveService.getArchivedIssues(workspaceSlug, projectId, params);
 
       this.onfetchIssues(response, options);
@@ -77,15 +82,21 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     }
   };
 
-  fetchNextIssues = async (workspaceSlug: string, projectId: string) => {
-    if (!this.paginationOptions || !this.next_page_results) return;
+  fetchNextIssues = async (workspaceSlug: string, projectId: string, groupId?: string, subGroupId?: string) => {
+    const cursorObject = this.getPaginationData(subGroupId ?? groupId);
+    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
       this.loader = "pagination";
 
-      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions, this.nextCursor);
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
+      const params = this.issueFilterStore?.getFilterParams(
+        this.paginationOptions,
+        cursorObject?.nextCursor,
+        groupId,
+        subGroupId
+      );
+      const response = await this.issueArchiveService.getArchivedIssues(workspaceSlug, projectId, params);
 
-      this.onfetchNexIssues(response);
+      this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
       this.loader = undefined;
@@ -110,7 +121,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
         this.rootIssueStore.issues.updateIssue(issueId, {
           archived_at: null,
         });
-        this.issues && pull(this.issues, issueId);
+        this.removeIssueFromList(issueId);
       });
 
       return response;

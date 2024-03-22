@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 // components
 import {
   BiWeekChartView,
+  ChartDataType,
   DayChartView,
   GanttChartBlocksList,
   GanttChartSidebar,
@@ -21,11 +22,13 @@ import { cn } from "helpers/common.helper";
 import { useGanttChart } from "../hooks/use-gantt-chart";
 
 type Props = {
-  blocks: IGanttBlock[] | null;
+  blockIds: string[];
+  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
+  canLoadMoreBlocks?: boolean;
+  loadMoreBlocks?: () => void;
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   bottomSpacing: boolean;
-  chartBlocks: IGanttBlock[] | null;
   enableBlockLeftResize: boolean;
   enableBlockMove: boolean;
   enableBlockRightResize: boolean;
@@ -41,11 +44,12 @@ type Props = {
 
 export const GanttChartMainContent: React.FC<Props> = observer((props) => {
   const {
-    blocks,
+    blockIds,
+    getBlockById,
+    loadMoreBlocks,
     blockToRender,
     blockUpdateHandler,
     bottomSpacing,
-    chartBlocks,
     enableBlockLeftResize,
     enableBlockMove,
     enableBlockRightResize,
@@ -55,6 +59,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
     showAllBlocks,
     sidebarToRender,
     title,
+    canLoadMoreBlocks,
     updateCurrentViewRenderPayload,
     quickAdd,
   } = props;
@@ -104,7 +109,11 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
       onScroll={onScroll}
     >
       <GanttChartSidebar
-        blocks={blocks}
+        blockIds={blockIds}
+        getBlockById={getBlockById}
+        loadMoreBlocks={loadMoreBlocks}
+        canLoadMoreBlocks={canLoadMoreBlocks}
+        ganttContainerRef={ganttContainerRef}
         blockUpdateHandler={blockUpdateHandler}
         enableReorder={enableReorder}
         sidebarToRender={sidebarToRender}
@@ -116,7 +125,8 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
         {currentViewData && (
           <GanttChartBlocksList
             itemsContainerWidth={itemsContainerWidth}
-            blocks={chartBlocks}
+            blockIds={blockIds}
+            getBlockById={getBlockById}
             blockToRender={blockToRender}
             blockUpdateHandler={blockUpdateHandler}
             enableBlockLeftResize={enableBlockLeftResize}

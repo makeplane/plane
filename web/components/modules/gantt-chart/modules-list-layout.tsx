@@ -2,11 +2,13 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
 // components
-import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
+import { ChartDataType, GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
 import { ModuleGanttBlock } from "components/modules";
 import { useModule, useProject } from "hooks/store";
 // types
 import { IModule } from "@plane/types";
+import { useCallback } from "react";
+import { getMonthChartItemPositionWidthInMonth } from "components/gantt-chart/views";
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
   // router
@@ -14,7 +16,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
   const { workspaceSlug } = router.query;
   // store
   const { currentProjectDetails } = useProject();
-  const { projectModuleIds, moduleMap, updateModuleDetails } = useModule();
+  const { projectModuleIds, getModuleById, updateModuleDetails } = useModule();
 
   const handleModuleUpdate = async (module: IModule, data: IBlockUpdateData) => {
     if (!workspaceSlug || !module) return;
@@ -25,26 +27,39 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
     await updateModuleDetails(workspaceSlug.toString(), module.project_id, module.id, payload);
   };
 
-  const blockFormat = (blocks: string[]) =>
-    blocks?.map((blockId) => {
-      const block = moduleMap[blockId];
-      return {
-        data: block,
-        id: block.id,
-        sort_order: block.sort_order,
-        start_date: block.start_date ? new Date(block.start_date) : null,
-        target_date: block.target_date ? new Date(block.target_date) : null,
+  const getBlockById = useCallback(
+    (id: string, currentViewData?: ChartDataType | undefined) => {
+      const module = getModuleById(id);
+
+      const block = {
+        data: module,
+        id: module?.id ?? "",
+        sort_order: module?.sort_order ?? 0,
+        start_date: module?.start_date ? new Date(module.start_date) : undefined,
+        target_date: module?.target_date ? new Date(module.target_date) : undefined,
       };
-    });
+      if (currentViewData) {
+        return {
+          ...block,
+          position: getMonthChartItemPositionWidthInMonth(currentViewData, block),
+        };
+      }
+      return block;
+    },
+    [getModuleById]
+  );
 
   const isAllowed = currentProjectDetails?.member_role === 20 || currentProjectDetails?.member_role === 15;
+
+  if (!projectModuleIds) return null;
 
   return (
     <div className="h-full w-full overflow-y-auto">
       <GanttChartRoot
         title="Modules"
         loaderTitle="Modules"
-        blocks={projectModuleIds ? blockFormat(projectModuleIds) : null}
+        blockIds={projectModuleIds}
+        getBlockById={getBlockById}
         sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
         blockToRender={(data: IModule) => <ModuleGanttBlock moduleId={data.id} />}

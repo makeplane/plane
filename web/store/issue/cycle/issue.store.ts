@@ -9,7 +9,7 @@ import { CycleService } from "services/cycle.service";
 // types
 import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore, EIssueGroupedAction, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { ICycleIssuesFilter } from "./filter.store";
 
 export const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
@@ -30,7 +30,13 @@ export interface ICycleIssues extends IBaseIssuesStore {
     loadType: TLoader,
     cycleId: string
   ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => Promise<TIssuesResponse | undefined>;
 
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>, cycleId: string) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
@@ -111,7 +117,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
 
       this.cycleId = cycleId;
 
-      const params = this.issueFilterStore?.getFilterParams(options, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
 
       this.onfetchIssues(response, options);
@@ -122,15 +128,27 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     }
   };
 
-  fetchNextIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    if (!this.paginationOptions || !this.next_page_results) return;
+  fetchNextIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => {
+    const cursorObject = this.getPaginationData(subGroupId ?? groupId);
+    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
       this.loader = "pagination";
 
-      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions, this.nextCursor);
+      const params = this.issueFilterStore?.getFilterParams(
+        this.paginationOptions,
+        cursorObject?.nextCursor,
+        groupId,
+        subGroupId
+      );
       const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
 
-      this.onfetchNexIssues(response);
+      this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
       this.loader = undefined;
@@ -175,8 +193,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
 
       runInAction(() => {
-        this.cycleId === cycleId &&
-          update(this, "issues", (cycleIssueIds = []) => uniq(concat(cycleIssueIds, issueIds)));
+        this.cycleId === cycleId && issueIds.forEach((issueId) => this.addIssueToList(issueId));
       });
 
       issueIds.forEach((issueId) => {
@@ -193,7 +210,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     try {
       await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
       runInAction(() => {
-        this.issues && this.cycleId === cycleId && pull(this.issues, issueId);
+        this.cycleId === cycleId && this.removeIssueFromList(issueId);
       });
 
       this.rootIssueStore.issues.updateIssue(issueId, { cycle_id: null });

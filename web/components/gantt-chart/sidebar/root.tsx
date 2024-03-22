@@ -1,19 +1,35 @@
 // components
-import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
+import { ChartDataType, IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
 // constants
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
+import { RefObject } from "react";
 
 type Props = {
-  blocks: IGanttBlock[] | null;
+  blockIds: string[];
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
+  canLoadMoreBlocks?: boolean;
+  loadMoreBlocks?: () => void;
+  ganttContainerRef: RefObject<HTMLDivElement>;
   enableReorder: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
+  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
   quickAdd?: React.JSX.Element | undefined;
 };
 
 export const GanttChartSidebar: React.FC<Props> = (props) => {
-  const { blocks, blockUpdateHandler, enableReorder, sidebarToRender, title, quickAdd } = props;
+  const {
+    blockIds,
+    blockUpdateHandler,
+    enableReorder,
+    sidebarToRender,
+    getBlockById,
+    loadMoreBlocks,
+    canLoadMoreBlocks,
+    ganttContainerRef,
+    title,
+    quickAdd,
+  } = props;
 
   return (
     <div
@@ -35,7 +51,17 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
       </div>
 
       <div className="min-h-full h-max bg-custom-background-100 overflow-x-hidden overflow-y-auto">
-        {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
+        {sidebarToRender &&
+          sidebarToRender({
+            title,
+            blockUpdateHandler,
+            blockIds,
+            getBlockById,
+            enableReorder,
+            canLoadMoreBlocks,
+            ganttContainerRef,
+            loadMoreBlocks,
+          })}
       </div>
       {quickAdd ? quickAdd : null}
     </div>

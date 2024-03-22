@@ -1,13 +1,14 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
 import { CycleGanttBlock } from "components/cycles";
-import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
+import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar, ChartDataType } from "components/gantt-chart";
 import { useCycle } from "hooks/store";
 // components
 // types
 import { ICycle } from "@plane/types";
+import { getMonthChartItemPositionWidthInMonth } from "components/gantt-chart/views";
 // constants
 
 type Props = {
@@ -23,6 +24,28 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
   // store hooks
   const { getCycleById, updateCycleDetails } = useCycle();
 
+  const getBlockById = useCallback(
+    (id: string, currentViewData?: ChartDataType | undefined) => {
+      const cycle = getCycleById(id);
+      const block = {
+        data: cycle,
+        id: cycle?.id ?? "",
+        sort_order: cycle?.sort_order ?? 0,
+        start_date: cycle?.start_date ? new Date(cycle?.start_date) : undefined,
+        target_date: cycle?.end_date ? new Date(cycle?.end_date) : undefined,
+      };
+
+      if (currentViewData) {
+        return {
+          ...block,
+          position: getMonthChartItemPositionWidthInMonth(currentViewData, block),
+        };
+      }
+      return block;
+    },
+    [getCycleById]
+  );
+
   const handleCycleUpdate = async (cycle: ICycle, data: IBlockUpdateData) => {
     if (!workspaceSlug || !cycle) return;
 
@@ -32,28 +55,13 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
     await updateCycleDetails(workspaceSlug.toString(), cycle.project_id, cycle.id, payload);
   };
 
-  const blockFormat = (blocks: (ICycle | null)[]) => {
-    if (!blocks) return [];
-
-    const filteredBlocks = blocks.filter((b) => b !== null && b.start_date && b.end_date);
-
-    const structuredBlocks = filteredBlocks.map((block) => ({
-      data: block,
-      id: block?.id ?? "",
-      sort_order: block?.sort_order ?? 0,
-      start_date: new Date(block?.start_date ?? ""),
-      target_date: new Date(block?.end_date ?? ""),
-    }));
-
-    return structuredBlocks;
-  };
-
   return (
     <div className="h-full w-full overflow-y-auto">
       <GanttChartRoot
         title="Cycles"
         loaderTitle="Cycles"
-        blocks={cycleIds ? blockFormat(cycleIds.map((c) => getCycleById(c))) : null}
+        blockIds={cycleIds}
+        getBlockById={getBlockById}
         blockUpdateHandler={(block, payload) => handleCycleUpdate(block, payload)}
         sidebarToRender={(props) => <CycleGanttSidebar {...props} />}
         blockToRender={(data: ICycle) => <CycleGanttBlock cycleId={data.id} />}

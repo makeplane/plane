@@ -10,10 +10,12 @@ import { useIssueDetail } from "hooks/store";
 import { BLOCK_HEIGHT } from "../constants";
 import { ChartAddBlock, ChartDraggable } from "../helpers";
 import { useGanttChart } from "../hooks";
-import { IBlockUpdateData, IGanttBlock } from "../types";
+import { ChartDataType, IBlockUpdateData, IGanttBlock } from "../types";
 
 type Props = {
-  block: IGanttBlock;
+  blockId: string;
+  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
+  showAllBlocks: boolean;
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableBlockLeftResize: boolean;
@@ -25,7 +27,9 @@ type Props = {
 
 export const GanttChartBlock: React.FC<Props> = observer((props) => {
   const {
-    block,
+    blockId,
+    getBlockById,
+    showAllBlocks,
     blockToRender,
     blockUpdateHandler,
     enableBlockLeftResize,
@@ -35,8 +39,13 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     ganttContainerRef,
   } = props;
   // store hooks
-  const { updateActiveBlockId, isBlockActive } = useGanttChart();
+  const { currentViewData, updateActiveBlockId, isBlockActive } = useGanttChart();
   const { peekIssue } = useIssueDetail();
+
+  const block = getBlockById(blockId, currentViewData);
+
+  // hide the block if it doesn't have start and target dates and showAllBlocks is false
+  if (!block || (!showAllBlocks && !(block.start_date && block.target_date))) return null;
 
   const isBlockVisibleOnChart = block.start_date && block.target_date;
 
@@ -72,7 +81,6 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      key={`block-${block.id}`}
       className="relative min-w-full w-max"
       style={{
         height: `${BLOCK_HEIGHT}px`,
@@ -80,11 +88,11 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     >
       <div
         className={cn("relative h-full", {
-          "bg-custom-background-80": isBlockActive(block.id),
+          "bg-custom-background-80": isBlockActive(blockId),
           "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
             peekIssue?.issueId === block.data.id,
         })}
-        onMouseEnter={() => updateActiveBlockId(block.id)}
+        onMouseEnter={() => updateActiveBlockId(blockId)}
         onMouseLeave={() => updateActiveBlockId(null)}
       >
         {isBlockVisibleOnChart ? (

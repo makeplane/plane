@@ -12,7 +12,9 @@ interface IssueBlocksListProps {
   issueIds: string[];
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;

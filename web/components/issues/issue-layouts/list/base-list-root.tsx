@@ -5,13 +5,14 @@ import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues, useUser } from "hooks/store";
 
-import { TGroupedIssues, TIssue, TUnGroupedIssues } from "@plane/types";
+import { TGroupedIssues, TIssue } from "@plane/types";
 // components
 import { List } from "./default";
 import { IQuickActionProps } from "./list-view-types";
 import { useIssuesActions } from "hooks/use-issues-actions";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import useSWR from "swr";
+import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
 // constants
 // hooks
 
@@ -51,14 +52,24 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   const { issueMap } = useIssues();
 
-  useSWR(`ISSUE_LIST_LAYOUT_${storeType}`, () => fetchIssues("init-loader", { canGroup: true, perPageCount: 100 }), {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
+  const displayFilters = issuesFilter?.issueFilters?.displayFilters;
+  const displayProperties = issuesFilter?.issueFilters?.displayProperties;
+
+  const group_by = displayFilters?.group_by || null;
+  const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
+
+  useSWR(
+    `ISSUE_LIST_LAYOUT_${storeType}_${group_by}`,
+    () => fetchIssues("init-loader", { canGroup: true, perPageCount: 50 }),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const issueIds = issues?.groupedIssueIds as TGroupedIssues | undefined;
+  const groupedIssueIds = issues?.groupedIssueIds as TGroupedIssues | undefined;
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
   const canEditProperties = useCallback(
@@ -70,12 +81,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     },
     [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
-
-  const displayFilters = issuesFilter?.issueFilters?.displayFilters;
-  const displayProperties = issuesFilter?.issueFilters?.displayProperties;
-
-  const group_by = displayFilters?.group_by || null;
-  const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
   const renderQuickActions = useCallback(
     (issue: TIssue) => (
@@ -93,9 +98,12 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
-  const loadMoreIssues = useCallback(() => {
-    fetchNextIssues();
-  }, [fetchNextIssues]);
+  const loadMoreIssues = useCallback(
+    (groupId?: string) => {
+      fetchNextIssues(groupId);
+    },
+    [fetchNextIssues]
+  );
 
   return (
     <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.LIST}>
@@ -106,11 +114,12 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           group_by={group_by}
           updateIssue={updateIssue}
           quickActions={renderQuickActions}
-          issueIds={issueIds!}
-          shouldLoadMore={issues.next_page_results}
+          groupedIssueIds={groupedIssueIds ?? {}}
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
           viewId={viewId}
+          getPaginationData={issues.getPaginationData}
+          getGroupIssueCount={issues.getGroupIssueCount}
           quickAddCallback={issues?.quickAddIssue}
           enableIssueQuickAdd={!!enableQuickAdd}
           canEditProperties={canEditProperties}

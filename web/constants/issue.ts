@@ -436,7 +436,7 @@ export const groupReactionEmojis = (reactions: any) => {
 };
 
 
-export enum IssueGroupByOptions {
+export enum EIssueGroupByToServerOptions {
   "state" = "state_id",
   "priority" = "priority",
   "labels" = "labels__id",
@@ -446,5 +446,18 @@ export enum IssueGroupByOptions {
   "module" = "modules__id",
   "target_date" = "target_date",
   "project" = "project_id",
+  "created_by" = "created_by",
+}
+
+export enum EServerGroupByToFilterOptions {
+  "state_id" = "state",
+  "priority" = "priority",
+  "labels__id" = "labels",
+  "state__group" = "state_group",
+  "assignees__id" = "assignees",
+  "cycle_id" = "cycle",
+  "modules__id" = "module",
+  "target_date" = "target_date",
+  "project_id" = "project",
   "created_by" = "created_by",
 }

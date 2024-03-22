@@ -8,7 +8,7 @@ import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssuesFilter } from "store/issue/project-views";
-import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
 import { ICalendarDate, ICalendarWeek } from "./types";
 
 type Props = {
@@ -17,7 +17,9 @@ type Props = {
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  loadMoreIssues: () => void;
+  loadMoreIssues: (dateString: string) => void;
+  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
   quickAddCallback?: (
@@ -38,6 +40,8 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     groupedIssueIds,
     week,
     loadMoreIssues,
+    getPaginationData,
+    getGroupIssueCount,
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
@@ -69,6 +73,8 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             issues={issues}
             groupedIssueIds={groupedIssueIds}
             loadMoreIssues={loadMoreIssues}
+            getPaginationData={getPaginationData}
+            getGroupIssueCount={getGroupIssueCount}
             quickActions={quickActions}
             enableQuickIssueCreate={enableQuickIssueCreate}
             disableIssueCreation={disableIssueCreation}

@@ -22,7 +22,9 @@ interface IssueBlockProps {
   isDragDisabled: boolean;
   draggableId: string;
   index: number;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -33,7 +35,9 @@ interface IssueBlockProps {
 interface IssueDetailsBlockProps {
   issue: TIssue;
   displayProperties: IIssueDisplayProperties | undefined;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   isReadOnly: boolean;
 }

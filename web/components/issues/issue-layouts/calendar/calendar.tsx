@@ -13,6 +13,7 @@ import {
   TIssue,
   TIssueKanbanFilters,
   TIssueMap,
+  TPaginationData,
 } from "@plane/types";
 import { ICalendarWeek } from "./types";
 // constants
@@ -33,7 +34,9 @@ type Props = {
   layout: "month" | "week" | undefined;
   showWeekends: boolean;
   issueCalendarView: ICalendarStore;
-  loadMoreIssues: () => void;
+  loadMoreIssues: (dateString: string) => void;
+  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -63,6 +66,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     quickActions,
     quickAddCallback,
     addIssuesToView,
+    getPaginationData,
+    getGroupIssueCount,
     viewId,
     updateFilters,
     readOnly = false,
@@ -108,6 +113,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                       issues={issues}
                       groupedIssueIds={groupedIssueIds}
                       loadMoreIssues={loadMoreIssues}
+                      getPaginationData={getPaginationData}
+                      getGroupIssueCount={getGroupIssueCount}
                       enableQuickIssueCreate
                       disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
                       quickActions={quickActions}
@@ -126,6 +133,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                 issues={issues}
                 groupedIssueIds={groupedIssueIds}
                 loadMoreIssues={loadMoreIssues}
+                getPaginationData={getPaginationData}
+                getGroupIssueCount={getGroupIssueCount}
                 enableQuickIssueCreate
                 disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
                 quickActions={quickActions}

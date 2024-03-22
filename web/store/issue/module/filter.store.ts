@@ -28,7 +28,9 @@ export interface IModuleIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
-    cursor: string | undefined
+    cursor: string | undefined,
+    groupId: string | undefined,
+    subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
@@ -97,21 +99,19 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     return filteredRouteParams;
   }
 
-  getFilterParams = computedFn((options: IssuePaginationOptions, cursor: string | undefined) => {
-    const filterParams = this.appliedFilters;
+  getFilterParams = computedFn(
+    (
+      options: IssuePaginationOptions,
+      cursor: string | undefined,
+      groupId: string | undefined,
+      subGroupId: string | undefined
+    ) => {
+      const filterParams = this.appliedFilters;
 
-    const paginationOptions: Partial<Record<TIssueParams, string | boolean>> = {
-      ...filterParams,
-      cursor: cursor ? cursor : `${options.perPageCount}:0:0`,
-      per_page: options.perPageCount.toString(),
-    };
-
-    if (options.groupedBy) {
-      paginationOptions.group_by = options.groupedBy;
+      const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
+      return paginationParams;
     }
-
-    return paginationOptions;
-  });
+  );
 
   fetchFilters = async (workspaceSlug: string, projectId: string, moduleId: string) => {
     try {

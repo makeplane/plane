@@ -22,7 +22,12 @@ export interface IProjectIssues extends IBaseIssuesStore {
     projectId: string,
     loadType: TLoader
   ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (workspaceSlug: string, projectId: string) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => Promise<TIssuesResponse | undefined>;
 
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
@@ -65,7 +70,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
         this.loader = loadType;
       });
       this.clear();
-      const params = this.issueFilterStore?.getFilterParams(options, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       this.onfetchIssues(response, options);
@@ -76,15 +81,21 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     }
   };
 
-  fetchNextIssues = async (workspaceSlug: string, projectId: string) => {
-    if (!this.paginationOptions || !this.next_page_results) return;
+  fetchNextIssues = async (workspaceSlug: string, projectId: string, groupId?: string, subGroupId?: string) => {
+    const cursorObject = this.getPaginationData(subGroupId ?? groupId);
+    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
       this.loader = "pagination";
 
-      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions, this.nextCursor);
+      const params = this.issueFilterStore?.getFilterParams(
+        this.paginationOptions,
+        cursorObject?.nextCursor,
+        groupId,
+        subGroupId
+      );
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
-      this.onfetchNexIssues(response);
+      this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
       this.loader = undefined;

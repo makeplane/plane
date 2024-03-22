@@ -12,14 +12,16 @@ import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssuesFilter } from "store/issue/project-views";
-import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
-  loadMoreIssues: () => void;
+  loadMoreIssues: (dateString: string) => void;
+  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
@@ -41,6 +43,8 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     issues,
     groupedIssueIds,
     loadMoreIssues,
+    getPaginationData,
+    getGroupIssueCount,
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
@@ -53,9 +57,12 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
 
   const formattedDatePayload = renderFormattedPayloadDate(date.date);
   if (!formattedDatePayload) return null;
-  const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : null;
+  const issueIds = groupedIssueIds?.[formattedDatePayload];
+  const dayIssueCount = getGroupIssueCount(formattedDatePayload);
+  const nextPageResults = getPaginationData(formattedDatePayload)?.nextPageResults;
 
-  const totalIssues = issueIdList?.issueCount ?? 0;
+  const shouldLoadMore =
+    nextPageResults === undefined && dayIssueCount !== undefined ? issueIds?.length < dayIssueCount : !!nextPageResults;
 
   const isToday = date.date.toDateString() === new Date().toDateString();
 
@@ -101,7 +108,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               >
                 <CalendarIssueBlocks
                   issues={issues}
-                  issueIdList={issueIdList?.issueIds ?? []}
+                  issueIdList={issueIds ?? []}
                   quickActions={quickActions}
                   isDragDisabled={readOnly}
                 />
@@ -121,12 +128,12 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                   </div>
                 )}
 
-                {totalIssues > (issueIdList?.issueIds?.length ?? 0) && (
+                {shouldLoadMore && (
                   <div className="flex items-center px-2.5 py-1">
                     <button
                       type="button"
                       className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-custom-background-80 hover:text-custom-text-300"
-                      onClick={loadMoreIssues}
+                      onClick={() => loadMoreIssues(formattedDatePayload)}
                     >
                       Load More
                     </button>

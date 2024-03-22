@@ -1,7 +1,7 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
 import { WorkspaceService } from "services/workspace.service";
-import { IssuePaginationOptions, TIssue, TIssuesResponse, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
+import { IssuePaginationOptions, TIssue, TIssuesResponse, TLoader, ViewFlags } from "@plane/types";
 // services
 // types
 import { IIssueRootStore } from "../root.store";
@@ -23,7 +23,12 @@ export interface IWorkspaceIssues extends IBaseIssuesStore {
     viewId: string,
     loadType: TLoader
   ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (workspaceSlug: string, viewId: string) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (
+    workspaceSlug: string,
+    viewId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => Promise<TIssuesResponse | undefined>;
 
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
@@ -64,7 +69,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
         this.loader = loadType;
       });
       this.clear();
-      const params = this.issueFilterStore?.getFilterParams(viewId, options, undefined);
+      const params = this.issueFilterStore?.getFilterParams(viewId, options, undefined, undefined, undefined);
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 
       this.onfetchIssues(response, options);
@@ -75,15 +80,22 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     }
   };
 
-  fetchNextIssues = async (workspaceSlug: string, viewId: string) => {
-    if (!this.paginationOptions) return;
+  fetchNextIssues = async (workspaceSlug: string, viewId: string, groupId?: string, subGroupId?: string) => {
+    const cursorObject = this.getPaginationData(subGroupId ?? groupId);
+    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
       this.loader = "pagination";
 
-      const params = this.issueFilterStore?.getFilterParams(viewId, this.paginationOptions, this.nextCursor);
+      const params = this.issueFilterStore?.getFilterParams(
+        viewId,
+        this.paginationOptions,
+        cursorObject?.nextCursor,
+        groupId,
+        subGroupId
+      );
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 
-      this.onfetchNexIssues(response);
+      this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
       this.loader = undefined;

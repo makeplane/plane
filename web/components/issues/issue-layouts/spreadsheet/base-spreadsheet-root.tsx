@@ -9,11 +9,12 @@ import { useIssuesActions } from "hooks/use-issues-actions";
 // views
 // types
 // constants
-import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
+import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { SpreadsheetView } from "./spreadsheet-view";
 import useSWR from "swr";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
+import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
 
 export type SpreadsheetStoreType =
   | EIssuesStoreType.PROJECT
@@ -72,7 +73,8 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
 
-  const issueIds = issues.groupedIssueIds?.["All Issues"]?.issueIds ?? [];
+  const issueIds = issues.groupedIssueIds?.[ALL_ISSUES] ?? [];
+  const nextPageResults = issues.getPaginationData(ALL_ISSUES)?.nextPageResults;
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
@@ -118,7 +120,8 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         viewId={viewId}
         enableQuickCreateIssue={enableQuickAdd}
         disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-        onEndOfListTrigger={fetchNextIssues}
+        canLoadMoreIssues={!!nextPageResults}
+        loadMoreIssues={fetchNextIssues}
       />
     </IssueLayoutHOC>
   );

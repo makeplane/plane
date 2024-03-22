@@ -18,7 +18,7 @@ interface IssueActions {
     options: IssuePaginationOptions,
     userViewId?: "assigned" | "created" | "subscribed"
   ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: () => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (groupId?: string, subGroupId?: string) => Promise<TIssuesResponse | undefined>;
   removeIssue: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   createIssue?: (projectId: string | undefined | null, data: Partial<TIssue>) => Promise<TIssue | undefined>;
   updateIssue?: (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>;
@@ -77,10 +77,13 @@ const useProjectIssueActions = () => {
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );
-  const fetchNextIssues = useCallback(async () => {
-    if (!workspaceSlug || !projectId) return;
-    return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString());
-  }, [issues.fetchIssues, workspaceSlug, projectId]);
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
+    },
+    [issues.fetchIssues, workspaceSlug, projectId]
+  );
 
   const createIssue = useCallback(
     async (projectId: string | undefined | null, data: Partial<TIssue>) => {
@@ -151,10 +154,19 @@ const useCycleIssueActions = () => {
     },
     [issues.fetchIssues, workspaceSlug, projectId, cycleId]
   );
-  const fetchNextIssues = useCallback(async () => {
-    if (!workspaceSlug || !projectId || !cycleId) return;
-    return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
-  }, [issues.fetchIssues, workspaceSlug, projectId, cycleId]);
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !projectId || !cycleId) return;
+      return issues.fetchNextIssues(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        cycleId.toString(),
+        groupId,
+        subGroupId
+      );
+    },
+    [issues.fetchIssues, workspaceSlug, projectId, cycleId]
+  );
 
   const createIssue = useCallback(
     async (projectId: string | undefined | null, data: Partial<TIssue>) => {
@@ -242,10 +254,19 @@ const useModuleIssueActions = () => {
     },
     [issues.fetchIssues, workspaceSlug, projectId, moduleId]
   );
-  const fetchNextIssues = useCallback(async () => {
-    if (!workspaceSlug || !projectId || !moduleId) return;
-    return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
-  }, [issues.fetchIssues, workspaceSlug, projectId, moduleId]);
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !projectId || !moduleId) return;
+      return issues.fetchNextIssues(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        moduleId.toString(),
+        groupId,
+        subGroupId
+      );
+    },
+    [issues.fetchIssues, workspaceSlug, projectId, moduleId]
+  );
 
   const createIssue = useCallback(
     async (projectId: string | undefined | null, data: Partial<TIssue>) => {
@@ -324,10 +345,13 @@ const useProfileIssueActions = () => {
     },
     [issues.fetchIssues, workspaceSlug, userId]
   );
-  const fetchNextIssues = useCallback(async () => {
-    if (!workspaceSlug || !userId) return;
-    return issues.fetchNextIssues(workspaceSlug.toString(), userId.toString());
-  }, [issues.fetchIssues, workspaceSlug, userId]);
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !userId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), userId.toString(), groupId, subGroupId);
+    },
+    [issues.fetchIssues, workspaceSlug, userId]
+  );
 
   const createIssue = useCallback(
     async (projectId: string | undefined | null, data: Partial<TIssue>) => {
@@ -398,10 +422,13 @@ const useProjectViewIssueActions = () => {
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );
-  const fetchNextIssues = useCallback(async () => {
-    if (!workspaceSlug || !projectId) return;
-    return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString());
-  }, [issues.fetchIssues, workspaceSlug, projectId]);
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
+    },
+    [issues.fetchIssues, workspaceSlug, projectId]
+  );
 
   const createIssue = useCallback(
     async (projectId: string | undefined | null, data: Partial<TIssue>) => {
@@ -472,10 +499,13 @@ const useDraftIssueActions = () => {
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );
-  const fetchNextIssues = useCallback(async () => {
-    if (!workspaceSlug || !projectId) return;
-    return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString());
-  }, [issues.fetchIssues, workspaceSlug, projectId]);
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
+    },
+    [issues.fetchIssues, workspaceSlug, projectId]
+  );
 
   const createIssue = useCallback(
     async (projectId: string | undefined | null, data: Partial<TIssue>) => {
@@ -538,10 +568,13 @@ const useArchivedIssueActions = () => {
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );
-  const fetchNextIssues = useCallback(async () => {
-    if (!workspaceSlug || !projectId) return;
-    return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString());
-  }, [issues.fetchIssues, workspaceSlug, projectId]);
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
+    },
+    [issues.fetchIssues, workspaceSlug, projectId]
+  );
 
   const removeIssue = useCallback(
     async (projectId: string | undefined | null, issueId: string) => {
@@ -595,10 +628,13 @@ const useGlobalIssueActions = () => {
     },
     [issues.fetchIssues, workspaceSlug, globalViewId]
   );
-  const fetchNextIssues = useCallback(async () => {
-    if (!workspaceSlug || !globalViewId) return;
-    return issues.fetchNextIssues(workspaceSlug.toString(), globalViewId.toString());
-  }, [issues.fetchIssues, workspaceSlug, globalViewId]);
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !globalViewId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), globalViewId.toString(), groupId, subGroupId);
+    },
+    [issues.fetchIssues, workspaceSlug, globalViewId]
+  );
 
   const createIssue = useCallback(
     async (projectId: string | undefined | null, data: Partial<TIssue>) => {

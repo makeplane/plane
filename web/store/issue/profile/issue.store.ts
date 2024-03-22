@@ -27,7 +27,12 @@ export interface IProfileIssues extends IBaseIssuesStore {
     userId: string,
     loadType: TLoader
   ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (workspaceSlug: string, userId: string) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (
+    workspaceSlug: string,
+    userId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => Promise<TIssuesResponse | undefined>;
 
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
@@ -95,7 +100,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
 
       this.setViewId(view);
 
-      let params = this.issueFilterStore?.getFilterParams(options, undefined);
+      let params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       params = {
         ...params,
         assignees: undefined,
@@ -116,12 +121,18 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     }
   };
 
-  fetchNextIssues = async (workspaceSlug: string, userId: string) => {
-    if (!this.paginationOptions || !this.currentView || !this.next_page_results) return;
+  fetchNextIssues = async (workspaceSlug: string, userId: string, groupId?: string, subGroupId?: string) => {
+    const cursorObject = this.getPaginationData(subGroupId ?? groupId);
+    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
       this.loader = "pagination";
 
-      let params = this.issueFilterStore?.getFilterParams(this.paginationOptions, this.nextCursor);
+      let params = this.issueFilterStore?.getFilterParams(
+        this.paginationOptions,
+        cursorObject?.nextCursor,
+        groupId,
+        subGroupId
+      );
       params = {
         ...params,
         assignees: undefined,
@@ -134,7 +145,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
 
       const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
 
-      this.onfetchNexIssues(response);
+      this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
       this.loader = undefined;

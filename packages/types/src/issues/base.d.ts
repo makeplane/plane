@@ -12,16 +12,26 @@ export * from "./activity/base";
 
 export type TLoader = "init-loader" | "mutation" | "pagination" | undefined;
 
-export type TIssueGroup = { issueIds: string[]; issueCount: number };
 export type TGroupedIssues = {
-  [group_id: string]: TIssueGroup;
+  [group_id: string]: string[];
 };
 
 export type TSubGroupedIssues = {
   [sub_grouped_id: string]: TGroupedIssues;
 };
-export type TUnGroupedIssues = {
-  "All Issues": TIssueGroup;
+
+export type TIssues = TGroupedIssues | TSubGroupedIssues;
+
+export type TPaginationData = {
+  nextCursor: string;
+  prevCursor: string;
+  nextPageResults: boolean;
 };
 
-export type TIssues = TGroupedIssues | TUnGroupedIssues;
+export type TIssuePaginationData = {
+  [group_id: string]: TPaginationData;
+};
+
+export type TGroupedIssueCount = {
+  [group_id: string]: number;
+};

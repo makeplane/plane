@@ -21,8 +21,8 @@ import {
   IIssueDisplayProperties,
   IIssueMap,
   TSubGroupedIssues,
-  TUnGroupedIssues,
   TIssueKanbanFilters,
+  TPaginationData,
 } from "@plane/types";
 // parent components
 import { getGroupByColumns } from "../utils";
@@ -33,17 +33,21 @@ import { KanbanStoreType } from "./base-kanban-root";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
-  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
+  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: any;
-  loadMoreIssues: (() => void) | undefined;
+  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -64,7 +68,9 @@ export interface IGroupByKanBan {
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const {
     issuesMap,
-    issueIds,
+    groupedIssueIds,
+    getGroupIssueCount,
+    getPaginationData,
     displayProperties,
     sub_group_by,
     group_by,
@@ -107,7 +113,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   if (!list) return null;
 
-  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)?.[_list.id]?.issueCount > 0);
+  const groupWithIssues = list.filter((_list) => (getGroupIssueCount(_list.id) ?? 0) > 0);
 
   const groupList = showEmptyGroup ? list : groupWithIssues;
 
@@ -143,7 +149,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                     column_id={_list.id}
                     icon={_list.icon}
                     title={_list.name}
-                    count={(issueIds as TGroupedIssues)?.[_list.id]?.issueCount || 0}
+                    count={getGroupIssueCount(_list.id) ?? 0}
                     issuePayload={_list.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     storeType={storeType}
@@ -158,7 +164,9 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                 <KanbanGroup
                   groupId={_list.id}
                   issuesMap={issuesMap}
-                  issueIds={issueIds}
+                  groupedIssueIds={groupedIssueIds}
+                  getGroupIssueCount={getGroupIssueCount}
+                  getPaginationData={getPaginationData}
                   peekIssueId={peekIssue?.issueId ?? ""}
                   displayProperties={displayProperties}
                   sub_group_by={sub_group_by}
@@ -187,16 +195,20 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
 export interface IKanBan {
   issuesMap: IIssueMap;
-  issueIds: TGroupedIssues | TSubGroupedIssues;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
+  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id?: string;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  loadMoreIssues: (() => void) | undefined;
+  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   showEmptyGroup: boolean;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
@@ -217,7 +229,9 @@ export interface IKanBan {
 export const KanBan: React.FC<IKanBan> = observer((props) => {
   const {
     issuesMap,
-    issueIds,
+    groupedIssueIds,
+    getGroupIssueCount,
+    getPaginationData,
     displayProperties,
     sub_group_by,
     group_by,
@@ -244,7 +258,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   return (
     <GroupByKanBan
       issuesMap={issuesMap}
-      issueIds={issueIds}
+      groupedIssueIds={groupedIssueIds}
+      getGroupIssueCount={getGroupIssueCount}
+      getPaginationData={getPaginationData}
       displayProperties={displayProperties}
       group_by={group_by}
       sub_group_by={sub_group_by}

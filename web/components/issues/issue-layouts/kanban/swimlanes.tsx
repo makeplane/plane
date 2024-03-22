@@ -10,8 +10,9 @@ import {
   IIssueDisplayProperties,
   IIssueMap,
   TSubGroupedIssues,
-  TUnGroupedIssues,
   TIssueKanbanFilters,
+  TGroupedIssueCount,
+  TPaginationData,
 } from "@plane/types";
 import { getGroupByColumns } from "../utils";
 import { KanBan } from "./default";
@@ -22,7 +23,7 @@ import { KanbanStoreType } from "./base-kanban-root";
 // constants
 
 interface ISubGroupSwimlaneHeader {
-  issueIds: TGroupedIssues | TSubGroupedIssues;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   list: IGroupByColumn[];
@@ -31,16 +32,8 @@ interface ISubGroupSwimlaneHeader {
   storeType: KanbanStoreType;
 }
 
-const getSubGroupHeaderIssuesCount = (issueIds: TSubGroupedIssues, groupById: string) => {
-  let headerCount = 0;
-  Object.keys(issueIds).map((groupState) => {
-    headerCount = headerCount + (issueIds?.[groupState]?.[groupById]?.issueCount || 0);
-  });
-  return headerCount;
-};
-
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
-  issueIds,
+  getGroupIssueCount,
   sub_group_by,
   group_by,
   storeType,
@@ -59,7 +52,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
             column_id={_list.id}
             icon={_list.icon}
             title={_list.name}
-            count={getSubGroupHeaderIssuesCount(issueIds as TSubGroupedIssues, _list?.id)}
+            count={getGroupIssueCount(_list?.id) ?? 0}
             kanbanFilters={kanbanFilters}
             handleKanbanFilters={handleKanbanFilters}
             issuePayload={_list.payload}
@@ -72,10 +65,14 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   issuesMap: IIssueMap;
-  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
+  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   showEmptyGroup: boolean;
   displayProperties: IIssueDisplayProperties | undefined;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
@@ -93,12 +90,14 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  loadMoreIssues: (() => void) | undefined;
+  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
     issuesMap,
-    issueIds,
+    groupedIssueIds,
+    getGroupIssueCount,
+    getPaginationData,
     sub_group_by,
     group_by,
     list,
@@ -119,22 +118,12 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     isDragStarted,
   } = props;
 
-  const calculateIssueCount = (column_id: string) => {
-    let issueCount = 0;
-    const subGroupedIds = issueIds as TSubGroupedIssues;
-    subGroupedIds?.[column_id] &&
-      Object.keys(subGroupedIds?.[column_id])?.forEach((_list: any) => {
-        issueCount += subGroupedIds?.[column_id]?.[_list]?.issueCount || 0;
-      });
-    return issueCount;
-  };
-
   return (
     <div className="relative h-max min-h-full w-full">
       {list &&
         list.length > 0 &&
-        list.map((_list: any, index: number) => {
-          const isLastSubGroup = index === list.length - 1;
+        list.map((_list: any) => {
+          const issueCount = getGroupIssueCount(_list.id) ?? 0;
           return (
             <div key={_list.id} className="flex flex-shrink-0 flex-col">
               <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
@@ -143,7 +132,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     column_id={_list.id}
                     icon={_list.Icon}
                     title={_list.name || ""}
-                    count={calculateIssueCount(_list.id)}
+                    count={issueCount}
                     kanbanFilters={kanbanFilters}
                     handleKanbanFilters={handleKanbanFilters}
                   />
@@ -155,7 +144,9 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                 <div className="relative">
                   <KanBan
                     issuesMap={issuesMap}
-                    issueIds={(issueIds as TSubGroupedIssues)?.[_list.id]}
+                    groupedIssueIds={groupedIssueIds}
+                    getGroupIssueCount={getGroupIssueCount}
+                    getPaginationData={getPaginationData}
                     displayProperties={displayProperties}
                     sub_group_by={sub_group_by}
                     group_by={group_by}
@@ -173,7 +164,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     scrollableContainerRef={scrollableContainerRef}
                     isDragStarted={isDragStarted}
                     storeType={storeType}
-                    loadMoreIssues={isLastSubGroup ? loadMoreIssues : undefined}
+                    loadMoreIssues={loadMoreIssues}
                   />
                 </div>
               )}
@@ -186,15 +177,19 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
 
 export interface IKanBanSwimLanes {
   issuesMap: IIssueMap;
-  issueIds: TGroupedIssues | TSubGroupedIssues;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
+  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  loadMoreIssues: (() => void) | undefined;
+  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   showEmptyGroup: boolean;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
@@ -215,7 +210,9 @@ export interface IKanBanSwimLanes {
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
   const {
     issuesMap,
-    issueIds,
+    groupedIssueIds,
+    getGroupIssueCount,
+    getPaginationData,
     displayProperties,
     sub_group_by,
     group_by,
@@ -268,7 +265,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     <div className="relative">
       <div className="sticky top-0 z-[2] h-[50px] bg-custom-background-90">
         <SubGroupSwimlaneHeader
-          issueIds={issueIds}
+          getGroupIssueCount={getGroupIssueCount}
           group_by={group_by}
           sub_group_by={sub_group_by}
           kanbanFilters={kanbanFilters}
@@ -282,7 +279,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
         <SubGroupSwimlane
           issuesMap={issuesMap}
           list={subGroupByList}
-          issueIds={issueIds}
+          groupedIssueIds={groupedIssueIds}
+          getPaginationData={getPaginationData}
+          getGroupIssueCount={getGroupIssueCount}
           displayProperties={displayProperties}
           group_by={group_by}
           sub_group_by={sub_group_by}

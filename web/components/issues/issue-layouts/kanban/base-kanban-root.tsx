@@ -75,26 +75,37 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     updateFilters,
   } = useIssuesActions(storeType);
 
-  useSWR(`ISSUE_KANBAN_LAYOUT_${storeType}`, () => fetchIssues("init-loader", { canGroup: true, perPageCount: 30 }), {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
-
-  const fetchMoreIssues = useCallback(() => {
-    if (issues.loader !== "pagination") {
-      fetchNextIssues();
-    }
-  }, [fetchNextIssues]);
-
-  const debouncedFetchMoreIssues = debounce(() => fetchMoreIssues(), 300, { leading: true, trailing: false });
-
-  const issueIds = issues?.groupedIssueIds;
-
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
 
   const sub_group_by: string | null = displayFilters?.sub_group_by || null;
   const group_by: string | null = displayFilters?.group_by || null;
+
+  useSWR(
+    `ISSUE_KANBAN_LAYOUT_${storeType}_${group_by}_${sub_group_by}`,
+    () => fetchIssues("init-loader", { canGroup: true, perPageCount: 30 }),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  const fetchMoreIssues = useCallback(
+    (groupId?: string, subgroupId?: string) => {
+      if (issues.loader !== "pagination") {
+        fetchNextIssues(groupId, subgroupId);
+      }
+    },
+    [fetchNextIssues]
+  );
+
+  const debouncedFetchMoreIssues = debounce(
+    (groupId?: string, subgroupId?: string) => fetchMoreIssues(groupId, subgroupId),
+    300,
+    { leading: true, trailing: false }
+  );
+
+  const groupedIssueIds = issues?.groupedIssueIds;
 
   const userDisplayFilters = displayFilters || null;
 
@@ -160,7 +171,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           sub_group_by,
           group_by,
           issueMap,
-          issueIds,
+          groupedIssueIds,
           updateIssue,
           removeIssue
         ).catch((err) => {
@@ -201,7 +212,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       sub_group_by,
       group_by,
       issueMap,
-      issueIds,
+      groupedIssueIds,
       updateIssue,
       removeIssue
     ).finally(() => {
@@ -271,7 +282,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
             <div className="h-max w-max">
               <KanBanView
                 issuesMap={issueMap}
-                issueIds={issueIds!}
+                groupedIssueIds={groupedIssueIds ?? {}}
+                getGroupIssueCount={issues.getGroupIssueCount}
                 displayProperties={displayProperties}
                 sub_group_by={sub_group_by}
                 group_by={group_by}
@@ -282,6 +294,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                 enableQuickIssueCreate={enableQuickAdd}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
                 quickAddCallback={issues?.quickAddIssue}
+                getPaginationData={issues.getPaginationData}
                 viewId={viewId}
                 disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
                 canEditProperties={canEditProperties}
