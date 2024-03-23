@@ -182,7 +182,7 @@ def update_label_color():
         labels = Label.objects.filter(color="")
         updated_labels = []
         for label in labels:
-            label.color = "#" + "%06x" % random.randint(0, 0xFFFFFF)
+            label.color = f"#{random.randint(0, 0xFFFFFF+1):06X}"
             updated_labels.append(label)
 
         Label.objects.bulk_update(updated_labels, ["color"], batch_size=100)
