@@ -117,6 +117,7 @@ class OffsetPaginator:
         if self.key:
             queryset = queryset.order_by(
                 *self.key,
+                "-created_at",
             )
 
         page = cursor.offset
@@ -205,7 +206,10 @@ class GroupedOffsetPaginator(OffsetPaginator):
             row_number=Window(
                 expression=RowNumber(),
                 partition_by=[F(self.group_by_field_name)],
-                order_by=(*self.key,),
+                order_by=(
+                    *self.key,
+                    "-created_at",
+                ),
             )
         )
 
@@ -399,7 +403,10 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             row_number=Window(
                 expression=RowNumber(),
                 partition_by=[F(self.sub_group_by_field_name)],
-                order_by=(*self.key,),
+                order_by=(
+                    *self.key,
+                    "-created_at",
+                ),
             )
         )
 
@@ -530,14 +537,19 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                 result_id = result["id"]
                 group_id = result[self.group_by_field_name]
                 result_group_mapping[str(result_id)].add(str(group_id))
+
+        # Use the same calculation for the sub group
         if self.sub_group_by_field_name in self.FIELD_MAPPER:
             for result in results:
                 result_id = result["id"]
                 sub_group_id = result[self.sub_group_by_field_name]
                 result_sub_group_mapping[str(result_id)].add(str(sub_group_id))
 
+        # Iterate over results
         for result in results:
+            # Get the group value
             group_value = str(result.get(self.group_by_field_name))
+            # Get the sub group value
             sub_group_value = str(result.get(self.sub_group_by_field_name))
             if (
                 group_value in processed_results
@@ -545,15 +557,18 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                 in processed_results[str(group_value)]["results"]
             ):
                 if self.group_by_field_name in self.FIELD_MAPPER:
+                    # for multi grouper
                     group_ids = list(result_group_mapping[str(result_id)])
                     result[self.FIELD_MAPPER.get(self.group_by_field_name)] = (
                         [] if "None" in group_ids else group_ids
                     )
                 if self.sub_group_by_field_name in self.FIELD_MAPPER:
                     sub_group_ids = list(result_group_mapping[str(result_id)])
+                    # for multi groups
                     result[self.FIELD_MAPPER.get(self.group_by_field_name)] = (
                         [] if "None" in sub_group_ids else sub_group_ids
                     )
+
                 processed_results[str(group_value)]["results"][
                     str(sub_group_value)
                 ]["results"].append(result)
