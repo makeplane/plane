@@ -220,7 +220,7 @@ def workspace_export(workspace_id, email):
         ModuleFavorite: "module_favorites.json",
         ModuleLink: "module_links.json",
         ModuleMember: "module_members.json",
-        ModuleUserProperties: "module_user_properties",
+        ModuleUserProperties: "module_user_properties.json",
         # Page
         Page: "pages.json",
         PageLog: "page_logs.json",
