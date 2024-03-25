@@ -150,22 +150,6 @@ export const WORKSPACE_SETTINGS_LINKS: {
     Icon: SettingIcon,
   },
   {
-    key: "integrations",
-    label: "Integrations",
-    href: `/settings/integrations`,
-    access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "import",
-    label: "Imports",
-    href: `/settings/imports`,
-    access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/imports`,
-    Icon: SettingIcon,
-  },
-  {
     key: "export",
     label: "Exports",
     href: `/settings/exports`,
