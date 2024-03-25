@@ -459,13 +459,16 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         )
 
     def __get_subgroup_total_queryset(self):
-        return self.queryset.values(
-            self.group_by_field_name, self.sub_group_by_field_name
-        ).annotate(
-            count=Count(
-                "id",
-                filter=self.count_filter,
-                distinct=True,
+        return (
+            self.queryset.values(
+                self.group_by_field_name, self.sub_group_by_field_name
+            )
+            .annotate(
+                count=Count("id", filter=self.count_filter, distinct=True)
+            )
+            .order_by()
+            .values(
+                self.group_by_field_name, self.sub_group_by_field_name, "count"
             )
         )
 
@@ -479,29 +482,36 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                 )
                 + (1 if group.get("count") == 0 else group.get("count"))
             )
-        for sub_group in self.__get_subgroup_total_queryset():
-            total_sub_group_dict[
-                str(sub_group.get(self.sub_group_by_field_name))
-            ] = total_sub_group_dict.get(
-                str(sub_group.get(self.sub_group_by_field_name)), 0
-            ) + (
-                1 if sub_group.get("count") == 0 else sub_group.get("count")
-            )
+
+        # Sub group total values
+        for item in self.__get_subgroup_total_queryset():
+            group = str(item[self.group_by_field_name])
+            subgroup = str(item[self.sub_group_by_field_name])
+            count = item["count"]
+
+            if group not in total_sub_group_dict:
+                total_sub_group_dict[str(group)] = {}
+
+            if subgroup not in total_sub_group_dict[group]:
+                total_sub_group_dict[str(group)][str(subgroup)] = {}
+
+            total_sub_group_dict[group][subgroup] = count
 
         return total_group_dict, total_sub_group_dict
 
     def __get_field_dict(self):
         total_group_dict, total_sub_group_dict = self.__get_total_dict()
+
         return {
             str(group): {
                 "results": {
                     str(sub_group): {
                         "results": [],
                         "total_results": total_sub_group_dict.get(
-                            str(sub_group), 0
-                        ),
+                            str(group)
+                        ).get(str(sub_group), 0),
                     }
-                    for sub_group in total_sub_group_dict
+                    for sub_group in total_sub_group_dict.get(str(group))
                 },
                 "total_results": total_group_dict.get(str(group), 0),
             }
