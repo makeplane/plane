@@ -21,10 +21,10 @@ export const IssueSuggestions = (suggestions: any[]) => {
   const mappedSuggestions: IIssueListSuggestion[] = suggestions.map((suggestion): IIssueListSuggestion => {
     const transactionId = uuidv4();
     return {
-      title: suggestion.name,
-      priority: suggestion.priority.toString(),
-      identifier: `${suggestion.project_detail.identifier}-${suggestion.sequence_id}`,
-      state: suggestion.state_detail && suggestion.state_detail.name ? suggestion.state_detail.name : "Todo",
+      title: suggestion?.name,
+      priority: suggestion?.priority.toString(),
+      identifier: `${suggestion?.project_detail?.identifier}-${suggestion?.sequence_id}`,
+      state: suggestion?.state_detail && suggestion?.state_detail?.name ? suggestion?.state_detail?.name : "Todo",
       command: ({ editor, range }) => {
         editor
           .chain()
@@ -32,11 +32,11 @@ export const IssueSuggestions = (suggestions: any[]) => {
           .insertContentAt(range, {
             type: "issue-embed-component",
             attrs: {
-              entity_identifier: suggestion.id,
+              entity_identifier: suggestion?.id,
               id: transactionId,
-              title: suggestion.name,
-              project_identifier: suggestion.project_detail.identifier,
-              sequence_id: suggestion.sequence_id,
+              title: suggestion?.name,
+              project_identifier: suggestion?.project_detail?.identifier,
+              sequence_id: suggestion?.sequence_id,
               entity_name: "issue",
             },
           })
