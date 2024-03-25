@@ -90,13 +90,13 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         if workspace_member.role > 10:
             serializer = WorkspaceMemberAdminSerializer(
                 workspace_members,
-                fields=("id", "member", "role"),
+                fields=("id", "member", "role", "is_active"),
                 many=True,
             )
         else:
             serializer = WorkSpaceMemberSerializer(
                 workspace_members,
-                fields=("id", "member", "role"),
+                fields=("id", "member", "role", "is_active"),
                 many=True,
             )
         return Response(serializer.data, status=status.HTTP_200_OK)

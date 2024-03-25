@@ -179,7 +179,7 @@ class ProjectMemberAdminSerializer(BaseSerializer):
 class ProjectMemberRoleSerializer(DynamicBaseSerializer):
     class Meta:
         model = ProjectMember
-        fields = ("id", "role", "member", "project")
+        fields = ("id", "role", "member", "project", "is_active")
 
 
 class ProjectMemberInviteSerializer(BaseSerializer):
