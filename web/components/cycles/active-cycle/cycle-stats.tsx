@@ -11,7 +11,9 @@ import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
 // components
 import { SingleProgressStats } from "@/components/core";
 import { StateDropdown } from "@/components/dropdowns";
+import { EmptyState } from "@/components/empty-state";
 // constants
+import { EmptyStateType } from "@/constants/empty-state";
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 import { EIssuesStoreType } from "@/constants/issue";
 // helper
@@ -177,8 +179,12 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                     </Link>
                   ))
                 ) : (
-                  <div className="flex items-center justify-center text-center h-full text-sm text-custom-text-200">
-                    <span>There are no high priority issues present in this cycle.</span>
+                  <div className="flex items-center justify-center h-full w-full">
+                    <EmptyState
+                      type={EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE}
+                      layout="screen-simple"
+                      size="sm"
+                    />
                   </div>
                 )
               ) : (
@@ -195,63 +201,75 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycle.distribution?.assignees?.map((assignee, index) => {
-              if (assignee.assignee_id)
-                return (
-                  <SingleProgressStats
-                    key={assignee.assignee_id}
-                    title={
-                      <div className="flex items-center gap-2">
-                        <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
+            {cycleIssues.length > 0 ? (
+              cycle.distribution?.assignees?.map((assignee, index) => {
+                if (assignee.assignee_id)
+                  return (
+                    <SingleProgressStats
+                      key={assignee.assignee_id}
+                      title={
+                        <div className="flex items-center gap-2">
+                          <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
 
-                        <span>{assignee.display_name}</span>
-                      </div>
-                    }
-                    completed={assignee.completed_issues}
-                    total={assignee.total_issues}
-                  />
-                );
-              else
-                return (
-                  <SingleProgressStats
-                    key={`unassigned-${index}`}
-                    title={
-                      <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                          <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                          <span>{assignee.display_name}</span>
                         </div>
-                        <span>No assignee</span>
-                      </div>
-                    }
-                    completed={assignee.completed_issues}
-                    total={assignee.total_issues}
-                  />
-                );
-            })}
+                      }
+                      completed={assignee.completed_issues}
+                      total={assignee.total_issues}
+                    />
+                  );
+                else
+                  return (
+                    <SingleProgressStats
+                      key={`unassigned-${index}`}
+                      title={
+                        <div className="flex items-center gap-2">
+                          <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                            <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                          </div>
+                          <span>No assignee</span>
+                        </div>
+                      }
+                      completed={assignee.completed_issues}
+                      total={assignee.total_issues}
+                    />
+                  );
+              })
+            ) : (
+              <div className="flex items-center justify-center h-full w-full">
+                <EmptyState type={EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE} layout="screen-simple" size="sm" />
+              </div>
+            )}
           </Tab.Panel>
 
           <Tab.Panel
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycle.distribution?.labels?.map((label, index) => (
-              <SingleProgressStats
-                key={label.label_id ?? `no-label-${index}`}
-                title={
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="block h-3 w-3 rounded-full"
-                      style={{
-                        backgroundColor: label.color ?? "#000000",
-                      }}
-                    />
-                    <span className="text-xs">{label.label_name ?? "No labels"}</span>
-                  </div>
-                }
-                completed={label.completed_issues}
-                total={label.total_issues}
-              />
-            ))}
+            {cycleIssues.length > 0 ? (
+              cycle.distribution?.labels?.map((label, index) => (
+                <SingleProgressStats
+                  key={label.label_id ?? `no-label-${index}`}
+                  title={
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="block h-3 w-3 rounded-full"
+                        style={{
+                          backgroundColor: label.color ?? "#000000",
+                        }}
+                      />
+                      <span className="text-xs">{label.label_name ?? "No labels"}</span>
+                    </div>
+                  }
+                  completed={label.completed_issues}
+                  total={label.total_issues}
+                />
+              ))
+            ) : (
+              <div className="flex items-center justify-center h-full w-full">
+                <EmptyState type={EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE} layout="screen-simple" size="sm" />
+              </div>
+            )}
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
