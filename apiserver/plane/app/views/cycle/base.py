@@ -14,6 +14,8 @@ from django.db.models import (
     When,
     Value,
     CharField,
+    Subquery,
+    IntegerField,
 )
 from django.utils import timezone
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -71,6 +73,60 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
+        cancelled_issues = (
+            Issue.issue_objects.filter(
+                state__group="cancelled",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
+            .values("cnt")
+        )
+        completed_issues = (
+            Issue.issue_objects.filter(
+                state__group="completed",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
+            .values("cnt")
+        )
+        started_issues = (
+            Issue.issue_objects.filter(
+                state__group="started",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
+            .values("cnt")
+        )
+        unstarted_issues = (
+            Issue.issue_objects.filter(
+                state__group="unstarted",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
+            .values("cnt")
+        )
+        backlog_issues = (
+            Issue.issue_objects.filter(
+                state__group="backlog",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
+            .values("cnt")
+        )
+        total_issues = (
+            Issue.issue_objects.filter(
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
+            .values("cnt")
+        )
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -100,58 +156,39 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(is_favorite=Exists(favorite_subquery))
             .annotate(
-                completed_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                    distinct=True,
+                completed_issues=Coalesce(
+                    Subquery(completed_issues[:1]),
+                    Value(0, output_field=IntegerField()),
                 )
             )
             .annotate(
-                cancelled_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="cancelled",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                    distinct=True,
+                cancelled_issues=Coalesce(
+                    Subquery(cancelled_issues[:1]),
+                    Value(0, output_field=IntegerField()),
                 )
             )
             .annotate(
-                started_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="started",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                    distinct=True,
+                started_issues=Coalesce(
+                    Subquery(started_issues[:1]),
+                    Value(0, output_field=IntegerField()),
                 )
             )
             .annotate(
-                unstarted_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="unstarted",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                    distinct=True,
+                unstarted_issues=Coalesce(
+                    Subquery(unstarted_issues[:1]),
+                    Value(0, output_field=IntegerField()),
                 )
             )
             .annotate(
-                backlog_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="backlog",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                    distinct=True,
+                backlog_issues=Coalesce(
+                    Subquery(backlog_issues[:1]),
+                    Value(0, output_field=IntegerField()),
+                )
+            )
+            .annotate(
+                total_issues=Coalesce(
+                    Subquery(total_issues[:1]),
+                    Value(0, output_field=IntegerField()),
                 )
             )
             .annotate(
@@ -193,19 +230,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def list(self, request, slug, project_id):
-        queryset = (
-            self.get_queryset()
-            .filter(archived_at__isnull=True)
-            .annotate(
-                total_issues=Count(
-                    "issue_cycle",
-                    filter=Q(
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-        )
+        queryset = self.get_queryset().filter(archived_at__isnull=True)
         cycle_view = request.GET.get("cycle_view", "all")
 
         # Update the order by
@@ -407,6 +432,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                         # meta fields
                         "is_favorite",
                         "cancelled_issues",
+                        "total_issues",
                         "completed_issues",
                         "started_issues",
                         "unstarted_issues",
@@ -482,6 +508,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "progress_snapshot",
                 # meta fields
                 "is_favorite",
+                "total_issues",
                 "cancelled_issues",
                 "completed_issues",
                 "started_issues",
@@ -495,32 +522,11 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
 
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
-            self.get_queryset()
-            .filter(archived_at__isnull=True)
-            .filter(pk=pk)
-            .annotate(
-                total_issues=Count(
-                    "issue_cycle",
-                    filter=Q(
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
+            self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
         )
         data = (
             self.get_queryset()
             .filter(pk=pk)
-            .annotate(
-                total_issues=Issue.issue_objects.filter(
-                    project_id=self.kwargs.get("project_id"),
-                    parent__isnull=True,
-                    issue_cycle__cycle_id=pk,
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
             .annotate(
                 sub_issues=Issue.issue_objects.filter(
                     project_id=self.kwargs.get("project_id"),
