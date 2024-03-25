@@ -38,7 +38,7 @@ from .workspace.base import (
     WorkSpaceAvailabilityCheckEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
-    ExportWorkspaceUserActivityEndpoint
+    ExportWorkspaceUserActivityEndpoint,
 )
 
 from .workspace.member import (
@@ -232,3 +232,26 @@ from .webhook.base import (
 from .dashboard.base import DashboardEndpoint, WidgetsEndpoint
 
 from .error_404 import custom_404_view
+
+from .importer.base import (
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+    BulkImportIssuesEndpoint,
+    BulkImportModulesEndpoint,
+)
+
+from .integration.base import (
+    IntegrationViewSet,
+    WorkspaceIntegrationViewSet,
+)
+
+from .integration.github import (
+    GithubRepositoriesEndpoint,
+    GithubRepositorySyncViewSet,
+    GithubIssueSyncViewSet,
+    GithubCommentSyncViewSet,
+    BulkCreateGithubIssueSyncEndpoint,
+)
+
+from .integration.slack import SlackProjectSyncViewSet

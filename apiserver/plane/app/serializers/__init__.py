@@ -124,3 +124,13 @@ from .exporter import ExporterHistorySerializer
 from .webhook import WebhookSerializer, WebhookLogSerializer
 
 from .dashboard import DashboardSerializer, WidgetSerializer
+
+from .integration import (
+    IntegrationSerializer,
+    WorkspaceIntegrationSerializer,
+    GithubIssueSyncSerializer,
+    GithubRepositorySerializer,
+    GithubRepositorySyncSerializer,
+    GithubCommentSyncSerializer,
+    SlackProjectSyncSerializer,
+)
