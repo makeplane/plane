@@ -3,8 +3,11 @@ import { FC } from "react";
 import { ICycle } from "@plane/types";
 // ui
 import { LinearProgressIndicator } from "@plane/ui";
+// components
+import { EmptyState } from "@/components/empty-state";
 // constants
 import { CYCLE_STATE_GROUPS_DETAILS } from "@/constants/cycle";
+import { EmptyStateType } from "@/constants/empty-state";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle;
@@ -32,48 +35,56 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
           <h3 className="text-base text-custom-text-300 font-semibold">Progress</h3>
-          <span className="flex gap-1 text-sm text-custom-text-400 font-medium whitespace-nowrap rounded-sm px-3 py-1 ">
-            {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
-              cycle.completed_issues + cycle.cancelled_issues > 1 ? "Issues" : "Issue"
-            } closed`}
-          </span>
+          {cycle.total_issues > 0 && (
+            <span className="flex gap-1 text-sm text-custom-text-400 font-medium whitespace-nowrap rounded-sm px-3 py-1 ">
+              {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
+                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Issues" : "Issue"
+              } closed`}
+            </span>
+          )}
         </div>
-        <LinearProgressIndicator size="lg" data={progressIndicatorData} />
+        {cycle.total_issues > 0 && <LinearProgressIndicator size="lg" data={progressIndicatorData} />}
       </div>
 
-      <div className="flex flex-col gap-5">
-        {Object.keys(groupedIssues).map((group, index) => (
-          <>
-            {groupedIssues[group] > 0 && (
-              <div key={index}>
-                <div className="flex items-center justify-between gap-2 text-sm">
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className="block h-3 w-3 rounded-full"
-                      style={{
-                        backgroundColor: CYCLE_STATE_GROUPS_DETAILS[index].color,
-                      }}
-                    />
-                    <span className="text-custom-text-300 capitalize font-medium w-16">{group}</span>
+      {cycle.total_issues > 0 ? (
+        <div className="flex flex-col gap-5">
+          {Object.keys(groupedIssues).map((group, index) => (
+            <>
+              {groupedIssues[group] > 0 && (
+                <div key={index}>
+                  <div className="flex items-center justify-between gap-2 text-sm">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className="block h-3 w-3 rounded-full"
+                        style={{
+                          backgroundColor: CYCLE_STATE_GROUPS_DETAILS[index].color,
+                        }}
+                      />
+                      <span className="text-custom-text-300 capitalize font-medium w-16">{group}</span>
+                    </div>
+                    <span className="text-custom-text-300">{`${groupedIssues[group]} ${
+                      groupedIssues[group] > 1 ? "Issues" : "Issue"
+                    }`}</span>
                   </div>
-                  <span className="text-custom-text-300">{`${groupedIssues[group]} ${
-                    groupedIssues[group] > 1 ? "Issues" : "Issue"
-                  }`}</span>
                 </div>
-              </div>
-            )}
-          </>
-        ))}
-        {cycle.cancelled_issues > 0 && (
-          <span className="flex items-center gap-2 text-sm text-custom-text-300">
-            <span>
-              {`${cycle.cancelled_issues} cancelled ${
-                cycle.cancelled_issues > 1 ? "issues are" : "issue is"
-              } excluded from this report.`}{" "}
+              )}
+            </>
+          ))}
+          {cycle.cancelled_issues > 0 && (
+            <span className="flex items-center gap-2 text-sm text-custom-text-300">
+              <span>
+                {`${cycle.cancelled_issues} cancelled ${
+                  cycle.cancelled_issues > 1 ? "issues are" : "issue is"
+                } excluded from this report.`}{" "}
+              </span>
             </span>
-          </span>
-        )}
-      </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-full w-full">
+          <EmptyState type={EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE} layout="screen-simple" size="sm" />
+        </div>
+      )}
     </div>
   );
 };
