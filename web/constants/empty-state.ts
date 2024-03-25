@@ -90,6 +90,8 @@ export enum EmptyStateType {
   ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE = "active-cycle-priority-issue-empty-state",
   ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE = "active-cycle-assignee-empty-state",
   ACTIVE_CYCLE_LABEL_EMPTY_STATE = "active-cycle-label-empty-state",
+
+  WORKSPACE_ACTIVE_CYCLES = "workspace-active-cycles",
 }
 
 const emptyStateDetails = {
@@ -614,6 +616,13 @@ const emptyStateDetails = {
     key: EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
     title: "Add labels to issues to see the \n breakdown of work by labels.",
     path: "/empty-state/active-cycle/label",
+  },
+  [EmptyStateType.WORKSPACE_ACTIVE_CYCLES]: {
+    key: EmptyStateType.WORKSPACE_ACTIVE_CYCLES,
+    title: "No active cycles",
+    description:
+      "Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here.",
+    path: "/empty-state/onboarding/workspace-active-cycles",
   },
 } as const;
 
