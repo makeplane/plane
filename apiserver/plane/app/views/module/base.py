@@ -3,7 +3,17 @@ import json
 
 # Django Imports
 from django.utils import timezone
-from django.db.models import Prefetch, F, OuterRef, Exists, Count, Q, Func
+from django.db.models import (
+    Prefetch,
+    F,
+    OuterRef,
+    Exists,
+    Count,
+    Q,
+    Func,
+    Subquery,
+    IntegerField,
+)
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Value, UUIDField
@@ -61,6 +71,71 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
+        cancelled_issues = (
+            ModuleIssue.objects.filter(
+                issue__state__group="cancelled",
+                issue__archived_at__isnull=True,
+                issue__is_draft=False,
+                module_id=OuterRef("pk"),
+            )
+            .values("module_id")
+            .annotate(cnt=Count("issue_id"))
+            .values("cnt")
+        )
+        completed_issues = (
+            ModuleIssue.objects.filter(
+                issue__state__group="completed",
+                issue__archived_at__isnull=True,
+                issue__is_draft=False,
+                module_id=OuterRef("pk"),
+            )
+            .values("module_id")
+            .annotate(cnt=Count("issue_id"))
+            .values("cnt")
+        )
+        started_issues = (
+            ModuleIssue.objects.filter(
+                issue__state__group="started",
+                issue__archived_at__isnull=True,
+                issue__is_draft=False,
+                module_id=OuterRef("pk"),
+            )
+            .values("module_id")
+            .annotate(cnt=Count("issue_id"))
+            .values("cnt")
+        )
+        unstarted_issues = (
+            ModuleIssue.objects.filter(
+                issue__state__group="unstarted",
+                issue__archived_at__isnull=True,
+                issue__is_draft=False,
+                module_id=OuterRef("pk"),
+            )
+            .values("module_id")
+            .annotate(cnt=Count("issue_id"))
+            .values("cnt")
+        )
+        backlog_issues = (
+            ModuleIssue.objects.filter(
+                issue__state__group="backlog",
+                issue__archived_at__isnull=True,
+                issue__is_draft=False,
+                module_id=OuterRef("pk"),
+            )
+            .values("module_id")
+            .annotate(cnt=Count("issue_id"))
+            .values("cnt")
+        )
+        total_issues = (
+            ModuleIssue.objects.filter(
+                issue__archived_at__isnull=True,
+                issue__is_draft=False,
+                module_id=OuterRef("pk"),
+            )
+            .values("module_id")
+            .annotate(cnt=Count("issue_id"))
+            .values("cnt")
+        )
         return (
             super()
             .get_queryset()
@@ -80,68 +155,39 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 )
             )
             .annotate(
-                total_issues=Count(
-                    "issue_module",
-                    filter=Q(
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                    ),
-                    distinct=True,
-                ),
-            )
-            .annotate(
-                completed_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="completed",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                    ),
-                    distinct=True,
+                completed_issues=Coalesce(
+                    Subquery(completed_issues[:1]),
+                    Value(0, output_field=IntegerField()),
                 )
             )
             .annotate(
-                cancelled_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="cancelled",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                    ),
-                    distinct=True,
+                cancelled_issues=Coalesce(
+                    Subquery(cancelled_issues[:1]),
+                    Value(0, output_field=IntegerField()),
                 )
             )
             .annotate(
-                started_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="started",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                    ),
-                    distinct=True,
+                started_issues=Coalesce(
+                    Subquery(started_issues[:1]),
+                    Value(0, output_field=IntegerField()),
                 )
             )
             .annotate(
-                unstarted_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="unstarted",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                    ),
-                    distinct=True,
+                unstarted_issues=Coalesce(
+                    Subquery(unstarted_issues[:1]),
+                    Value(0, output_field=IntegerField()),
                 )
             )
             .annotate(
-                backlog_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="backlog",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                    ),
-                    distinct=True,
+                backlog_issues=Coalesce(
+                    Subquery(backlog_issues[:1]),
+                    Value(0, output_field=IntegerField()),
+                )
+            )
+            .annotate(
+                total_issues=Coalesce(
+                    Subquery(total_issues[:1]),
+                    Value(0, output_field=IntegerField()),
                 )
             )
             .annotate(
@@ -191,6 +237,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                     "is_favorite",
                     "cancelled_issues",
                     "completed_issues",
+                    "total_issues",
                     "started_issues",
                     "unstarted_issues",
                     "backlog_issues",
@@ -246,16 +293,6 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             self.get_queryset()
             .filter(archived_at__isnull=True)
             .filter(pk=pk)
-            .annotate(
-                total_issues=Issue.issue_objects.filter(
-                    project_id=self.kwargs.get("project_id"),
-                    parent__isnull=True,
-                    issue_module__module_id=pk,
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
             .annotate(
                 sub_issues=Issue.issue_objects.filter(
                     project_id=self.kwargs.get("project_id"),
@@ -418,6 +455,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 "cancelled_issues",
                 "completed_issues",
                 "started_issues",
+                "total_issues",
                 "unstarted_issues",
                 "backlog_issues",
                 "created_at",
