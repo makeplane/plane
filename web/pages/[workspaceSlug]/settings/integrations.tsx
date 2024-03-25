@@ -38,6 +38,10 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
 
+  const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
+    workspaceSlug && isAdmin ? integrationService.getAppIntegrationsList() : null
+  );
+
   if (!isAdmin)
     return (
       <>
@@ -47,10 +51,6 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
         </div>
       </>
     );
-
-  const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
-    workspaceSlug && isAdmin ? integrationService.getAppIntegrationsList() : null
-  );
 
   return (
     <>
