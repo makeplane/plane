@@ -46,5 +46,8 @@ urlpatterns = [
     *workspace_urls,
     *api_urls,
     *webhook_urls,
+    # ee
     *active_cycle_urls,
+    *integration_urls,
+    *importer_urls,
 ]
