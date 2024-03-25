@@ -30,6 +30,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
     customActionButton,
     portalElement,
     readOnly = false,
+    placements = "bottom-start",
   } = props;
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
@@ -106,7 +107,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
       />
       <CustomMenu
         menuItemsClassName="z-[14]"
-        placement="bottom-start"
+        placement={placements}
         customButton={customActionButton}
         portalElement={portalElement}
         maxHeight="lg"

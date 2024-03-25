@@ -89,7 +89,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
             groupedIssueIds={groupedIssueIds}
             layout={displayFilters?.calendar?.layout}
             showWeekends={displayFilters?.calendar?.show_weekends ?? false}
-            quickActions={(issue, customActionButton) => (
+            quickActions={(issue, customActionButton, placement) => (
               <QuickActions
                 customActionButton={customActionButton}
                 issue={issue}
@@ -101,6 +101,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
                 handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
                 handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
                 readOnly={!isEditingAllowed || isCompletedCycle}
+                placements={placement}
               />
             )}
             addIssuesToView={addIssuesToView}

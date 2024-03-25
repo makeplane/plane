@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 import { TIssue } from "@plane/types";
@@ -14,7 +15,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   issue: TIssue;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
   isDragging?: boolean;
 };
 
@@ -55,6 +56,11 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
       <MoreHorizontal className="h-3.5 w-3.5" />
     </div>
   );
+
+  const isMenuActionRefAboveScreenBottom =
+    menuActionRef?.current && menuActionRef?.current?.getBoundingClientRect().bottom < window.innerHeight - 220;
+
+  const placement = isMenuActionRefAboveScreenBottom ? "bottom-end" : "top-end";
 
   return (
     <ControlLink
@@ -104,7 +110,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
               e.stopPropagation();
             }}
           >
-            {quickActions(issue, customActionButton)}
+            {quickActions(issue, customActionButton, placement)}
           </div>
         </div>
       </>

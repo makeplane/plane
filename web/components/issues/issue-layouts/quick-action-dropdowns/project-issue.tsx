@@ -28,6 +28,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     customActionButton,
     portalElement,
     readOnly = false,
+    placements = "bottom-start",
   } = props;
   // router
   const router = useRouter();
@@ -107,7 +108,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
       />
       <CustomMenu
         menuItemsClassName="z-[14]"
-        placement="bottom-start"
+        placement={placements}
         customButton={customActionButton}
         portalElement={portalElement}
         maxHeight="lg"
