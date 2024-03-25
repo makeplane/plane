@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { EIssuesStoreType } from "constants/issue";
+import { EIssuesStoreType } from "@/constants/issue";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
 

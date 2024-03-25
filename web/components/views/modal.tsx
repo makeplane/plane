@@ -1,14 +1,14 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
+import { IProjectView } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ProjectViewForm } from "components/views";
+import { ProjectViewForm } from "@/components/views";
 // hooks
-import { useProjectView } from "hooks/store";
+import { useProjectView } from "@/hooks/store";
 // types
-import { IProjectView } from "@plane/types";
 
 type Props = {
   data?: IProjectView | null;

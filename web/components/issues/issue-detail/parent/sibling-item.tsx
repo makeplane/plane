@@ -3,7 +3,7 @@ import Link from "next/link";
 // ui
 import { CustomMenu, LayersIcon } from "@plane/ui";
 // hooks
-import { useIssueDetail, useProject } from "hooks/store";
+import { useIssueDetail, useProject } from "@/hooks/store";
 
 type TIssueParentSiblingItem = {
   issueId: string;

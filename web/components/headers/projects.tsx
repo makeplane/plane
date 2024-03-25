@@ -1,20 +1,20 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
+import { TProjectFilters } from "@plane/types";
 // hooks
-import { useApplication, useEventTracker, useMember, useProject, useProjectFilter, useUser } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
+import { BreadcrumbLink } from "@/components/common";
 // helpers
-import { cn } from "helpers/common.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { FiltersDropdown } from "components/issues";
-import { ProjectFiltersSelection, ProjectOrderByDropdown } from "components/project";
-import { TProjectFilters } from "@plane/types";
+import { FiltersDropdown } from "@/components/issues";
+import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useEventTracker, useMember, useProject, useProjectFilter, useUser } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ProjectsHeader = observer(() => {
   // states

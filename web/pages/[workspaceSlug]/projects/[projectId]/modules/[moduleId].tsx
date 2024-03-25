@@ -3,20 +3,20 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { EmptyState } from "components/common";
-import { PageHead } from "components/core";
-import { ModuleIssuesHeader } from "components/headers";
-import { ModuleLayoutRoot } from "components/issues";
-import { ModuleDetailsSidebar } from "components/modules";
-import { useModule, useProject } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
+import { EmptyState } from "@/components/common";
+import { PageHead } from "@/components/core";
+import { ModuleIssuesHeader } from "@/components/headers";
+import { ModuleLayoutRoot } from "@/components/issues";
+import { ModuleDetailsSidebar } from "@/components/modules";
+import { ModuleMobileHeader } from "@/components/modules/module-mobile-header";
+import { useModule, useProject } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { AppLayout } from "@/layouts/app-layout";
 // components
 // assets
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 import emptyModule from "public/empty-state/module.svg";
-import { ModuleMobileHeader } from "components/modules/module-mobile-header";
 // types
 
 const ModuleIssuesPage: NextPageWithLayout = observer(() => {
@@ -84,7 +84,7 @@ const ModuleIssuesPage: NextPageWithLayout = observer(() => {
 
 ModuleIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ModuleIssuesHeader />} mobileHeader={<ModuleMobileHeader/>} withProjectWrapper>
+    <AppLayout header={<ModuleIssuesHeader />} mobileHeader={<ModuleMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

@@ -92,6 +92,7 @@ class Module(ProjectBaseModel):
     sort_order = models.FloatField(default=65535)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
         unique_together = ["name", "project"]

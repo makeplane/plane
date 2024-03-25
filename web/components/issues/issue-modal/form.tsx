@@ -1,13 +1,14 @@
 import React, { FC, useState, useRef, useEffect, Fragment } from "react";
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import type { TIssue, ISearchIssueResponse } from "@plane/types";
 // editor
 // hooks
 import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
-import { GptAssistantPopover } from "components/core";
+import { GptAssistantPopover } from "@/components/core";
 import {
   CycleDropdown,
   DateDropdown,
@@ -17,22 +18,21 @@ import {
   ProjectDropdown,
   MemberDropdown,
   StateDropdown,
-} from "components/dropdowns";
-import { ParentIssuesListModal } from "components/issues";
-import { IssueLabelSelect } from "components/issues/select";
-import { CreateLabelModal } from "components/labels";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
+} from "@/components/dropdowns";
+import { ParentIssuesListModal } from "@/components/issues";
+import { IssueLabelSelect } from "@/components/issues/select";
+import { CreateLabelModal } from "@/components/labels";
+import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
+import { getChangedIssuefields } from "@/helpers/issue.helper";
+import { shouldRenderProject } from "@/helpers/project.helper";
+import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "@/hooks/store";
 // services
-import { AIService } from "services/ai.service";
-import { FileService } from "services/file.service";
+import { AIService } from "@/services/ai.service";
+import { FileService } from "@/services/file.service";
 // components
 // ui
 // helpers
-import { getChangedIssuefields } from "helpers/issue.helper";
-import { shouldRenderProject } from "helpers/project.helper";
 // types
-import type { TIssue, ISearchIssueResponse } from "@plane/types";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -52,6 +52,7 @@ const defaultValues: Partial<TIssue> = {
 
 export interface IssueFormProps {
   data?: Partial<TIssue>;
+  issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange?: (formData: Partial<TIssue> | null) => void;
@@ -93,6 +94,7 @@ const getTabIndex = (key: string) => TAB_INDICES.findIndex((tabIndex) => tabInde
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     data,
+    issueTitleRef,
     onChange,
     onClose,
     onSubmit,
@@ -176,6 +178,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           id: data.id,
           description_html: formData.description_html ?? "<p></p>",
         };
+
+    // this condition helps to move the issues from draft to project issues
+    if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
+
     await onSubmit(submitData, is_draft_issue);
 
     setGptAssistantModal(false);
@@ -242,10 +248,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const startDate = watch("start_date");
   const targetDate = watch("target_date");
 
-  const minDate = startDate ? new Date(startDate) : null;
+  const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = targetDate ? new Date(targetDate) : null;
+  const maxDate = getDate(targetDate);
   maxDate?.setDate(maxDate.getDate());
 
   const projectDetails = getProjectById(projectId);
@@ -366,11 +372,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       onChange(e.target.value);
                       handleFormChange();
                     }}
-                    ref={ref}
+                    ref={issueTitleRef || ref}
                     hasError={Boolean(errors.name)}
                     placeholder="Issue Title"
                     className="w-full resize-none text-xl"
                     tabIndex={getTabIndex("name")}
+                    autoFocus
                   />
                 )}
               />
@@ -594,6 +601,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChange(cycleId);
                             handleFormChange();
                           }}
+                          placeholder="Cycle"
                           value={value}
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("cycle_id")}
@@ -615,6 +623,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChange(moduleIds);
                             handleFormChange();
                           }}
+                          placeholder="Modules"
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("module_ids")}
                           multiple
@@ -713,19 +722,24 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           </div>
         </div>
         <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-100 px-5 pt-5">
-          <div
-            className="flex cursor-default items-center gap-1.5"
-            onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
-            }}
-            tabIndex={getTabIndex("create_more")}
-          >
-            <div className="flex cursor-pointer items-center justify-center">
-              <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-            </div>
-            <span className="text-xs">Create more</span>
+          <div>
+            {!data?.id && (
+              <div
+                className="inline-flex cursor-default items-center gap-1.5"
+                onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
+                }}
+                tabIndex={getTabIndex("create_more")}
+              >
+                <div className="flex cursor-pointer items-center justify-center">
+                  <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
+                </div>
+                <span className="text-xs">Create more</span>
+              </div>
+            )}
           </div>
+
           <div className="flex items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={getTabIndex("discard_button")}>
               Discard

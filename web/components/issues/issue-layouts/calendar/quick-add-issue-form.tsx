@@ -3,23 +3,23 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 // components
-import { ExistingIssuesListModal } from "components/core";
-// hooks
-import { useEventTracker, useIssueDetail, useProject } from "hooks/store";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// helpers
-import { createIssuePayload } from "helpers/issue.helper";
-// icons
 import { PlusIcon } from "lucide-react";
-// ui
-import { TOAST_TYPE, setPromiseToast, setToast, CustomMenu } from "@plane/ui";
-// types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
+import { TOAST_TYPE, setPromiseToast, setToast, CustomMenu } from "@plane/ui";
+import { ExistingIssuesListModal } from "@/components/core";
+// hooks
+import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { cn } from "@/helpers/common.helper";
+import { createIssuePayload } from "@/helpers/issue.helper";
+import { useEventTracker, useIssueDetail, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// helpers
+// icons
+// ui
+// types
 // constants
-import { ISSUE_CREATED } from "constants/event-tracker";
 // helper
-import { cn } from "helpers/common.helper";
 
 type Props = {
   formKey: keyof TIssue;
@@ -230,7 +230,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
 
       {!isOpen && (
         <div
-          className={cn("md:hidden rounded md:border-[0.5px] border-custom-border-200 md:group-hover:block", {
+          className={cn("md:opacity-0 rounded md:border-[0.5px] border-custom-border-200 md:group-hover:opacity-100", {
             block: isMenuOpen,
           })}
         >

@@ -5,18 +5,18 @@ import { useRouter } from "next/router";
 // hooks
 // ui
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
+import { TIssue } from "@plane/types";
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { STATE_GROUPS } from "constants/state";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useIssues, useEventTracker, useUser, useProjectState } from "hooks/store";
+import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { STATE_GROUPS } from "@/constants/state";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useIssues, useEventTracker, useUser, useProjectState } from "@/hooks/store";
 // components
 // helpers
 // types
-import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
 
@@ -30,6 +30,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
     customActionButton,
     portalElement,
     readOnly = false,
+    placements = "bottom-start",
   } = props;
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
@@ -106,7 +107,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
       />
       <CustomMenu
         menuItemsClassName="z-[14]"
-        placement="bottom-start"
+        placement={placements}
         customButton={customActionButton}
         portalElement={portalElement}
         maxHeight="lg"

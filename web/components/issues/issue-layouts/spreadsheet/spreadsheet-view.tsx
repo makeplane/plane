@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
 import { Spinner } from "@plane/ui";
-import { SpreadsheetQuickAddIssueForm } from "components/issues";
-import { useProject } from "hooks/store";
-import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { SpreadsheetQuickAddIssueForm } from "@/components/issues";
+import { useProject } from "@/hooks/store";
 import { SpreadsheetTable } from "./spreadsheet-table";
 // types
 //hooks

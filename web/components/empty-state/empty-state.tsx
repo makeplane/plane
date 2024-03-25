@@ -1,17 +1,17 @@
 import React from "react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 
 import { useTheme } from "next-themes";
 // hooks
-import { useUser } from "hooks/store";
 // components
 import { Button, TButtonVariant } from "@plane/ui";
-import { ComicBoxButton } from "./comic-box-button";
 // constant
-import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
+import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
 // helpers
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
+import { useUser } from "@/hooks/store";
+import { ComicBoxButton } from "./comic-box-button";
 
 export type EmptyStateProps = {
   type: EmptyStateType;
@@ -151,12 +151,12 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
       )}
       {layout === "screen-simple" && (
         <div className="text-center flex flex-col gap-2.5 items-center">
-          <div className="h-28 w-28">
+          <div className={`${size === "sm" ? "h-24 w-24" : "h-28 w-28"}`}>
             <Image
               src={resolvedEmptyStatePath}
               alt={key || "button image"}
-              width={96}
-              height={96}
+              width={size === "sm" ? 78 : 96}
+              height={size === "sm" ? 78 : 96}
               layout="responsive"
               lazyBoundary="100%"
             />

@@ -2,19 +2,19 @@ import { FC } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { TGroupedIssues } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { CalendarChart } from "components/issues";
+import { CalendarChart } from "@/components/issues";
 // hooks
-import { useIssues, useUser } from "hooks/store";
-import { useIssuesActions } from "hooks/use-issues-actions";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 // ui
 // types
-import { TGroupedIssues } from "@plane/types";
-import { EIssuesStoreType } from "constants/issue";
 import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";
-import { EUserProjectRoles } from "constants/project";
 
 type CalendarStoreType =
   | EIssuesStoreType.PROJECT
@@ -89,7 +89,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
             groupedIssueIds={groupedIssueIds}
             layout={displayFilters?.calendar?.layout}
             showWeekends={displayFilters?.calendar?.show_weekends ?? false}
-            quickActions={(issue, customActionButton) => (
+            quickActions={(issue, customActionButton, placement) => (
               <QuickActions
                 customActionButton={customActionButton}
                 issue={issue}
@@ -101,6 +101,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
                 handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
                 handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
                 readOnly={!isEditingAllowed || isCompletedCycle}
+                placements={placement}
               />
             )}
             addIssuesToView={addIssuesToView}

@@ -533,8 +533,8 @@ class IssueReactionLiteSerializer(DynamicBaseSerializer):
         model = IssueReaction
         fields = [
             "id",
-            "actor_id",
-            "issue_id",
+            "actor",
+            "issue",
             "reaction",
         ]
 

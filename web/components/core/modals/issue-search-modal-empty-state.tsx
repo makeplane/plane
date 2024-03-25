@@ -1,10 +1,10 @@
 import React from "react";
 // components
-import { EmptyState } from "components/empty-state";
-// types
 import { ISearchIssueResponse } from "@plane/types";
+import { EmptyState } from "@/components/empty-state";
+// types
+import { EmptyStateType } from "@/constants/empty-state";
 // constants
-import { EmptyStateType } from "constants/empty-state";
 
 interface EmptyStateProps {
   issues: ISearchIssueResponse[];
@@ -29,8 +29,8 @@ export const IssueSearchModalEmptyState: React.FC<EmptyStateProps> = ({
     issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching
       ? renderEmptyState(EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE)
       : issues.length === 0
-      ? renderEmptyState(EmptyStateType.ISSUE_RELATION_EMPTY_STATE)
-      : null;
+        ? renderEmptyState(EmptyStateType.ISSUE_RELATION_EMPTY_STATE)
+        : null;
 
   return emptyState;
 };

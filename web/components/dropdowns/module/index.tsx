@@ -1,14 +1,14 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Combobox } from "@headlessui/react";
 import { ChevronDown, X } from "lucide-react";
+import { Combobox } from "@headlessui/react";
 // hooks
 import { DiceIcon, Tooltip } from "@plane/ui";
-import { cn } from "helpers/common.helper";
-import { useModule } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { cn } from "@/helpers/common.helper";
+import { useModule } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { DropdownButton } from "../buttons";
 // icons
@@ -46,7 +46,7 @@ type ButtonContentProps = {
   hideIcon: boolean;
   hideText: boolean;
   onChange: (moduleIds: string[]) => void;
-  placeholder: string;
+  placeholder?: string;
   showCount: boolean;
   showTooltip?: boolean;
   value: string | string[] | null;
@@ -73,15 +73,17 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
     return (
       <>
         {showCount ? (
-          <div className="relative flex items-center gap-1">
+          <div className="relative flex items-center gap-1 max-w-full">
             {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-            <div className="max-w-40 flex-grow truncate">
-              {value.length > 0
-                ? value.length === 1
-                  ? `${getModuleById(value[0])?.name || "module"}`
-                  : `${value.length} Module${value.length === 1 ? "" : "s"}`
-                : placeholder}
-            </div>
+            {(value.length > 0 || !!placeholder) && (
+              <div className="max-w-40 flex-grow truncate">
+                {value.length > 0
+                  ? value.length === 1
+                    ? `${getModuleById(value[0])?.name || "module"}`
+                    : `${value.length} Module${value.length === 1 ? "" : "s"}`
+                  : placeholder}
+              </div>
+            )}
           </div>
         ) : value.length > 0 ? (
           <div className="flex max-w-full flex-grow flex-wrap items-center gap-2 truncate py-0.5">
@@ -94,7 +96,12 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
                 >
                   {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
-                    <Tooltip tooltipHeading="Title" tooltipContent={moduleDetails?.name} disabled={!showTooltip} isMobile={isMobile}>
+                    <Tooltip
+                      tooltipHeading="Title"
+                      tooltipContent={moduleDetails?.name}
+                      disabled={!showTooltip}
+                      isMobile={isMobile}
+                    >
                       <span className="max-w-40 flex-grow truncate text-xs font-medium">{moduleDetails?.name}</span>
                     </Tooltip>
                   )}
@@ -153,7 +160,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     multiple,
     onChange,
     onClose,
-    placeholder = "Module",
+    placeholder = "",
     placement,
     projectId,
     showCount = false,

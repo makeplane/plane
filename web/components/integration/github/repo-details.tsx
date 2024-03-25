@@ -9,10 +9,10 @@ import useSWR from "swr";
 // ui
 import { Button, Loader } from "@plane/ui";
 // types
-import { IUserDetails, TFormValues, TIntegrationSteps } from "components/integration";
+import { IUserDetails, TFormValues, TIntegrationSteps } from "@/components/integration";
 // fetch-keys
-import { GITHUB_REPOSITORY_INFO } from "constants/fetch-keys";
-import { GithubIntegrationService } from "services/integrations";
+import { GITHUB_REPOSITORY_INFO } from "@/constants/fetch-keys";
+import { GithubIntegrationService } from "@/services/integrations";
 
 type Props = {
   selectedRepo: any;

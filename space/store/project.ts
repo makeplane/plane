@@ -1,7 +1,7 @@
 // mobx
 import { observable, action, makeObservable, runInAction } from "mobx";
 // service
-import ProjectService from "services/project.service";
+import ProjectService from "@/services/project.service";
 import { TIssueBoardKeys } from "types/issue";
 // types
 import { IWorkspace, IProject, IProjectSettings } from "types/project";

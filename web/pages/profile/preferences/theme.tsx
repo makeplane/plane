@@ -4,15 +4,15 @@ import { useTheme } from "next-themes";
 // ui
 import { Spinner, setPromiseToast } from "@plane/ui";
 // components
-import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
+import { CustomThemeSelector, ThemeSwitch, PageHead } from "@/components/core";
 // constants
-import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
+import { I_THEME_OPTION, THEME_OPTIONS } from "@/constants/themes";
 // hooks
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 // layouts
-import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
+import { ProfilePreferenceSettingsLayout } from "@/layouts/settings-layout/profile/preferences";
 // type
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
   // states

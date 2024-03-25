@@ -1,8 +1,8 @@
 import { FC } from "react";
 // components
-import { ChartViewRoot, IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
+import { ChartViewRoot, IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
 // context
-import { GanttStoreProvider } from "components/gantt-chart/contexts";
+import { GanttStoreProvider } from "@/components/gantt-chart/contexts";
 
 type GanttChartRootProps = {
   border?: boolean;

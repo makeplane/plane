@@ -4,13 +4,13 @@ import { useRouter } from "next/router";
 // hooks
 import { PanelRight } from "lucide-react";
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
-import { BreadcrumbLink } from "components/common";
-import { cn } from "helpers/common.helper";
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
+import { BreadcrumbLink } from "@/components/common";
+import { ProjectLogo } from "@/components/project";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
 // ui
 // helpers
 // services
-import { ProjectLogo } from "components/project";
 // constants
 // components
 

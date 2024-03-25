@@ -5,9 +5,9 @@ import { BarChart2, PanelRight } from "lucide-react";
 // ui
 import { Breadcrumbs } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "components/common";
-import { cn } from "helpers/common.helper";
-import { useApplication } from "hooks/store";
+import { BreadcrumbLink } from "@/components/common";
+import { cn } from "@/helpers/common.helper";
+import { useApplication } from "@/hooks/store";
 
 export const WorkspaceAnalyticsHeader = observer(() => {
   const router = useRouter();

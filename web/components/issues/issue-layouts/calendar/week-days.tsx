@@ -1,14 +1,15 @@
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
-// components
-import { CalendarDayTile } from "components/issues";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-// types
-import { ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssuesFilter } from "store/issue/project-views";
 import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+// components
+import { CalendarDayTile } from "@/components/issues";
+// helpers
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+// types
+import { ICycleIssuesFilter } from "@/store/issue/cycle";
+import { IModuleIssuesFilter } from "@/store/issue/module";
+import { IProjectIssuesFilter } from "@/store/issue/project";
+import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { ICalendarDate, ICalendarWeek } from "./types";
 
 type Props = {
@@ -16,7 +17,7 @@ type Props = {
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
   quickAddCallback?: (

@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 // ui
+import { List } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 // icon
-import { List } from "lucide-react";
 // constants
-import { CYCLE_VIEW_LAYOUTS } from "constants/cycle";
+import { CYCLE_VIEW_LAYOUTS } from "@/constants/cycle";
 // hooks
-import { useCycleFilter, useProject } from "hooks/store";
+import { useCycleFilter, useProject } from "@/hooks/store";
 
 const CyclesListMobileHeader = observer(() => {
   const { currentProjectDetails } = useProject();

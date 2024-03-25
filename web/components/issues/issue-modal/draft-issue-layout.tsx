@@ -1,21 +1,21 @@
 import React, { useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import type { TIssue } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { ConfirmIssueDiscard } from "components/issues";
-import { IssueFormRoot } from "components/issues/issue-modal/form";
-import { useEventTracker } from "hooks/store";
+import { ConfirmIssueDiscard } from "@/components/issues";
+import { IssueFormRoot } from "@/components/issues/issue-modal/form";
+import { isEmptyHtmlString } from "@/helpers/string.helper";
+import { useEventTracker } from "@/hooks/store";
 // services
-import { IssueDraftService } from "services/issue";
-// ui
-// components
-// types
-import type { TIssue } from "@plane/types";
+import { IssueDraftService } from "@/services/issue";
 
 export interface DraftIssueProps {
   changesMade: Partial<TIssue> | null;
   data?: Partial<TIssue>;
+  issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange: (formData: Partial<TIssue> | null) => void;
@@ -31,6 +31,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const {
     changesMade,
     data,
+    issueTitleRef,
     onChange,
     onClose,
     onSubmit,
@@ -48,8 +49,34 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const { captureIssueEvent } = useEventTracker();
 
   const handleClose = () => {
-    if (changesMade) setIssueDiscardModal(true);
-    else onClose(false);
+    if (data?.id) {
+      onClose(false);
+      setIssueDiscardModal(false);
+    } else {
+      if (changesMade) {
+        Object.entries(changesMade).forEach(([key, value]) => {
+          const issueKey = key as keyof TIssue;
+          if (value === null || value === undefined || value === "") delete changesMade[issueKey];
+          if (typeof value === "object" && isEmpty(value)) delete changesMade[issueKey];
+          if (Array.isArray(value) && value.length === 0) delete changesMade[issueKey];
+          if (issueKey === "project_id") delete changesMade.project_id;
+          if (issueKey === "priority" && value && value === "none") delete changesMade.priority;
+          if (
+            issueKey === "description_html" &&
+            changesMade.description_html &&
+            isEmptyHtmlString(changesMade.description_html)
+          )
+            delete changesMade.description_html;
+        });
+        if (isEmpty(changesMade)) {
+          onClose(false);
+          setIssueDiscardModal(false);
+        } else setIssueDiscardModal(true);
+      } else {
+        onClose(false);
+        setIssueDiscardModal(false);
+      }
+    }
   };
 
   const handleCreateDraftIssue = async () => {
@@ -57,7 +84,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
 
     const payload = {
       ...changesMade,
-      name: changesMade.name?.trim() === "" ? "Untitled" : changesMade.name?.trim(),
+      name: changesMade?.name && changesMade?.name?.trim() === "" ? changesMade.name?.trim() : "Untitled",
     };
 
     await issueDraftService
@@ -107,6 +134,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         isCreateMoreToggleEnabled={isCreateMoreToggleEnabled}
         onCreateMoreToggleChange={onCreateMoreToggleChange}
         data={data}
+        issueTitleRef={issueTitleRef}
         onChange={onChange}
         onClose={handleClose}
         onSubmit={onSubmit}

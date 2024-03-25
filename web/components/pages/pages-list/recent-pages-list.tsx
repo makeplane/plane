@@ -1,17 +1,17 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-// components
-import { PagesListView } from "components/pages/pages-list";
-import { EmptyState } from "components/empty-state";
-// ui
 import { Loader } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { PagesListView } from "@/components/pages/pages-list";
+import { EmptyStateType } from "@/constants/empty-state";
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+import { useApplication } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
+// components
+// ui
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // constants
-import { EmptyStateType } from "constants/empty-state";
 
 export const RecentPagesList: FC = observer(() => {
   // store hooks

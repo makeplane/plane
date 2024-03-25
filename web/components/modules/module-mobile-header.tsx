@@ -3,17 +3,17 @@ import { observer } from "mobx-react";
 import router from "next/router";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
-import { ProjectAnalyticsModal } from "components/analytics";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // hooks
-import { useIssues, useLabel, useMember, useModule, useProjectState } from "hooks/store";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+import { useIssues, useLabel, useMember, useModule, useProjectState } from "@/hooks/store";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
 
 export const ModuleMobileHeader = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -54,8 +54,10 @@ export const ModuleMobileHeader = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);

@@ -17,10 +17,10 @@
 </p>
 
 <p align="center">
-    <a href="http://www.plane.so"><b>Website</b></a> •
-    <a href="https://github.com/makeplane/plane/releases"><b>Releases</b></a> •
-    <a href="https://twitter.com/planepowers"><b>Twitter</b></a> •
-    <a href="https://docs.plane.so/"><b>Documentation</b></a>
+    <a href="https://dub.sh/plane-website-readme"><b>Website</b></a> •
+    <a href="https://git.new/releases"><b>Releases</b></a> •
+    <a href="https://dub.sh/planepowershq"><b>Twitter</b></a> •
+    <a href="https://dub.sh/planedocs"><b>Documentation</b></a>
 </p>
 
 <p>
@@ -40,15 +40,15 @@
     </a>
 </p>
 
-Meet [Plane](https://plane.so). An open-source software development tool to manage issues, sprints, and product roadmaps with peace of mind. 🧘‍♀️
+Meet [Plane](https://dub.sh/plane-website-readme). An open-source software development tool to manage issues, sprints, and product roadmaps with peace of mind. 🧘‍♀️
 
-> Plane is still in its early days, not everything will be perfect yet, and hiccups may happen. Please let us know of any suggestions, ideas, or bugs that you encounter on our [Discord](https://discord.com/invite/A92xrEGCge) or GitHub issues, and we will use your feedback to improve on our upcoming releases.
+> Plane is still in its early days, not everything will be perfect yet, and hiccups may happen. Please let us know of any suggestions, ideas, or bugs that you encounter on our [Discord](https://discord.com/invite/A92xrEGCge) or GitHub issues, and we will use your feedback to improve in our upcoming releases.
 
 ## ⚡ Installation
 
 The easiest way to get started with Plane is by creating a [Plane Cloud](https://app.plane.so) account where we offer a hosted solution for users.
 
-If you want more control over your data prefer to self-host Plane, please refer to our [deployment documentation](https://docs.plane.so/docker-compose).
+If you want more control over your data, prefer to self-host Plane, please refer to our [deployment documentation](https://docs.plane.so/docker-compose).
 
 | Installation Methods | Documentation Link                                                                                                                                           |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -59,9 +59,9 @@ If you want more control over your data prefer to self-host Plane, please refer 
 
 ## 🚀 Features
 
-- **Issues**: Quickly create issues and add details using a powerful, rich text editor that supports file uploads. Add sub-properties and references to problems for better organization and tracking.
+- **Issues**: Quickly create issues and add details using a powerful rich text editor that supports file uploads. Add sub-properties and references to problems for better organization and tracking.
 
-- **Cycles**
+- **Cycles**:
   Keep up your team's momentum with Cycles. Gain insights into your project's progress with burn-down charts and other valuable features.
 
 - **Modules**: Break down your large projects into smaller, more manageable modules. Assign modules between teams to track and plan your project's progress easily.
@@ -74,11 +74,11 @@ If you want more control over your data prefer to self-host Plane, please refer 
 
 - **Drive** (_coming soon_): The drive helps you share documents, images, videos, or any other files that make sense to you or your team and align on the problem/solution.
 
-## 🛠️ Contributors Quick Start
+## 🛠️ Quick start for contributors
 
 > Development system must have docker engine installed and running.
 
-Setting up local environment is extremely easy and straight forward. Follow the below step and you will be ready to contribute
+Setting up local environment is extremely easy and straight forward. Follow the below step and you will be ready to contribute - 
 
 1. Clone the code locally using:
    ```

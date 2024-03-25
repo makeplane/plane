@@ -1,3 +1,4 @@
+import { Placement } from "@popperjs/core";
 import { TIssue } from "@plane/types";
 
 export interface IQuickActionProps {
@@ -10,4 +11,5 @@ export interface IQuickActionProps {
   customActionButton?: React.ReactElement;
   portalElement?: HTMLDivElement | null;
   readOnly?: boolean;
+  placements?: Placement;
 }

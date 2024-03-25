@@ -1,17 +1,17 @@
 import { useCallback, useState } from "react";
-import router from "next/router";
 import { observer } from "mobx-react";
+import router from "next/router";
 // components
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // icons
 // constants
-import { ProjectAnalyticsModal } from "components/analytics";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
 // hooks
-import { useIssues, useLabel, useMember, useProject, useProjectState } from "hooks/store";
+import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 // layouts
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "./issue-layouts";
 
 export const IssuesMobileHeader = observer(() => {
@@ -52,8 +52,10 @@ export const IssuesMobileHeader = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -88,7 +90,7 @@ export const IssuesMobileHeader = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className="flex justify-evenly border-b border-custom-border-200 py-2 z-[13] bg-custom-background-100">
+      <div className="md:hidden flex justify-evenly border-b border-custom-border-200 py-2 z-[13] bg-custom-background-100">
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-sm text-custom-text-200"

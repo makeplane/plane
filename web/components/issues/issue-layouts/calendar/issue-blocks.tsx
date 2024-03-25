@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
-// components
-import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "components/issues";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-// types
 import { TIssue, TIssueMap } from "@plane/types";
-import useSize from "hooks/use-window-size";
+// components
+import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/issues";
+// helpers
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+// types
 
 type Props = {
   date: Date;
   issues: TIssueMap | undefined;
   issueIdList: string[] | null;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
   isDragDisabled?: boolean;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
@@ -26,6 +26,7 @@ type Props = {
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   readOnly?: boolean;
+  isMobileView?: boolean;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
@@ -41,11 +42,10 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     addIssuesToView,
     viewId,
     readOnly,
+    isMobileView = false,
   } = props;
   // states
   const [showAllIssues, setShowAllIssues] = useState(false);
-  // hooks
-  const [windowWidth] = useSize();
 
   const formattedDatePayload = renderFormattedPayloadDate(date);
   const totalIssues = issueIdList?.length ?? 0;
@@ -54,8 +54,8 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      {issueIdList?.slice(0, showAllIssues || windowWidth <= 768 ? issueIdList.length : 4).map((issueId, index) =>
-        windowWidth > 768 ? (
+      {issueIdList?.slice(0, showAllIssues || isMobileView ? issueIdList.length : 4).map((issueId, index) =>
+        !isMobileView ? (
           <Draggable key={issueId} draggableId={issueId} index={index} isDragDisabled={isDragDisabled}>
             {(provided, snapshot) => (
               <div

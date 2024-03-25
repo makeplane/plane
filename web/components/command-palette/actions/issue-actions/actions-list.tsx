@@ -2,15 +2,15 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
+import { TIssue } from "@plane/types";
 // hooks
 import { DoubleCircleIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
-import { EIssuesStoreType } from "constants/issue";
-import { copyTextToClipboard } from "helpers/string.helper";
-import { useApplication, useUser, useIssues } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+import { useApplication, useUser, useIssues } from "@/hooks/store";
 // ui
 // helpers
 // types
-import { TIssue } from "@plane/types";
 
 type Props = {
   closePalette: () => void;

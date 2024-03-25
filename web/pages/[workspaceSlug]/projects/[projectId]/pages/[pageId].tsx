@@ -1,31 +1,32 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
-import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { Sparkle } from "lucide-react";
+import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
+import { IPage } from "@plane/types";
 // hooks
 
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-import { GptAssistantPopover, PageHead } from "components/core";
-import { PageDetailsHeader } from "components/headers/page-details";
-import { IssuePeekOverview } from "components/issues";
-import { EUserProjectRoles } from "constants/project";
-import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
+import { GptAssistantPopover, PageHead } from "@/components/core";
+import { PageDetailsHeader } from "@/components/headers/page-details";
+import { IssuePeekOverview } from "@/components/issues";
+import { EUserProjectRoles } from "@/constants/project";
+import { getDate } from "@/helpers/date-time.helper";
+import { useApplication, usePage, useUser, useWorkspace } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
-import { FileService } from "services/file.service";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { FileService } from "@/services/file.service";
 // layouts
 // components
 // ui
 // assets
 // helpers
 // types
-import { IPage } from "@plane/types";
 // fetch-keys
 // constants
 
@@ -265,8 +266,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               documentDetails={{
                 title: pageTitle,
                 created_by: created_by,
-                created_on: created_at,
-                last_updated_at: updated_at,
+                created_on: getDate(created_at) ?? new Date(created_at ?? ""),
+                last_updated_at: getDate(updated_at) ?? new Date(created_at ?? ""),
                 last_updated_by: updated_by,
               }}
               pageLockConfig={userCanLock && !archived_at ? { action: unlockPage, is_locked: is_locked } : undefined}
@@ -276,7 +277,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   ? {
                       action: archived_at ? unArchivePage : archivePage,
                       is_archived: archived_at ? true : false,
-                      archived_at: archived_at ? new Date(archived_at) : undefined,
+                      archived_at: getDate(archived_at),
                     }
                   : undefined
               }
@@ -292,8 +293,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     documentDetails={{
                       title: pageTitle,
                       created_by: created_by,
-                      created_on: created_at,
-                      last_updated_at: updated_at,
+                      created_on: getDate(created_at) ?? new Date(created_at ?? ""),
+                      last_updated_at: getDate(updated_at) ?? new Date(created_at ?? ""),
                       last_updated_by: updated_by,
                     }}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}

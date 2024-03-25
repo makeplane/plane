@@ -12,11 +12,11 @@ import {
   TIssueOperations,
   ArchiveIssueModal,
   PeekOverviewIssueAttachments,
-} from "components/issues";
+} from "@/components/issues";
 // hooks
-import { useIssueDetail, useUser } from "hooks/store";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useIssueDetail, useUser } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // store hooks
 import { IssueActivity } from "../issue-detail/issue-activity";
 import { SubIssuesRoot } from "../sub-issues";
@@ -91,23 +91,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
         />
       )}
 
-      {issue && !is_archived && (
+      {issue && isDeleteIssueModalOpen === issue.id && (
         <DeleteIssueModal
-          isOpen={isDeleteIssueModalOpen}
+          isOpen={!!isDeleteIssueModalOpen}
           handleClose={() => {
-            toggleDeleteIssueModal(false);
+            toggleDeleteIssueModal(null);
           }}
           data={issue}
-          onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId)}
-        />
-      )}
-
-      {issue && is_archived && (
-        <DeleteIssueModal
-          data={issue}
-          isOpen={isDeleteIssueModalOpen}
-          handleClose={() => toggleDeleteIssueModal(false)}
-          onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId)}
+          onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId).then(() => removeRoutePeekId())}
         />
       )}
 

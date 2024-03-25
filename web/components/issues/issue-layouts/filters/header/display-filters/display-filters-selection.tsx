@@ -1,5 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
 
 // components
 import {
@@ -9,10 +10,9 @@ import {
   FilterIssueType,
   FilterOrderBy,
   FilterSubGroupBy,
-} from "components/issues";
+} from "@/components/issues";
 // types
-import { ILayoutDisplayFiltersOptions } from "constants/issue";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
+import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;

@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 // mobx
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { OnBoardingForm } from "@/components/accounts/onboarding-form";
+import { useMobxStore } from "@/lib/mobx/store-provider";
 // components
-import { OnBoardingForm } from "components/accounts/onboarding-form";
 
 const imagePrefix = Boolean(parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0")) ? "/spaces" : "";
 

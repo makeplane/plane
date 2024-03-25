@@ -1,7 +1,5 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
-// components
-import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -13,11 +11,13 @@ import {
   TUnGroupedIssues,
   TIssueKanbanFilters,
 } from "@plane/types";
-import { getGroupByColumns } from "../utils";
+// components
+import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
+import { getGroupByColumns, isWorkspaceLevel } from "../utils";
+import { KanbanStoreType } from "./base-kanban-root";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
-import { KanbanStoreType } from "./base-kanban-root";
 // types
 // constants
 
@@ -291,7 +291,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     projectModule,
     label,
     projectState,
-    member
+    member,
+    true,
+    isWorkspaceLevel(storeType)
   );
   const subGroupByList = getGroupByColumns(
     sub_group_by as GroupByColumnTypes,
@@ -300,7 +302,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     projectModule,
     label,
     projectState,
-    member
+    member,
+    true,
+    isWorkspaceLevel(storeType)
   );
 
   if (!groupByList || !subGroupByList) return null;

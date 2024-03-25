@@ -9,11 +9,11 @@ import {
   ArchivedIssueAppliedFiltersRoot,
   ProjectArchivedEmptyState,
   IssuePeekOverview,
-} from "components/issues";
-import { ListLayoutLoader } from "components/ui";
-import { EIssuesStoreType } from "constants/issue";
+} from "@/components/issues";
+import { ListLayoutLoader } from "@/components/ui";
+import { EIssuesStoreType } from "@/constants/issue";
 // ui
-import { useIssues } from "hooks/store";
+import { useIssues } from "@/hooks/store";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -43,9 +43,8 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
 
   if (!workspaceSlug || !projectId) return <></>;
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden">
+    <>
       <ArchivedIssueAppliedFiltersRoot />
-
       {issues?.groupedIssueIds?.length === 0 ? (
         <div className="relative h-full w-full overflow-y-auto">
           <ProjectArchivedEmptyState />
@@ -58,6 +57,6 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
           <IssuePeekOverview is_archived />
         </Fragment>
       )}
-    </div>
+    </>
   );
 });

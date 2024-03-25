@@ -2,15 +2,15 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 // services
-import { AuthService } from "services/authentication.service";
+import { Button, Input } from "@plane/ui";
+import { ESignInSteps } from "@/components/accounts";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { AuthService } from "@/services/authentication.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Input } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // constants
-import { ESignInSteps } from "components/accounts";
 
 type Props = {
   email: string;

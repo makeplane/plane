@@ -29,7 +29,10 @@ class ExportIssuesEndpoint(BaseAPIView):
         if provider in ["csv", "xlsx", "json"]:
             if not project_ids:
                 project_ids = Project.objects.filter(
-                    workspace__slug=slug
+                    workspace__slug=slug,
+                    project_projectmember__member=request.user,
+                    project_projectmember__is_active=True,
+                    archived_at__isnull=True,
                 ).values_list("id", flat=True)
                 project_ids = [str(project_id) for project_id in project_ids]
 

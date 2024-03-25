@@ -4,12 +4,12 @@ import useSWR from "swr";
 // layouts
 import { Lightbulb } from "lucide-react";
 import { Loader } from "@plane/ui";
-import { PageHead } from "components/core";
-import { InstanceAIForm } from "components/instance";
-import { useApplication } from "hooks/store";
-import { InstanceAdminLayout } from "layouts/admin-layout";
+import { PageHead } from "@/components/core";
+import { InstanceAIForm } from "@/components/instance";
+import { useApplication } from "@/hooks/store";
+import { InstanceAdminLayout } from "@/layouts/admin-layout";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // hooks
 // ui
 // icons

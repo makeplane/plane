@@ -1,11 +1,11 @@
 // components
-import { AppliedPriorityFilters } from "./priority";
-import { AppliedStateFilters } from "./state";
 // icons
 import { X } from "lucide-react";
 // helpers
-import { IIssueFilterOptions } from "store/issues/types";
+import { IIssueFilterOptions } from "@/store/issues/types";
 import { IIssueLabel, IIssueState } from "types/issue";
+import { AppliedPriorityFilters } from "./priority";
+import { AppliedStateFilters } from "./state";
 // types
 
 type Props = {

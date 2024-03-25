@@ -4,8 +4,6 @@ import io
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
-
-# Django imports
 from django.db import IntegrityError
 from django.db.models import (
     Count,
@@ -17,6 +15,8 @@ from django.db.models import (
 )
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractDay, ExtractWeek
+
+# Django imports
 from django.http import HttpResponse
 from django.utils import timezone
 
@@ -152,6 +152,7 @@ class WorkSpaceViewSet(BaseViewSet):
 
     @invalidate_cache(path="/api/workspaces/", user=False)
     @invalidate_cache(path="/api/users/me/workspaces/")
+    @invalidate_cache(path="/api/users/me/settings/")
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 

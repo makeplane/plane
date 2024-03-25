@@ -1,21 +1,21 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
-import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
+import { Combobox } from "@headlessui/react";
+import { IProject } from "@plane/types";
 // hooks
-import { cn } from "helpers/common.helper";
-import { useProject } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { ProjectLogo } from "@/components/project";
+import { cn } from "@/helpers/common.helper";
+import { useProject } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
-import { ProjectLogo } from "components/project";
 // helpers
 // types
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
-import { IProject } from "@plane/types";
 // constants
 
 type Props = TDropdownProps & {

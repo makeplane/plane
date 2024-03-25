@@ -2,10 +2,10 @@ import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { Loader } from "@plane/ui";
-import { PagesListView } from "components/pages/pages-list";
+import { PagesListView } from "@/components/pages/pages-list";
 // hooks
 // ui
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
+import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
 
 export const FavoritePagesList: FC = observer(() => {
   const projectPageStore = useProjectPages();

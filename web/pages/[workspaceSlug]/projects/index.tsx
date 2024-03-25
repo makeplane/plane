@@ -1,17 +1,17 @@
 import { ReactElement, useCallback } from "react";
 import { observer } from "mobx-react";
+import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // components
-import { PageHead } from "components/core";
-import { ProjectsHeader } from "components/headers";
-import { ProjectAppliedFiltersList, ProjectCardList } from "components/project";
+import { PageHead } from "@/components/core";
+import { ProjectsHeader } from "@/components/headers";
+import { ProjectAppliedFiltersList, ProjectCardList } from "@/components/project";
 // layouts
-import { useApplication, useProject, useProjectFilter, useWorkspace } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { useApplication, useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
 // helpers
-import { calculateTotalFilters } from "helpers/filter.helper";
 // types
-import { NextPageWithLayout } from "lib/types";
-import { TProjectFilters } from "@plane/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectsPage: NextPageWithLayout = observer(() => {
   // store
@@ -19,8 +19,15 @@ const ProjectsPage: NextPageWithLayout = observer(() => {
     router: { workspaceSlug },
   } = useApplication();
   const { currentWorkspace } = useWorkspace();
-  const { workspaceProjectIds, filteredProjectIds } = useProject();
-  const { currentWorkspaceFilters, clearAllFilters, updateFilters } = useProjectFilter();
+  const { totalProjectIds, filteredProjectIds } = useProject();
+  const {
+    currentWorkspaceFilters,
+    currentWorkspaceAppliedDisplayFilters,
+    clearAllFilters,
+    clearAllAppliedDisplayFilters,
+    updateFilters,
+    updateDisplayFilters,
+  } = useProjectFilter();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Projects` : undefined;
 
@@ -37,18 +44,35 @@ const ProjectsPage: NextPageWithLayout = observer(() => {
     [currentWorkspaceFilters, updateFilters, workspaceSlug]
   );
 
+  const handleRemoveDisplayFilter = useCallback(
+    (key: TProjectAppliedDisplayFilterKeys) => {
+      if (!workspaceSlug) return;
+      updateDisplayFilters(workspaceSlug.toString(), { [key]: false });
+    },
+    [updateDisplayFilters, workspaceSlug]
+  );
+
+  const handleClearAllFilters = useCallback(() => {
+    if (!workspaceSlug) return;
+    clearAllFilters(workspaceSlug.toString());
+    clearAllAppliedDisplayFilters(workspaceSlug.toString());
+  }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
+
   return (
     <>
       <PageHead title={pageTitle} />
       <div className="h-full w-full flex flex-col">
-        {calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 && (
+        {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 ||
+          currentWorkspaceAppliedDisplayFilters?.length !== 0) && (
           <div className="border-b border-custom-border-200 px-5 py-3">
             <ProjectAppliedFiltersList
               appliedFilters={currentWorkspaceFilters ?? {}}
-              handleClearAllFilters={() => clearAllFilters(`${workspaceSlug}`)}
+              appliedDisplayFilters={currentWorkspaceAppliedDisplayFilters ?? []}
+              handleClearAllFilters={handleClearAllFilters}
               handleRemoveFilter={handleRemoveFilter}
+              handleRemoveDisplayFilter={handleRemoveDisplayFilter}
               filteredProjects={filteredProjectIds?.length ?? 0}
-              totalProjects={workspaceProjectIds?.length ?? 0}
+              totalProjects={totalProjectIds?.length ?? 0}
               alwaysAllowEditing
             />
           </div>

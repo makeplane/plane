@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // services
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { CycleForm } from "components/cycles";
-import { CYCLE_CREATED, CYCLE_UPDATED } from "constants/event-tracker";
-import { useEventTracker, useCycle, useProject } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
-import { CycleService } from "services/cycle.service";
+import { CycleForm } from "@/components/cycles";
+import { CYCLE_CREATED, CYCLE_UPDATED } from "@/constants/event-tracker";
+import { useEventTracker, useCycle, useProject } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
+import { CycleService } from "@/services/cycle.service";
 // hooks
 // components
 // ui
 // types
-import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // constants
 
 type CycleModalProps = {
@@ -95,10 +95,10 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
       });
   };
 
-  const dateChecker = async (payload: CycleDateCheckData) => {
+  const dateChecker = async (projectId: string, payload: CycleDateCheckData) => {
     let status = false;
 
-    await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload).then((res) => {
+    await cycleService.cycleDateCheck(workspaceSlug, projectId, payload).then((res) => {
       status = res.status;
     });
 
@@ -116,13 +116,13 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
 
     if (payload.start_date && payload.end_date) {
       if (data?.start_date && data?.end_date)
-        isDateValid = await dateChecker({
+        isDateValid = await dateChecker(payload.project_id ?? projectId, {
           start_date: payload.start_date,
           end_date: payload.end_date,
           cycle_id: data.id,
         });
       else
-        isDateValid = await dateChecker({
+        isDateValid = await dateChecker(payload.project_id ?? projectId, {
           start_date: payload.start_date,
           end_date: payload.end_date,
         });

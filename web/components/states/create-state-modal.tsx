@@ -3,17 +3,17 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
+import { ChevronDown } from "lucide-react";
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // icons
-import { ChevronDown } from "lucide-react";
+import type { IState } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { GROUP_CHOICES } from "constants/project";
+import { GROUP_CHOICES } from "@/constants/project";
 // hooks
-import { useProjectState } from "hooks/store";
+import { useProjectState } from "@/hooks/store";
 // types
-import type { IState } from "@plane/types";
 
 // types
 type Props = {

@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
 
 // headless ui
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // icons
-import { ChevronDown, ChevronUp } from "lucide-react";
 
 export const CustomPopover = ({
   children,

@@ -1,13 +1,14 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { ICycle } from "@plane/types";
 // hooks
-import { CycleGanttBlock } from "components/cycles";
-import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
-import { useCycle } from "hooks/store";
+import { CycleGanttBlock } from "@/components/cycles";
+import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "@/components/gantt-chart";
+import { getDate } from "@/helpers/date-time.helper";
+import { useCycle } from "@/hooks/store";
 // components
 // types
-import { ICycle } from "@plane/types";
 // constants
 
 type Props = {
@@ -41,8 +42,8 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
       data: block,
       id: block?.id ?? "",
       sort_order: block?.sort_order ?? 0,
-      start_date: new Date(block?.start_date ?? ""),
-      target_date: new Date(block?.end_date ?? ""),
+      start_date: getDate(block?.start_date),
+      target_date: getDate(block?.end_date),
     }));
 
     return structuredBlocks;
