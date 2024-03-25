@@ -72,68 +72,56 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             workspace__slug=self.kwargs.get("slug"),
         )
         cancelled_issues = (
-            ModuleIssue.objects.filter(
-                issue__state__group="cancelled",
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                module_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                state__group="cancelled",
+                issue_module__module_id=OuterRef("pk"),
             )
-            .values("module_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_module__module_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         completed_issues = (
-            ModuleIssue.objects.filter(
-                issue__state__group="completed",
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                module_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                state__group="completed",
+                issue_module__module_id=OuterRef("pk"),
             )
-            .values("module_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_module__module_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         started_issues = (
-            ModuleIssue.objects.filter(
-                issue__state__group="started",
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                module_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                state__group="started",
+                issue_module__module_id=OuterRef("pk"),
             )
-            .values("module_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_module__module_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         unstarted_issues = (
-            ModuleIssue.objects.filter(
-                issue__state__group="unstarted",
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                module_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                state__group="unstarted",
+                issue_module__module_id=OuterRef("pk"),
             )
-            .values("module_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_module__module_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         backlog_issues = (
-            ModuleIssue.objects.filter(
-                issue__state__group="backlog",
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                module_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                state__group="backlog",
+                issue_module__module_id=OuterRef("pk"),
             )
-            .values("module_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_module__module_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         total_issues = (
-            ModuleIssue.objects.filter(
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                module_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                issue_module__module_id=OuterRef("pk"),
             )
-            .values("module_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_module__module_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         return (

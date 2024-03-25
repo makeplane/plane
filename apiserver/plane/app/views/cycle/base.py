@@ -2,7 +2,6 @@
 import json
 
 # Django imports
-from django.db import models
 from django.db.models import (
     Func,
     F,
@@ -75,68 +74,56 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             workspace__slug=self.kwargs.get("slug"),
         )
         cancelled_issues = (
-            CycleIssue.objects.filter(
-                issue__state__group="cancelled",
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                cycle_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                state__group="cancelled",
+                issue_cycle__cycle_id=OuterRef("pk"),
             )
-            .values("cycle_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         completed_issues = (
-            CycleIssue.objects.filter(
-                issue__state__group="completed",
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                cycle_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                state__group="completed",
+                issue_cycle__cycle_id=OuterRef("pk"),
             )
-            .values("cycle_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         started_issues = (
-            CycleIssue.objects.filter(
-                issue__state__group="started",
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                cycle_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                state__group="started",
+                issue_cycle__cycle_id=OuterRef("pk"),
             )
-            .values("cycle_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         unstarted_issues = (
-            CycleIssue.objects.filter(
-                issue__state__group="unstarted",
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                cycle_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                state__group="unstarted",
+                issue_cycle__cycle_id=OuterRef("pk"),
             )
-            .values("cycle_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         backlog_issues = (
-            CycleIssue.objects.filter(
-                issue__state__group="backlog",
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                cycle_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                state__group="backlog",
+                issue_cycle__cycle_id=OuterRef("pk"),
             )
-            .values("cycle_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
         total_issues = (
-            CycleIssue.objects.filter(
-                issue__archived_at__isnull=True,
-                issue__is_draft=False,
-                cycle_id=OuterRef("pk"),
+            Issue.issue_objects.filter(
+                issue_cycle__cycle_id=OuterRef("pk"),
             )
-            .values("cycle_id")
-            .annotate(cnt=Count("issue_id"))
+            .values("issue_cycle__cycle_id")
+            .annotate(cnt=Count("pk"))
             .values("cnt")
         )
 
