@@ -230,7 +230,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
 
       {!isOpen && (
         <div
-          className={cn("md:hidden rounded md:border-[0.5px] border-custom-border-200 md:group-hover:block", {
+          className={cn("md:opacity-0 rounded md:border-[0.5px] border-custom-border-200 md:group-hover:opacity-100", {
             block: isMenuOpen,
           })}
         >

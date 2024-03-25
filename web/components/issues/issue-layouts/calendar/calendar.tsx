@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
 import type {
   IIssueDisplayFilterOptions,
@@ -37,7 +38,7 @@ type Props = {
   groupedIssueIds: TGroupedIssues;
   layout: "month" | "week" | undefined;
   showWeekends: boolean;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
