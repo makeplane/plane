@@ -1099,6 +1099,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
         for (const groupKey of groupIssuesKeys) {
           if (groupKey.includes(subGroupId)) subGroupCumulativeCount += this.groupedIssueCount[groupKey];
         }
+
+        return subGroupCumulativeCount;
       }
 
       return get(this.groupedIssueCount, [this.getGroupKey(groupId, subGroupId)]);
