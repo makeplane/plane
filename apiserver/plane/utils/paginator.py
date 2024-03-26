@@ -340,6 +340,11 @@ class GroupedOffsetPaginator(OffsetPaginator):
             group_value = str(result.get(self.group_by_field_name))
             if group_value in processed_results:
                 processed_results[str(group_value)]["results"].append(result)
+
+        for group_value, data in processed_results.items():
+            data["results"].sort(
+                key=lambda x: x.get("created_at"), reverse=True
+            )
         return processed_results
 
     def process_results(self, results):
