@@ -201,7 +201,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycleIssues.length > 0 ? (
+            {cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
               cycle.distribution?.assignees?.map((assignee, index) => {
                 if (assignee.assignee_id)
                   return (
@@ -246,8 +246,8 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycleIssues.length > 0 ? (
-              cycle.distribution?.labels?.map((label, index) => (
+            {cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
+              cycle.distribution.labels?.map((label, index) => (
                 <SingleProgressStats
                   key={label.label_id ?? `no-label-${index}`}
                   title={
