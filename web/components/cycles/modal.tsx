@@ -56,7 +56,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err.detail ?? "Error in creating cycle. Please try again.",
+          message: err?.detail ?? "Error in creating cycle. Please try again.",
         });
         captureCycleEvent({
           eventName: CYCLE_CREATED,
@@ -90,7 +90,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err.detail ?? "Error in updating cycle. Please try again.",
+          message: err?.detail ?? "Error in updating cycle. Please try again.",
         });
       });
   };
