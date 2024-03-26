@@ -25,15 +25,11 @@ class WorkspaceEstimatesEndpoint(BaseAPIView):
         estimate_ids = Project.objects.filter(
             workspace__slug=slug, estimate__isnull=False
         ).values_list("estimate_id", flat=True)
-        estimates = Estimate.objects.filter(
-            pk__in=estimate_ids
-        ).prefetch_related(
-            Prefetch(
-                "points",
-                queryset=Project.objects.select_related(
-                    "estimate", "workspace"
-                ),
-            )
+        estimates = (
+            Estimate.objects.filter(pk__in=estimate_ids, workspace__slug=slug)
+            .prefetch_related("points")
+            .select_related("workspace", "project")
         )
+
         serializer = WorkspaceEstimateSerializer(estimates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
