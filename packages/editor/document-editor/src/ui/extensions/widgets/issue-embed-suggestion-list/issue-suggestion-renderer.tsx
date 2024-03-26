@@ -176,13 +176,13 @@ const IssueSuggestionList = ({
                           section === currentSection && index === selectedIndex,
                       }
                     )}
-                    key={item.identifier}
+                    key={item?.identifier}
                     onClick={() => selectItem(section, index)}
                   >
-                    <h5 className="whitespace-nowrap text-xs text-custom-text-300">{item.identifier}</h5>
-                    <PriorityIcon priority={item.priority} />
+                    <h5 className="whitespace-nowrap text-xs text-custom-text-300">{item?.identifier}</h5>
+                    <PriorityIcon priority={item?.priority} />
                     <div className="w-full truncate">
-                      <p className="flex-grow w-full truncate text-xs">{item.title}</p>
+                      <p className="flex-grow w-full truncate text-xs">{item?.title}</p>
                     </div>
                   </button>
                 ))}

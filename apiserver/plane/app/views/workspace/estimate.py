@@ -3,15 +3,10 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
+from plane.app.permissions import WorkspaceEntityPermission
 from plane.app.serializers import WorkspaceEstimateSerializer
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Project, Estimate
-from plane.app.permissions import WorkspaceEntityPermission
-
-# Django imports
-from django.db.models import (
-    Prefetch,
-)
+from plane.db.models import Estimate, Project
 from plane.utils.cache import cache_response
 
 
