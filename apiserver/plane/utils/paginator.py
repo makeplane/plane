@@ -413,7 +413,10 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         queryset = queryset.annotate(
             row_number=Window(
                 expression=RowNumber(),
-                partition_by=[F(self.sub_group_by_field_name)],
+                partition_by=[
+                    F(self.group_by_field_name),
+                    F(self.sub_group_by_field_name),
+                ],
                 order_by=(
                     *self.key,
                     "-created_at",
@@ -590,14 +593,9 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         for result in results:
             group_value = str(result.get(self.group_by_field_name))
             sub_group_value = str(result.get(self.sub_group_by_field_name))
-            if (
-                group_value in processed_results
-                and sub_group_value
-                in processed_results[str(group_value)]["results"]
-            ):
-                processed_results[str(group_value)]["results"][
-                    str(sub_group_value)
-                ]["results"].append(result)
+            processed_results[group_value]["results"][sub_group_value][
+                "results"
+            ].append(result)
         return processed_results
 
     def process_results(self, results):
