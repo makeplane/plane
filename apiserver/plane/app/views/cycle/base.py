@@ -1,55 +1,55 @@
 # Python imports
 import json
 
-# Django imports
-from django.db.models import (
-    Func,
-    F,
-    Q,
-    Exists,
-    OuterRef,
-    Count,
-    Prefetch,
-    Case,
-    When,
-    Value,
-    CharField,
-    Subquery,
-    IntegerField,
-)
-from django.utils import timezone
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import UUIDField
+
+# Django imports
+from django.db.models import (
+    Case,
+    CharField,
+    Count,
+    Exists,
+    F,
+    Func,
+    OuterRef,
+    Prefetch,
+    Q,
+    UUIDField,
+    Value,
+    When,
+)
 from django.db.models.functions import Coalesce
+from django.utils import timezone
+from rest_framework import status
 
 # Third party imports
 from rest_framework.response import Response
-from rest_framework import status
 
-# Module imports
-from .. import BaseViewSet, BaseAPIView, WebhookMixin
-from plane.app.serializers import (
-    CycleSerializer,
-    CycleFavoriteSerializer,
-    CycleWriteSerializer,
-    CycleUserPropertiesSerializer,
-)
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
 )
-from plane.db.models import (
-    User,
-    Cycle,
-    CycleIssue,
-    Issue,
-    CycleFavorite,
-    Label,
-    CycleUserProperties,
+from plane.app.serializers import (
+    CycleFavoriteSerializer,
+    CycleSerializer,
+    CycleUserPropertiesSerializer,
+    CycleWriteSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (
+    Cycle,
+    CycleFavorite,
+    CycleIssue,
+    CycleUserProperties,
+    Issue,
+    Label,
+    User,
+)
 from plane.utils.analytics_plot import burndown_plot
+
+# Module imports
+from .. import BaseAPIView, BaseViewSet, WebhookMixin
 
 
 class CycleViewSet(WebhookMixin, BaseViewSet):
@@ -73,60 +73,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
-        cancelled_issues = (
-            Issue.issue_objects.filter(
-                state__group="cancelled",
-                issue_cycle__cycle_id=OuterRef("pk"),
-            )
-            .values("issue_cycle__cycle_id")
-            .annotate(cnt=Count("pk"))
-            .values("cnt")
-        )
-        completed_issues = (
-            Issue.issue_objects.filter(
-                state__group="completed",
-                issue_cycle__cycle_id=OuterRef("pk"),
-            )
-            .values("issue_cycle__cycle_id")
-            .annotate(cnt=Count("pk"))
-            .values("cnt")
-        )
-        started_issues = (
-            Issue.issue_objects.filter(
-                state__group="started",
-                issue_cycle__cycle_id=OuterRef("pk"),
-            )
-            .values("issue_cycle__cycle_id")
-            .annotate(cnt=Count("pk"))
-            .values("cnt")
-        )
-        unstarted_issues = (
-            Issue.issue_objects.filter(
-                state__group="unstarted",
-                issue_cycle__cycle_id=OuterRef("pk"),
-            )
-            .values("issue_cycle__cycle_id")
-            .annotate(cnt=Count("pk"))
-            .values("cnt")
-        )
-        backlog_issues = (
-            Issue.issue_objects.filter(
-                state__group="backlog",
-                issue_cycle__cycle_id=OuterRef("pk"),
-            )
-            .values("issue_cycle__cycle_id")
-            .annotate(cnt=Count("pk"))
-            .values("cnt")
-        )
-        total_issues = (
-            Issue.issue_objects.filter(
-                issue_cycle__cycle_id=OuterRef("pk"),
-            )
-            .values("issue_cycle__cycle_id")
-            .annotate(cnt=Count("pk"))
-            .values("cnt")
-        )
-
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -156,39 +102,62 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(is_favorite=Exists(favorite_subquery))
             .annotate(
-                completed_issues=Coalesce(
-                    Subquery(completed_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                total_issues=Count(
+                    "issue_cycle",
+                    filter=Q(
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
-                cancelled_issues=Coalesce(
-                    Subquery(cancelled_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                completed_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="completed",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
-                started_issues=Coalesce(
-                    Subquery(started_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                cancelled_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="cancelled",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
-                unstarted_issues=Coalesce(
-                    Subquery(unstarted_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                started_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="started",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
-                backlog_issues=Coalesce(
-                    Subquery(backlog_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                unstarted_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="unstarted",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
-                total_issues=Coalesce(
-                    Subquery(total_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                backlog_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="backlog",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
@@ -217,9 +186,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                         distinct=True,
                         filter=~Q(
                             issue_cycle__issue__assignees__id__isnull=True
-                        )
-                        & Q(
-                            issue_cycle__issue__assignees__member_project__is_active=True
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -384,8 +350,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             "external_id",
             "progress_snapshot",
             # meta fields
-            "total_issues",
             "is_favorite",
+            "total_issues",
             "cancelled_issues",
             "completed_issues",
             "started_issues",
