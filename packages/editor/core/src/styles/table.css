@@ -99,7 +99,7 @@
   bottom: -2px;
   width: 4px;
   z-index: 5;
-  background-color: rgba(var(--color-primary-400));
+  background-color: #d9e4ff;
   pointer-events: none;
 }
 
@@ -198,7 +198,7 @@
 
 .tableWrapper .tableControls .tableToolbox .toolboxItem:hover,
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem:hover {
-  background-color: rgba(var(--color-background-100), 0.5);
+  background-color: rgba(var(--color-background-80), 0.6);
 }
 
 .tableWrapper .tableControls .tableToolbox .toolboxItem .iconContainer,

@@ -1,19 +1,19 @@
 import { MutableRefObject, memo } from "react";
 import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
-// components
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { IssueProperties } from "../properties/all-properties";
-// ui
-import { Tooltip, ControlLink } from "@plane/ui";
-// types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
-import { EIssueActions } from "../types";
+// hooks
+import { Tooltip, ControlLink } from "@plane/ui";
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// components
+import { IssueProperties } from "../properties/all-properties";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+// ui
+// types
 // helper
-import { cn } from "helpers/common.helper";
-import RenderIfVisible from "components/core/render-if-visible-HOC";
 
 interface IssueBlockProps {
   peekIssueId?: string;
@@ -23,7 +23,7 @@ interface IssueBlockProps {
   isDragDisabled: boolean;
   draggableId: string;
   index: number;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -34,23 +34,20 @@ interface IssueBlockProps {
 interface IssueDetailsBlockProps {
   issue: TIssue;
   displayProperties: IIssueDisplayProperties | undefined;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   isReadOnly: boolean;
 }
 
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props: IssueDetailsBlockProps) => {
-  const { issue, handleIssues, quickActions, isReadOnly, displayProperties } = props;
+  const { issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
   // hooks
+  const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
   const {
     router: { workspaceSlug },
   } = useApplication();
   const { setPeekIssue } = useIssueDetail();
-
-  const updateIssue = async (issueToUpdate: TIssue) => {
-    if (issueToUpdate) await handleIssues(issueToUpdate, EIssueActions.UPDATE);
-  };
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -71,12 +68,12 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
       </WithDisplayPropertiesHOC>
 
       {issue?.is_draft ? (
-        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
           <span>{issue.name}</span>
         </Tooltip>
       ) : (
         <ControlLink
-          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archived-issues" : "issues"}/${
+          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
             issue.id
           }`}
           target="_blank"
@@ -84,7 +81,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
           disabled={!!issue?.tempId}
         >
-          <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+          <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
             <span>{issue.name}</span>
           </Tooltip>
         </ControlLink>
@@ -95,7 +92,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
         issue={issue}
         displayProperties={displayProperties}
         activeLayout="Kanban"
-        handleIssues={updateIssue}
+        updateIssue={updateIssue}
         isReadOnly={isReadOnly}
       />
     </>
@@ -111,7 +108,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
     isDragDisabled,
     draggableId,
     index,
-    handleIssues,
+    updateIssue,
     quickActions,
     canEditProperties,
     scrollableContainerRef,
@@ -151,7 +148,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
               classNames="space-y-2 px-3 py-2"
               root={scrollableContainerRef}
               defaultHeight="100px"
-              horizonatlOffset={50}
+              horizontalOffset={50}
               alwaysRender={snapshot.isDragging}
               pauseHeightUpdateWhileRendering={isDragStarted}
               changingReference={issueIds}
@@ -159,7 +156,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
               <KanbanIssueDetailsBlock
                 issue={issue}
                 displayProperties={displayProperties}
-                handleIssues={handleIssues}
+                updateIssue={updateIssue}
                 quickActions={quickActions}
                 isReadOnly={!canEditIssueProperties}
               />

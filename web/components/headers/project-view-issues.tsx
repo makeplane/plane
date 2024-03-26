@@ -1,9 +1,22 @@
 import { useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { Plus } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // hooks
+// components
+// ui
+import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+// helpers
+// types
+// constants
+import { ProjectLogo } from "@/components/project";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { truncateText } from "@/helpers/string.helper";
 import {
   useApplication,
   useEventTracker,
@@ -14,30 +27,12 @@ import {
   useProjectState,
   useProjectView,
   useUser,
-} from "hooks/store";
-// components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
-// ui
-import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
-// helpers
-import { truncateText } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
-// types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-// constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
+} from "@/hooks/store";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    viewId: string;
-  };
+  const { workspaceSlug, projectId, viewId } = router.query;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -61,43 +56,69 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, viewId);
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !viewId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, viewId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId);
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        updatedDisplayFilter,
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, viewId);
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
@@ -108,9 +129,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
-    <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2">
-        <SidebarHamburgerToggle />
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"
@@ -119,17 +139,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                 label={currentProjectDetails?.name ?? "Project"}
                 icon={
-                  currentProjectDetails?.emoji ? (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {renderEmoji(currentProjectDetails.emoji)}
-                    </span>
-                  ) : currentProjectDetails?.icon_prop ? (
-                    <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                      {renderEmoji(currentProjectDetails.icon_prop)}
-                    </div>
-                  ) : (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                      {currentProjectDetails?.name.charAt(0)}
+                  currentProjectDetails && (
+                    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                      <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                     </span>
                   )
                 }

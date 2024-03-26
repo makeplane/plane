@@ -1,20 +1,18 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
-import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
+import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { getUserRole } from "helpers/user.helper";
+import { PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+import { ROLE } from "@/constants/workspace";
+import { useEventTracker, useMember, useUser } from "@/hooks/store";
 // constants
-import { ROLE } from "constants/workspace";
-import { EUserProjectRoles } from "constants/project";
-import { PROJECT_MEMBER_ADDED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -45,8 +43,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const { captureEvent } = useEventTracker();
   const {
@@ -84,9 +80,9 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       .then(() => {
         if (onSuccess) onSuccess();
         onClose();
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Members added successfully.",
         });
         captureEvent(PROJECT_MEMBER_ADDED, {
@@ -139,27 +135,35 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     }
   }, [fields, append]);
 
-  const options = uninvitedPeople?.map((userId) => {
-    const memberDetails = getWorkspaceMemberDetails(userId);
+  const options = uninvitedPeople
+    ?.map((userId) => {
+      const memberDetails = getWorkspaceMemberDetails(userId);
 
-    return {
-      value: `${memberDetails?.member.id}`,
-      query: `${memberDetails?.member.first_name} ${
-        memberDetails?.member.last_name
-      } ${memberDetails?.member.display_name.toLowerCase()}`,
-      content: (
-        <div className="flex w-full items-center gap-2">
-          <div className="flex-shrink-0 pt-0.5">
-            <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+      if (!memberDetails?.member) return;
+      return {
+        value: `${memberDetails?.member.id}`,
+        query: `${memberDetails?.member.first_name} ${memberDetails?.member
+          .last_name} ${memberDetails?.member.display_name.toLowerCase()}`,
+        content: (
+          <div className="flex w-full items-center gap-2">
+            <div className="flex-shrink-0 pt-0.5">
+              <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+            </div>
+            <div className="truncate">
+              {memberDetails?.member.display_name} (
+              {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
+            </div>
           </div>
-          <div className="truncate">
-            {memberDetails?.member.display_name} (
-            {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
-          </div>
-        </div>
-      ),
-    };
-  });
+        ),
+      };
+    })
+    .filter((option) => !!option) as
+    | {
+        value: string;
+        query: string;
+        content: React.JSX.Element;
+      }[]
+    | undefined;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -207,7 +211,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                               rules={{ required: "Please select a member" }}
                               render={({ field: { value, onChange } }) => {
                                 const selectedMember = getWorkspaceMemberDetails(value);
-
                                 return (
                                   <CustomSearchSelect
                                     value={value}

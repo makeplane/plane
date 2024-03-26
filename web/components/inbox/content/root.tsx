@@ -2,12 +2,12 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Inbox } from "lucide-react";
 // hooks
-import { useInboxIssues } from "hooks/store";
-// components
-import { InboxIssueActionsHeader } from "components/inbox";
-import { InboxIssueDetailRoot } from "components/issues/issue-detail/inbox";
-// ui
 import { Loader } from "@plane/ui";
+import { InboxIssueActionsHeader } from "@/components/inbox";
+import { InboxIssueDetailRoot } from "@/components/issues/issue-detail/inbox";
+import { useInboxIssues } from "@/hooks/store";
+// components
+// ui
 
 type TInboxContentRoot = {
   workspaceSlug: string;

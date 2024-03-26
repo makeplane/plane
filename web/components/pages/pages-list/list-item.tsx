@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import {
   AlertCircle,
   Archive,
@@ -13,18 +14,19 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
+import { IIssueLabel } from "@plane/types";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
-import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
+import { CreateUpdatePageModal, DeletePageModal } from "@/components/pages";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { useRouter } from "next/router";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import { useMember, usePage, useUser } from "hooks/store";
-import { IIssueLabel } from "@plane/types";
+import { EUserProjectRoles } from "@/constants/project";
+import { renderFormattedTime, renderFormattedDate } from "@/helpers/date-time.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useMember, usePage, useUser } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export interface IPagesListItem {
   pageId: string;
@@ -44,7 +46,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
 
   const [deletePageModal, setDeletePageModal] = useState(false);
-
+  const { isMobile } = usePlatformOS();
   const {
     currentUser,
     membership: { currentProjectRole },
@@ -182,6 +184,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
               <div className="flex items-center gap-2.5">
                 {archived_at ? (
                   <Tooltip
+                    isMobile={isMobile}
                     tooltipContent={`Archived at ${renderFormattedTime(archived_at)} on ${renderFormattedDate(
                       archived_at
                     )}`}
@@ -189,16 +192,21 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                     <p className="text-sm text-custom-text-200">{renderFormattedTime(archived_at)}</p>
                   </Tooltip>
                 ) : (
-                  <Tooltip
-                    tooltipContent={`Last updated at ${renderFormattedTime(updated_at)} on ${renderFormattedDate(
-                      updated_at
-                    )}`}
-                  >
-                    <p className="text-sm text-custom-text-200">{renderFormattedTime(updated_at)}</p>
-                  </Tooltip>
+                  updated_at && (
+                    <Tooltip
+                      tooltipContent={`Last updated at ${renderFormattedTime(updated_at)} on ${renderFormattedDate(
+                        updated_at
+                      )}`}
+                    >
+                      <p className="text-sm text-custom-text-200">{renderFormattedTime(updated_at)}</p>
+                    </Tooltip>
+                  )
                 )}
                 {isEditingAllowed && (
-                  <Tooltip tooltipContent={`${is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
+                  <Tooltip
+                    tooltipContent={`${is_favorite ? "Remove from favorites" : "Mark as favorite"}`}
+                    isMobile={isMobile}
+                  >
                     {is_favorite ? (
                       <button type="button" onClick={handleRemoveFromFavorites}>
                         <Star className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />
@@ -212,6 +220,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                 )}
                 {userCanChangeAccess && (
                   <Tooltip
+                    isMobile={isMobile}
                     tooltipContent={`${
                       access ? "This page is only visible to you" : "This page can be viewed by anyone in the project"
                     }`}
@@ -228,6 +237,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                   </Tooltip>
                 )}
                 <Tooltip
+                  isMobile={isMobile}
                   position="top-right"
                   tooltipContent={`Created by ${ownerDetails?.member?.display_name} on ${renderFormattedDate(
                     created_at

@@ -1,3 +1,4 @@
+export * from "./activity";
 export * from "./overview";
 export * from "./navbar";
 export * from "./profile-issues-filter";

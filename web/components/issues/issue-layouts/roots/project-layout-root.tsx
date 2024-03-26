@@ -1,8 +1,10 @@
 import { FC, Fragment } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
+// ui
+import { Spinner } from "@plane/ui";
 import {
   ListLayout,
   CalendarLayout,
@@ -12,15 +14,13 @@ import {
   ProjectSpreadsheetLayout,
   ProjectEmptyState,
   IssuePeekOverview,
-} from "components/issues";
-// ui
-import { Spinner } from "@plane/ui";
+} from "@/components/issues";
 // hooks
-import { useIssues } from "hooks/store";
 // helpers
-import { ActiveLoader } from "components/ui";
+import { ActiveLoader } from "@/components/ui";
 // constants
-import { EIssuesStoreType } from "constants/issue";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 
 export const ProjectLayoutRoot: FC = observer(() => {
   // router

@@ -1,5 +1,5 @@
 // ui
-import { ProfileEmptyState } from "components/ui";
+import { ProfileEmptyState } from "@/components/ui";
 // image
 import emptyUsers from "public/empty-state/empty_users.svg";
 
@@ -24,7 +24,7 @@ export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyState
       <div className="mt-3 space-y-3">
         {users.map((user) => (
           <a
-            key={user.display_name ?? "None"}
+            key={user?.display_name ?? "None"}
             href={`/${workspaceSlug}/profile/${user.id}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -36,16 +36,16 @@ export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyState
                   <img
                     src={user.avatar}
                     className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
-                    alt={user.display_name ?? "None"}
+                    alt={user?.display_name ?? "None"}
                   />
                 </div>
               ) : (
                 <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 text-[11px] capitalize text-white">
-                  {user.display_name !== "" ? user?.display_name?.[0] : "?"}
+                  {user?.display_name !== "" ? user?.display_name?.[0] : "?"}
                 </div>
               )}
               <span className="break-words text-custom-text-200">
-                {user.display_name !== "" ? `${user.display_name}` : "No assignee"}
+                {user?.display_name !== "" ? `${user?.display_name}` : "No assignee"}
               </span>
             </div>
             <span className="flex-shrink-0">{user.count}</span>

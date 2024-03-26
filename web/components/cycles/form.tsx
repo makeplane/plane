@@ -1,13 +1,14 @@
 import { useEffect } from "react";
+
 import { Controller, useForm } from "react-hook-form";
-// components
-import { DateRangeDropdown, ProjectDropdown } from "components/dropdowns";
-// ui
-import { Button, Input, TextArea } from "@plane/ui";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-// types
 import { ICycle } from "@plane/types";
+
+import { Button, Input, TextArea } from "@plane/ui";
+
+import { DateRangeDropdown, ProjectDropdown } from "@/components/dropdowns";
+
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldRenderProject } from "@/helpers/project.helper";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>, dirtyFields: any) => Promise<void>;
@@ -66,6 +67,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     setActiveProject(val);
                   }}
                   buttonVariant="background-with-text"
+                  renderCondition={(project) => shouldRenderProject(project)}
                   tabIndex={7}
                 />
               )}
@@ -111,7 +113,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     id="cycle_description"
                     name="description"
                     placeholder="Description..."
-                    className="!h-24 w-full resize-none text-sm"
+                    className="w-full text-sm resize-none min-h-24"
                     hasError={Boolean(errors?.description)}
                     value={value}
                     onChange={onChange}
@@ -135,8 +137,8 @@ export const CycleForm: React.FC<Props> = (props) => {
                         className="h-7"
                         minDate={new Date()}
                         value={{
-                          from: startDateValue ? new Date(startDateValue) : undefined,
-                          to: endDateValue ? new Date(endDateValue) : undefined,
+                          from: getDate(startDateValue),
+                          to: getDate(endDateValue),
                         }}
                         onSelect={(val) => {
                           onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);

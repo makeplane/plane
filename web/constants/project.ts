@@ -1,8 +1,9 @@
 // icons
 import { Globe2, Lock, LucideIcon } from "lucide-react";
-import { SettingIcon } from "components/icons";
+import { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
+import { SettingIcon } from "@/components/icons";
 // types
-import { Props } from "components/icons/types";
+import { Props } from "@/components/icons/types";
 
 export enum EUserProjectRoles {
   GUEST = 5,
@@ -38,23 +39,6 @@ export const GROUP_CHOICES = {
   completed: "Completed",
   cancelled: "Cancelled",
 };
-
-export const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-export const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export const PROJECT_AUTOMATION_MONTHS = [
   { label: "1 month", value: 1 },
@@ -132,14 +116,6 @@ export const PROJECT_SETTINGS_LINKS: {
     Icon: SettingIcon,
   },
   {
-    key: "integrations",
-    label: "Integrations",
-    href: `/settings/integrations`,
-    access: EUserProjectRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations`,
-    Icon: SettingIcon,
-  },
-  {
     key: "estimates",
     label: "Estimates",
     href: `/settings/estimates`,
@@ -154,5 +130,41 @@ export const PROJECT_SETTINGS_LINKS: {
     access: EUserProjectRoles.ADMIN,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations`,
     Icon: SettingIcon,
+  },
+];
+
+export const PROJECT_ORDER_BY_OPTIONS: {
+  key: TProjectOrderByOptions;
+  label: string;
+}[] = [
+  {
+    key: "sort_order",
+    label: "Manual",
+  },
+  {
+    key: "name",
+    label: "Name",
+  },
+  {
+    key: "created_at",
+    label: "Created date",
+  },
+  {
+    key: "members_length",
+    label: "Number of members",
+  },
+];
+
+export const PROJECT_DISPLAY_FILTER_OPTIONS: {
+  key: TProjectAppliedDisplayFilterKeys;
+  label: string;
+}[] = [
+  {
+    key: "my_projects",
+    label: "My projects",
+  },
+  {
+    key: "archived_projects",
+    label: "Archived",
   },
 ];

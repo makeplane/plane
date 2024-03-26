@@ -1,9 +1,9 @@
 // ui
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { LayersIcon } from "@plane/ui";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { SPREADSHEET_PROPERTY_LIST } from "@/constants/spreadsheet";
 // constants
-import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
@@ -38,6 +38,7 @@ export const SpreadsheetHeader = (props: Props) => {
 
         {SPREADSHEET_PROPERTY_LIST.map((property) => (
           <SpreadsheetHeaderColumn
+            key={property}
             property={property}
             displayProperties={displayProperties}
             displayFilters={displayFilters}

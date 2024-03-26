@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { DoubleCircleIcon } from "@plane/ui";
+import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 // icons
-import { DoubleCircleIcon } from "@plane/ui";
 
 type TIssueStateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 

@@ -1,12 +1,12 @@
 import { FC, ReactNode } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
 // hooks
-import { useUser, useWorkspace } from "hooks/store";
-// ui
 import { Spinner } from "@plane/ui";
+import { useUser, useWorkspace } from "@/hooks/store";
+// ui
 
 export interface IUserAuthWrapper {
   children: ReactNode;
@@ -34,15 +34,15 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     shouldRetryOnError: false,
   });
   // fetching user settings
-  useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
+  const { isLoading: userSettingsLoader } = useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
     shouldRetryOnError: false,
   });
   // fetching all workspaces
-  useSWR("USER_WORKSPACES_LIST", () => fetchWorkspaces(), {
+  const { isLoading: workspaceLoader } = useSWR("USER_WORKSPACES_LIST", () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
 
-  if (!currentUser && !currentUserError) {
+  if ((!currentUser && !currentUserError) || userSettingsLoader || workspaceLoader) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">

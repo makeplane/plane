@@ -1,19 +1,27 @@
-from .project import (
+from .project.base import (
     ProjectViewSet,
-    ProjectMemberViewSet,
-    UserProjectInvitationsViewset,
-    ProjectInvitationsViewset,
-    AddTeamToProjectEndpoint,
     ProjectIdentifierEndpoint,
-    ProjectJoinEndpoint,
     ProjectUserViewsEndpoint,
-    ProjectMemberUserEndpoint,
     ProjectFavoritesViewSet,
     ProjectPublicCoverImagesEndpoint,
     ProjectDeployBoardViewSet,
+    ProjectArchiveUnarchiveEndpoint,
+)
+
+from .project.invite import (
+    UserProjectInvitationsViewset,
+    ProjectInvitationsViewset,
+    ProjectJoinEndpoint,
+)
+
+from .project.member import (
+    ProjectMemberViewSet,
+    AddTeamToProjectEndpoint,
+    ProjectMemberUserEndpoint,
     UserProjectRolesEndpoint,
 )
-from .user import (
+
+from .user.base import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
@@ -24,70 +32,122 @@ from .oauth import OauthEndpoint
 
 from .base import BaseAPIView, BaseViewSet, WebhookMixin
 
-from .workspace import (
+from .workspace.base import (
     WorkSpaceViewSet,
     UserWorkSpacesEndpoint,
     WorkSpaceAvailabilityCheckEndpoint,
-    WorkspaceJoinEndpoint,
-    WorkSpaceMemberViewSet,
-    TeamMemberViewSet,
-    WorkspaceInvitationsViewset,
-    UserWorkspaceInvitationsViewSet,
-    UserLastProjectWithWorkspaceEndpoint,
-    WorkspaceMemberUserEndpoint,
-    WorkspaceMemberUserViewsEndpoint,
-    UserActivityGraphEndpoint,
-    UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
-    WorkspaceUserProfileStatsEndpoint,
-    WorkspaceUserActivityEndpoint,
-    WorkspaceUserProfileEndpoint,
-    WorkspaceUserProfileIssuesEndpoint,
-    WorkspaceLabelsEndpoint,
+    ExportWorkspaceUserActivityEndpoint
+)
+
+from .workspace.member import (
+    WorkSpaceMemberViewSet,
+    TeamMemberViewSet,
+    WorkspaceMemberUserEndpoint,
     WorkspaceProjectMemberEndpoint,
-    WorkspaceUserPropertiesEndpoint,
+    WorkspaceMemberUserViewsEndpoint,
+)
+from .workspace.invite import (
+    WorkspaceInvitationsViewset,
+    WorkspaceJoinEndpoint,
+    UserWorkspaceInvitationsViewSet,
+)
+from .workspace.label import (
+    WorkspaceLabelsEndpoint,
+)
+from .workspace.state import (
     WorkspaceStatesEndpoint,
+)
+from .workspace.user import (
+    UserLastProjectWithWorkspaceEndpoint,
+    WorkspaceUserProfileIssuesEndpoint,
+    WorkspaceUserPropertiesEndpoint,
+    WorkspaceUserProfileEndpoint,
+    WorkspaceUserActivityEndpoint,
+    WorkspaceUserProfileStatsEndpoint,
+    UserActivityGraphEndpoint,
+    UserIssueCompletedGraphEndpoint,
+)
+from .workspace.estimate import (
     WorkspaceEstimatesEndpoint,
+)
+from .workspace.module import (
     WorkspaceModulesEndpoint,
+)
+from .workspace.cycle import (
     WorkspaceCyclesEndpoint,
 )
-from .state import StateViewSet
-from .view import (
+
+from .state.base import StateViewSet
+from .view.base import (
     GlobalViewViewSet,
     GlobalViewIssuesViewSet,
     IssueViewViewSet,
     IssueViewFavoriteViewSet,
 )
-from .cycle import (
+from .cycle.base import (
     CycleViewSet,
-    CycleIssueViewSet,
     CycleDateCheckEndpoint,
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
+    CycleArchiveUnarchiveEndpoint,
     CycleUserPropertiesEndpoint,
 )
-from .asset import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
-from .issue import (
+from .cycle.issue import (
+    CycleIssueViewSet,
+)
+
+from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
+from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
-    WorkSpaceIssuesEndpoint,
-    IssueActivityEndpoint,
-    IssueCommentViewSet,
     IssueUserDisplayPropertyEndpoint,
-    LabelViewSet,
     BulkDeleteIssuesEndpoint,
-    UserWorkSpaceIssues,
-    SubIssuesEndpoint,
-    IssueLinkViewSet,
-    BulkCreateIssueLabelsEndpoint,
-    IssueAttachmentEndpoint,
+)
+
+from .issue.activity import (
+    IssueActivityEndpoint,
+)
+
+from .issue.archive import (
     IssueArchiveViewSet,
-    IssueSubscriberViewSet,
+)
+
+from .issue.attachment import (
+    IssueAttachmentEndpoint,
+)
+
+from .issue.comment import (
+    IssueCommentViewSet,
     CommentReactionViewSet,
-    IssueReactionViewSet,
+)
+
+from .issue.draft import IssueDraftViewSet
+
+from .issue.label import (
+    LabelViewSet,
+    BulkCreateIssueLabelsEndpoint,
+)
+
+from .issue.link import (
+    IssueLinkViewSet,
+)
+
+from .issue.relation import (
     IssueRelationViewSet,
-    IssueDraftViewSet,
+)
+
+from .issue.reaction import (
+    IssueReactionViewSet,
+)
+
+from .issue.sub_issue import (
+    SubIssuesEndpoint,
+)
+
+from .issue.subscriber import (
+    IssueSubscriberViewSet,
 )
 
 from .auth_extended import (
@@ -106,36 +166,22 @@ from .authentication import (
     MagicSignInEndpoint,
 )
 
-from .module import (
+from .module.base import (
     ModuleViewSet,
-    ModuleIssueViewSet,
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
+    ModuleArchiveUnarchiveEndpoint,
     ModuleUserPropertiesEndpoint,
+)
+
+from .module.issue import (
+    ModuleIssueViewSet,
 )
 
 from .api import ApiTokenEndpoint
 
-from .integration import (
-    WorkspaceIntegrationViewSet,
-    IntegrationViewSet,
-    GithubIssueSyncViewSet,
-    GithubRepositorySyncViewSet,
-    GithubCommentSyncViewSet,
-    GithubRepositoriesEndpoint,
-    BulkCreateGithubIssueSyncEndpoint,
-    SlackProjectSyncViewSet,
-)
 
-from .importer import (
-    ServiceIssueImportSummaryEndpoint,
-    ImportServiceEndpoint,
-    UpdateServiceImportStatusEndpoint,
-    BulkImportIssuesEndpoint,
-    BulkImportModulesEndpoint,
-)
-
-from .page import (
+from .page.base import (
     PageViewSet,
     PageFavoriteViewSet,
     PageLogEndpoint,
@@ -145,20 +191,19 @@ from .page import (
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 
 
-from .external import (
+from .external.base import (
     GPTIntegrationEndpoint,
-    ReleaseNotesEndpoint,
     UnsplashEndpoint,
 )
 
-from .estimate import (
+from .estimate.base import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
 )
 
-from .inbox import InboxViewSet, InboxIssueViewSet
+from .inbox.base import InboxViewSet, InboxIssueViewSet
 
-from .analytic import (
+from .analytic.base import (
     AnalyticsEndpoint,
     AnalyticViewViewset,
     SavedAnalyticEndpoint,
@@ -166,24 +211,23 @@ from .analytic import (
     DefaultAnalyticsEndpoint,
 )
 
-from .notification import (
+from .notification.base import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
     MarkAllReadNotificationViewSet,
     UserNotificationPreferenceEndpoint,
 )
 
-from .exporter import ExportIssuesEndpoint
+from .exporter.base import ExportIssuesEndpoint
 
 from .config import ConfigurationEndpoint, MobileConfigurationEndpoint
 
-from .webhook import (
+from .webhook.base import (
     WebhookEndpoint,
     WebhookLogsEndpoint,
     WebhookSecretRegenerateEndpoint,
 )
 
-from .dashboard import (
-    DashboardEndpoint,
-    WidgetsEndpoint
-)
+from .dashboard.base import DashboardEndpoint, WidgetsEndpoint
+
+from .error_404 import custom_404_view

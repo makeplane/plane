@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // computed
+import { useIssueDetail, useUser } from "@/hooks/store";
 import { IssueLinkDetail } from "./link-detail";
 // hooks
-import { useIssueDetail, useUser } from "hooks/store";
 import { TLinkOperations } from "./root";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
@@ -34,6 +34,7 @@ export const IssueLinkList: FC<TIssueLinkList> = observer((props) => {
         issueLinks.length > 0 &&
         issueLinks.map((linkId) => (
           <IssueLinkDetail
+            key={linkId}
             linkId={linkId}
             linkOperations={linkOperations}
             isNotAllowed={currentProjectRole === 5 || currentProjectRole === 10}

@@ -1,5 +1,5 @@
 // types
-import { RootStore } from "store/root";
+import { RootStore } from "@/store/root";
 
 export interface IIssueFilterBaseStore {
   // helper methods

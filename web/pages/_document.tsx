@@ -1,5 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
 // constants
+import Script from "next/script";
 import {
   SITE_NAME,
   SITE_DESCRIPTION,
@@ -7,8 +8,7 @@ import {
   TWITTER_USER_NAME,
   SITE_KEYWORDS,
   SITE_TITLE,
-} from "constants/seo-variables";
-import Script from "next/script";
+} from "@/constants/seo-variables";
 
 class MyDocument extends Document {
   render() {

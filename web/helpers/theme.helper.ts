@@ -1,4 +1,4 @@
-import { TRgb, hexToRgb } from "helpers/color.helper";
+import { TRgb, hexToRgb } from "@/helpers/color.helper";
 
 type TShades = {
   10: TRgb;
@@ -118,3 +118,6 @@ export const unsetCustomCssVariables = () => {
     dom?.style.removeProperty("--color-scheme");
   }
 };
+
+export const resolveGeneralTheme = (resolvedTheme: string | undefined) =>
+  resolvedTheme?.includes("light") ? "light" : resolvedTheme?.includes("dark") ? "dark" : "system";

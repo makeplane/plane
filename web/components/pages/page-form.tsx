@@ -1,11 +1,12 @@
 import { Controller, useForm } from "react-hook-form";
+import { IPage } from "@plane/types";
 // ui
 import { Button, Input, Tooltip } from "@plane/ui";
 // types
-import { IPage } from "@plane/types";
 // constants
-import { PAGE_ACCESS_SPECIFIERS } from "constants/page";
-import { IPageStore } from "store/page.store";
+import { PAGE_ACCESS_SPECIFIERS } from "@/constants/page";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { IPageStore } from "@/store/page.store";
 
 type Props = {
   handleFormSubmit: (values: IPage) => Promise<void>;
@@ -31,7 +32,7 @@ export const PageForm: React.FC<Props> = (props) => {
       ? { name: pageStore.name, description: pageStore.description, access: pageStore.access }
       : defaultValues,
   });
-
+  const { isMobile } = usePlatformOS();
   const handleCreateUpdatePage = (formData: IPage) => handleFormSubmit(formData);
 
   return (
@@ -75,7 +76,7 @@ export const PageForm: React.FC<Props> = (props) => {
             <div className="flex items-center gap-2">
               <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-custom-border-200 p-1">
                 {PAGE_ACCESS_SPECIFIERS.map((access, index) => (
-                  <Tooltip key={access.key} tooltipContent={access.label}>
+                  <Tooltip key={access.key} tooltipContent={access.label} isMobile={isMobile}>
                     <button
                       type="button"
                       onClick={() => onChange(access.key)}

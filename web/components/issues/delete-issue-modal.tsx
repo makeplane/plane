@@ -1,14 +1,12 @@
 import { useEffect, useState, Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// ui
-import { Button } from "@plane/ui";
-// hooks
-import useToast from "hooks/use-toast";
-// types
-import { useIssues } from "hooks/store/use-issues";
+import { Dialog, Transition } from "@headlessui/react";
 import { TIssue } from "@plane/types";
-import { useProject } from "hooks/store";
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// types
+import { useIssues, useProject } from "@/hooks/store";
+// hooks
 
 type Props = {
   isOpen: boolean;
@@ -25,7 +23,6 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { setToastAlert } = useToast();
   // hooks
   const { getProjectById } = useProject();
 
@@ -50,9 +47,9 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
           onClose();
         })
         .catch(() => {
-          setToastAlert({
+          setToast({
             title: "Error",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Failed to delete issue",
           });
         })

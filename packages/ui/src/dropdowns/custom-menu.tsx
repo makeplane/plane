@@ -114,7 +114,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  openDropdown();
+                  isOpen ? closeDropdown() : openDropdown();
                   if (menuButtonOnClick) menuButtonOnClick();
                 }}
                 className={customButtonClassName}
@@ -131,8 +131,9 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     ref={setReferenceElement}
                     type="button"
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
-                      openDropdown();
+                      isOpen ? closeDropdown() : openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
                     disabled={disabled}
@@ -157,8 +158,9 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                         : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
-                      openDropdown();
+                      isOpen ? closeDropdown() : openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
                     tabIndex={customButtonTabIndex}

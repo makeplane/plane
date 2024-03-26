@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { CustomMenu } from "@plane/ui";
-import { ExternalLink, Link, RotateCcw, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, ExternalLink, Link, Trash2 } from "lucide-react";
 // hooks
-import useToast from "hooks/use-toast";
-import { useEventTracker, useIssues, useUser } from "hooks/store";
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+
+import { DeleteIssueModal } from "@/components/issues";
+// ui
 // components
-import { DeleteIssueModal } from "components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useEventTracker, useIssues, useUser } from "@/hooks/store";
+// components
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
-import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
 
 export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleRestore, customActionButton, portalElement, readOnly = false } = props;
@@ -32,16 +34,14 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   // auth
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER && !readOnly;
   const isRestoringAllowed = handleRestore && isEditingAllowed;
-  // toast alert
-  const { setToastAlert } = useToast();
 
-  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/archived-issues/${issue.id}`;
+  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/archives/issues/${issue.id}`;
 
   const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })
@@ -60,13 +60,14 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         placement="bottom-start"
         customButton={customActionButton}
         portalElement={portalElement}
+        maxHeight="lg"
         closeOnSelect
         ellipsis
       >
         {isRestoringAllowed && (
           <CustomMenu.MenuItem onClick={handleRestore}>
             <div className="flex items-center gap-2">
-              <RotateCcw className="h-3 w-3" />
+              <ArchiveRestoreIcon className="h-3 w-3" />
               Restore
             </div>
           </CustomMenu.MenuItem>

@@ -1,17 +1,15 @@
 import { FC, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
-// hooks
-import { useUser } from "hooks/store";
 // ui
-import { Input, Button } from "@plane/ui";
-// services
-import { AuthService } from "services/auth.service";
-const authService = new AuthService();
-// hooks
-import useToast from "hooks/use-toast";
+import { Input, Button, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
+import { checkEmailValidity } from "@/helpers/string.helper";
+// hooks
+import { useUser } from "@/hooks/store";
+// services
+import { AuthService } from "@/services/auth.service";
+const authService = new AuthService();
 
 interface InstanceSetupEmailFormValues {
   email: string;
@@ -40,8 +38,6 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
       password: "",
     },
   });
-  // hooks
-  const { setToastAlert } = useToast();
 
   const handleFormSubmit = async (formValues: InstanceSetupEmailFormValues) => {
     const payload = {
@@ -56,8 +52,8 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
         handleNextStep(formValues.email);
       })
       .catch((err) => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });

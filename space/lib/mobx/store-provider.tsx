@@ -2,17 +2,17 @@
 
 import { createContext, useContext } from "react";
 // mobx store
-import { RootStore } from "store/root";
+import { RootStore } from "@/store/root";
 
 let rootStore: RootStore = new RootStore();
 
 export const MobxStoreContext = createContext<RootStore>(rootStore);
 
 const initializeStore = () => {
-  const _rootStore: RootStore = rootStore ?? new RootStore();
-  if (typeof window === "undefined") return _rootStore;
-  if (!rootStore) rootStore = _rootStore;
-  return _rootStore;
+  const singletonRootStore: RootStore = rootStore ?? new RootStore();
+  if (typeof window === "undefined") return singletonRootStore;
+  if (!rootStore) rootStore = singletonRootStore;
+  return singletonRootStore;
 };
 
 export const MobxStoreProvider = ({ children }: any) => {

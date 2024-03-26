@@ -1,13 +1,12 @@
 import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Copy, Eye, EyeOff } from "lucide-react";
-// ui
-import { Button, Input } from "@plane/ui";
-// types
 import { IFormattedInstanceConfiguration } from "@plane/types";
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// types
+import { useApplication } from "@/hooks/store";
 // hooks
-import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
 
 export interface IInstanceGithubConfigForm {
   config: IFormattedInstanceConfiguration;
@@ -24,8 +23,6 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { instance: instanceStore } = useApplication();
-  // toast
-  const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,
@@ -44,9 +41,9 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
     await instanceStore
       .updateInstanceConfigurations(payload)
       .then(() =>
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Github Configuration Settings updated successfully",
         })
       )
@@ -145,9 +142,9 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
             className="flex items-center justify-between py-2"
             onClick={() => {
               navigator.clipboard.writeText(originURL);
-              setToastAlert({
+              setToast({
                 message: "The Origin URL has been successfully copied to your clipboard",
-                type: "success",
+                type: TOAST_TYPE.SUCCESS,
                 title: "Copied to clipboard",
               });
             }}

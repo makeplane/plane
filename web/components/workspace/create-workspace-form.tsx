@@ -1,19 +1,18 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// hooks
-import { useEventTracker, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-import { Button, CustomSelect, Input } from "@plane/ui";
-// types
 import { IWorkspace } from "@plane/types";
+// ui
+import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
-import { WORKSPACE_CREATED } from "constants/event-tracker";
+import { WORKSPACE_CREATED } from "@/constants/event-tracker";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
+// hooks
+import { useEventTracker, useWorkspace } from "@/hooks/store";
+// ui
+// types
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -22,7 +21,7 @@ type Props = {
     slug: string;
     organization_size: string;
   };
-  setDefaultValues: Dispatch<SetStateAction<any>>;
+  setDefaultValues: Dispatch<SetStateAction<IWorkspace>>;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;
@@ -51,8 +50,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
   const { createWorkspace } = useWorkspace();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,
@@ -79,8 +76,8 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   element: "Create workspace page",
                 },
               });
-              setToastAlert({
-                type: "success",
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
@@ -95,8 +92,8 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   element: "Create workspace page",
                 },
               });
-              setToastAlert({
-                type: "error",
+              setToast({
+                type: TOAST_TYPE.ERROR,
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
               });
@@ -104,8 +101,8 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
         } else setSlugError(true);
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         });
@@ -124,7 +121,10 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
     <form className="space-y-6 sm:space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
       <div className="space-y-6 sm:space-y-7">
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceName">Workspace Name</label>
+          <label htmlFor="workspaceName">
+            Workspace Name
+            <span className="ml-0.5 text-red-500">*</span>
+          </label>
           <Controller
             control={control}
             name="name"
@@ -156,7 +156,10 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           />
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceUrl">Workspace URL</label>
+          <label htmlFor="workspaceUrl">
+            Workspace URL
+            <span className="ml-0.5 text-red-500">*</span>
+          </label>
           <div className="flex w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
             <span className="whitespace-nowrap text-sm text-custom-text-200">{window && window.location.host}/</span>
             <Controller
@@ -188,7 +191,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <span>What size is your organization?</span>
+          <span>
+            What size is your organization?<span className="ml-0.5 text-red-500">*</span>
+          </span>
           <div className="w-full">
             <Controller
               name="organization_size"

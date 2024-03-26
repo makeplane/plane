@@ -3,28 +3,27 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
-import { AuthService } from "services/auth.service";
+import { Eye, EyeOff } from "lucide-react";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { LatestFeatureBlock } from "@/components/common";
+import { PageHead } from "@/components/core";
+import { NEW_PASS_CREATED } from "@/constants/event-tracker";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { useEventTracker } from "@/hooks/store";
+import useSignInRedirection from "@/hooks/use-sign-in-redirection";
+import DefaultLayout from "@/layouts/default-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { AuthService } from "@/services/auth.service";
 // hooks
-import useToast from "hooks/use-toast";
-import useSignInRedirection from "hooks/use-sign-in-redirection";
-import { useEventTracker } from "hooks/store";
 // layouts
-import DefaultLayout from "layouts/default-layout";
 // components
-import { LatestFeatureBlock } from "components/common";
-import { PageHead } from "components/core";
 // ui
-import { Button, Input } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // type
-import { NextPageWithLayout } from "lib/types";
 // icons
-import { Eye, EyeOff } from "lucide-react";
 // constants
-import { NEW_PASS_CREATED } from "constants/event-tracker";
 
 type TResetPasswordFormValues = {
   email: string;
@@ -47,8 +46,6 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
-  // toast
-  const { setToastAlert } = useToast();
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // form info
@@ -82,8 +79,8 @@ const ResetPasswordPage: NextPageWithLayout = () => {
         captureEvent(NEW_PASS_CREATED, {
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });

@@ -1,10 +1,10 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // services
-import { IssueRelationService } from "services/issue";
+import { IssueRelationService } from "@/services/issue";
 // types
-import { IIssueDetail } from "./root.store";
 import { TIssueRelationIdMap, TIssueRelationMap, TIssueRelationTypes, TIssueRelation, TIssue } from "@plane/types";
+import { IIssueDetail } from "./root.store";
 
 export interface IIssueRelationStoreActions {
   // actions

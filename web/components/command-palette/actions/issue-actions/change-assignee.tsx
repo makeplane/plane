@@ -1,14 +1,14 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Check } from "lucide-react";
-// mobx store
-import { useIssues, useMember } from "hooks/store";
-// ui
-import { Avatar } from "@plane/ui";
-// types
 import { TIssue } from "@plane/types";
-import { EIssuesStoreType } from "constants/issue";
+// mobx store
+import { Avatar } from "@plane/ui";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues, useMember } from "@/hooks/store";
+// ui
+// types
 
 type Props = {
   closePalette: () => void;

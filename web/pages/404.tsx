@@ -1,17 +1,17 @@
 import React from "react";
 
-import Link from "next/link";
+import type { NextPage } from "next";
 import Image from "next/image";
+import Link from "next/link";
 // components
-import { PageHead } from "components/core";
-// layouts
-import DefaultLayout from "layouts/default-layout";
-// ui
 import { Button } from "@plane/ui";
+import { PageHead } from "@/components/core";
+// layouts
+import DefaultLayout from "@/layouts/default-layout";
+// ui
 // images
 import Image404 from "public/404.svg";
 // types
-import type { NextPage } from "next";
 
 const PageNotFound: NextPage = () => (
   <DefaultLayout>

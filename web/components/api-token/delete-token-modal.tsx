@@ -2,16 +2,14 @@ import { useState, Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { APITokenService } from "services/api_token.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button } from "@plane/ui";
-// types
 import { IApiToken } from "@plane/types";
+// services
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { APITokenService } from "@/services/api_token.service";
+// ui
+// types
 // fetch-keys
-import { API_TOKENS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -25,8 +23,6 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
   const { isOpen, onClose, tokenId } = props;
   // states
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  // hooks
-  const { setToastAlert } = useToast();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -44,8 +40,8 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
     apiTokenService
       .deleteApiToken(workspaceSlug.toString(), tokenId)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Token deleted successfully.",
         });
@@ -59,8 +55,8 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
         handleClose();
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error",
           message: err?.message ?? "Something went wrong. Please try again.",
         })

@@ -1,12 +1,11 @@
+import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
-import { MutableRefObject, useEffect, useRef } from "react";
-//types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
-import { EIssueActions } from "../types";
+//types
+import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 //components
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
-import { useTableKeyboardNavigation } from "hooks/use-table-keyboard-navigation";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -19,7 +18,7 @@ type Props = {
     customActionButton?: React.ReactElement,
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
@@ -34,7 +33,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     isEstimateEnabled,
     portalElement,
     quickActions,
-    handleIssues,
+    updateIssue,
     canEditProperties,
     containerRef,
   } = props;
@@ -42,7 +41,7 @@ export const SpreadsheetTable = observer((props: Props) => {
   // states
   const isScrolled = useRef(false);
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
     const scrollLeft = containerRef.current.scrollLeft;
 
@@ -51,19 +50,19 @@ export const SpreadsheetTable = observer((props: Props) => {
 
     //The shadow styles are added this way to avoid re-render of all the rows of table, which could be costly
     if (scrollLeft > 0 !== isScrolled.current) {
-      const firtColumns = containerRef.current.querySelectorAll("table tr td:first-child, th:first-child");
+      const firstColumns = containerRef.current.querySelectorAll("table tr td:first-child, th:first-child");
 
-      for (let i = 0; i < firtColumns.length; i++) {
+      for (let i = 0; i < firstColumns.length; i++) {
         const shadow = i === 0 ? headerShadow : columnShadow;
         if (scrollLeft > 0) {
-          (firtColumns[i] as HTMLElement).style.boxShadow = shadow;
+          (firstColumns[i] as HTMLElement).style.boxShadow = shadow;
         } else {
-          (firtColumns[i] as HTMLElement).style.boxShadow = "none";
+          (firstColumns[i] as HTMLElement).style.boxShadow = "none";
         }
       }
       isScrolled.current = scrollLeft > 0;
     }
-  };
+  }, [containerRef]);
 
   useEffect(() => {
     const currentContainerRef = containerRef.current;
@@ -73,7 +72,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     return () => {
       if (currentContainerRef) currentContainerRef.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [handleScroll, containerRef]);
 
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
@@ -95,7 +94,7 @@ export const SpreadsheetTable = observer((props: Props) => {
             canEditProperties={canEditProperties}
             nestingLevel={0}
             isEstimateEnabled={isEstimateEnabled}
-            handleIssues={handleIssues}
+            updateIssue={updateIssue}
             portalElement={portalElement}
             containerRef={containerRef}
             isScrolled={isScrolled}

@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useEventTracker } from "hooks/store";
-import useSignInRedirection from "hooks/use-sign-in-redirection";
-// components
+import Link from "next/link";
 import {
   OAuthOptions,
   SignUpEmailForm,
   SignUpOptionalSetPasswordForm,
   SignUpPasswordForm,
   SignUpUniqueCodeForm,
-} from "components/account";
-import Link from "next/link";
+} from "@/components/account";
+import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
+import { useApplication, useEventTracker } from "@/hooks/store";
+import useSignInRedirection from "@/hooks/use-sign-in-redirection";
+// components
 // constants
-import { NAVIGATE_TO_SIGNIN } from "constants/event-tracker";
 
 export enum ESignUpSteps {
   EMAIL = "EMAIL",

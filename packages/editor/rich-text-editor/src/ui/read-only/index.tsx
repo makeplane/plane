@@ -15,6 +15,7 @@ interface IRichTextReadOnlyEditor {
   borderOnFocus?: boolean;
   customClassName?: string;
   mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  tabIndex?: number;
 }
 
 interface RichTextReadOnlyEditorProps extends IRichTextReadOnlyEditor {

@@ -85,7 +85,10 @@ const getSuggestionItems =
         searchTerms: ["p", "paragraph"],
         icon: <CaseSensitive className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").run();
+          if (range) {
+            editor.chain().focus().deleteRange(range).clearNodes().run();
+          }
+          editor.chain().focus().clearNodes().run();
         },
       },
       {

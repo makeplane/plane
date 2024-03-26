@@ -1,8 +1,8 @@
-import useSWR from "swr";
 import { useRef, useEffect } from "react";
 import { ProjectMemberService } from "services/project";
-import { IProjectMember, IUser } from "@plane/types";
 import { UserService } from "services/user.service";
+import useSWR from "swr";
+import { IProjectMember, IUser } from "@plane/types";
 
 export const useMention = ({ workspaceSlug, projectId }: { workspaceSlug: string; projectId: string }) => {
   const userService = new UserService();

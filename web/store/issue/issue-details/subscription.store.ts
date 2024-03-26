@@ -1,7 +1,7 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
+import { action, makeObservable, observable, runInAction } from "mobx";
 // services
-import { NotificationService } from "services/notification.service";
+import { NotificationService } from "@/services/notification.service";
 // types
 import { IIssueDetail } from "./root.store";
 

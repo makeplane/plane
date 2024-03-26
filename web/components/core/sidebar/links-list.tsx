@@ -1,37 +1,35 @@
-// ui
-import { ExternalLinkIcon, Tooltip } from "@plane/ui";
+import { observer } from "mobx-react";
 // icons
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
-// helpers
-import { calculateTimeAgo } from "helpers/date-time.helper";
-// types
 import { ILinkDetails, UserAuth } from "@plane/types";
+// ui
+import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
 // hooks
-import useToast from "hooks/use-toast";
-import { observer } from "mobx-react";
-import { useMeasure } from "@nivo/core";
-import { useMember } from "hooks/store";
+import { useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// types
 
 type Props = {
   links: ILinkDetails[];
   handleDeleteLink: (linkId: string) => void;
   handleEditLink: (link: ILinkDetails) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth }) => {
-  // toast
-  const { setToastAlert } = useToast();
+export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth, disabled }) => {
   const { getUserDetails } = useMember();
-
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const { isMobile } = usePlatformOS();
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    setToastAlert({
-      message: "The URL has been successfully copied to your clipboard",
-      type: "success",
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
       title: "Copied to clipboard",
+      message: "The URL has been successfully copied to your clipboard",
     });
   };
 
@@ -46,7 +44,7 @@ export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, h
                 <span className="py-1">
                   <LinkIcon className="h-3 w-3 flex-shrink-0" />
                 </span>
-                <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url}>
+                <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
                   <span
                     className="cursor-pointer truncate text-xs"
                     onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}

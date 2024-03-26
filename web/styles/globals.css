@@ -149,6 +149,27 @@
     --color-onboarding-border-300: 229, 229, 229, 0.5;
 
     --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(126, 139, 171, 0.1);
+
+    /* toast theme */
+    --color-toast-success-text: 62, 155, 79;
+    --color-toast-error-text: 220, 62, 66;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 51, 88, 212;
+    --color-toast-loading-text: 28, 32, 36;
+    --color-toast-secondary-text: 128, 131, 141;
+    --color-toast-tertiary-text: 96, 100, 108;
+
+    --color-toast-success-background: 253, 253, 254;
+    --color-toast-error-background: 255, 252, 252;
+    --color-toast-warning-background: 254, 253, 251;
+    --color-toast-info-background: 253, 253, 254;
+    --color-toast-loading-background: 253, 253, 254;
+
+    --color-toast-success-border: 218, 241, 219;
+    --color-toast-error-border: 255, 219, 220;
+    --color-toast-warning-border: 255, 247, 194;
+    --color-toast-info-border: 210, 222, 255;
+    --color-toast-loading-border: 224, 225, 230;
   }
 
   [data-theme="light-contrast"] {
@@ -217,6 +238,27 @@
     --color-onboarding-border-300: 34, 35, 38, 0.5;
 
     --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(39, 44, 56, 0.1);
+
+    /* toast theme */
+    --color-toast-success-text: 178, 221, 181;
+    --color-toast-error-text: 206, 44, 49;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 141, 164, 239;
+    --color-toast-loading-text: 255, 255, 255;
+    --color-toast-secondary-text: 185, 187, 198;
+    --color-toast-tertiary-text: 139, 141, 152;
+
+    --color-toast-success-background: 46, 46, 46;
+    --color-toast-error-background: 46, 46, 46;
+    --color-toast-warning-background: 46, 46, 46;
+    --color-toast-info-background: 46, 46, 46;
+    --color-toast-loading-background: 46, 46, 46;
+
+    --color-toast-success-border: 42, 126, 59;
+    --color-toast-error-border: 100, 23, 35;
+    --color-toast-warning-border: 79, 52, 34;
+    --color-toast-info-border: 58, 91, 199;
+    --color-toast-loading-border: 96, 100, 108;
   }
 
   [data-theme="dark-contrast"] {
@@ -559,6 +601,9 @@ div.web-view-spinner div.bar12 {
 .vertical-scrollbar::-webkit-scrollbar-corner,
 .horizontal-scrollbar::-webkit-scrollbar-corner {
   background-color: transparent;
+}
+.vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
+  margin-top: 44px;
 }
 
 /* scrollbar sm size */

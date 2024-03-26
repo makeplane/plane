@@ -1,13 +1,13 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
+import { InstanceSetupView } from "@/components/instance";
+import { useApplication } from "@/hooks/store";
 // layouts
-import { AdminAuthWrapper, UserAuthWrapper } from "layouts/auth-layout";
+import { AdminAuthWrapper, UserAuthWrapper } from "@/layouts/auth-layout";
 // components
-import { InstanceAdminSidebar } from "./sidebar";
 import { InstanceAdminHeader } from "./header";
-import { InstanceSetupView } from "components/instance";
+import { InstanceAdminSidebar } from "./sidebar";
 
 export interface IInstanceAdminLayout {
   children: ReactNode;

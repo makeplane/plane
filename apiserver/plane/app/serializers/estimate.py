@@ -74,5 +74,3 @@ class WorkspaceEstimateSerializer(BaseSerializer):
             "name",
             "description",
         ]
-
-

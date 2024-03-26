@@ -3,16 +3,6 @@ import React from "react";
 import Image from "next/image";
 // headless ui
 import { Tab } from "@headlessui/react";
-// hooks
-import useLocalStorage from "hooks/use-local-storage";
-// images
-import emptyLabel from "public/empty-state/empty_label.svg";
-import emptyMembers from "public/empty-state/empty_members.svg";
-// components
-import { SingleProgressStats } from "components/core";
-// ui
-import { Avatar, StateGroupIcon } from "@plane/ui";
-// types
 import {
   IModule,
   TAssigneesDistribution,
@@ -20,6 +10,16 @@ import {
   TLabelsDistribution,
   TStateGroups,
 } from "@plane/types";
+// hooks
+import { Avatar, StateGroupIcon } from "@plane/ui";
+import { SingleProgressStats } from "@/components/core";
+import useLocalStorage from "@/hooks/use-local-storage";
+// images
+import emptyLabel from "public/empty-state/empty_label.svg";
+import emptyMembers from "public/empty-state/empty_members.svg";
+// components
+// ui
+// types
 
 type Props = {
   distribution: {
@@ -127,7 +127,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
       <Tab.Panels className="flex w-full items-center justify-between text-custom-text-200">
         <Tab.Panel
           as="div"
-          className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
+          className="flex w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
         >
           {distribution?.assignees.length > 0 ? (
             distribution.assignees.map((assignee, index) => {
@@ -137,8 +137,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     key={assignee.assignee_id}
                     title={
                       <div className="flex items-center gap-2">
-                        <Avatar name={assignee.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
-                        <span>{assignee.display_name}</span>
+                        <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
+                        <span>{assignee?.display_name ?? ""}</span>
                       </div>
                     }
                     completed={assignee.completed_issues}
@@ -187,7 +187,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab.Panel>
         <Tab.Panel
           as="div"
-          className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
+          className="flex w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
         >
           {distribution?.labels.length > 0 ? (
             distribution.labels.map((label, index) => (
@@ -230,7 +230,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab.Panel>
         <Tab.Panel
           as="div"
-          className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
+          className="flex w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
         >
           {Object.keys(groupedIssues).map((group, index) => (
             <SingleProgressStats

@@ -1,9 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
-import { useRouter } from "next/router";
+import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-// components
 import {
   AppliedCycleFilters,
   AppliedDateFilters,
@@ -14,13 +12,14 @@ import {
   AppliedProjectFilters,
   AppliedStateFilters,
   AppliedStateGroupFilters,
-} from "components/issues";
+} from "@/components/issues";
+import { EUserProjectRoles } from "@/constants/project";
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+import { useApplication, useUser } from "@/hooks/store";
+// components
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -56,14 +55,15 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
         const filterKey = key as keyof IIssueFilterOptions;
 
         if (!value) return;
+        if (Array.isArray(value) && value.length === 0) return;
 
         return (
           <div
             key={filterKey}
             className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
           >
-            <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
-            <div className="flex flex-wrap items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {membersFilters.includes(filterKey) && (
                 <AppliedMembersFilters
                   editable={isEditingAllowed}

@@ -1,12 +1,12 @@
 import { observer } from "mobx-react-lite";
-import { Controller, useForm } from "react-hook-form";
 import { useTheme } from "next-themes";
-// hooks
-import { useUser } from "hooks/store";
-// ui
-import { Button, InputColorPicker } from "@plane/ui";
-// types
+import { Controller, useForm } from "react-hook-form";
 import { IUserTheme } from "@plane/types";
+// hooks
+import { Button, InputColorPicker } from "@plane/ui";
+import { useUser } from "@/hooks/store";
+// ui
+// types
 
 const inputRules = {
   required: "Background color is required",

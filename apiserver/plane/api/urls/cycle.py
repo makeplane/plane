@@ -4,6 +4,7 @@ from plane.api.views.cycle import (
     CycleAPIEndpoint,
     CycleIssueAPIEndpoint,
     TransferCycleIssueAPIEndpoint,
+    CycleArchiveUnarchiveAPIEndpoint,
 )
 
 urlpatterns = [
@@ -31,5 +32,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/transfer-issues/",
         TransferCycleIssueAPIEndpoint.as_view(),
         name="transfer-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:pk>/archive/",
+        CycleArchiveUnarchiveAPIEndpoint.as_view(),
+        name="cycle-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-cycles/",
+        CycleArchiveUnarchiveAPIEndpoint.as_view(),
+        name="cycle-archive-unarchive",
     ),
 ]

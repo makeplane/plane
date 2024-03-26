@@ -1,22 +1,20 @@
 import { ReactElement, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { Button, Input, Spinner, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { PageHead } from "@/components/core";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { useApplication, useUser } from "@/hooks/store";
 // services
-import { UserService } from "services/user.service";
 // components
-import { PageHead } from "components/core";
-// hooks
-import useToast from "hooks/use-toast";
 // layout
-import { ProfileSettingsLayout } from "layouts/settings-layout";
+import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // ui
-import { Button, Input, Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "lib/types";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { NextPageWithLayout } from "@/lib/types";
+import { UserService } from "@/services/user.service";
 
 interface FormValues {
   old_password: string;
@@ -46,33 +44,28 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ defaultValues });
-  const { setToastAlert } = useToast();
 
   const handleChangePassword = async (formData: FormValues) => {
     if (formData.new_password !== formData.confirm_password) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "The new password and the confirm password don't match.",
       });
       return;
     }
-    await userService
-      .changePassword(formData)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Password changed successfully.",
-        });
-      })
-      .catch((error) => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: error?.error ?? "Something went wrong. Please try again.",
-        });
-      });
+    const changePasswordPromise = userService.changePassword(formData);
+    setPromiseToast(changePasswordPromise, {
+      loading: "Changing password...",
+      success: {
+        title: "Success!",
+        message: () => "Password changed successfully.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Something went wrong. Please try again.",
+      },
+    });
   };
 
   useEffect(() => {
@@ -92,8 +85,8 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title="Profile - Change Password" />
-      <div className="flex flex-col h-full">
-        <div className="block md:hidden flex-shrink-0 border-b border-custom-border-200 p-4">
+      <div className="flex h-full flex-col">
+        <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
           <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
         </div>
         <form

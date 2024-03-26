@@ -2,21 +2,22 @@
 import csv
 import io
 import json
-import boto3
 import zipfile
+
+import boto3
+from botocore.client import Config
+
+# Third party imports
+from celery import shared_task
 
 # Django imports
 from django.conf import settings
 from django.utils import timezone
-
-# Third party imports
-from celery import shared_task
-from sentry_sdk import capture_exception
-from botocore.client import Config
 from openpyxl import Workbook
 
 # Module imports
-from plane.db.models import Issue, ExporterHistory
+from plane.db.models import ExporterHistory, Issue
+from plane.utils.exception_logger import log_exception
 
 
 def dateTimeConverter(time):
@@ -144,12 +145,17 @@ def generate_table_row(issue):
         issue["description_stripped"],
         issue["state__name"],
         issue["priority"],
-        f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-        if issue["created_by__first_name"] and issue["created_by__last_name"]
-        else "",
-        f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
-        if issue["assignees__first_name"] and issue["assignees__last_name"]
-        else "",
+        (
+            f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
+            if issue["created_by__first_name"]
+            and issue["created_by__last_name"]
+            else ""
+        ),
+        (
+            f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
+            if issue["assignees__first_name"] and issue["assignees__last_name"]
+            else ""
+        ),
         issue["labels__name"],
         issue["issue_cycle__cycle__name"],
         dateConverter(issue["issue_cycle__cycle__start_date"]),
@@ -172,12 +178,17 @@ def generate_json_row(issue):
         "Description": issue["description_stripped"],
         "State": issue["state__name"],
         "Priority": issue["priority"],
-        "Created By": f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-        if issue["created_by__first_name"] and issue["created_by__last_name"]
-        else "",
-        "Assignee": f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
-        if issue["assignees__first_name"] and issue["assignees__last_name"]
-        else "",
+        "Created By": (
+            f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
+            if issue["created_by__first_name"]
+            and issue["created_by__last_name"]
+            else ""
+        ),
+        "Assignee": (
+            f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
+            if issue["assignees__first_name"] and issue["assignees__last_name"]
+            else ""
+        ),
         "Labels": issue["labels__name"],
         "Cycle Name": issue["issue_cycle__cycle__name"],
         "Cycle Start Date": dateConverter(
@@ -292,7 +303,8 @@ def issue_export_task(
                     workspace__id=workspace_id,
                     project_id__in=project_ids,
                     project__project_projectmember__member=exporter_instance.initiated_by_id,
-                    project__project_projectmember__is_active=True
+                    project__project_projectmember__is_active=True,
+                    project__archived_at__isnull=True,
                 )
                 .select_related(
                     "project", "workspace", "state", "parent", "created_by"
@@ -393,8 +405,5 @@ def issue_export_task(
         exporter_instance.status = "failed"
         exporter_instance.reason = str(e)
         exporter_instance.save(update_fields=["status", "reason"])
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
+        log_exception(e)
         return

@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { observer } from "mobx-react";
+import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
-// components
-import { FilterHeader, FilterOption } from "components/issues";
-import { useApplication, useCycle } from "hooks/store";
-// ui
-import { Loader, CycleGroupIcon } from "@plane/ui";
-// types
+import { observer } from "mobx-react";
 import { TCycleGroups } from "@plane/types";
+// components
+import { Loader, CycleGroupIcon } from "@plane/ui";
+import { FilterHeader, FilterOption } from "@/components/issues";
+import { useApplication, useCycle } from "@/hooks/store";
+// ui
+// types
 
 type Props = {
   appliedFilters: string[] | null;
@@ -31,16 +31,24 @@ export const FilterCycle: React.FC<Props> = observer((props) => {
   const cycleIds = projectId ? getProjectCycleIds(projectId) : undefined;
   const cycles = cycleIds?.map((projectId) => getCycleById(projectId)!) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const filteredOptions = sortBy(
-    cycles?.filter((cycle) => cycle.name.toLowerCase().includes(searchQuery.toLowerCase())),
-    (cycle) => cycle.name.toLowerCase()
-  );
+
+  const sortedOptions = useMemo(() => {
+    const filteredOptions = (cycles || []).filter((cycle) =>
+      cycle.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return sortBy(filteredOptions, [
+      (cycle) => !appliedFilters?.includes(cycle.id),
+      (cycle) => cycle.name.toLowerCase(),
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const handleViewToggle = () => {
-    if (!filteredOptions) return;
+    if (!sortedOptions) return;
 
-    if (itemsToRender === filteredOptions.length) setItemsToRender(5);
-    else setItemsToRender(filteredOptions.length);
+    if (itemsToRender === sortedOptions.length) setItemsToRender(5);
+    else setItemsToRender(sortedOptions.length);
   };
 
   const cycleStatus = (status: TCycleGroups) => (status ? status.toLocaleLowerCase() : "draft") as TCycleGroups;
@@ -54,10 +62,10 @@ export const FilterCycle: React.FC<Props> = observer((props) => {
       />
       {previewEnabled && (
         <div>
-          {filteredOptions ? (
-            filteredOptions.length > 0 ? (
+          {sortedOptions ? (
+            sortedOptions.length > 0 ? (
               <>
-                {filteredOptions.slice(0, itemsToRender).map((cycle) => (
+                {sortedOptions.slice(0, itemsToRender).map((cycle) => (
                   <FilterOption
                     key={cycle.id}
                     isChecked={appliedFilters?.includes(cycle.id) ? true : false}
@@ -69,13 +77,13 @@ export const FilterCycle: React.FC<Props> = observer((props) => {
                     activePulse={cycleStatus(cycle?.status) === "current" ? true : false}
                   />
                 ))}
-                {filteredOptions.length > 5 && (
+                {sortedOptions.length > 5 && (
                   <button
                     type="button"
                     className="ml-8 text-xs font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
-                    {itemsToRender === filteredOptions.length ? "View less" : "View all"}
+                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
                   </button>
                 )}
               </>

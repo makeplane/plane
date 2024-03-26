@@ -3,9 +3,9 @@ import { createContext, useCallback, useEffect, useReducer } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import { NotificationService } from "services/notification.service";
+import { UNREAD_NOTIFICATIONS_COUNT, USER_WORKSPACE_NOTIFICATIONS } from "@/constants/fetch-keys";
+import { NotificationService } from "@/services/notification.service";
 // fetch-keys
-import { UNREAD_NOTIFICATIONS_COUNT, USER_WORKSPACE_NOTIFICATIONS } from "constants/fetch-keys";
 // type
 import type { NotificationType, NotificationCount, IUserNotification } from "@plane/types";
 
@@ -91,7 +91,7 @@ const UserNotificationContextProvider: React.FC<{
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { selectedTab, snoozed, archived, readNotification, selectedNotificationForSnooze } = state;
+  const { selectedTab, snoozed, archived, readNotification } = state;
 
   const params = {
     type: snoozed || archived || readNotification ? undefined : selectedTab,
@@ -207,7 +207,7 @@ const UserNotificationContextProvider: React.FC<{
       (previousNotifications: any) =>
         previousNotifications?.map((notification: any) =>
           notification.id === notificationId
-            ? { ...notification, snoozed_till: isSnoozed ? null : new Date(dateTime!) }
+            ? { ...notification, snoozed_till: isSnoozed ? null : dateTime }
             : notification
         ) || [],
       false

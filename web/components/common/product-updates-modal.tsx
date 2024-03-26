@@ -1,16 +1,16 @@
 import React from "react";
 import useSWR from "swr";
 // headless ui
+import { X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import { WorkspaceService } from "services/workspace.service";
 // components
-import { MarkdownRenderer } from "components/ui";
 import { Loader } from "@plane/ui";
+import { MarkdownRenderer } from "@/components/ui";
 // icons
-import { X } from "lucide-react";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   isOpen: boolean;

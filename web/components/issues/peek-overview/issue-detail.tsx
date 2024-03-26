@@ -1,14 +1,14 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 // store hooks
-import { useIssueDetail, useProject, useUser } from "hooks/store";
+import { TIssueOperations } from "@/components/issues";
+import { useIssueDetail, useProject, useUser } from "@/hooks/store";
 // hooks
-import useReloadConfirmations from "hooks/use-reload-confirmation";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // components
-import { TIssueOperations } from "components/issues";
+import { IssueDescriptionInput } from "../description-input";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
-import { IssueDescriptionInput } from "../description-input";
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
@@ -55,7 +55,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
       : undefined;
 
   return (
-    <>
+    <div className="space-y-2">
       <span className="text-base font-medium text-custom-text-400">
         {projectDetails?.identifier}-{issue?.sequence_id}
       </span>
@@ -89,6 +89,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
           currentUser={currentUser}
         />
       )}
-    </>
+    </div>
   );
 });

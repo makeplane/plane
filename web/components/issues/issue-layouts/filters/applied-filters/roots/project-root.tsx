@@ -1,15 +1,15 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useLabel, useProjectState, useUser } from "hooks/store";
-import { useIssues } from "hooks/store/use-issues";
-// components
-import { AppliedFiltersList, SaveFilterView } from "components/issues";
-// constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-// types
+import { useRouter } from "next/router";
 import { IIssueFilterOptions } from "@plane/types";
+// hooks
+// components
+import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
+// constants
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useLabel, useProjectState, useUser } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
+// types
 
 export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -59,7 +59,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, { ...newFilters });
   };
@@ -68,7 +68,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <div className="flex items-center justify-between p-4">
+    <div className="flex items-center justify-between p-4 gap-2.5">
       <AppliedFiltersList
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}

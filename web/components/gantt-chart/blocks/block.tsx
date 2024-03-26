@@ -1,16 +1,16 @@
 import { observer } from "mobx-react";
 // hooks
-import { useGanttChart } from "../hooks";
-import { useIssueDetail } from "hooks/store";
 // components
-import { ChartAddBlock, ChartDraggable } from "../helpers";
 // helpers
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { cn } from "@/helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { useIssueDetail } from "@/hooks/store";
 // types
-import { IBlockUpdateData, IGanttBlock } from "../types";
 // constants
 import { BLOCK_HEIGHT } from "../constants";
+import { ChartAddBlock, ChartDraggable } from "../helpers";
+import { useGanttChart } from "../hooks";
+import { IBlockUpdateData, IGanttBlock } from "../types";
 
 type Props = {
   block: IGanttBlock;
@@ -45,12 +45,12 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     totalBlockShifts: number,
     dragDirection: "left" | "right" | "move"
   ) => {
-    if (!block.start_date || !block.target_date) return;
+    const originalStartDate = getDate(block.start_date);
+    const originalTargetDate = getDate(block.target_date);
 
-    const originalStartDate = new Date(block.start_date);
+    if (!originalStartDate || !originalTargetDate) return;
+
     const updatedStartDate = new Date(originalStartDate);
-
-    const originalTargetDate = new Date(block.target_date);
     const updatedTargetDate = new Date(originalTargetDate);
 
     // update the start date on left resize

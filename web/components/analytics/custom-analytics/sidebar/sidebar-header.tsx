@@ -1,12 +1,13 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useCycle, useMember, useModule, useProject } from "hooks/store";
+import { ProjectLogo } from "@/components/project";
+import { NETWORK_CHOICES } from "@/constants/project";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useCycle, useMember, useModule, useProject } from "@/hooks/store";
+// components
 // helpers
-import { renderEmoji } from "helpers/emoji.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
-import { NETWORK_CHOICES } from "constants/project";
 
 export const CustomAnalyticsSidebarHeader = observer(() => {
   const router = useRouter();
@@ -81,15 +82,9 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
         ) : (
           <div className="h-full overflow-y-auto">
             <div className="flex items-center gap-1">
-              {projectDetails?.emoji ? (
-                <div className="grid h-6 w-6 flex-shrink-0 place-items-center">{renderEmoji(projectDetails.emoji)}</div>
-              ) : projectDetails?.icon_prop ? (
-                <div className="grid h-6 w-6 flex-shrink-0 place-items-center">
-                  {renderEmoji(projectDetails.icon_prop)}
-                </div>
-              ) : (
-                <span className="mr-1 grid h-6 w-6 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                  {projectDetails?.name.charAt(0)}
+              {projectDetails && (
+                <span className="h-6 w-6 grid place-items-center flex-shrink-0">
+                  <ProjectLogo logo={projectDetails.logo_props} />
                 </span>
               )}
               <h4 className="break-words font-medium">{projectDetails?.name}</h4>

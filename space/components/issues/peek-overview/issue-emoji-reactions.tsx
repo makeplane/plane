@@ -1,13 +1,13 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // lib
-import { useMobxStore } from "lib/mobx/store-provider";
-// helpers
-import { groupReactions, renderEmoji } from "helpers/emoji.helper";
-// components
-import { ReactionSelector } from "components/ui";
 import { Tooltip } from "@plane/ui";
+import { ReactionSelector } from "@/components/ui";
+import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+// helpers
+// components
 
 export const IssueEmojiReactions: React.FC = observer(() => {
   // router

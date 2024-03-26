@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
-// hooks
-import { useCycle } from "hooks/store";
-// ui
-import { CycleGroupIcon } from "@plane/ui";
-// types
 import { TCycleGroups } from "@plane/types";
+// hooks
+import { CycleGroupIcon } from "@plane/ui";
+import { useCycle } from "@/hooks/store";
+// ui
+// types
 
 type Props = {
   handleRemove: (val: string) => void;

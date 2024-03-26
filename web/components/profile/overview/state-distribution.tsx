@@ -1,11 +1,11 @@
 // ui
-import { ProfileEmptyState, PieGraph } from "components/ui";
+import { IUserProfileData, IUserStateDistribution } from "@plane/types";
+import { ProfileEmptyState, PieGraph } from "@/components/ui";
 // image
+import { STATE_GROUPS } from "@/constants/state";
 import stateGraph from "public/empty-state/state_graph.svg";
 // types
-import { IUserProfileData, IUserStateDistribution } from "@plane/types";
 // constants
-import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   stateDistribution: IUserStateDistribution[];
@@ -17,7 +17,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
 
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">Issues by State</h3>
+      <h3 className="text-lg font-medium">Issues by state</h3>
       <div className="flex-grow rounded border border-custom-border-100 p-7">
         {userProfile.state_distribution.length > 0 ? (
           <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2">
@@ -65,7 +65,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                           backgroundColor: STATE_GROUPS[group.state_group].color,
                         }}
                       />
-                      <div className="whitespace-nowrap capitalize">{group.state_group}</div>
+                      <div className="whitespace-nowrap">{STATE_GROUPS[group.state_group].label}</div>
                     </div>
                     <div>{group.state_count}</div>
                   </div>
