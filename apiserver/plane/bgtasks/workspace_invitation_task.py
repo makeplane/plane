@@ -3,8 +3,11 @@ import logging
 
 # Third party imports
 from celery import shared_task
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 # Django imports
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
