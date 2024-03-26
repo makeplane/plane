@@ -332,6 +332,12 @@ class GroupedOffsetPaginator(OffsetPaginator):
             }
             for group_id, issues in grouped_by_field_name.items()
         }
+
+        # ordering
+        for group_value, data in processed_results.items():
+            data["results"].sort(
+                key=lambda x: x.get("created_at"), reverse=True
+            )
         return processed_results
 
     def __query_grouper(self, results):
