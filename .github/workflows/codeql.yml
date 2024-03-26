@@ -3,7 +3,7 @@ name: "CodeQL"
 on:
   workflow_dispatch:
   push:
-    branches: ["master"]
+    branches: ["develop", "preview", "master"]
   pull_request:
     branches: ["develop", "preview", "master"]
   schedule:
