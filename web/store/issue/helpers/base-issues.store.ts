@@ -783,7 +783,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
   issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
     const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, this.isArchived ? "archived" : "un-archived");
-    const array = orderBy(issues, "created_at", ["asc"]);
+    const array = orderBy(issues, "created_at", ["desc"]);
 
     switch (key) {
       case "sort_order":
@@ -834,13 +834,13 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       // custom
       case "priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return this.getIssueIds(
-          orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority), ["desc"])
-        );
+        return this.getIssueIds(orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority)));
       }
       case "-priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return this.getIssueIds(orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority)));
+        return this.getIssueIds(
+          orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority), ["desc"])
+        );
       }
 
       // number

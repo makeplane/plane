@@ -101,9 +101,9 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
   priority: {
     title: "Priority",
-    ascendingOrderKey: "priority",
+    ascendingOrderKey: "-priority",
     ascendingOrderTitle: "None",
-    descendingOrderKey: "-priority",
+    descendingOrderKey: "priority",
     descendingOrderTitle: "Urgent",
     icon: Signal,
     Column: SpreadsheetPriorityColumn,
