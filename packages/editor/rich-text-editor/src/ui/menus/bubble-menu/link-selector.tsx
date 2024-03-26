@@ -33,8 +33,9 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
           "flex h-full items-center space-x-2 px-3 py-1.5 text-sm font-medium text-custom-text-300 hover:bg-custom-background-100 active:bg-custom-background-100",
           { "bg-custom-background-100": isOpen }
         )}
-        onClick={() => {
+        onClick={(e) => {
           setIsOpen(!isOpen);
+          e.stopPropagation();
         }}
       >
         <p className="text-base">↗</p>
@@ -60,6 +61,9 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
             ref={inputRef}
             type="url"
             placeholder="Paste a link"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
             className="flex-1 border-r border-custom-border-300 bg-custom-background-100 p-1 text-sm outline-none placeholder:text-custom-text-400"
             defaultValue={editor.getAttributes("link").href || ""}
           />
@@ -67,9 +71,10 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
             <button
               type="button"
               className="flex items-center rounded-sm p-1 text-red-600 transition-all hover:bg-red-100 dark:hover:bg-red-800"
-              onClick={() => {
+              onClick={(e) => {
                 unsetLinkEditor(editor);
                 setIsOpen(false);
+                e.stopPropagation();
               }}
             >
               <Trash className="h-4 w-4" />
@@ -78,8 +83,9 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
             <button
               className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-custom-background-90"
               type="button"
-              onClick={() => {
+              onClick={(e) => {
                 onLinkSubmit();
+                e.stopPropagation();
               }}
             >
               <Check className="h-4 w-4" />

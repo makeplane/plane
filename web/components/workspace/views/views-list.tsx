@@ -1,12 +1,11 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
-// store hooks
-import { useGlobalView } from "hooks/store";
 // components
-import { GlobalViewListItem } from "components/workspace";
-// ui
-import { ViewListLoader } from "components/ui";
+import { ViewListLoader } from "@/components/ui";
+import { GlobalViewListItem } from "@/components/workspace";
+// store hooks
+import { useGlobalView } from "@/hooks/store";
 
 type Props = {
   searchQuery: string;
@@ -29,11 +28,5 @@ export const GlobalViewsList: React.FC<Props> = observer((props) => {
 
   const filteredViewsList = getSearchedViews(searchQuery);
 
-  return (
-    <>
-      {filteredViewsList?.map((viewId) => (
-        <GlobalViewListItem key={viewId} viewId={viewId} />
-      ))}
-    </>
-  );
+  return <>{filteredViewsList?.map((viewId) => <GlobalViewListItem key={viewId} viewId={viewId} />)}</>;
 });

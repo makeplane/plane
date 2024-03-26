@@ -2,11 +2,11 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { RotateCcw } from "lucide-react";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { ArchiveIcon } from "@plane/ui";
+import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
 // ui
-import { ArchiveIcon } from "@plane/ui";
 
 type TIssueArchivedAtActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 

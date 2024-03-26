@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { X } from "lucide-react";
 // types
+import { useIssueDetail, useLabel } from "@/hooks/store";
 import { TLabelOperations } from "./root";
-import { useIssueDetail, useLabel } from "hooks/store";
 
 type TLabelListItem = {
   workspaceSlug: string;

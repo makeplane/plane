@@ -1,5 +1,4 @@
 //ui
-import { CustomMenu } from "@plane/ui";
 import {
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
@@ -9,12 +8,13 @@ import {
   ListFilter,
   MoveRight,
 } from "lucide-react";
-//hooks
-import useLocalStorage from "hooks/use-local-storage";
-//types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
+//hooks
+import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/spreadsheet";
+import useLocalStorage from "@/hooks/use-local-storage";
+//types
 //constants
-import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 
 interface Props {
   property: keyof IIssueDisplayProperties;

@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useGanttChart } from "components/gantt-chart/hooks/use-gantt-chart";
+import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
+import { useGanttChart } from "@/components/gantt-chart/hooks/use-gantt-chart";
 // helpers
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 // types
 import { IMonthBlock } from "../../views";
 // constants
-import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "components/gantt-chart/constants";
 
 export const MonthChartView: FC<any> = observer(() => {
   // chart hook
@@ -19,7 +19,7 @@ export const MonthChartView: FC<any> = observer(() => {
       {monthBlocks?.map((block, rootIndex) => (
         <div key={`month-${block?.month}-${block?.year}`} className="relative flex flex-col">
           <div
-            className="w-full sticky top-0 z-[5] bg-custom-background-100"
+            className="w-full sticky top-0 z-[5] bg-custom-background-100 flex-shrink-0"
             style={{
               height: `${HEADER_HEIGHT}px`,
             }}
@@ -55,7 +55,7 @@ export const MonthChartView: FC<any> = observer(() => {
               ))}
             </div>
           </div>
-          <div className="h-full w-full flex divide-x divide-custom-border-100/50">
+          <div className="h-full w-full flex-grow flex divide-x divide-custom-border-100/50">
             {block?.children?.map((monthDay, index) => (
               <div
                 key={`column-${rootIndex}-${index}`}

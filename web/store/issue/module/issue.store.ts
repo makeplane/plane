@@ -1,17 +1,17 @@
-import { action, observable, makeObservable, computed, runInAction } from "mobx";
-import set from "lodash/set";
-import update from "lodash/update";
 import concat from "lodash/concat";
 import pull from "lodash/pull";
+import set from "lodash/set";
 import uniq from "lodash/uniq";
+import update from "lodash/update";
+import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
-import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
-import { IssueService } from "services/issue";
-import { ModuleService } from "services/module.service";
+import { IssueService } from "@/services/issue";
+import { ModuleService } from "@/services/module.service";
 // types
-import { IIssueRootStore } from "../root.store";
 import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
+import { IssueHelperStore } from "../helpers/issue-helper.store";
+import { IIssueRootStore } from "../root.store";
 
 export interface IModuleIssues {
   // observable
@@ -25,33 +25,23 @@ export interface IModuleIssues {
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
-    moduleId?: string | undefined
+    moduleId: string
   ) => Promise<TIssue[] | undefined>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
     data: Partial<TIssue>,
-    moduleId?: string | undefined
+    moduleId: string
   ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    moduleId?: string | undefined
+    moduleId: string
   ) => Promise<void>;
-  removeIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    moduleId?: string | undefined
-  ) => Promise<void>;
-  archiveIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    moduleId?: string | undefined
-  ) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => Promise<void>;
   quickAddIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -160,11 +150,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader = "init-loader",
-    moduleId: string | undefined = undefined
+    moduleId: string
   ) => {
     try {
-      if (!moduleId) throw new Error("Module Id is required");
-
       this.loader = loadType;
 
       const params = this.rootIssueStore?.moduleIssuesFilter?.appliedFilters;
@@ -190,15 +178,8 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     }
   };
 
-  createIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<TIssue>,
-    moduleId: string | undefined = undefined
-  ) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, moduleId: string) => {
     try {
-      if (!moduleId) throw new Error("Module Id is required");
-
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
       await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id], false);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
@@ -214,11 +195,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    moduleId: string | undefined = undefined
+    moduleId: string
   ) => {
     try {
-      if (!moduleId) throw new Error("Module Id is required");
-
       await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
     } catch (error) {
@@ -227,15 +206,8 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     }
   };
 
-  removeIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    moduleId: string | undefined = undefined
-  ) => {
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => {
     try {
-      if (!moduleId) throw new Error("Module Id is required");
-
       await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
@@ -249,15 +221,8 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     }
   };
 
-  archiveIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    moduleId: string | undefined = undefined
-  ) => {
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => {
     try {
-      if (!moduleId) throw new Error("Module Id is required");
-
       await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 

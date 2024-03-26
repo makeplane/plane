@@ -1,7 +1,7 @@
 // mobx
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // service
-import { UserService } from "services/user.service";
+import { UserService } from "@/services/user.service";
 // types
 import { IUser } from "types/user";
 

@@ -1,11 +1,13 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
-import { useApplication, useCycle } from "hooks/store";
 // ui
 import { Tooltip, ContrastIcon } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useApplication, useCycle } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   cycleId: string;
@@ -22,7 +24,7 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
   const { getCycleById } = useCycle();
   // derived values
   const cycleDetails = getCycleById(cycleId);
-
+  const { isMobile } = usePlatformOS();
   const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
 
   return (
@@ -33,17 +35,18 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-            ? "#f7ae59"
-            : cycleStatus === "completed"
-            ? "#3f76ff"
-            : cycleStatus === "draft"
-            ? "rgb(var(--color-text-200))"
-            : "",
+              ? "#f7ae59"
+              : cycleStatus === "completed"
+                ? "#3f76ff"
+                : cycleStatus === "draft"
+                  ? "rgb(var(--color-text-200))"
+                  : "",
       }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`)}
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
+        isMobile={isMobile}
         tooltipContent={
           <div className="space-y-1">
             <h5>{cycleDetails?.name}</h5>
@@ -63,8 +66,6 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
 
 export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { cycleId } = props;
-  // router
-  const router = useRouter();
   // store hooks
   const {
     router: { workspaceSlug },
@@ -76,9 +77,9 @@ export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
 
   return (
-    <div
+    <Link
       className="relative flex h-full w-full items-center gap-2"
-      onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`)}
+      href={`/${workspaceSlug}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`}
     >
       <ContrastIcon
         className="h-5 w-5 flex-shrink-0"
@@ -86,15 +87,15 @@ export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-            ? "#f7ae59"
-            : cycleStatus === "completed"
-            ? "#3f76ff"
-            : cycleStatus === "draft"
-            ? "rgb(var(--color-text-200))"
-            : ""
+              ? "#f7ae59"
+              : cycleStatus === "completed"
+                ? "#3f76ff"
+                : cycleStatus === "draft"
+                  ? "rgb(var(--color-text-200))"
+                  : ""
         }`}
       />
       <h6 className="flex-grow truncate text-sm font-medium">{cycleDetails?.name}</h6>
-    </div>
+    </Link>
   );
 });

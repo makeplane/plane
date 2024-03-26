@@ -1,15 +1,14 @@
 import React from "react";
 
-import { useRouter } from "next/router";
-
 // mobx
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useRouter } from "next/router";
 // ui
-import { ReactionSelector } from "components/ui";
 import { Tooltip } from "@plane/ui";
+import { ReactionSelector } from "@/components/ui";
 // helpers
-import { groupReactions, renderEmoji } from "helpers/emoji.helper";
+import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
+import { useMobxStore } from "@/lib/mobx/store-provider";
 
 type Props = {
   commentId: string;

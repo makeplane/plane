@@ -1,9 +1,9 @@
 // icons
 import { Triangle } from "lucide-react";
-// types
 import { IDefaultAnalyticsResponse, TStateGroups } from "@plane/types";
+// types
+import { STATE_GROUPS } from "@/constants/state";
 // constants
-import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   defaultAnalytics: IDefaultAnalyticsResponse;

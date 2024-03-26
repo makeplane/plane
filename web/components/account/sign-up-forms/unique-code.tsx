@@ -2,21 +2,21 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
-// services
-import { AuthService } from "services/auth.service";
-import { UserService } from "services/user.service";
-// hooks
-import useToast from "hooks/use-toast";
-import useTimer from "hooks/use-timer";
-import { useEventTracker } from "hooks/store";
-// ui
-import { Button, Input } from "@plane/ui";
-// helpers
-import { checkEmailValidity } from "helpers/string.helper";
-// types
 import { IEmailCheckData, IMagicSignInData } from "@plane/types";
+// services
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+
+import { CODE_VERIFIED } from "@/constants/event-tracker";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { useEventTracker } from "@/hooks/store";
+import useTimer from "@/hooks/use-timer";
+import { AuthService } from "@/services/auth.service";
+import { UserService } from "@/services/user.service";
+// hooks
+// ui
+// helpers
+// types
 // constants
-import { CODE_VERIFIED } from "constants/event-tracker";
 
 type Props = {
   email: string;
@@ -44,8 +44,6 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(30);
   // form info
@@ -84,8 +82,8 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
         captureEvent(CODE_VERIFIED, {
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });
@@ -101,8 +99,8 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
       .generateUniqueCode(payload)
       .then(() => {
         setResendCodeTimer(30);
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "A new unique code has been sent to your email.",
         });
@@ -112,8 +110,8 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
         });
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })
@@ -204,8 +202,8 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
               {resendTimerCode > 0
                 ? `Request new code in ${resendTimerCode}s`
                 : isRequestingNewCode
-                ? "Requesting new code"
-                : "Request new code"}
+                  ? "Requesting new code"
+                  : "Request new code"}
             </button>
           </div>
         </div>

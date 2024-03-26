@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
-import { LucideIcon, X } from "lucide-react";
 import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
+import { LucideIcon, X } from "lucide-react";
+import { IIssueLabel } from "@plane/types";
 //ui
 import { CustomMenu } from "@plane/ui";
 //types
-import { IIssueLabel } from "@plane/types";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 //hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 //components
 import { DragHandle } from "./drag-handle";
 import { LabelName } from "./label-name";

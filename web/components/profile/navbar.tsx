@@ -1,12 +1,12 @@
 import React from "react";
 
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // components
-import { ProfileIssuesFilter } from "components/profile";
+import { ProfileIssuesFilter } from "@/components/profile";
 // constants
-import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "constants/profile";
+import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 
 type Props = {
   isAuthorized: boolean;
@@ -27,10 +27,11 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
             <span
-              className={`flex whitespace-nowrap border-b-2 p-4 text-sm font-medium outline-none ${router.pathname === tab.selected
-                ? "border-custom-primary-100 text-custom-primary-100"
-                : "border-transparent"
-                }`}
+              className={`flex whitespace-nowrap border-b-2 p-4 text-sm font-medium outline-none ${
+                router.pathname === tab.selected
+                  ? "border-custom-primary-100 text-custom-primary-100"
+                  : "border-transparent"
+              }`}
             >
               {tab.label}
             </span>

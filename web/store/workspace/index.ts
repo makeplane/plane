@@ -1,13 +1,13 @@
-import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import { RootStore } from "../root.store";
 import set from "lodash/set";
-// types
+import { action, computed, observable, makeObservable, runInAction } from "mobx";
+import { WorkspaceService } from "@/services/workspace.service";
 import { IWorkspace } from "@plane/types";
+import { RootStore } from "../root.store";
+// types
 // services
-import { WorkspaceService } from "services/workspace.service";
 // sub-stores
-import { IWebhookStore, WebhookStore } from "./webhook.store";
 import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
+import { IWebhookStore, WebhookStore } from "./webhook.store";
 
 export interface IWorkspaceRootStore {
   // observables

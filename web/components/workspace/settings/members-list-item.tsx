@@ -1,18 +1,19 @@
 import { useState, FC } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
+// lucide icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
-// hooks
-import { useEventTracker, useMember, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // ui
-import { CustomSelect, Tooltip } from "@plane/ui";
+import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
-import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
+import { WORKSPACE_MEMBER_lEAVE } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+// hooks
+import { useEventTracker, useMember, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   memberId: string;
@@ -35,8 +36,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     workspace: { updateMember, removeMemberFromWorkspace, getWorkspaceMemberDetails },
   } = useMember();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
+  const { isMobile } = usePlatformOS();
   // derived values
   const memberDetails = getWorkspaceMemberDetails(memberId);
 
@@ -52,8 +52,8 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         router.push("/profile");
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error",
           message: err?.error || "Something went wrong. Please try again.",
         })
@@ -64,8 +64,8 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     if (!workspaceSlug || !memberDetails) return;
 
     await removeMemberFromWorkspace(workspaceSlug.toString(), memberDetails.member.id).catch((err) =>
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error",
         message: err?.error || "Something went wrong. Please try again.",
       })
@@ -165,8 +165,8 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
               updateMember(workspaceSlug.toString(), memberDetails.member.id, {
                 role: value,
               }).catch(() => {
-                setToastAlert({
-                  type: "error",
+                setToast({
+                  type: TOAST_TYPE.ERROR,
                   title: "Error!",
                   message: "An error occurred while updating member role. Please try again.",
                 });
@@ -187,6 +187,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
             })}
           </CustomSelect>
           <Tooltip
+            isMobile={isMobile}
             tooltipContent={isCurrentUser ? "Leave workspace" : "Remove member"}
             disabled={!isAdmin && !isCurrentUser}
           >

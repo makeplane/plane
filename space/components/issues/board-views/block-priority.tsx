@@ -1,9 +1,9 @@
 "use client";
 
 // types
+import { issuePriorityFilter } from "@/constants/data";
 import { TIssuePriorityKey } from "types/issue";
 // constants
-import { issuePriorityFilter } from "constants/data";
 
 export const IssueBlockPriority = ({ priority }: { priority: TIssuePriorityKey | null }) => {
   const priority_detail = priority != null ? issuePriorityFilter(priority) : null;

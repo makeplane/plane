@@ -1,13 +1,13 @@
 // components
+import { TWidgetKeys } from "@plane/types";
 import { AssignedIssuesWidgetLoader } from "./assigned-issues";
 import { IssuesByPriorityWidgetLoader } from "./issues-by-priority";
 import { IssuesByStateGroupWidgetLoader } from "./issues-by-state-group";
 import { OverviewStatsWidgetLoader } from "./overview-stats";
 import { RecentActivityWidgetLoader } from "./recent-activity";
-import { RecentProjectsWidgetLoader } from "./recent-projects";
 import { RecentCollaboratorsWidgetLoader } from "./recent-collaborators";
+import { RecentProjectsWidgetLoader } from "./recent-projects";
 // types
-import { TWidgetKeys } from "@plane/types";
 
 type Props = {
   widgetKey: TWidgetKeys;

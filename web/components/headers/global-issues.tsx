@@ -1,23 +1,23 @@
 import { useCallback, useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useMember, useUser, useIssues } from "hooks/store";
-// components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
-import { CreateUpdateWorkspaceViewModal } from "components/workspace";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
-// ui
-import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
-// icons
 import { List, PlusIcon, Sheet } from "lucide-react";
-// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
+// components
+import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
+// ui
+// icons
+// types
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { useLabel, useMember, useUser, useIssues } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },
@@ -46,6 +46,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
+  const { isMobile } = usePlatformOS();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
@@ -55,8 +56,10 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -107,9 +110,8 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
         <div className="relative flex gap-2">
-          <SidebarHamburgerToggle />
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
@@ -133,7 +135,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
             {GLOBAL_VIEW_LAYOUTS.map((layout) => (
               <Link key={layout.key} href={`/${workspaceSlug}/${layout.link}`}>
                 <span>
-                  <Tooltip tooltipContent={layout.title}>
+                  <Tooltip tooltipContent={layout.title} isMobile={isMobile}>
                     <div
                       className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
                         activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""

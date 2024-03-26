@@ -1,5 +1,4 @@
 # Python imports
-import urllib
 import socket
 import ipaddress
 from urllib.parse import urlparse

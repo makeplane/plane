@@ -1,15 +1,15 @@
 // icons
+import { TStateGroups } from "@plane/types";
 import {
   StateGroupBacklogIcon,
   StateGroupCancelledIcon,
   StateGroupCompletedIcon,
   StateGroupStartedIcon,
   StateGroupUnstartedIcon,
-} from "components/icons";
+} from "@/components/icons";
 // types
-import { TStateGroups } from "@plane/types";
+import { STATE_GROUPS } from "@/constants/state";
 // constants
-import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   className?: string;

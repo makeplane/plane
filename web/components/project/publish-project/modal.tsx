@@ -1,18 +1,21 @@
 import { Fragment, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
-import { Check, CircleDot, Globe2 } from "lucide-react";
-// hooks
-import { useProjectPublish } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
-import { Button, Loader, ToggleSwitch } from "@plane/ui";
-import { CustomPopover } from "./popover";
-// types
+import { Check, CircleDot, Globe2 } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+// icons
 import { IProject } from "@plane/types";
-import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project-publish.store";
+// ui
+import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useProjectPublish } from "@/hooks/store";
+// store
+import { IProjectPublishSettings, TProjectPublishViews } from "@/store/project/project-publish.store";
+// types
+// local components
+import { CustomPopover } from "./popover";
 
 type Props = {
   isOpen: boolean;
@@ -71,8 +74,6 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     unPublishProject,
     fetchSettingsLoader,
   } = useProjectPublish();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     control,
@@ -150,8 +151,8 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
     await updateProjectSettingsAsync(workspaceSlug.toString(), project.id, payload.id ?? "", payload)
       .then((res) => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Publish settings updated successfully!",
         });
@@ -176,8 +177,8 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
         return res;
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong while un-publishing the project.",
         })
@@ -208,8 +209,8 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
   const handleFormSubmit = async (formData: FormData) => {
     if (!formData.views || formData.views.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one view layout to publish the project.",
       });
@@ -362,16 +363,16 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                                           : "hover:bg-custom-background-80 hover:text-custom-text-100"
                                       }`}
                                       onClick={() => {
-                                        const _views =
+                                        const optionViews =
                                           value.length > 0
                                             ? value.includes(option.key)
                                               ? value.filter((_o: string) => _o !== option.key)
                                               : [...value, option.key]
                                             : [option.key];
 
-                                        if (_views.length === 0) return;
+                                        if (optionViews.length === 0) return;
 
-                                        onChange(_views);
+                                        onChange(optionViews);
                                         checkIfUpdateIsRequired();
                                       }}
                                     >

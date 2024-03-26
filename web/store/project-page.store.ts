@@ -1,13 +1,15 @@
-import { makeObservable, observable, runInAction, action, computed } from "mobx";
+import { isThisWeek, isToday, isYesterday } from "date-fns";
 import { set } from "lodash";
+import { makeObservable, observable, runInAction, action, computed } from "mobx";
 // services
-import { PageService } from "services/page.service";
+import { PageService } from "@/services/page.service";
 // store
-import { PageStore, IPageStore } from "store/page.store";
+import { PageStore, IPageStore } from "@/store/page.store";
 // types
 import { IPage, IRecentPages } from "@plane/types";
 import { RootStore } from "./root.store";
-import { isThisWeek, isToday, isYesterday } from "date-fns";
+//helpers
+import { getDate } from "helpers/date-time.helper";
 
 export interface IProjectPageStore {
   loader: boolean;
@@ -73,8 +75,8 @@ export class ProjectPageStore implements IProjectPageStore {
 
     const allProjectIds = Object.keys(this.projectPageMap[projectId]);
     return allProjectIds.sort((a, b) => {
-      const dateA = new Date(this.projectPageMap[projectId][a].created_at).getTime();
-      const dateB = new Date(this.projectPageMap[projectId][b].created_at).getTime();
+      const dateA = getDate(this.projectPageMap[projectId]?.[a]?.created_at)?.getTime() ?? 0;
+      const dateB = getDate(this.projectPageMap[projectId]?.[b]?.created_at)?.getTime() ?? 0;
       return dateB - dateA;
     });
   }
@@ -84,8 +86,8 @@ export class ProjectPageStore implements IProjectPageStore {
     if (!projectId || !this.projectArchivedPageMap[projectId]) return [];
     const archivedPages = Object.keys(this.projectArchivedPageMap[projectId]);
     return archivedPages.sort((a, b) => {
-      const dateA = new Date(this.projectArchivedPageMap[projectId][a].created_at).getTime();
-      const dateB = new Date(this.projectArchivedPageMap[projectId][b].created_at).getTime();
+      const dateA = getDate(this.projectArchivedPageMap[projectId]?.[a]?.created_at)?.getTime() ?? 0;
+      const dateB = getDate(this.projectArchivedPageMap[projectId]?.[b]?.created_at)?.getTime() ?? 0;
       return dateB - dateA;
     });
   }
@@ -126,26 +128,24 @@ export class ProjectPageStore implements IProjectPageStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!this.projectPageIds || !projectId) return;
 
-    const today: string[] = this.projectPageIds.filter((page) =>
-      isToday(new Date(this.projectPageMap[projectId][page].updated_at))
-    );
+    const today: string[] = this.projectPageIds.filter((page) => {
+      const updatedAt = getDate(this.projectPageMap[projectId]?.[page]?.updated_at);
+      return updatedAt && isToday(updatedAt);
+    });
 
-    const yesterday: string[] = this.projectPageIds.filter((page) =>
-      isYesterday(new Date(this.projectPageMap[projectId][page].updated_at))
-    );
+    const yesterday: string[] = this.projectPageIds.filter((page) => {
+      const updatedAt = getDate(this.projectPageMap[projectId]?.[page]?.updated_at);
+      return updatedAt && isYesterday(updatedAt);
+    });
 
     const this_week: string[] = this.projectPageIds.filter((page) => {
-      const pageUpdatedAt = this.projectPageMap[projectId][page].updated_at;
-      return (
-        isThisWeek(new Date(pageUpdatedAt)) &&
-        !isToday(new Date(pageUpdatedAt)) &&
-        !isYesterday(new Date(pageUpdatedAt))
-      );
+      const pageUpdatedAt = getDate(this.projectPageMap[projectId]?.[page]?.updated_at);
+      return pageUpdatedAt && isThisWeek(pageUpdatedAt) && !isToday(pageUpdatedAt) && !isYesterday(pageUpdatedAt);
     });
 
     const older: string[] = this.projectPageIds.filter((page) => {
-      const pageUpdatedAt = this.projectPageMap[projectId][page].updated_at;
-      return !isThisWeek(new Date(pageUpdatedAt)) && !isYesterday(new Date(pageUpdatedAt));
+      const pageUpdatedAt = getDate(this.projectPageMap[projectId]?.[page]?.updated_at);
+      return pageUpdatedAt && !isThisWeek(pageUpdatedAt) && !isYesterday(pageUpdatedAt);
     });
 
     return { today, yesterday, this_week, older };

@@ -1,20 +1,20 @@
 import React, { useRef } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 // lib
-import { useMobxStore } from "lib/mobx/store-provider";
+import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
+import { Button } from "@plane/ui";
+import { useMobxStore } from "@/lib/mobx/store-provider";
 // hooks
+import fileService from "@/services/file.service";
+import { RootStore } from "@/store/root";
 import useToast from "hooks/use-toast";
 // ui
-import { Button } from "@plane/ui";
 // types
 import { Comment } from "types/issue";
 // components
-import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // service
-import fileService from "services/file.service";
-import { RootStore } from "store/root";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",
@@ -93,7 +93,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
               customClassName="p-2"
               editorContentCustomClassNames="min-h-[35px]"
               debouncedUpdatesEnabled={false}
-              onChange={(comment_json: Object, comment_html: string) => {
+              onChange={(comment_json: unknown, comment_html: string) => {
                 onChange(comment_html);
               }}
               submitButton={

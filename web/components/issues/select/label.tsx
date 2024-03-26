@@ -1,16 +1,16 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
-import { Combobox } from "@headlessui/react";
-import { usePopper } from "react-popper";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useLabel } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// ui
-import { IssueLabelsList } from "components/ui";
-// icons
+import { useRouter } from "next/router";
+import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
+import { Combobox } from "@headlessui/react";
+// hooks
+import { IssueLabelsList } from "@/components/ui";
+import { useLabel } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// ui
+// icons
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -178,7 +178,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                         );
                     } else
                       return (
-                        <div className="border-y border-custom-border-200">
+                        <div key={label.id} className="border-y border-custom-border-200">
                           <div className="flex select-none items-center gap-2 truncate p-2 text-custom-text-100">
                             <Component className="h-3 w-3" /> {label.name}
                           </div>

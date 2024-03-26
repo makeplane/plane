@@ -1,18 +1,18 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import isEqual from "lodash/isEqual";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 // hooks
-import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
 //ui
 import { Button } from "@plane/ui";
 // components
-import { AppliedFiltersList } from "components/issues";
+import { AppliedFiltersList } from "@/components/issues";
 // types
-import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
+import { GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "@/constants/workspace";
 // constants
-import { GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
+import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "@/hooks/store";
 
 type Props = {
   globalViewId: string;
@@ -76,7 +76,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
     if (!workspaceSlug || !globalViewId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     updateFilters(
       workspaceSlug.toString(),

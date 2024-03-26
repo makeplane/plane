@@ -7,6 +7,7 @@ import { AlertLabel } from "src/ui/components/alert-label";
 import { IVerticalDropdownItemProps, VerticalDropdownMenu } from "src/ui/components/vertical-dropdown-menu";
 import { SummaryPopover } from "src/ui/components/summary-popover";
 import { InfoPopover } from "src/ui/components/info-popover";
+import { getDate } from "src/utils/date-utils";
 
 interface IEditorHeader {
   editor: Editor;
@@ -72,7 +73,7 @@ export const EditorHeader = (props: IEditorHeader) => {
             Icon={Archive}
             backgroundColor="bg-blue-500/20"
             textColor="text-blue-500"
-            label={`Archived at ${new Date(archivedAt).toLocaleString()}`}
+            label={`Archived at ${getDate(archivedAt)?.toLocaleString()}`}
           />
         )}
 

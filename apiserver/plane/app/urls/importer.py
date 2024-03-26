@@ -5,6 +5,7 @@ from plane.app.views import (
     ServiceIssueImportSummaryEndpoint,
     ImportServiceEndpoint,
     UpdateServiceImportStatusEndpoint,
+    BulkImportIssuesEndpoint,
 )
 
 
@@ -33,5 +34,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/service/<str:service>/importers/<uuid:importer_id>/",
         UpdateServiceImportStatusEndpoint.as_view(),
         name="importer-status",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-issues/<str:service>/",
+        BulkImportIssuesEndpoint.as_view(),
+        name="bulk-import-issues",
     ),
 ]

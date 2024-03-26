@@ -1,13 +1,13 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// components
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "components/issues";
-// hooks
-import { useIssues, useLabel } from "hooks/store";
-// constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+// components
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
+// hooks
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { useIssues, useLabel } from "@/hooks/store";
+// constants
 
 export const ProfileIssuesFilter = observer(() => {
   // router
@@ -44,8 +44,10 @@ export const ProfileIssuesFilter = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);

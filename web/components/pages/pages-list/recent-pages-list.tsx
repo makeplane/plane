@@ -1,38 +1,26 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-// components
-import { PagesListView } from "components/pages/pages-list";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
-// ui
 import { Loader } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { PagesListView } from "@/components/pages/pages-list";
+import { EmptyStateType } from "@/constants/empty-state";
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+import { useApplication } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
+// components
+// ui
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const RecentPagesList: FC = observer(() => {
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
-  const {
-    membership: { currentProjectRole },
-    currentUser,
-  } = useUser();
-  const { recentProjectPages } = useProjectPages();
 
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const EmptyStateImagePath = getEmptyStateImagePath("pages", "recent", isLightMode);
+  const { recentProjectPages } = useProjectPages();
 
   // FIXME: replace any with proper type
   const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value: any) => value.length === 0);
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!recentProjectPages) {
     return (
@@ -64,15 +52,9 @@ export const RecentPagesList: FC = observer(() => {
       ) : (
         <>
           <EmptyState
-            title={PAGE_EMPTY_STATE_DETAILS["Recent"].title}
-            description={PAGE_EMPTY_STATE_DETAILS["Recent"].description}
-            image={EmptyStateImagePath}
-            primaryButton={{
-              text: PAGE_EMPTY_STATE_DETAILS["Recent"].primaryButton.text,
-              onClick: () => commandPaletteStore.toggleCreatePageModal(true),
-            }}
+            type={EmptyStateType.PROJECT_PAGE_RECENT}
+            primaryButtonOnClick={() => commandPaletteStore.toggleCreatePageModal(true)}
             size="sm"
-            disabled={!isEditingAllowed}
           />
         </>
       )}

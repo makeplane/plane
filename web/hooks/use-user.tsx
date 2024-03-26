@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import { UserService } from "services/user.service";
+import { CURRENT_USER } from "@/constants/fetch-keys";
+import { UserService } from "@/services/user.service";
 // constants
-import { CURRENT_USER } from "constants/fetch-keys";
 // types
 import type { IUser } from "@plane/types";
 

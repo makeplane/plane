@@ -6,8 +6,8 @@ from plane.app.views import (
     ModuleIssueViewSet,
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
-    BulkImportModulesEndpoint,
     ModuleUserPropertiesEndpoint,
+    ModuleArchiveUnarchiveEndpoint,
 )
 
 
@@ -107,13 +107,18 @@ urlpatterns = [
         name="user-favorite-module",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-modules/<str:service>/",
-        BulkImportModulesEndpoint.as_view(),
-        name="bulk-modules-create",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/user-properties/",
         ModuleUserPropertiesEndpoint.as_view(),
         name="cycle-user-filters",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/archive/",
+        ModuleArchiveUnarchiveEndpoint.as_view(),
+        name="module-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-modules/",
+        ModuleArchiveUnarchiveEndpoint.as_view(),
+        name="module-archive-unarchive",
     ),
 ]

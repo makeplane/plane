@@ -30,6 +30,7 @@ interface IDocumentReadOnlyEditor {
     type: "success" | "error" | "warning" | "info";
   }) => void;
   embedConfig?: IEmbedConfig;
+  tabIndex?: number;
 }
 
 interface DocumentReadOnlyEditorProps extends IDocumentReadOnlyEditor {
@@ -54,6 +55,7 @@ const DocumentReadOnlyEditor = ({
   pageArchiveConfig,
   rerenderOnPropsChange,
   onActionCompleteHandler,
+  tabIndex,
 }: DocumentReadOnlyEditorProps) => {
   const router = useRouter();
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
@@ -111,9 +113,10 @@ const DocumentReadOnlyEditor = ({
         </div>
         <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
           <PageRenderer
+            tabIndex={tabIndex}
             onActionCompleteHandler={onActionCompleteHandler}
             updatePageTitle={() => Promise.resolve()}
-            readonly={true}
+            readonly
             editor={editor}
             editorClassNames={editorClassNames}
             documentDetails={documentDetails}

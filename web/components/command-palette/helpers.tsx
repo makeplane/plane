@@ -1,5 +1,4 @@
 // types
-import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
 import { Briefcase, FileText, LayoutGrid } from "lucide-react";
 import {
   IWorkspaceDefaultSearchResult,
@@ -7,6 +6,7 @@ import {
   IWorkspaceProjectSearchResult,
   IWorkspaceSearchResult,
 } from "@plane/types";
+import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
 
 export const commandGroups: {
   [key: string]: {

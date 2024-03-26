@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
-// components
-import { IssueUpdateStatus, TIssueOperations } from "components/issues";
-import { IssueTitleInput } from "../../title-input";
-import { IssueDescriptionInput } from "../../description-input";
-import { IssueReaction } from "../reactions";
-import { IssueActivity } from "../issue-activity";
-import { InboxIssueStatus } from "../../../inbox/inbox-issue-status";
-// ui
 import { StateGroupIcon } from "@plane/ui";
+import { IssueUpdateStatus, TIssueOperations } from "@/components/issues";
+import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+// components
+import { InboxIssueStatus } from "../../../inbox/inbox-issue-status";
+import { IssueDescriptionInput } from "../../description-input";
+import { IssueTitleInput } from "../../title-input";
+import { IssueActivity } from "../issue-activity";
+import { IssueReaction } from "../reactions";
+// ui
 
 type Props = {
   workspaceSlug: string;
@@ -65,7 +65,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           projectId={projectId}
           inboxId={inboxId}
           issueId={issueId}
-          showDescription={true}
+          showDescription
         />
 
         <div className="mb-2.5 flex items-center">

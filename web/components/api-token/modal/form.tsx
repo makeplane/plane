@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
-import { DateDropdown } from "components/dropdowns";
 import { Calendar } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button, CustomSelect, Input, TextArea, ToggleSwitch } from "@plane/ui";
-// helpers
-import { renderFormattedDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
-// types
 import { IApiToken } from "@plane/types";
+// ui
+import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { DateDropdown } from "@/components/dropdowns";
+// helpers
+import { renderFormattedDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+// types
 
 type Props = {
   handleClose: () => void;
@@ -66,8 +64,6 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
   const { handleClose, neverExpires, toggleNeverExpires, onSubmit } = props;
   // states
   const [customDate, setCustomDate] = useState<Date | null>(null);
-  // toast alert
-  const { setToastAlert } = useToast();
   // form
   const {
     control,
@@ -80,8 +76,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
   const handleFormSubmit = async (data: IApiToken) => {
     // if never expires is toggled off, and the user has not selected a custom date or a predefined date, show an error
     if (!neverExpires && (!data.expired_at || (data.expired_at === "custom" && !customDate)))
-      return setToastAlert({
-        type: "error",
+      return setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select an expiration date.",
       });
@@ -94,7 +90,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
     // if never expires is toggled on, set expired_at to null
     if (neverExpires) payload.expired_at = null;
     // if never expires is toggled off, and the user has selected a custom date, set expired_at to the custom date
-    else if (data.expired_at === "custom") payload.expired_at = renderFormattedPayloadDate(customDate ?? new Date());
+    else if (data.expired_at === "custom") payload.expired_at = renderFormattedPayloadDate(customDate);
     // if never expires is toggled off, and the user has selected a predefined date, set expired_at to the predefined date
     else {
       const expiryDate = getExpiryDate(data.expired_at ?? "");
@@ -174,8 +170,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                           {value === "custom"
                             ? "Custom date"
                             : selectedOption
-                            ? selectedOption.label
-                            : "Set expiration date"}
+                              ? selectedOption.label
+                              : "Set expiration date"}
                         </div>
                       }
                       value={value}
@@ -211,8 +207,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     ? `Expires ${renderFormattedDate(customDate)}`
                     : null
                   : watch("expired_at")
-                  ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
-                  : null}
+                    ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
+                    : null}
               </span>
             )}
           </div>

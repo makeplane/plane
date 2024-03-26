@@ -1,6 +1,6 @@
 // services
-import APIService from "services/api.service";
-import { API_BASE_URL } from "helpers/common.helper";
+import APIService from "@/services/api.service";
+import { API_BASE_URL } from "@/helpers/common.helper";
 import { IEmailCheckData, IEmailCheckResponse, ILoginTokenResponse, IPasswordSignInData } from "types/auth";
 
 export class AuthService extends APIService {

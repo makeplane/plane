@@ -1,10 +1,10 @@
 import useSWR from "swr";
 // fetch keys
-import { COMMENT_REACTION_LIST } from "constants/fetch-keys";
+import { COMMENT_REACTION_LIST } from "@/constants/fetch-keys";
 // services
-import { IssueReactionService } from "services/issue";
+import { groupReactions } from "@/helpers/emoji.helper";
+import { IssueReactionService } from "@/services/issue";
 // helpers
-import { groupReactions } from "helpers/emoji.helper";
 import { useUser } from "./store";
 // hooks
 

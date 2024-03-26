@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Combobox } from "@headlessui/react";
-import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
 import { DateRange, DayPicker, Matcher } from "react-day-picker";
+import { usePopper } from "react-popper";
 import { ArrowRight, CalendarDays } from "lucide-react";
+import { Combobox } from "@headlessui/react";
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 // components
-import { DropdownButton } from "./buttons";
 // ui
 import { Button } from "@plane/ui";
 // helpers
-import { cn } from "helpers/common.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { DropdownButton } from "./buttons";
 // types
 import { TButtonVariants } from "./types";
 
@@ -149,6 +149,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
           if (!isOpen) handleKeyDown(e);
         } else handleKeyDown(e);
       }}
+      disabled={disabled}
     >
       <Combobox.Button as={React.Fragment}>
         <button

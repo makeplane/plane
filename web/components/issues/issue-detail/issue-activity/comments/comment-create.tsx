@@ -1,18 +1,18 @@
 import { FC, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
-// components
+import { Globe2, Lock } from "lucide-react";
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
+import { TIssueComment } from "@plane/types";
+// components
 import { Button } from "@plane/ui";
 // services
-import { FileService } from "services/file.service";
+import { isEmptyHtmlString } from "@/helpers/string.helper";
+import { useMention, useWorkspace } from "@/hooks/store";
+import { FileService } from "@/services/file.service";
 // types
 import { TActivityOperations } from "../root";
-import { TIssueComment } from "@plane/types";
 // icons
-import { Globe2, Lock } from "lucide-react";
-import { useMention, useWorkspace } from "hooks/store";
 // helpers
-import { isEmptyHtmlString } from "helpers/string.helper";
 
 const fileService = new FileService();
 
@@ -97,7 +97,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 customClassName="p-2"
                 editorContentCustomClassNames="min-h-[35px]"
                 debouncedUpdatesEnabled={false}
-                onChange={(comment_json: Object, comment_html: string) => {
+                onChange={(comment_json: any, comment_html: string) => {
                   onChange(comment_html);
                 }}
                 mentionSuggestions={mentionSuggestions}

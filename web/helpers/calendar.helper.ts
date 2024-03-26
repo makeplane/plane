@@ -1,7 +1,7 @@
 // helpers
-import { getWeekNumberOfDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { ICalendarDate, ICalendarPayload } from "@/components/issues";
+import { getWeekNumberOfDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
-import { ICalendarDate, ICalendarPayload } from "components/issues";
 
 export const formatDate = (date: Date, format: string): string => {
   const day = date.getDate();

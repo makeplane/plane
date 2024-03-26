@@ -1,8 +1,10 @@
 import { FC, Fragment, useState } from "react";
-import { Dialog, Transition, Tab } from "@headlessui/react";
+// icons
 import { CheckCircle } from "lucide-react";
+// ui
+import { Dialog, Transition, Tab } from "@headlessui/react";
 // store
-import { useEventTracker } from "hooks/store";
+import { useEventTracker } from "@/hooks/store";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");

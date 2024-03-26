@@ -1,15 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-// hooks
-import { useUser } from "hooks/store";
-// components
-import { ActiveCyclesListPage } from "components/cycles/active-cycles";
 import { Button } from "@plane/ui";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { ActiveCyclesListPage } from "@/components/active-cycles";
+import { EmptyStateType } from "@/constants/empty-state";
+import { EmptyState } from "../empty-state";
 
 const perPage = 3;
 
@@ -21,13 +16,6 @@ export const WorkspaceActiveCyclesList = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
-  // store
-  const {
-    membership: { currentWorkspaceRole },
-    currentUser,
-  } = useUser();
 
   const activeCyclesPages = [];
 
@@ -59,13 +47,9 @@ export const WorkspaceActiveCyclesList = observer(() => {
       />
     );
   }
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "workspace-active-cycles", isLightMode);
-
-  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <div className="h-full w-full bg-custom-background-90">
+    <div className="h-full w-full overflow-y-scroll bg-custom-background-90 vertical-scrollbar scrollbar-md">
       {activeCyclesPages}
 
       {pageCount < totalPages && resultsCount !== 0 && (
@@ -76,15 +60,7 @@ export const WorkspaceActiveCyclesList = observer(() => {
         </div>
       )}
 
-      {resultsCount === 0 && (
-        <EmptyState
-          image={EmptyStateImagePath}
-          title="No active cycles"
-          description="Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here."
-          size="lg"
-          disabled={!isEditingAllowed}
-        />
-      )}
+      <EmptyState type={EmptyStateType.WORKSPACE_ACTIVE_CYCLES} />
     </div>
   );
 });

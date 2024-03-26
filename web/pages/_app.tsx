@@ -1,19 +1,22 @@
 import { ReactElement } from "react";
-import Head from "next/head";
 import { AppProps } from "next/app";
+import Head from "next/head";
+import { ThemeProvider } from "next-themes";
 // styles
-import "styles/globals.css";
-import "styles/command-pallette.css";
-import "styles/nprogress.css";
-import "styles/react-day-picker.css";
+import "@/styles/globals.css";
+import "@/styles/command-pallette.css";
+import "@/styles/nprogress.css";
+import "@/styles/emoji.css";
+import "@/styles/react-day-picker.css";
 // constants
-import { SITE_TITLE } from "constants/seo-variables";
+import { SITE_TITLE } from "@/constants/seo-variables";
+import { THEMES } from "@/constants/themes";
 // mobx store provider
-import { StoreProvider } from "contexts/store-context";
+import { StoreProvider } from "@/contexts/store-context";
 
-import { AppProvider } from "lib/app-provider";
+import { AppProvider } from "@/lib/app-provider";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
@@ -29,7 +32,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <title>{SITE_TITLE}</title>
       </Head>
       <StoreProvider {...pageProps}>
-        <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
+        <ThemeProvider themes={THEMES} defaultTheme="system">
+          <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
+        </ThemeProvider>
       </StoreProvider>
     </>
   );

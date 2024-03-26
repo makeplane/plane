@@ -1,21 +1,21 @@
 import { Fragment, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Combobox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
+import { Combobox } from "@headlessui/react";
 // hooks
-import { useMember } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { cn } from "@/helpers/common.helper";
+import { useMember } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // components
-import { ButtonAvatars } from "./avatar";
 import { DropdownButton } from "../buttons";
+import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
+import { ButtonAvatars } from "./avatar";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
+import { MemberOptions } from "./member-options";
 import { MemberDropdownProps } from "./types";
 // constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
-import { MemberOptions } from "./member-options";
 
 type Props = {
   projectId?: string;
@@ -37,6 +37,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     onChange,
     onClose,
     placeholder = "Members",
+    tooltipContent,
     placement,
     projectId,
     showTooltip = false,
@@ -123,7 +124,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
               className={buttonClassName}
               isActive={isOpen}
               tooltipHeading={placeholder}
-              tooltipContent={`${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
+              tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
               showTooltip={showTooltip}
               variant={buttonVariant}
             >

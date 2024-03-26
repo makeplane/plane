@@ -1,13 +1,14 @@
 import { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // hooks
-import { useIssueDetail } from "hooks/store";
-// ui
 import { Tooltip } from "@plane/ui";
+import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
+import { useIssueDetail } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// ui
 // components
 import { IssueUser } from "../";
 // helpers
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 
 type TIssueActivityBlockComponent = {
   icon?: ReactNode;
@@ -25,7 +26,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
   } = useIssueDetail();
 
   const activity = getActivityById(activityId);
-
+  const { isMobile } = usePlatformOS();
   if (!activity) return <></>;
   return (
     <div
@@ -33,7 +34,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
         ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`
       }`}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden={true} />
+      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
       <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-custom-background-80 text-custom-text-200">
         {icon ? icon : <Network className="w-3.5 h-3.5" />}
       </div>
@@ -42,6 +43,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
         <span> {children} </span>
         <span>
           <Tooltip
+            isMobile={isMobile}
             tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
           >
             <span className="whitespace-nowrap"> {calculateTimeAgo(activity.created_at)}</span>

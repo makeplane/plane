@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
-// services
-import { AuthService } from "services/auth.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button, Input } from "@plane/ui";
-// helpers
-import { checkEmailValidity } from "helpers/string.helper";
-// types
 import { IPasswordSignInData } from "@plane/types";
+// services
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { AuthService } from "@/services/auth.service";
+// types
 
 type Props = {
   onSubmit: () => Promise<void>;
@@ -34,8 +32,6 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
   const { onSubmit } = props;
   // states
   const [showPassword, setShowPassword] = useState(false);
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     control,
@@ -59,8 +55,8 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
       .passwordSignIn(payload)
       .then(async () => await onSubmit())
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })
@@ -138,7 +134,7 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
               </div>
             )}
           />
-          <p className="text-onboarding-text-200 text-xs mt-2 pb-3">
+          <p className="mt-2 pb-3 text-xs text-onboarding-text-200">
             This password will continue to be your account{"'"}s password.
           </p>
         </div>

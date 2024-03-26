@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { Plus, X } from "lucide-react";
-// hooks
-import { useUser } from "hooks/store";
+import { Dialog, Transition } from "@headlessui/react";
+import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
-// types
-import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+// hooks
+import { useUser } from "@/hooks/store";
+// types
 
 type Props = {
   isOpen: boolean;
@@ -121,7 +121,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
 
                     <div className="mb-3 space-y-4">
                       {fields.map((field, index) => (
-                        <div key={field.id} className="group relative grid grid-cols-11 gap-4">
+                        <div key={field.id} className="group relative grid grid-cols-11 items-start gap-4">
                           <div className="col-span-7">
                             <Controller
                               control={control}
@@ -155,7 +155,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                               )}
                             />
                           </div>
-                          <div className="col-span-3">
+                          <div className="col-span-3 flex items-center gap-2">
                             <Controller
                               control={control}
                               name={`emails.${index}.role`}
@@ -166,6 +166,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                                   label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
                                   onChange={onChange}
                                   optionsClassName="w-full"
+                                  className="flex-grow"
                                   input
                                 >
                                   {Object.entries(ROLE).map(([key, value]) => {
@@ -179,16 +180,16 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                                 </CustomSelect>
                               )}
                             />
+                            {fields.length > 1 && (
+                              <button
+                                type="button"
+                                className="grid place-items-center self-center rounded flex-shrink-0"
+                                onClick={() => remove(index)}
+                              >
+                                <X className="h-3.5 w-3.5 text-custom-text-200" />
+                              </button>
+                            )}
                           </div>
-                          {fields.length > 1 && (
-                            <button
-                              type="button"
-                              className="-ml-3 place-items-center self-center rounded"
-                              onClick={() => remove(index)}
-                            >
-                              <X className="h-3.5 w-3.5 text-custom-text-200" />
-                            </button>
-                          )}
                         </div>
                       ))}
                     </div>

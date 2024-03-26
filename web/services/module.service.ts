@@ -1,8 +1,8 @@
 // services
-import { APIService } from "services/api.service";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "@/services/api.service";
 // types
 import type { IModule, TIssue, ILinkDetails, ModuleLink } from "@plane/types";
-import { API_BASE_URL } from "helpers/common.helper";
 
 export class ModuleService extends APIService {
   constructor() {

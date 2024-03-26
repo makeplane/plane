@@ -1,5 +1,5 @@
 import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
-import { isNil } from "lodash";
+import isNumber from "lodash/isNumber";
 
 // Format Date Helpers
 /**
@@ -8,10 +8,11 @@ import { isNil } from "lodash";
  * @param {Date | string} date
  * @example renderFormattedDate("2024-01-01") // Jan 01, 2024
  */
-export const renderFormattedDate = (date: string | Date): string | null => {
-  if (!date) return null;
+export const renderFormattedDate = (date: string | Date | undefined | null): string | null => {
   // Parse the date to check if it is valid
-  const parsedDate = new Date(date);
+  const parsedDate = getDate(date);
+  // return if undefined
+  if (!parsedDate) return null;
   // Check if the parsed date is valid before formatting
   if (!isValid(parsedDate)) return null; // Return null for invalid dates
   // Format the date in format (MMM dd, yyyy)
@@ -26,9 +27,10 @@ export const renderFormattedDate = (date: string | Date): string | null => {
  * @example renderShortDateFormat("2024-01-01") // Jan 01
  */
 export const renderFormattedDateWithoutYear = (date: string | Date): string => {
-  if (!date) return "";
   // Parse the date to check if it is valid
-  const parsedDate = new Date(date);
+  const parsedDate = getDate(date);
+  // return if undefined
+  if (!parsedDate) return "";
   // Check if the parsed date is valid before formatting
   if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
   // Format the date in short format (MMM dd)
@@ -42,10 +44,11 @@ export const renderFormattedDateWithoutYear = (date: string | Date): string => {
  * @param {Date | string} date
  * @example renderFormattedPayloadDate("Jan 01, 20224") // "2024-01-01"
  */
-export const renderFormattedPayloadDate = (date: Date | string): string | null => {
-  if (!date) return null;
+export const renderFormattedPayloadDate = (date: Date | string | undefined | null): string | null => {
   // Parse the date to check if it is valid
-  const parsedDate = new Date(date);
+  const parsedDate = getDate(date);
+  // return if undefined
+  if (!parsedDate) return null;
   // Check if the parsed date is valid before formatting
   if (!isValid(parsedDate)) return null; // Return null for invalid dates
   // Format the date in payload format (yyyy-mm-dd)
@@ -63,9 +66,10 @@ export const renderFormattedPayloadDate = (date: Date | string): string | null =
  * @example renderFormattedTime("2024-01-01 13:00:00", "12-hour") // 01:00 PM
  */
 export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" | "24-hour" = "24-hour"): string => {
-  if (!date || date === "") return "";
   // Parse the date to check if it is valid
   const parsedDate = new Date(date);
+  // return if undefined
+  if (!parsedDate) return "";
   // Check if the parsed date is valid
   if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
   // Format the date in 12 hour format if in12HourFormat is true
@@ -92,10 +96,11 @@ export const findTotalDaysInRange = (
   endDate: Date | string | undefined | null,
   inclusive: boolean = true
 ): number | undefined => {
-  if (!startDate || !endDate) return undefined;
   // Parse the dates to check if they are valid
-  const parsedStartDate = new Date(startDate);
-  const parsedEndDate = new Date(endDate);
+  const parsedStartDate = getDate(startDate);
+  const parsedEndDate = getDate(endDate);
+  // return if undefined
+  if (!parsedStartDate || !parsedEndDate) return;
   // Check if the parsed dates are valid before calculating the difference
   if (!isValid(parsedStartDate) || !isValid(parsedEndDate)) return 0; // Return 0 for invalid dates
   // Calculate the difference in days
@@ -131,6 +136,7 @@ export const calculateTimeAgo = (time: string | number | Date | null): string =>
   if (!time) return "";
   // Parse the time to check if it is valid
   const parsedTime = typeof time === "string" || typeof time === "number" ? parseISO(String(time)) : time;
+  // return if undefined
   if (!parsedTime) return ""; // Return empty string for invalid dates
   // Format the time in the form of amount of time passed since the event happened
   const distance = formatDistanceToNow(parsedTime, { addSuffix: true });
@@ -164,7 +170,7 @@ export const isDateGreaterThanToday = (dateStr: string): boolean => {
  * @example getWeekNumber(new Date("2023-09-01")) // 35
  */
 export const getWeekNumberOfDate = (date: Date): number => {
-  const currentDate = new Date(date);
+  const currentDate = date;
   // Adjust the starting day to Sunday (0) instead of Monday (1)
   const startDate = new Date(currentDate.getFullYear(), 0, 1);
   // Calculate the number of days between currentDate and startDate
@@ -186,10 +192,35 @@ export const checkIfDatesAreEqual = (
   date1: Date | string | null | undefined,
   date2: Date | string | null | undefined
 ): boolean => {
-  if (isNil(date1) && isNil(date2)) return true;
-  if (isNil(date1) || isNil(date2)) return false;
+  const parsedDate1 = getDate(date1);
+  const parsedDate2 = getDate(date2);
+  // return if undefined
+  if (!parsedDate1 && !parsedDate2) return true;
+  if (!parsedDate1 || !parsedDate2) return false;
 
-  const parsedDate1 = new Date(date1);
-  const parsedDate2 = new Date(date2);
   return isEqual(parsedDate1, parsedDate2);
+};
+
+/**
+ * This method returns a date from string of type yyyy-mm-dd
+ * This method is recommended to use instead of new Date() as this does not introduce any timezone offsets
+ * @param date
+ * @returns date or undefined
+ */
+export const getDate = (date: string | Date | undefined | null): Date | undefined => {
+  try {
+    if (!date || date === "") return;
+
+    if (typeof date !== "string" && !(date instanceof String)) return date;
+
+    const [yearString, monthString, dayString] = date.substring(0, 10).split("-");
+    const year = parseInt(yearString);
+    const month = parseInt(monthString);
+    const day = parseInt(dayString);
+    if (!isNumber(year) || !isNumber(month) || !isNumber(day)) return;
+
+    return new Date(year, month - 1, day);
+  } catch (e) {
+    return undefined;
+  }
 };

@@ -1,11 +1,11 @@
 import { FC } from "react";
 import useSWR from "swr";
-// components
-import { IssueParentSiblingItem } from "./sibling-item";
-// hooks
-import { useIssueDetail } from "hooks/store";
-// types
 import { TIssue } from "@plane/types";
+// components
+// hooks
+import { useIssueDetail } from "@/hooks/store";
+// types
+import { IssueParentSiblingItem } from "./sibling-item";
 
 export type TIssueParentSiblings = {
   currentIssue: TIssue;
@@ -39,7 +39,9 @@ export const IssueParentSiblings: FC<TIssueParentSiblings> = (props) => {
           Loading
         </div>
       ) : subIssueIds && subIssueIds.length > 0 ? (
-        subIssueIds.map((issueId) => currentIssue.id != issueId && <IssueParentSiblingItem issueId={issueId} />)
+        subIssueIds.map(
+          (issueId) => currentIssue.id != issueId && <IssueParentSiblingItem key={issueId} issueId={issueId} />
+        )
       ) : (
         <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-custom-text-200">
           No sibling issues

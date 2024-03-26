@@ -1,20 +1,20 @@
 import React, { useRef, useState } from "react";
-import { Combobox } from "@headlessui/react";
 import { DayPicker, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
+import { Combobox } from "@headlessui/react";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedDate, getDate } from "@/helpers/date-time.helper";
 // hooks
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
-// helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { cn } from "helpers/common.helper";
 // types
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;
@@ -168,8 +168,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
             {...attributes.popper}
           >
             <DayPicker
-              selected={value ? new Date(value) : undefined}
-              defaultMonth={value ? new Date(value) : undefined}
+              selected={getDate(value)}
+              defaultMonth={getDate(value)}
               onSelect={(date) => {
                 dropdownOnChange(date ?? null);
               }}

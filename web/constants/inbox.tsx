@@ -1,14 +1,19 @@
 // icons
 import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, LucideIcon, XCircle } from "lucide-react";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 
 export const INBOX_STATUS: {
   key: string;
   status: number;
   icon: LucideIcon;
   title: string;
-  description: (workspaceSlug: string, projectId: string, issueId: string, snoozedTillDate: Date) => JSX.Element;
+  description: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    snoozedTillDate: Date | undefined
+  ) => JSX.Element;
   textColor: (snoozeDatePassed: boolean) => string;
   bgColor: (snoozeDatePassed: boolean) => string;
   borderColor: (snoozeDatePassed: boolean) => string;

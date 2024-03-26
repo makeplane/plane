@@ -1,14 +1,12 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
-import pickBy from "lodash/pickBy";
 import isArray from "lodash/isArray";
+import isEmpty from "lodash/isEmpty";
+import pickBy from "lodash/pickBy";
+import set from "lodash/set";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
-// helpers
-import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
-// types
-import { IIssueRootStore } from "../root.store";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { IssueFiltersService } from "@/services/issue_filter.service";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -17,10 +15,12 @@ import {
   IIssueFilters,
   TIssueParams,
 } from "@plane/types";
+import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+// helpers
+// types
+import { IIssueRootStore } from "../root.store";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 // services
-import { IssueFiltersService } from "services/issue_filter.service";
 
 export interface IModuleIssuesFilter {
   // observables
@@ -35,7 +35,7 @@ export interface IModuleIssuesFilter {
     projectId: string,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    moduleId?: string | undefined
+    moduleId: string
   ) => Promise<void>;
 }
 
@@ -136,10 +136,9 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     projectId: string,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    moduleId: string | undefined = undefined
+    moduleId: string
   ) => {
     try {
-      if (!moduleId) throw new Error("Module id is required");
       if (isEmpty(this.filters) || isEmpty(this.filters[moduleId]) || isEmpty(filters)) return;
 
       const _filters = {
