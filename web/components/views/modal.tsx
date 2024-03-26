@@ -54,7 +54,7 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err.detail ?? "Something went wrong. Please try again.",
+          message: err?.detail ?? "Something went wrong. Please try again.",
         })
       );
   };
