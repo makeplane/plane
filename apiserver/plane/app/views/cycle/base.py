@@ -103,7 +103,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             .annotate(is_favorite=Exists(favorite_subquery))
             .annotate(
                 total_issues=Count(
-                    "issue_cycle",
+                    "issue_cycle__issue__id",
+                    distinct=True,
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
@@ -112,7 +113,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 completed_issues=Count(
-                    "issue_cycle__issue__state__group",
+                    "issue_cycle__issue__id",
+                    distinct=True,
                     filter=Q(
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
@@ -122,7 +124,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 cancelled_issues=Count(
-                    "issue_cycle__issue__state__group",
+                    "issue_cycle__issue__id",
+                    distinct=True,
                     filter=Q(
                         issue_cycle__issue__state__group="cancelled",
                         issue_cycle__issue__archived_at__isnull=True,
@@ -132,7 +135,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 started_issues=Count(
-                    "issue_cycle__issue__state__group",
+                    "issue_cycle__issue__id",
+                    distinct=True,
                     filter=Q(
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
@@ -142,7 +146,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 unstarted_issues=Count(
-                    "issue_cycle__issue__state__group",
+                    "issue_cycle__issue__id",
+                    distinct=True,
                     filter=Q(
                         issue_cycle__issue__state__group="unstarted",
                         issue_cycle__issue__archived_at__isnull=True,
@@ -152,7 +157,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 backlog_issues=Count(
-                    "issue_cycle__issue__state__group",
+                    "issue_cycle__issue__id",
+                    distinct=True,
                     filter=Q(
                         issue_cycle__issue__state__group="backlog",
                         issue_cycle__issue__archived_at__isnull=True,
