@@ -1083,7 +1083,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
   }
 
   getGroupKey(groupId?: string, subGroupId?: string) {
-    if (groupId && subGroupId) return `${groupId}_${subGroupId}`;
+    if (groupId && subGroupId && subGroupId !== "null") return `${groupId}_${subGroupId}`;
 
     if (groupId) return groupId;
 
