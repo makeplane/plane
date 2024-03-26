@@ -179,17 +179,18 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
             {provided.placeholder}
 
-            {shouldLoadMore && isSubGroup ? (
-              <div
-                className="w-full sticky bottom-0 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
-                onClick={() => loadMoreIssues(groupId, sub_group_id)}
-              >
-                {" "}
-                Load more &darr;
-              </div>
-            ) : (
-              <KanbanIssueBlockLoader ref={intersectionRef} />
-            )}
+            {shouldLoadMore &&
+              (isSubGroup ? (
+                <div
+                  className="w-full sticky bottom-0 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
+                  onClick={() => loadMoreIssues(groupId, sub_group_id)}
+                >
+                  {" "}
+                  Load more &darr;
+                </div>
+              ) : (
+                <KanbanIssueBlockLoader ref={intersectionRef} />
+              ))}
 
             {enableQuickIssueCreate && !disableIssueCreation && (
               <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
