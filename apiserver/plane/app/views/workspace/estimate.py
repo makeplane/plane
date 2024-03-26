@@ -31,7 +31,7 @@ class WorkspaceEstimatesEndpoint(BaseAPIView):
             Prefetch(
                 "points",
                 queryset=Project.objects.select_related(
-                    "estimate", "workspace", "project"
+                    "estimate", "workspace"
                 ),
             )
         )
