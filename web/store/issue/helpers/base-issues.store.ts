@@ -39,9 +39,9 @@ import isEqual from "date-fns/isEqual";
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
 export enum EIssueGroupedAction {
-  ADD,
-  DELETE,
-  REORDER,
+  ADD = "ADD",
+  DELETE = "DELETE",
+  REORDER = "REORDER",
 }
 
 export const ALL_ISSUES = "All Issues";
@@ -95,10 +95,10 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   "-assignees__first_name": "assignee_ids",
   labels__name: "label_ids",
   "-labels__name": "label_ids",
-  modules__name: "module_ids",
-  "-modules__name": "module_ids",
-  cycle__name: "cycle_id",
-  "-cycle__name": "cycle_id",
+  issue_module__module__name: "module_ids",
+  "-issue_module__module__name": "module_ids",
+  issue_cycle__cycle__name: "cycle_id",
+  "-issue_cycle__cycle__name": "cycle_id",
   target_date: "target_date",
   "-target_date": "target_date",
   estimate_point: "estimate_point",
@@ -154,9 +154,14 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       onfetchNexIssues: action.bound,
       clear: action.bound,
       getPaginationData: action.bound,
+      addIssue: action.bound,
+      removeIssueFromList: action.bound,
 
       createIssue: action,
       updateIssue: action,
+      createDraftIssue: action,
+      updateDraftIssue: action,
+      issueQuickAdd: action.bound,
       removeIssue: action,
       archiveIssue: action,
       removeBulkIssues: action,
@@ -661,7 +666,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
   getDifference = (
     current: string[],
-    previous: string[]
+    previous: string[],
+    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
   ): { [EIssueGroupedAction.ADD]: string[]; [EIssueGroupedAction.DELETE]: string[] } => {
     const ADD = [];
     const DELETE = [];
@@ -675,7 +681,11 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       DELETE.push(previousValue);
     }
 
-    return { [EIssueGroupedAction.ADD]: ADD, [EIssueGroupedAction.DELETE]: DELETE };
+    if (!action) return { [EIssueGroupedAction.ADD]: ADD, [EIssueGroupedAction.DELETE]: DELETE };
+
+    if (action === EIssueGroupedAction.ADD)
+      return { [EIssueGroupedAction.ADD]: [...ADD, ...DELETE], [EIssueGroupedAction.DELETE]: [] };
+    else return { [EIssueGroupedAction.DELETE]: [...ADD, ...DELETE], [EIssueGroupedAction.ADD]: [] };
   };
 
   issueDisplayFiltersDefaultData = (groupBy: string | null): string[] => {
@@ -783,7 +793,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
   issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
     const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, this.isArchived ? "archived" : "un-archived");
-    const array = orderBy(issues, "created_at", ["asc"]);
+    const array = orderBy(issues, "created_at", ["desc"]);
 
     switch (key) {
       case "sort_order":
@@ -834,13 +844,13 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       // custom
       case "priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return this.getIssueIds(
-          orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority), ["desc"])
-        );
+        return this.getIssueIds(orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority)));
       }
       case "-priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return this.getIssueIds(orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority)));
+        return this.getIssueIds(
+          orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority), ["desc"])
+        );
       }
 
       // number
@@ -892,14 +902,14 @@ export class BaseIssuesStore implements IBaseIssuesStore {
           )
         );
 
-      case "modules__name":
+      case "issue_module__module__name":
         return this.getIssueIds(
           orderBy(array, [
             this.getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
             (issue) => this.populateIssueDataForSorting("module_ids", issue["module_ids"], "asc"),
           ])
         );
-      case "-modules__name":
+      case "-issue_module__module__name":
         return this.getIssueIds(
           orderBy(
             array,
@@ -911,14 +921,14 @@ export class BaseIssuesStore implements IBaseIssuesStore {
           )
         );
 
-      case "cycle__name":
+      case "issue_cycle__cycle__name":
         return this.getIssueIds(
           orderBy(array, [
             this.getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
             (issue) => this.populateIssueDataForSorting("cycle_id", issue["cycle_id"], "asc"),
           ])
         );
-      case "-cycle__name":
+      case "-issue_cycle__cycle__name":
         return this.getIssueIds(
           orderBy(
             array,
@@ -1073,7 +1083,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
   }
 
   getGroupKey(groupId?: string, subGroupId?: string) {
-    if (groupId && subGroupId) return `${groupId}_${subGroupId}`;
+    if (groupId && subGroupId && subGroupId !== "null") return `${groupId}_${subGroupId}`;
 
     if (groupId) return groupId;
 
@@ -1099,6 +1109,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
         for (const groupKey of groupIssuesKeys) {
           if (groupKey.includes(subGroupId)) subGroupCumulativeCount += this.groupedIssueCount[groupKey];
         }
+
+        return subGroupCumulativeCount;
       }
 
       return get(this.groupedIssueCount, [this.getGroupKey(groupId, subGroupId)]);
