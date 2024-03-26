@@ -39,9 +39,9 @@ import isEqual from "date-fns/isEqual";
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
 export enum EIssueGroupedAction {
-  ADD,
-  DELETE,
-  REORDER,
+  ADD = "ADD",
+  DELETE = "DELETE",
+  REORDER = "REORDER",
 }
 
 export const ALL_ISSUES = "All Issues";
@@ -154,9 +154,14 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       onfetchNexIssues: action.bound,
       clear: action.bound,
       getPaginationData: action.bound,
+      addIssue: action.bound,
+      removeIssueFromList: action.bound,
 
       createIssue: action,
       updateIssue: action,
+      createDraftIssue: action,
+      updateDraftIssue: action,
+      issueQuickAdd: action.bound,
       removeIssue: action,
       archiveIssue: action,
       removeBulkIssues: action,
@@ -661,7 +666,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
   getDifference = (
     current: string[],
-    previous: string[]
+    previous: string[],
+    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
   ): { [EIssueGroupedAction.ADD]: string[]; [EIssueGroupedAction.DELETE]: string[] } => {
     const ADD = [];
     const DELETE = [];
@@ -675,7 +681,11 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       DELETE.push(previousValue);
     }
 
-    return { [EIssueGroupedAction.ADD]: ADD, [EIssueGroupedAction.DELETE]: DELETE };
+    if (!action) return { [EIssueGroupedAction.ADD]: ADD, [EIssueGroupedAction.DELETE]: DELETE };
+
+    if (action === EIssueGroupedAction.ADD)
+      return { [EIssueGroupedAction.ADD]: [...ADD, ...DELETE], [EIssueGroupedAction.DELETE]: [] };
+    else return { [EIssueGroupedAction.DELETE]: [...ADD, ...DELETE], [EIssueGroupedAction.ADD]: [] };
   };
 
   issueDisplayFiltersDefaultData = (groupBy: string | null): string[] => {
