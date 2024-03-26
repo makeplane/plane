@@ -23,25 +23,6 @@ export const Mentions = ({
     readonly: readonly,
     mentionHighlights: mentionHighlights,
     suggestion: {
-      items: async ({ query }) => {
-        const suggestions = await mentionSuggestions?.();
-        if (!suggestions) {
-          return [];
-        }
-        const mappedSuggestions: IMentionSuggestion[] = suggestions.map((suggestion): IMentionSuggestion => {
-          const transactionId = uuidv4();
-          return {
-            ...suggestion,
-            id: transactionId,
-          };
-        });
-
-        const filteredSuggestions = mappedSuggestions
-          .filter((suggestion) => suggestion.title.toLowerCase().startsWith(query.toLowerCase()))
-          .slice(0, 5);
-
-        return filteredSuggestions;
-      },
       // @ts-ignore
       render: () => {
         let component: ReactRenderer | null = null;
@@ -56,11 +37,11 @@ export const Mentions = ({
               return;
             }
             component = new ReactRenderer(MentionList, {
-              props,
+              props: { ...props, mentionSuggestions },
               editor: props.editor,
             });
             props.editor.storage.mentionsOpen = true;
-            // @ts-ignore
+            // @ts-expect-error - Tippy types are incorrect
             popup = tippy("body", {
               getReferenceClientRect: props.clientRect,
               appendTo: () => document.body,
@@ -70,7 +51,7 @@ export const Mentions = ({
               trigger: "manual",
               placement: "bottom-start",
             });
-            document.addEventListener("scroll", hidePopup, true);
+            // document.addEventListener("scroll", hidePopup, true);
           },
           onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
             component?.updateProps(props);
@@ -107,7 +88,7 @@ export const Mentions = ({
             popup?.[0].destroy();
             component?.destroy();
 
-            document.removeEventListener("scroll", hidePopup, true);
+            // document.removeEventListener("scroll", hidePopup, true);
           },
         };
       },

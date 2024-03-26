@@ -1,9 +1,9 @@
 import { Editor } from "@tiptap/react";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { v4 as uuidv4 } from "uuid";
 
 interface MentionListProps {
-  items: IMentionSuggestion[];
   command: (item: {
     id: string;
     label: string;
@@ -12,14 +12,42 @@ interface MentionListProps {
     target: string;
     redirect_uri: string;
   }) => void;
+  query: string;
   editor: Editor;
+  mentionSuggestions: () => Promise<IMentionSuggestion[]>;
 }
 
 export const MentionList = forwardRef((props: MentionListProps, ref) => {
+  const { query, mentionSuggestions } = props;
+  const [items, setItems] = useState<IMentionSuggestion[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false); // New loading state
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      setIsLoading(true); // Start loading
+      const suggestions = await mentionSuggestions();
+      const mappedSuggestions: IMentionSuggestion[] = suggestions.map((suggestion): IMentionSuggestion => {
+        const transactionId = uuidv4();
+        return {
+          ...suggestion,
+          id: transactionId,
+        };
+      });
+
+      const filteredSuggestions = mappedSuggestions
+        .filter((suggestion) => suggestion.title.toLowerCase().startsWith(query.toLowerCase()))
+        .slice(0, 5);
+
+      setItems(filteredSuggestions);
+      setIsLoading(false); // End loading
+    };
+
+    fetchSuggestions();
+  }, [query, mentionSuggestions]);
 
   const selectItem = (index: number) => {
-    const item = props.items[index];
+    const item = items[index];
 
     if (item) {
       props.command({
@@ -33,12 +61,35 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
     }
   };
 
+  const commandListContainer = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const container = commandListContainer?.current;
+
+    const item = container?.children[selectedIndex] as HTMLElement;
+
+    if (item && container) updateScrollView(container, item);
+  }, [selectedIndex]);
+
+  const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
+    const containerHeight = container.offsetHeight;
+    const itemHeight = item ? item.offsetHeight : 0;
+
+    const top = item.offsetTop;
+    const bottom = top + itemHeight;
+
+    if (top < container.scrollTop) {
+      container.scrollTop -= container.scrollTop - top + 5;
+    } else if (bottom > containerHeight + container.scrollTop) {
+      container.scrollTop += bottom - containerHeight - container.scrollTop + 5;
+    }
+  };
   const upHandler = () => {
-    setSelectedIndex((selectedIndex + props.items.length - 1) % props.items.length);
+    setSelectedIndex((selectedIndex + items.length - 1) % items.length);
   };
 
   const downHandler = () => {
-    setSelectedIndex((selectedIndex + 1) % props.items.length);
+    setSelectedIndex((selectedIndex + 1) % items.length);
   };
 
   const enterHandler = () => {
@@ -47,7 +98,7 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
 
   useEffect(() => {
     setSelectedIndex(0);
-  }, [props.items]);
+  }, [items]);
 
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
@@ -70,10 +121,15 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
     },
   }));
 
-  return props.items && props.items.length !== 0 ? (
-    <div className="mentions absolute max-h-40 w-48 space-y-0.5 overflow-y-auto rounded-md bg-custom-background-100 p-1 text-sm text-custom-text-300 shadow-custom-shadow-sm">
-      {props.items.length ? (
-        props.items.map((item, index) => (
+  return (
+    <div
+      ref={commandListContainer}
+      className="mentions absolute max-h-40 w-48 space-y-0.5 overflow-y-auto rounded-md bg-custom-background-100 p-1 text-sm text-custom-text-300 shadow-custom-shadow-sm"
+    >
+      {isLoading ? (
+        <div className="flex justify-center items-center h-full text-gray-500">Loading...</div>
+      ) : items.length ? (
+        items.map((item, index) => (
           <div
             key={item.id}
             className={`flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-custom-background-80 ${
@@ -92,16 +148,13 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
             </div>
             <div className="flex-grow space-y-1 truncate">
               <p className="truncate text-sm font-medium">{item.title}</p>
-              {/* <p className="text-xs text-gray-400">{item.subtitle}</p> */}
             </div>
           </div>
         ))
       ) : (
-        <div className="item">No result</div>
+        <div className="flex justify-center items-center h-full">No results</div>
       )}
     </div>
-  ) : (
-    <></>
   );
 });
 
