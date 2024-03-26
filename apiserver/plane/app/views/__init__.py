@@ -93,8 +93,8 @@ from .cycle.base import (
     TransferCycleIssueEndpoint,
     CycleArchiveUnarchiveEndpoint,
     CycleUserPropertiesEndpoint,
-    ActiveCycleEndpoint,
 )
+from .cycle.active_cycle import ActiveCycleEndpoint
 from .cycle.issue import (
     CycleIssueViewSet,
 )

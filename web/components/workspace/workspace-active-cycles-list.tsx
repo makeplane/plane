@@ -60,7 +60,7 @@ export const WorkspaceActiveCyclesList = observer(() => {
         </div>
       )}
 
-      <EmptyState type={EmptyStateType.WORKSPACE_ACTIVE_CYCLES} />
+      {resultsCount === 0 && <EmptyState type={EmptyStateType.WORKSPACE_ACTIVE_CYCLES} />}
     </div>
   );
 });
