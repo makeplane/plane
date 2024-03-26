@@ -241,12 +241,45 @@ class IssueDraftViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
+
             issue = (
-                self.get_queryset().filter(pk=serializer.data["id"]).first()
+                issue_queryset_grouper(
+                    queryset=self.get_queryset().filter(
+                        pk=serializer.data["id"]
+                    ),
+                    group_by=None,
+                    sub_group_by=None,
+                )
+                .values(
+                    "id",
+                    "name",
+                    "state_id",
+                    "sort_order",
+                    "completed_at",
+                    "estimate_point",
+                    "priority",
+                    "start_date",
+                    "target_date",
+                    "sequence_id",
+                    "project_id",
+                    "parent_id",
+                    "cycle_id",
+                    "module_ids",
+                    "label_ids",
+                    "assignee_ids",
+                    "sub_issues_count",
+                    "created_at",
+                    "updated_at",
+                    "created_by",
+                    "updated_by",
+                    "attachment_count",
+                    "link_count",
+                    "is_draft",
+                    "archived_at",
+                )
+                .first()
             )
-            return Response(
-                IssueSerializer(issue).data, status=status.HTTP_201_CREATED
-            )
+            return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, pk):

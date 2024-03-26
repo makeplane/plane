@@ -431,8 +431,13 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 origin=request.META.get("HTTP_ORIGIN"),
             )
             issue = (
-                self.get_queryset()
-                .filter(pk=serializer.data["id"])
+                issue_queryset_grouper(
+                    queryset=self.get_queryset().filter(
+                        pk=serializer.data["id"]
+                    ),
+                    group_by=None,
+                    sub_group_by=None,
+                )
                 .values(
                     "id",
                     "name",
