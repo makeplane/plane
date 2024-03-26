@@ -95,10 +95,10 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   "-assignees__first_name": "assignee_ids",
   labels__name: "label_ids",
   "-labels__name": "label_ids",
-  modules__name: "module_ids",
-  "-modules__name": "module_ids",
-  cycle__name: "cycle_id",
-  "-cycle__name": "cycle_id",
+  issue_module__module__name: "module_ids",
+  "-issue_module__module__name": "module_ids",
+  issue_cycle__cycle__name: "cycle_id",
+  "-issue_cycle__cycle__name": "cycle_id",
   target_date: "target_date",
   "-target_date": "target_date",
   estimate_point: "estimate_point",
@@ -902,14 +902,14 @@ export class BaseIssuesStore implements IBaseIssuesStore {
           )
         );
 
-      case "modules__name":
+      case "issue_module__module__name":
         return this.getIssueIds(
           orderBy(array, [
             this.getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
             (issue) => this.populateIssueDataForSorting("module_ids", issue["module_ids"], "asc"),
           ])
         );
-      case "-modules__name":
+      case "-issue_module__module__name":
         return this.getIssueIds(
           orderBy(
             array,
@@ -921,14 +921,14 @@ export class BaseIssuesStore implements IBaseIssuesStore {
           )
         );
 
-      case "cycle__name":
+      case "issue_cycle__cycle__name":
         return this.getIssueIds(
           orderBy(array, [
             this.getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
             (issue) => this.populateIssueDataForSorting("cycle_id", issue["cycle_id"], "asc"),
           ])
         );
-      case "-cycle__name":
+      case "-issue_cycle__cycle__name":
         return this.getIssueIds(
           orderBy(
             array,
