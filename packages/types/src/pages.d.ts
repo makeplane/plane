@@ -10,7 +10,7 @@ export type TPage = {
   access: EPageAccess | undefined;
   is_favorite: boolean;
   is_locked: boolean;
-  archived_at: string | undefined;
+  archived_at: string | null | undefined;
   workspace: string | undefined;
   project: string | undefined;
   created_by: string | undefined;

@@ -1,38 +1,24 @@
 import { FC } from "react";
-import { useTheme } from "next-themes";
-// hooks
-import { useEventTracker, useUser } from "hooks/store";
-// components
-import { getEmptyStateImagePath } from "components/empty-state";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-
-// types
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import Image from "next/image";
 import { TPageNavigationTabs } from "@plane/types";
 
 type TPageEmptyState = {
+  description?: string;
+  image: string | StaticImport;
   pageType: TPageNavigationTabs;
   title?: string;
-  description?: string;
-  callback?: () => void;
 };
 
 export const PageEmptyState: FC<TPageEmptyState> = (props) => {
-  const { title = "No pages", description = "No pages are available.", callback } = props;
-  // theme
-  const { resolvedTheme } = useTheme();
-  // hooks
-  const { currentUser } = useUser();
-
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const { image, title = "No pages", description = "No pages are available." } = props;
 
   return (
-    <div className="relative w-full h-full flex flex-col justify-center items-center gap-2 text-center">
-      {/* replace hello with images */}
-      <div className="w-full h-full max-w-40 max-h-40 relative flex justify-center items-center">Hello</div>
-      <div className="space-y-1">
-        <div className="text-xl">{title}</div>
-        <div className="text-sm text-custom-text-200">{description}</div>
+    <div className="h-full w-full grid place-items-center">
+      <div className="text-center">
+        <Image src={image} className="h-36 sm:h-48 w-36 sm:w-48 mx-auto" alt="No matching modules" />
+        <h5 className="text-xl font-medium mt-7 mb-1">{title}</h5>
+        <p className="text-custom-text-400 text-base">{description}</p>
       </div>
     </div>
   );

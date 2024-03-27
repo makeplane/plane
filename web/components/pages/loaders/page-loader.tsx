@@ -1,20 +1,17 @@
 import { Loader } from "@plane/ui";
-import { FC } from "react";
 
-type TPageLoader = {};
-
-export const PageLoader: FC<TPageLoader> = (props) => {
+export const PageLoader: React.FC = (props) => {
   const {} = props;
 
   return (
     <div className="relative w-full h-full flex flex-col">
-      <div className="px-3 border-b border-custom-border-100 py-3">
+      {/* <div className="px-3 border-b border-custom-border-100 py-3">
         <Loader className="relative flex items-center gap-2">
           <Loader.Item width="80px" height="30px" />
           <Loader.Item width="80px" height="30px" />
           <Loader.Item width="80px" height="30px" />
         </Loader>
-      </div>
+      </div> */}
       <div className="px-3 border-b border-custom-border-100 py-3">
         <Loader className="relative flex items-center gap-2">
           <Loader.Item width="200px" height="30px" />

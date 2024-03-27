@@ -58,16 +58,16 @@ export class PageService extends APIService {
       });
   }
 
-  async makeFavorite(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/favorites/`)
+  async addToFavorites(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/favorite-pages/${pageId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async removeFavorite(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/favorites/`)
+  async removeFromFavorites(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/favorite-pages/${pageId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -82,16 +82,22 @@ export class PageService extends APIService {
       });
   }
 
-  async makeArchive(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/archived/`)
+  async archive(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string
+  ): Promise<{
+    archived_at: string;
+  }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async removeArchive(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/archived/`)
+  async restore(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

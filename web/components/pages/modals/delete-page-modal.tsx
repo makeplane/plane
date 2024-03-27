@@ -5,11 +5,6 @@ import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@plane/ui";
-// constants
-import { PAGE_DELETED } from "@/constants/event-tracker";
-// hooks
-import { useEventTracker, usePage } from "@/hooks/store";
-import { useProjectPages } from "@/hooks/store/use-project-page";
 // types
 
 type TConfirmPageDeletionProps = {
@@ -30,9 +25,6 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   // const { deletePage } = useProjectPages();
   // const { capturePageEvent } = useEventTracker();
   // const pageStore = usePage(pageId);
-
-  // toast alert
-  const { setToastAlert } = useToast();
 
   // if (!pageStore) return null;
 

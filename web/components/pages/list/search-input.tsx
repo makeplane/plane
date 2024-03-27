@@ -1,11 +1,9 @@
 import { FC, useState, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
-// hooks
-import { useProjectPages } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// helpers
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
+import { useProjectPages } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export type TPageSearchInput = { projectId: string };
 

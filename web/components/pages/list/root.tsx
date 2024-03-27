@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useProjectPages } from "hooks/store";
+import { useProjectPages } from "@/hooks/store";
 // components
 import { PageListBlock } from "./";
 

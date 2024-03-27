@@ -24,7 +24,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
   const { createPage } = useProjectPages(projectId?.toString() ?? "");
-  const pageStore = usePage(projectId?.toString() ?? "", pageId?.toString() ?? "");
+  const pageStore = usePage(pageId?.toString() ?? "");
 
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();

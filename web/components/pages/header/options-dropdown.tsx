@@ -1,17 +1,11 @@
-import { EUserProjectRoles } from "constants/project";
-import { copyTextToClipboard, copyUrlToClipboard } from "helpers/string.helper";
-import { useApplication, useUser } from "hooks/store";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { observer } from "mobx-react";
-import { IPageStore } from "store/page.store";
 import { Clipboard, Copy, Link, Lock } from "lucide-react";
-// hooks
-// ui
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
-// helpers
-// types
-// constants
+import { EUserProjectRoles } from "@/constants/project";
+import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
+import { useApplication, useProjectPages, useUser } from "@/hooks/store";
+import { IPageStore } from "@/store/pages/page.store";
 
 type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
@@ -22,7 +16,7 @@ type Props = {
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, pageStore } = props;
   // store values
-  const { lockPage, unlockPage, owned_by } = pageStore;
+  const { lock, unlock, owned_by } = pageStore;
   // store hooks
   const {
     router: { workspaceSlug, projectId },
@@ -31,7 +25,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  const { archivePage, restorePage } = useProjectPages();
 
   const handleArchivePage = async () => {
     if (!workspaceSlug || !projectId) return;
@@ -61,7 +54,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
 
   const handleLockPage = async () => {
     try {
-      await lockPage();
+      await lock();
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -73,7 +66,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
 
   const handleUnlockPage = async () => {
     try {
-      await unlockPage();
+      await unlock();
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,

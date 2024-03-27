@@ -2,11 +2,13 @@ import set from "lodash/set";
 import unset from "lodash/unset";
 import { makeObservable, observable, runInAction, action, computed } from "mobx";
 import { computedFn } from "mobx-utils";
-import { PageService } from "services/page.service";
-import { IPageStore, PageStore } from "store/pages/page.store";
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
+// helpers
+import { filterPagesByPageType, orderPages, shouldFilterPage } from "@/helpers/page.helper";
+// services
+import { PageService } from "@/services/page.service";
+import { IPageStore, PageStore } from "@/store/pages/page.store";
 import { RootStore } from "../root.store";
-import { PageHelpers } from "./helpers";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
@@ -16,7 +18,7 @@ export interface IProjectPageStore {
   // observables
   loader: TLoader;
   pageType: TPageNavigationTabs;
-  data: Record<string, Record<string, IPageStore>>; // projectId => pageId => PageStore
+  data: Record<string, IPageStore>; // pageId => PageStore
   error: TError | undefined;
   filters: TPageFilters;
   // computed
@@ -31,11 +33,11 @@ export interface IProjectPageStore {
   removePage: (pageId: string) => Promise<void>;
 }
 
-export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
+export class ProjectPageStore implements IProjectPageStore {
   // observables
   loader: TLoader = "init-loader";
   pageType: TPageNavigationTabs = "public";
-  data: Record<string, Record<string, IPageStore>> = {}; // projectId => pageId => PageStore
+  data: Record<string, IPageStore> = {}; // pageId => PageStore
   error: TError | undefined = undefined;
   filters: TPageFilters = {
     searchQuery: "",
@@ -46,8 +48,6 @@ export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
   service: PageService;
 
   constructor(private store: RootStore) {
-    super();
-
     makeObservable(this, {
       // observables
       loader: observable.ref,
@@ -74,9 +74,13 @@ export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
     if (!projectId) return undefined;
 
     // helps to filter pages based on the pageType
-    const filtersPages = this.filterPagesByPages(this.pageType, Object.values(this?.data?.[projectId] || {}));
-
-    // TODO: apply user filters
+    let filtersPages = filterPagesByPageType(this.pageType, Object.values(this?.data || {}));
+    filtersPages = filtersPages.filter(
+      (p) =>
+        p.name?.toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        shouldFilterPage(p, this.filters.filters)
+    );
+    filtersPages = orderPages(filtersPages, this.filters.sortKey, this.filters.sortBy);
 
     const pages = (filtersPages.map((page) => page.id) as string[]) || undefined;
     if (!pages) return undefined;
@@ -84,12 +88,11 @@ export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
     return pages;
   }
 
-  // helper actions
   pageById = computedFn((pageId: string) => {
     const { projectId } = this.store.app.router;
     if (!projectId) return undefined;
 
-    return this.data?.[projectId]?.[pageId] || undefined;
+    return this.data?.[pageId] || undefined;
   });
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
@@ -98,7 +101,10 @@ export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
     });
   };
 
-  // actions
+  /**
+   * @description fetch all the pages based on the navigation tab
+   * @param {TPageNavigationTabs} pageType
+   */
   getAllPages = async (pageType: TPageNavigationTabs = "public") => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
@@ -113,7 +119,7 @@ export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
 
       const pages = await this.service.fetchAll(workspaceSlug, projectId);
       runInAction(() => {
-        for (const page of pages) if (page?.id) set(this.data, [projectId, page.id], new PageStore(this.store, page));
+        for (const page of pages) if (page?.id) set(this.data, [page.id], new PageStore(this.store, page));
         this.loader = undefined;
       });
 
@@ -129,6 +135,10 @@ export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
     }
   };
 
+  /**
+   * @description fetch the details of a page
+   * @param {string} pageId
+   */
   getPageById = async (pageId: string) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
@@ -142,7 +152,7 @@ export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
 
       const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
       runInAction(() => {
-        if (page?.id) set(this.data, [projectId, page.id], new PageStore(this.store, page));
+        if (page?.id) set(this.data, [page.id], new PageStore(this.store, page));
         this.loader = undefined;
       });
 
@@ -158,19 +168,23 @@ export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
     }
   };
 
+  /**
+   * @description create a page
+   * @param {Partial<TPage>} pageData
+   */
   createPage = async (pageData: Partial<TPage>) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !projectId) return undefined;
 
       runInAction(() => {
-        this.loader = `init-loader`;
+        this.loader = "init-loader";
         this.error = undefined;
       });
 
       const page = await this.service.create(workspaceSlug, projectId, pageData);
       runInAction(() => {
-        if (page?.id) set(this.data, [projectId, page.id], new PageStore(this.store, page));
+        if (page?.id) set(this.data, [page.id], new PageStore(this.store, page));
         this.loader = undefined;
       });
 
@@ -186,13 +200,17 @@ export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
     }
   };
 
+  /**
+   * @description delete a page
+   * @param {string} pageId
+   */
   removePage = async (pageId: string) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
       await this.service.remove(workspaceSlug, projectId, pageId);
-      runInAction(() => unset(this.data, [projectId, pageId]));
+      runInAction(() => unset(this.data, [pageId]));
     } catch {
       runInAction(() => {
         this.loader = undefined;

@@ -1,9 +1,9 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProjectPages, usePage } from "hooks/store";
+import { PageHead } from "@/components/core";
+import { useProjectPages, usePage } from "@/hooks/store";
 // components
-import { PageHead } from "components/core";
 import { PageDetailRootLoader } from "./";
 
 type TPageDetailRoot = {
@@ -15,9 +15,7 @@ export const PageDetailRoot: FC<TPageDetailRoot> = observer((props) => {
   const { projectId, pageId } = props;
   // hooks
   const { loader } = useProjectPages(projectId);
-  const {
-    data: { id, name },
-  } = usePage(projectId, pageId);
+  const { id, name } = usePage(pageId);
 
   if (loader === "init-loader") return <PageDetailRootLoader />;
 

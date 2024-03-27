@@ -18,8 +18,7 @@ const ProjectPagesPage: NextPageWithLayout = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const currentPageType = (): TPageNavigationTabs => {
-    if (!type) return "public";
-    const pageType = type.toString();
+    const pageType = type?.toString();
     if (pageType === "private") return "private";
     if (pageType === "archived") return "archived";
     return "public";

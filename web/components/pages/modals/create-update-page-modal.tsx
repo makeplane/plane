@@ -1,15 +1,15 @@
 import { FC, Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
+import { TPage } from "@plane/types";
 // components
+import { PAGE_CREATED, PAGE_UPDATED } from "@/constants/event-tracker";
+import { EPageAccess } from "@/constants/page";
+import { useProjectPages, usePage, useEventTracker } from "@/hooks/store";
 import { PageForm } from "./";
 // hooks
-import { useProjectPages, usePage, useEventTracker } from "hooks/store";
 // types
-import { TPage } from "@plane/types";
 // constants
-import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
-import { EPageAccess } from "constants/page";
 
 type TCreateUpdatePageModal = {
   workspaceSlug: string;
@@ -25,7 +25,7 @@ export const CreateUpdatePageModal: FC<TCreateUpdatePageModal> = (props) => {
   const router = useRouter();
   // hooks
   const { createPage } = useProjectPages(projectId);
-  const { updatePage, asJson: storePageData } = usePage(projectId, pageData?.id || undefined);
+  const { update, asJSON: storePageData } = usePage(pageData?.id || undefined);
   const { capturePageEvent } = useEventTracker();
   // states
   const [pageFormData, setPageFormData] = useState<Partial<TPage>>({
@@ -62,7 +62,7 @@ export const CreateUpdatePageModal: FC<TCreateUpdatePageModal> = (props) => {
           handleStateClear();
           return;
         }
-        const pageData = await updatePage(pageFormData);
+        const pageData = await update(pageFormData);
         if (pageData) {
           capturePageEvent({
             eventName: PAGE_UPDATED,

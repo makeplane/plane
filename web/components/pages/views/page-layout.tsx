@@ -2,7 +2,13 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { ListFilter } from "lucide-react";
 // hooks
-import { useLabel, useMember, useProjectPages } from "hooks/store";
+import { TPageNavigationTabs } from "@plane/types";
+import { FiltersDropdown } from "@/components/issues";
+// types
+import { useLabel, useMember, useProjectPages } from "@/hooks/store";
+// assets
+import AllFiltersImage from "public/empty-state/pages/all-filters.svg";
+import NameFilterImage from "public/empty-state/pages/name-filter.svg";
 // components
 import {
   PageLoader,
@@ -12,9 +18,6 @@ import {
   PageOrderByDropdown,
   PageFiltersSelection,
 } from "..";
-import { FiltersDropdown } from "components/issues";
-// types
-import { TPageNavigationTabs } from "@plane/types";
 
 type TPageView = {
   workspaceSlug: string;
@@ -33,12 +36,12 @@ export const PageView: React.FC<TPageView> = observer((props) => {
   const { projectLabels } = useLabel();
 
   // fetching pages list
-  useSWR(projectId && pageType ? `PROJECT_PAGES_${projectId}_${pageType}` : null, async () => {
-    projectId && pageType && (await getAllPages(pageType));
-  });
+  useSWR(
+    projectId && pageType ? `PROJECT_PAGES_${projectId}_${pageType}` : null,
+    projectId && pageType ? () => getAllPages(pageType) : null
+  );
 
   // pages loader
-  if (loader === "init-loader") return <PageLoader />;
   return (
     <div className="relative w-full h-full overflow-hidden flex flex-col">
       {/* tab header */}
@@ -68,28 +71,22 @@ export const PageView: React.FC<TPageView> = observer((props) => {
         </div>
       </div>
 
-      {pageIds && pageIds.length === 0 ? (
-        // no filtered pages are available
+      {loader === "init-loader" ? (
+        <PageLoader />
+      ) : pageIds?.length === 0 ? (
         <PageEmptyState
           pageType={pageType}
-          title={`No matching pages`}
-          description={`Remove the filters to see all pages`}
+          image={filters.searchQuery.length > 0 ? NameFilterImage : AllFiltersImage}
+          title="No matching pages"
+          description={
+            filters.searchQuery.length > 0
+              ? "Remove the search criteria to see all pages"
+              : "Remove the filters to see all pages"
+          }
         />
-      ) : pageIds && pageIds.length === 0 && filters.searchQuery.length > 0 ? (
-        // no searching pages are available
-        <PageEmptyState
-          pageType={pageType}
-          title={`No matching pages`}
-          description={`Remove the search criteria to see all pages`}
-        />
-      ) : pageIds && pageIds.length === 0 ? (
-        // no pages are available
-        <PageEmptyState pageType={pageType} />
       ) : (
-        <div className="w-full h-full overflow-hidden">{children}</div>
+        <div className="h-full w-full overflow-hidden">{children}</div>
       )}
-
-      {/* no search elements */}
     </div>
   );
 });
