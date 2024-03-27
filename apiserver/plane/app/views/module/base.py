@@ -1,19 +1,6 @@
 # Python imports
 import json
 
-# Django Imports
-from django.utils import timezone
-from django.db.models import (
-    Prefetch,
-    F,
-    OuterRef,
-    Exists,
-    Count,
-    Q,
-    Func,
-    Subquery,
-    IntegerField,
-)
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
@@ -21,9 +8,11 @@ from django.db.models import (
     Exists,
     F,
     Func,
+    IntegerField,
     OuterRef,
     Prefetch,
     Q,
+    Subquery,
     UUIDField,
     Value,
 )
@@ -31,8 +20,6 @@ from django.db.models.functions import Coalesce
 
 # Django Imports
 from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.views.decorators.gzip import gzip_page
 
 # Third party imports
 from rest_framework import status
@@ -45,7 +32,6 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     ModuleDetailSerializer,
     ModuleFavoriteSerializer,
-    ModuleIssueSerializer,
     ModuleLinkSerializer,
     ModuleSerializer,
     ModuleUserPropertiesSerializer,
@@ -54,8 +40,6 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
-    IssueLink,
     Module,
     ModuleFavorite,
     ModuleIssue,
@@ -64,17 +48,6 @@ from plane.db.models import (
     Project,
 )
 from plane.utils.analytics_plot import burndown_plot
-from plane.utils.grouper import (
-    issue_group_values,
-    issue_on_results,
-    issue_queryset_grouper,
-)
-from plane.utils.issue_filters import issue_filters
-from plane.utils.order_queryset import order_issue_queryset
-from plane.utils.paginator import (
-    GroupedOffsetPaginator,
-    SubGroupedOffsetPaginator,
-)
 
 # Module imports
 from .. import BaseAPIView, BaseViewSet, WebhookMixin
@@ -422,9 +395,11 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             "completion_chart": {},
         }
 
-        if queryset.first().start_date and queryset.first().target_date:
+        # Fetch the modules
+        modules = queryset.first()
+        if modules and modules.start_date and modules.target_date:
             data["distribution"]["completion_chart"] = burndown_plot(
-                queryset=queryset.first(),
+                queryset=modules,
                 slug=slug,
                 project_id=project_id,
                 module_id=pk,
