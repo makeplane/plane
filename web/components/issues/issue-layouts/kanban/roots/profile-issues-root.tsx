@@ -22,7 +22,6 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
 
   return (
     <BaseKanBanRoot
-      showLoader
       QuickActions={ProjectIssueQuickActions}
       storeType={EIssuesStoreType.PROFILE}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}

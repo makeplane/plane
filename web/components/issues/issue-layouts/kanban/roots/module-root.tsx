@@ -21,7 +21,6 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
 
   return (
     <BaseKanBanRoot
-      showLoader
       QuickActions={ModuleIssueQuickActions}
       viewId={moduleId?.toString()}
       storeType={EIssuesStoreType.MODULE}

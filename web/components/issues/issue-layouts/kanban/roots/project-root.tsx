@@ -8,5 +8,5 @@ import { EIssuesStoreType } from "@/constants/issue";
 import { BaseKanBanRoot } from "../base-kanban-root";
 
 export const KanBanLayout: React.FC = observer(() => (
-  <BaseKanBanRoot showLoader QuickActions={ProjectIssueQuickActions} storeType={EIssuesStoreType.PROJECT} />
+  <BaseKanBanRoot QuickActions={ProjectIssueQuickActions} storeType={EIssuesStoreType.PROJECT} />
 ));

@@ -464,7 +464,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           debouncedUpdatesEnabled={false}
                           value={
                             !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                              ? watch("description_html")
+                              ? watch("description_html") ?? ""
                               : value
                           }
                           initialValue={data?.description_html}

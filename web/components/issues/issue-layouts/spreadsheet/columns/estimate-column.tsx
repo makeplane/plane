@@ -21,7 +21,7 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = observer((props: Props
         onChange={(data) =>
           onChange(issue, { estimate_point: data }, { changed_property: "estimate_point", change_details: data })
         }
-        projectId={issue.project_id}
+        projectId={issue.project_id ?? undefined}
         disabled={disabled}
         buttonVariant="transparent-with-text"
         buttonClassName="rounded-none text-left"
