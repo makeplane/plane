@@ -1,53 +1,56 @@
 # Python imports
 import json
 
-# Django Imports
-from django.utils import timezone
-from django.db.models import (
-    Prefetch,
-    F,
-    OuterRef,
-    Exists,
-    Count,
-    Q,
-    Func,
-    Subquery,
-    IntegerField,
-)
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.db.models import (
+    Count,
+    Exists,
+    F,
+    Func,
+    IntegerField,
+    OuterRef,
+    Prefetch,
+    Q,
+    Subquery,
+    UUIDField,
+    Value,
+)
 from django.db.models.functions import Coalesce
+
+# Django Imports
+from django.utils import timezone
+from rest_framework import status
 
 # Third party imports
 from rest_framework.response import Response
-from rest_framework import status
 
-# Module imports
-from .. import BaseViewSet, BaseAPIView, WebhookMixin
-from plane.app.serializers import (
-    ModuleWriteSerializer,
-    ModuleSerializer,
-    ModuleLinkSerializer,
-    ModuleFavoriteSerializer,
-    ModuleUserPropertiesSerializer,
-    ModuleDetailSerializer,
-)
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
 )
-from plane.db.models import (
-    Module,
-    ModuleIssue,
-    Project,
-    Issue,
-    ModuleLink,
-    ModuleFavorite,
-    ModuleUserProperties,
+from plane.app.serializers import (
+    ModuleDetailSerializer,
+    ModuleFavoriteSerializer,
+    ModuleLinkSerializer,
+    ModuleSerializer,
+    ModuleUserPropertiesSerializer,
+    ModuleWriteSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (
+    Issue,
+    Module,
+    ModuleFavorite,
+    ModuleIssue,
+    ModuleLink,
+    ModuleUserProperties,
+    Project,
+)
 from plane.utils.analytics_plot import burndown_plot
+
+# Module imports
+from .. import BaseAPIView, BaseViewSet, WebhookMixin
 
 
 class ModuleViewSet(WebhookMixin, BaseViewSet):
@@ -392,9 +395,11 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             "completion_chart": {},
         }
 
-        if queryset.first().start_date and queryset.first().target_date:
+        # Fetch the modules
+        modules = queryset.first()
+        if modules and modules.start_date and modules.target_date:
             data["distribution"]["completion_chart"] = burndown_plot(
-                queryset=queryset.first(),
+                queryset=modules,
                 slug=slug,
                 project_id=project_id,
                 module_id=pk,
