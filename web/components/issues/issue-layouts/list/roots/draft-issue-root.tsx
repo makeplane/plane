@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { ProjectIssueQuickActions } from "@/components/issues";
+import { DraftIssueQuickActions } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
 // components
 // types
@@ -15,5 +15,5 @@ export const DraftIssueListLayout: FC = observer(() => {
 
   if (!workspaceSlug || !projectId) return null;
 
-  return <BaseListRoot QuickActions={ProjectIssueQuickActions} storeType={EIssuesStoreType.DRAFT} />;
+  return <BaseListRoot QuickActions={DraftIssueQuickActions} storeType={EIssuesStoreType.DRAFT} />;
 });

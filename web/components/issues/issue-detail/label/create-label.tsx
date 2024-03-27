@@ -1,14 +1,13 @@
 import { FC, useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
+import { usePopper } from "react-popper";
 import { Plus, X, Loader } from "lucide-react";
-import { Popover, Transition } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 import { IIssueLabel } from "@plane/types";
 // hooks
 import { Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store";
-// helpers
-import { cn } from "helpers/common.helper";
 // ui
 // types
 import { TLabelOperations } from "./root";
@@ -31,11 +30,12 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
   // hooks
   const {
     issue: { getIssueById },
-    peekIssue,
   } = useIssueDetail();
   // state
   const [isCreateToggle, setIsCreateToggle] = useState(false);
   const handleIsCreateToggle = () => setIsCreateToggle(!isCreateToggle);
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // react hook form
   const {
     handleSubmit,
@@ -45,6 +45,18 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
     setFocus,
   } = useForm<Partial<IIssueLabel>>({
     defaultValues,
+  });
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
   });
 
   useEffect(() => {
@@ -93,36 +105,28 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
               render={({ field: { value, onChange } }) => (
                 <Popover>
                   <>
-                    <Popover.Button className="grid place-items-center outline-none">
-                      {value && value?.trim() !== "" && (
-                        <span
-                          className="h-6 w-6 rounded"
-                          style={{
-                            backgroundColor: value ?? "black",
-                          }}
-                        />
-                      )}
+                    <Popover.Button as={Fragment}>
+                      <button type="button" ref={setReferenceElement} className="grid place-items-center outline-none">
+                        {value && value?.trim() !== "" && (
+                          <span
+                            className="h-6 w-6 rounded"
+                            style={{
+                              backgroundColor: value ?? "black",
+                            }}
+                          />
+                        )}
+                      </button>
                     </Popover.Button>
-
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel
-                        className={cn("absolute z-10 mt-1.5 max-w-xs px-2 sm:px-0", !peekIssue ? "right-0" : "")}
+                    <Popover.Panel className="fixed z-10">
+                      <div
+                        className="p-2 max-w-xs sm:px-0"
+                        ref={setPopperElement}
+                        style={styles.popper}
+                        {...attributes.popper}
                       >
-                        <TwitterPicker
-                          triangle={!peekIssue ? "hide" : "top-left"}
-                          color={value}
-                          onChange={(value) => onChange(value.hex)}
-                        />
-                      </Popover.Panel>
-                    </Transition>
+                        <TwitterPicker triangle={"hide"} color={value} onChange={(value) => onChange(value.hex)} />
+                      </div>
+                    </Popover.Panel>
                   </>
                 </Popover>
               )}
