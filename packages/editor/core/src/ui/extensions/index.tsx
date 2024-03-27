@@ -11,7 +11,7 @@ import { TableCell } from "src/ui/extensions/table/table-cell/table-cell";
 import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
 import { TableRow } from "src/ui/extensions/table/table-row/table-row";
 
-import { ImageExtension } from "src/ui/extensions/image";
+import { ImageExtension } from "src/ui/extensions/image/image";
 
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
@@ -24,10 +24,10 @@ import { CustomQuoteExtension } from "src/ui/extensions/quote";
 import { DeleteImage } from "src/types/delete-image";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
-import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
-import { CustomTypographyExtension } from "src/ui/extensions/typography";
+import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
+import { CustomTypographyExtension } from "src/ui/extensions/typography";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -36,7 +36,8 @@ export const CoreEditorExtensions = (
   },
   deleteFile: DeleteImage,
   restoreFile: RestoreImage,
-  cancelUploadImage?: () => any
+  cancelUploadImage?: () => any,
+  getAsset?: any
 ) => [
   StarterKit.configure({
     bulletList: {

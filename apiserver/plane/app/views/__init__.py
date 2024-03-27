@@ -6,6 +6,7 @@ from .project.base import (
     ProjectPublicCoverImagesEndpoint,
     ProjectDeployBoardViewSet,
     ProjectArchiveUnarchiveEndpoint,
+    ProjectCoverImageEndpoint,
 )
 
 from .project.invite import (
@@ -26,6 +27,8 @@ from .user.base import (
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
+    UserAvatarEndpoint,
+    UserCoverImageEndpoint,
 )
 
 from .oauth import OauthEndpoint
@@ -38,7 +41,8 @@ from .workspace.base import (
     WorkSpaceAvailabilityCheckEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
-    ExportWorkspaceUserActivityEndpoint
+    ExportWorkspaceUserActivityEndpoint,
+    WorkspaceLogoEndpoint,
 )
 
 from .workspace.member import (
@@ -98,7 +102,7 @@ from .cycle.issue import (
     CycleIssueViewSet,
 )
 
-from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
+from .asset.base import FileAssetEndpoint, FileAssetViewSet
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
@@ -114,13 +118,12 @@ from .issue.archive import (
     IssueArchiveViewSet,
 )
 
-from .issue.attachment import (
-    IssueAttachmentEndpoint,
-)
+from .issue.attachment import IssueAttachmentEndpoint
 
 from .issue.comment import (
     IssueCommentViewSet,
     CommentReactionViewSet,
+    CommentAssetEndpoint,
 )
 
 from .issue.draft import IssueDraftViewSet
@@ -186,6 +189,7 @@ from .page.base import (
     PageFavoriteViewSet,
     PageLogEndpoint,
     SubPagesEndpoint,
+    PageAssetEndpoint,
 )
 
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint

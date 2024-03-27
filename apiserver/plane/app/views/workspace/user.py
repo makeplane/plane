@@ -1,59 +1,60 @@
 # Python imports
 from datetime import date
+
 from dateutil.relativedelta import relativedelta
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import (
+    Case,
+    CharField,
+    Count,
+    F,
+    Func,
+    IntegerField,
+    Max,
+    OuterRef,
+    Q,
+    UUIDField,
+    Value,
+    When,
+)
+from django.db.models.fields import DateField
+from django.db.models.functions import Cast, Coalesce, ExtractWeek
 
 # Django imports
 from django.utils import timezone
-from django.db.models import (
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Count,
-    Case,
-    Value,
-    CharField,
-    When,
-    Max,
-    IntegerField,
-    UUIDField,
-)
-from django.db.models.functions import ExtractWeek, Cast
-from django.db.models.fields import DateField
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models.functions import Coalesce
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
 
+from plane.app.permissions import (
+    WorkspaceEntityPermission,
+    WorkspaceViewerPermission,
+)
+
 # Module imports
 from plane.app.serializers import (
-    WorkSpaceSerializer,
-    ProjectMemberSerializer,
     IssueActivitySerializer,
     IssueSerializer,
+    ProjectMemberSerializer,
+    WorkSpaceSerializer,
     WorkspaceUserPropertiesSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from plane.db.models import (
-    User,
-    Workspace,
-    ProjectMember,
-    IssueActivity,
+    CycleIssue,
+    FileAsset,
     Issue,
+    IssueActivity,
     IssueLink,
-    IssueAttachment,
     IssueSubscriber,
     Project,
+    ProjectMember,
+    User,
+    Workspace,
     WorkspaceMember,
-    CycleIssue,
     WorkspaceUserProperties,
-)
-from plane.app.permissions import (
-    WorkspaceEntityPermission,
-    WorkspaceViewerPermission,
 )
 from plane.utils.issue_filters import issue_filters
 
@@ -137,16 +138,17 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

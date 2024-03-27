@@ -13,7 +13,6 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueAssignee,
-    IssueAttachment,
     IssueComment,
     IssueLabel,
     IssueLink,
@@ -79,7 +78,7 @@ class IssueSerializer(BaseSerializer):
                 parsed_str = html.tostring(parsed, encoding="unicode")
                 data["description_html"] = parsed_str
 
-        except Exception as e:
+        except Exception:
             raise serializers.ValidationError("Invalid HTML passed")
 
         # Validate assignees are from project
@@ -323,22 +322,6 @@ class IssueLinkSerializer(BaseSerializer):
         return super().update(instance, validated_data)
 
 
-class IssueAttachmentSerializer(BaseSerializer):
-    class Meta:
-        model = IssueAttachment
-        fields = "__all__"
-        read_only_fields = [
-            "id",
-            "workspace",
-            "project",
-            "issue",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
 class IssueCommentSerializer(BaseSerializer):
     is_member = serializers.BooleanField(read_only=True)
 
@@ -366,7 +349,7 @@ class IssueCommentSerializer(BaseSerializer):
                 parsed_str = html.tostring(parsed, encoding="unicode")
                 data["comment_html"] = parsed_str
 
-        except Exception as e:
+        except Exception:
             raise serializers.ValidationError("Invalid HTML passed")
         return data
 

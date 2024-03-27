@@ -1,19 +1,19 @@
-# Python import
-from uuid import uuid4
+# Python imports
+import uuid
 
 # Django imports
-from django.contrib.postgres.fields import ArrayField
-from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 # Module imports
-from . import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
+
+from .project import ProjectBaseModel
 
 
 def get_default_properties():
@@ -94,6 +94,17 @@ class IssueManager(models.Manager):
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
         )
+
+
+def get_upload_path(instance, filename):
+    if instance.workspace_id is not None:
+        return f"{instance.workspace.id}/{uuid.uuid4().hex}"
+    return f"user-{uuid.uuid4().hex}"
+
+
+def file_size(value):
+    if value.size > settings.FILE_SIZE_LIMIT:
+        raise ValidationError("File too large. Size should not exceed 5 MB.")
 
 
 class Issue(ProjectBaseModel):
@@ -337,38 +348,6 @@ class IssueLink(ProjectBaseModel):
         return f"{self.issue.name} {self.url}"
 
 
-def get_upload_path(instance, filename):
-    return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
-
-
-def file_size(value):
-    # File limit check is only for cloud hosted
-    if value.size > settings.FILE_SIZE_LIMIT:
-        raise ValidationError("File too large. Size should not exceed 5 MB.")
-
-
-class IssueAttachment(ProjectBaseModel):
-    attributes = models.JSONField(default=dict)
-    asset = models.FileField(
-        upload_to=get_upload_path,
-        validators=[
-            file_size,
-        ],
-    )
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
-    )
-
-    class Meta:
-        verbose_name = "Issue Attachment"
-        verbose_name_plural = "Issue Attachments"
-        db_table = "issue_attachments"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return f"{self.issue.name} {self.asset}"
-
-
 class IssueActivity(ProjectBaseModel):
     issue = models.ForeignKey(
         Issue,
@@ -390,9 +369,6 @@ class IssueActivity(ProjectBaseModel):
     )
 
     comment = models.TextField(verbose_name="Comment", blank=True)
-    attachments = ArrayField(
-        models.URLField(), size=10, blank=True, default=list
-    )
     issue_comment = models.ForeignKey(
         "db.IssueComment",
         on_delete=models.SET_NULL,
@@ -424,9 +400,6 @@ class IssueComment(ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
-    attachments = ArrayField(
-        models.URLField(), size=10, blank=True, default=list
-    )
     issue = models.ForeignKey(
         Issue, on_delete=models.CASCADE, related_name="issue_comments"
     )

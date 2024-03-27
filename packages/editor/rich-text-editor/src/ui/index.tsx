@@ -27,6 +27,7 @@ export type IRichTextEditor = {
     id: string;
     description_html: string;
   };
+  getAsset: any;
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
@@ -59,6 +60,7 @@ const RichTextEditor = ({
   value,
   initialValue,
   uploadFile,
+  getAsset,
   deleteFile,
   noBorder,
   cancelUploadImage,
@@ -81,6 +83,7 @@ const RichTextEditor = ({
 
   const editor = useEditor({
     onChange,
+    getAsset,
     debouncedUpdatesEnabled,
     setIsSubmitting,
     setShouldShowAlert,

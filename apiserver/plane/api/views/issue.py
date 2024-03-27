@@ -1,9 +1,8 @@
 # Python imports
 import json
 
-from django.core.serializers.json import DjangoJSONEncoder
-
 # Django imports
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.db.models import (
     Case,
@@ -23,7 +22,6 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
-# Module imports
 from plane.api.serializers import (
     IssueActivitySerializer,
     IssueCommentSerializer,
@@ -38,9 +36,9 @@ from plane.app.permissions import (
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
+    FileAsset,
     Issue,
     IssueActivity,
-    IssueAttachment,
     IssueComment,
     IssueLink,
     Label,
@@ -48,6 +46,7 @@ from plane.db.models import (
     ProjectMember,
 )
 
+# Module imports
 from .base import BaseAPIView, WebhookMixin
 
 
@@ -128,8 +127,9 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

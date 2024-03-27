@@ -2,18 +2,20 @@
 from uuid import uuid4
 
 # Django import
-from django.db import models
-from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.db import models
 
 # Module import
-from . import BaseModel
+from plane.settings.storage import S3PrivateBucketStorage
+
+from .base import BaseModel
 
 
 def get_upload_path(instance, filename):
     if instance.workspace_id is not None:
-        return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
-    return f"user-{uuid4().hex}-{filename}"
+        return f"{instance.workspace.id}/{uuid4().hex}"
+    return f"user-{uuid4().hex}"
 
 
 def file_size(value):
@@ -32,6 +34,7 @@ class FileAsset(BaseModel):
         validators=[
             file_size,
         ],
+        storage=S3PrivateBucketStorage(),
     )
     workspace = models.ForeignKey(
         "db.Workspace",
@@ -39,7 +42,24 @@ class FileAsset(BaseModel):
         null=True,
         related_name="assets",
     )
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="assets",
+    )
+    entity_type = models.CharField(
+        choices=(
+            ("issue_attachment", "Issue Attachment"),
+            ("issue_description", "Issue Description"),
+            ("comment", "Comment"),
+            ("page", "Page"),
+        ),
+        null=True,
+    )
+    entity_identifier = models.UUIDField(null=True)
     is_deleted = models.BooleanField(default=False)
+    size = models.PositiveBigIntegerField(null=True)
 
     class Meta:
         verbose_name = "File Asset"
@@ -49,3 +69,7 @@ class FileAsset(BaseModel):
 
     def __str__(self):
         return str(self.asset)
+
+    def save(self, *args, **kwargs):
+        self.size = self.asset.size
+        super(FileAsset, self).save(*args, **kwargs)

@@ -94,7 +94,7 @@ class Project(BaseModel):
     issue_views_view = models.BooleanField(default=True)
     page_view = models.BooleanField(default=True)
     inbox_view = models.BooleanField(default=False)
-    cover_image = models.URLField(blank=True, null=True, max_length=800)
+    cover_image = models.CharField(blank=True, null=True, max_length=800)
     estimate = models.ForeignKey(
         "db.Estimate",
         on_delete=models.SET_NULL,

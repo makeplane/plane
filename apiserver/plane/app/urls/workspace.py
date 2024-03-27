@@ -1,32 +1,31 @@
 from django.urls import path
 
-
 from plane.app.views import (
-    UserWorkspaceInvitationsViewSet,
-    WorkSpaceViewSet,
-    WorkspaceJoinEndpoint,
-    WorkSpaceMemberViewSet,
-    WorkspaceInvitationsViewset,
-    WorkspaceMemberUserEndpoint,
-    WorkspaceMemberUserViewsEndpoint,
-    WorkSpaceAvailabilityCheckEndpoint,
+    ExportWorkspaceUserActivityEndpoint,
     TeamMemberViewSet,
     UserLastProjectWithWorkspaceEndpoint,
+    UserWorkspaceInvitationsViewSet,
+    WorkSpaceAvailabilityCheckEndpoint,
+    WorkspaceCyclesEndpoint,
+    WorkspaceEstimatesEndpoint,
+    WorkspaceInvitationsViewset,
+    WorkspaceJoinEndpoint,
+    WorkspaceLabelsEndpoint,
+    WorkspaceLogoEndpoint,
+    WorkspaceMemberUserEndpoint,
+    WorkspaceMemberUserViewsEndpoint,
+    WorkSpaceMemberViewSet,
+    WorkspaceModulesEndpoint,
+    WorkspaceProjectMemberEndpoint,
+    WorkspaceStatesEndpoint,
     WorkspaceThemeViewSet,
-    WorkspaceUserProfileStatsEndpoint,
     WorkspaceUserActivityEndpoint,
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
-    WorkspaceLabelsEndpoint,
-    WorkspaceProjectMemberEndpoint,
+    WorkspaceUserProfileStatsEndpoint,
     WorkspaceUserPropertiesEndpoint,
-    WorkspaceStatesEndpoint,
-    WorkspaceEstimatesEndpoint,
-    ExportWorkspaceUserActivityEndpoint,
-    WorkspaceModulesEndpoint,
-    WorkspaceCyclesEndpoint,
+    WorkSpaceViewSet,
 )
-
 
 urlpatterns = [
     path(
@@ -236,5 +235,15 @@ urlpatterns = [
         "workspaces/<str:slug>/cycles/",
         WorkspaceCyclesEndpoint.as_view(),
         name="workspace-cycles",
+    ),
+    path(
+        "workspaces/<str:slug>/logo/",
+        WorkspaceLogoEndpoint.as_view(),
+        name="workspace-logo",
+    ),
+    path(
+        "workspaces/<str:slug>/logo/<str:workspace_id>/<str:logo_key>/",
+        WorkspaceLogoEndpoint.as_view(),
+        name="workspace-logo",
     ),
 ]

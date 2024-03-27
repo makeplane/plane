@@ -1,39 +1,39 @@
 # Django imports
-from django.utils import timezone
-from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
+from django.utils import timezone
 
 # Third Party imports
 from rest_framework import serializers
 
-# Module imports
-from .base import BaseSerializer, DynamicBaseSerializer
-from .user import UserLiteSerializer
-from .state import StateLiteSerializer
-from .project import ProjectLiteSerializer
-from .workspace import WorkspaceLiteSerializer
 from plane.db.models import (
-    User,
+    CommentReaction,
+    Cycle,
+    CycleIssue,
     Issue,
     IssueActivity,
-    IssueComment,
-    IssueProperty,
     IssueAssignee,
-    IssueSubscriber,
+    IssueComment,
     IssueLabel,
+    IssueLink,
+    IssueProperty,
+    IssueReaction,
+    IssueRelation,
+    IssueSubscriber,
+    IssueVote,
     Label,
-    CycleIssue,
-    Cycle,
     Module,
     ModuleIssue,
-    IssueLink,
-    IssueAttachment,
-    IssueReaction,
-    CommentReaction,
-    IssueVote,
-    IssueRelation,
     State,
+    User,
 )
+
+# Module imports
+from .base import BaseSerializer, DynamicBaseSerializer
+from .project import ProjectLiteSerializer
+from .state import StateLiteSerializer
+from .user import UserLiteSerializer
+from .workspace import WorkspaceLiteSerializer
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -442,7 +442,7 @@ class IssueLinkSerializer(BaseSerializer):
             raise serializers.ValidationError("Invalid URL format.")
 
         # Check URL scheme
-        if not value.startswith(('http://', 'https://')):
+        if not value.startswith(("http://", "https://")):
             raise serializers.ValidationError("Invalid URL scheme.")
 
         return value
@@ -481,35 +481,6 @@ class IssueLinkLiteSerializer(BaseSerializer):
             "metadata",
             "created_by_id",
             "created_at",
-        ]
-        read_only_fields = fields
-
-
-class IssueAttachmentSerializer(BaseSerializer):
-    class Meta:
-        model = IssueAttachment
-        fields = "__all__"
-        read_only_fields = [
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-            "workspace",
-            "project",
-            "issue",
-        ]
-
-
-class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
-    class Meta:
-        model = IssueAttachment
-        fields = [
-            "id",
-            "asset",
-            "attributes",
-            "issue_id",
-            "updated_at",
-            "updated_by_id",
         ]
         read_only_fields = fields
 

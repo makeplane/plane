@@ -1,22 +1,33 @@
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
+from django.http import HttpResponseRedirect
 
 # Third party imports
 from rest_framework import status
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 # Module imports
 from plane.app.serializers import (
+    FileAssetSerializer,
     IssueActivitySerializer,
     UserMeSerializer,
     UserMeSettingsSerializer,
     UserSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
-from plane.db.models import IssueActivity, ProjectMember, User, WorkspaceMember
+from plane.db.models import (
+    FileAsset,
+    IssueActivity,
+    ProjectMember,
+    User,
+    WorkspaceMember,
+)
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.utils.paginator import BasePaginator
+from plane.utils.presigned_url_generator import generate_download_presigned_url
 
 
 class UserEndpoint(BaseViewSet):
@@ -189,3 +200,97 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
                 issue_activities, many=True
             ).data,
         )
+
+
+class UserAvatarEndpoint(BaseAPIView):
+
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
+
+    def get_permissions(self):
+        if self.request.method == "POST" or self.request.method == "DELETE":
+            return [
+                IsAuthenticated(),
+            ]
+        return [
+            AllowAny(),
+        ]
+
+    def get(self, request, avatar_key):
+        url = generate_download_presigned_url(
+            key=avatar_key,
+            host=request.get_host(),
+            scheme=request.scheme,
+        )
+        return HttpResponseRedirect(url)
+
+    def post(self, request):
+        serializer = FileAssetSerializer(data=request.data)
+        if serializer.is_valid():
+            # Get the workspace
+            serializer.save()
+            user = request.user
+            user.avatar = "/api/users/avatar/" + serializer.data["asset"] + "/"
+            user.save()
+            user_serializer = UserMeSerializer(user)
+            return Response(
+                user_serializer.data, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, avatar_key):
+        file_asset = FileAsset.objects.get(asset=avatar_key)
+        file_asset.is_deleted = True
+        file_asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserCoverImageEndpoint(BaseAPIView):
+
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
+
+    def get_permissions(self):
+        if self.request.method == "POST" or self.request.method == "DELETE":
+            return [
+                IsAuthenticated(),
+            ]
+        return [
+            AllowAny(),
+        ]
+
+    def get(self, request, cover_image_key):
+        url = generate_download_presigned_url(
+            key=cover_image_key,
+            host=request.get_host(),
+            scheme=request.scheme,
+        )
+        return HttpResponseRedirect(url)
+
+    def post(self, request):
+        serializer = FileAssetSerializer(data=request.data)
+        if serializer.is_valid():
+            # Get the workspace
+            serializer.save()
+            user = request.user
+            user.avatar = (
+                "/api/users/cover-image/" + serializer.data["asset"] + "/"
+            )
+            user.save()
+            user_serializer = UserMeSerializer(user)
+            return Response(
+                user_serializer.data, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, cover_image_key):
+        file_asset = FileAsset.objects.get(asset=cover_image_key)
+        file_asset.is_deleted = True
+        file_asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,4 +1,6 @@
 import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
+import { Editor, Range } from "@tiptap/core";
+
 import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
 import { UploadImage } from "src/types/upload-image";
 
@@ -78,7 +80,8 @@ export async function startImageUpload(
   view: EditorView,
   pos: number,
   uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
+  editor?: Editor
 ) {
   if (!file) {
     alert("No file selected. Please select a file to upload.");
@@ -123,17 +126,15 @@ export async function startImageUpload(
   setIsSubmitting?.("submitting");
 
   try {
-    const src = await UploadImageHandler(file, uploadFile);
-    const { schema } = view.state;
-    pos = findPlaceholder(view.state, id);
+    const assetId = await UploadImageHandler(file, uploadFile);
+    const attrs = {
+      src: "",
+      alt: "",
+      assetId,
+    };
 
-    if (pos == null) return;
-    const imageSrc = typeof src === "object" ? reader.result : src;
-
-    const node = schema.nodes.image.create({ src: imageSrc });
-    const transaction = view.state.tr.insert(pos - 1, node).setMeta(uploadKey, { remove: { id } });
-
-    view.dispatch(transaction);
+    editor?.chain().focus().insertContent({ type: "image", attrs }).run();
+    removePlaceholder(view, id);
   } catch (error) {
     console.error("Upload error: ", error);
     removePlaceholder(view, id);
@@ -144,13 +145,8 @@ const UploadImageHandler = (file: File, uploadFile: UploadImage): Promise<string
   try {
     return new Promise(async (resolve, reject) => {
       try {
-        const imageUrl = await uploadFile(file);
-
-        const image = new Image();
-        image.src = imageUrl;
-        image.onload = () => {
-          resolve(imageUrl);
-        };
+        const blob = await uploadFile(file);
+        resolve(blob);
       } catch (error) {
         if (error instanceof Error) {
           console.log(error.message);

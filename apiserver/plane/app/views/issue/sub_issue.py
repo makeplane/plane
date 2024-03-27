@@ -1,37 +1,38 @@
 # Python imports
 import json
+from collections import defaultdict
+
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import (
+    F,
+    Func,
+    OuterRef,
+    Q,
+    UUIDField,
+    Value,
+)
+from django.db.models.functions import Coalesce
 
 # Django imports
 from django.utils import timezone
-from django.db.models import (
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Value,
-    UUIDField,
-)
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models.functions import Coalesce
+from rest_framework import status
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import status
 
-# Module imports
-from .. import BaseAPIView
-from plane.app.serializers import IssueSerializer
 from plane.app.permissions import ProjectEntityPermission
+from plane.app.serializers import IssueSerializer
+from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueLink,
-    IssueAttachment,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
-from collections import defaultdict
+
+# Module imports
+from .. import BaseAPIView
 
 
 class SubIssuesEndpoint(BaseAPIView):
@@ -50,14 +51,6 @@ class SubIssuesEndpoint(BaseAPIView):
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
-                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
