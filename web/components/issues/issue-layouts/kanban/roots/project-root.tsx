@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 // mobx store
-import { ProjectIssueQuickActions } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
+import { ProjectIssueQuickActions } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
 // components
 // types
 // constants

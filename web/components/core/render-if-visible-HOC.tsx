@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, ReactNode, MutableRefObject } from "react";
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 
 type Props = {
   defaultHeight?: string;
@@ -27,7 +27,6 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     alwaysRender = false, //render the children even if it is not visible in root
     placeholderChildren = null, //placeholder children
     pauseHeightUpdateWhileRendering = false, //while this is true the height of the blocks are maintained
-    changingReference, //This is to force render when this reference is changed
   } = props;
   const [shouldVisible, setShouldVisible] = useState<boolean>(alwaysRender);
   const placeholderHeight = useRef<string>(defaultHeight);

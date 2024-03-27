@@ -1,11 +1,10 @@
-// services
+import { action, makeObservable, runInAction, } from "mobx";
 // types
-import { action, makeObservable, runInAction } from "mobx";
+import { TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse, TIssue } from "@plane/types";
 // base class
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
-// types
+// services
 import { IIssueRootStore } from "../root.store";
-import { TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse, TIssue } from "@plane/types";
 import { IProjectIssuesFilter } from "./filter.store";
 
 export interface IProjectIssues extends IBaseIssuesStore {
@@ -74,6 +73,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       this.onfetchIssues(response, options);
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
       return response;
     } catch (error) {
       this.loader = undefined;

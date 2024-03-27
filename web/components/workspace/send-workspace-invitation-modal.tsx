@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { Plus, X } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 // hooks
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 // types
-import { IWorkspaceBulkInviteFormData } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

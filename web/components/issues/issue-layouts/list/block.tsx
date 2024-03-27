@@ -1,13 +1,14 @@
 import { observer } from "mobx-react-lite";
+import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // components
 // hooks
 // ui
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
 // helper
-import { cn } from "helpers/common.helper";
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { IssueProperties } from "../properties/all-properties";
 
 interface IssueBlockProps {
@@ -38,7 +39,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const issue = issuesMap[issueId];
-
+  const { isMobile } = usePlatformOS();
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id ?? undefined);
@@ -67,20 +68,20 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           )}
 
           {issue?.is_draft ? (
-            <Tooltip tooltipContent={issue.name}>
+            <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
               <span>{issue.name}</span>
             </Tooltip>
           ) : (
             <ControlLink
-              href={`/${workspaceSlug}/projects/${issue.project_id}/${
-                issue.archived_at ? "archived-issues" : "issues"
-              }/${issue.id}`}
+              href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
+                issue.id
+              }`}
               target="_blank"
               onClick={() => handleIssuePeekOverview(issue)}
               className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
               disabled={!!issue?.tempId}
             >
-              <Tooltip tooltipContent={issue.name}>
+              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
                 <span>{issue.name}</span>
               </Tooltip>
             </ControlLink>

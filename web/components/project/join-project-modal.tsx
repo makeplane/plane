@@ -1,12 +1,12 @@
 import { useState, Fragment } from "react";
 import { useRouter } from "next/router";
 import { Transition, Dialog } from "@headlessui/react";
+import type { IProject } from "@plane/types";
 // hooks
 import { Button } from "@plane/ui";
-import { useProject, useUser } from "hooks/store";
+import { useProject, useUser } from "@/hooks/store";
 // ui
 // types
-import type { IProject } from "@plane/types";
 
 // type
 type TJoinProjectModalProps = {

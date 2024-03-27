@@ -1,26 +1,29 @@
 import { FC, useCallback, useRef, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
+import debounce from "lodash/debounce";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// hooks
+import { TIssue } from "@plane/types";
+//ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { DeleteIssueModal } from "components/issues";
-import { ISSUE_DELETED } from "constants/event-tracker";
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useEventTracker, useIssues, useUser } from "hooks/store";
-import { useIssuesActions } from "hooks/use-issues-actions";
+//components
+import { DeleteIssueModal } from "@/components/issues";
+//constants
+import { ISSUE_DELETED } from "@/constants/event-tracker";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+//hooks
+import { useEventTracker, useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 // ui
 // types
-import { TIssue } from "@plane/types";
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { IQuickActionProps } from "../list/list-view-types";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 import { handleDragDrop } from "./utils";
-import { IssueLayoutHOC } from "../issue-layout-HOC";
-import debounce from "lodash/debounce";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT
@@ -31,7 +34,6 @@ export type KanbanStoreType =
   | EIssuesStoreType.PROFILE;
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;
-  showLoader?: boolean;
   viewId?: string;
   storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
@@ -48,7 +50,6 @@ type KanbanDragState = {
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
   const {
     QuickActions,
-    showLoader,
     viewId,
     storeType,
     addIssuesToView,
@@ -178,7 +179,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           setToast({
             title: "Error",
             type: TOAST_TYPE.ERROR,
-            message: err.detail ?? "Failed to perform this action",
+            message: err?.detail ?? "Failed to perform this action",
           });
         });
       }

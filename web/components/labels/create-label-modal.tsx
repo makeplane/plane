@@ -3,15 +3,15 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
-import { Dialog, Popover, Transition } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
+import { Dialog, Popover, Transition } from "@headlessui/react";
+import type { IIssueLabel, IState } from "@plane/types";
 // hooks
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
-import { useLabel } from "hooks/store";
+import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@/constants/label";
+import { useLabel } from "@/hooks/store";
 // ui
 // types
-import type { IIssueLabel, IState } from "@plane/types";
 // constants
 
 // types

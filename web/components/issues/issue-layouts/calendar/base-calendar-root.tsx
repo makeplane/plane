@@ -2,21 +2,21 @@ import { FC, useCallback } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { TGroupedIssues } from "@plane/types";
 import useSWR from "swr";
+import { TGroupedIssues } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { CalendarChart } from "components/issues";
+import { CalendarChart } from "@/components/issues";
+//constants
+import { EIssuesStoreType, EIssueLayoutTypes, EIssueGroupByToServerOptions } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useCalendarView, useIssues, useUser } from "hooks/store";
-import { useIssuesActions } from "hooks/use-issues-actions";
-// ui
+import { useIssues, useUser, useCalendarView } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 // types
-import { EIssueLayoutTypes, EIssuesStoreType, EIssueGroupByToServerOptions } from "constants/issue";
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";
-import { EUserProjectRoles } from "constants/project";
-import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 type CalendarStoreType =
   | EIssuesStoreType.PROJECT
@@ -106,7 +106,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
         setToast({
           title: "Error",
           type: TOAST_TYPE.ERROR,
-          message: err.detail ?? "Failed to perform this action",
+          message: err?.detail ?? "Failed to perform this action",
         });
       });
     }
@@ -120,16 +120,12 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   );
 
   const getPaginationData = useCallback(
-    (groupId: string | undefined) => {
-      return issues?.getPaginationData(groupId, undefined);
-    },
+    (groupId: string | undefined) => issues?.getPaginationData(groupId, undefined),
     [issues?.getPaginationData]
   );
 
   const getGroupIssueCount = useCallback(
-    (groupId: string | undefined) => {
-      return issues?.getGroupIssueCount(groupId, undefined, false);
-    },
+    (groupId: string | undefined) => issues?.getGroupIssueCount(groupId, undefined, false),
     [issues?.getGroupIssueCount]
   );
 
@@ -144,7 +140,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
             layout={displayFilters?.calendar?.layout}
             showWeekends={displayFilters?.calendar?.show_weekends ?? false}
             issueCalendarView={issueCalendarView}
-            quickActions={(issue, customActionButton) => (
+            quickActions={(issue, customActionButton, placement) => (
               <QuickActions
                 customActionButton={customActionButton}
                 issue={issue}
@@ -156,6 +152,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
                 handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
                 handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
                 readOnly={!isEditingAllowed || isCompletedCycle}
+                placements={placement}
               />
             )}
             loadMoreIssues={loadMoreIssues}

@@ -1,13 +1,20 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import { v4 as uuidv4 } from "uuid";
 // helpers
+import { getDate } from "@/helpers/date-time.helper";
+import { orderArrayBy } from "@/helpers/array.helper";
 // types
-import { IGanttBlock } from "components/gantt-chart";
+import { IGanttBlock } from "@/components/gantt-chart";
 // constants
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { STATE_GROUPS } from "constants/state";
-import { orderArrayBy } from "helpers/array.helper";
-import { TIssue, TIssueGroupByOptions, TIssueOrderByOptions, TIssueParams, TStateGroups } from "@plane/types";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { STATE_GROUPS } from "@/constants/state";
+import {
+  TIssue,
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
+  TIssueParams,
+  TStateGroups,
+} from "@plane/types";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
@@ -150,7 +157,9 @@ export const shouldHighlightIssueDueDate = (
   // if the issue is completed or cancelled, don't highlight the due date
   if ([STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateGroup)) return false;
 
-  const parsedDate = new Date(date);
+  const parsedDate = getDate(date);
+  if (!parsedDate) return false;
+
   const targetDateDistance = differenceInCalendarDays(parsedDate, new Date());
 
   // if the issue is overdue, highlight the due date
@@ -161,10 +170,9 @@ export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => {
     data: block,
     id: block.id,
     sort_order: block.sort_order,
-    start_date: block.start_date ? new Date(block.start_date) : undefined,
-    target_date: block.target_date ? new Date(block.target_date) : undefined,
-  };
-};
+    start_date: getDate(block.start_date),
+    target_date: getDate(block.target_date),
+  }};
 
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
   const changedFields: Partial<TIssue> = {};
@@ -178,3 +186,21 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
 
   return changedFields;
 }
+
+export const formatTextList = (TextArray: string[]): string => {
+  const count = TextArray.length;
+  switch (count) {
+    case 0:
+      return "";
+    case 1:
+      return TextArray[0];
+    case 2:
+      return `${TextArray[0]} and ${TextArray[1]}`;
+    case 3:
+      return `${TextArray.slice(0, 2).join(", ")}, and ${TextArray[2]}`;
+    case 4:
+      return `${TextArray.slice(0, 3).join(", ")}, and ${TextArray[3]}`;
+    default:
+      return `${TextArray.slice(0, 3).join(", ")}, and +${count - 3} more`;
+  }
+};

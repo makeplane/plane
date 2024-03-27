@@ -1,7 +1,8 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
-import { UserService } from "services/user.service";
-import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
+import { UserService } from "@/services/user.service";
+import { TIssue, TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags } from "@plane/types";
+
 // services
 // types
 import { IIssueRootStore } from "../root.store";

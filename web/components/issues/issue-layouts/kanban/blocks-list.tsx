@@ -1,8 +1,8 @@
-import { MutableRefObject, memo } from "react";
-//types
-import { KanbanIssueBlock } from "components/issues";
-import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
+//types
+import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+import { KanbanIssueBlock } from "@/components/issues";
 // components
 
 interface IssueBlocksListProps {

@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
+import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // hooks
 import {
   AppliedCycleFilters,
@@ -11,14 +12,13 @@ import {
   AppliedProjectFilters,
   AppliedStateFilters,
   AppliedStateGroupFilters,
-} from "components/issues";
-import { EUserProjectRoles } from "constants/project";
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-import { useApplication, useUser } from "hooks/store";
+} from "@/components/issues";
+import { EUserProjectRoles } from "@/constants/project";
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+import { useApplication, useUser } from "@/hooks/store";
 // components
 // helpers
 // types
-import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // constants
 
 type Props = {

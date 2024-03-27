@@ -1,23 +1,22 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// hooks
-import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "components/gantt-chart";
-import { GanttQuickAddIssueForm, IssueGanttBlock } from "components/issues";
-import { EUserProjectRoles } from "constants/project";
-import { getIssueBlocksStructure } from "helpers/issue.helper";
-import { useIssues, useUser } from "hooks/store";
-import { useIssuesActions } from "hooks/use-issues-actions";
-// components
-// helpers
-// types
-import { TIssue } from "@plane/types";
-// constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
-import { IssueLayoutHOC } from "../issue-layout-HOC";
 import useSWR from "swr";
-import { getMonthChartItemPositionWidthInMonth } from "components/gantt-chart/views";
-import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
+import { TIssue,  } from "@plane/types";
+//components
+import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
+import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
+import { GanttQuickAddIssueForm, IssueGanttBlock } from "@/components/issues";
+//constants
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { getIssueBlocksStructure } from "@/helpers/issue.helper";
+//hooks
+import { useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+
+import { ALL_ISSUES } from "@/store/issue/helpers/base-issues.store";
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 type GanttStoreType =
   | EIssuesStoreType.PROJECT

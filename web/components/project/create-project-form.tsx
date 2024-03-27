@@ -2,6 +2,7 @@ import { useState, FC, ChangeEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
 import { Info, X } from "lucide-react";
+import { IProject } from "@plane/types";
 // ui
 import {
   Button,
@@ -15,20 +16,20 @@ import {
   Tooltip,
 } from "@plane/ui";
 // components
-import { ImagePickerPopover } from "components/core";
-import { MemberDropdown } from "components/dropdowns";
-import { ProjectLogo } from "./project-logo";
+import { ImagePickerPopover } from "@/components/core";
+import { MemberDropdown } from "@/components/dropdowns";
 // constants
-import { PROJECT_CREATED } from "constants/event-tracker";
-import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+import { PROJECT_CREATED } from "@/constants/event-tracker";
+import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "@/constants/project";
 // helpers
-import { convertHexEmojiToDecimal, getRandomEmoji } from "helpers/emoji.helper";
-import { cn } from "helpers/common.helper";
-import { projectIdentifierSanitizer } from "helpers/project.helper";
+import { cn } from "@/helpers/common.helper";
+import { convertHexEmojiToDecimal, getRandomEmoji } from "@/helpers/emoji.helper";
+import { projectIdentifierSanitizer } from "@/helpers/project.helper";
 // hooks
-import { useEventTracker, useProject } from "hooks/store";
+import { useEventTracker, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { IProject } from "@plane/types";
+import { ProjectLogo } from "./project-logo";
 
 type Props = {
   setToFavorite?: boolean;
@@ -71,7 +72,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
     defaultValues,
     reValidateMode: "onChange",
   });
-
+  const { isMobile } = usePlatformOS();
   const handleAddToFavorites = (projectId: string) => {
     if (!workspaceSlug) return;
 
@@ -208,8 +209,10 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                     [val.type]: logoValue,
                   });
                 }}
-                defaultIconColor={value.in_use === "icon" ? value.icon?.color : undefined}
-                defaultOpen={value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON}
+                defaultIconColor={value.in_use && value.in_use === "icon" ? value.icon?.color : undefined}
+                defaultOpen={
+                  value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
+                }
               />
             )}
           />
@@ -283,6 +286,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                 )}
               />
               <Tooltip
+                isMobile={isMobile}
                 tooltipContent="Helps you identify issues in the project uniquely, (e.g. APP-123). Max 5 characters."
                 className="text-sm"
                 position="right-top"

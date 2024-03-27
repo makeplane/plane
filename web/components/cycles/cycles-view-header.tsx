@@ -1,21 +1,22 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Tab } from "@headlessui/react";
 import { ListFilter, Search, X } from "lucide-react";
-// hooks
-import { useCycleFilter } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// components
-import { CycleFiltersSelection } from "components/cycles";
-import { FiltersDropdown } from "components/issues";
-// ui
-import { Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "helpers/common.helper";
+import { Tab } from "@headlessui/react";
 // types
 import { TCycleFilters } from "@plane/types";
+// ui
+import { Tooltip } from "@plane/ui";
+// components
+import { CycleFiltersSelection } from "@/components/cycles";
+import { FiltersDropdown } from "@/components/issues";
 // constants
-import { CYCLE_TABS_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
+import { CYCLE_TABS_LIST, CYCLE_VIEW_LAYOUTS } from "@/constants/cycle";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useCycleFilter } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   projectId: string;
@@ -23,8 +24,6 @@ type Props = {
 
 export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   const { projectId } = props;
-  // states
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // hooks
@@ -36,10 +35,15 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
     updateFilters,
     updateSearchQuery,
   } = useCycleFilter();
+  const { isMobile } = usePlatformOS();
+  // states
+  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
+  // derived values
+  const activeLayout = currentProjectDisplayFilters?.layout ?? "list";
 
   const handleFilters = useCallback(
     (key: keyof TCycleFilters, value: string | string[]) => {
@@ -62,7 +66,10 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
-      else setIsSearchOpen(false);
+      else {
+        setIsSearchOpen(false);
+        inputRef.current?.blur();
+      }
     }
   };
 
@@ -107,7 +114,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
             <Search className="h-3.5 w-3.5" />
             <input
               ref={inputRef}
-              className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 focus:outline-none"
+              className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => updateSearchQuery(e.target.value)}
@@ -131,13 +138,11 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
           </FiltersDropdown>
           <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
             {CYCLE_VIEW_LAYOUTS.map((layout) => (
-              <Tooltip key={layout.key} tooltipContent={layout.title}>
+              <Tooltip key={layout.key} tooltipContent={layout.title} isMobile={isMobile}>
                 <button
                   type="button"
                   className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-                    currentProjectDisplayFilters?.layout == layout.key
-                      ? "bg-custom-background-100 shadow-custom-shadow-2xs"
-                      : ""
+                    activeLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
                   }`}
                   onClick={() =>
                     updateDisplayFilters(projectId, {
@@ -148,9 +153,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
                   <layout.icon
                     strokeWidth={2}
                     className={`h-3.5 w-3.5 ${
-                      currentProjectDisplayFilters?.layout == layout.key
-                        ? "text-custom-text-100"
-                        : "text-custom-text-200"
+                      activeLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
                     }`}
                   />
                 </button>

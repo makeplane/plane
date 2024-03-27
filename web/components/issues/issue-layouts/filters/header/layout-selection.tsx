@@ -4,7 +4,9 @@ import React from "react";
 import { Tooltip } from "@plane/ui";
 // types
 // constants
-import { EIssueLayoutTypes, ISSUE_LAYOUTS } from "constants/issue";
+import { EIssueLayoutTypes,ISSUE_LAYOUTS } from "@/constants/issue";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// hooks
 
 type Props = {
   layouts: EIssueLayoutTypes[];
@@ -14,11 +16,12 @@ type Props = {
 
 export const LayoutSelection: React.FC<Props> = (props) => {
   const { layouts, onChange, selectedLayout } = props;
+  const { isMobile } = usePlatformOS();
 
   return (
     <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
       {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout) => (
-        <Tooltip key={layout.key} tooltipContent={layout.title}>
+        <Tooltip key={layout.key} tooltipContent={layout.title} isMobile={isMobile}>
           <button
             type="button"
             className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${

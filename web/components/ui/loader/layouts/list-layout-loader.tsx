@@ -21,6 +21,8 @@ export const ListLoaderItemRow = forwardRef<HTMLDivElement>((props, ref) => (
   </div>
 ));
 
+ListLoaderItemRow.displayName = "ListLoaderItemRow";
+
 const ListSection = ({ itemCount }: { itemCount: number }) => (
   <div className="flex flex-shrink-0 flex-col">
     <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">

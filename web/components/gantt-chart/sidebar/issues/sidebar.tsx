@@ -1,13 +1,14 @@
-import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
+import { RefObject, useRef } from "react";
+import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
+import { observer } from "mobx-react";
 // components
 // ui
 import { Loader } from "@plane/ui";
 // types
-import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
-import { observer } from "mobx-react";
+import { IGanttBlock, IBlockUpdateData } from "@/components/gantt-chart/types";
+//hooks
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { IssueDraggableBlock } from "./issue-draggable-block";
-import { useIntersectionObserver } from "hooks/use-intersection-observer";
-import { RefObject, useRef } from "react";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
@@ -89,6 +90,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
                 <>
                   {blockIds.map((blockId, index) => (
                     <IssueDraggableBlock
+                      key={blockId}
                       blockId={blockId}
                       enableReorder={enableReorder}
                       index={index}

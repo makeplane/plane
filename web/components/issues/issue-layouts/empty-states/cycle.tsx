@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
 import isEmpty from "lodash/isEmpty";
+import size from "lodash/size";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useApplication, useCycle, useEventTracker, useIssues } from "hooks/store";
-// ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
-import { ExistingIssuesListModal } from "components/core";
-// components
-import { EmptyState } from "components/empty-state";
 // types
 import { IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { ExistingIssuesListModal } from "@/components/core";
+// components
+import { EmptyState } from "@/components/empty-state";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { EmptyStateType } from "constants/empty-state";
-import size from "lodash/size";
-import { useRouter } from "next/router";
+import { EmptyStateType } from "@/constants/empty-state";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { useApplication, useCycle, useEventTracker, useIssues } from "@/hooks/store";
 
 export const CycleEmptyState: React.FC = observer(() => {
   // router
@@ -82,12 +82,14 @@ export const CycleEmptyState: React.FC = observer(() => {
   };
 
   const isEmptyFilters = issueFilterCount > 0;
-  const emptyStateType = isCompletedCycleSnapshotAvailable
+  const isCompletedAndEmpty = isCompletedCycleSnapshotAvailable || cycleDetails?.status.toLowerCase() === "completed";
+
+  const emptyStateType = isCompletedAndEmpty
     ? EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES
     : isEmptyFilters
-    ? EmptyStateType.PROJECT_EMPTY_FILTER
-    : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
-  const additionalPath = isCompletedCycleSnapshotAvailable ? undefined : activeLayout ?? "list";
+      ? EmptyStateType.PROJECT_EMPTY_FILTER
+      : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
+  const additionalPath = isCompletedAndEmpty ? undefined : activeLayout ?? "list";
   const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
@@ -106,7 +108,7 @@ export const CycleEmptyState: React.FC = observer(() => {
           additionalPath={additionalPath}
           size={emptyStateSize}
           primaryButtonOnClick={
-            !isCompletedCycleSnapshotAvailable && !isEmptyFilters
+            !isCompletedAndEmpty && !isEmptyFilters
               ? () => {
                   setTrackElement("Cycle issue empty state");
                   toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
@@ -114,9 +116,7 @@ export const CycleEmptyState: React.FC = observer(() => {
               : undefined
           }
           secondaryButtonOnClick={
-            !isCompletedCycleSnapshotAvailable && isEmptyFilters
-              ? handleClearAllFilters
-              : () => setCycleIssuesListModal(true)
+            !isCompletedAndEmpty && isEmptyFilters ? handleClearAllFilters : () => setCycleIssuesListModal(true)
           }
         />
       </div>

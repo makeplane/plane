@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
 // components
-import { TransferIssues, TransferIssuesModal } from "components/cycles";
+import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
 import {
   CycleAppliedFiltersRoot,
   CycleCalendarLayout,
@@ -14,10 +14,11 @@ import {
   CycleListLayout,
   CycleSpreadsheetLayout,
   IssuePeekOverview,
-} from "components/issues";
+} from "@/components/issues";
 // constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
-import { useCycle, useIssues } from "hooks/store";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+// hooks
+import { useCycle, useIssues } from "@/hooks/store";
 
 const CycleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
   switch (props.activeLayout) {
@@ -40,7 +41,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
   // store hooks
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { getCycleById } = useCycle();
   // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);

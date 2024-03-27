@@ -7,18 +7,18 @@ import { mutate } from "swr";
 // components
 // ui
 import { CalendarDays, Download, RefreshCw } from "lucide-react";
+import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
 import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "components/analytics";
+import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "@/components/analytics";
 // helpers
 // types
 // fetch-keys
-import { ANALYTICS } from "constants/fetch-keys";
-import { cn } from "helpers/common.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { useCycle, useModule, useProject, useUser, useWorkspace } from "hooks/store";
-import { AnalyticsService } from "services/analytics.service";
-import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
+import { ANALYTICS } from "@/constants/fetch-keys";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useCycle, useModule, useProject, useUser, useWorkspace } from "@/hooks/store";
+import { AnalyticsService } from "@/services/analytics.service";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;

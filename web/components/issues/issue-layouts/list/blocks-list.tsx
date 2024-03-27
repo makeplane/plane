@@ -1,10 +1,10 @@
 import { FC, MutableRefObject } from "react";
-// components
-import RenderIfVisible from "components/core/render-if-visible-HOC";
-import { IssueBlock } from "components/issues";
-// types
-import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { observer } from "mobx-react";
+// components
+import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { IssueBlock } from "@/components/issues";
+// types
 
 interface Props {
   issueIds: TGroupedIssues | any;

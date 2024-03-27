@@ -2,8 +2,8 @@ import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { ProjectIssueQuickActions } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
+import { ProjectIssueQuickActions } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
 // components
 // types
 // constants

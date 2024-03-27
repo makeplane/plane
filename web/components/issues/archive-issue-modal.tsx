@@ -1,12 +1,12 @@
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { TIssue } from "@plane/types";
 // hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { useProject } from "hooks/store";
-import { useIssues } from "hooks/store/use-issues";
+import { useProject } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 // ui
 // types
-import { TIssue } from "@plane/types";
 
 type Props = {
   data?: TIssue;

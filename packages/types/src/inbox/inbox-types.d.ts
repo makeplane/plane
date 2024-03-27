@@ -1,5 +1,5 @@
 import { TIssue } from "../issues/base";
-import type { IProjectLite } from "../projects";
+import type { IProjectLite } from "../project";
 
 export type TInboxIssueExtended = {
   completed_at: string | null;

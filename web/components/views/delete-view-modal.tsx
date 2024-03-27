@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { IProjectView } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProjectView } from "hooks/store";
+import { useProjectView } from "@/hooks/store";
 // types
-import { IProjectView } from "@plane/types";
 
 type Props = {
   data: IProjectView;

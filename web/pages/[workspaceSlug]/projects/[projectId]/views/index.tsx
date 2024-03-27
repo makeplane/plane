@@ -2,15 +2,15 @@ import { ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // components
-import { PageHead } from "components/core";
-import { ProjectViewsHeader } from "components/headers";
-import { ProjectViewsList } from "components/views";
+import { PageHead } from "@/components/core";
+import { ProjectViewsHeader } from "@/components/headers";
+import { ProjectViewsList } from "@/components/views";
 // hooks
-import { useProject } from "hooks/store";
+import { useProject } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { AppLayout } from "@/layouts/app-layout";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectViewsPage: NextPageWithLayout = observer(() => {
   // router

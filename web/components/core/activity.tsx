@@ -18,20 +18,25 @@ import {
   MessageSquareIcon,
   UsersIcon,
 } from "lucide-react";
+import { IIssueActivity } from "@plane/types";
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { capitalizeFirstLetter } from "helpers/string.helper";
-import { useEstimate, useLabel } from "hooks/store";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { capitalizeFirstLetter } from "@/helpers/string.helper";
+import { useEstimate, useLabel } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { IIssueActivity } from "@plane/types";
 
 export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  const { isMobile } = usePlatformOS();
 
   return (
-    <Tooltip tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}>
+    <Tooltip
+      tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}
+      isMobile={isMobile}
+    >
       {activity?.issue_detail ? (
         <a
           aria-disabled={activity.issue === null}

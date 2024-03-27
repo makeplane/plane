@@ -1,15 +1,15 @@
 import { useRouter } from "next/router";
 import { mutate } from "swr";
+import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 
 // components
 import { Button, Loader } from "@plane/ui";
-import { AnalyticsGraph, AnalyticsTable } from "components/analytics";
+import { AnalyticsGraph, AnalyticsTable } from "@/components/analytics";
 // ui
 // helpers
-import { ANALYTICS } from "constants/fetch-keys";
-import { convertResponseToBarGraphData } from "helpers/analytics.helper";
+import { ANALYTICS } from "@/constants/fetch-keys";
+import { convertResponseToBarGraphData } from "@/helpers/analytics.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 // fetch-keys
 
 type Props = {

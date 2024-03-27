@@ -1,8 +1,8 @@
 // nivo
 import { ResponsiveLine, LineSvgProps } from "@nivo/line";
 // helpers
-import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
-import { generateYAxisTickValues } from "helpers/graph.helper";
+import { CHARTS_THEME, DEFAULT_MARGIN } from "@/constants/graph";
+import { generateYAxisTickValues } from "@/helpers/graph.helper";
 // types
 import { TGraph } from "./types";
 // constants

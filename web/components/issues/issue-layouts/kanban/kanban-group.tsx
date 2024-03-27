@@ -1,9 +1,7 @@
 import { MutableRefObject, useRef } from "react";
 import { Droppable } from "@hello-pangea/dnd";
+import { observer } from "mobx-react";
 // hooks
-import { useProjectState } from "hooks/store";
-//components
-//types
 import {
   TGroupedIssues,
   TIssue,
@@ -12,10 +10,13 @@ import {
   TSubGroupedIssues,
   TPaginationData,
 } from "@plane/types";
+//components
+import { KanbanIssueBlockLoader } from "@/components/ui/loader";
+//hooks
+import { useProjectState } from "@/hooks/store";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+//types
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
-import { KanbanIssueBlockLoader } from "components/ui/loader";
-import { useIntersectionObserver } from "hooks/use-intersection-observer";
-import { observer } from "mobx-react";
 
 interface IKanbanGroup {
   groupId: string;
@@ -48,7 +49,7 @@ interface IKanbanGroup {
   viewId?: string;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
-  groupByVisibilityToggle: boolean;
+  groupByVisibilityToggle?: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   isDragStarted?: boolean;
 }

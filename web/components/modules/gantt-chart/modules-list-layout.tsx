@@ -1,22 +1,25 @@
+import { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { IModule } from "@plane/types";
 // mobx store
 // components
-import { ChartDataType, GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
-import { ModuleGanttBlock } from "components/modules";
-import { useModule, useProject } from "hooks/store";
+import { ChartDataType, GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "@/components/gantt-chart";
+import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
+import { ModuleGanttBlock } from "@/components/modules";
+import { getDate } from "@/helpers/date-time.helper";
+import { useModule, useProject } from "@/hooks/store";
 // types
-import { IModule } from "@plane/types";
-import { useCallback } from "react";
-import { getMonthChartItemPositionWidthInMonth } from "components/gantt-chart/views";
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // store
   const { currentProjectDetails } = useProject();
-  const { projectModuleIds, getModuleById, updateModuleDetails } = useModule();
+  const { getFilteredModuleIds, getModuleById, updateModuleDetails } = useModule();
+  // derived values
+  const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
 
   const handleModuleUpdate = async (module: IModule, data: IBlockUpdateData) => {
     if (!workspaceSlug || !module) return;
@@ -29,14 +32,14 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
 
   const getBlockById = useCallback(
     (id: string, currentViewData?: ChartDataType | undefined) => {
-      const module = getModuleById(id);
+      const projectModule = getModuleById(id);
 
       const block = {
-        data: module,
-        id: module?.id ?? "",
-        sort_order: module?.sort_order ?? 0,
-        start_date: module?.start_date ? new Date(module.start_date) : undefined,
-        target_date: module?.target_date ? new Date(module.target_date) : undefined,
+        data: projectModule,
+        id: projectModule?.id ?? "",
+        sort_order: projectModule?.sort_order ?? 0,
+        start_date: getDate(projectModule?.start_date),
+        target_date: getDate(projectModule?.target_date),
       };
       if (currentViewData) {
         return {
@@ -51,14 +54,14 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
 
   const isAllowed = currentProjectDetails?.member_role === 20 || currentProjectDetails?.member_role === 15;
 
-  if (!projectModuleIds) return null;
+  if (!filteredModuleIds) return null;
 
   return (
     <div className="h-full w-full overflow-y-auto">
       <GanttChartRoot
         title="Modules"
         loaderTitle="Modules"
-        blockIds={projectModuleIds}
+        blockIds={filteredModuleIds}
         getBlockById={getBlockById}
         sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}

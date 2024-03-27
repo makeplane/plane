@@ -1,13 +1,14 @@
 import { MutableRefObject, memo } from "react";
 import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
+import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks
 import { Tooltip, ControlLink } from "@plane/ui";
-import RenderIfVisible from "components/core/render-if-visible-HOC";
-import { cn } from "helpers/common.helper";
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
-import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 // ui
@@ -45,6 +46,7 @@ interface IssueDetailsBlockProps {
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props: IssueDetailsBlockProps) => {
   const { issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
   // hooks
+  const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
   const {
     router: { workspaceSlug },
@@ -70,12 +72,12 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
       </WithDisplayPropertiesHOC>
 
       {issue?.is_draft ? (
-        <Tooltip tooltipContent={issue.name}>
+        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
           <span>{issue.name}</span>
         </Tooltip>
       ) : (
         <ControlLink
-          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archived-issues" : "issues"}/${
+          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
             issue.id
           }`}
           target="_blank"
@@ -83,7 +85,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
           disabled={!!issue?.tempId}
         >
-          <Tooltip tooltipContent={issue.name}>
+          <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
             <span>{issue.name}</span>
           </Tooltip>
         </ControlLink>

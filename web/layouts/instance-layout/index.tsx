@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
 import { Spinner } from "@plane/ui";
-import { InstanceNotReady } from "components/instance";
-import { useApplication } from "hooks/store";
+import { InstanceNotReady } from "@/components/instance";
+import { useApplication } from "@/hooks/store";
 // components
 
 type Props = {

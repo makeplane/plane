@@ -2,12 +2,12 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
-// constants
-import { GROUP_WORKSPACE } from "constants/event-tracker";
-// helpers
-import { getUserRole } from "helpers/user.helper";
-// types
 import { IUser } from "@plane/types";
+// constants
+import { GROUP_WORKSPACE } from "@/constants/event-tracker";
+// helpers
+import { getUserRole } from "@/helpers/user.helper";
+// types
 
 export interface IPosthogWrapper {
   children: ReactNode;

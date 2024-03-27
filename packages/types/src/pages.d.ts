@@ -11,7 +11,7 @@ export interface IPage {
   archived_at: string | null;
   blocks: IPageBlock[];
   color: string;
-  created_at: Date;
+  created_at: string | null;
   created_by: string;
   description: string;
   description_html: string;
@@ -25,7 +25,7 @@ export interface IPage {
   owned_by: string;
   project: string;
   project_detail: IProjectLite;
-  updated_at: Date;
+  updated_at: string | null;
   updated_by: string;
   workspace: string;
   workspace_detail: IWorkspaceLite;

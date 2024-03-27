@@ -4,23 +4,24 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // ui
+import { ChevronDown, Pencil } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // icons
-import { ChevronDown, Pencil } from "lucide-react";
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
 // fetch-keys
-import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+import { ProjectLogo } from "@/components/project";
+import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useApplication, useProject, useUser } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { UserService } from "services/user.service";
+import { UserService } from "@/services/user.service";
 // components
 import { ProfileSidebarTime } from "./time";
-import { ProjectLogo } from "components/project";
 
 // services
 const userService = new UserService();
@@ -35,7 +36,7 @@ export const ProfileSidebar = observer(() => {
   const { currentUser } = useUser();
   const { theme: themeStore } = useApplication();
   const { getProjectById } = useProject();
-
+  const { isMobile } = usePlatformOS();
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
     workspaceSlug && userId
@@ -158,7 +159,7 @@ export const ProfileSidebar = observer(() => {
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2">
                             {project.assigned_issues > 0 && (
-                              <Tooltip tooltipContent="Completion percentage" position="left">
+                              <Tooltip tooltipContent="Completion percentage" position="left" isMobile={isMobile}>
                                 <div
                                   className={`rounded px-1 py-0.5 text-xs font-medium ${
                                     completedIssuePercentage <= 35

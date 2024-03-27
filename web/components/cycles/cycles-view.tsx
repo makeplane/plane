@@ -1,17 +1,17 @@
 import { FC } from "react";
-import Image from "next/image";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useCycle, useCycleFilter } from "hooks/store";
-// components
-import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cycles";
-// ui
-import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
-// assets
-import NameFilterImage from "public/empty-state/cycle/name-filter.svg";
-import AllFiltersImage from "public/empty-state/cycle/all-filters.svg";
-// types
+import Image from "next/image";
 import { TCycleLayoutOptions } from "@plane/types";
+// hooks
+// components
+import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "@/components/cycles";
+// ui
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
+import { useCycle, useCycleFilter } from "@/hooks/store";
+// assets
+import AllFiltersImage from "public/empty-state/cycle/all-filters.svg";
+import NameFilterImage from "public/empty-state/cycle/name-filter.svg";
+// types
 
 export interface ICyclesView {
   layout: TCycleLayoutOptions;

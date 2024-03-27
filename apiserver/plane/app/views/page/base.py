@@ -70,6 +70,7 @@ class PageViewSet(BaseViewSet):
             .filter(
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
             )
             .filter(parent__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=0))

@@ -1,15 +1,15 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// hooks
-import { CycleGanttBlock } from "components/cycles";
-import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar, ChartDataType } from "components/gantt-chart";
-import { useCycle } from "hooks/store";
-// components
-// types
 import { ICycle } from "@plane/types";
-import { getMonthChartItemPositionWidthInMonth } from "components/gantt-chart/views";
-// constants
+// components
+import { CycleGanttBlock } from "@/components/cycles";
+import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar, ChartDataType } from "@/components/gantt-chart";
+import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
+// helpers
+import { getDate } from "@/helpers/date-time.helper";
+// hooks
+import { useCycle } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -31,8 +31,8 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
         data: cycle,
         id: cycle?.id ?? "",
         sort_order: cycle?.sort_order ?? 0,
-        start_date: cycle?.start_date ? new Date(cycle?.start_date) : undefined,
-        target_date: cycle?.end_date ? new Date(cycle?.end_date) : undefined,
+        start_date: getDate(cycle?.start_date),
+        target_date: getDate(cycle?.end_date),
       };
 
       if (currentViewData) {

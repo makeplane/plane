@@ -2,22 +2,25 @@ import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
 // components
 import { Info, Star } from "lucide-react";
+import type { TCycleGroups } from "@plane/types";
 import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast } from "@plane/ui";
-import { CycleQuickActions } from "components/cycles";
+import { CycleQuickActions } from "@/components/cycles";
+// hooks
 // ui
 // icons
 // helpers
-import { CYCLE_STATUS } from "constants/cycle";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
+// import { copyTextToClipboard } from "@/helpers/string.helper";
 // constants
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
+import { CYCLE_STATUS } from "@/constants/cycle";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { findHowManyDaysLeft, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+// constants
+import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 //.types
-import { TCycleGroups } from "@plane/types";
 
 export interface ICyclesBoardCard {
   workspaceSlug: string;
@@ -38,12 +41,15 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const { getUserDetails } = useMember();
   // computed
   const cycleDetails = getCycleById(cycleId);
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   if (!cycleDetails) return null;
 
   const cycleStatus = cycleDetails.status.toLocaleLowerCase();
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
+  // const isCompleted = cycleStatus === "completed";
+  const endDate = getDate(cycleDetails.end_date);
+  const startDate = getDate(cycleDetails.start_date);
   const isDateValid = cycleDetails.start_date || cycleDetails.end_date;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
@@ -128,10 +134,18 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     e.preventDefault();
     e.stopPropagation();
 
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekCycle: cycleId },
-    });
+    if (query.peekCycle) {
+      delete query.peekCycle;
+      router.push({
+        pathname: router.pathname,
+        query: { ...query },
+      });
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekCycle: cycleId },
+      });
+    }
   };
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
@@ -145,7 +159,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
               <span className="flex-shrink-0">
                 <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />
               </span>
-              <Tooltip tooltipContent={cycleDetails.name} position="top">
+              <Tooltip tooltipContent={cycleDetails.name} position="top" isMobile={isMobile}>
                 <span className="truncate text-base font-medium">{cycleDetails.name}</span>
               </Tooltip>
             </div>
@@ -176,7 +190,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
                 <span className="text-xs text-custom-text-300">{issueCount}</span>
               </div>
               {cycleDetails.assignee_ids.length > 0 && (
-                <Tooltip tooltipContent={`${cycleDetails.assignee_ids.length} Members`}>
+                <Tooltip tooltipContent={`${cycleDetails.assignee_ids.length} Members`} isMobile={isMobile}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
                       {cycleDetails.assignee_ids.map((assigne_id) => {
@@ -190,6 +204,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
             </div>
 
             <Tooltip
+              isMobile={isMobile}
               tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
               position="top-left"
             >

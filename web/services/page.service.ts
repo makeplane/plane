@@ -1,8 +1,9 @@
-import { API_BASE_URL } from "helpers/common.helper";
-// services
-import { APIService } from "services/api.service";
 // types
 import { IPage, IPageBlock, TIssue } from "@plane/types";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
+// services
+import { APIService } from "@/services/api.service";
 
 export class PageService extends APIService {
   constructor() {

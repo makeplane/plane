@@ -4,6 +4,8 @@ export const KanbanIssueBlockLoader = forwardRef<HTMLSpanElement>((props, ref) =
   <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-custom-background-80 rounded" />
 ));
 
+KanbanIssueBlockLoader.displayName = "KanbanIssueBlockLoader";
+
 export const KanbanLayoutLoader = ({ cardsInEachColumn = [2, 3, 2, 4, 3] }: { cardsInEachColumn?: number[] }) => (
   <div className="flex gap-5 px-3.5 py-1.5 overflow-x-auto">
     {cardsInEachColumn.map((cardsInColumn, columnIndex) => (

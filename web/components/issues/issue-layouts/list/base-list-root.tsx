@@ -1,20 +1,18 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
+import useSWR from "swr";
 // types
-import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useIssues, useUser } from "hooks/store";
-
 import { TGroupedIssues, TIssue } from "@plane/types";
+// constants
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useIssues, useUser } from "@/hooks/store";
+// hooks
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
 import { IQuickActionProps } from "./list-view-types";
-import { useIssuesActions } from "hooks/use-issues-actions";
-import { IssueLayoutHOC } from "../issue-layout-HOC";
-import useSWR from "swr";
-import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
-// constants
-// hooks
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT
@@ -106,16 +104,12 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   );
 
   const getPaginationData = useCallback(
-    (groupId?: string) => {
-      return issues?.getPaginationData(groupId, undefined);
-    },
+    (groupId?: string) => issues?.getPaginationData(groupId, undefined),
     [issues?.getPaginationData]
   );
 
   const getGroupIssueCount = useCallback(
-    (groupId?: string) => {
-      return issues?.getGroupIssueCount(groupId, undefined, false);
-    },
+    (groupId?: string) => issues?.getGroupIssueCount(groupId, undefined, false),
     [issues?.getGroupIssueCount]
   );
 

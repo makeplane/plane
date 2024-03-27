@@ -3,19 +3,20 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // icons
 import { ChevronRight, MoreHorizontal } from "lucide-react";
+import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
 // components
-import RenderIfVisible from "components/core/render-if-visible-HOC";
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // constants
-import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
+import { SPREADSHEET_PROPERTY_LIST } from "@/constants/spreadsheet";
 // helper
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssueDetail, useProject } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useIssueDetail, useProject } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // local components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssueColumn } from "./issue-column";
@@ -148,6 +149,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   //hooks
   const { getProjectIdentifierById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   const menuActionRef = useRef<HTMLDivElement | null>(null);
@@ -245,7 +247,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           disabled={!!issueDetail?.tempId}
         >
           <div className="w-full overflow-hidden">
-            <Tooltip tooltipContent={issueDetail.name}>
+            <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
               <div
                 className="h-full w-full cursor-pointer truncate px-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
                 tabIndex={-1}

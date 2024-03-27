@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { TIssue } from "@plane/types";
 // hooks
-import { CycleDropdown } from "components/dropdowns";
-import { EIssuesStoreType } from "constants/issue";
-import { useEventTracker, useIssues } from "hooks/store";
+import { CycleDropdown } from "@/components/dropdowns";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useEventTracker, useIssues } from "@/hooks/store";
 // components
 // types
-import { TIssue } from "@plane/types";
 // constants
 
 type Props = {

@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 // mobx store
-import { EIssuesStoreType } from "constants/issue";
+import { EIssuesStoreType } from "@/constants/issue";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 

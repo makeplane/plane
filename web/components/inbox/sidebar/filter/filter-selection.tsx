@@ -1,17 +1,17 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { TInboxIssueFilterOptions } from "@plane/types";
 // mobx store
 // ui
 // icons
 import { PriorityIcon } from "@plane/ui";
-import { MultiLevelDropdown } from "components/ui";
+import { MultiLevelDropdown } from "@/components/ui";
 // types
 // constants
-import { INBOX_STATUS } from "constants/inbox";
-import { ISSUE_PRIORITIES } from "constants/issue";
-import { useInboxIssues } from "hooks/store";
-import { TInboxIssueFilterOptions } from "@plane/types";
+import { INBOX_STATUS } from "@/constants/inbox";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
+import { useInboxIssues } from "@/hooks/store";
 
 type TInboxIssueFilterSelection = { workspaceSlug: string; projectId: string; inboxId: string };
 

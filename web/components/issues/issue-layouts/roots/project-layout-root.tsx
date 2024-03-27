@@ -13,12 +13,12 @@ import {
   ProjectAppliedFiltersRoot,
   ProjectSpreadsheetLayout,
   IssuePeekOverview,
-} from "components/issues";
+} from "@/components/issues";
 // hooks
 // helpers
 // constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 
 const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
   switch (props.activeLayout) {

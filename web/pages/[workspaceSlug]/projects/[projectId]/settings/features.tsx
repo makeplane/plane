@@ -3,18 +3,18 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { PageHead } from "components/core";
-import { ProjectSettingHeader } from "components/headers";
-import { ProjectFeaturesList } from "components/project";
-import { useProject, useUser } from "hooks/store";
+import { PageHead } from "@/components/core";
+import { ProjectSettingHeader } from "@/components/headers";
+import { ProjectFeaturesList } from "@/components/project";
+import { EUserProjectRoles } from "@/constants/project";
+import { useProject, useUser } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
+import { AppLayout } from "@/layouts/app-layout";
+import { ProjectSettingLayout } from "@/layouts/settings-layout";
 // components
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 const FeaturesSettingsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();

@@ -1,15 +1,14 @@
+import { observer } from "mobx-react";
 import {
   CalendarLayoutLoader,
   GanttLayoutLoader,
   KanbanLayoutLoader,
   ListLayoutLoader,
   SpreadsheetLayoutLoader,
-} from "components/ui";
-import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
-import { observer } from "mobx-react";
+} from "@/components/ui";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 import { IssueLayoutEmptyState } from "./empty-states";
-import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
 
 const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
   const { layout } = props;

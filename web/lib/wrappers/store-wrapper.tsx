@@ -4,9 +4,9 @@ import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // helpers
-import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
+import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication, useUser } from "@/hooks/store";
 
 interface IStoreWrapper {
   children: ReactNode;

@@ -1,4 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import update from "lodash/update";
 import uniq from "lodash/uniq";
 import concat from "lodash/concat";
@@ -7,6 +8,9 @@ import orderBy from "lodash/orderBy";
 import clone from "lodash/clone";
 import indexOf from "lodash/indexOf";
 import isEmpty from "lodash/isEmpty";
+import set from "lodash/set";
+import get from "lodash/get";
+import isEqual from "lodash/isEqual";
 // types
 import {
   TIssue,
@@ -25,16 +29,12 @@ import {
 import { IIssueRootStore } from "../root.store";
 import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
 // constants
-import { ISSUE_PRIORITIES } from "constants/issue";
-import { STATE_GROUPS } from "constants/state";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
+import { STATE_GROUPS } from "@/constants/state";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // services
-import { IssueArchiveService, IssueDraftService, IssueService } from "services/issue";
-import set from "lodash/set";
-import { get } from "lodash";
-import { computedFn } from "mobx-utils";
-import isEqual from "date-fns/isEqual";
+import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 

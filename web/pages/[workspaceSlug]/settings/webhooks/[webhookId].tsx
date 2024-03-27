@@ -2,21 +2,21 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { IWebhook } from "@plane/types";
 // hooks
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 
-import { PageHead } from "components/core";
-import { WorkspaceSettingHeader } from "components/headers";
-import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "components/web-hooks";
-import { useUser, useWebhook, useWorkspace } from "hooks/store";
+import { PageHead } from "@/components/core";
+import { WorkspaceSettingHeader } from "@/components/headers";
+import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
+import { useUser, useWebhook, useWorkspace } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { AppLayout } from "@/layouts/app-layout";
+import { WorkspaceSettingLayout } from "@/layouts/settings-layout";
 // components
 // ui
 // types
-import { NextPageWithLayout } from "lib/types";
-import { IWebhook } from "@plane/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   // states

@@ -3,9 +3,9 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { IssuePeekOverview } from "components/issues/peek-overview";
-import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 // components
 import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";
 import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
@@ -28,7 +28,7 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // hooks
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
+  const { issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
 
   useSWR(
     workspaceSlug && projectId ? `DRAFT_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,

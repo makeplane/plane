@@ -1,12 +1,11 @@
-import pull from "lodash/pull";
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import { TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
+import { TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags } from "@plane/types";
 // services
 // types
 import { IIssueRootStore } from "../root.store";
 import { IArchivedIssuesFilter } from "./filter.store";
-import { BaseIssuesStore, EIssueGroupedAction, IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 
 export interface IArchivedIssues extends IBaseIssuesStore {
   // observable

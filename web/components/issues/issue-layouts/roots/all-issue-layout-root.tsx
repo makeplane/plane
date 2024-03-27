@@ -1,30 +1,28 @@
-import React, { Fragment, useCallback } from "react";
+import React, { useCallback } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// hooks
-import { useWorkspaceIssueProperties } from "hooks/use-workspace-issue-properties";
-import { useApplication, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
-import { useIssuesActions } from "hooks/use-issues-actions";
-// components
-import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
-import { SpreadsheetView } from "components/issues/issue-layouts";
-import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-action-dropdowns";
-import { EmptyState } from "components/empty-state";
-import { SpreadsheetLayoutLoader } from "components/ui";
-// types
 import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
+// components
+import { SpreadsheetView } from "@/components/issues/issue-layouts";
+import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
+import { SpreadsheetLayoutLoader } from "@/components/ui";
 // constants
-import { EUserProjectRoles } from "constants/project";
 import {
   EIssueFilterType,
   EIssueLayoutTypes,
   EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
-} from "constants/issue";
-import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
-import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
+} from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
+import { useGlobalView, useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
+// store
+import { ALL_ISSUES } from "@/store/issue/helpers/base-issues.store";
+import { IssuePeekOverview } from "../../peek-overview";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
@@ -34,7 +32,6 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
   // store
-  const { commandPalette: commandPaletteStore } = useApplication();
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },
     issues: { loader, getPaginationData, groupedIssueIds, fetchIssues, fetchNextIssues },
@@ -45,8 +42,6 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
-  const { workspaceProjectIds } = useProject();
-  const { setTrackElement } = useEventTracker();
   // filter init from the query params
 
   const routerFilterParams = () => {
@@ -162,9 +157,6 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   const issueIds = groupedIssueIds[ALL_ISSUES];
   const nextPageResults = getPaginationData(ALL_ISSUES, undefined)?.nextPageResults;
-
-  const emptyStateType =
-    (workspaceProjectIds ?? []).length > 0 ? `workspace-${globalViewId}` : EmptyStateType.WORKSPACE_NO_PROJECTS;
 
   return (
     <IssueLayoutHOC storeType={EIssuesStoreType.GLOBAL} layout={EIssueLayoutTypes.SPREADSHEET}>

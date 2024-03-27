@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { Disclosure } from "@headlessui/react";
 import { ChevronRight } from "lucide-react";
+import { Disclosure } from "@headlessui/react";
 // components
-import { CyclePeekOverview, CyclesBoardMap } from "components/cycles";
+import { CyclePeekOverview, CyclesBoardMap } from "@/components/cycles";
 // helpers
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 
 export interface ICyclesBoard {
   completedCycleIds: string[];
@@ -22,12 +22,14 @@ export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
     <div className="h-full w-full">
       <div className="flex h-full w-full justify-between">
         <div className="h-full w-full flex flex-col p-8 space-y-8 vertical-scrollbar scrollbar-lg">
-          <CyclesBoardMap
-            cycleIds={cycleIds}
-            peekCycle={peekCycle}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-          />
+          {cycleIds.length > 0 && (
+            <CyclesBoardMap
+              cycleIds={cycleIds}
+              peekCycle={peekCycle}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
           {completedCycleIds.length !== 0 && (
             <Disclosure as="div" className="space-y-4">
               <Disclosure.Button className="bg-custom-background-80 font-semibold text-sm py-1 px-2 rounded flex items-center gap-1">

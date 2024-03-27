@@ -1,18 +1,18 @@
 import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { TIssue } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import { IssueView } from "components/issues";
+import { IssueView } from "@/components/issues";
 // ui
 // components
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "constants/event-tracker";
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
 // components
 // types
-import { TIssue } from "@plane/types";
 // constants
 
 interface IIssuePeekOverview {

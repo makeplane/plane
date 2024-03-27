@@ -3,19 +3,19 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
+import { IProject, TIssue } from "@plane/types";
 // hooks
 import { setPromiseToast } from "@plane/ui";
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { createIssuePayload } from "helpers/issue.helper";
-import { useEventTracker, useProject } from "hooks/store";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { createIssuePayload } from "@/helpers/issue.helper";
+import { useEventTracker, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
 // ui
 // types
-import { IProject, TIssue } from "@plane/types";
-import { ISSUE_CREATED } from "constants/event-tracker";
 // constants
 
 interface IInputProps {

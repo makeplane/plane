@@ -1,17 +1,17 @@
 import React from "react";
 
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 // mobx
-import { observer } from "mobx-react-lite";
 // lib
-import { useMobxStore } from "lib/mobx/store-provider";
-// components
-import { CommentCard, AddComment } from "components/issues/peek-overview";
-// ui
-import { Icon } from "components/ui";
 import { Button } from "@plane/ui";
+import { CommentCard, AddComment } from "@/components/issues/peek-overview";
+import { Icon } from "@/components/ui";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+// components
+// ui
 // types
 import { IIssue } from "types/issue";
 

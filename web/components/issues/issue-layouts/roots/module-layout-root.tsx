@@ -12,10 +12,10 @@ import {
   ModuleKanBanLayout,
   ModuleListLayout,
   ModuleSpreadsheetLayout,
-} from "components/issues";
+} from "@/components/issues";
 // constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 // types
 
 const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
@@ -40,7 +40,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
   // hooks
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
+  const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
 
   useSWR(
     workspaceSlug && projectId && moduleId

@@ -3,14 +3,14 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
+import { IPasswordSignInData } from "@plane/types";
 // services
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
-import { AuthService } from "services/auth.service";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { AuthService } from "@/services/auth.service";
 // types
-import { IPasswordSignInData } from "@plane/types";
 
 type Props = {
   onSubmit: () => Promise<void>;

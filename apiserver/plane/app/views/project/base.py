@@ -1,6 +1,7 @@
 # Python imports
 import boto3
 from django.conf import settings
+from django.utils import timezone
 
 # Django imports
 from django.db import IntegrityError
@@ -13,11 +14,13 @@ from django.db.models import (
     Q,
     Subquery,
 )
-from rest_framework import serializers, status
-from rest_framework.permissions import AllowAny
 
 # Third Party imports
 from rest_framework.response import Response
+from rest_framework import serializers, status
+from rest_framework.permissions import AllowAny
+
+# Module imports
 
 from plane.app.permissions import (
     ProjectBasePermission,
@@ -29,8 +32,6 @@ from plane.app.serializers import (
     ProjectListSerializer,
     ProjectSerializer,
 )
-
-# Module imports
 from plane.app.views.base import BaseAPIView, BaseViewSet, WebhookMixin
 from plane.db.models import (
     Cycle,
@@ -70,7 +71,10 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(
-                Q(project_projectmember__member=self.request.user)
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
                 | Q(network=2)
             )
             .select_related(
@@ -175,6 +179,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
+            .filter(archived_at__isnull=True)
             .filter(pk=pk)
             .annotate(
                 total_issues=Issue.issue_objects.filter(
@@ -362,6 +367,12 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
 
             project = Project.objects.get(pk=pk)
 
+            if project.archived_at:
+                return Response(
+                    {"error": "Archived projects cannot be updated"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             serializer = ProjectSerializer(
                 project,
                 data={**request.data},
@@ -414,6 +425,28 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
             )
+
+
+class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+
+    def post(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.archived_at = timezone.now()
+        project.save()
+        return Response(
+            {"archived_at": str(project.archived_at)},
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.archived_at = None
+        project.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectIdentifierEndpoint(BaseAPIView):

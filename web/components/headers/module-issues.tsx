@@ -2,23 +2,27 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
 import { ArrowRight, PanelRight, Plus } from "lucide-react";
+// types
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip } from "@plane/ui";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { ModuleMobileHeader } from "components/modules/module-mobile-header";
+// components
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import { ProjectLogo } from "@/components/project";
+// constants
 import {
   EIssuesStoreType,
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
   EIssueLayoutTypes,
-} from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { cn } from "helpers/common.helper";
-import { truncateText } from "helpers/string.helper";
+} from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { truncateText } from "@/helpers/string.helper";
+// hooks
 import {
   useApplication,
   useEventTracker,
@@ -29,17 +33,12 @@ import {
   useProjectState,
   useUser,
   useIssues,
-} from "hooks/store";
-import { useIssuesActions } from "hooks/use-issues-actions";
-import useLocalStorage from "hooks/use-local-storage";
-// components
+} from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+import useLocalStorage from "@/hooks/use-local-storage";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 // icons
-// helpers
-// types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
-import { ProjectLogo } from "components/project";
-// constants
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -71,6 +70,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
+  // hooks
+  const { isMobile } = usePlatformOS();
   // store hooks
   const {
     issuesFilter: { issueFilters },
@@ -105,7 +106,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       if (!projectId) return;
       updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
-    [projectId, moduleId, updateFilters]
+    [projectId, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
@@ -114,8 +115,10 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -124,7 +127,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
       updateFilters(projectId.toString(), EIssueFilterType.FILTERS, { [key]: newValues });
     },
-    [projectId, moduleId, issueFilters, updateFilters]
+    [projectId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
@@ -132,7 +135,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       if (!projectId) return;
       updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
-    [projectId, moduleId, updateFilters]
+    [projectId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
@@ -140,7 +143,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       if (!projectId) return;
       updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
-    [projectId, moduleId, updateFilters]
+    [projectId, updateFilters]
   );
 
   // derived values
@@ -162,9 +165,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         moduleDetails={moduleDetails ?? undefined}
       />
       <div className="relative z-[15] items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex justify-between bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
-            <SidebarHamburgerToggle />
             <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
@@ -213,6 +215,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                           <p className="truncate">{moduleDetails?.name && moduleDetails.name}</p>
                           {issueCount && issueCount > 0 ? (
                             <Tooltip
+                              isMobile={isMobile}
                               tooltipContent={`There are ${issueCount} ${
                                 issueCount > 1 ? "issues" : "issue"
                               } in this module`}
@@ -316,7 +319,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             </button>
           </div>
         </div>
-        <ModuleMobileHeader />
       </div>
     </>
   );

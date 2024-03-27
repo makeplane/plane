@@ -1,6 +1,6 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import { WorkspaceService } from "services/workspace.service";
+import { WorkspaceService } from "@/services/workspace.service";
 import { IssuePaginationOptions, TIssue, TIssuesResponse, TLoader, ViewFlags } from "@plane/types";
 // services
 // types

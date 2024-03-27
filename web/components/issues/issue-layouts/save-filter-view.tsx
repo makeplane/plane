@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@plane/ui";
 // components
-import { CreateUpdateProjectViewModal } from "components/views";
+import { CreateUpdateProjectViewModal } from "@/components/views";
 
 interface ISaveFilterView {
   workspaceSlug: string;

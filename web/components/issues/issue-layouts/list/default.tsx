@@ -1,10 +1,7 @@
-import { useCallback, useRef } from "react";
-// components
-import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
-// hooks
-import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
-// constants
-// types
+import { useRef } from "react";
+import isNil from "lodash/isNil";
+import { observer } from "mobx-react";
+//types
 import {
   GroupByColumnTypes,
   TGroupedIssues,
@@ -14,14 +11,18 @@ import {
   IGroupByColumn,
   TPaginationData,
 } from "@plane/types";
-import { getGroupByColumns } from "../utils";
+// components
+import { IssueBlocksList, ListQuickAddIssueForm } from "@/components/issues";
+import { ListLoaderItemRow } from "@/components/ui";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
+// hooks
+import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+// utils
+import { getGroupByColumns, isWorkspaceLevel } from "../utils";
+//components
 import { HeaderGroupByCard } from "./headers/group-by-card";
-import { EIssuesStoreType } from "constants/issue";
-import { ListLoaderItemRow } from "components/ui";
-import { useIntersectionObserver } from "hooks/use-intersection-observer";
-import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
-import { observer } from "mobx-react";
-import isNil from "lodash/isNil";
 
 export interface IGroupByList {
   groupedIssueIds: TGroupedIssues;
@@ -94,7 +95,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     projectState,
     member,
     true,
-    true
+    isWorkspaceLevel(storeType)
   );
 
   if (!groups) return null;

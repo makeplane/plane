@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 // hooks
 // components
 import { Button, LayersIcon } from "@plane/ui";
-import { NotAuthorizedView } from "components/auth-screens";
+import { NotAuthorizedView } from "@/components/auth-screens";
 // ui
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { useUser } from "hooks/store";
+import { EUserProjectRoles } from "@/constants/project";
+import { useUser } from "@/hooks/store";
 import { ProjectSettingsSidebar } from "./sidebar";
 
 export interface IProjectSettingLayout {

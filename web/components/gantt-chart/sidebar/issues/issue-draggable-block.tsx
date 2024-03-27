@@ -1,7 +1,7 @@
 import { Draggable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react";
+import { IGanttBlock } from "@/components/gantt-chart/types";
 import { IssuesSidebarBlock } from "./block";
-import { IGanttBlock } from "components/gantt-chart/types";
 
 interface Props {
   blockId: string;

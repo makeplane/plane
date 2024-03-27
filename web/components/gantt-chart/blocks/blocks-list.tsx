@@ -43,23 +43,21 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
         transform: `translateY(${HEADER_HEIGHT}px)`,
       }}
     >
-      {blockIds?.map((blockId) => {
-        return (
-          <GanttChartBlock
-            key={blockId}
-            blockId={blockId}
-            getBlockById={getBlockById}
-            showAllBlocks={showAllBlocks}
-            blockToRender={blockToRender}
-            blockUpdateHandler={blockUpdateHandler}
-            enableBlockLeftResize={enableBlockLeftResize}
-            enableBlockRightResize={enableBlockRightResize}
-            enableBlockMove={enableBlockMove}
-            enableAddBlock={enableAddBlock}
-            ganttContainerRef={ganttContainerRef}
-          />
-        );
-      })}
+      {blockIds?.map((blockId) => (
+        <GanttChartBlock
+          key={blockId}
+          blockId={blockId}
+          getBlockById={getBlockById}
+          showAllBlocks={showAllBlocks}
+          blockToRender={blockToRender}
+          blockUpdateHandler={blockUpdateHandler}
+          enableBlockLeftResize={enableBlockLeftResize}
+          enableBlockRightResize={enableBlockRightResize}
+          enableBlockMove={enableBlockMove}
+          enableAddBlock={enableAddBlock}
+          ganttContainerRef={ganttContainerRef}
+        />
+      ))}
     </div>
   );
 };

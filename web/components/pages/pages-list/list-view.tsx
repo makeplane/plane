@@ -1,15 +1,15 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 // hooks
-import { useApplication } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
+import { Loader } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
+import { useApplication } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 // components
-import { EmptyState } from "components/empty-state";
 import { PagesListItem } from "./list-item";
 // ui
-import { Loader } from "@plane/ui";
 // constants
-import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
 
 type IPagesListView = {
   pageIds: string[];
@@ -29,7 +29,7 @@ export const PagesListView: FC<IPagesListView> = (props) => {
 
   // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
 
-  const emptyStateType = pageTab ? `project-page-${pageTab}` : EmptyStateType.PROJECT_PAGE_ALL;
+  const emptyStateType = pageTab ? `project-page-${pageTab.toLowerCase()}` : EmptyStateType.PROJECT_PAGE_ALL;
   const isButtonVisible = pageTab !== "archived" && pageTab !== "favorites";
 
   return (

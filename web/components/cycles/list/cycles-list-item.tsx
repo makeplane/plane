@@ -2,22 +2,23 @@ import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-import { Check, Info, Star, User2 } from "lucide-react";
-import { Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar, setPromiseToast } from "@plane/ui";
-import { CycleQuickActions } from "components/cycles";
-import { CYCLE_STATUS } from "constants/cycle";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
-import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-// components
-// ui
 // icons
-// helpers
-// constants
+import { Check, Info, Star, User2 } from "lucide-react";
 // types
-import { TCycleGroups } from "@plane/types";
-import { EUserProjectRoles } from "constants/project";
+import type { TCycleGroups } from "@plane/types";
+// ui
+import { Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar, setPromiseToast } from "@plane/ui";
+// components
+import { CycleQuickActions } from "@/components/cycles";
+// constants
+import { CYCLE_STATUS } from "@/constants/cycle";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { findHowManyDaysLeft, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
+import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TCyclesListItem = {
   cycleId: string;
@@ -27,12 +28,15 @@ type TCyclesListItem = {
   handleRemoveFromFavorites?: () => void;
   workspaceSlug: string;
   projectId: string;
+  isArchived?: boolean;
 };
 
 export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
-  const { cycleId, workspaceSlug, projectId } = props;
+  const { cycleId, workspaceSlug, projectId, isArchived } = props;
   // router
   const router = useRouter();
+  // hooks
+  const { isMobile } = usePlatformOS();
   // store hooks
   const { captureEvent } = useEventTracker();
   const {
@@ -97,15 +101,23 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
     });
   };
 
-  const openCycleOverview = (e: MouseEvent<HTMLButtonElement>) => {
+  const openCycleOverview = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     const { query } = router;
     e.preventDefault();
     e.stopPropagation();
 
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekCycle: cycleId },
-    });
+    if (query.peekCycle) {
+      delete query.peekCycle;
+      router.push({
+        pathname: router.pathname,
+        query: { ...query },
+      });
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekCycle: cycleId },
+      });
+    }
   };
 
   const cycleDetails = getCycleById(cycleId);
@@ -116,8 +128,8 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   // TODO: change this logic once backend fix the response
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const isCompleted = cycleStatus === "completed";
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
+  const endDate = getDate(cycleDetails.end_date);
+  const startDate = getDate(cycleDetails.start_date);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -142,7 +154,14 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
 
   return (
     <>
-      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
+      <Link
+        href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
+        onClick={(e) => {
+          if (isArchived) {
+            openCycleOverview(e);
+          }
+        }}
+      >
         <div className="group flex w-full flex-col items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90 md:flex-row">
           <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
             <div className="relative flex w-full items-center gap-3 overflow-hidden">
@@ -164,7 +183,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
 
               <div className="relative flex items-center gap-2.5 overflow-hidden">
                 <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5 flex-shrink-0" />
-                <Tooltip tooltipContent={cycleDetails.name} position="top">
+                <Tooltip tooltipContent={cycleDetails.name} position="top" isMobile={isMobile}>
                   <span className="line-clamp-1 inline-block overflow-hidden truncate text-base font-medium">
                     {cycleDetails.name}
                   </span>
@@ -175,7 +194,11 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
                 <Info className="h-4 w-4 text-custom-text-400" />
               </button>
             </div>
-
+            <div className="text-xs text-custom-text-300 flex-shrink-0">
+              {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
+            </div>
+          </div>
+          <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 md:w-auto md:flex-shrink-0 md:justify-end">
             {currentCycle && (
               <div
                 className="relative flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
@@ -189,14 +212,9 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
                   : `${currentCycle.label}`}
               </div>
             )}
-          </div>
-          <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 overflow-hidden md:w-auto md:flex-shrink-0 md:justify-end">
-            <div className="text-xs text-custom-text-300">
-              {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
-            </div>
 
             <div className="relative flex flex-shrink-0 items-center gap-3">
-              <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`}>
+              <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
                 <div className="flex w-10 cursor-default items-center justify-center">
                   {cycleDetails.assignee_ids?.length > 0 ? (
                     <AvatarGroup showTooltip={false}>
@@ -213,21 +231,23 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
                 </div>
               </Tooltip>
 
-              {isEditingAllowed && (
-                <>
-                  {cycleDetails.is_favorite ? (
-                    <button type="button" onClick={handleRemoveFromFavorites}>
-                      <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                    </button>
-                  ) : (
-                    <button type="button" onClick={handleAddToFavorites}>
-                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                    </button>
-                  )}
-
-                  <CycleQuickActions cycleId={cycleId} projectId={projectId} workspaceSlug={workspaceSlug} />
-                </>
-              )}
+              {isEditingAllowed &&
+                !isArchived &&
+                (cycleDetails.is_favorite ? (
+                  <button type="button" onClick={handleRemoveFromFavorites}>
+                    <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+                  </button>
+                ) : (
+                  <button type="button" onClick={handleAddToFavorites}>
+                    <Star className="h-3.5 w-3.5 text-custom-text-200" />
+                  </button>
+                ))}
+              <CycleQuickActions
+                cycleId={cycleId}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+                isArchived={isArchived}
+              />
             </div>
           </div>
         </div>

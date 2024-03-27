@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
+import type { IModule } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { ModuleForm } from "components/modules";
-import { MODULE_CREATED, MODULE_UPDATED } from "constants/event-tracker";
+import { ModuleForm } from "@/components/modules";
+import { MODULE_CREATED, MODULE_UPDATED } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useModule, useProject } from "hooks/store";
+import { useEventTracker, useModule, useProject } from "@/hooks/store";
 // ui
 // components
 // types
-import type { IModule } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -68,7 +68,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err.detail ?? "Module could not be created. Please try again.",
+          message: err?.detail ?? "Module could not be created. Please try again.",
         });
         captureModuleEvent({
           eventName: MODULE_CREATED,
@@ -99,7 +99,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err.detail ?? "Module could not be updated. Please try again.",
+          message: err?.detail ?? "Module could not be updated. Please try again.",
         });
         captureModuleEvent({
           eventName: MODULE_UPDATED,

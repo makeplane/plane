@@ -2,23 +2,26 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
 import { ArrowRight, Plus, PanelRight } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/ui";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+//components
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import { ProjectLogo } from "@/components/project";
+// constants
 import {
   EIssueFilterType,
   EIssueLayoutTypes,
   EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
-} from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { cn } from "helpers/common.helper";
-import { truncateText } from "helpers/string.helper";
+} from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { truncateText } from "@/helpers/string.helper";
+//hooks
 import {
   useApplication,
   useEventTracker,
@@ -29,16 +32,14 @@ import {
   useProjectState,
   useUser,
   useIssues,
-} from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
-// components
+} from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 // icons
-// helpers
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
-import { ProjectLogo } from "components/project";
-// constants
+
+
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
@@ -48,6 +49,7 @@ const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   const { getCycleById } = useCycle();
   // derived values
   const cycle = getCycleById(cycleId);
+  //
 
   if (!cycle) return null;
 
@@ -89,6 +91,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
+  const { isMobile } = usePlatformOS();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -113,8 +116,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -161,9 +166,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         cycleDetails={cycleDetails ?? undefined}
       />
       <div className="relative z-[15] w-full items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex justify-between bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
-            <SidebarHamburgerToggle />
             <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
@@ -212,6 +216,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                           <p className="truncate">{cycleDetails?.name && cycleDetails.name}</p>
                           {issueCount && issueCount > 0 ? (
                             <Tooltip
+                              isMobile={isMobile}
                               tooltipContent={`There are ${issueCount} ${
                                 issueCount > 1 ? "issues" : "issue"
                               } in this cycle`}
@@ -305,9 +310,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           >
             <PanelRight className={cn("w-4 h-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
-        </div>
-        <div className="block sm:block md:hidden">
-          <CycleMobileHeader />
         </div>
       </div>
     </>

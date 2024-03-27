@@ -3,13 +3,13 @@ import { observer } from "mobx-react-lite";
 // mobx store
 // icons
 import { X } from "lucide-react";
+import { TInboxIssueFilterOptions, TIssuePriorities } from "@plane/types";
 import { PriorityIcon } from "@plane/ui";
 // helpers
-import { INBOX_STATUS } from "constants/inbox";
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+import { INBOX_STATUS } from "@/constants/inbox";
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // types
-import { useInboxIssues } from "hooks/store";
-import { TInboxIssueFilterOptions, TIssuePriorities } from "@plane/types";
+import { useInboxIssues } from "@/hooks/store";
 // constants
 
 type TInboxIssueAppliedFilter = { workspaceSlug: string; projectId: string; inboxId: string };

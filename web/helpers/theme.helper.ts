@@ -1,4 +1,4 @@
-import { TRgb, hexToRgb } from "helpers/color.helper";
+import { TRgb, hexToRgb } from "@/helpers/color.helper";
 
 type TShades = {
   10: TRgb;

@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 
 // ui
 import { UserCircle2 } from "lucide-react";
+import { IUserProfileData } from "@plane/types";
 import { CreateIcon, LayerStackIcon, Loader } from "@plane/ui";
 // types
-import { IUserProfileData } from "@plane/types";
 
 type Props = {
   userProfile: IUserProfileData | undefined;

@@ -84,8 +84,8 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
               className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-custom-background-90"
               type="button"
               onClick={(e) => {
-                e.stopPropagation();
                 onLinkSubmit();
+                e.stopPropagation();
               }}
             >
               <Check className="h-4 w-4" />

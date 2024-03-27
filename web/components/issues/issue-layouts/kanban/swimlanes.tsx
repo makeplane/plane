@@ -1,7 +1,5 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
-// components
-import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -13,11 +11,13 @@ import {
   TIssueKanbanFilters,
   TPaginationData,
 } from "@plane/types";
-import { getGroupByColumns } from "../utils";
+// components
+import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
+import { getGroupByColumns, isWorkspaceLevel } from "../utils";
+import { KanbanStoreType } from "./base-kanban-root";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
-import { KanbanStoreType } from "./base-kanban-root";
 // types
 // constants
 
@@ -33,14 +33,47 @@ interface ISubGroupSwimlaneHeader {
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   storeType: KanbanStoreType;
+  showEmptyGroup: boolean;
 }
 
-const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
-  ({ getGroupIssueCount, sub_group_by, group_by, storeType, list, kanbanFilters, handleKanbanFilters }) => (
-    <div className="relative flex h-max min-h-full w-full items-center gap-2">
-      {list &&
-        list.length > 0 &&
-        list.map((_list: IGroupByColumn) => (
+const visibilitySubGroupByGroupCount = (
+  subGroupIssueCount: number,
+  showEmptyGroup: boolean
+): boolean => {
+  let subGroupHeaderVisibility = true;
+
+  if (showEmptyGroup) subGroupHeaderVisibility = true;
+  else {
+    if (subGroupIssueCount > 0) subGroupHeaderVisibility = true;
+    else subGroupHeaderVisibility = false;
+  }
+
+  return subGroupHeaderVisibility;
+};
+
+const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(({
+  getGroupIssueCount,  sub_group_by,
+  group_by,
+  storeType,
+  list,
+  kanbanFilters,
+  handleKanbanFilters,
+  showEmptyGroup,
+}) => (
+  <div className="relative flex h-max min-h-full w-full items-center gap-2">
+    {list &&
+      list.length > 0 &&
+      list.map((_list: IGroupByColumn) => {
+        const groupCount = getGroupIssueCount(_list?.id, undefined, false) ?? 0;
+
+        const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(
+          groupCount,
+          showEmptyGroup
+        );
+
+        if (subGroupByVisibilityToggle === false) return <></>;
+
+        return (
           <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
             <HeaderGroupByCard
               sub_group_by={sub_group_by}
@@ -48,14 +81,14 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
               column_id={_list.id}
               icon={_list.icon}
               title={_list.name}
-              count={getGroupIssueCount(_list?.id, undefined, false) ?? 0}
+              count={groupCount}
               kanbanFilters={kanbanFilters}
               handleKanbanFilters={handleKanbanFilters}
               issuePayload={_list.payload}
               storeType={storeType}
             />
           </div>
-        ))}
+        )})}
     </div>
   )
 );
@@ -93,6 +126,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
+
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
     issuesMap,
@@ -119,12 +153,28 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     isDragStarted,
   } = props;
 
+  const visibilitySubGroupBy = (_list: IGroupByColumn, subGroupCount: number): { showGroup: boolean; showIssues: boolean } => {
+    const subGroupVisibility = {
+      showGroup: true,
+      showIssues: true,
+    };
+    if (showEmptyGroup) subGroupVisibility.showGroup = true;
+    else {
+      if (subGroupCount > 0) subGroupVisibility.showGroup = true;
+      else subGroupVisibility.showGroup = false;
+    }
+    if (kanbanFilters?.sub_group_by.includes(_list.id)) subGroupVisibility.showIssues = false;
+    return subGroupVisibility;
+  };
+
   return (
     <div className="relative h-max min-h-full w-full">
       {list &&
         list.length > 0 &&
         list.map((_list: any) => {
           const issueCount = getGroupIssueCount(undefined, _list.id, true) ?? 0;
+          const subGroupByVisibilityToggle = visibilitySubGroupBy(_list, issueCount);
+          if (subGroupByVisibilityToggle.showGroup === false) return <></>;
           return (
             <div key={_list.id} className="flex flex-shrink-0 flex-col">
               <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
@@ -141,7 +191,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                 <div className="w-full border-b border-dashed border-custom-border-400" />
               </div>
 
-              {!kanbanFilters?.sub_group_by.includes(_list.id) && (
+              {subGroupByVisibilityToggle.showIssues && (
                 <div className="relative">
                   <KanBan
                     issuesMap={issuesMap}
@@ -152,6 +202,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     sub_group_by={sub_group_by}
                     group_by={group_by}
                     sub_group_id={_list.id}
+                    storeType={storeType}
                     updateIssue={updateIssue}
                     quickActions={quickActions}
                     kanbanFilters={kanbanFilters}
@@ -164,7 +215,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     viewId={viewId}
                     scrollableContainerRef={scrollableContainerRef}
                     isDragStarted={isDragStarted}
-                    storeType={storeType}
                     loadMoreIssues={loadMoreIssues}
                   />
                 </div>
@@ -252,7 +302,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     projectModule,
     label,
     projectState,
-    member
+    member,
+    true,
+    isWorkspaceLevel(storeType)
   );
   const subGroupByList = getGroupByColumns(
     sub_group_by as GroupByColumnTypes,
@@ -261,7 +313,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     projectModule,
     label,
     projectState,
-    member
+    member,
+    true,
+    isWorkspaceLevel(storeType)
   );
 
   if (!groupByList || !subGroupByList) return null;
@@ -277,6 +331,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           handleKanbanFilters={handleKanbanFilters}
           list={groupByList}
           storeType={storeType}
+          showEmptyGroup={showEmptyGroup}
         />
       </div>
 

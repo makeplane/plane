@@ -1,8 +1,8 @@
+import { RefObject } from "react";
 // components
 import { ChartDataType, IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
 // constants
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
-import { RefObject } from "react";
 
 type Props = {
   blockIds: string[];

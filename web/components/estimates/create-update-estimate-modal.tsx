@@ -3,14 +3,14 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
+import { IEstimate, IEstimateFormData } from "@plane/types";
 // store hooks
 import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
-import { checkDuplicates } from "helpers/array.helper";
-import { useEstimate } from "hooks/store";
+import { checkDuplicates } from "@/helpers/array.helper";
+import { useEstimate } from "@/hooks/store";
 // ui
 // helpers
 // types
-import { IEstimate, IEstimateFormData } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

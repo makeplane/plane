@@ -1,20 +1,21 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// hooks
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useIssues, useUser } from "hooks/store";
-import { useIssuesActions } from "hooks/use-issues-actions";
-// views
-// types
-// constants
+import useSWR from "swr";
 import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
+// constants
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
+import { useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+// views
+// stores
+import { ALL_ISSUES } from "@/store/issue/helpers/base-issues.store";
+// components
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { IQuickActionProps } from "../list/list-view-types";
 import { SpreadsheetView } from "./spreadsheet-view";
-import useSWR from "swr";
-import { IssueLayoutHOC } from "../issue-layout-HOC";
-import { ALL_ISSUES } from "store/issue/helpers/base-issues.store";
 
 export type SpreadsheetStoreType =
   | EIssuesStoreType.PROJECT

@@ -1,26 +1,28 @@
 import { observer } from "mobx-react";
 // icons
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
+import { ILinkDetails, UserAuth } from "@plane/types";
 // ui
 import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { calculateTimeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { useMember } from "hooks/store";
+import { useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { ILinkDetails, UserAuth } from "@plane/types";
 
 type Props = {
   links: ILinkDetails[];
   handleDeleteLink: (linkId: string) => void;
   handleEditLink: (link: ILinkDetails) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth }) => {
+export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth, disabled }) => {
   const { getUserDetails } = useMember();
-
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const { isMobile } = usePlatformOS();
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -42,7 +44,7 @@ export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, h
                 <span className="py-1">
                   <LinkIcon className="h-3 w-3 flex-shrink-0" />
                 </span>
-                <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url}>
+                <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
                   <span
                     className="cursor-pointer truncate text-xs"
                     onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}

@@ -1,15 +1,8 @@
 import { useEffect, Fragment, FC, useState } from "react";
-import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// ui
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { CreateProjectForm } from "./create-project-form";
 import { ProjectFeatureUpdate } from "./project-feature-update";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-// hooks
-import { useUser } from "hooks/store";
 
 type Props = {
   isOpen: boolean;
@@ -23,32 +16,11 @@ enum EProjectCreationSteps {
   FEATURE_SELECTION = "FEATURE_SELECTION",
 }
 
-interface IIsGuestCondition {
-  onClose: () => void;
-}
-
-const IsGuestCondition: FC<IIsGuestCondition> = ({ onClose }) => {
-  useEffect(() => {
-    onClose();
-    setToast({
-      title: "Error",
-      type: TOAST_TYPE.ERROR,
-      message: "You don't have permission to create project.",
-    });
-  }, [onClose]);
-
-  return null;
-};
-
-export const CreateProjectModal: FC<Props> = observer((props) => {
+export const CreateProjectModal: FC<Props> = (props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // states
   const [currentStep, setCurrentStep] = useState<EProjectCreationSteps>(EProjectCreationSteps.CREATE_PROJECT);
   const [createdProjectId, setCreatedProjectId] = useState<string | null>(null);
-  // hooks
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
 
   useEffect(() => {
     if (isOpen) {
@@ -56,9 +28,6 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       setCreatedProjectId(null);
     }
   }, [isOpen]);
-
-  if (currentWorkspaceRole && isOpen)
-    if (currentWorkspaceRole < EUserWorkspaceRoles.MEMBER) return <IsGuestCondition onClose={onClose} />;
 
   const handleNextStep = (projectId: string) => {
     if (!projectId) return;
@@ -111,4 +80,4 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       </Dialog>
     </Transition.Root>
   );
-});
+};

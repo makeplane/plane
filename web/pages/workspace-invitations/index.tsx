@@ -5,17 +5,17 @@ import useSWR from "swr";
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
 // hooks
 import { Spinner } from "@plane/ui";
-import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
-import { WORKSPACE_INVITATION } from "constants/fetch-keys";
-import { useUser } from "hooks/store";
+import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
+import { WORKSPACE_INVITATION } from "@/constants/fetch-keys";
+import { useUser } from "@/hooks/store";
 // services
 // layouts
-import DefaultLayout from "layouts/default-layout";
+import DefaultLayout from "@/layouts/default-layout";
 // ui
 // icons
 // types
-import { NextPageWithLayout } from "lib/types";
-import { WorkspaceService } from "services/workspace.service";
+import { NextPageWithLayout } from "@/lib/types";
+import { WorkspaceService } from "@/services/workspace.service";
 // constants
 
 // services

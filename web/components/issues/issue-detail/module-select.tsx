@@ -3,11 +3,11 @@ import xor from "lodash/xor";
 import { observer } from "mobx-react-lite";
 // hooks
 // components
-import { ModuleDropdown } from "components/dropdowns";
+import { ModuleDropdown } from "@/components/dropdowns";
 // ui
 // helpers
-import { cn } from "helpers/common.helper";
-import { useIssueDetail } from "hooks/store";
+import { cn } from "@/helpers/common.helper";
+import { useIssueDetail } from "@/hooks/store";
 // types
 import type { TIssueOperations } from "./root";
 
@@ -71,7 +71,6 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         hideIcon
         dropdownArrow
         dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-        showTooltip
         multiple
       />
     </div>

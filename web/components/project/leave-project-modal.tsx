@@ -3,17 +3,17 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // headless ui
+import { AlertTriangleIcon } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { AlertTriangleIcon } from "lucide-react";
+import { IProject } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
+import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useUser } from "hooks/store";
+import { useEventTracker, useUser } from "@/hooks/store";
 // types
-import { IProject } from "@plane/types";
 
 type FormData = {
   projectName: string;

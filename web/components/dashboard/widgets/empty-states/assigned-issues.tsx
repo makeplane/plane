@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
-// types
-import { ASSIGNED_ISSUES_EMPTY_STATES } from "constants/dashboard";
 import { TIssuesListTypes } from "@plane/types";
+// types
+import { ASSIGNED_ISSUES_EMPTY_STATES } from "@/constants/dashboard";
 // constants
 
 type Props = {
