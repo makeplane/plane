@@ -5,13 +5,26 @@ import { CycleService } from "@/services/cycle.service";
 // types
 import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import { ALL_ISSUES, BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { ICycleIssuesFilter } from "./filter.store";
+import { concat, get, set, uniq, update } from "lodash";
+import { computedFn } from "mobx-utils";
 
 export const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
 
+export interface ActiveCycleIssueDetails {
+  issueIds: string[];
+  issueCount: number;
+  nextCursor: string;
+  nextPageResults: boolean;
+  perPageCount: number;
+}
+
 export interface ICycleIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;
+  activeCycleIds: Record<string, ActiveCycleIssueDetails>;
+  //action helpers
+  getActiveCycleId: (cycleId: string) => ActiveCycleIssueDetails | undefined;
   // actions
   fetchIssues: (
     workspaceSlug: string,
@@ -32,6 +45,18 @@ export interface ICycleIssues extends IBaseIssuesStore {
     cycleId: string,
     groupId?: string,
     subGroupId?: string
+  ) => Promise<TIssuesResponse | undefined>;
+
+  fetchActiveCycleIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    perPageCount: number,
+    cycleId: string
+  ) => Promise<TIssuesResponse | undefined>;
+  fetchNextActiveCycleIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
   ) => Promise<TIssuesResponse | undefined>;
 
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>, cycleId: string) => Promise<TIssue>;
@@ -56,15 +81,11 @@ export interface ICycleIssues extends IBaseIssuesStore {
       new_cycle_id: string;
     }
   ) => Promise<TIssue>;
-  fetchActiveCycleIssues: (
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string
-  ) => Promise<TIssuesResponse | undefined>;
 }
 
 export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
   cycleId: string | undefined = undefined;
+  activeCycleIds: Record<string, ActiveCycleIssueDetails> = {};
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
@@ -80,6 +101,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     makeObservable(this, {
       // observable
       cycleId: observable.ref,
+      activeCycleIds: observable,
       // action
       fetchIssues: action,
       fetchNextIssues: action,
@@ -97,6 +119,8 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     // filter store
     this.issueFilterStore = issueFilterStore;
   }
+
+  getActiveCycleId = computedFn((cycleId: string) => this.activeCycleIds[cycleId]);
 
   fetchIssues = async (
     workspaceSlug: string,
@@ -240,17 +264,55 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     }
   };
 
-  fetchActiveCycleIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+  fetchActiveCycleIssues = async (workspaceSlug: string, projectId: string, perPageCount: number, cycleId: string) => {
     try {
-      const params = { priority: `urgent,high` };
+      set(this.activeCycleIds, [cycleId], undefined);
+
+      const params = { priority: `urgent,high`, cursor: `${perPageCount}:0:0`, per_page: perPageCount };
       const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
 
-      // runInAction(() => {
-      //   set(this.issues, , Object.keys(response));
-      //   this.loader = undefined;
-      // });
+      const { issueList, groupedIssues } = this.processIssueResponse(response);
 
-      // this.rootIssueStore.issues.addIssue(Object.values(response));
+      this.rootIssueStore.issues.addIssue(issueList);
+      const activeIssueIds = groupedIssues[ALL_ISSUES] as string[];
+
+      set(this.activeCycleIds, [cycleId], {
+        issueIds: activeIssueIds,
+        issueCount: response.total_count,
+        nextCursor: response.next_cursor,
+        nextPageResults: response.next_page_results,
+        perPageCount: perPageCount,
+      });
+
+      return response;
+    } catch (error) {
+      this.loader = undefined;
+      throw error;
+    }
+  };
+
+  fetchNextActiveCycleIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    try {
+      const activeCycle = get(this.activeCycleIds, [cycleId]);
+
+      if (!activeCycle || !activeCycle.nextPageResults) return;
+
+      const params = { priority: `urgent,high`, cursor: activeCycle.nextCursor, per_page: activeCycle.perPageCount };
+      const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
+
+      const { issueList, groupedIssues } = this.processIssueResponse(response);
+
+      this.rootIssueStore.issues.addIssue(issueList);
+
+      const activeIssueIds = groupedIssues[ALL_ISSUES] as string[];
+
+      set(this.activeCycleIds, [cycleId, "issueCount"], response.total_count);
+      set(this.activeCycleIds, [cycleId, "nextCursor"], response.next_cursor);
+      set(this.activeCycleIds, [cycleId, "nextPageResults"], response.next_page_results);
+      set(this.activeCycleIds, [cycleId, "issueCount"], response.total_count);
+      update(this.activeCycleIds, [cycleId, "issueIds"], (issueIds: string[] = []) => {
+        return this.issuesSortWithOrderBy(uniq(concat(issueIds, activeIssueIds)), this.orderBy);
+      });
 
       return response;
     } catch (error) {
