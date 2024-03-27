@@ -28,6 +28,7 @@ import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
 import { CustomTypographyExtension } from "src/ui/extensions/typography";
 import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
+import { CustomCodeMarkPlugin } from "./custom-code-inline/inline-code-plugin";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -103,6 +104,7 @@ export const CoreEditorExtensions = (
     nested: true,
   }),
   CustomCodeBlockExtension,
+  CustomCodeMarkPlugin,
   CustomCodeInlineExtension,
   Markdown.configure({
     html: true,
