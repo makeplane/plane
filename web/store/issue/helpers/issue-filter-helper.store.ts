@@ -302,12 +302,12 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     groupId?: string,
     subGroupId?: string
   ) {
-    const pageCursor = cursor ? cursor : groupId ? `${options.perPageCount * 2}:0:0` : `${options.perPageCount}:0:0`;
+    const pageCursor = cursor ? cursor : groupId ? `${options.perPageCount}:1:0` : `${options.perPageCount}:0:0`;
 
     const paginationParams: Partial<Record<TIssueParams, string | boolean>> = {
       ...filterParams,
       cursor: pageCursor,
-      per_page: (groupId ? options.perPageCount * 2 : options.perPageCount).toString(),
+      per_page: options.perPageCount.toString(),
     };
 
     if (options.groupedBy) {

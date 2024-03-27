@@ -106,7 +106,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
       </div>
     );
 
-  const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : null;
+  const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : [];
 
   return (
     <>
@@ -182,6 +182,9 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               date={selectedDate}
               issues={issues}
               issueIdList={issueIdList}
+              loadMoreIssues={loadMoreIssues}
+              getPaginationData={getPaginationData}
+              getGroupIssueCount={getGroupIssueCount}
               quickActions={quickActions}
               enableQuickIssueCreate
               disableIssueCreation={!enableIssueCreation || !isEditingAllowed}

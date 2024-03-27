@@ -16,7 +16,6 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
 
   return (
     <BaseKanBanRoot
-      showLoader
       QuickActions={ProjectIssueQuickActions}
       storeType={EIssuesStoreType.PROJECT_VIEW}
       viewId={viewId?.toString()}

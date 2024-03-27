@@ -122,7 +122,9 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
       // fetch other issues states and members when sub-issues are from different project
       if (subIssues && subIssues.length > 0) {
-        const otherProjectIds = uniq(subIssues.map((issue) => issue.project_id).filter((id) => id !== projectId));
+        const otherProjectIds = uniq(
+          subIssues.map((issue) => issue.project_id).filter((id) => !!id && id !== projectId)
+        ) as string[];
         this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
       }
 
@@ -152,7 +154,9 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
       // fetch other issues states and members when sub-issues are from different project
       if (subIssues && subIssues.length > 0) {
-        const otherProjectIds = uniq(subIssues.map((issue) => issue.project_id).filter((id) => id !== projectId));
+        const otherProjectIds = uniq(
+          subIssues.map((issue) => issue.project_id).filter((id) => !!id && id !== projectId)
+        ) as string[];
         this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
       }
 
