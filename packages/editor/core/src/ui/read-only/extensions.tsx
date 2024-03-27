@@ -29,12 +29,12 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "list-disc list-outside leading-3 -mt-2",
+        class: "list-disc list-outside leading-3",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "list-decimal list-outside leading-3 -mt-2",
+        class: "list-decimal list-outside leading-3 -mt-2 -mb-2",
       },
     },
     listItem: {
@@ -82,7 +82,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   TaskItem.configure({
     HTMLAttributes: {
-      class: "flex items-start my-4",
+      class: "flex items-start mt-4",
     },
     nested: true,
   }),
