@@ -18,14 +18,11 @@ import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { EUserProjectRoles } from "@/constants/project";
 import { useApplication, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, globalViewId, ...routeFilters } = router.query;
-  //swr hook for fetching issue properties
-  useWorkspaceIssueProperties(workspaceSlug);
   // store
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
