@@ -81,7 +81,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
                     title={`You are already a member of ${invitationDetail.workspace.name}`}
                     description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
                   >
-                    <EmptySpaceItem Icon={Boxes} title="Continue to Dashboard" href="/" />
+                    <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
                   </EmptySpace>
                 </>
               ) : (
@@ -105,7 +105,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
           {!currentUser ? (
             <EmptySpaceItem Icon={User2} title="Sign in to continue" href="/" />
           ) : (
-            <EmptySpaceItem Icon={Boxes} title="Continue to Dashboard" href="/" />
+            <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
           )}
           <EmptySpaceItem Icon={Star} title="Star us on GitHub" href="https://github.com/makeplane" />
           <EmptySpaceItem
