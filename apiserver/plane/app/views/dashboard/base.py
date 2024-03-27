@@ -48,26 +48,6 @@ from plane.utils.issue_filters import issue_filters
 
 # Module imports
 from .. import BaseAPIView
-from plane.db.models import (
-    Issue,
-    IssueActivity,
-    ProjectMember,
-    Widget,
-    DashboardWidget,
-    Dashboard,
-    Project,
-    IssueLink,
-    IssueAttachment,
-    IssueRelation,
-    User,
-)
-from plane.app.serializers import (
-    IssueActivitySerializer,
-    IssueSerializer,
-    DashboardSerializer,
-    WidgetSerializer,
-)
-from plane.utils.issue_filters import issue_filters
 
 
 def dashboard_overview_stats(self, request, slug):

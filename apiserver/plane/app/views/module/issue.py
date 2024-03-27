@@ -44,7 +44,7 @@ from plane.utils.paginator import (
 )
 
 # Module imports
-from .. import BaseAPIView, BaseViewSet, WebhookMixin
+from .. import BaseViewSet, WebhookMixin
 
 
 class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
