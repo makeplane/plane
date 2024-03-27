@@ -800,11 +800,11 @@ export class BaseIssuesStore implements IBaseIssuesStore {
         return this.getIssueIds(orderBy(array, "sort_order"));
       case "state__name":
         return this.getIssueIds(
-          orderBy(array, (issue) => this.populateIssueDataForSorting("state_id", issue["state_id"]))
+          orderBy(array, (issue) => this.populateIssueDataForSorting("state_id", issue?.["state_id"]))
         );
       case "-state__name":
         return this.getIssueIds(
-          orderBy(array, (issue) => this.populateIssueDataForSorting("state_id", issue["state_id"]), ["desc"])
+          orderBy(array, (issue) => this.populateIssueDataForSorting("state_id", issue?.["state_id"]), ["desc"])
         );
       // dates
       case "created_at":
@@ -844,12 +844,12 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       // custom
       case "priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return this.getIssueIds(orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority)));
+        return this.getIssueIds(orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority)));
       }
       case "-priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
         return this.getIssueIds(
-          orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority), ["desc"])
+          orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority), ["desc"])
         );
       }
 
@@ -887,7 +887,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
         return this.getIssueIds(
           orderBy(array, [
             this.getSortOrderToFilterEmptyValues.bind(null, "label_ids"), //preferring sorting based on empty values to always keep the empty values below
-            (issue) => this.populateIssueDataForSorting("label_ids", issue["label_ids"], "asc"),
+            (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "asc"),
           ])
         );
       case "-labels__name":
@@ -896,7 +896,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
             array,
             [
               this.getSortOrderToFilterEmptyValues.bind(null, "label_ids"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("label_ids", issue["label_ids"], "desc"),
+              (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "desc"),
             ],
             ["asc", "desc"]
           )
@@ -906,7 +906,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
         return this.getIssueIds(
           orderBy(array, [
             this.getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
-            (issue) => this.populateIssueDataForSorting("module_ids", issue["module_ids"], "asc"),
+            (issue) => this.populateIssueDataForSorting("module_ids", issue?.["module_ids"], "asc"),
           ])
         );
       case "-issue_module__module__name":
@@ -915,7 +915,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
             array,
             [
               this.getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("module_ids", issue["module_ids"], "desc"),
+              (issue) => this.populateIssueDataForSorting("module_ids", issue?.["module_ids"], "desc"),
             ],
             ["asc", "desc"]
           )
@@ -925,7 +925,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
         return this.getIssueIds(
           orderBy(array, [
             this.getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
-            (issue) => this.populateIssueDataForSorting("cycle_id", issue["cycle_id"], "asc"),
+            (issue) => this.populateIssueDataForSorting("cycle_id", issue?.["cycle_id"], "asc"),
           ])
         );
       case "-issue_cycle__cycle__name":
@@ -934,7 +934,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
             array,
             [
               this.getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("cycle_id", issue["cycle_id"], "desc"),
+              (issue) => this.populateIssueDataForSorting("cycle_id", issue?.["cycle_id"], "desc"),
             ],
             ["asc", "desc"]
           )
@@ -944,7 +944,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
         return this.getIssueIds(
           orderBy(array, [
             this.getSortOrderToFilterEmptyValues.bind(null, "assignee_ids"), //preferring sorting based on empty values to always keep the empty values below
-            (issue) => this.populateIssueDataForSorting("assignee_ids", issue["assignee_ids"], "asc"),
+            (issue) => this.populateIssueDataForSorting("assignee_ids", issue?.["assignee_ids"], "asc"),
           ])
         );
       case "-assignees__first_name":
@@ -953,7 +953,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
             array,
             [
               this.getSortOrderToFilterEmptyValues.bind(null, "assignee_ids"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("assignee_ids", issue["assignee_ids"], "desc"),
+              (issue) => this.populateIssueDataForSorting("assignee_ids", issue?.["assignee_ids"], "desc"),
             ],
             ["asc", "desc"]
           )
