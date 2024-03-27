@@ -40,7 +40,7 @@ const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
   // hooks
-  const { getProjectById } = useProject();
+  const { getProjectById, workspaceProjectIds } = useProject();
   const { isMobile } = usePlatformOS();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
@@ -282,22 +282,24 @@ export const CommandModal: React.FC = observer(() => {
                               setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
                             />
                           )}
-                          <Command.Group heading="Issue">
-                            <Command.Item
-                              onSelect={() => {
-                                closePalette();
-                                setTrackElement("Command Palette");
-                                toggleCreateIssueModal(true);
-                              }}
-                              className="focus:bg-custom-background-80"
-                            >
-                              <div className="flex items-center gap-2 text-custom-text-200">
-                                <LayersIcon className="h-3.5 w-3.5" />
-                                Create new issue
-                              </div>
-                              <kbd>C</kbd>
-                            </Command.Item>
-                          </Command.Group>
+                          {workspaceSlug && workspaceProjectIds && workspaceProjectIds.length > 0 && (
+                            <Command.Group heading="Issue">
+                              <Command.Item
+                                onSelect={() => {
+                                  closePalette();
+                                  setTrackElement("Command Palette");
+                                  toggleCreateIssueModal(true);
+                                }}
+                                className="focus:bg-custom-background-80"
+                              >
+                                <div className="flex items-center gap-2 text-custom-text-200">
+                                  <LayersIcon className="h-3.5 w-3.5" />
+                                  Create new issue
+                                </div>
+                                <kbd>C</kbd>
+                              </Command.Item>
+                            </Command.Group>
+                          )}
 
                           {workspaceSlug && (
                             <Command.Group heading="Project">
