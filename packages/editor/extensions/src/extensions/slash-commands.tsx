@@ -330,7 +330,7 @@ const renderItems = () => {
       // @ts-ignore
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.body,
+        appendTo: () => document.querySelector(".active-editor"),
         content: component.element,
         showOnCreate: true,
         interactive: true,

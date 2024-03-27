@@ -4,7 +4,6 @@ import { ReactRenderer } from "@tiptap/react";
 import { Editor } from "@tiptap/core";
 import tippy from "tippy.js";
 
-import { v4 as uuidv4 } from "uuid";
 import { MentionList } from "src/ui/mentions/mention-list";
 
 export const Mentions = ({
@@ -28,9 +27,6 @@ export const Mentions = ({
         let component: ReactRenderer | null = null;
         let popup: any | null = null;
 
-        const hidePopup = () => {
-          popup?.[0].hide();
-        };
         return {
           onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
             if (!props.clientRect) {
@@ -44,14 +40,13 @@ export const Mentions = ({
             // @ts-expect-error - Tippy types are incorrect
             popup = tippy("body", {
               getReferenceClientRect: props.clientRect,
-              appendTo: () => document.body,
+              appendTo: () => document.querySelector(".active-editor"),
               content: component.element,
               showOnCreate: true,
               interactive: true,
               trigger: "manual",
               placement: "bottom-start",
             });
-            // document.addEventListener("scroll", hidePopup, true);
           },
           onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
             component?.updateProps(props);
@@ -87,8 +82,6 @@ export const Mentions = ({
             props.editor.storage.mentionsOpen = false;
             popup?.[0].destroy();
             component?.destroy();
-
-            // document.removeEventListener("scroll", hidePopup, true);
           },
         };
       },

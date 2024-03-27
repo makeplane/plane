@@ -35,9 +35,9 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
         };
       });
 
-      const filteredSuggestions = mappedSuggestions
-        .filter((suggestion) => suggestion.title.toLowerCase().startsWith(query.toLowerCase()))
-        .slice(0, 5);
+      const filteredSuggestions = mappedSuggestions.filter((suggestion) =>
+        suggestion.title.toLowerCase().startsWith(query.toLowerCase())
+      );
 
       setItems(filteredSuggestions);
       setIsLoading(false); // End loading
