@@ -1,5 +1,9 @@
+# Python imports
+import uuid
+
 # Django imports
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import post_save
@@ -94,8 +98,8 @@ class IssueManager(models.Manager):
 
 def get_upload_path(instance, filename):
     if instance.workspace_id is not None:
-        return f"{instance.workspace.id}/{uuid4().hex}"
-    return f"user-{uuid4().hex}"
+        return f"{instance.workspace.id}/{uuid.uuid4().hex}"
+    return f"user-{uuid.uuid4().hex}"
 
 
 def file_size(value):
