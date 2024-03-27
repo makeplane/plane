@@ -81,7 +81,7 @@ export const ISSUE_ORDER_BY_OPTIONS: {
   { key: "-updated_at", title: "Last Updated" },
   { key: "start_date", title: "Start Date" },
   { key: "target_date", title: "Due Date" },
-  { key: "-priority", title: "Priority" },
+  { key: "priority", title: "Priority" },
 ];
 
 export const ISSUE_FILTER_OPTIONS: {
@@ -157,7 +157,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "priority", "project", "labels", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -170,7 +170,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "priority", "project", "labels"],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -205,7 +205,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
           "created_by",
           null,
         ],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -220,7 +220,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "cycle", "module", "priority", "project", "labels", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -233,7 +233,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "cycle", "module", "priority", "project", "labels"],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -303,7 +303,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_properties: true,
       display_filters: {
         group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -328,7 +328,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_filters: {
         group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by"],
         sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority", "target_date"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -362,7 +362,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       ],
       display_properties: true,
       display_filters: {
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -385,7 +385,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       ],
       display_properties: false,
       display_filters: {
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
