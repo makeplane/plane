@@ -1,6 +1,6 @@
 import { ReactElement, useState } from "react";
 import { PagesHeader } from "components/headers";
-import { PageView, PagesListRoot, CreateUpdatePageModal } from "components/pages";
+import { PagesListRoot, PagesListView, CreateUpdatePageModal } from "components/pages";
 import { AppLayout } from "layouts/app-layout";
 import { NextPageWithLayout } from "lib/types";
 import { useRouter } from "next/router";
@@ -27,9 +27,13 @@ const ProjectPagesPage: NextPageWithLayout = () => {
   if (!workspaceSlug || !projectId) return <></>;
   return (
     <>
-      <PageView workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} pageType={currentPageType()}>
+      <PagesListView
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={projectId.toString()}
+        pageType={currentPageType()}
+      >
         <PagesListRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
-      </PageView>
+      </PagesListView>
 
       <CreateUpdatePageModal
         workspaceSlug={workspaceSlug.toString()}

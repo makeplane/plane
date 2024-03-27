@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
-// components
-import { FilterCreatedBy, FilterCreatedDate, FilterLabels } from "components/pages";
-import { FilterOption } from "components/issues";
-// types
 import { IIssueLabel, TPageFilterProps, TPageFilters } from "@plane/types";
+// components
+import { FilterOption } from "@/components/issues";
+import { FilterCreatedBy, FilterCreatedDate, FilterLabels } from "@/components/pages";
 
 type Props = {
   filters: TPageFilters;
@@ -22,9 +21,7 @@ export const PageFiltersSelection: React.FC<Props> = observer((props) => {
   const handleFilters = (key: keyof TPageFilterProps, value: boolean | string | string[]) => {
     const newValues = filters.filters?.[key] ?? [];
 
-    if (typeof newValues === "boolean" && typeof value === "boolean") {
-      return;
-    }
+    if (typeof newValues === "boolean" && typeof value === "boolean") return;
 
     if (Array.isArray(newValues)) {
       if (Array.isArray(value))

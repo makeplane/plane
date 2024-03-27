@@ -1,22 +1,10 @@
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { useEffect } from "react";
-import { PageContentBrowser } from "components/pages";
-// helpers
-import { cn } from "helpers/common.helper";
-// hooks
-import { useUser, useWorkspace } from "hooks/store";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
-
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Control, Controller } from "react-hook-form";
-
-// services
-import { FileService } from "services/file.service";
-
-// components
-import { IPageStore } from "store/page.store";
+// document editor
 import {
   DocumentEditorWithRef,
   DocumentReadOnlyEditorWithRef,
@@ -24,14 +12,24 @@ import {
   EditorRefApi,
   IMarking,
 } from "@plane/document-editor";
-
 // types
-import { IPage } from "@plane/types";
+import { TPage } from "@plane/types";
+// components
+import { PageContentBrowser } from "@/components/pages";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useUser, useWorkspace } from "@/hooks/store";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+// services
+import { FileService } from "@/services/file.service";
+// store
+import { IPageStore } from "@/store/page.store";
 
 const fileService = new FileService();
 
 type Props = {
-  control: Control<IPage, any>;
+  control: Control<TPage, any>;
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleSubmit: () => void;

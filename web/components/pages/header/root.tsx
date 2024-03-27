@@ -1,145 +1,85 @@
-import { EUserProjectRoles } from "constants/project";
-import { useState } from "react";
-import { GptAssistantPopover } from "components/core";
-import { PageInfoPopover, PageOptionsDropdown, PageSummaryPopover, PageToolbar } from "components/pages";
-import { cn } from "helpers/common.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
-// types
-import { useApplication, useUser } from "hooks/store";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { IPageStore } from "store/page.store";
-import { Lock, RefreshCw, Sparkle } from "lucide-react";
-// hooks
+import { ListFilter } from "lucide-react";
+import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
 // components
-// ui
-import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
-import { ArchiveIcon } from "@plane/ui";
+import { FiltersDropdown } from "@/components/issues";
+import {
+  PageAppliedFiltersList,
+  PageFiltersSelection,
+  PageOrderByDropdown,
+  PageSearchInput,
+  PageTabNavigation,
+} from "@/components/pages";
 // helpers
-// types
-// constants
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+// hooks
+import { useLabel, useMember, useProjectPages } from "@/hooks/store";
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  handleDuplicatePage: () => void;
-  markings: IMarking[];
-  pageStore: IPageStore;
+  pageType: TPageNavigationTabs;
   projectId: string;
-  sidePeekVisible: boolean;
-  setSidePeekVisible: (sidePeekState: boolean) => void;
-  editorReady: boolean;
-  readOnlyEditorReady: boolean;
+  workspaceSlug: string;
 };
 
-export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const {
-    editorRef,
-    readOnlyEditorRef,
-    editorReady,
-    markings,
-    readOnlyEditorReady,
-    handleDuplicatePage,
-    pageStore,
-    projectId,
-    sidePeekVisible,
-    setSidePeekVisible,
-  } = props;
-  // states
-  const [gptModalOpen, setGptModal] = useState(false);
+export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
+  const { pageType, projectId, workspaceSlug } = props;
   // store hooks
+  const { filters, updateFilters, clearAllFilters } = useProjectPages(projectId);
   const {
-    config: { envConfig },
-    router: { workspaceSlug },
-  } = useApplication();
-  // derived values
-  const isSubmitting = pageStore.isSubmitting;
+    workspace: { workspaceMemberIds },
+  } = useMember();
+  const { projectLabels } = useLabel();
 
-  const handleAiAssistance = async (response: string) => {
-    if (!workspaceSlug || !projectId || !editorRef) return;
-    editorRef.current?.setEditorValueAtCursorPosition(response);
-  };
+  const handleRemoveFilter = useCallback(
+    (key: keyof TPageFilterProps, value: string | null) => {
+      let newValues = filters.filters?.[key];
 
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+      if (key === "favorites") newValues = !!value;
+      if (Array.isArray(newValues)) {
+        if (!value) newValues = [];
+        else newValues = newValues.filter((val) => val !== value);
+      }
 
-  if (!editorRef.current && !readOnlyEditorRef.current) return null;
-
-  // auth
-  const isPageReadOnly =
-    pageStore.is_locked ||
-    pageStore.archived_at ||
-    (!!currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER);
+      updateFilters("filters", { [key]: newValues });
+    },
+    [filters.filters, updateFilters]
+  );
 
   return (
-    <div className="flex items-center border-b border-custom-border-200 px-3 py-2 md:px-5">
-      <div className="flex-shrink-0 md:w-56 lg:w-72">
-        <PageSummaryPopover
-          editorRef={isPageReadOnly ? readOnlyEditorRef.current : editorRef.current}
-          markings={markings}
-          sidePeekVisible={sidePeekVisible}
-          setSidePeekVisible={setSidePeekVisible}
-        />
-      </div>
-      {(editorReady || readOnlyEditorReady) && !isPageReadOnly && editorRef.current && (
-        <PageToolbar editorRef={editorRef?.current} />
-      )}
-      <div className="flex flex-grow items-center justify-end gap-3">
-        {!pageStore.is_locked && !pageStore.archived_at && (
-          <div
-            className={cn("fadeIn absolute right-[120px] flex items-center gap-x-2 transition-all duration-300", {
-              fadeOut: isSubmitting === "saved",
-            })}
-          >
-            {isSubmitting === "submitting" && <RefreshCw className="h-4 w-4 stroke-custom-text-300" />}
-            <span className="text-sm text-custom-text-300">
-              {isSubmitting === "submitting" ? "Saving..." : "Saved"}
-            </span>
-          </div>
-        )}
-        {pageStore.is_locked && (
-          <div className="flex h-7 items-center gap-2 rounded-full bg-custom-background-80 px-3 py-0.5 text-xs font-medium text-custom-text-300">
-            <Lock className="h-3 w-3" />
-            <span>Locked</span>
-          </div>
-        )}
-        {pageStore.archived_at && (
-          <div className="flex h-7 items-center gap-2 rounded-full bg-blue-500/20 px-3 py-0.5 text-xs font-medium text-blue-500">
-            <ArchiveIcon className="h-3 w-3" />
-            <span>Archived at {renderFormattedDate(pageStore.archived_at)}</span>
-          </div>
-        )}
-        {!isPageReadOnly && envConfig?.has_openai_configured && (
-          <GptAssistantPopover
-            isOpen={gptModalOpen}
-            projectId={projectId}
-            handleClose={() => {
-              setGptModal((prevData) => !prevData);
-              // this is done so that the title do not reset after gpt popover closed
-              // reset(getValues());
+    <>
+      <div className="flex-shrink-0 w-full border-b border-custom-border-200 px-3 relative flex items-center gap-4 justify-between">
+        <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
+        <div className="h-full flex items-center gap-2 self-end">
+          <PageSearchInput projectId={projectId} />
+          <PageOrderByDropdown
+            sortBy={filters.sortBy}
+            sortKey={filters.sortKey}
+            onChange={(val) => {
+              if (val.key) updateFilters("sortKey", val.key);
+              if (val.order) updateFilters("sortBy", val.order);
             }}
-            onResponse={handleAiAssistance}
-            placement="top-end"
-            button={
-              <button
-                type="button"
-                className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
-                onClick={() => setGptModal((prevData) => !prevData)}
-              >
-                <Sparkle className="h-4 w-4" />
-                AI
-              </button>
-            }
-            className="!min-w-[38rem]"
           />
-        )}
-        <PageInfoPopover pageStore={pageStore} />
-        <PageOptionsDropdown
-          editorRef={isPageReadOnly ? readOnlyEditorRef.current : editorRef.current}
-          handleDuplicatePage={handleDuplicatePage}
-          pageStore={pageStore}
-        />
+          <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+            <PageFiltersSelection
+              filters={filters}
+              handleFiltersUpdate={updateFilters}
+              labels={projectLabels}
+              memberIds={workspaceMemberIds ?? undefined}
+            />
+          </FiltersDropdown>
+        </div>
       </div>
-    </div>
+      {calculateTotalFilters(filters?.filters ?? {}) !== 0 && (
+        <div className="border-b border-custom-border-200 px-5 py-3">
+          <PageAppliedFiltersList
+            appliedFilters={filters.filters ?? {}}
+            handleClearAllFilters={clearAllFilters}
+            handleRemoveFilter={handleRemoveFilter}
+            alwaysAllowEditing
+          />
+        </div>
+      )}
+    </>
   );
 });

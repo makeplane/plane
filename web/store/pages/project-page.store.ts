@@ -23,9 +23,11 @@ export interface IProjectPageStore {
   filters: TPageFilters;
   // computed
   pageIds: string[] | undefined;
+  filteredPageIds: string[] | undefined;
   // helper actions
   pageById: (pageId: string) => IPageStore | undefined;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
+  clearAllFilters: () => void;
   // actions
   getAllPages: (pageType?: TPageNavigationTabs) => Promise<TPage[] | undefined>;
   getPageById: (pageId: string) => Promise<TPage | undefined>;
@@ -57,8 +59,10 @@ export class ProjectPageStore implements IProjectPageStore {
       filters: observable,
       // computed
       pageIds: computed,
+      filteredPageIds: computed,
       // helper actions
       updateFilters: action,
+      clearAllFilters: action,
       // actions
       getAllPages: action,
       getPageById: action,
@@ -74,18 +78,29 @@ export class ProjectPageStore implements IProjectPageStore {
     if (!projectId) return undefined;
 
     // helps to filter pages based on the pageType
-    let filtersPages = filterPagesByPageType(this.pageType, Object.values(this?.data || {}));
-    filtersPages = filtersPages.filter(
+    const pagesByType = filterPagesByPageType(this.pageType, Object.values(this?.data || {}));
+
+    const pages = (pagesByType.map((page) => page.id) as string[]) || undefined;
+
+    return pages ?? undefined;
+  }
+
+  get filteredPageIds() {
+    const { projectId } = this.store.app.router;
+    if (!projectId) return undefined;
+
+    // helps to filter pages based on the pageType
+    const pagesByType = filterPagesByPageType(this.pageType, Object.values(this?.data || {}));
+    let filteredPages = pagesByType.filter(
       (p) =>
         p.name?.toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
         shouldFilterPage(p, this.filters.filters)
     );
-    filtersPages = orderPages(filtersPages, this.filters.sortKey, this.filters.sortBy);
+    filteredPages = orderPages(filteredPages, this.filters.sortKey, this.filters.sortBy);
 
-    const pages = (filtersPages.map((page) => page.id) as string[]) || undefined;
-    if (!pages) return undefined;
+    const pages = (filteredPages.map((page) => page.id) as string[]) || undefined;
 
-    return pages;
+    return pages ?? undefined;
   }
 
   pageById = computedFn((pageId: string) => {
@@ -100,6 +115,14 @@ export class ProjectPageStore implements IProjectPageStore {
       set(this.filters, [filterKey], filterValue);
     });
   };
+
+  /**
+   * @description clear all the filters
+   */
+  clearAllFilters = () =>
+    runInAction(() => {
+      set(this.filters, ["filters"], {});
+    });
 
   /**
    * @description fetch all the pages based on the navigation tab
