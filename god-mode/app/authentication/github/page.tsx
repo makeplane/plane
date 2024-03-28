@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
@@ -8,17 +10,20 @@ import useInstance from "hooks/use-instance";
 // ui
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { InstanceGithubConfigForm } from "components/authentication";
+import { AuthenticationMethodCard, InstanceGithubConfigForm } from "components/authentication";
+// icons
+import githubLightModeImage from "/public/logos/github-black.png";
+import githubDarkModeImage from "/public/logos/github-white.png";
+// helpers
+import { resolveGeneralTheme } from "helpers/common.helper";
 
 const InstanceGithubAuthenticationPage = observer(() => {
   // store
-  const {
-    fetchInstanceConfigurations,
-    formattedConfig,
-    updateInstanceConfigurations,
-  } = useInstance();
+  const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  // theme
+  const { resolvedTheme } = useTheme();
   // config
   const enableGithubConfig = formattedConfig?.IS_GITHUB_ENABLED ?? "";
 
@@ -37,8 +42,7 @@ const InstanceGithubAuthenticationPage = observer(() => {
       loading: "Saving Configuration...",
       success: {
         title: "Configuration saved",
-        message: () =>
-          `Github authentication is now ${value ? "active" : "disabled"}.`,
+        message: () => `Github authentication is now ${value ? "active" : "disabled"}.`,
       },
       error: {
         title: "Error",
@@ -56,37 +60,37 @@ const InstanceGithubAuthenticationPage = observer(() => {
       });
   };
   return (
-    <div className="flex max-w-6xl flex-col gap-4 pb-6">
-      <div className="mb-2 flex items-center gap-4 border-b border-custom-border-100 pb-3">
-        <div className="grow">
-          <div className="text-xl font-medium text-custom-text-100">Github</div>
-          <div className="text-sm font-normal text-custom-text-300">
-            Allow members to login or sign up to plane with their Github
-            accounts.
-          </div>
-        </div>
-        <div
-          className={`shrink-0 ${
-            (isSubmitting || !formattedConfig) && "opacity-70"
-          }`}
-        >
-          <ToggleSwitch
-            value={Boolean(parseInt(enableGithubConfig))}
-            onChange={() => {
-              Boolean(parseInt(enableGithubConfig)) === true
-                ? updateConfig("IS_GITHUB_ENABLED", "0")
-                : updateConfig("IS_GITHUB_ENABLED", "1");
-            }}
-            size="sm"
-            disabled={isSubmitting || !formattedConfig}
-          />
-        </div>
+    <div className="flex flex-col gap-4 max-w-6xl pb-6 md:px-2">
+      <div className="flex items-center gap-4 mb-2 border-b border-custom-border-100 pb-3">
+        <AuthenticationMethodCard
+          name="Github"
+          description="Allow members to login or sign up to plane with their Github accounts."
+          icon={
+            <Image
+              src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
+              height={24}
+              width={24}
+              alt="GitHub Logo"
+            />
+          }
+          config={
+            <ToggleSwitch
+              value={Boolean(parseInt(enableGithubConfig))}
+              onChange={() => {
+                Boolean(parseInt(enableGithubConfig)) === true
+                  ? updateConfig("IS_GITHUB_ENABLED", "0")
+                  : updateConfig("IS_GITHUB_ENABLED", "1");
+              }}
+              size="sm"
+              disabled={isSubmitting || !formattedConfig}
+            />
+          }
+          disabled={isSubmitting || !formattedConfig}
+          withBorder={false}
+        />
       </div>
       {formattedConfig ? (
-        <>
-          <div className="pt-2 text-lg font-medium">Github configuration</div>
-          <InstanceGithubConfigForm config={formattedConfig} />
-        </>
+        <InstanceGithubConfigForm config={formattedConfig} />
       ) : (
         <Loader className="space-y-8">
           <Loader.Item height="50px" width="25%" />

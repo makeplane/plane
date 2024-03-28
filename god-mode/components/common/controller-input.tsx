@@ -44,7 +44,7 @@ export const ControllerInput: React.FC<Props> = (props) => {
 
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-sm">{label}</h4>
+      <h4 className="text-sm text-custom-text-300">{label}</h4>
       <div className="relative">
         <Controller
           control={control}

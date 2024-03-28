@@ -20,6 +20,7 @@ import githubDarkModeImage from "/public/logos/github-white.png";
 import { resolveGeneralTheme } from "helpers/common.helper";
 // components
 import {
+  AuthenticationMethodCard,
   EmailCodesConfiguration,
   PasswordLoginConfiguration,
   GoogleConfiguration,
@@ -154,23 +155,14 @@ const InstanceAuthenticationPage = observer(() => {
           {/* Authentication modes */}
           <div className="pt-8 text-lg font-medium">Authentication modes</div>
           {authenticationMethodsCard.map((method) => (
-            <div
+            <AuthenticationMethodCard
               key={method.key}
-              className="flex items-center gap-14 rounded border border-custom-border-200 px-4 py-3"
-            >
-              <div className="flex grow items-center gap-4">
-                <div className="shrink-0">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-custom-background-80">
-                    {method.icon}
-                  </div>
-                </div>
-                <div className="grow">
-                  <div className="text-sm font-medium leading-5 text-custom-text-100">{method.name}</div>
-                  <div className="text-xs font-normal leading-5 text-custom-text-300">{method.description}</div>
-                </div>
-              </div>
-              <div className={`shrink-0 ${isSubmitting && "opacity-70"}`}>{method.config}</div>
-            </div>
+              name={method.name}
+              description={method.description}
+              icon={method.icon}
+              config={method.config}
+              disabled={isSubmitting}
+            />
           ))}
         </>
       ) : (

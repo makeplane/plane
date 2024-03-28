@@ -66,7 +66,7 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
         />
 
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Email</h4>
+          <h4 className="text-sm text-custom-text-300">Email</h4>
           <Input
             id="email"
             name="email"
@@ -79,7 +79,7 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Instance ID</h4>
+          <h4 className="text-sm text-custom-text-300">Instance ID</h4>
           <Input
             id="instance_id"
             name="instance_id"

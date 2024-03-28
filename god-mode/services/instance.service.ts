@@ -50,4 +50,12 @@ export class InstanceService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async sendTestEmail(receiverEmail: string) {
+    return this.post("/api/instances/email-credentials-check/", { receiver_email: receiverEmail })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
