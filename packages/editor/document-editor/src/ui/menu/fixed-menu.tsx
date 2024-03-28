@@ -27,7 +27,7 @@ type EditorBubbleMenuProps = {
   editor: Editor;
   uploadFile: UploadImage;
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
-  savedSelection?: Selection | null;
+  savedSelection: Selection | null;
 };
 
 export const FixedMenu = (props: EditorBubbleMenuProps) => {

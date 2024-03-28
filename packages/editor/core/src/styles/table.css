@@ -9,7 +9,6 @@
   border-collapse: collapse;
   table-layout: fixed;
   margin: 0;
-  margin-bottom: 1rem;
   border: 2px solid rgba(var(--color-border-300));
   width: 100%;
 }

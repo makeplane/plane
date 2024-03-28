@@ -50,9 +50,15 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
       (elem: Element) =>
         elem.parentElement?.matches?.(".ProseMirror") ||
         elem.matches(
-          ["li", "p:not(:first-child)", "pre", "blockquote", "h1, h2, h3", "table", "[data-type=horizontalRule]"].join(
-            ", "
-          )
+          [
+            "li",
+            "p:not(:first-child)",
+            "pre",
+            "blockquote",
+            "h1, h2, h3",
+            ".tableWrapper",
+            "[data-type=horizontalRule]",
+          ].join(", ")
         )
     );
 }
@@ -107,10 +113,14 @@ function DragHandle(options: DragHandleOptions) {
       y: event.clientY,
     });
 
+    console.log(node); // Log the node to see if it's correctly identified
+
     if (!(node instanceof Element)) return;
 
     const nodePos = nodePosAtDOM(node, view, options);
-    if (!nodePos) return;
+    console.log(nodePos); // Log the node position to see if it's correctly calculated
+
+    if (nodePos === null || nodePos === undefined) return;
 
     view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
   }

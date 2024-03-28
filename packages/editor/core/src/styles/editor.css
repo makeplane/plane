@@ -42,6 +42,9 @@
   }
 }
 
+/* Custom list item styles */
+
+/* Custom gap cursor styles  */
 .ProseMirror-gapcursor:after {
   border-top: 1px solid rgb(var(--color-text-100)) !important;
 }

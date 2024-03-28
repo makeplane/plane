@@ -130,7 +130,7 @@ export class PageStore implements IPageStore {
           });
         });
       },
-      { delay: 3000 }
+      { delay: 1500 }
     );
 
     const pageTitleDisposer = reaction(

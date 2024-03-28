@@ -6,6 +6,10 @@ import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+
+import ListItem from "@tiptap/extension-list-item";
 import { Table } from "src/ui/extensions/table/table";
 import { TableCell } from "src/ui/extensions/table/table-cell/table-cell";
 import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
@@ -42,17 +46,17 @@ export const CoreEditorExtensions = (
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "list-disc list-outside leading-3",
+        class: "not-prose",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "list-decimal list-outside leading-3 -mt-2 -mb-2",
+        class: "not-prose",
       },
     },
     listItem: {
       HTMLAttributes: {
-        class: "leading-normal -mb-2",
+        class: "not-prose",
       },
     },
     code: false,
@@ -64,6 +68,10 @@ export const CoreEditorExtensions = (
       width: 2,
     },
   }),
+  // BulletList,
+  // OrderedList,
+  // ListItem,
+
   CustomQuoteExtension.configure({
     HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
   }),

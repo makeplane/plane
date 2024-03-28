@@ -1,4 +1,4 @@
-import { EditorContainer, EditorContentWrapper } from "@plane/editor-core";
+import { cn, EditorContainer, EditorContentWrapper } from "@plane/editor-core";
 import { Node } from "@tiptap/pm/model";
 import { EditorView } from "@tiptap/pm/view";
 import { Editor, ReactRenderer } from "@tiptap/react";
@@ -15,6 +15,7 @@ import {
   useFloating,
   useInteractions,
 } from "@floating-ui/react";
+import BlockMenu from "../menu/block-menu";
 
 type IPageRenderer = {
   documentDetails: DocumentDetails;
@@ -170,12 +171,21 @@ export const PageRenderer = (props: IPageRenderer) => {
         />
       )}
       <div className="flex relative h-full w-full flex-col pr-5 editor-renderer" onMouseOver={handleLinkHover}>
-        <EditorContainer hideDragHandle={hideDragHandle} editor={editor} editorClassNames={editorClassNames}>
+        <EditorContainer
+          hideDragHandle={hideDragHandle}
+          editor={editor}
+          editorClassNames={cn(editorClassNames, `h-[100000px]`)}
+        >
           <EditorContentWrapper
             tabIndex={tabIndex}
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}
           />
+          {editor && editor.isEditable && (
+            <>
+              <BlockMenu editor={editor} />
+            </>
+          )}
         </EditorContainer>
       </div>
       {isOpen && linkViewProps && coordinates && (

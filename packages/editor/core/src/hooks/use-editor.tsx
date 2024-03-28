@@ -76,7 +76,7 @@ export const useEditor = ({
         setSavedSelection(editor.state.selection);
       },
       onUpdate: async ({ editor }) => {
-        setIsSubmitting?.("submitting");
+        // setIsSubmitting?.("submitting");
         setShouldShowAlert?.(true);
         onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
