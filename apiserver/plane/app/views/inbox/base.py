@@ -175,32 +175,20 @@ class InboxIssueViewSet(BaseViewSet):
         inbox_id = Inbox.objects.filter(
             workspace_id=workspace.id, project_id=project_id
         ).first()
+        filters = issue_filters(request.GET, "GET", "issue__")
         inbox_issue = (
             InboxIssue.objects.filter(
-                inbox_id=inbox_id.id,
-                project_id=project_id,
+                inbox_id=inbox_id.id, project_id=project_id, **filters
             ).select_related("issue")
         ).order_by(request.GET.get("order_by", "-issue__created_at"))
         # inbox status filter
         inbox_status = [
             item
-            for item in request.GET.get("inbox_status", "-2").split(",")
+            for item in request.GET.get("status", "-2").split(",")
             if item != "null"
         ]
         if inbox_status:
             inbox_issue = inbox_issue.filter(status__in=inbox_status)
-
-        # issue issue priority filter
-        if request.GET.get("priority", False):
-            issue_priority = [
-                item
-                for item in request.GET.get("priority", "none").split(",")
-                if item != "null"
-            ]
-            if issue_priority:
-                inbox_issue = inbox_issue.filter(
-                    issue__priority__in=issue_priority
-                )
 
         return self.paginate(
             request=request,
