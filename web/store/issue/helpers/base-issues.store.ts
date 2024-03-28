@@ -612,39 +612,45 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     previousIssueSubGroupProperties: string[],
     currentIssueSubGroupProperties: string[]
   ): { path: string[]; action: EIssueGroupedAction }[] => {
-    const issueKeyActions = [];
+    const issueKeyActions: { [key: string]: { path: string[]; action: EIssueGroupedAction } } = {};
 
     for (const addKey of groupActionsArray[EIssueGroupedAction.ADD]) {
       for (const subGroupProperty of currentIssueSubGroupProperties) {
-        issueKeyActions.push({ path: [addKey, subGroupProperty], action: EIssueGroupedAction.ADD });
+        issueKeyActions[this.getGroupKey(addKey, subGroupProperty)] = {
+          path: [addKey, subGroupProperty],
+          action: EIssueGroupedAction.ADD,
+        };
       }
     }
 
     for (const deleteKey of groupActionsArray[EIssueGroupedAction.DELETE]) {
       for (const subGroupProperty of previousIssueSubGroupProperties) {
-        issueKeyActions.push({
+        issueKeyActions[this.getGroupKey(deleteKey, subGroupProperty)] = {
           path: [deleteKey, subGroupProperty],
           action: EIssueGroupedAction.DELETE,
-        });
+        };
       }
     }
 
     for (const addKey of subGroupActionsArray[EIssueGroupedAction.ADD]) {
       for (const groupProperty of currentIssueGroupProperties) {
-        issueKeyActions.push({ path: [groupProperty, addKey], action: EIssueGroupedAction.ADD });
+        issueKeyActions[this.getGroupKey(groupProperty, addKey)] = {
+          path: [groupProperty, addKey],
+          action: EIssueGroupedAction.ADD,
+        };
       }
     }
 
     for (const deleteKey of subGroupActionsArray[EIssueGroupedAction.DELETE]) {
       for (const groupProperty of previousIssueGroupProperties) {
-        issueKeyActions.push({
+        issueKeyActions[this.getGroupKey(groupProperty, deleteKey)] = {
           path: [groupProperty, deleteKey],
           action: EIssueGroupedAction.DELETE,
-        });
+        };
       }
     }
 
-    return issueKeyActions;
+    return Object.values(issueKeyActions);
   };
 
   getGroupIssueKeyActions = (
