@@ -144,7 +144,7 @@ function startServices() {
     if [ -n "$migrator_container_id" ]; then
         local idx=0
         while docker inspect --format='{{.State.Status}}' $migrator_container_id | grep -q "running"; do
-            local message=">>> Waiting for Data Migration to finish"
+            local message=">> Waiting for Data Migration to finish"
             local dots=$(printf '%*s' $idx | tr ' ' '.')
             echo -ne "\r$message$dots"
             ((idx++))
@@ -152,13 +152,18 @@ function startServices() {
         done
     fi
     printf "\r\033[K"
+    echo ""
+    echo "   Data Migration completed successfully ✅"
 
     # if migrator exit status is not 0, show error message and exit
     if [ -n "$migrator_container_id" ]; then
         local migrator_exit_code=$(docker inspect --format='{{.State.ExitCode}}' $migrator_container_id)
         if [ $migrator_exit_code -ne 0 ]; then
             echo "Plane Server failed to start ❌"
-            stopServices
+            # stopServices
+            echo
+            echo "Please check the logs for the 'migrator' service and resolve the issue(s)."
+            echo "Stop the services by running the command: ./setup.sh stop"
             exit 1
         fi
     fi
@@ -167,18 +172,18 @@ function startServices() {
     local idx2=0
     while ! docker logs $api_container_id 2>&1 | grep -m 1 -i "Application startup complete" | grep -q ".";
     do
-        local message=">>> Waiting for API Service to Start"
+        local message=">> Waiting for API Service to Start"
         local dots=$(printf '%*s' $idx2 | tr ' ' '.')    
         echo -ne "\r$message$dots"
         ((idx2++))
         sleep 1
     done
     printf "\r\033[K"
-
-    echo ""
+    echo "   API Service started successfully ✅"
     source $DOCKER_ENV_PATH
-    echo ">>> Plane Server started successfully ✅"
-    echo "    You can access the application at $WEB_URL"
+    echo "   Plane Server started successfully ✅"
+    echo ""
+    echo "   You can access the application at $WEB_URL"
     echo ""
 
 }
@@ -186,7 +191,9 @@ function stopServices() {
     docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH down
 }
 function restartServices() {
-    docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH restart
+    # docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH restart
+    stopServices
+    startServices
 }
 function upgrade() {
     echo "***** STOPPING SERVICES ****"
