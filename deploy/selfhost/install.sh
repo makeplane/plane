@@ -17,16 +17,16 @@ function print_header() {
 clear
 
 cat <<"EOF"
----------------------------------------
- ____  _                  
-|  _ \| | __ _ _ __   ___ 
-| |_) | |/ _` | '_ \ / _ \
-|  __/| | (_| | | | |  __/
-|_|   |_|\__,_|_| |_|\___|    
-
----------------------------------------
+--------------------------------------------
+ ____  _                          ///////// 
+|  _ \| | __ _ _ __   ___         ///////// 
+| |_) | |/ _` | '_ \ / _ \   /////    ///// 
+|  __/| | (_| | | | |  __/   /////    ///// 
+|_|   |_|\__,_|_| |_|\___|        ////      
+                                  ////      
+--------------------------------------------
 Project management tool from the future
----------------------------------------
+--------------------------------------------
 EOF
 }
 
@@ -174,6 +174,13 @@ function startServices() {
         sleep 1
     done
     printf "\r\033[K"
+
+    echo ""
+    source $DOCKER_ENV_PATH
+    echo ">>> Plane Server started successfully ✅"
+    echo "    You can access the application at $WEB_URL"
+    echo ""
+
 }
 function stopServices() {
     docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH down
@@ -303,15 +310,15 @@ function askForAction() {
     elif [ "$ACTION" == "2" ] || [ "$DEFAULT_ACTION" == "start" ]
     then
         startServices
-        askForAction
+        # askForAction
     elif [ "$ACTION" == "3" ] || [ "$DEFAULT_ACTION" == "stop" ]
     then
         stopServices
-        askForAction
+        # askForAction
     elif [ "$ACTION" == "4" ] || [ "$DEFAULT_ACTION" == "restart" ]
     then
         restartServices
-        askForAction
+        # askForAction
     elif [ "$ACTION" == "5" ]  || [ "$DEFAULT_ACTION" == "upgrade" ]
     then
         upgrade
