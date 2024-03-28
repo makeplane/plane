@@ -91,7 +91,6 @@ export const CoreEditorExtensions = (
   }),
   TiptapUnderline,
   TextStyle,
-  Color,
   TaskList.configure({
     HTMLAttributes: {
       class: "not-prose pl-2",
@@ -108,7 +107,6 @@ export const CoreEditorExtensions = (
   CustomCodeInlineExtension,
   Markdown.configure({
     html: true,
-    transformCopiedText: true,
     transformPastedText: true,
   }),
   Table,

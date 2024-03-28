@@ -6,6 +6,9 @@ import { hasListBefore } from "src/ui/extensions/custom-list-keymap/list-helpers
 
 import { hasListItemBefore } from "src/ui/extensions/custom-list-keymap/list-helpers/has-list-item-before";
 import { listItemHasSubList } from "src/ui/extensions/custom-list-keymap/list-helpers/list-item-has-sub-list";
+import { isCursorInSubList } from "./is-sublist";
+import { nextListIsDeeper } from "./next-list-is-deeper";
+import { prevListIsHigher } from "./prev-list-is-deeper";
 
 export const handleBackspace = (editor: Editor, name: string, parentListTypes: string[]) => {
   // this is required to still handle the undo handling
@@ -61,18 +64,47 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
   if (!listItemPos) {
     return false;
   }
+  const currentNode = listItemPos.$pos.node(listItemPos.depth);
+  const currentNodeSize = currentNode.nodeSize;
+  const currentListItemHasSubList = listItemHasSubList(name, editor.state, currentNode);
+  const isCurrentListItemSublist = prevListIsHigher(name, editor.state);
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log(
+    "handleBackspace isCurrentListItemSublist: %s",
+    isCurrentListItemSublist,
+    hasListItemBefore(name, editor.state)
+  ); // __AUTO_GENERATED_PRINT_VAR_END__
+  // if the cursor is not at the start of a node
+  // do nothing and proceed
+  if (!isAtStartOfNode(editor.state)) {
+    return false;
+  }
 
   const $prev = editor.state.doc.resolve(listItemPos.$pos.pos - 2);
   const prevNode = $prev.node(listItemPos.depth);
 
   const previousListItemHasSubList = listItemHasSubList(name, editor.state, prevNode);
-
-  // if the previous item is a list item and doesn't have a sublist, join the list items
-  if (hasListItemBefore(name, editor.state) && previousListItemHasSubList) {
-    return editor.chain().liftListItem(name).run();
-    // return editor.commands.joinItemBackward();
+  // if the previous item is a list item and has a sublist, join the list items (this scenario only occurs when a sublist's first item is lifted)
+  if (
+    // hasListItemBefore(name, editor.state) &&
+    // currentListItemHasSubList &&
+    // currentNodeSize > 4 &&
+    // !previousListItemHasSubList &&
+    isCurrentListItemSublist
+  ) {
+    console.log("ran 0");
+    editor.chain().liftListItem(name).run();
+    return editor.commands.joinItemBackward();
+    // return editor.chain().liftListItem(name).run();
   }
 
+  // if the previous item is a list item and doesn't have a sublist, join the list items
+  if (hasListItemBefore(name, editor.state)) {
+    console.log("ran 1");
+    return editor.chain().liftListItem(name).run();
+  }
+
+  console.log("ran 2");
   // otherwise in the end, a backspace should
   // always just lift the list item if
   // joining / merging is not possible
