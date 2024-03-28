@@ -361,6 +361,7 @@ OLD_DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/.env
 if [ -f "$OLD_DOCKER_ENV_PATH" ];
 then
     mv $OLD_DOCKER_ENV_PATH $DOCKER_ENV_PATH
+    sed -i '' -e 's@APP_RELEASE=latest@APP_RELEASE=stable@' $DOCKER_ENV_PATH 
 fi
 
 print_header
