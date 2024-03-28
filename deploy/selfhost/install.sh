@@ -180,7 +180,7 @@ function startServices() {
     done
     printf "\r\033[K"
     echo "   API Service started successfully ✅"
-    source $DOCKER_ENV_PATH
+    source "${DOCKER_ENV_PATH}"
     echo "   Plane Server started successfully ✅"
     echo ""
     echo "   You can access the application at $WEB_URL"
@@ -374,13 +374,13 @@ DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/plane.env
 OLD_DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/.env
 if [ -f "$OLD_DOCKER_ENV_PATH" ];
 then
-    mv $OLD_DOCKER_ENV_PATH $DOCKER_ENV_PATH
+    mv "$OLD_DOCKER_ENV_PATH" "$DOCKER_ENV_PATH"
     OS_NAME=$(uname)
     if [ "$OS_NAME" == "Darwin" ];
     then
-        sed -i '' -e 's@APP_RELEASE=latest@APP_RELEASE=stable@' $DOCKER_ENV_PATH 
+        sed -i '' -e 's@APP_RELEASE=latest@APP_RELEASE=stable@' "$DOCKER_ENV_PATH" 
     else
-        sed -i -e 's@APP_RELEASE=latest@APP_RELEASE=stable@' $DOCKER_ENV_PATH 
+        sed -i -e 's@APP_RELEASE=latest@APP_RELEASE=stable@' "$DOCKER_ENV_PATH" 
     fi
 fi
 
