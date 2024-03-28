@@ -1,36 +1,33 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/ui";
-// types
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { PAGE_DELETED } from "@/constants/event-tracker";
+// hooks
+import { useEventTracker, usePage, useProjectPages } from "@/hooks/store";
 
 type TConfirmPageDeletionProps = {
-  pageId: string;
   isOpen: boolean;
   onClose: () => void;
+  pageId: string;
+  projectId: string;
 };
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
-  const { pageId, isOpen, onClose } = props;
-
+  const { pageId, projectId, isOpen, onClose } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
   // store hooks
-  // const { deletePage } = useProjectPages();
-  // const { capturePageEvent } = useEventTracker();
-  // const pageStore = usePage(pageId);
+  const { removePage } = useProjectPages(projectId);
+  const { capturePageEvent } = useEventTracker();
+  const pageStore = usePage(pageId);
 
-  // if (!pageStore) return null;
+  if (!pageStore) return null;
 
-  // const { name } = pageStore;
-
-  const name = undefined;
+  const { name } = pageStore;
 
   const handleClose = () => {
     setIsDeleting(false);
@@ -38,44 +35,39 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   };
 
   const handleDelete = async () => {
-    if (!pageId || !workspaceSlug || !projectId) return;
-
     setIsDeleting(true);
+    await removePage(pageId)
+      .then(() => {
+        capturePageEvent({
+          eventName: PAGE_DELETED,
+          payload: {
+            ...pageStore,
+            state: "SUCCESS",
+          },
+        });
+        handleClose();
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Page deleted successfully.",
+        });
+      })
+      .catch(() => {
+        capturePageEvent({
+          eventName: PAGE_DELETED,
+          payload: {
+            ...pageStore,
+            state: "FAILED",
+          },
+        });
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be deleted. Please try again.",
+        });
+      });
 
-    // Delete Page will only delete the page from the archive page map, at this point only archived pages can be deleted
-    // await deletePage(workspaceSlug.toString(), projectId as string, pageId)
-    //   .then(() => {
-    //     capturePageEvent({
-    //       eventName: PAGE_DELETED,
-    //       payload: {
-    //         ...pageStore,
-    //         state: "SUCCESS",
-    //       },
-    //     });
-    //     handleClose();
-    //     setToastAlert({
-    //       type: "success",
-    //       title: "Success!",
-    //       message: "Page deleted successfully.",
-    //     });
-    //   })
-    //   .catch(() => {
-    //     capturePageEvent({
-    //       eventName: PAGE_DELETED,
-    //       payload: {
-    //         ...pageStore,
-    //         state: "FAILED",
-    //       },
-    //     });
-    //     setToastAlert({
-    //       type: "error",
-    //       title: "Error!",
-    //       message: "Page could not be deleted. Please try again.",
-    //     });
-    //   })
-    //   .finally(() => {
-    //     setIsDeleting(false);
-    //   });
+    setIsDeleting(false);
   };
 
   return (

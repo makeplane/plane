@@ -1,22 +1,20 @@
-import { EUserProjectRoles } from "constants/project";
 import { useState } from "react";
-import { GptAssistantPopover } from "components/core";
-import { PageInfoPopover, PageOptionsDropdown, PageSummaryPopover, PageToolbar } from "components/pages";
-import { cn } from "helpers/common.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
-// types
-import { useApplication, useUser } from "hooks/store";
 import { observer } from "mobx-react";
-import { IPageStore } from "store/page.store";
 import { Lock, RefreshCw, Sparkle } from "lucide-react";
-// hooks
-// components
-// ui
 import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
 import { ArchiveIcon } from "@plane/ui";
-// helpers
-// types
+// components
+import { GptAssistantPopover } from "@/components/core";
+import { PageInfoPopover, PageOptionsDropdown, PageSummaryPopover, PageToolbar } from "@/components/pages";
 // constants
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
+import { useApplication, useUser } from "@/hooks/store";
+// store
+import { IPageStore } from "@/store/pages/page.store";
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { usePopper } from "react-popper";
 import { List } from "lucide-react";
-// components
+// document editor
 import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
+// components
 import { PageContentBrowser } from "./content-browser";
-// types
 
 type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;

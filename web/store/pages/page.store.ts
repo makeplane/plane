@@ -1,5 +1,5 @@
 import set from "lodash/set";
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { TPage } from "@plane/types";
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
@@ -10,6 +10,7 @@ export type TLoader = "submitting" | "submitted" | "saved" | undefined;
 
 export interface IPageStore extends TPage {
   // observables
+  isSubmitting: "submitting" | "submitted" | "saved";
   loader: TLoader;
   // computed
   asJSON: TPage | undefined;
@@ -19,8 +20,12 @@ export interface IPageStore extends TPage {
   canCurrentUserLockPage: boolean;
   canCurrentUserArchivePage: boolean;
   canCurrentUserDeletePage: boolean;
-  // helper actions
+  // helpers
+  oldName: string;
+  updateName: (name: string) => Promise<void>;
   updateDescription: (description: string) => void;
+  setIsSubmitting: (isSubmitting: "submitting" | "submitted" | "saved") => void;
+  cleanup: () => void;
   // actions
   update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   makePublic: () => Promise<void>;
@@ -34,6 +39,10 @@ export interface IPageStore extends TPage {
 }
 
 export class PageStore implements IPageStore {
+  // loaders
+  isSubmitting: "submitting" | "submitted" | "saved" = "saved";
+  loader: TLoader = undefined;
+  // page properties
   id: string | undefined;
   name: string | undefined;
   description_html: string | undefined;
@@ -50,8 +59,10 @@ export class PageStore implements IPageStore {
   updated_by: string | undefined;
   created_at: Date | undefined;
   updated_at: Date | undefined;
-
-  loader: TLoader = undefined;
+  // helpers
+  oldName: string = "";
+  // disposers
+  disposers: Array<() => void> = [];
   // service
   pageService: PageService;
 
@@ -72,9 +83,11 @@ export class PageStore implements IPageStore {
     this.updated_by = page?.updated_by || undefined;
     this.created_at = page?.created_at || undefined;
     this.updated_at = page?.updated_at || undefined;
+    this.oldName = page?.name || "";
 
     makeObservable(this, {
       // observables
+      isSubmitting: observable.ref,
       loader: observable.ref,
       // computed
       asJSON: computed,
@@ -85,7 +98,10 @@ export class PageStore implements IPageStore {
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
       // helper actions
-      updateDescription: action,
+      updateName: action,
+      updateDescription: action.bound,
+      setIsSubmitting: action,
+      cleanup: action,
       // actions
       update: action,
       makePublic: action,
@@ -99,6 +115,47 @@ export class PageStore implements IPageStore {
     });
 
     this.pageService = new PageService();
+
+    const titleDisposer = reaction(
+      () => this.name,
+      (name) => {
+        const { workspaceSlug, projectId } = this.store.app.router;
+        if (!workspaceSlug || !projectId || !this.id) return;
+        this.isSubmitting = "submitting";
+        this.pageService
+          .update(workspaceSlug, projectId, this.id, { name })
+          .catch(() =>
+            runInAction(() => {
+              this.name = this.oldName;
+            })
+          )
+          .finally(() =>
+            runInAction(() => {
+              this.isSubmitting = "submitted";
+            })
+          );
+      },
+      { delay: 2000 }
+    );
+
+    const descriptionDisposer = reaction(
+      () => this.description_html,
+      (description_html) => {
+        console.log("Reacting...");
+        //TODO: Fix reaction to only run when the data is changed, not when the page is loaded
+        const { workspaceSlug, projectId } = this.store.app.router;
+        if (!workspaceSlug || !projectId || !this.id) return;
+        this.isSubmitting = "submitting";
+        this.pageService.update(workspaceSlug, projectId, this.id, { description_html }).finally(() =>
+          runInAction(() => {
+            this.isSubmitting = "submitted";
+          })
+        );
+      },
+      { delay: 3000 }
+    );
+
+    this.disposers.push(titleDisposer, descriptionDisposer);
   }
 
   // computed
@@ -187,7 +244,24 @@ export class PageStore implements IPageStore {
     return false;
   }
 
-  updateDescription = async () => {};
+  updateName = action("updateName", async (name: string) => {
+    this.oldName = this.name ?? "";
+    this.name = name;
+  });
+
+  updateDescription = action("updateDescription", (description_html: string) => {
+    this.description_html = description_html;
+  });
+
+  setIsSubmitting = action("setIsSubmitting", (isSubmitting: "submitting" | "submitted" | "saved") => {
+    this.isSubmitting = isSubmitting;
+  });
+
+  cleanup = action("cleanup", () => {
+    this.disposers.forEach((disposer) => {
+      disposer();
+    });
+  });
 
   /**
    * @description update the page

@@ -1,7 +1,7 @@
-// helpers
-import { cn } from "helpers/common.helper";
-// types
+// document editor
 import { IMarking } from "@plane/document-editor";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 type HeadingProps = {
   marking: IMarking;

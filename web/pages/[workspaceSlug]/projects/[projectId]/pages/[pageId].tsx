@@ -1,31 +1,35 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
-import { PageEditorBody, PageEditorHeaderRoot } from "components/pages";
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
 import { TPage } from "@plane/types";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { PageHead } from "@/components/core";
 import { PageDetailsHeader } from "@/components/headers/page-details";
 import { IssuePeekOverview } from "@/components/issues";
+import { PageEditorBody, PageEditorHeaderRoot } from "@/components/pages";
+// hooks
 import { usePage, useProjectPages } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
+  const [editorReady, setEditorReady] = useState(false);
+  const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const readOnlyEditorRef = useRef<EditorRefApi>(null);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, pageId } = router.query;
+  const { projectId, pageId } = router.query;
   // store hooks
-  const { createPage } = useProjectPages(projectId?.toString() ?? "");
+  const { createPage, getPageById } = useProjectPages(projectId?.toString() ?? "");
   const pageStore = usePage(pageId?.toString() ?? "");
-
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
   // form info
@@ -38,21 +42,17 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   useEffect(
     () => () => {
-      if (pageStore) pageStore.cleanup();
+      // if (pageStore) pageStore.cleanup();
     },
     [pageStore]
   );
 
-  const [editorReady, setEditorReady] = useState(false);
-  const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
+  const handleEditorReady = (value: boolean) => setEditorReady(value);
 
-  const handleEditorReady = (value: boolean) => {
-    setEditorReady(value);
-  };
+  const handleReadOnlyEditorReady = () => setReadOnlyEditorReady(true);
 
-  const handleReadOnlyEditorReady = () => {
-    setReadOnlyEditorReady(true);
-  };
+  // fetching page details
+  useSWR(pageId ? `PAGE_DETAILS_${pageId}` : null, pageId ? () => getPageById(pageId.toString()) : null);
 
   if (!pageStore || !pageStore.id)
     return (
@@ -64,10 +64,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // we need to get the values of title and description from the page store but we don't have to subscribe to those values
   const pageTitle = pageStore?.name;
 
-  const handleCreatePage = async (payload: Partial<TPage>) => {
-    if (!workspaceSlug || !projectId) return;
-    await createPage(payload);
-  };
+  const handleCreatePage = async (payload: Partial<TPage>) => await createPage(payload);
 
   const handleUpdatePage = async (formData: TPage) =>
     pageStore.updateDescription(formData.description_html ?? "<p></p>");
@@ -85,15 +82,13 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       description_html: currentPageValues.description_html,
     };
 
-    try {
-      await handleCreatePage(formData);
-    } catch (error) {
+    await handleCreatePage(formData).catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Page could not be duplicated. Please try again later.",
-      });
-    }
+      })
+    );
   };
 
   return (

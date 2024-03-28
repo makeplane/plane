@@ -24,7 +24,7 @@ import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
 // store
-import { IPageStore } from "@/store/page.store";
+import { IPageStore } from "@/store/pages/page.store";
 
 const fileService = new FileService();
 
@@ -65,14 +65,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() ?? "")?.id ?? "";
-  const pageTitle = pageStore?.name;
-  const pageDescription = pageStore?.description_html;
-  const { is_locked, archived_at, updateName, isSubmitting, setIsSubmitting } = pageStore;
+  const pageTitle = pageStore?.name ?? "";
+  const pageDescription = pageStore?.description_html ?? "<p></p>";
+  const { description_html, is_locked, archived_at, updateName, isSubmitting, setIsSubmitting } = pageStore;
 
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
-    updateMarkings(pageStore.description_html);
+    updateMarkings(description_html ?? "<p></p>");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
