@@ -26,6 +26,7 @@ import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper"
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "@/hooks/store";
+import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
 import { AIService } from "@/services/ai.service";
 import { FileService } from "@/services/file.service";
@@ -128,6 +129,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  const { fetchCycles } = useProjectIssueProperties();
   // form info
   const {
     formState: { errors, isDirty, isSubmitting, dirtyFields },
@@ -160,6 +162,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         parent_id: formData.parent_id,
       });
     }
+    if (projectId) fetchCycles(workspaceSlug, projectId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 

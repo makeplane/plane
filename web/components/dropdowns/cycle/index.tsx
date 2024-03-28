@@ -1,10 +1,9 @@
-import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
+import { Fragment, ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
 import { ChevronDown } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
-import { ContrastIcon, Spinner } from "@plane/ui";
+import { ContrastIcon } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { useCycle } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
@@ -52,15 +51,11 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
   // states
 
   const [isOpen, setIsOpen] = useState(false);
-  const { getCycleNameById, fetchAllCycles } = useCycle();
+  const { getCycleNameById } = useCycle();
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
 
   const selectedName = value ? getCycleNameById(value) : null;
 
@@ -89,18 +84,6 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
-
-  const onOpen = async () => {
-    if (!selectedName && workspaceSlug) {
-      setIsLoading(true);
-      await fetchAllCycles(workspaceSlug.toString(), projectId);
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    if (projectId) onOpen();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
 
   return (
     <Combobox
@@ -148,21 +131,12 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
               showTooltip={showTooltip}
               variant={buttonVariant}
             >
-              {isLoading ? (
-                <Spinner className="w-3.5 h-3.5" />
-              ) : (
-                <>
-                  {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
-                  {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
-                    <span className="flex-grow truncate max-w-40">{selectedName ?? placeholder}</span>
-                  )}
-                  {dropdownArrow && (
-                    <ChevronDown
-                      className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)}
-                      aria-hidden="true"
-                    />
-                  )}
-                </>
+              {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
+              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
+                <span className="flex-grow truncate max-w-40">{selectedName ?? placeholder}</span>
+              )}
+              {dropdownArrow && (
+                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
               )}
             </DropdownButton>
           </button>
