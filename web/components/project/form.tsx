@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // icons
-import { Lock } from "lucide-react";
+import { Info, Lock } from "lucide-react";
 import { IProject, IWorkspace } from "@plane/types";
 // ui
 import {
@@ -13,6 +13,7 @@ import {
   setToast,
   CustomEmojiIconPicker,
   EmojiIconPickerTypes,
+  Tooltip,
 } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "@/components/core";
@@ -24,6 +25,7 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { useEventTracker, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
 // types
@@ -42,6 +44,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   // store hooks
   const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
+  const { isMobile } = usePlatformOS();
   // form info
   const {
     handleSubmit,
@@ -251,37 +254,49 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         </div>
         <div className="flex w-full items-center justify-between gap-10">
           <div className="flex w-1/2 flex-col gap-1">
-            <h4 className="text-sm">Identifier</h4>
-            <Controller
-              control={control}
-              name="identifier"
-              rules={{
-                required: "Identifier is required",
-                validate: (value) => /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
-                minLength: {
-                  value: 1,
-                  message: "Identifier must at least be of 1 character",
-                },
-                maxLength: {
-                  value: 12,
-                  message: "Identifier must at most be of 5 characters",
-                },
-              }}
-              render={({ field: { value, ref } }) => (
-                <Input
-                  id="identifier"
-                  name="identifier"
-                  type="text"
-                  value={value}
-                  onChange={handleIdentifierChange}
-                  ref={ref}
-                  hasError={Boolean(errors.identifier)}
-                  placeholder="Enter identifier"
-                  className="w-full font-medium"
-                  disabled={!isAdmin}
-                />
-              )}
-            />
+            <h4 className="text-sm">Project ID</h4>
+            <div className="relative">
+              <Controller
+                control={control}
+                name="identifier"
+                rules={{
+                  required: "Project ID is required",
+                  validate: (value) =>
+                    /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) ||
+                    "Only Alphanumeric & Non-latin characters are allowed.",
+                  minLength: {
+                    value: 1,
+                    message: "Project ID must at least be of 1 character",
+                  },
+                  maxLength: {
+                    value: 5,
+                    message: "Project ID must at most be of 5 characters",
+                  },
+                }}
+                render={({ field: { value, ref } }) => (
+                  <Input
+                    id="identifier"
+                    name="identifier"
+                    type="text"
+                    value={value}
+                    onChange={handleIdentifierChange}
+                    ref={ref}
+                    hasError={Boolean(errors.identifier)}
+                    placeholder="Enter Project ID"
+                    className="w-full font-medium"
+                    disabled={!isAdmin}
+                  />
+                )}
+              />
+              <Tooltip
+                isMobile={isMobile}
+                tooltipContent="Helps you identify issues in the project uniquely, (e.g. APP-123). Max 5 characters."
+                className="text-sm"
+                position="right-top"
+              >
+                <Info className="absolute right-2 top-2.5 h-4 w-4 text-custom-text-400" />
+              </Tooltip>
+            </div>
           </div>
           <div className="flex w-1/2 flex-col gap-1">
             <h4 className="text-sm">Network</h4>
