@@ -11,11 +11,6 @@ export interface LinkViewProps {
   to: number;
   url: string;
   closeLinkView: () => void;
-  onActionCompleteHandler: (action: {
-    title: string;
-    message: string;
-    type: "success" | "error" | "warning" | "info";
-  }) => void;
 }
 
 export const LinkView = (props: LinkViewProps & { style: CSSProperties }) => {

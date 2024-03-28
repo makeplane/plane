@@ -1,4 +1,6 @@
 import * as React from "react";
+// helpers
+import { cn } from "../../helpers";
 
 export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   mode?: "primary" | "transparent";
@@ -46,13 +48,17 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>((props, re
       value={value}
       rows={rows}
       cols={cols}
-      className={`no-scrollbar w-full bg-transparent px-3 py-2 placeholder-custom-text-400 outline-none ${
-        mode === "primary"
-          ? "rounded-md border-[0.5px] border-custom-border-200"
-          : mode === "transparent"
-            ? "focus:ring-theme rounded border-none bg-transparent ring-0 transition-all focus:ring-1"
-            : ""
-      } ${hasError ? "border-red-500" : ""} ${hasError && mode === "primary" ? "bg-red-100" : ""} ${className}`}
+      className={cn(
+        "no-scrollbar w-full bg-transparent px-3 py-2 placeholder-custom-text-400 outline-none",
+        {
+          "rounded-md border-[0.5px] border-custom-border-200": mode === "primary",
+          "focus:ring-theme rounded border-none bg-transparent ring-0 transition-all focus:ring-1":
+            mode === "transparent",
+          "border-red-500": hasError,
+          "bg-red-100": hasError && mode === "primary",
+        },
+        className
+      )}
       {...rest}
     />
   );

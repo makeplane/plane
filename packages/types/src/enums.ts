@@ -4,3 +4,9 @@ export enum EUserProjectRoles {
   MEMBER = 15,
   ADMIN = 20,
 }
+
+// project pages
+export enum EPageAccess {
+  PUBLIC = 0,
+  PRIVATE = 1,
+}

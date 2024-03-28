@@ -1,10 +1,12 @@
-import { Editor } from "@tiptap/react";
 import {
   BoldItem,
   BulletListItem,
-  isCellSelection,
   cn,
   CodeItem,
+  EditorMenuItem,
+  HeadingOneItem,
+  HeadingThreeItem,
+  HeadingTwoItem,
   ImageItem,
   ItalicItem,
   NumberedListItem,
@@ -12,24 +14,19 @@ import {
   StrikeThroughItem,
   TableItem,
   UnderLineItem,
-  HeadingOneItem,
-  HeadingTwoItem,
-  HeadingThreeItem,
-  findTableAncestor,
-  EditorMenuItem,
   UploadImage,
-} from "@plane/editor-core";
+} from "@plane/editor-document-core";
+import { Editor } from "@tiptap/react";
 
 export type BubbleMenuItem = EditorMenuItem;
 
 type EditorBubbleMenuProps = {
   editor: Editor;
   uploadFile: UploadImage;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
 };
 
 export const FixedMenu = (props: EditorBubbleMenuProps) => {
-  const { editor, uploadFile, setIsSubmitting } = props;
+  const { editor, uploadFile } = props;
 
   const basicMarkItems: BubbleMenuItem[] = [
     HeadingOneItem(editor),
@@ -48,7 +45,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
   function getComplexItems(): BubbleMenuItem[] {
     const items: BubbleMenuItem[] = [TableItem(editor)];
 
-    items.push(ImageItem(editor, uploadFile, setIsSubmitting));
+    items.push(ImageItem(editor, uploadFile));
     return items;
   }
 

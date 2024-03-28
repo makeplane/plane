@@ -103,9 +103,7 @@ export const useEditor = ({
     },
   }));
 
-  if (!editor) {
-    return null;
-  }
+  if (!editor) return null;
 
   return editor;
 };

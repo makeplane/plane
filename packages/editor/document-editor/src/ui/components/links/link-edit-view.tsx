@@ -1,4 +1,4 @@
-import { isValidHttpUrl } from "@plane/editor-core";
+import { isValidHttpUrl } from "@plane/editor-document-core";
 import { Node } from "@tiptap/pm/model";
 import { Link2Off } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -115,11 +115,6 @@ export const LinkEditView = ({
   const removeLink = () => {
     editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
     linkRemoved.current = true;
-    viewProps.onActionCompleteHandler({
-      title: "Link successfully removed",
-      message: "The link was removed from the text.",
-      type: "success",
-    });
     viewProps.closeLinkView();
   };
 

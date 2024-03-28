@@ -300,9 +300,9 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
         <button
           key={item.key}
           className={cn(
-            `flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-custom-text-100 hover:bg-custom-primary-100/5`,
+            `flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-custom-text-100 hover:bg-custom-background-80`,
             {
-              "bg-custom-primary-100/5": index === selectedIndex,
+              "bg-custom-background-80": index === selectedIndex,
             }
           )}
           onClick={() => selectItem(index)}

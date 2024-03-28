@@ -1,9 +1,8 @@
-import { EditorContainer, EditorContentWrapper } from "@plane/editor-core";
+import { useCallback, useRef, useState } from "react";
+import { EditorContainer, EditorContentWrapper, cn } from "@plane/editor-document-core";
 import { Node } from "@tiptap/pm/model";
 import { EditorView } from "@tiptap/pm/view";
 import { Editor, ReactRenderer } from "@tiptap/react";
-import { useCallback, useRef, useState } from "react";
-import { DocumentDetails } from "src/types/editor-types";
 import { LinkView, LinkViewProps } from "./links/link-view";
 import {
   autoUpdate,
@@ -15,16 +14,13 @@ import {
   useFloating,
   useInteractions,
 } from "@floating-ui/react";
+// ui
+import { TextArea } from "@plane/ui";
 
 type IPageRenderer = {
-  documentDetails: DocumentDetails;
+  title: string;
   updatePageTitle: (title: string) => void;
   editor: Editor;
-  onActionCompleteHandler: (action: {
-    title: string;
-    message: string;
-    type: "success" | "error" | "warning" | "info";
-  }) => void;
   editorClassNames: string;
   editorContentCustomClassNames?: string;
   hideDragHandle?: () => void;
@@ -34,7 +30,7 @@ type IPageRenderer = {
 
 export const PageRenderer = (props: IPageRenderer) => {
   const {
-    documentDetails,
+    title,
     tabIndex,
     editor,
     editorClassNames,
@@ -44,7 +40,7 @@ export const PageRenderer = (props: IPageRenderer) => {
     hideDragHandle,
   } = props;
 
-  const [pageTitle, setPagetitle] = useState(documentDetails.title);
+  const [pageTitle, setPageTitle] = useState(title);
 
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -64,11 +60,11 @@ export const PageRenderer = (props: IPageRenderer) => {
   const { getFloatingProps } = useInteractions([dismiss]);
 
   const handlePageTitleChange = (title: string) => {
-    setPagetitle(title);
+    setPageTitle(title);
     updatePageTitle(title);
   };
 
-  const [cleanup, setcleanup] = useState(() => () => {});
+  const [cleanup, setCleanup] = useState(() => () => {});
 
   const floatingElementRef = useRef<HTMLElement | null>(null);
 
@@ -137,7 +133,6 @@ export const PageRenderer = (props: IPageRenderer) => {
           setCoordinates({ x: x - 300, y: y - 50 });
           setIsOpen(true);
           setLinkViewProps({
-            onActionCompleteHandler: props.onActionCompleteHandler,
             closeLinkView: closeLinkView,
             view: "LinkPreview",
             url: href,
@@ -148,29 +143,31 @@ export const PageRenderer = (props: IPageRenderer) => {
         });
       });
 
-      setcleanup(cleanupFunc);
+      setCleanup(cleanupFunc);
     },
     [editor, cleanup]
   );
 
   return (
-    <div className="w-full h-full pb-20 pl-7 pt-5 page-renderer">
-      {!readonly ? (
-        <input
-          onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full break-words border-none bg-custom-background pr-5 text-4xl font-bold outline-none"
-          value={pageTitle}
-        />
-      ) : (
-        <input
-          onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full overflow-x-clip break-words border-none bg-custom-background pr-5 text-4xl font-bold outline-none"
-          value={pageTitle}
-          disabled
-        />
-      )}
-      <div className="flex relative h-full w-full flex-col pr-5 editor-renderer" onMouseOver={handleLinkHover}>
-        <EditorContainer hideDragHandle={hideDragHandle} editor={editor} editorClassNames={editorClassNames}>
+    <div className="frame-renderer h-full w-full flex flex-col overflow-y-auto">
+      <div className="w-full flex-shrink-0">
+        {readonly ? (
+          <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{pageTitle}</h6>
+        ) : (
+          <TextArea
+            onChange={(e) => handlePageTitleChange(e.target.value)}
+            className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none rounded-none"
+            placeholder="Untitled Page"
+            value={pageTitle}
+          />
+        )}
+      </div>
+      <div className="relative flex-grow w-full pr-5" onMouseOver={handleLinkHover}>
+        <EditorContainer
+          hideDragHandle={hideDragHandle}
+          editor={editor}
+          editorClassNames={cn(editorClassNames, "pb-64")}
+        >
           <EditorContentWrapper
             tabIndex={tabIndex}
             editor={editor}
@@ -181,7 +178,7 @@ export const PageRenderer = (props: IPageRenderer) => {
       {isOpen && linkViewProps && coordinates && (
         <div
           style={{ ...floatingStyles, left: `${coordinates.x}px`, top: `${coordinates.y}px` }}
-          className={`absolute`}
+          className="absolute"
           ref={refs.setFloating}
         >
           <LinkView {...linkViewProps} style={floatingStyles} {...getFloatingProps()} />

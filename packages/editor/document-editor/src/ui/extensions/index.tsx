@@ -1,15 +1,14 @@
 import Placeholder from "@tiptap/extension-placeholder";
 import { IssueWidgetPlaceholder } from "src/ui/extensions/widgets/issue-embed-widget";
 
-import { SlashCommand, DragAndDrop } from "@plane/editor-extensions";
-import { UploadImage } from "@plane/editor-core";
+import { SlashCommandDocumentEditor, DragAndDrop } from "@plane/editor-extensions";
+import { UploadImage } from "@plane/editor-document-core";
 
 export const DocumentEditorExtensions = (
   uploadFile: UploadImage,
-  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void
 ) => [
-  SlashCommand(uploadFile, setIsSubmitting),
+  SlashCommandDocumentEditor(uploadFile),
   DragAndDrop(setHideDragHandle),
   Placeholder.configure({
     placeholder: ({ node }) => {

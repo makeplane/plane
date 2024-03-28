@@ -11,11 +11,6 @@ export interface MenuOptionsProps {
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
-  onActionCompleteHandler: (action: {
-    title: string;
-    message: string;
-    type: "success" | "error" | "warning" | "info";
-  }) => void;
 }
 
 export const getMenuOptions = ({
@@ -24,7 +19,6 @@ export const getMenuOptions = ({
   duplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
-  onActionCompleteHandler,
 }: MenuOptionsProps) => {
   const KanbanMenuOptions: IVerticalDropdownItemProps[] = [
     {
@@ -32,11 +26,6 @@ export const getMenuOptions = ({
       type: "copy_markdown",
       Icon: ClipboardIcon,
       action: () => {
-        onActionCompleteHandler({
-          title: "Markdown Copied",
-          message: "Page Copied as Markdown",
-          type: "success",
-        });
         copyMarkdownToClipboard(editor);
       },
       label: "Copy markdown",
@@ -53,11 +42,6 @@ export const getMenuOptions = ({
       type: "copy_page_link",
       Icon: Link,
       action: () => {
-        onActionCompleteHandler({
-          title: "Link Copied",
-          message: "Link to the page has been copied to clipboard",
-          type: "success",
-        });
         CopyPageLink();
       },
       label: "Copy page link",
@@ -73,20 +57,8 @@ export const getMenuOptions = ({
       action: () => {
         duplicationConfig
           .action()
-          .then(() => {
-            onActionCompleteHandler({
-              title: "Page Copied",
-              message: "Page has been copied as 'Copy of' followed by page title",
-              type: "success",
-            });
-          })
-          .catch(() => {
-            onActionCompleteHandler({
-              title: "Copy Failed",
-              message: "Sorry, page cannot be copied, please try again later.",
-              type: "error",
-            });
-          });
+          .then(() => {})
+          .catch(() => {});
       },
       label: "Make a copy",
     });
@@ -102,20 +74,8 @@ export const getMenuOptions = ({
         const state = pageLockConfig.is_locked ? "Unlocked" : "Locked";
         pageLockConfig
           .action()
-          .then(() => {
-            onActionCompleteHandler({
-              title: `Page ${state}`,
-              message: `Page has been ${state}, no one will be able to change the state of lock except you.`,
-              type: "success",
-            });
-          })
-          .catch(() => {
-            onActionCompleteHandler({
-              title: `Page cannot be ${state}`,
-              message: `Sorry, page cannot be ${state}, please try again later`,
-              type: "error",
-            });
-          });
+          .then(() => {})
+          .catch(() => {});
       },
     });
   }
@@ -131,20 +91,8 @@ export const getMenuOptions = ({
         const state = pageArchiveConfig.is_archived ? "Unarchived" : "Archived";
         pageArchiveConfig
           .action()
-          .then(() => {
-            onActionCompleteHandler({
-              title: `Page ${state}`,
-              message: `Page has been ${state}, you can checkout all archived tab and can restore the page later.`,
-              type: "success",
-            });
-          })
-          .catch(() => {
-            onActionCompleteHandler({
-              title: `Page cannot be ${state}`,
-              message: `Sorry, page cannot be ${state}, please try again later.`,
-              type: "success",
-            });
-          });
+          .then(() => {})
+          .catch(() => {});
       },
     });
   }

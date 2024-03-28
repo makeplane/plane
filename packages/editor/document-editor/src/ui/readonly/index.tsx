@@ -1,132 +1,59 @@
-import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
-import { useRouter } from "next/router";
-import { useState, forwardRef, useEffect } from "react";
-import { EditorHeader } from "src/ui/components/editor-header";
-import { PageRenderer } from "src/ui/components/page-renderer";
-import { SummarySideBar } from "src/ui/components/summary-side-bar";
+import { forwardRef, MutableRefObject, useEffect } from "react";
+// hooks
 import { useEditorMarkings } from "src/hooks/use-editor-markings";
-import { DocumentDetails } from "src/types/editor-types";
-import { IPageArchiveConfig, IPageLockConfig, IDuplicationConfig } from "src/types/menu-actions";
-import { getMenuOptions } from "src/utils/menu-options";
+import { EditorReadOnlyRefApi, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-document-core";
+// components
+import { PageRenderer } from "src/ui/components/page-renderer";
 import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
 
 interface IDocumentReadOnlyEditor {
   value: string;
-  rerenderOnPropsChange?: {
-    id: string;
-    description_html: string;
-  };
-  noBorder: boolean;
-  borderOnFocus: boolean;
   customClassName: string;
-  documentDetails: DocumentDetails;
-  pageLockConfig?: IPageLockConfig;
-  pageArchiveConfig?: IPageArchiveConfig;
-  pageDuplicationConfig?: IDuplicationConfig;
-  onActionCompleteHandler: (action: {
-    title: string;
-    message: string;
-    type: "success" | "error" | "warning" | "info";
-  }) => void;
   tabIndex?: number;
+  title: string;
+  handleEditorReady?: (value: boolean) => void;
+  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
 }
 
-interface DocumentReadOnlyEditorProps extends IDocumentReadOnlyEditor {
-  forwardedRef?: React.Ref<EditorHandle>;
-}
-
-interface EditorHandle {
-  clearEditor: () => void;
-  setEditorValue: (content: string) => void;
-}
-
-const DocumentReadOnlyEditor = ({
-  noBorder,
-  borderOnFocus,
-  customClassName,
-  value,
-  documentDetails,
-  forwardedRef,
-  pageDuplicationConfig,
-  pageLockConfig,
-  pageArchiveConfig,
-  rerenderOnPropsChange,
-  onActionCompleteHandler,
-  tabIndex,
-}: DocumentReadOnlyEditorProps) => {
-  const router = useRouter();
-  const [sidePeekVisible, setSidePeekVisible] = useState(true);
-  const { markings, updateMarkings } = useEditorMarkings();
+const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
+  const { customClassName, value, title, forwardedRef, tabIndex, handleEditorReady } = props;
+  const { updateMarkings } = useEditorMarkings();
 
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
-    rerenderOnPropsChange,
+    handleEditorReady,
     extensions: [IssueWidgetPlaceholder()],
   });
 
   useEffect(() => {
     if (editor) {
-      updateMarkings(editor.getJSON());
+      updateMarkings(editor.getHTML());
     }
-  }, [editor]);
+  }, [editor, updateMarkings]);
 
   if (!editor) {
     return null;
   }
 
   const editorClassNames = getEditorClassNames({
-    noBorder,
-    borderOnFocus,
     customClassName,
   });
 
-  const KanbanMenuOptions = getMenuOptions({
-    editor: editor,
-    router: router,
-    pageArchiveConfig: pageArchiveConfig,
-    pageLockConfig: pageLockConfig,
-    duplicationConfig: pageDuplicationConfig,
-    onActionCompleteHandler,
-  });
-
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden">
-      <EditorHeader
-        isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
-        isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
-        readonly
-        editor={editor}
-        sidePeekVisible={sidePeekVisible}
-        setSidePeekVisible={setSidePeekVisible}
-        KanbanMenuOptions={KanbanMenuOptions}
-        markings={markings}
-        documentDetails={documentDetails}
-        archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
-      />
-      <div className="flex h-full w-full overflow-y-auto frame-renderer">
-        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-80">
-          <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
-        </div>
-        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
-          <PageRenderer
-            tabIndex={tabIndex}
-            onActionCompleteHandler={onActionCompleteHandler}
-            updatePageTitle={() => Promise.resolve()}
-            readonly
-            editor={editor}
-            editorClassNames={editorClassNames}
-            documentDetails={documentDetails}
-          />
-        </div>
-        <div className="hidden w-56 flex-shrink-0 lg:block lg:w-80" />
-      </div>
-    </div>
+    <PageRenderer
+      tabIndex={tabIndex}
+      updatePageTitle={() => Promise.resolve()}
+      readonly
+      editor={editor}
+      editorClassNames={editorClassNames}
+      title={title}
+    />
   );
 };
 
-const DocumentReadOnlyEditorWithRef = forwardRef<EditorHandle, IDocumentReadOnlyEditor>((props, ref) => (
-  <DocumentReadOnlyEditor {...props} forwardedRef={ref} />
+const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditor>((props, ref) => (
+  <DocumentReadOnlyEditor {...props} forwardedRef={ref as MutableRefObject<EditorReadOnlyRefApi | null>} />
 ));
 
 DocumentReadOnlyEditorWithRef.displayName = "DocumentReadOnlyEditorWithRef";

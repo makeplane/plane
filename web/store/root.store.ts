@@ -17,7 +17,7 @@ import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { IStateStore, StateStore } from "./state.store";
 import { IUserRootStore, UserRootStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
-import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
+import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 import { IModuleFilterStore, ModuleFilterStore } from "./module_filter.store";
 
@@ -43,7 +43,7 @@ export class RootStore {
   estimate: IEstimateStore;
   mention: IMentionStore;
   dashboard: IDashboardStore;
-  projectPages: IProjectPageStore;
+  projectPage: IProjectPageStore;
 
   constructor() {
     this.app = new AppRootStore(this);
@@ -66,7 +66,7 @@ export class RootStore {
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
     this.dashboard = new DashboardStore(this);
-    this.projectPages = new ProjectPageStore(this);
+    this.projectPage = new ProjectPageStore(this);
   }
 
   resetOnSignout() {
@@ -87,6 +87,6 @@ export class RootStore {
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
     this.dashboard = new DashboardStore(this);
-    this.projectPages = new ProjectPageStore(this);
+    this.projectPage = new ProjectPageStore(this);
   }
 }
