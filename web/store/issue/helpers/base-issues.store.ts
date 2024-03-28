@@ -489,19 +489,19 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
     if (subGroupId && groupId) {
       const groupKey = this.getGroupKey(groupId, subGroupId);
-      const subGroupIssueCount = get(this.groupedIssueCount, groupKey);
+      const subGroupIssueCount = get(this.groupedIssueCount, groupKey) ?? 0;
 
       set(this.groupedIssueCount, groupKey, subGroupIssueCount + increment);
     }
 
     if (groupId) {
-      const groupIssueCount = get(this.groupedIssueCount, [groupId]);
+      const groupIssueCount = get(this.groupedIssueCount, [groupId]) ?? 0;
 
       set(this.groupedIssueCount, groupId, groupIssueCount + increment);
     }
 
     if (groupId !== ALL_ISSUES) {
-      const totalIssueCount = get(this.groupedIssueCount, [ALL_ISSUES]);
+      const totalIssueCount = get(this.groupedIssueCount, [ALL_ISSUES]) ?? 0;
 
       set(this.groupedIssueCount, ALL_ISSUES, totalIssueCount + increment);
     }
@@ -671,14 +671,20 @@ export class BaseIssuesStore implements IBaseIssuesStore {
   ): { [EIssueGroupedAction.ADD]: string[]; [EIssueGroupedAction.DELETE]: string[] } => {
     const ADD = [];
     const DELETE = [];
-    for (const currentValue of current) {
-      if (previous.includes(currentValue)) continue;
-      ADD.push(currentValue);
+    if (isEmpty(current)) ADD.push("None");
+    else {
+      for (const currentValue of current) {
+        if (previous.includes(currentValue)) continue;
+        ADD.push(currentValue);
+      }
     }
 
-    for (const previousValue of previous) {
-      if (current.includes(previousValue)) continue;
-      DELETE.push(previousValue);
+    if (isEmpty(previous)) DELETE.push("None");
+    else {
+      for (const previousValue of previous) {
+        if (current.includes(previousValue)) continue;
+        DELETE.push(previousValue);
+      }
     }
 
     if (!action) return { [EIssueGroupedAction.ADD]: ADD, [EIssueGroupedAction.DELETE]: DELETE };
