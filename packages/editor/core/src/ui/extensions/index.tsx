@@ -46,17 +46,17 @@ export const CoreEditorExtensions = (
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "not-prose",
+        class: "",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "not-prose",
+        class: "",
       },
     },
     listItem: {
       HTMLAttributes: {
-        class: "not-prose",
+        class: "",
       },
     },
     code: false,

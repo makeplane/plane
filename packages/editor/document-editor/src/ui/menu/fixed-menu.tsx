@@ -18,6 +18,7 @@ import {
   findTableAncestor,
   EditorMenuItem,
   UploadImage,
+  TodoListItem,
 } from "@plane/editor-core";
 import { Selection } from "@tiptap/pm/state";
 
@@ -43,7 +44,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
     StrikeThroughItem(editor),
   ];
 
-  const listItems: BubbleMenuItem[] = [BulletListItem(editor), NumberedListItem(editor)];
+  const listItems: BubbleMenuItem[] = [BulletListItem(editor), NumberedListItem(editor), TodoListItem(editor)];
 
   const userActionItems: BubbleMenuItem[] = [QuoteItem(editor), CodeItem(editor)];
 

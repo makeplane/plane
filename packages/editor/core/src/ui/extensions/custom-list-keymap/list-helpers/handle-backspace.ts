@@ -6,9 +6,7 @@ import { hasListBefore } from "src/ui/extensions/custom-list-keymap/list-helpers
 
 import { hasListItemBefore } from "src/ui/extensions/custom-list-keymap/list-helpers/has-list-item-before";
 import { listItemHasSubList } from "src/ui/extensions/custom-list-keymap/list-helpers/list-item-has-sub-list";
-import { isCursorInSubList } from "./is-sublist";
-import { nextListIsDeeper } from "./next-list-is-deeper";
-import { prevListIsHigher } from "./prev-list-is-deeper";
+import { prevListIsHigher } from "src/ui/extensions/custom-list-keymap/list-helpers/prev-list-is-higher";
 
 export const handleBackspace = (editor: Editor, name: string, parentListTypes: string[]) => {
   // this is required to still handle the undo handling
@@ -89,12 +87,13 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
     // hasListItemBefore(name, editor.state) &&
     // currentListItemHasSubList &&
     // currentNodeSize > 4 &&
-    // !previousListItemHasSubList &&
+    // !previousListItemHasSubList
     isCurrentListItemSublist
   ) {
     console.log("ran 0");
-    editor.chain().liftListItem(name).run();
-    return editor.commands.joinItemBackward();
+    // editor.chain().liftListItem(name).run();
+    return false;
+    // return editor.commands.joinItemBackward();
     // return editor.chain().liftListItem(name).run();
   }
 
