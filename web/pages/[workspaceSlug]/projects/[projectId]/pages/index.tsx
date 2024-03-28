@@ -1,14 +1,14 @@
 import { ReactElement, useState } from "react";
-import { PagesHeader } from "components/headers";
-import { PagesListRoot, PagesListView, CreateUpdatePageModal } from "components/pages";
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
 import { useRouter } from "next/router";
-// layouts
-// components
 // types
 import { TPageNavigationTabs } from "@plane/types";
-// constants
+// components
+import { PagesHeader } from "@/components/headers";
+import { PagesListRoot, PagesListView, CreateUpdatePageModal } from "@/components/pages";
+// layouts
+import { AppLayout } from "@/layouts/app-layout";
+// lib
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectPagesPage: NextPageWithLayout = () => {
   // router

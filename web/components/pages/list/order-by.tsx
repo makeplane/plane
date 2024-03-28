@@ -1,12 +1,12 @@
 import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
-// ui
-import { CustomMenu, getButtonStyling } from "@plane/ui";
-// helpers
-import { cn } from "helpers/common.helper";
 // types
 import { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
+// ui
+import { CustomMenu, getButtonStyling } from "@plane/ui";
 // constants
-import { PAGE_SORTING_KEY_OPTIONS } from "constants/page";
+import { PAGE_SORTING_KEY_OPTIONS } from "@/constants/page";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 type Props = {
   onChange: (value: { key?: TPageFiltersSortKey; order?: TPageFiltersSortBy }) => void;

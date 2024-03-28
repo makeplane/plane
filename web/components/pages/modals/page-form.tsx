@@ -1,13 +1,14 @@
 import { FormEvent, useState } from "react";
-import { Button, Input, Tooltip } from "@plane/ui";
-// hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // types
 import { TPage } from "@plane/types";
+// ui
+import { Button, Input, Tooltip } from "@plane/ui";
 // constants
-import { PAGE_ACCESS_SPECIFIERS } from "constants/page";
+import { PAGE_ACCESS_SPECIFIERS } from "@/constants/page";
 // helpers
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   formData: Partial<TPage>;

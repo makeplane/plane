@@ -5,9 +5,6 @@ import { PostHogProvider as PHProvider } from "posthog-js/react";
 import { IUser } from "@plane/types";
 // constants
 import { GROUP_WORKSPACE } from "@/constants/event-tracker";
-// helpers
-import { getUserRole } from "@/helpers/user.helper";
-// types
 
 export interface IPosthogWrapper {
   children: ReactNode;
@@ -20,7 +17,7 @@ export interface IPosthogWrapper {
 }
 
 const PostHogProvider: FC<IPosthogWrapper> = (props) => {
-  const { children, user, workspaceRole, currentWorkspaceId, projectRole, posthogAPIKey, posthogHost } = props;
+  const { children, user, currentWorkspaceId, posthogAPIKey, posthogHost } = props;
   // states
   const [lastWorkspaceId, setLastWorkspaceId] = useState(currentWorkspaceId);
   // router

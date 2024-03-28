@@ -1,8 +1,11 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
+// types
 import { TPage } from "@plane/types";
+// constants
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
+// services
 import { PageService } from "@/services/page.service";
 import { RootStore } from "../root.store";
 
@@ -20,9 +23,10 @@ export interface IPageStore extends TPage {
   canCurrentUserLockPage: boolean;
   canCurrentUserArchivePage: boolean;
   canCurrentUserDeletePage: boolean;
+  isContentEditable: boolean;
   // helpers
   oldName: string;
-  updateName: (name: string) => Promise<void>;
+  updateName: (name: string) => void;
   updateDescription: (description: string) => void;
   setIsSubmitting: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   cleanup: () => void;
@@ -97,6 +101,7 @@ export class PageStore implements IPageStore {
       canCurrentUserLockPage: computed,
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
+      isContentEditable: computed,
       // helper actions
       updateName: action,
       updateDescription: action.bound,
@@ -123,7 +128,9 @@ export class PageStore implements IPageStore {
         if (!workspaceSlug || !projectId || !this.id) return;
         this.isSubmitting = "submitting";
         this.pageService
-          .update(workspaceSlug, projectId, this.id, { name })
+          .update(workspaceSlug, projectId, this.id, {
+            name,
+          })
           .catch(() =>
             runInAction(() => {
               this.name = this.oldName;
@@ -146,11 +153,15 @@ export class PageStore implements IPageStore {
         const { workspaceSlug, projectId } = this.store.app.router;
         if (!workspaceSlug || !projectId || !this.id) return;
         this.isSubmitting = "submitting";
-        this.pageService.update(workspaceSlug, projectId, this.id, { description_html }).finally(() =>
-          runInAction(() => {
-            this.isSubmitting = "submitted";
+        this.pageService
+          .update(workspaceSlug, projectId, this.id, {
+            description_html,
           })
-        );
+          .finally(() =>
+            runInAction(() => {
+              this.isSubmitting = "submitted";
+            })
+          );
       },
       { delay: 3000 }
     );
@@ -230,26 +241,26 @@ export class PageStore implements IPageStore {
    * @description returns true if the page can be edited
    */
   get isContentEditable() {
-    const currentUserId = this.store.user.currentUser?.id;
-    if (!currentUserId) return false;
-
-    const isOwner = this.owned_by === currentUserId;
+    const isOwner = this.isCurrentUserOwner;
+    const currentUserRole = this.store.user.membership.currentProjectRole;
     const isPublic = this.access === EPageAccess.PUBLIC;
+    const isArchived = this.archived_at;
     const isLocked = this.is_locked;
 
-    if (isOwner) return true;
-    if (!isOwner && isPublic) return true;
-    if (!isOwner && !isLocked) return true;
-
-    return false;
+    return (
+      !isArchived &&
+      !isLocked &&
+      (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserProjectRoles.MEMBER))
+    );
   }
 
-  updateName = action("updateName", async (name: string) => {
+  updateName = action("updateName", (name: string) => {
     this.oldName = this.name ?? "";
     this.name = name;
   });
 
   updateDescription = action("updateDescription", (description_html: string) => {
+    console.log("Updating description from the store");
     this.description_html = description_html;
   });
 

@@ -15,10 +15,10 @@ type Props = {
 
 export const PageSummaryPopover: React.FC<Props> = (props) => {
   const { editorRef, markings, sidePeekVisible, setSidePeekVisible } = props;
-
+  // refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
+  // popper-js
   const { styles: summaryPopoverStyles, attributes: summaryPopoverAttributes } = usePopper(
     referenceElement,
     popperElement,

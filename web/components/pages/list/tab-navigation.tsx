@@ -1,9 +1,9 @@
 import { FC } from "react";
 import Link from "next/link";
-// helpers
-import { cn } from "helpers/common.helper";
 // types
 import { TPageNavigationTabs } from "@plane/types";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 type TPageTabNavigation = {
   workspaceSlug: string;

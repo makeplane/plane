@@ -1,5 +1,3 @@
-// constants
-import { EUserProjectRoles } from "constants/project";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
@@ -19,7 +17,7 @@ import { PageContentBrowser } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
@@ -59,15 +57,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() ?? "")?.id ?? "";
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html ?? "<p></p>";
-  const { description_html, is_locked, archived_at, updateName, isSubmitting, setIsSubmitting } = pageStore;
+  const { description_html, isContentEditable, updateName, isSubmitting, setIsSubmitting } = pageStore;
 
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
@@ -75,10 +70,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(description_html ?? "<p></p>");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // auth
-  const isPageReadOnly =
-    is_locked || archived_at || (!!currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER);
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -91,20 +82,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         )}
       >
         <PageContentBrowser
-          editorRef={isPageReadOnly ? readOnlyEditorRef.current : editorRef.current}
+          editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
           markings={markings}
         />
       </div>
       <div className="h-full w-full pt-5 px-5 md:w-[calc(100%-14rem)] md:pr-0 lg:w-[calc(100%-18rem-18rem)]">
-        {isPageReadOnly ? (
-          <DocumentReadOnlyEditorWithRef
-            ref={readOnlyEditorRef}
-            title={pageTitle}
-            value={pageDescription}
-            handleEditorReady={handleReadOnlyEditorReady}
-            customClassName="tracking-tight w-full px-0 !border-none"
-          />
-        ) : (
+        {isContentEditable ? (
           <Controller
             name="description_html"
             control={control}
@@ -131,6 +114,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 }}
               />
             )}
+          />
+        ) : (
+          <DocumentReadOnlyEditorWithRef
+            ref={readOnlyEditorRef}
+            title={pageTitle}
+            value={pageDescription}
+            handleEditorReady={handleReadOnlyEditorReady}
+            customClassName="tracking-tight w-full px-0 !border-none"
           />
         )}
       </div>

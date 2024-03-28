@@ -42,7 +42,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   useEffect(
     () => () => {
-      // if (pageStore) pageStore.cleanup();
+      if (pageStore) pageStore.cleanup?.();
     },
     [pageStore]
   );
@@ -66,8 +66,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const handleCreatePage = async (payload: Partial<TPage>) => await createPage(payload);
 
-  const handleUpdatePage = async (formData: TPage) =>
+  const handleUpdatePage = async (formData: TPage) => {
+    console.log("Updating description");
     pageStore.updateDescription(formData.description_html ?? "<p></p>");
+  };
 
   const handleDuplicatePage = async () => {
     const currentPageValues = getValues();

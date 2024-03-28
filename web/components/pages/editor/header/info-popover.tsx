@@ -1,10 +1,10 @@
 import { useState } from "react";
-// helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
 import { usePopper } from "react-popper";
-// types
-import { IPageStore } from "store/page.store";
 import { Calendar, History, Info } from "lucide-react";
+// helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+// store
+import { IPageStore } from "@/store/pages/page.store";
 
 type Props = {
   pageStore: IPageStore;
@@ -12,12 +12,12 @@ type Props = {
 
 export const PageInfoPopover: React.FC<Props> = (props) => {
   const { pageStore } = props;
-
+  // states
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
-
+  // refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
+  // popper-js
   const { styles: infoPopoverStyles, attributes: infoPopoverAttributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-start",
   });

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { cn } from "helpers/common.helper";
 import {
   Bold,
   Code2,
@@ -17,8 +16,11 @@ import {
   Table,
   Underline,
 } from "lucide-react";
+// document editor
 import { EditorRefApi } from "@plane/document-editor";
 import { EditorMenuItemNames } from "@plane/editor-document-core";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 type Props = {
   editorRef: EditorRefApi;

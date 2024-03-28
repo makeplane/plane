@@ -6,13 +6,11 @@ import { ArchiveIcon } from "@plane/ui";
 // components
 import { GptAssistantPopover } from "@/components/core";
 import { PageInfoPopover, PageOptionsDropdown, PageSummaryPopover, PageToolbar } from "@/components/pages";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useApplication, useUser } from "@/hooks/store";
+import { useApplication } from "@/hooks/store";
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -56,30 +54,22 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId || !editorRef) return;
     editorRef.current?.setEditorValueAtCursorPosition(response);
   };
-
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  // auth
+  const isContentEditable = pageStore.isContentEditable;
 
   if (!editorRef.current && !readOnlyEditorRef.current) return null;
-
-  // auth
-  const isPageReadOnly =
-    pageStore.is_locked ||
-    pageStore.archived_at ||
-    (!!currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER);
 
   return (
     <div className="flex items-center border-b border-custom-border-200 px-3 py-2 md:px-5">
       <div className="flex-shrink-0 md:w-56 lg:w-72">
         <PageSummaryPopover
-          editorRef={isPageReadOnly ? readOnlyEditorRef.current : editorRef.current}
+          editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
           markings={markings}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}
         />
       </div>
-      {(editorReady || readOnlyEditorReady) && !isPageReadOnly && editorRef.current && (
+      {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
         <PageToolbar editorRef={editorRef?.current} />
       )}
       <div className="flex flex-grow items-center justify-end gap-3">
@@ -107,7 +97,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
             <span>Archived at {renderFormattedDate(pageStore.archived_at)}</span>
           </div>
         )}
-        {!isPageReadOnly && envConfig?.has_openai_configured && (
+        {isContentEditable && envConfig?.has_openai_configured && (
           <GptAssistantPopover
             isOpen={gptModalOpen}
             projectId={projectId}
@@ -133,7 +123,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
         )}
         <PageInfoPopover pageStore={pageStore} />
         <PageOptionsDropdown
-          editorRef={isPageReadOnly ? readOnlyEditorRef.current : editorRef.current}
+          editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
           handleDuplicatePage={handleDuplicatePage}
           pageStore={pageStore}
         />

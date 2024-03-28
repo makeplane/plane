@@ -1,10 +1,14 @@
 import { observer } from "mobx-react";
 import { Clipboard, Copy, Link, Lock } from "lucide-react";
+// document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
+// ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
-import { EUserProjectRoles } from "@/constants/project";
+// helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
-import { useApplication, useProjectPages, useUser } from "@/hooks/store";
+// hooks
+import { useApplication } from "@/hooks/store";
+// store
 import { IPageStore } from "@/store/pages/page.store";
 
 type Props = {
@@ -16,41 +20,37 @@ type Props = {
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, pageStore } = props;
   // store values
-  const { lock, unlock, owned_by } = pageStore;
+  const {
+    archive,
+    lock,
+    unlock,
+    canCurrentUserArchivePage,
+    canCurrentUserDuplicatePage,
+    canCurrentUserLockPage,
+    restore,
+  } = pageStore;
   // store hooks
   const {
     router: { workspaceSlug, projectId },
   } = useApplication();
-  const {
-    currentUser,
-    membership: { currentProjectRole },
-  } = useUser();
 
-  const handleArchivePage = async () => {
-    if (!workspaceSlug || !projectId) return;
-    try {
-      await archivePage(workspaceSlug.toString(), projectId.toString(), pageStore.id);
-    } catch (error) {
+  const handleArchivePage = async () =>
+    await archive().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Page could not be archived. Please try again later.",
-      });
-    }
-  };
+      })
+    );
 
-  const handleRestorePage = async () => {
-    if (!workspaceSlug || !projectId) return;
-    try {
-      await restorePage(workspaceSlug.toString(), projectId.toString(), pageStore.id);
-    } catch (error) {
+  const handleRestorePage = async () =>
+    await restore().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Page could not be restored. Please try again later.",
-      });
-    }
-  };
+      })
+    );
 
   const handleLockPage = async () => {
     try {
@@ -76,11 +76,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     }
   };
 
-  // auth
-  const isCurrentUserOwner = owned_by === currentUser?.id;
-  const canUserDuplicate = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  const canUserArchive = isCurrentUserOwner || currentProjectRole === EUserProjectRoles.ADMIN;
-  const canUserLock = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   // menu items list
   const MENU_ITEMS: {
     key: string;
@@ -125,35 +120,35 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       action: handleDuplicatePage,
       label: "Make a copy",
       icon: Copy,
-      shouldRender: canUserDuplicate,
+      shouldRender: canCurrentUserDuplicatePage,
     },
     {
       key: "lock-page",
       action: handleLockPage,
       label: "Lock page",
       icon: Lock,
-      shouldRender: !pageStore.is_locked && canUserLock,
+      shouldRender: !pageStore.is_locked && canCurrentUserLockPage,
     },
     {
       key: "unlock-page",
       action: handleUnlockPage,
       label: "Unlock page",
       icon: Lock,
-      shouldRender: pageStore.is_locked && canUserLock,
+      shouldRender: pageStore.is_locked && canCurrentUserLockPage,
     },
     {
       key: "archive-page",
       action: handleArchivePage,
       label: "Archive page",
       icon: ArchiveIcon,
-      shouldRender: !pageStore.archived_at && canUserArchive,
+      shouldRender: !pageStore.archived_at && canCurrentUserArchivePage,
     },
     {
       key: "restore-page",
       action: handleRestorePage,
       label: "Restore page",
       icon: ArchiveIcon,
-      shouldRender: !!pageStore.archived_at && canUserArchive,
+      shouldRender: !!pageStore.archived_at && canCurrentUserArchivePage,
     },
   ];
 
