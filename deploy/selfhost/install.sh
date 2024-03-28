@@ -66,7 +66,7 @@ function buildLocalImage() {
         cd $PLANE_TEMP_CODE_DIR
         if [ "$BRANCH" == "master" ];
         then
-            export APP_RELEASE=latest
+            export APP_RELEASE=stable
         fi
 
         docker compose -f build.yml build --no-cache  >&2
@@ -99,17 +99,17 @@ function download() {
     curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s)
     curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/variables-upgrade.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env?$(date +%s)
 
-    if [ -f "$PLANE_INSTALL_DIR/.env" ];
+    if [ -f "$DOCKER_ENV_PATH" ];
     then
-        cp $PLANE_INSTALL_DIR/.env $PLANE_INSTALL_DIR/archive/$TS.env
+        cp $DOCKER_ENV_PATH $PLANE_INSTALL_DIR/archive/$TS.env
     else
-        mv $PLANE_INSTALL_DIR/variables-upgrade.env $PLANE_INSTALL_DIR/.env
+        mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
     fi
 
     if [ "$BRANCH" != "master" ];
     then
         cp $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/temp.yaml 
-        sed -e 's@${APP_RELEASE:-latest}@'"$BRANCH"'@g' \
+        sed -e 's@${APP_RELEASE:-stable}@'"$BRANCH"'@g' \
             $PLANE_INSTALL_DIR/temp.yaml > $PLANE_INSTALL_DIR/docker-compose.yaml
 
         rm $PLANE_INSTALL_DIR/temp.yaml
@@ -131,9 +131,9 @@ function download() {
     fi
     
     echo ""
-    echo "Latest version is now available for you to use"
+    echo "Most recent Stable version is now available for you to use"
     echo ""
-    echo "In case of Upgrade, your new setting file is availabe as 'variables-upgrade.env'. Please compare and set the required values in '.env 'file."
+    echo "In case of Upgrade, your new setting file is availabe as 'variables-upgrade.env'. Please compare and set the required values in 'plane.env 'file."
     echo ""
 
 }
@@ -186,7 +186,7 @@ function upgrade() {
     stopServices
 
     echo
-    echo "***** DOWNLOADING LATEST VERSION ****"
+    echo "***** DOWNLOADING STABLE VERSION ****"
     download
 
     echo "***** PLEASE VALIDATE AND START SERVICES ****"
@@ -343,7 +343,7 @@ fi
 
 if [ "$BRANCH" == "master" ];
 then
-    export APP_RELEASE=latest
+    export APP_RELEASE=stable
 fi
 
 # REMOVE SPECIAL CHARACTERS FROM BRANCH NAME
@@ -354,7 +354,14 @@ fi
 mkdir -p $PLANE_INSTALL_DIR/archive
 
 DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/docker-compose.yaml
-DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/.env
+DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/plane.env
+
+# BACKWARD COMPATIBILITY
+OLD_DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/.env
+if [ -f "$OLD_DOCKER_ENV_PATH" ];
+then
+    mv $OLD_DOCKER_ENV_PATH $DOCKER_ENV_PATH
+fi
 
 print_header
 askForAction $@

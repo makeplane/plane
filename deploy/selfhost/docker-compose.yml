@@ -39,7 +39,7 @@ x-app-env: &app-env
 services:
   web:
     <<: *app-env
-    image: ${DOCKERHUB_USER:-makeplane}/plane-frontend:${APP_RELEASE:-latest}
+    image: ${DOCKERHUB_USER:-makeplane}/plane-frontend:${APP_RELEASE:-stable}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: /usr/local/bin/start.sh web/server.js web
@@ -51,7 +51,7 @@ services:
 
   space:
     <<: *app-env
-    image: ${DOCKERHUB_USER:-makeplane}/plane-space:${APP_RELEASE:-latest}
+    image: ${DOCKERHUB_USER:-makeplane}/plane-space:${APP_RELEASE:-stable}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: /usr/local/bin/start.sh space/server.js space
@@ -64,7 +64,7 @@ services:
 
   api:
     <<: *app-env
-    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-latest}
+    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: ./bin/takeoff
@@ -78,7 +78,7 @@ services:
 
   worker:
     <<: *app-env
-    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-latest}
+    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: ./bin/worker
@@ -91,7 +91,7 @@ services:
 
   beat-worker:
     <<: *app-env
-    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-latest}
+    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: ./bin/beat
@@ -104,7 +104,7 @@ services:
 
   migrator:
     <<: *app-env
-    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-latest}
+    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
     pull_policy: ${PULL_POLICY:-always}
     restart: no
     command: >
@@ -118,7 +118,7 @@ services:
 
   plane-db:
     <<: *app-env
-    image: postgres:15.2-alpine
+    image: postgres:15.5-alpine
     pull_policy: if_not_present
     restart: unless-stopped
     command: postgres -c 'max_connections=1000'
@@ -126,7 +126,7 @@ services:
       - pgdata:/var/lib/postgresql/data
   plane-redis:
     <<: *app-env
-    image: redis:6.2.7-alpine
+    image: redis:7.2.4-alpine
     pull_policy: if_not_present
     restart: unless-stopped
     volumes:
@@ -144,7 +144,7 @@ services:
   # Comment this if you already have a reverse proxy running
   proxy:
     <<: *app-env
-    image: ${DOCKERHUB_USER:-makeplane}/plane-proxy:${APP_RELEASE:-latest}
+    image: ${DOCKERHUB_USER:-makeplane}/plane-proxy:${APP_RELEASE:-stable}
     pull_policy: ${PULL_POLICY:-always}
     ports:
       - ${NGINX_PORT}:80
