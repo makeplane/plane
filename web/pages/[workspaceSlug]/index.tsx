@@ -14,7 +14,7 @@ import { NextPageWithLayout } from "@/lib/types";
 const WorkspacePage: NextPageWithLayout = observer(() => {
   const { currentWorkspace } = useWorkspace();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Dashboard` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Home` : undefined;
 
   return (
     <>
