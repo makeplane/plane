@@ -1,5 +1,6 @@
 import { Editor } from "@tiptap/react";
 import { FC, ReactNode } from "react";
+import { cn } from "src/lib/utils";
 
 interface EditorContainerProps {
   editor: Editor | null;
@@ -53,7 +54,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
       onMouseLeave={() => {
         hideDragHandle?.();
       }}
-      className={`cursor-text ${editorClassNames}`}
+      className={cn(`cursor-text`, { "active-editor": editor?.isFocused && editor?.isEditable }, editorClassNames)}
     >
       {children}
     </div>
