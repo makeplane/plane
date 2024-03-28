@@ -107,5 +107,5 @@ export const useEditor = ({
     return null;
   }
 
-  return editor;
+  return { editor, savedSelection };
 };

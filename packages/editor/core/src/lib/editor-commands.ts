@@ -2,6 +2,7 @@ import { Editor, Range } from "@tiptap/core";
 import { startImageUpload } from "src/ui/plugins/upload-image";
 import { findTableAncestor } from "src/lib/utils";
 import { UploadImage } from "src/types/upload-image";
+import { Selection } from "@tiptap/pm/state";
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).clearNodes().setNode("heading", { level: 1 }).run();
@@ -113,6 +114,7 @@ export const insertImageCommand = (
   editor: Editor,
   uploadFile: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
+  savedSelection?: Selection | null,
   range?: Range
 ) => {
   if (range) editor.chain().focus().deleteRange(range).run();
@@ -122,7 +124,9 @@ export const insertImageCommand = (
   input.onchange = async () => {
     if (input.files?.length) {
       const file = input.files[0];
-      const pos = editor.view.state.selection.from;
+      const pos = savedSelection?.anchor ?? editor.view.state.selection.from;
+      // __AUTO_GENERATED_PRINT_VAR_START__
+      console.log("insertImageCommand#(anon)#if pos: %s", pos); // __AUTO_GENERATED_PRINT_VAR_END__
       startImageUpload(file, editor.view, pos, uploadFile, setIsSubmitting);
     }
   };

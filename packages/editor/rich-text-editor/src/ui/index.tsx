@@ -80,7 +80,7 @@ const RichTextEditor = ({
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
 
-  const editor = useEditor({
+  const editorVal = useEditor({
     onChange,
     debouncedUpdatesEnabled,
     setIsSubmitting,
@@ -107,6 +107,9 @@ const RichTextEditor = ({
   //   if (editor && initialValue && editor.getHTML() != initialValue) editor.commands.setContent(initialValue);
   // }, [editor, initialValue]);
   //
+  if (!editorVal) return null;
+
+  const { editor } = editorVal;
   if (!editor) return null;
 
   return (
