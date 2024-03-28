@@ -122,6 +122,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // store hooks
   const {
     config: { envConfig },
+    router: { projectId: routeProjectId },
   } = useApplication();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
@@ -162,7 +163,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         parent_id: formData.parent_id,
       });
     }
-    if (projectId) fetchCycles(workspaceSlug, projectId);
+    if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug, projectId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
