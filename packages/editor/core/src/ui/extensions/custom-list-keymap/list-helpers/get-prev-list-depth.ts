@@ -18,10 +18,16 @@ export const getPrevListDepth = (typeOrName: string, state: EditorState) => {
   for (let d = resolvedPos.depth; d > 0; d--) {
     const node = resolvedPos.node(d);
     if (node.type.name === "bulletList" || node.type.name === "orderedList") {
+      // Increment depth for each list ancestor found
       depth++;
     }
   }
 
-  console.log("depth", depth);
+  // Subtract 1 from the calculated depth to get the parent list's depth
+  // This adjustment is necessary because the depth calculation includes the current list
+  // By subtracting 1, we aim to get the depth of the parent list, which helps in identifying if the current list is a sublist
+  depth = depth > 0 ? depth - 1 : 0;
+
+  console.log("Parent list depth", depth);
   return depth;
 };

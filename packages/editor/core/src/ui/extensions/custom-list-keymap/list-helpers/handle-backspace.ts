@@ -44,6 +44,7 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
       .joinForward()
       .run();
   }
+  const isCurrentListItemSublist = prevListIsHigher(name, editor.state);
 
   // if the cursor is not inside the current node type
   // do nothing and proceed
@@ -65,7 +66,6 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
   const currentNode = listItemPos.$pos.node(listItemPos.depth);
   const currentNodeSize = currentNode.nodeSize;
   const currentListItemHasSubList = listItemHasSubList(name, editor.state, currentNode);
-  const isCurrentListItemSublist = prevListIsHigher(name, editor.state);
   // __AUTO_GENERATED_PRINT_VAR_START__
   console.log(
     "handleBackspace isCurrentListItemSublist: %s",
@@ -83,6 +83,11 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
 
   const previousListItemHasSubList = listItemHasSubList(name, editor.state, prevNode);
   // if the previous item is a list item and has a sublist, join the list items (this scenario only occurs when a sublist's first item is lifted)
+  if (currentListItemHasSubList && isCurrentListItemSublist) {
+    console.log("ran 2");
+    editor.chain().liftListItem(name).run();
+    return editor.commands.joinItemBackward();
+  }
   if (
     // hasListItemBefore(name, editor.state) &&
     // currentListItemHasSubList &&
@@ -97,13 +102,20 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
     // return editor.chain().liftListItem(name).run();
   }
 
+  if (currentListItemHasSubList) {
+    console.log("ran 1");
+    return false;
+  }
+  // if u are first node which has both parent list and sub list
+  // then do
+
   // if the previous item is a list item and doesn't have a sublist, join the list items
   if (hasListItemBefore(name, editor.state)) {
-    console.log("ran 1");
+    console.log("ran 3");
     return editor.chain().liftListItem(name).run();
   }
 
-  console.log("ran 2");
+  console.log("ran 4");
   // otherwise in the end, a backspace should
   // always just lift the list item if
   // joining / merging is not possible
