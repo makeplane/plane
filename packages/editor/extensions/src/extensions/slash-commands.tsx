@@ -186,7 +186,7 @@ const getSuggestionItems =
         searchTerms: ["img", "photo", "picture", "media"],
         icon: <ImageIcon className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          insertImageCommand(editor, uploadFile, setIsSubmitting, range);
+          insertImageCommand(editor, uploadFile, setIsSubmitting, null, range);
         },
       },
       {

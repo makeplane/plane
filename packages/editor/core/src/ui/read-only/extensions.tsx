@@ -74,7 +74,6 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   TiptapUnderline,
   TextStyle,
-  Color,
   TaskList.configure({
     HTMLAttributes: {
       class: "not-prose pl-2",

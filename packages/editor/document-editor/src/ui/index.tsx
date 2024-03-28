@@ -95,7 +95,7 @@ const DocumentEditor = ({
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
 
-  const editor = useEditor({
+  const editorVal = useEditor({
     onChange(json, html) {
       updateMarkings(json);
       onChange(json, html);
@@ -116,6 +116,11 @@ const DocumentEditor = ({
     extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction, setIsSubmitting),
   });
 
+  if (!editorVal) {
+    return null;
+  }
+
+  const { editor, savedSelection } = editorVal;
   if (!editor) {
     return null;
   }
@@ -154,14 +159,21 @@ const DocumentEditor = ({
         documentDetails={documentDetails}
         isSubmitting={isSubmitting}
       />
-      <div className="flex-shrink-0 md:hidden border-b border-custom-border-200 pl-3 py-2">
-        {uploadFile && <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />}
+      <div className="flex-shrink-0 border-b border-custom-border-200 py-2 pl-3 md:hidden">
+        {uploadFile && (
+          <FixedMenu
+            savedSelection={savedSelection}
+            editor={editor}
+            uploadFile={uploadFile}
+            setIsSubmitting={setIsSubmitting}
+          />
+        )}
       </div>
-      <div className="flex h-full w-full overflow-y-auto frame-renderer">
-        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72 hidden md:block">
+      <div className="frame-renderer flex h-full w-full overflow-y-auto">
+        <div className="sticky top-0 hidden h-full w-56 flex-shrink-0 md:block lg:w-72">
           <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
-        <div className="h-full w-full md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
+        <div className="page-renderer h-full w-full md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
             tabIndex={tabIndex}
             onActionCompleteHandler={onActionCompleteHandler}

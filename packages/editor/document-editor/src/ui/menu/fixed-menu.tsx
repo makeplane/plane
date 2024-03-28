@@ -19,6 +19,7 @@ import {
   EditorMenuItem,
   UploadImage,
 } from "@plane/editor-core";
+import { Selection } from "@tiptap/pm/state";
 
 export type BubbleMenuItem = EditorMenuItem;
 
@@ -26,10 +27,11 @@ type EditorBubbleMenuProps = {
   editor: Editor;
   uploadFile: UploadImage;
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
+  savedSelection?: Selection | null;
 };
 
 export const FixedMenu = (props: EditorBubbleMenuProps) => {
-  const { editor, uploadFile, setIsSubmitting } = props;
+  const { editor, uploadFile, setIsSubmitting, savedSelection } = props;
 
   const basicMarkItems: BubbleMenuItem[] = [
     HeadingOneItem(editor),
@@ -48,7 +50,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
   function getComplexItems(): BubbleMenuItem[] {
     const items: BubbleMenuItem[] = [TableItem(editor)];
 
-    items.push(ImageItem(editor, uploadFile, setIsSubmitting));
+    items.push(ImageItem(editor, uploadFile, setIsSubmitting, savedSelection));
     return items;
   }
 

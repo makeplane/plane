@@ -78,7 +78,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
     tabIndex,
   } = props;
 
-  const editor = useEditor({
+  const editorVal = useEditor({
     onChange,
     cancelUploadImage,
     debouncedUpdatesEnabled,
@@ -100,8 +100,10 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
     customClassName,
   });
 
-  if (!editor) return null;
+  if (!editorVal) return null;
 
+  const { editor } = editorVal;
+  if (!editor) return null;
   return (
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
       <div className="flex flex-col">
