@@ -79,7 +79,7 @@ export const handleDragDrop = async (
 
   if (destinationGroupByColumnId === "issue-trash-box") {
     const sourceIssues: string[] = subGroupBy
-      ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
+      ? (issueWithIds as TSubGroupedIssues)[sourceGroupByColumnId][sourceSubGroupByColumnId]
       : (issueWithIds as TGroupedIssues)[sourceGroupByColumnId];
 
     const [removed] = sourceIssues.splice(source.index, 1);
@@ -92,11 +92,11 @@ export const handleDragDrop = async (
     //since we are removing an id from array further down
     const sourceIssues = [
       ...(subGroupBy
-        ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
+        ? (issueWithIds as TSubGroupedIssues)[sourceGroupByColumnId][sourceSubGroupByColumnId]
         : (issueWithIds as TGroupedIssues)[sourceGroupByColumnId]),
     ];
     const destinationIssues = subGroupBy
-      ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][destinationGroupByColumnId]
+      ? (issueWithIds as TSubGroupedIssues)[destinationGroupByColumnId][sourceSubGroupByColumnId]
       : (issueWithIds as TGroupedIssues)[destinationGroupByColumnId];
 
     const [removed] = sourceIssues.splice(source.index, 1);
