@@ -10,7 +10,6 @@ import { LogOut } from "lucide-react";
 import { Button, Spinner, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
 import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // images
 import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
@@ -35,8 +34,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   } = useMember();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
-  //swr hook for fetching issue properties
-  useWorkspaceIssueProperties(workspaceSlug);
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
