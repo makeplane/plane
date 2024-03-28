@@ -33,7 +33,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
   // form info
-  const { handleSubmit, getValues, control, reset } = useForm<TPage>({
+  const { handleSubmit, getValues, control } = useForm<TPage>({
     defaultValues: {
       name: "",
       description_html: "",
