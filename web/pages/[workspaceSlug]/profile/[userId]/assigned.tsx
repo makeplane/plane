@@ -1,11 +1,12 @@
 import React, { ReactElement } from "react";
-// layouts
+// components
 import { PageHead } from "@/components/core";
 import { UserProfileHeader } from "@/components/headers";
 import { ProfileIssuesPage } from "@/components/profile/profile-issues";
+import ProfileIssuesMobileHeader from "@/components/profile/profile-issues-mobile-header";
+// layouts
 import { AppLayout } from "@/layouts/app-layout";
 import { ProfileAuthWrapper } from "@/layouts/user-profile-layout";
-// components
 // types
 import { NextPageWithLayout } from "@/lib/types";
 
@@ -18,7 +19,7 @@ const ProfileAssignedIssuesPage: NextPageWithLayout = () => (
 
 ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<UserProfileHeader type="Assigned" />}>
+    <AppLayout header={<UserProfileHeader type="Assigned" />} mobileHeader={<ProfileIssuesMobileHeader />}>
       <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
     </AppLayout>
   );
