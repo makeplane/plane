@@ -82,7 +82,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   TaskItem.configure({
     HTMLAttributes: {
-      class: "flex items-start my-4",
+      class: "flex items-start gap-1 my-4 pointer-events-none",
     },
     nested: true,
   }),
