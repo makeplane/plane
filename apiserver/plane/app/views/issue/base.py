@@ -120,102 +120,14 @@ class IssueListEndpoint(BaseAPIView):
             sub_group_by=sub_group_by,
         )
 
-        if group_by:
-            # Check group and sub group value paginate
-            if sub_group_by:
-                if group_by == sub_group_by:
-                    return Response(
-                        {
-                            "error": "Group by and sub group by cannot have same parameters"
-                        },
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-                else:
-                    # group and sub group pagination
-                    return self.paginate(
-                        request=request,
-                        order_by=(
-                            "priority_order"
-                            if order_by_param in ["priority", "-priority"]
-                            else order_by_param
-                        ),
-                        queryset=issue_queryset,
-                        on_results=lambda issues: issue_on_results(
-                            group_by=group_by,
-                            issues=issues,
-                            sub_group_by=sub_group_by,
-                        ),
-                        paginator_cls=SubGroupedOffsetPaginator,
-                        group_by_fields=issue_group_values(
-                            field=group_by,
-                            slug=slug,
-                            project_id=project_id,
-                            filters=filters,
-                        ),
-                        sub_group_by_fields=issue_group_values(
-                            field=sub_group_by,
-                            slug=slug,
-                            project_id=project_id,
-                            filters=filters,
-                        ),
-                        group_by_field_name=group_by,
-                        sub_group_by_field_name=sub_group_by,
-                        count_filter=Q(
-                            Q(issue_inbox__status=1)
-                            | Q(issue_inbox__status=-1)
-                            | Q(issue_inbox__status=2)
-                            | Q(issue_inbox__isnull=True),
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-            # Group Paginate
-            else:
-                # Group paginate
-                return self.paginate(
-                    request=request,
-                    order_by=(
-                        "priority_order"
-                        if order_by_param in ["priority", "-priority"]
-                        else order_by_param
-                    ),
-                    queryset=issue_queryset,
-                    on_results=lambda issues: issue_on_results(
-                        group_by=group_by,
-                        issues=issues,
-                        sub_group_by=sub_group_by,
-                    ),
-                    paginator_cls=GroupedOffsetPaginator,
-                    group_by_fields=issue_group_values(
-                        field=group_by,
-                        slug=slug,
-                        project_id=project_id,
-                        filters=filters,
-                    ),
-                    group_by_field_name=group_by,
-                    count_filter=Q(
-                        Q(issue_inbox__status=1)
-                        | Q(issue_inbox__status=-1)
-                        | Q(issue_inbox__status=2)
-                        | Q(issue_inbox__isnull=True),
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-        else:
-            # List Paginate
-            return self.paginate(
-                order_by=(
-                    "-priority_order"
-                    if order_by_param in ["priority", "-priority"]
-                    else order_by_param
-                ),
-                request=request,
-                queryset=issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
-            )
+        return Response(
+            issue_on_results(
+                group_by=group_by,
+                issues=issue_queryset,
+                sub_group_by=sub_group_by,
+            ),
+            status=status.HTTP_200_OK,
+        )
 
 
 class IssueViewSet(WebhookMixin, BaseViewSet):

@@ -22,7 +22,7 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
     FIELD_MAPPER = {
         "label_ids": "labels__id",
         "assignee_ids": "assignees__id",
-        "module_ids": "modules__id",
+        "module_ids": "issue_module__module_id",
     }
 
     annotations_map = {
@@ -55,7 +55,7 @@ def issue_on_results(issues, group_by, sub_group_by):
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
-        "modules__id": "module_ids",
+        "issue_module__module_id": "module_ids",
     }
 
     original_list = ["assignee_ids", "label_ids", "module_ids"]
@@ -129,7 +129,7 @@ def issue_group_values(field, slug, project_id=None, filters={}):
                     workspace__slug=slug, is_active=True
                 ).values_list("member_id", flat=True)
             )
-    if field == "modules__id":
+    if field == "issue_module__module_id":
         queryset = Module.objects.filter(
             workspace__slug=slug,
         ).values_list("id", flat=True)
