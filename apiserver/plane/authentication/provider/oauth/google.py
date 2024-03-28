@@ -42,7 +42,7 @@ class GoogleOAuthProvider(OauthAdapter):
         client_secret = GOOGLE_CLIENT_SECRET
 
         redirect_uri = (
-            f"{request.scheme}://{request.get_host()}/auth/callback/google/"
+            f"{request.scheme}://{request.get_host()}/auth/google/callback/"
         )
         url_params = {
             "client_id": client_id,

@@ -107,16 +107,6 @@ TEMPLATES = [
     },
 ]
 
-# Cookie Settings
-SESSION_COOKIE_SECURE = True
-SESSION_ENGINE = "plane.db.models.session"
-SESSION_COOKIE_AGE = 1800
-SESSION_COOKIE_NAME = "plane-session-id"
-SESSION_COOKIE_DOMAIN = None
-
-# CSRF cookies
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
 
 # CORS Settings
 CORS_ALLOW_CREDENTIALS = True
@@ -127,8 +117,14 @@ cors_allowed_origins = [
 ]
 if cors_allowed_origins:
     CORS_ALLOWED_ORIGINS = cors_allowed_origins
+    secure_origins = (
+        False
+        if [origin for origin in cors_allowed_origins if "http:" in origin]
+        else True
+    )
 else:
     CORS_ALLOW_ALL_ORIGINS = True
+    secure_origins = False
 
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
@@ -322,3 +318,17 @@ INSTANCE_KEY = os.environ.get(
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
+# Cookie Settings
+SESSION_COOKIE_SECURE = secure_origins
+SESSION_COOKIE_HTTPONLY = True
+SESSION_ENGINE = "plane.db.models.session"
+SESSION_COOKIE_AGE = 1800
+SESSION_COOKIE_NAME = "plane-session-id"
+SESSION_COOKIE_DOMAIN = None
+
+# CSRF cookies
+CSRF_COOKIE_SECURE = secure_origins
+CSRF_COOKIE_HTTPONLY = True
+CSRF_TRUSTED_ORIGINS = cors_allowed_origins
+CSRF_COOKIE_DOMAIN = None
