@@ -234,18 +234,21 @@ class GroupedOffsetPaginator(OffsetPaginator):
 
         # Optionally, calculate the total count and max_hits if needed
         # This might require adjustments based on specific use cases
-        max_hits = math.ceil(
-            queryset.values(self.group_by_field_name)
-            .annotate(
-                count=Count(
-                    "id",
-                    filter=self.count_filter,
-                    distinct=True,
+        if results:
+            max_hits = math.ceil(
+                queryset.values(self.group_by_field_name)
+                .annotate(
+                    count=Count(
+                        "id",
+                        filter=self.count_filter,
+                        distinct=True,
+                    )
                 )
+                .order_by("-count")[0]["count"]
+                / limit
             )
-            .order_by("-count")[0]["count"]
-            / limit
-        )
+        else:
+            max_hits = 0
         return CursorResult(
             results=results,
             next=next_cursor,
@@ -354,10 +357,13 @@ class GroupedOffsetPaginator(OffsetPaginator):
         return processed_results
 
     def process_results(self, results):
-        if self.group_by_field_name in self.FIELD_MAPPER:
-            processed_results = self.__query_multi_grouper(results=results)
+        if results:
+            if self.group_by_field_name in self.FIELD_MAPPER:
+                processed_results = self.__query_multi_grouper(results=results)
+            else:
+                processed_results = self.__query_grouper(results=results)
         else:
-            processed_results = self.__query_grouper(results=results)
+            processed_results = {}
         return processed_results
 
 
@@ -445,18 +451,21 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
 
         # Optionally, calculate the total count and max_hits if needed
         # This might require adjustments based on specific use cases
-        max_hits = math.ceil(
-            queryset.values(self.group_by_field_name)
-            .annotate(
-                count=Count(
-                    "id",
-                    filter=self.count_filter,
-                    distinct=True,
+        if results:
+            max_hits = math.ceil(
+                queryset.values(self.group_by_field_name)
+                .annotate(
+                    count=Count(
+                        "id",
+                        filter=self.count_filter,
+                        distinct=True,
+                    )
                 )
+                .order_by("-count")[0]["count"]
+                / limit
             )
-            .order_by("-count")[0]["count"]
-            / limit
-        )
+        else:
+            max_hits = 0
         return CursorResult(
             results=results,
             next=next_cursor,
@@ -586,6 +595,12 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                 processed_results[str(group_value)]["results"][
                     str(sub_group_value)
                 ]["results"].append(result)
+
+        for group_value, processed_result in processed_results.items():
+            for sub_group_value, data in processed_result["result"].items():
+                data["results"].sort(
+                    key=lambda x: x.get("created_at"), reverse=True
+                )
         return processed_results
 
     def __query_grouper(self, results):
@@ -596,16 +611,25 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             processed_results[group_value]["results"][sub_group_value][
                 "results"
             ].append(result)
+
+        for group_value, processed_result in processed_results.items():
+            for sub_group_value, data in processed_result["results"].items():
+                data["results"].sort(
+                    key=lambda x: x.get("created_at"), reverse=True
+                )
         return processed_results
 
     def process_results(self, results):
-        if (
-            self.group_by_field_name in self.FIELD_MAPPER
-            or self.sub_group_by_field_name in self.FIELD_MAPPER
-        ):
-            processed_results = self.__query_multi_grouper(results=results)
+        if results:
+            if (
+                self.group_by_field_name in self.FIELD_MAPPER
+                or self.sub_group_by_field_name in self.FIELD_MAPPER
+            ):
+                processed_results = self.__query_multi_grouper(results=results)
+            else:
+                processed_results = self.__query_grouper(results=results)
         else:
-            processed_results = self.__query_grouper(results=results)
+            processed_results = {}
         return processed_results
 
 
