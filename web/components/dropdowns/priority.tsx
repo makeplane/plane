@@ -24,6 +24,8 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   highlightUrgent?: boolean;
   onChange: (val: TIssuePriorities) => void;
+  isDropdownOpened?: boolean;
+  onOpen?: () => void;
   onClose?: () => void;
   value: TIssuePriorities;
 };
@@ -283,6 +285,8 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     hideIcon = false,
     highlightUrgent = true,
     onChange,
+    isDropdownOpened,
+    onOpen: onDropdownOpen,
     onClose,
     placement,
     showTooltip = false,
@@ -336,6 +340,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
 
   const toggleDropdown = () => {
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (!isOpen) onDropdownOpen && onDropdownOpen();
     if (isOpen) onClose && onClose();
   };
 
@@ -364,14 +369,21 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
-      ? BackgroundButton
-      : TransparentButton;
+    ? BackgroundButton
+    : TransparentButton;
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isDropdownOpened && !isOpen) setIsOpen(true);
+  }, [isDropdownOpened, isOpen]);
+  useEffect(() => {
+    if (isDropdownOpened === false) setIsOpen(false);
+  }, [isDropdownOpened]);
 
   return (
     <Combobox

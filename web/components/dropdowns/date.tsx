@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DayPicker, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
@@ -23,6 +23,8 @@ type Props = TDropdownProps & {
   minDate?: Date;
   maxDate?: Date;
   onChange: (val: Date | null) => void;
+  isDropdownOpened?: boolean;
+  onOpen?: () => void;
   onClose?: () => void;
   value: Date | string | null;
   closeOnSelect?: boolean;
@@ -43,6 +45,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
     minDate,
     maxDate,
     onChange,
+    isDropdownOpened,
+    onOpen: onDropdownOpen,
     onClose,
     placeholder = "Date",
     placement,
@@ -84,7 +88,10 @@ export const DateDropdown: React.FC<Props> = (props) => {
   };
 
   const toggleDropdown = () => {
-    if (!isOpen) onOpen();
+    if (!isOpen) {
+      onOpen();
+      onDropdownOpen && onDropdownOpen();
+    }
     setIsOpen((prevIsOpen) => !prevIsOpen);
     if (isOpen) onClose && onClose();
   };
@@ -107,6 +114,13 @@ export const DateDropdown: React.FC<Props> = (props) => {
   const disabledDays: Matcher[] = [];
   if (minDate) disabledDays.push({ before: minDate });
   if (maxDate) disabledDays.push({ after: maxDate });
+
+  useEffect(() => {
+    if (isDropdownOpened && !isOpen) setIsOpen(true);
+  }, [isDropdownOpened, isOpen]);
+  useEffect(() => {
+    if (isDropdownOpened === false) setIsOpen(false);
+  }, [isDropdownOpened]);
 
   return (
     <Combobox

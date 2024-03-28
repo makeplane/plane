@@ -22,6 +22,8 @@ type Props = TDropdownProps & {
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onChange: (val: number | null) => void;
+  isDropdownOpened?: boolean;
+  onOpen?: () => void;
   onClose?: () => void;
   projectId: string;
   value: number | null;
@@ -47,6 +49,8 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     dropdownArrowClassName = "",
     hideIcon = false,
     onChange,
+    isDropdownOpened,
+    onOpen: onDropdownOpen,
     onClose,
     placeholder = "Estimate",
     placement,
@@ -120,7 +124,10 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   };
 
   const toggleDropdown = () => {
-    if (!isOpen) onOpen();
+    if (!isOpen) {
+      onOpen();
+      onDropdownOpen && onDropdownOpen();
+    }
     setIsOpen((prevIsOpen) => !prevIsOpen);
     if (isOpen) onClose && onClose();
   };
@@ -152,6 +159,13 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isDropdownOpened && !isOpen) setIsOpen(true);
+  }, [isDropdownOpened, isOpen]);
+  useEffect(() => {
+    if (isDropdownOpened === false) setIsOpen(false);
+  }, [isDropdownOpened]);
 
   return (
     <Combobox

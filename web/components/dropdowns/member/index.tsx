@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronDown } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -19,6 +19,8 @@ import { MemberDropdownProps } from "./types";
 
 type Props = {
   projectId?: string;
+  isDropdownOpened?: boolean;
+  onOpen?: () => void;
   onClose?: () => void;
 } & MemberDropdownProps;
 
@@ -35,6 +37,8 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     hideIcon = false,
     multiple,
     onChange,
+    isDropdownOpened,
+    onOpen: onDropdownOpen,
     onClose,
     placeholder = "Members",
     tooltipContent,
@@ -68,6 +72,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
 
   const toggleDropdown = () => {
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (!isOpen) onDropdownOpen && onDropdownOpen();
     if (isOpen) onClose && onClose();
   };
 
@@ -85,6 +90,13 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
+
+  useEffect(() => {
+    if (isDropdownOpened && !isOpen) setIsOpen(true);
+  }, [isDropdownOpened, isOpen]);
+  useEffect(() => {
+    if (isDropdownOpened === false) setIsOpen(false);
+  }, [isDropdownOpened]);
 
   return (
     <Combobox

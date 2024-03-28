@@ -25,6 +25,8 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   projectId: string;
   showCount?: boolean;
+  isDropdownOpened?: boolean;
+  onOpen?: () => void;
   onClose?: () => void;
 } & (
     | {
@@ -159,6 +161,8 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     hideIcon = false,
     multiple,
     onChange,
+    isDropdownOpened,
+    onOpen: onDropdownOpen,
     onClose,
     placeholder = "",
     placement,
@@ -186,6 +190,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
 
   const toggleDropdown = () => {
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (!isOpen) onDropdownOpen && onDropdownOpen();
     if (isOpen) onClose && onClose();
   };
 
@@ -216,6 +221,13 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isDropdownOpened && !isOpen) setIsOpen(true);
+  }, [isDropdownOpened, isOpen]);
+  useEffect(() => {
+    if (isDropdownOpened === false) setIsOpen(false);
+  }, [isDropdownOpened]);
 
   return (
     <Combobox

@@ -4,18 +4,20 @@ import { useRouter } from "next/router";
 import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// hooks
+// components
 import { IssueLabelsList } from "@/components/ui";
+// hooks
 import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-// ui
-// icons
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   value: string[];
   onChange: (value: string[]) => void;
+  isDropdownOpened?: boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
   projectId: string;
   label?: JSX.Element;
   disabled?: boolean;
@@ -23,7 +25,18 @@ type Props = {
 };
 
 export const IssueLabelSelect: React.FC<Props> = observer((props) => {
-  const { setIsOpen, value, onChange, projectId, label, disabled = false, tabIndex } = props;
+  const {
+    setIsOpen,
+    value,
+    onChange,
+    isDropdownOpened,
+    onOpen: onDropdownOpen,
+    onClose,
+    projectId,
+    label,
+    disabled = false,
+    tabIndex,
+  } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -59,7 +72,11 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   };
 
   const toggleDropdown = () => {
-    if (!isDropdownOpen) onOpen();
+    if (!isDropdownOpen) {
+      onOpen();
+      onDropdownOpen && onDropdownOpen();
+    }
+    if (isDropdownOpen) onClose && onClose();
     setIsDropdownOpen((prevIsOpen) => !prevIsOpen);
   };
 
@@ -82,6 +99,13 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
       inputRef.current.focus();
     }
   }, [isDropdownOpen]);
+
+  useEffect(() => {
+    if (isDropdownOpened && !isDropdownOpen) setIsDropdownOpen(true);
+  }, [isDropdownOpened, isDropdownOpen]);
+  useEffect(() => {
+    if (isDropdownOpened === false) setIsDropdownOpen(false);
+  }, [isDropdownOpened]);
 
   return (
     <Combobox
