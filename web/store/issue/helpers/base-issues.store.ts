@@ -229,13 +229,12 @@ export class BaseIssuesStore implements IBaseIssuesStore {
   onfetchIssues(issuesResponse: TIssuesResponse, options: IssuePaginationOptions) {
     const { issueList, groupedIssues, groupedIssueCount } = this.processIssueResponse(issuesResponse);
 
+    this.rootIssueStore.issues.addIssue(issueList);
+
     runInAction(() => {
-      this.groupedIssueIds = groupedIssues;
-      this.groupedIssueCount = groupedIssueCount;
+      this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
       this.loader = undefined;
     });
-
-    this.rootIssueStore.issues.addIssue(issueList);
 
     this.storePreviousPaginationValues(issuesResponse, options);
   }
