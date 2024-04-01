@@ -10,13 +10,14 @@ import { TActivityOperations } from "./root";
 
 type TIssueActivityCommentRoot = {
   workspaceSlug: string;
+  projectId: string;
   issueId: string;
   activityOperations: TActivityOperations;
   showAccessSpecifier?: boolean;
 };
 
 export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
-  const { workspaceSlug, issueId, activityOperations, showAccessSpecifier } = props;
+  const { workspaceSlug, issueId, activityOperations, showAccessSpecifier, projectId } = props;
   // hooks
   const {
     activity: { getActivityCommentByIssueId },

@@ -3,7 +3,7 @@ import { useImperativeHandle, useRef, MutableRefObject } from "react";
 import { CoreReadOnlyEditorExtensions } from "src/ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "src/ui/read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
-import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { IMentionHighlight, IMentionSuggestion } from "src/types/mention-suggestion";
 
 interface CustomReadOnlyEditorProps {
   value: string;
@@ -14,8 +14,7 @@ interface CustomReadOnlyEditorProps {
     id: string;
     description_html: string;
   };
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
 }
 
 export const useReadOnlyEditor = ({
@@ -25,7 +24,6 @@ export const useReadOnlyEditor = ({
   editorProps = {},
   rerenderOnPropsChange,
   mentionHighlights,
-  mentionSuggestions,
 }: CustomReadOnlyEditorProps) => {
   const editor = useCustomEditor(
     {
@@ -37,8 +35,7 @@ export const useReadOnlyEditor = ({
       },
       extensions: [
         ...CoreReadOnlyEditorExtensions({
-          mentionSuggestions: mentionSuggestions ?? [],
-          mentionHighlights: mentionHighlights ?? [],
+          mentionHighlights: mentionHighlights,
         }),
         ...extensions,
       ],

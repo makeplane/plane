@@ -1,4 +1,3 @@
-import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
@@ -22,17 +21,18 @@ import { CustomKeymap } from "src/ui/extensions/keymap";
 import { CustomQuoteExtension } from "src/ui/extensions/quote";
 
 import { DeleteImage } from "src/types/delete-image";
-import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { IMentionHighlight, IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
 import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
 import { CustomTypographyExtension } from "src/ui/extensions/typography";
 import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
+import { CustomCodeMarkPlugin } from "./custom-code-inline/inline-code-plugin";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
-    mentionSuggestions: IMentionSuggestion[];
-    mentionHighlights: string[];
+    mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
+    mentionHighlights?: () => Promise<IMentionHighlight[]>;
   },
   deleteFile: DeleteImage,
   restoreFile: RestoreImage,
@@ -41,17 +41,17 @@ export const CoreEditorExtensions = (
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "list-disc list-outside leading-3 -mt-2",
+        class: "",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "list-decimal list-outside leading-3 -mt-2",
+        class: "",
       },
     },
     listItem: {
       HTMLAttributes: {
-        class: "leading-normal -mb-2",
+        class: "",
       },
     },
     code: false,
@@ -63,11 +63,15 @@ export const CoreEditorExtensions = (
       width: 2,
     },
   }),
+  // BulletList,
+  // OrderedList,
+  // ListItem,
+
   CustomQuoteExtension.configure({
     HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
   }),
   CustomHorizontalRule.configure({
-    HTMLAttributes: { class: "my-4" },
+    HTMLAttributes: { class: "mt-4 mb-4" },
   }),
   CustomKeymap,
   ListKeymap,
@@ -90,7 +94,6 @@ export const CoreEditorExtensions = (
   }),
   TiptapUnderline,
   TextStyle,
-  Color,
   TaskList.configure({
     HTMLAttributes: {
       class: "not-prose pl-2",
@@ -98,20 +101,24 @@ export const CoreEditorExtensions = (
   }),
   TaskItem.configure({
     HTMLAttributes: {
-      class: "flex items-start my-4",
+      class: "flex items-start mt-4",
     },
     nested: true,
   }),
   CustomCodeBlockExtension,
+  CustomCodeMarkPlugin,
   CustomCodeInlineExtension,
   Markdown.configure({
     html: true,
-    transformCopiedText: true,
     transformPastedText: true,
   }),
   Table,
   TableHeader,
   TableCell,
   TableRow,
-  Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, false),
+  Mentions({
+    mentionSuggestions: mentionConfig.mentionSuggestions,
+    mentionHighlights: mentionConfig.mentionHighlights,
+    readonly: false,
+  }),
 ];

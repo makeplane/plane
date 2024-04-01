@@ -8,6 +8,7 @@ import { IssueCommentCard } from "./comment-card";
 // types
 
 type TIssueCommentRoot = {
+  projectId: string;
   workspaceSlug: string;
   issueId: string;
   activityOperations: TActivityOperations;
@@ -15,7 +16,7 @@ type TIssueCommentRoot = {
 };
 
 export const IssueCommentRoot: FC<TIssueCommentRoot> = observer((props) => {
-  const { workspaceSlug, issueId, activityOperations, showAccessSpecifier } = props;
+  const { workspaceSlug, projectId, issueId, activityOperations, showAccessSpecifier } = props;
   // hooks
   const {
     comment: { getCommentsByIssueId },

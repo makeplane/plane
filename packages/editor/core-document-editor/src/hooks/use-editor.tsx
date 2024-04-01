@@ -5,7 +5,7 @@ import { CoreEditorExtensions } from "src/ui/extensions";
 import { EditorProps } from "@tiptap/pm/view";
 import { getTrimmedHTML } from "src/lib/utils";
 import { DeleteImage } from "src/types/delete-image";
-import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { IMentionHighlight, IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
 import { UploadImage } from "src/types/upload-image";
 import { Selection } from "@tiptap/pm/state";
@@ -25,8 +25,8 @@ interface CustomEditorProps {
   extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
+  mentionHighlights: () => Promise<IMentionHighlight[]>;
+  mentionSuggestions: () => Promise<IMentionSuggestion[]>;
   handleEditorReady?: (value: boolean) => void;
 }
 

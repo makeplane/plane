@@ -14,7 +14,7 @@ import { TableRow } from "src/ui/extensions/table/table-row/table-row";
 import { ReadOnlyImageExtension } from "src/ui/extensions/image/read-only-image";
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
-import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { IMentionHighlight, IMentionSuggestion } from "src/types/mention-suggestion";
 import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
 import { CustomQuoteExtension } from "src/ui/extensions/quote";
@@ -23,8 +23,7 @@ import { CustomCodeBlockExtension } from "src/ui/extensions/code";
 import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
 
 export const CoreReadOnlyEditorExtensions = (mentionConfig: {
-  mentionSuggestions: IMentionSuggestion[];
-  mentionHighlights: string[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
 }) => [
   StarterKit.configure({
     bulletList: {
@@ -96,5 +95,8 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   TableHeader,
   TableCell,
   TableRow,
-  Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, true),
+  Mentions({
+    mentionHighlights: mentionConfig.mentionHighlights,
+    readonly: true,
+  }),
 ];

@@ -8,6 +8,7 @@ import {
   EditorContentWrapper,
   getEditorClassNames,
   useEditor,
+  IMentionHighlight,
 } from "@plane/editor-core";
 import { FixedMenu } from "src/ui/menus/fixed-menu";
 import { LiteTextEditorExtensions } from "src/ui/extensions";
@@ -39,8 +40,8 @@ interface ILiteTextEditor {
   };
   onEnterKeyPress?: (e?: any) => void;
   cancelUploadImage?: () => any;
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
   submitButton?: React.ReactNode;
   tabIndex?: number;
 }
@@ -78,7 +79,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
     tabIndex,
   } = props;
 
-  const editor = useEditor({
+  const editorVal = useEditor({
     onChange,
     cancelUploadImage,
     debouncedUpdatesEnabled,
@@ -100,8 +101,10 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
     customClassName,
   });
 
-  if (!editor) return null;
+  if (!editorVal) return null;
 
+  const { editor } = editorVal;
+  if (!editor) return null;
   return (
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
       <div className="flex flex-col">

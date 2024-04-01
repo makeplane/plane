@@ -4,16 +4,16 @@ import { Node } from "@tiptap/pm/model";
 import { findListItemPos } from "src/ui/extensions/custom-list-keymap/list-helpers/find-list-item-pos";
 import { hasListBefore } from "src/ui/extensions/custom-list-keymap/list-helpers/has-list-before";
 
+import { hasListItemBefore } from "src/ui/extensions/custom-list-keymap/list-helpers/has-list-item-before";
+import { listItemHasSubList } from "src/ui/extensions/custom-list-keymap/list-helpers/list-item-has-sub-list";
+import { isCurrentParagraphASibling } from "src/ui/extensions/custom-list-keymap/list-helpers/is-para-sibling";
+import { nextListIsSibling } from "src/ui/extensions/custom-list-keymap/list-helpers/next-list-is-sibling";
+import { prevListIsHigher } from "src/ui/extensions/custom-list-keymap/list-helpers/prev-list-is-higher";
+
 export const handleBackspace = (editor: Editor, name: string, parentListTypes: string[]) => {
   // this is required to still handle the undo handling
   if (editor.commands.undoInputRule()) {
     return true;
-  }
-
-  // if the cursor is not at the start of a node
-  // do nothing and proceed
-  if (!isAtStartOfNode(editor.state)) {
-    return false;
   }
 
   // if the current item is NOT inside a list item &
@@ -53,14 +53,54 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
     return false;
   }
 
+  // if the cursor is not at the start of a node
+  // do nothing and proceed
+  if (!isAtStartOfNode(editor.state)) {
+    return false;
+  }
+  const isParaSibling = isCurrentParagraphASibling(editor.state);
+  const isCurrentListItemSublist = prevListIsHigher(name, editor.state);
   const listItemPos = findListItemPos(name, editor.state);
+  const nextListItemIsSibling = nextListIsSibling(name, editor.state);
 
   if (!listItemPos) {
     return false;
   }
 
-  // if current node is a list item and cursor it at start of a list node,
-  // simply lift the list item i.e. remove it as a list item (task/bullet/ordered)
-  // irrespective of above node being a list or not
+  const currentNode = listItemPos.$pos.node(listItemPos.depth);
+  const currentListItemHasSubList = listItemHasSubList(name, editor.state, currentNode);
+
+  if (currentListItemHasSubList && isCurrentListItemSublist && isParaSibling) {
+    return false;
+  }
+
+  if (currentListItemHasSubList && isCurrentListItemSublist) {
+    editor.chain().liftListItem(name).run();
+    return editor.commands.joinItemBackward();
+  }
+
+  if (isCurrentListItemSublist && nextListItemIsSibling) {
+    return false;
+  }
+
+  if (isCurrentListItemSublist) {
+    return false;
+  }
+
+  if (currentListItemHasSubList) {
+    return false;
+  }
+
+  if (hasListItemBefore(name, editor.state)) {
+    return editor.chain().liftListItem(name).run();
+  }
+
+  if (!currentListItemHasSubList) {
+    return false;
+  }
+
+  // otherwise in the end, a backspace should
+  // always just lift the list item if
+  // joining / merging is not possible
   return editor.chain().liftListItem(name).run();
 };

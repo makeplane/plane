@@ -3,12 +3,15 @@ import sortBy from "lodash/sortBy";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IssueLabelService, IssueService } from "@/services/issue";
-import { ProjectService, ProjectStateService } from "@/services/project";
 import { IProject } from "@plane/types";
-import { RootStore } from "../root.store";
+// helpers
 import { orderProjects, shouldFilterProject } from "@/helpers/project.helper";
 // services
+import { IssueLabelService, IssueService } from "@/services/issue";
+import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
+// store
+import { RootStore } from "../root.store";
+
 export interface IProjectStore {
   // observables
   projectMap: {
@@ -17,6 +20,8 @@ export interface IProjectStore {
   // computed
   filteredProjectIds: string[] | undefined;
   workspaceProjectIds: string[] | undefined;
+  archivedProjectIds: string[] | undefined;
+  totalProjectIds: string[] | undefined;
   joinedProjectIds: string[];
   favoriteProjectIds: string[];
   currentProjectDetails: IProject | undefined;
@@ -35,6 +40,9 @@ export interface IProjectStore {
   createProject: (workspaceSlug: string, data: Partial<IProject>) => Promise<IProject>;
   updateProject: (workspaceSlug: string, projectId: string, data: Partial<IProject>) => Promise<IProject>;
   deleteProject: (workspaceSlug: string, projectId: string) => Promise<void>;
+  // archive actions
+  archiveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
+  restoreProject: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 
 export class ProjectStore implements IProjectStore {
@@ -46,6 +54,7 @@ export class ProjectStore implements IProjectStore {
   rootStore: RootStore;
   // service
   projectService;
+  projectArchiveService;
   issueLabelService;
   issueService;
   stateService;
@@ -57,6 +66,8 @@ export class ProjectStore implements IProjectStore {
       // computed
       filteredProjectIds: computed,
       workspaceProjectIds: computed,
+      archivedProjectIds: computed,
+      totalProjectIds: computed,
       currentProjectDetails: computed,
       joinedProjectIds: computed,
       favoriteProjectIds: computed,
@@ -76,6 +87,7 @@ export class ProjectStore implements IProjectStore {
     this.rootStore = _rootStore;
     // services
     this.projectService = new ProjectService();
+    this.projectArchiveService = new ProjectArchiveService();
     this.issueService = new IssueService();
     this.issueLabelService = new IssueLabelService();
     this.stateService = new ProjectStateService();
@@ -109,9 +121,40 @@ export class ProjectStore implements IProjectStore {
   get workspaceProjectIds() {
     const workspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
     if (!workspaceDetails) return;
-    const workspaceProjects = Object.values(this.projectMap).filter((p) => p.workspace === workspaceDetails.id);
+    const workspaceProjects = Object.values(this.projectMap).filter(
+      (p) => p.workspace === workspaceDetails.id && !p.archived_at
+    );
     const projectIds = workspaceProjects.map((p) => p.id);
     return projectIds ?? null;
+  }
+
+  /**
+   * Returns archived project IDs belong to current workspace.
+   */
+  get archivedProjectIds() {
+    const currentWorkspace = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!currentWorkspace) return;
+
+    let projects = Object.values(this.projectMap ?? {});
+    projects = sortBy(projects, "archived_at");
+
+    const projectIds = projects
+      .filter((project) => project.workspace === currentWorkspace.id && !!project.archived_at)
+      .map((project) => project.id);
+    return projectIds;
+  }
+
+  /**
+   * Returns total project IDs belong to the current workspace
+   */
+  // workspaceProjectIds + archivedProjectIds
+  get totalProjectIds() {
+    const currentWorkspace = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!currentWorkspace) return;
+
+    const workspaceProjects = this.workspaceProjectIds ?? [];
+    const archivedProjects = this.archivedProjectIds ?? [];
+    return [...workspaceProjects, ...archivedProjects];
   }
 
   /**
@@ -133,7 +176,7 @@ export class ProjectStore implements IProjectStore {
     projects = sortBy(projects, "sort_order");
 
     const projectIds = projects
-      .filter((project) => project.workspace === currentWorkspace.id && project.is_member)
+      .filter((project) => project.workspace === currentWorkspace.id && project.is_member && !project.archived_at)
       .map((project) => project.id);
     return projectIds;
   }
@@ -149,7 +192,10 @@ export class ProjectStore implements IProjectStore {
     projects = sortBy(projects, "created_at");
 
     const projectIds = projects
-      .filter((project) => project.workspace === currentWorkspace.id && project.is_member && project.is_favorite)
+      .filter(
+        (project) =>
+          project.workspace === currentWorkspace.id && project.is_member && project.is_favorite && !project.archived_at
+      )
       .map((project) => project.id);
     return projectIds;
   }
@@ -347,5 +393,49 @@ export class ProjectStore implements IProjectStore {
       console.log("Failed to delete project from project store");
       this.fetchProjects(workspaceSlug);
     }
+  };
+
+  /**
+   * Archives a project from specific workspace and updates it in the store
+   * @param workspaceSlug
+   * @param projectId
+   * @returns Promise<void>
+   */
+  archiveProject = async (workspaceSlug: string, projectId: string) => {
+    await this.projectArchiveService
+      .archiveProject(workspaceSlug, projectId)
+      .then((response) => {
+        runInAction(() => {
+          set(this.projectMap, [projectId, "archived_at"], response.archived_at);
+        });
+      })
+      .catch((error) => {
+        console.log("Failed to archive project from project store");
+        this.fetchProjects(workspaceSlug);
+        this.fetchProjectDetails(workspaceSlug, projectId);
+        throw error;
+      });
+  };
+
+  /**
+   * Restores a project from specific workspace and updates it in the store
+   * @param workspaceSlug
+   * @param projectId
+   * @returns Promise<void>
+   */
+  restoreProject = async (workspaceSlug: string, projectId: string) => {
+    await this.projectArchiveService
+      .restoreProject(workspaceSlug, projectId)
+      .then(() => {
+        runInAction(() => {
+          set(this.projectMap, [projectId, "archived_at"], null);
+        });
+      })
+      .catch((error) => {
+        console.log("Failed to restore project from project store");
+        this.fetchProjects(workspaceSlug);
+        this.fetchProjectDetails(workspaceSlug, projectId);
+        throw error;
+      });
   };
 }

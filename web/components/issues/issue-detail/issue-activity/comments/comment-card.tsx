@@ -20,6 +20,7 @@ import { IssueCommentBlock } from "./comment-block";
 const fileService = new FileService();
 
 type TIssueCommentCard = {
+  projectId: string;
   workspaceSlug: string;
   commentId: string;
   activityOperations: TActivityOperations;
@@ -28,13 +29,16 @@ type TIssueCommentCard = {
 };
 
 export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
-  const { workspaceSlug, commentId, activityOperations, ends, showAccessSpecifier = false } = props;
+  const { workspaceSlug, projectId, commentId, activityOperations, ends, showAccessSpecifier = false } = props;
   // hooks
   const {
     comment: { getCommentById },
   } = useIssueDetail();
   const { currentUser } = useUser();
-  const { mentionHighlights, mentionSuggestions } = useMention();
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: projectId as string,
+  });
   // refs
   const editorRef = useRef<any>(null);
   const showEditorRef = useRef<any>(null);

@@ -143,7 +143,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           setToast({
             title: "Error",
             type: TOAST_TYPE.ERROR,
-            message: err.detail ?? "Failed to perform this action",
+            message: err?.detail ?? "Failed to perform this action",
           });
         });
       }

@@ -4,7 +4,7 @@ import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "
 // components
 import { ProjectLogo } from "@/components/project";
 // stores
-import { ISSUE_PRIORITIES } from "@/constants/issue";
+import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 import { ICycleStore } from "@/store/cycle.store";
 import { ILabelStore } from "@/store/label.store";
@@ -15,6 +15,9 @@ import { IStateStore } from "@/store/state.store";
 // helpers
 // constants
 // types
+
+export const isWorkspaceLevel = (type: EIssuesStoreType) =>
+  [EIssuesStoreType.PROFILE, EIssuesStoreType.GLOBAL].includes(type) ? true : false;
 
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,

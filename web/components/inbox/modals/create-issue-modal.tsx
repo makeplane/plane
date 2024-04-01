@@ -45,6 +45,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // refs
   const editorRef = useRef<any>(null);
+
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query as {
@@ -53,9 +54,13 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     inboxId: string;
   };
   // hooks
-  const { mentionHighlights, mentionSuggestions } = useMention();
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: projectId as string,
+  });
 
   // store hooks
   const {
