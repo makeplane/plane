@@ -11,8 +11,6 @@ export const nextListIsSibling = (typeOrName: string, state: EditorState) => {
     return false;
   }
 
-  console.log("sibling", listDepth, "current", listItemPos.depth, listItemPos, listDepth < listItemPos.depth);
-
   if (listDepth === listItemPos.depth) {
     return true;
   }

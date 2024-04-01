@@ -11,7 +11,6 @@ export const prevListIsHigher = (typeOrName: string, state: EditorState) => {
     return false;
   }
 
-  console.log(listDepth, listItemPos.depth, listItemPos, listDepth < listItemPos.depth);
   if (listDepth < listItemPos.depth) {
     return true;
   }

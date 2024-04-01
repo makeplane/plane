@@ -125,8 +125,6 @@ export const insertImageCommand = (
     if (input.files?.length) {
       const file = input.files[0];
       const pos = savedSelection?.anchor ?? editor.view.state.selection.from;
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log("insertImageCommand#(anon)#if pos: %s", pos); // __AUTO_GENERATED_PRINT_VAR_END__
       startImageUpload(file, editor.view, pos, uploadFile, setIsSubmitting);
     }
   };

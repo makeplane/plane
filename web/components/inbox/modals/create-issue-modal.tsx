@@ -57,8 +57,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
 
-  console.log("in  create issue modal", workspaceSlug, projectId);
-
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug as string,
     projectId: projectId as string,

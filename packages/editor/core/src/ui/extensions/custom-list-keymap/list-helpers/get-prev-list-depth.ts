@@ -31,6 +31,5 @@ export const getPrevListDepth = (typeOrName: string, state: EditorState) => {
   // Double the depth value to get results as 2, 4, 6, 8, etc.
   depth = depth * 2;
 
-  console.log("Parent list depth", depth);
   return depth;
 };

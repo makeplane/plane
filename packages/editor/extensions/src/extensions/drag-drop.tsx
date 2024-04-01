@@ -113,12 +113,9 @@ function DragHandle(options: DragHandleOptions) {
       y: event.clientY,
     });
 
-    console.log(node); // Log the node to see if it's correctly identified
-
     if (!(node instanceof Element)) return;
 
     const nodePos = nodePosAtDOM(node, view, options);
-    console.log(nodePos); // Log the node position to see if it's correctly calculated
 
     if (nodePos === null || nodePos === undefined) return;
 
