@@ -327,32 +327,38 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             </h3>
           </div>
           {watch("parent_id") && selectedParentIssue && (
-            <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span
-                  className="block h-1.5 w-1.5 rounded-full"
-                  style={{
-                    backgroundColor: selectedParentIssue.state__color,
-                  }}
-                />
-                <span className="flex-shrink-0 text-custom-text-200">
-                  {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
-                </span>
-                <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
-                <button
-                  type="button"
-                  className="grid place-items-center"
-                  onClick={() => {
-                    setValue("parent_id", null);
-                    handleFormChange();
-                    setSelectedParentIssue(null);
-                  }}
-                  tabIndex={getTabIndex("remove_parent")}
-                >
-                  <X className="h-3 w-3 cursor-pointer" />
-                </button>
-              </div>
-            </div>
+            <Controller
+              control={control}
+              name="parent_id"
+              render={({ field: { onChange } }) => (
+                <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="block h-1.5 w-1.5 rounded-full"
+                      style={{
+                        backgroundColor: selectedParentIssue.state__color,
+                      }}
+                    />
+                    <span className="flex-shrink-0 text-custom-text-200">
+                      {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
+                    </span>
+                    <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
+                    <button
+                      type="button"
+                      className="grid place-items-center"
+                      onClick={() => {
+                        onChange(null);
+                        handleFormChange();
+                        setSelectedParentIssue(null);
+                      }}
+                      tabIndex={getTabIndex("remove_parent")}
+                    >
+                      <X className="h-3 w-3 cursor-pointer" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            />
           )}
           <div className="space-y-3">
             <div className="mt-2 space-y-3">
