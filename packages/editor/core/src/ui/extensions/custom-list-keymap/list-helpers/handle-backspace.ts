@@ -6,6 +6,8 @@ import { hasListBefore } from "src/ui/extensions/custom-list-keymap/list-helpers
 
 import { hasListItemBefore } from "src/ui/extensions/custom-list-keymap/list-helpers/has-list-item-before";
 import { listItemHasSubList } from "src/ui/extensions/custom-list-keymap/list-helpers/list-item-has-sub-list";
+import { isCurrentParagraphASibling } from "src/ui/extensions/custom-list-keymap/list-helpers/is-para-sibling";
+import { nextListIsSibling } from "src/ui/extensions/custom-list-keymap/list-helpers/next-list-is-sibling";
 import { prevListIsHigher } from "src/ui/extensions/custom-list-keymap/list-helpers/prev-list-is-higher";
 
 export const handleBackspace = (editor: Editor, name: string, parentListTypes: string[]) => {
@@ -44,7 +46,6 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
       .joinForward()
       .run();
   }
-  const isCurrentListItemSublist = prevListIsHigher(name, editor.state);
 
   // if the cursor is not inside the current node type
   // do nothing and proceed
@@ -57,65 +58,47 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
   if (!isAtStartOfNode(editor.state)) {
     return false;
   }
-
+  const isParaSibling = isCurrentParagraphASibling(editor.state);
+  const isCurrentListItemSublist = prevListIsHigher(name, editor.state);
   const listItemPos = findListItemPos(name, editor.state);
+  const nextListItemIsSibling = nextListIsSibling(name, editor.state);
 
   if (!listItemPos) {
     return false;
   }
+
   const currentNode = listItemPos.$pos.node(listItemPos.depth);
-  const currentNodeSize = currentNode.nodeSize;
   const currentListItemHasSubList = listItemHasSubList(name, editor.state, currentNode);
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log(
-    "handleBackspace isCurrentListItemSublist: %s",
-    isCurrentListItemSublist,
-    hasListItemBefore(name, editor.state)
-  ); // __AUTO_GENERATED_PRINT_VAR_END__
-  // if the cursor is not at the start of a node
-  // do nothing and proceed
-  if (!isAtStartOfNode(editor.state)) {
+
+  if (currentListItemHasSubList && isCurrentListItemSublist && isParaSibling) {
     return false;
   }
 
-  const $prev = editor.state.doc.resolve(listItemPos.$pos.pos - 2);
-  const prevNode = $prev.node(listItemPos.depth);
-
-  const previousListItemHasSubList = listItemHasSubList(name, editor.state, prevNode);
-  // if the previous item is a list item and has a sublist, join the list items (this scenario only occurs when a sublist's first item is lifted)
   if (currentListItemHasSubList && isCurrentListItemSublist) {
-    console.log("ran 2");
     editor.chain().liftListItem(name).run();
     return editor.commands.joinItemBackward();
   }
-  if (
-    // hasListItemBefore(name, editor.state) &&
-    // currentListItemHasSubList &&
-    // currentNodeSize > 4 &&
-    // !previousListItemHasSubList
-    isCurrentListItemSublist
-  ) {
-    console.log("ran 0");
-    // editor.chain().liftListItem(name).run();
+
+  if (isCurrentListItemSublist && nextListItemIsSibling) {
     return false;
-    // return editor.commands.joinItemBackward();
-    // return editor.chain().liftListItem(name).run();
+  }
+
+  if (isCurrentListItemSublist) {
+    return false;
   }
 
   if (currentListItemHasSubList) {
-    console.log("ran 1");
     return false;
   }
-  // if u are first node which has both parent list and sub list
-  // then do
 
-  // if the previous item is a list item and doesn't have a sublist, join the list items
   if (hasListItemBefore(name, editor.state)) {
-    console.log("ran 3");
     return editor.chain().liftListItem(name).run();
   }
 
-  console.log("ran 4");
+  if (!currentListItemHasSubList) {
+    return false;
+  }
+
   // otherwise in the end, a backspace should
   // always just lift the list item if
   // joining / merging is not possible
