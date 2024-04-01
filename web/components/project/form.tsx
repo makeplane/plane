@@ -232,6 +232,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               />
             )}
           />
+          <span className="text-xs text-red-500">
+            <>{errors?.name?.message}</>
+          </span>
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Description</h4>
@@ -252,7 +255,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             )}
           />
         </div>
-        <div className="flex w-full items-center justify-between gap-10">
+        <div className="flex w-full justify-between gap-10">
           <div className="flex w-1/2 flex-col gap-1">
             <h4 className="text-sm">Project ID</h4>
             <div className="relative">
@@ -297,6 +300,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 <Info className="absolute right-2 top-2.5 h-4 w-4 text-custom-text-400" />
               </Tooltip>
             </div>
+            <span className="text-xs text-red-500">
+              <>{errors?.identifier?.message}</>
+            </span>
           </div>
           <div className="flex w-1/2 flex-col gap-1">
             <h4 className="text-sm">Network</h4>

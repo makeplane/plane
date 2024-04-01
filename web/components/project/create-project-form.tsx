@@ -226,7 +226,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                 control={control}
                 name="name"
                 rules={{
-                  required: "Title is required",
+                  required: "Name is required",
                   maxLength: {
                     value: 255,
                     message: "Title should be less than 255 characters",
@@ -240,7 +240,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                     value={value}
                     onChange={handleNameChange(onChange)}
                     hasError={Boolean(errors.name)}
-                    placeholder="Project title"
+                    placeholder="Project name"
                     className="w-full focus:border-blue-400"
                     tabIndex={1}
                   />
