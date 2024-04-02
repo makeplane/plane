@@ -262,6 +262,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 displayProperties={issueFilters?.displayProperties ?? {}}
                 handleDisplayPropertiesUpdate={handleDisplayProperties}
                 ignoreGroupedFilters={["cycle"]}
+                cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
 

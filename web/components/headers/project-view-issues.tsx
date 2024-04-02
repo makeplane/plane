@@ -221,6 +221,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             handleDisplayFiltersUpdate={handleDisplayFilters}
             displayProperties={issueFilters?.displayProperties ?? {}}
             handleDisplayPropertiesUpdate={handleDisplayProperties}
+            cycleViewDisabled={!currentProjectDetails?.cycle_view}
+            moduleViewDisabled={!currentProjectDetails?.module_view}
           />
         </FiltersDropdown>
         {canUserCreateIssue && (
