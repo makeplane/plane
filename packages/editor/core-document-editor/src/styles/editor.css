@@ -12,6 +12,10 @@
   display: none;
 }
 
+.ProseMirror code {
+  color: rgba(var(--color-primary-100));
+}
+
 .ProseMirror code::before,
 .ProseMirror code::after {
   display: none;
@@ -42,6 +46,9 @@
   }
 }
 
+/* Custom list item styles */
+
+/* Custom gap cursor styles  */
 .ProseMirror-gapcursor:after {
   border-top: 1px solid rgb(var(--color-text-100)) !important;
 }
@@ -235,4 +242,32 @@ div[data-type="horizontalRule"] {
 /* image resizer */
 .moveable-control-box {
   z-index: 10 !important;
+}
+
+/* Cursor styles for the inline code blocks */
+@keyframes blink {
+  49% {
+    border-color: unset;
+  }
+  50% {
+    border-color: transparent;
+  }
+  99% {
+    border-color: transparent;
+  }
+}
+
+.no-cursor {
+  caret-color: transparent;
+}
+
+div:focus .fake-cursor,
+span:focus .fake-cursor {
+  margin-right: -1px;
+  border-left-width: 1.5px;
+  border-left-style: solid;
+  animation: blink 1s;
+  animation-iteration-count: infinite;
+  position: relative;
+  z-index: 1;
 }

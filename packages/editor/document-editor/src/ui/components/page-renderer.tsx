@@ -24,22 +24,12 @@ type IPageRenderer = {
   editor: Editor;
   editorClassNames: string;
   editorContentCustomClassNames?: string;
-  hideDragHandle?: () => void;
   readonly: boolean;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const {
-    title,
-    tabIndex,
-    editor,
-    editorClassNames,
-    editorContentCustomClassNames,
-    updatePageTitle,
-    readonly,
-    hideDragHandle,
-  } = props;
+  const { title, tabIndex, editor, editorClassNames, editorContentCustomClassNames, updatePageTitle, readonly } = props;
 
   const [pageTitle, setPageTitle] = useState(title);
 
@@ -174,11 +164,7 @@ export const PageRenderer = (props: IPageRenderer) => {
         )}
       </div>
       <div className="relative flex-grow w-full pr-5" onMouseOver={handleLinkHover}>
-        <EditorContainer
-          hideDragHandle={hideDragHandle}
-          editor={editor}
-          editorClassNames={cn(editorClassNames, "pb-64 break-words")}
-        >
+        <EditorContainer editor={editor} editorClassNames={cn(editorClassNames, "pb-64")}>
           <EditorContentWrapper
             tabIndex={tabIndex}
             editor={editor}

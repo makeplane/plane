@@ -1,12 +1,14 @@
 import { Extension } from "@tiptap/core";
 
-import { NodeSelection, Plugin, PluginKey } from "@tiptap/pm/state";
+import { NodeSelection, Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import { Fragment, Slice, Node } from "@tiptap/pm/model";
 // @ts-expect-error __serializeForClipboard's is not exported
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
 
 export interface DragHandleOptions {
   dragHandleWidth: number;
   setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
+  scrollTreshold: number;
 }
 
 function createDragHandleElement(): HTMLElement {
@@ -72,7 +74,14 @@ function nodePosAtDOM(node: Element, view: EditorView, options: DragHandleOption
   })?.inside;
 }
 
+function calcNodePos(pos: number, view: EditorView) {
+  const $pos = view.state.doc.resolve(pos);
+  if ($pos.depth > 1) return $pos.before($pos.depth);
+  return pos;
+}
+
 function DragHandle(options: DragHandleOptions) {
+  let listType = "";
   function handleDragStart(event: DragEvent, view: EditorView) {
     view.focus();
 
@@ -85,10 +94,41 @@ function DragHandle(options: DragHandleOptions) {
 
     if (!(node instanceof Element)) return;
 
-    const nodePos = nodePosAtDOM(node, view, options);
-    if (nodePos == null || nodePos < 0) return;
+    let draggedNodePos = nodePosAtDOM(node, view, options);
+    if (draggedNodePos == null || draggedNodePos < 0) return;
+    draggedNodePos = calcNodePos(draggedNodePos, view);
 
-    view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
+    const { from, to } = view.state.selection;
+    const diff = from - to;
+
+    const fromSelectionPos = calcNodePos(from, view);
+    let differentNodeSelected = false;
+
+    const nodePos = view.state.doc.resolve(fromSelectionPos);
+
+    // Check if nodePos points to the top level node
+    if (nodePos.node().type.name === "doc") differentNodeSelected = true;
+    else {
+      const nodeSelection = NodeSelection.create(view.state.doc, nodePos.before());
+      // Check if the node where the drag event started is part of the current selection
+      differentNodeSelected = !(
+        draggedNodePos + 1 >= nodeSelection.$from.pos && draggedNodePos <= nodeSelection.$to.pos
+      );
+    }
+
+    if (!differentNodeSelected && diff !== 0 && !(view.state.selection instanceof NodeSelection)) {
+      const endSelection = NodeSelection.create(view.state.doc, to - 1);
+      const multiNodeSelection = TextSelection.create(view.state.doc, draggedNodePos, endSelection.$to.pos);
+      view.dispatch(view.state.tr.setSelection(multiNodeSelection));
+    } else {
+      const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
+      view.dispatch(view.state.tr.setSelection(nodeSelection));
+    }
+
+    // If the selected node is a list item, we need to save the type of the wrapping list e.g. OL or UL
+    if (view.state.selection instanceof NodeSelection && view.state.selection.node.type.name === "listItem") {
+      listType = node.parentElement!.tagName;
+    }
 
     const slice = view.state.selection.content();
     const { dom, text } = __serializeForClipboard(view, slice);
@@ -149,11 +189,15 @@ function DragHandle(options: DragHandleOptions) {
         handleClick(e, view);
       });
 
-      dragHandleElement.addEventListener("dragstart", (e) => {
-        handleDragStart(e, view);
-      });
-      dragHandleElement.addEventListener("click", (e) => {
-        handleClick(e, view);
+      dragHandleElement.addEventListener("drag", (e) => {
+        hideDragHandle();
+        const a = document.querySelector(".frame-renderer");
+        if (!a) return;
+        if (e.clientY < options.scrollTreshold) {
+          a.scrollBy({ top: -50, behavior: "smooth" });
+        } else if (window.innerHeight - e.clientY < options.scrollTreshold) {
+          a.scrollBy({ top: 50, behavior: "smooth" });
+        }
       });
 
       hideDragHandle();
@@ -214,9 +258,42 @@ function DragHandle(options: DragHandleOptions) {
           view.dom.classList.add("dragging");
           hideDragHandle();
         },
-        drop: (view) => {
+        drop: (view, event) => {
           view.dom.classList.remove("dragging");
           hideDragHandle();
+          let droppedNode: Node | null = null;
+          const dropPos = view.posAtCoords({
+            left: event.clientX,
+            top: event.clientY,
+          });
+
+          if (!dropPos) return;
+
+          if (view.state.selection instanceof NodeSelection) {
+            droppedNode = view.state.selection.node;
+          }
+          if (!droppedNode) return;
+
+          const resolvedPos = view.state.doc.resolve(dropPos.pos);
+
+          const isDroppedInsideList = resolvedPos.parent.type.name === "listItem";
+
+          // If the selected node is a list item and is not dropped inside a list, we need to wrap it inside <ol> tag otherwise ol list items will be transformed into ul list item when dropped
+          if (
+            view.state.selection instanceof NodeSelection &&
+            view.state.selection.node.type.name === "listItem" &&
+            !isDroppedInsideList &&
+            listType == "OL"
+          ) {
+            const text = droppedNode.textContent;
+            if (!text) return;
+            const paragraph = view.state.schema.nodes.paragraph?.createAndFill({}, view.state.schema.text(text));
+            const listItem = view.state.schema.nodes.listItem?.createAndFill({}, paragraph);
+
+            const newList = view.state.schema.nodes.orderedList?.createAndFill(null, listItem);
+            const slice = new Slice(Fragment.from(newList), 0, 0);
+            view.dragging = { slice, move: event.ctrlKey };
+          }
         },
         dragend: (view) => {
           view.dom.classList.remove("dragging");
@@ -234,6 +311,7 @@ export const DragAndDrop = (setHideDragHandle?: (hideDragHandlerFromDragDrop: ()
       return [
         DragHandle({
           dragHandleWidth: 24,
+          scrollTreshold: 200,
           setHideDragHandle,
         }),
       ];
