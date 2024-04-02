@@ -3,6 +3,8 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Sparkle } from "lucide-react";
+import { Transition, Dialog } from "@headlessui/react";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // types
 import { TIssue } from "@plane/types";
 // ui

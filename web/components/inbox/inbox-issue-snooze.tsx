@@ -1,9 +1,9 @@
 import { FC, useState } from "react";
-import { Popover } from "@headlessui/react";
 import { DayPicker } from "react-day-picker";
 // icons
 import { Clock } from "lucide-react";
 // ui
+import { Popover } from "@headlessui/react";
 import { Button } from "@plane/ui";
 
 export type InboxIssueSnoozeProps = {

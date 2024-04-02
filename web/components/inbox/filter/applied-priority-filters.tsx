@@ -1,10 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
+// icons
 import { X } from "lucide-react";
-// ui
-import { PriorityIcon } from "@plane/ui";
 // types
 import { TIssuePriorities } from "@plane/types";
+// ui
+import { PriorityIcon } from "@plane/ui";
 
 export type InboxIssueAppliedPriorityFiltersProps = {
   priorities: string[];

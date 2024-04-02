@@ -1,9 +1,9 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
 // constants
-import { INBOX_STATUS } from "constants/inbox";
-import { observer } from "mobx-react";
+import { INBOX_STATUS } from "@/constants/inbox";
 
 export type InboxIssueAppliedStatusFiltersProps = {
   statuses: number[];

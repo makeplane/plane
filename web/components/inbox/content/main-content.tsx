@@ -63,13 +63,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   return (
     <>
       <div className="rounded-lg space-y-4">
-        <InboxIssueStatus
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          inboxId={inboxId}
-          issueId={issueId}
-          showDescription
-        />
+        <InboxIssueStatus workspaceSlug={workspaceSlug} projectId={projectId} inboxIssue={issueId} showDescription />
 
         <div className="mb-2.5 flex items-center">
           {currentIssueState && (

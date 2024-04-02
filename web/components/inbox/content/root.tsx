@@ -17,6 +17,8 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   const { inboxIssuesArray } = useProjectInbox();
   const inboxIssue = useInboxIssues(inboxIssueId);
 
+  console.log("inboxIssue", inboxIssuesArray);
+
   return (
     <>
       <div className="w-full h-full overflow-hidden relative flex flex-col">

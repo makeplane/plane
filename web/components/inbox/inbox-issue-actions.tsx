@@ -22,7 +22,6 @@ import type { IInboxIssueStore } from "@/store/inbox-issue.store";
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;
   projectId: string;
-  inboxId: string;
   inboxIssue: IInboxIssueStore | undefined;
 };
 
