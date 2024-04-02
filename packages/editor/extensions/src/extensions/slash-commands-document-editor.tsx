@@ -195,7 +195,7 @@ const getSuggestionItems =
         searchTerms: ["img", "photo", "picture", "media"],
         icon: <ImageIcon className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          insertImageCommand(editor, uploadFile, range);
+          insertImageCommand(editor, uploadFile, null, range);
         },
       },
       {
@@ -324,19 +324,21 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
   ) : null;
 };
 
-const renderItems = () => {
-  let component: ReactRenderer | null = null;
-  let popup: any | null = null;
+interface CommandListInstance {
+  onKeyDown: (props: { event: KeyboardEvent }) => boolean;
+}
 
+const renderItems = () => {
+  let component: ReactRenderer<CommandListInstance, typeof CommandList> | null = null;
+  let popup: any | null = null;
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component = new ReactRenderer(CommandList, {
         props,
-        // @ts-ignore
         editor: props.editor,
       });
 
-      // @ts-ignore
+      // @ts-expect-error Tippy overloads are messed up
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
         appendTo: () => document.querySelector("#editor-container"),
@@ -362,8 +364,10 @@ const renderItems = () => {
         return true;
       }
 
-      // @ts-expect-error no inference
-      return component?.ref?.onKeyDown(props);
+      if (component?.ref?.onKeyDown(props)) {
+        return true;
+      }
+      return false;
     },
     onExit: () => {
       popup?.[0].destroy();

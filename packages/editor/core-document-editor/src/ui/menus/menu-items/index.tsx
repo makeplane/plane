@@ -33,6 +33,7 @@ import {
 } from "src/lib/editor-commands";
 import { LucideIconType } from "src/types/lucide-icon";
 import { UploadImage } from "src/types/upload-image";
+import { Selection } from "@tiptap/pm/state";
 
 export interface EditorMenuItem {
   name: string;
@@ -149,9 +150,9 @@ export const ImageItem = (editor: Editor, uploadFile: UploadImage) =>
   ({
     name: "image",
     isActive: () => editor?.isActive("image"),
-    command: () => insertImageCommand(editor, uploadFile),
+    command: (savedSelection: Selection | null) => insertImageCommand(editor, uploadFile, savedSelection),
     icon: ImageIcon,
-  }) as const satisfies EditorMenuItem;
+  }) as const;
 
 export function getEditorMenuItems(editor: Editor | null, uploadFile: UploadImage) {
   if (!editor) {

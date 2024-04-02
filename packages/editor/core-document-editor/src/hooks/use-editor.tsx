@@ -103,7 +103,11 @@ export const useEditor = ({
 
         const item = getEditorMenuItem(itemName);
         if (item) {
-          item.command();
+          if (item.name === "image") {
+            item.command(savedSelection);
+          } else {
+            item.command();
+          }
         } else {
           console.warn(`No command found for item: ${itemName}`);
         }

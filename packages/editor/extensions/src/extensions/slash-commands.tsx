@@ -370,7 +370,10 @@ const renderItems = () => {
         return true;
       }
 
-      return component?.ref?.onKeyDown(props);
+      if (component?.ref?.onKeyDown(props)) {
+        return true;
+      }
+      return false;
     },
     onExit: () => {
       popup?.[0].destroy();
