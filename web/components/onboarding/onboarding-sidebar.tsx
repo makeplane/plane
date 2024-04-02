@@ -10,11 +10,11 @@ import {
   ContrastIcon,
   FileText,
   LayersIcon,
-  LayoutGrid,
   PenSquare,
   Search,
   Settings,
   Bell,
+  Home,
 } from "lucide-react";
 import { IWorkspace } from "@plane/types";
 import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
@@ -26,8 +26,8 @@ import projectEmoji from "public/emoji/project-emoji.svg";
 
 const workspaceLinks = [
   {
-    Icon: LayoutGrid,
-    name: "Dashboard",
+    Icon: Home,
+    name: "Home",
   },
   {
     Icon: BarChart2,
