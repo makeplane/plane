@@ -21,7 +21,6 @@ export const ModuleListLayout: React.FC = observer(() => {
   return (
     <BaseListRoot
       QuickActions={ModuleIssueQuickActions}
-      viewId={moduleId?.toString()}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !moduleId) throw new Error();
         return issues.addIssuesToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);

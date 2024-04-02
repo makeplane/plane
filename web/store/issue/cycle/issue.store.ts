@@ -1,4 +1,4 @@
-import { action, observable, makeObservable, runInAction, computed } from "mobx";
+import { action, observable, makeObservable, runInAction } from "mobx";
 // base class
 // types
 import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
@@ -60,7 +60,12 @@ export interface ICycleIssues extends IBaseIssuesStore {
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>, cycleId: string) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue | undefined>;
+  quickAddIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    data: TIssue,
+    cycleId: string
+  ) => Promise<TIssue | undefined>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
 
   transferIssuesFromCycle: (
@@ -168,7 +173,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
 
   override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, cycleId: string) => {
     try {
-      const response = await super.createIssue(workspaceSlug, projectId, data);
+      const response = await super.createIssue(workspaceSlug, projectId, data, cycleId, false);
       await this.addIssueToCycle(workspaceSlug, projectId, cycleId, [response.id], false);
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
 
@@ -259,5 +264,19 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     }
   };
 
-  quickAddIssue = this.issueQuickAdd;
+  quickAddIssue = async (workspaceSlug: string, projectId: string, data: TIssue, cycleId: string) => {
+    try {
+      this.addIssue(data);
+
+      const response = await this.createIssue(workspaceSlug, projectId, data, cycleId);
+      return response;
+    } catch (error) {
+      throw error;
+    } finally {
+      runInAction(() => {
+        this.removeIssueFromList(data.id);
+        this.rootIssueStore.issues.removeIssue(data.id);
+      });
+    }
+  };
 }

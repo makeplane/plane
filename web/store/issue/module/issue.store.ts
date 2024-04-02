@@ -1,12 +1,7 @@
-import concat from "lodash/concat";
-import pull from "lodash/pull";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
-import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import { action, makeObservable, runInAction } from "mobx";
 // base class
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 // services
-import { ModuleService } from "@/services/module.service";
 // types
 import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
@@ -40,7 +35,12 @@ export interface IModuleIssues extends IBaseIssuesStore {
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>, moduleId: string) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue | undefined>;
+  quickAddIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    data: TIssue,
+    moduleId: string
+  ) => Promise<TIssue | undefined>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
 }
 
@@ -132,7 +132,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
 
   override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, moduleId: string) => {
     try {
-      const response = await super.createIssue(workspaceSlug, projectId, data, moduleId);
+      const response = await super.createIssue(workspaceSlug, projectId, data, moduleId, false);
       await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id], false);
 
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
@@ -143,5 +143,19 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     }
   };
 
-  quickAddIssue = this.issueQuickAdd;
+  quickAddIssue = async (workspaceSlug: string, projectId: string, data: TIssue, moduleId: string) => {
+    try {
+      this.addIssue(data);
+
+      const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
+      return response;
+    } catch (error) {
+      throw error;
+    } finally {
+      runInAction(() => {
+        this.removeIssueFromList(data.id);
+        this.rootIssueStore.issues.removeIssue(data.id);
+      });
+    }
+  };
 }

@@ -25,18 +25,25 @@ type ListStoreType =
   | EIssuesStoreType.PROFILE;
 interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
-  viewId?: string;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
 }
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const { QuickActions, viewId, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
 
   const storeType = useIssueStore() as ListStoreType;
   const { issuesFilter, issues } = useIssues(storeType);
-  const { fetchIssues, fetchNextIssues, updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue } =
-    useIssuesActions(storeType);
+  const {
+    fetchIssues,
+    fetchNextIssues,
+    quickAddIssue,
+    updateIssue,
+    removeIssue,
+    removeIssueFromView,
+    archiveIssue,
+    restoreIssue,
+  } = useIssuesActions(storeType);
   // mobx store
   const {
     membership: { currentProjectRole },
@@ -119,10 +126,9 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           groupedIssueIds={groupedIssueIds ?? {}}
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
-          viewId={viewId}
           getPaginationData={getPaginationData}
           getGroupIssueCount={getGroupIssueCount}
-          quickAddCallback={issues?.quickAddIssue}
+          quickAddCallback={quickAddIssue}
           enableIssueQuickAdd={!!enableQuickAdd}
           canEditProperties={canEditProperties}
           disableIssueCreation={!enableIssueCreation || !isEditingAllowed}

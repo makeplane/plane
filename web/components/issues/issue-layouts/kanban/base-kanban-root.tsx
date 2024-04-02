@@ -35,7 +35,6 @@ export type KanbanStoreType =
   | EIssuesStoreType.PROFILE;
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;
-  viewId?: string;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
@@ -48,7 +47,7 @@ type KanbanDragState = {
 };
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const { QuickActions, viewId, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -62,6 +61,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     fetchIssues,
     fetchNextIssues,
+    quickAddIssue,
     updateIssue,
     removeIssue,
     removeIssueFromView,
@@ -288,9 +288,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                 kanbanFilters={kanbanFilters}
                 enableQuickIssueCreate={enableQuickAdd}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
-                quickAddCallback={issues?.quickAddIssue}
+                quickAddCallback={quickAddIssue}
                 getPaginationData={issues.getPaginationData}
-                viewId={viewId}
                 disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
                 canEditProperties={canEditProperties}
                 addIssuesToView={addIssuesToView}

@@ -53,13 +53,7 @@ export interface IGroupByKanBan {
   handleKanbanFilters: any;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   enableQuickIssueCreate?: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -87,7 +81,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     enableQuickIssueCreate,
     quickAddCallback,
     loadMoreIssues,
-    viewId,
     disableIssueCreation,
     addIssuesToView,
     canEditProperties,
@@ -197,7 +190,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   quickActions={quickActions}
                   enableQuickIssueCreate={enableQuickIssueCreate}
                   quickAddCallback={quickAddCallback}
-                  viewId={viewId}
                   disableIssueCreation={disableIssueCreation}
                   canEditProperties={canEditProperties}
                   scrollableContainerRef={scrollableContainerRef}
@@ -234,13 +226,7 @@ export interface IKanBan {
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   showEmptyGroup: boolean;
   enableQuickIssueCreate?: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -266,7 +252,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     loadMoreIssues,
     enableQuickIssueCreate,
     quickAddCallback,
-    viewId,
     disableIssueCreation,
     addIssuesToView,
     canEditProperties,
@@ -296,7 +281,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       loadMoreIssues={loadMoreIssues}
       enableQuickIssueCreate={enableQuickIssueCreate}
       quickAddCallback={quickAddCallback}
-      viewId={viewId}
       disableIssueCreation={disableIssueCreation}
       addIssuesToView={addIssuesToView}
       canEditProperties={canEditProperties}

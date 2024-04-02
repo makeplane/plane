@@ -37,15 +37,9 @@ export interface IGroupByList {
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  viewId?: string;
   isCompletedCycle?: boolean;
   loadMoreIssues: (groupId?: string) => void;
 }
@@ -62,7 +56,6 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     showEmptyGroup,
     canEditProperties,
     quickAddCallback,
-    viewId,
     disableIssueCreation,
     addIssuesToView,
     getPaginationData,
@@ -198,7 +191,6 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                     <ListQuickAddIssueForm
                       prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}
                       quickAddCallback={quickAddCallback}
-                      viewId={viewId}
                     />
                   </div>
                 )}
@@ -222,13 +214,7 @@ export interface IList {
   showEmptyGroup: boolean;
   enableIssueQuickAdd: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
@@ -245,7 +231,6 @@ export const List: React.FC<IList> = (props) => {
     updateIssue,
     quickActions,
     quickAddCallback,
-    viewId,
     displayProperties,
     showEmptyGroup,
     enableIssueQuickAdd,
@@ -274,7 +259,6 @@ export const List: React.FC<IList> = (props) => {
         quickAddCallback={quickAddCallback}
         getPaginationData={getPaginationData}
         getGroupIssueCount={getGroupIssueCount}
-        viewId={viewId}
         disableIssueCreation={disableIssueCreation}
         addIssuesToView={addIssuesToView}
         isCompletedCycle={isCompletedCycle}

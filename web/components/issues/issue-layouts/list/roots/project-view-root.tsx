@@ -1,6 +1,5 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
 // store
 // constants
 // types
@@ -8,11 +7,4 @@ import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 // components
 import { BaseListRoot } from "../base-list-root";
 
-export const ProjectViewListLayout: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
-
-  if (!workspaceSlug || !projectId) return null;
-
-  return <BaseListRoot QuickActions={ProjectIssueQuickActions} viewId={viewId?.toString()} />;
-});
+export const ProjectViewListLayout: React.FC = observer(() => <BaseListRoot QuickActions={ProjectIssueQuickActions} />);

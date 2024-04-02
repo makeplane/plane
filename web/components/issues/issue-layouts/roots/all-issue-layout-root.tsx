@@ -170,7 +170,6 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
           quickActions={renderQuickActions}
           updateIssue={updateIssue}
           canEditProperties={canEditProperties}
-          viewId={globalViewId.toString()}
           canLoadMoreIssues={!!nextPageResults}
           loadMoreIssues={fetchNextPages}
         />

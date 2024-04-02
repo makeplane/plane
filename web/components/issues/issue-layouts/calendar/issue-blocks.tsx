@@ -19,14 +19,8 @@ type Props = {
   isDragDisabled?: boolean;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  viewId?: string;
   readOnly?: boolean;
   isMobileView?: boolean;
 };
@@ -45,7 +39,6 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     disableIssueCreation,
     quickAddCallback,
     addIssuesToView,
-    viewId,
     readOnly,
     isMobileView = false,
   } = props;
@@ -98,7 +91,6 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
             }}
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
-            viewId={viewId}
           />
         </div>
       )}

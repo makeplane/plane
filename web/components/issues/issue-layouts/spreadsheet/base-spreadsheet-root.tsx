@@ -24,14 +24,13 @@ export type SpreadsheetStoreType =
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW;
 interface IBaseSpreadsheetRoot {
-  viewId?: string;
   QuickActions: FC<IQuickActionProps>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const { viewId, QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  const { QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
   // router
   const router = useRouter();
   const { projectId } = router.query;
@@ -44,6 +43,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const {
     fetchIssues,
     fetchNextIssues,
+    quickAddIssue,
     updateIssue,
     removeIssue,
     removeIssueFromView,
@@ -118,8 +118,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         quickActions={renderQuickActions}
         updateIssue={updateIssue}
         canEditProperties={canEditProperties}
-        quickAddCallback={issues.quickAddIssue}
-        viewId={viewId}
+        quickAddCallback={quickAddIssue}
         enableQuickCreateIssue={enableQuickAdd}
         disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
         canLoadMoreIssues={!!nextPageResults}

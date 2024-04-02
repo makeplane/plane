@@ -366,12 +366,12 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     projectId: string,
     data: Partial<TIssue>,
     id?: string,
-    shouldAddStore = true
+    shouldUpdateList = true
   ) {
     try {
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
-      if (shouldAddStore) this.addIssue(response);
+      this.addIssue(response, shouldUpdateList);
 
       return response;
     } catch (error) {
@@ -638,12 +638,12 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     }
   }
 
-  addIssue(issue: TIssue) {
+  addIssue(issue: TIssue, shouldUpdateList = true) {
     runInAction(() => {
       this.rootIssueStore.issues.addIssue([issue]);
     });
 
-    this.updateIssueList(issue, undefined, EIssueGroupedAction.ADD);
+    if (shouldUpdateList) this.updateIssueList(issue, undefined, EIssueGroupedAction.ADD);
   }
 
   clear() {

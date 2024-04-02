@@ -39,14 +39,8 @@ interface IKanbanGroup {
     | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
-  viewId?: string;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle?: boolean;
@@ -74,7 +68,6 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     enableQuickIssueCreate,
     disableIssueCreation,
     quickAddCallback,
-    viewId,
     scrollableContainerRef,
     isDragStarted,
   } = props;
@@ -201,7 +194,6 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
                     ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
                   }}
                   quickAddCallback={quickAddCallback}
-                  viewId={viewId}
                 />
               </div>
             )}

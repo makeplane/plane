@@ -102,13 +102,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   enableQuickIssueCreate: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
@@ -133,7 +127,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     canEditProperties,
     addIssuesToView,
     quickAddCallback,
-    viewId,
     scrollableContainerRef,
     isDragStarted,
   } = props;
@@ -199,7 +192,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     canEditProperties={canEditProperties}
                     addIssuesToView={addIssuesToView}
                     quickAddCallback={quickAddCallback}
-                    viewId={viewId}
                     scrollableContainerRef={scrollableContainerRef}
                     isDragStarted={isDragStarted}
                     loadMoreIssues={loadMoreIssues}
@@ -237,13 +229,7 @@ export interface IKanBanSwimLanes {
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   enableQuickIssueCreate: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
@@ -269,7 +255,6 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     canEditProperties,
     addIssuesToView,
     quickAddCallback,
-    viewId,
     scrollableContainerRef,
   } = props;
 
@@ -343,7 +328,6 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           addIssuesToView={addIssuesToView}
           canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
-          viewId={viewId}
           scrollableContainerRef={scrollableContainerRef}
         />
       )}

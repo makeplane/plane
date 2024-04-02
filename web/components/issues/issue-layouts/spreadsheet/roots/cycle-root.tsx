@@ -21,7 +21,6 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
 
   return (
     <BaseSpreadsheetRoot
-      viewId={cycleId?.toString()}
       QuickActions={CycleIssueQuickActions}
       canEditPropertiesBasedOnProject={canEditIssueProperties}
       isCompletedCycle={isCompletedCycle}
