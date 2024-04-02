@@ -14,7 +14,7 @@ import { TableRow } from "src/ui/extensions/table/table-row/table-row";
 import { ReadOnlyImageExtension } from "src/ui/extensions/image/read-only-image";
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
-import { IMentionHighlight, IMentionSuggestion } from "src/types/mention-suggestion";
+import { IMentionHighlight } from "src/types/mention-suggestion";
 import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
 import { CustomQuoteExtension } from "src/ui/extensions/quote";
@@ -85,7 +85,11 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     },
     nested: true,
   }),
-  CustomCodeBlockExtension,
+  CustomCodeBlockExtension.configure({
+    HTMLAttributes: {
+      class: "bg-custom-background-80 text-custom-text-100 rounded-lg p-8 pl-9 pr-4",
+    },
+  }),
   CustomCodeInlineExtension,
   Markdown.configure({
     html: true,

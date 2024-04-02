@@ -188,11 +188,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 }
 
 .ProseMirror pre {
-  background: rgba(var(--color-background-80));
-  border-radius: 0.5rem;
-  color: rgba(var(--color-text-100));
   font-family: "JetBrainsMono", monospace;
-  padding: 0.75rem 1rem;
+  tab-size: 2;
 }
 
 .ProseMirror pre code {
@@ -250,23 +247,32 @@ span:focus .fake-cursor {
 .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 2rem;
   margin-bottom: 4px;
+  font-size: 1.875rem;
   font-weight: 700;
+  line-height: 1.3;
 }
 
 .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 1.4rem;
   margin-bottom: 1px;
+  font-size: 1.5rem;
   font-weight: 600;
+  line-height: 1.3;
 }
 
 .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 1rem;
   margin-bottom: 1px;
+  font-size: 1.25rem;
+  line-height: 1.3;
 }
 
 .prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 0.25rem;
   margin-bottom: 1px;
+  padding: 3px 2px;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 .prose :where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
