@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect } from "react";
+import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect, FC } from "react";
 import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
@@ -250,7 +250,9 @@ export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
   }
 };
 
-const CommandList = ({ items, command }: { items: CommandItemProps[]; command: any; editor: any; range: any }) => {
+type Props = { items: CommandItemProps[]; command: (props: CommandItemProps) => void; editor: Editor; range: Range };
+
+const CommandList: FC<Props> = ({ items, command }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = useCallback(

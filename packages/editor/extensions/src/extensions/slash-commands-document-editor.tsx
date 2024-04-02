@@ -54,7 +54,20 @@ const Command = Extension.create<SlashCommandOptions>({
           props.command({ editor, range });
         },
         allow({ editor }: { editor: Editor }) {
-          return !editor.isActive("table");
+          const { selection } = editor.state;
+
+          const parentNode = selection.$from.node(selection.$from.depth);
+          const blockType = parentNode.type.name;
+
+          if (blockType === "codeBlock") {
+            return false;
+          }
+
+          if (editor.isActive("table")) {
+            return false;
+          }
+
+          return true;
         },
         allowSpaces: true,
       },
@@ -71,11 +84,7 @@ const Command = Extension.create<SlashCommandOptions>({
 });
 
 const getSuggestionItems =
-  (
-    uploadFile: UploadImage,
-    setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-    additionalOptions?: Array<ISlashCommandItem>
-  ) =>
+  (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
   ({ query }: { query: string }) => {
     let slashCommands: ISlashCommandItem[] = [
       {
@@ -363,14 +372,10 @@ const renderItems = () => {
   };
 };
 
-export const SlashCommandDocumentEditor = (
-  uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-  additionalOptions?: Array<ISlashCommandItem>
-) =>
+export const SlashCommandDocumentEditor = (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(uploadFile, setIsSubmitting, additionalOptions),
+      items: getSuggestionItems(uploadFile, additionalOptions),
       render: renderItems,
     },
   });
