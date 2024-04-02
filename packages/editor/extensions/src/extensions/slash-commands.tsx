@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect } from "react";
+import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect, FC } from "react";
 import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
@@ -250,7 +250,9 @@ export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
   }
 };
 
-const CommandList = ({ items, command }: { items: CommandItemProps[]; command: any; editor: any; range: any }) => {
+type Props = { items: CommandItemProps[]; command: (props: CommandItemProps) => void; editor: Editor; range: Range };
+
+const CommandList: FC<Props> = ({ items, command }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = useCallback(
@@ -328,19 +330,21 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
   ) : null;
 };
 
+interface CommandListInstance {
+  onKeyDown: (props: { event: KeyboardEvent }) => boolean;
+}
 const renderItems = () => {
-  let component: ReactRenderer | null = null;
+  let component: ReactRenderer<CommandListInstance, typeof CommandList> | null = null;
   let popup: any | null = null;
 
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component = new ReactRenderer(CommandList, {
         props,
-        // @ts-ignore
         editor: props.editor,
       });
 
-      // @ts-ignore
+      // @ts-expect-error Tippy overloads are messed up
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
         appendTo: () => document.querySelector(".active-editor"),
@@ -366,7 +370,6 @@ const renderItems = () => {
         return true;
       }
 
-      // @ts-ignore
       return component?.ref?.onKeyDown(props);
     },
     onExit: () => {
