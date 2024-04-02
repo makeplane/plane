@@ -339,7 +339,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
       for (const subGroupId in issueGroup) {
         const issueSubGroup = (issueGroup as TGroupedIssues)[subGroupId];
-        const issueSubGroupCount = groupedIssueCount[subGroupId];
+        const issueSubGroupCount = groupedIssueCount[this.getGroupKey(groupId, subGroupId)];
 
         set(this.groupedIssueCount, [this.getGroupKey(groupId, subGroupId)], issueSubGroupCount);
         this.updateIssueGroup(issueSubGroup, [groupId, subGroupId]);
