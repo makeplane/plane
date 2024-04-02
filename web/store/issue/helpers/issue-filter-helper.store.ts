@@ -108,8 +108,11 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     Object.keys(computedFilters).forEach((key) => {
       const _key = key as TIssueParams;
       const _value: string | boolean | string[] | undefined = computedFilters[_key];
-      if (_value != undefined && acceptableParamsByLayout.includes(_key))
-        issueFiltersParams[_key] = Array.isArray(_value) ? _value.join(",") : _value;
+      const nonEmptyArrayValue = Array.isArray(_value) && _value.length === 0 ? undefined : _value;
+      if (nonEmptyArrayValue != undefined && acceptableParamsByLayout.includes(_key))
+        issueFiltersParams[_key] = Array.isArray(nonEmptyArrayValue)
+          ? nonEmptyArrayValue.join(",")
+          : nonEmptyArrayValue;
     });
 
     return issueFiltersParams;
