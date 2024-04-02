@@ -1,20 +1,21 @@
 import { useState } from "react";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
-// hooks
-import { Copy, Pencil, Trash2 } from "lucide-react";
+// icons
+import { Pencil, Trash2 } from "lucide-react";
+// types
 import { TIssue } from "@plane/types";
+// ui
 import { CustomMenu } from "@plane/ui";
+// components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+// constant
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useEventTracker, useIssues, useUser } from "@/hooks/store";
-// ui
-// components
-// helpers
 // types
 import { IQuickActionProps } from "../list/list-view-types";
-// constant
 
 export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const { issue, handleDelete, handleUpdate, customActionButton, portalElement, readOnly = false } = props;
@@ -86,19 +87,6 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
             <div className="flex items-center gap-2">
               <Pencil className="h-3 w-3" />
               Edit
-            </div>
-          </CustomMenu.MenuItem>
-        )}
-        {isEditingAllowed && (
-          <CustomMenu.MenuItem
-            onClick={() => {
-              setTrackElement(activeLayout);
-              setCreateUpdateIssueModal(true);
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <Copy className="h-3 w-3" />
-              Make a copy
             </div>
           </CustomMenu.MenuItem>
         )}

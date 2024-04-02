@@ -220,7 +220,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
                 description="You can see here if someone invites you to a workspace."
                 image={emptyInvitation}
                 primaryButton={{
-                  text: "Back to dashboard",
+                  text: "Back to home",
                   onClick: () => router.push("/"),
                 }}
               />
