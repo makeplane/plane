@@ -1,17 +1,15 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
-import { observer } from "mobx-react-lite";
-// services
-import { AuthService } from "services/auth.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button, Input } from "@plane/ui";
-// helpers
-import { checkEmailValidity } from "helpers/string.helper";
-// types
 import { IEmailCheckData } from "@plane/types";
+// services
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { AuthService } from "@/services/auth.service";
+// ui
+// helpers
+// types
 
 type Props = {
   onSubmit: (isPasswordAutoset: boolean) => void;
@@ -27,7 +25,6 @@ const authService = new AuthService();
 export const SignInEmailForm: React.FC<Props> = observer((props) => {
   const { onSubmit, updateEmail } = props;
   // hooks
-  const { setToastAlert } = useToast();
   const {
     control,
     formState: { errors, isSubmitting, isValid },
@@ -52,8 +49,8 @@ export const SignInEmailForm: React.FC<Props> = observer((props) => {
       .emailCheck(payload)
       .then((res) => onSubmit(res.is_password_autoset))
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

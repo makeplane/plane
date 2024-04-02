@@ -52,5 +52,5 @@ class Command(BaseCommand):
         user.save()
 
         self.stdout.write(
-            self.style.SUCCESS(f"User password updated succesfully")
+            self.style.SUCCESS("User password updated succesfully")
         )

@@ -4,8 +4,8 @@ import { IUser } from "@plane/types";
 
 declare global {
   interface Window {
-    $crisp: any;
-    CRISP_WEBSITE_ID: any;
+    $crisp: unknown[];
+    CRISP_WEBSITE_ID: unknown;
   }
 }
 
@@ -22,8 +22,8 @@ const CrispWrapper: FC<ICrispWrapper> = (props) => {
       window.$crisp = [];
       window.CRISP_WEBSITE_ID = process.env.NEXT_PUBLIC_CRISP_ID;
       (function () {
-        var d = document;
-        var s = d.createElement("script");
+        const d = document;
+        const s = d.createElement("script");
         s.src = "https://client.crisp.chat/l.js";
         s.async = true;
         d.getElementsByTagName("head")[0].appendChild(s);

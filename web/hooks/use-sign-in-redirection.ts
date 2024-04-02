@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 // hooks
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 // types
 import { IUser, IUserSettings } from "@plane/types";
 

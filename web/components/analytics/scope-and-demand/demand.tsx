@@ -1,9 +1,7 @@
-// icons
-import { Triangle } from "lucide-react";
 // types
 import { IDefaultAnalyticsResponse, TStateGroups } from "@plane/types";
 // constants
-import { STATE_GROUPS } from "constants/state";
+import { STATE_GROUPS } from "@/constants/state";
 
 type Props = {
   defaultAnalytics: IDefaultAnalyticsResponse;
@@ -16,7 +14,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
       <h4 className="text-base font-medium text-custom-text-100">Total open tasks</h4>
       <h3 className="mt-1 text-xl font-semibold">{defaultAnalytics.open_issues}</h3>
     </div>
-    <div className="space-y-6">
+    <div className="space-y-6 pb-2">
       {defaultAnalytics?.open_issues_classified.map((group) => {
         const percentage = ((group.state_count / defaultAnalytics.total_issues) * 100).toFixed(0);
 
@@ -49,15 +47,6 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
           </div>
         );
       })}
-    </div>
-    <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
-      <p className="flex items-center gap-1 text-custom-text-200">
-        <Triangle className="h-4 w-4" />
-        <span>Estimate Demand:</span>
-      </p>
-      <p className="font-medium">
-        {defaultAnalytics.open_estimate_sum}/{defaultAnalytics.total_estimate_sum}
-      </p>
     </div>
   </div>
 );

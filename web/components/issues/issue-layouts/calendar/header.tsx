@@ -1,22 +1,34 @@
 import { observer } from "mobx-react-lite";
 
 // components
-import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "components/issues";
-// icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCalendarView } from "hooks/store/use-calendar-view";
-import { ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssueKanbanFilters,
+} from "@plane/types";
+import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "@/components/issues";
+// icons
+import { EIssueFilterType } from "@/constants/issue";
+import { useCalendarView } from "@/hooks/store/use-calendar-view";
+import { ICycleIssuesFilter } from "@/store/issue/cycle";
+import { IModuleIssuesFilter } from "@/store/issue/module";
+import { IProjectIssuesFilter } from "@/store/issue/project";
+import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
-  viewId?: string;
+  updateFilters?: (
+    projectId: string,
+    filterType: EIssueFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+  ) => Promise<void>;
+  setSelectedDate: (date: Date) => void;
 }
 
 export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
-  const { issuesFilterStore, viewId } = props;
+  const { issuesFilterStore, updateFilters, setSelectedDate } = props;
 
   const issueCalendarView = useCalendarView();
 
@@ -80,6 +92,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
       activeMonthDate: firstDayOfCurrentMonth,
       activeWeekDate: today,
     });
+    setSelectedDate(today);
   };
 
   return (
@@ -101,7 +114,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         >
           Today
         </button>
-        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} viewId={viewId} />
+        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} updateFilters={updateFilters} />
       </div>
     </div>
   );

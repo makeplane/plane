@@ -1,34 +1,34 @@
-import { Sparkle } from "lucide-react";
-import { observer } from "mobx-react-lite";
-import useSWR from "swr";
-import { useRouter } from "next/router";
 import { ReactElement, useEffect, useRef, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+import useSWR from "swr";
+import { Sparkle } from "lucide-react";
+import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
+import { IPage } from "@plane/types";
 // hooks
 
-import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
-import useToast from "hooks/use-toast";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { GptAssistantPopover, PageHead } from "@/components/core";
+import { PageDetailsHeader } from "@/components/headers/page-details";
+import { IssuePeekOverview } from "@/components/issues";
+import { EUserProjectRoles } from "@/constants/project";
+import { getDate } from "@/helpers/date-time.helper";
+import { useApplication, usePage, useUser, useWorkspace } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
-import { FileService } from "services/file.service";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { FileService } from "@/services/file.service";
 // layouts
-import { AppLayout } from "layouts/app-layout";
 // components
-import { GptAssistantPopover, PageHead } from "components/core";
-import { PageDetailsHeader } from "components/headers/page-details";
 // ui
-import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-import { Spinner } from "@plane/ui";
 // assets
 // helpers
 // types
-import { IPage } from "@plane/types";
-import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import { IssuePeekOverview } from "components/issues";
 
 // services
 const fileService = new FileService();
@@ -53,10 +53,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  // toast alert
-  const { setToastAlert } = useToast();
 
-  const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
+  const { handleSubmit, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
   });
 
@@ -127,16 +125,13 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
-    await updateDescriptionAction(formData.description_html);
+    updateDescriptionAction(formData.description_html);
   };
 
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    const newDescription = `${watch("description_html")}<p>${response}</p>`;
-    setValue("description_html", newDescription);
-    editorRef.current?.setEditorValue(newDescription);
-    updateDescriptionAction(newDescription);
+    editorRef.current?.setEditorValueAtCursorPosition(response);
   };
 
   const actionCompleteAlert = ({
@@ -148,10 +143,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     message: string;
     type: "success" | "error" | "warning" | "info";
   }) => {
-    setToastAlert({
+    setToast({
       title,
       message,
-      type,
+      type: type as TOAST_TYPE,
     });
   };
 
@@ -271,8 +266,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               documentDetails={{
                 title: pageTitle,
                 created_by: created_by,
-                created_on: created_at,
-                last_updated_at: updated_at,
+                created_on: getDate(created_at) ?? new Date(created_at ?? ""),
+                last_updated_at: getDate(updated_at) ?? new Date(created_at ?? ""),
                 last_updated_by: updated_by,
               }}
               pageLockConfig={userCanLock && !archived_at ? { action: unlockPage, is_locked: is_locked } : undefined}
@@ -282,7 +277,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   ? {
                       action: archived_at ? unArchivePage : archivePage,
                       is_archived: archived_at ? true : false,
-                      archived_at: archived_at ? new Date(archived_at) : undefined,
+                      archived_at: getDate(archived_at),
                     }
                   : undefined
               }
@@ -298,8 +293,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     documentDetails={{
                       title: pageTitle,
                       created_by: created_by,
-                      created_on: created_at,
-                      last_updated_at: updated_at,
+                      created_on: getDate(created_at) ?? new Date(created_at ?? ""),
+                      last_updated_at: getDate(updated_at) ?? new Date(created_at ?? ""),
                       last_updated_by: updated_by,
                     }}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
@@ -314,7 +309,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     updatePageTitle={updatePageTitle}
                     onActionCompleteHandler={actionCompleteAlert}
                     customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
-                    onChange={(_description_json: Object, description_html: string) => {
+                    onChange={(_description_json: any, description_html: string) => {
                       setShowAlert(true);
                       onChange(description_html);
                       handleSubmit(updatePage)();

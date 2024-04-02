@@ -2,11 +2,11 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // hooks
-import { useProject, useUser } from "hooks/store";
-// ui
-import { Button } from "@plane/ui";
-// icons
 import { ClipboardList } from "lucide-react";
+import { Button } from "@plane/ui";
+import { useProject, useUser } from "@/hooks/store";
+// ui
+// icons
 // images
 import JoinProjectImg from "public/auth/project-not-authorized.svg";
 

@@ -1,13 +1,13 @@
 import { Copy } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button, Tooltip } from "@plane/ui";
-// helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
-// types
 import { IApiToken } from "@plane/types";
+// ui
+import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+// types
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// hooks
 
 type Props = {
   handleClose: () => void;
@@ -16,13 +16,11 @@ type Props = {
 
 export const GeneratedTokenDetails: React.FC<Props> = (props) => {
   const { handleClose, tokenDetails } = props;
-
-  const { setToastAlert } = useToast();
-
+  const { isMobile } = usePlatformOS();
   const copyApiToken = (token: string) => {
     copyTextToClipboard(token).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Token copied to clipboard.",
       })
@@ -44,7 +42,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
         className="mt-4 flex w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none"
       >
         {tokenDetails.token}
-        <Tooltip tooltipContent="Copy secret key">
+        <Tooltip tooltipContent="Copy secret key" isMobile={isMobile}>
           <Copy className="h-4 w-4 text-custom-text-400" />
         </Tooltip>
       </button>

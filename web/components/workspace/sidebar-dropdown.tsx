@@ -1,20 +1,20 @@
 import { Fragment, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { Menu, Transition } from "@headlessui/react";
-import { mutate } from "swr";
-import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 import { usePopper } from "react-popper";
-// hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
-// hooks
-import useToast from "hooks/use-toast";
+import { mutate } from "swr";
 // ui
-import { Avatar, Loader } from "@plane/ui";
-// types
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
+import { Menu, Transition } from "@headlessui/react";
+// icons
 import { IWorkspace } from "@plane/types";
+// plane ui
+import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useApplication, useUser, useWorkspace } from "@/hooks/store";
+// types
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
   {
@@ -24,8 +24,8 @@ const userLinks = (workspaceSlug: string, userId: string) => [
     icon: Mails,
   },
   {
-    key: "view_profile",
-    name: "View profile",
+    key: "my_activity",
+    name: "My activity",
     href: `/${workspaceSlug}/profile/${userId}`,
     icon: CircleUserRound,
   },
@@ -38,7 +38,7 @@ const userLinks = (workspaceSlug: string, userId: string) => [
 ];
 const profileLinks = (workspaceSlug: string, userId: string) => [
   {
-    name: "View profile",
+    name: "My activity",
     icon: UserCircle2,
     link: `/${workspaceSlug}/profile/${userId}`,
   },
@@ -58,8 +58,6 @@ export const WorkspaceSidebarDropdown = observer(() => {
   } = useApplication();
   const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
-  // hooks
-  const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -88,8 +86,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
         router.push("/");
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })

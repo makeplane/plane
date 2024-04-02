@@ -1,10 +1,10 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 
 // helpers
-import { generateCalendarData } from "helpers/calendar.helper";
+import { ICalendarPayload, ICalendarWeek } from "@/components/issues";
+import { generateCalendarData } from "@/helpers/calendar.helper";
 // types
-import { ICalendarPayload, ICalendarWeek } from "components/issues";
-import { getWeekNumberOfDate } from "helpers/date-time.helper";
+import { getWeekNumberOfDate } from "@/helpers/date-time.helper";
 
 export interface ICalendarStore {
   calendarFilters: {

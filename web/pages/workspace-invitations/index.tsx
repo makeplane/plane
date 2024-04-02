@@ -1,22 +1,22 @@
 import React, { ReactElement } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
-import { observer } from "mobx-react-lite";
 // hooks
-import { useUser } from "hooks/store";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// layouts
-import DefaultLayout from "layouts/default-layout";
-// ui
 import { Spinner } from "@plane/ui";
+import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
+import { WORKSPACE_INVITATION } from "@/constants/fetch-keys";
+import { useUser } from "@/hooks/store";
+// services
+// layouts
+import DefaultLayout from "@/layouts/default-layout";
+// ui
 // icons
-import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
+import { WorkspaceService } from "@/services/workspace.service";
 // constants
-import { WORKSPACE_INVITATION } from "constants/fetch-keys";
 
 // services
 const workspaceService = new WorkspaceService();
@@ -81,7 +81,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
                     title={`You are already a member of ${invitationDetail.workspace.name}`}
                     description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
                   >
-                    <EmptySpaceItem Icon={Boxes} title="Continue to Dashboard" href="/" />
+                    <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
                   </EmptySpace>
                 </>
               ) : (
@@ -105,7 +105,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
           {!currentUser ? (
             <EmptySpaceItem Icon={User2} title="Sign in to continue" href="/" />
           ) : (
-            <EmptySpaceItem Icon={Boxes} title="Continue to Dashboard" href="/" />
+            <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
           )}
           <EmptySpaceItem Icon={Star} title="Star us on GitHub" href="https://github.com/makeplane" />
           <EmptySpaceItem

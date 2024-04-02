@@ -1,16 +1,16 @@
 import { ReactElement } from "react";
 import useSWR from "swr";
 // layouts
-import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
+import { PageHead } from "@/components/core";
+import { EmailNotificationForm } from "@/components/profile/preferences";
+import { EmailSettingsLoader } from "@/components/ui";
+import { ProfilePreferenceSettingsLayout } from "@/layouts/settings-layout/profile/preferences";
 // ui
-import { EmailSettingsLoader } from "components/ui";
 // components
-import { EmailNotificationForm } from "components/profile/preferences";
-import { PageHead } from "components/core";
 // services
-import { UserService } from "services/user.service";
+import { NextPageWithLayout } from "@/lib/types";
+import { UserService } from "@/services/user.service";
 // type
-import { NextPageWithLayout } from "lib/types";
 
 // services
 const userService = new UserService();
@@ -28,7 +28,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = () => {
   return (
     <>
       <PageHead title="Profile - Email Preference" />
-      <div className="mx-auto mt-8 h-full w-full overflow-y-auto px-6 lg:px-20 pb-8">
+      <div className="mx-auto mt-8 h-full w-full px-6 lg:px-20 pb-8 vertical-scrollbar scrollbar-md">
         <EmailNotificationForm data={data} />
       </div>
     </>

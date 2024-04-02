@@ -26,4 +26,3 @@ export const DocumentEditorExtensions = (
   }),
   IssueWidgetPlaceholder(),
 ];
-

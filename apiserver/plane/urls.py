@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 
 from django.conf import settings
 
+handler404 = "plane.app.views.error_404.custom_404_view"
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="index.html")),

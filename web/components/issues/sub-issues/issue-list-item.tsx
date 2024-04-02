@@ -1,16 +1,18 @@
 import React from "react";
-import { ChevronDown, ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
+import { observer } from "mobx-react-lite";
+import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
+import { TIssue } from "@plane/types";
 // components
+import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
+import { cn } from "@/helpers/common.helper";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
-import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // types
-import { TIssue } from "@plane/types";
 import { TSubIssueOperations } from "./root";
 // import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
-import { useIssueDetail, useProject, useProjectState } from "hooks/store";
-import { observer } from "mobx-react-lite";
 
 export interface ISubIssues {
   workspaceSlug: string;
@@ -43,10 +45,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     setPeekIssue,
     issue: { getIssueById },
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
+    toggleCreateIssueModal,
+    toggleDeleteIssueModal,
   } = useIssueDetail();
   const project = useProject();
   const { getProjectStates } = useProjectState();
-
+  const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const currentIssueStateDetail =
@@ -89,11 +93,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                       setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);
                     }}
                   >
-                    {subIssueHelpers.issue_visibility.includes(issue.id) ? (
-                      <ChevronDown width={14} strokeWidth={2} />
-                    ) : (
-                      <ChevronRight width={14} strokeWidth={2} />
-                    )}
+                    <ChevronRight
+                      className={cn("h-3 w-3 transition-all", {
+                        "rotate-90": subIssueHelpers.issue_visibility.includes(issue.id),
+                      })}
+                      strokeWidth={2}
+                    />
                   </div>
                 )}
               </>
@@ -117,7 +122,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
               onClick={() => handleIssuePeekOverview(issue)}
               className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
             >
-              <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
                 <span>{issue.name}</span>
               </Tooltip>
             </ControlLink>
@@ -136,7 +141,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
           <div className="flex-shrink-0 text-sm">
             <CustomMenu placement="bottom-end" ellipsis>
               {disabled && (
-                <CustomMenu.MenuItem onClick={() => handleIssueCrudState("update", parentIssueId, { ...issue })}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    handleIssueCrudState("update", parentIssueId, { ...issue });
+                    toggleCreateIssueModal(true);
+                  }}
+                >
                   <div className="flex items-center gap-2">
                     <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
                     <span>Edit issue</span>
@@ -145,7 +155,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
               )}
 
               {disabled && (
-                <CustomMenu.MenuItem onClick={() => handleIssueCrudState("delete", parentIssueId, issue)}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    handleIssueCrudState("delete", parentIssueId, issue);
+                    toggleDeleteIssueModal(issue.id);
+                  }}
+                >
                   <div className="flex items-center gap-2">
                     <Trash className="h-3.5 w-3.5" strokeWidth={2} />
                     <span>Delete issue</span>

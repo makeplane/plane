@@ -1,15 +1,15 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Check } from "lucide-react";
-// mobx store
-import { useIssues } from "hooks/store";
-// ui
-import { PriorityIcon } from "@plane/ui";
-// types
 import { TIssue, TIssuePriorities } from "@plane/types";
+// mobx store
+import { PriorityIcon } from "@plane/ui";
+import { EIssuesStoreType, ISSUE_PRIORITIES } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
+// ui
+// types
 // constants
-import { EIssuesStoreType, ISSUE_PRIORITIES } from "constants/issue";
 
 type Props = {
   closePalette: () => void;

@@ -1,17 +1,15 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
+import { Loader } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
+import { useApplication } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 // components
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { PagesListItem } from "./list-item";
 // ui
-import { Loader } from "@plane/ui";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 type IPagesListView = {
   pageIds: string[];
@@ -19,34 +17,20 @@ type IPagesListView = {
 
 export const PagesListView: FC<IPagesListView> = (props) => {
   const { pageIds: projectPageIds } = props;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
-  const {
-    membership: { currentProjectRole },
-    currentUser,
-  } = useUser();
   // local storage
   const { storedValue: pageTab } = useLocalStorage("pageTab", "Recent");
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const currentPageTabDetails = pageTab
-    ? PAGE_EMPTY_STATE_DETAILS[pageTab as keyof typeof PAGE_EMPTY_STATE_DETAILS]
-    : PAGE_EMPTY_STATE_DETAILS["All"];
-
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("pages", currentPageTabDetails.key, isLightMode);
-
-  const isButtonVisible = currentPageTabDetails.key !== "archived" && currentPageTabDetails.key !== "favorites";
-
   // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const emptyStateType = pageTab ? `project-page-${pageTab.toLowerCase()}` : EmptyStateType.PROJECT_PAGE_ALL;
+  const isButtonVisible = pageTab !== "archived" && pageTab !== "favorites";
 
   return (
     <>
@@ -60,18 +44,8 @@ export const PagesListView: FC<IPagesListView> = (props) => {
             </ul>
           ) : (
             <EmptyState
-              title={currentPageTabDetails.title}
-              description={currentPageTabDetails.description}
-              image={emptyStateImage}
-              primaryButton={
-                isButtonVisible
-                  ? {
-                      text: "Create new page",
-                      onClick: () => toggleCreatePageModal(true),
-                    }
-                  : undefined
-              }
-              disabled={!isEditingAllowed}
+              type={emptyStateType as keyof typeof EMPTY_STATE_DETAILS}
+              primaryButtonOnClick={isButtonVisible ? () => toggleCreatePageModal(true) : undefined}
             />
           )}
         </div>

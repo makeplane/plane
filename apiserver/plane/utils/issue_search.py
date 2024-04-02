@@ -5,7 +5,6 @@ import re
 from django.db.models import Q
 
 # Module imports
-from plane.db.models import Issue
 
 
 def search_issues(query, queryset):

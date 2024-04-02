@@ -4,11 +4,11 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 /// layouts
-import ProjectLayout from "layouts/project-layout";
 // components
-import { ProjectDetailsView } from "components/views/project-details";
+import { ProjectDetailsView } from "@/components/views/project-details";
 // lib
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+import ProjectLayout from "layouts/project-layout";
 
 const WorkspaceProjectPage = (props: any) => {
   const SITE_TITLE = props?.project_settings?.project_details?.name || "Plane | Deploy";

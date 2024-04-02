@@ -1,8 +1,8 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProject } from "hooks/store";
-// ui
 import { CustomSearchSelect } from "@plane/ui";
+import { useProject } from "@/hooks/store";
+// ui
 
 type Props = {
   value: string[] | undefined;

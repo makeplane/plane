@@ -1,7 +1,7 @@
 import React from "react";
 // ui
-import { InboxSidebarLoader } from "./inbox-sidebar-loader";
 import { Loader } from "@plane/ui";
+import { InboxSidebarLoader } from "./inbox-sidebar-loader";
 
 export const InboxLayoutLoader = () => (
   <div className="relative flex h-full overflow-hidden">

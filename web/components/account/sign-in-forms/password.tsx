@@ -1,23 +1,22 @@
 import React, { useState } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
-// services
-import { AuthService } from "services/auth.service";
-// hooks
-import useToast from "hooks/use-toast";
-import { useApplication, useEventTracker } from "hooks/store";
-// components
-import { ESignInSteps, ForgotPasswordPopover } from "components/account";
-// ui
-import { Button, Input } from "@plane/ui";
-// helpers
-import { checkEmailValidity } from "helpers/string.helper";
-// types
 import { IPasswordSignInData } from "@plane/types";
+// services
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { ESignInSteps, ForgotPasswordPopover } from "@/components/account";
+import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "@/constants/event-tracker";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { useApplication, useEventTracker } from "@/hooks/store";
+import { AuthService } from "@/services/auth.service";
+// hooks
+// components
+// ui
+// helpers
+// types
 // constants
-import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "constants/event-tracker";
 
 type Props = {
   email: string;
@@ -43,8 +42,6 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   // states
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  // toast alert
-  const { setToastAlert } = useToast();
   const {
     config: { envConfig },
   } = useApplication();
@@ -83,8 +80,8 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
         await onSubmit();
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })
@@ -107,8 +104,8 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
       .generateUniqueCode({ email: emailFormValue })
       .then(() => handleStepChange(ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD))
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

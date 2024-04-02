@@ -1,52 +1,36 @@
 import { FC, useCallback, useRef, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useEventTracker, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-import { Spinner } from "@plane/ui";
-// types
+import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
-import { EIssueActions } from "../types";
+// hooks
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { DeleteIssueModal } from "@/components/issues";
+import { ISSUE_DELETED } from "@/constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useEventTracker, useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+// ui
+// types
 import { IQuickActionProps } from "../list/list-view-types";
-import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { DeleteIssueModal } from "components/issues";
-import { EUserProjectRoles } from "constants/project";
-import { useIssues } from "hooks/store/use-issues";
 import { handleDragDrop } from "./utils";
-import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
-import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
-import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
-import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
-import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
-import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
-import { ISSUE_DELETED } from "constants/event-tracker";
 
+export type KanbanStoreType =
+  | EIssuesStoreType.PROJECT
+  | EIssuesStoreType.MODULE
+  | EIssuesStoreType.CYCLE
+  | EIssuesStoreType.PROJECT_VIEW
+  | EIssuesStoreType.DRAFT
+  | EIssuesStoreType.PROFILE;
 export interface IBaseKanBanLayout {
-  issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;
-  issuesFilter:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IDraftIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProfileIssuesFilter;
   QuickActions: FC<IQuickActionProps>;
-  issueActions: {
-    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
-  };
   showLoader?: boolean;
   viewId?: string;
-  storeType?: TCreateModalStoreTypes;
+  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
@@ -60,10 +44,7 @@ type KanbanDragState = {
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
   const {
-    issues,
-    issuesFilter,
     QuickActions,
-    issueActions,
     showLoader,
     viewId,
     storeType,
@@ -79,9 +60,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     membership: { currentProjectRole },
   } = useUser();
   const { captureIssueEvent } = useEventTracker();
-  const { issueMap } = useIssues();
-  // toast alert
-  const { setToastAlert } = useToast();
+  const { issueMap, issuesFilter, issues } = useIssues(storeType);
+  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
+    useIssuesActions(storeType);
 
   const issueIds = issues?.groupedIssueIds || [];
 
@@ -152,72 +133,56 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           result.destination,
           workspaceSlug?.toString(),
           projectId?.toString(),
-          issues,
           sub_group_by,
           group_by,
           issueMap,
           issueIds,
-          viewId
+          updateIssue,
+          removeIssue
         ).catch((err) => {
-          setToastAlert({
+          setToast({
             title: "Error",
-            type: "error",
-            message: err.detail ?? "Failed to perform this action",
+            type: TOAST_TYPE.ERROR,
+            message: err?.detail ?? "Failed to perform this action",
           });
         });
       }
     }
   };
 
-  const handleIssues = useCallback(
-    async (issue: TIssue, action: EIssueActions) => {
-      if (issueActions[action]) {
-        await issueActions[action]!(issue);
-      }
-    },
-    [issueActions]
-  );
-
   const renderQuickActions = useCallback(
     (issue: TIssue, customActionButton?: React.ReactElement) => (
       <QuickActions
         customActionButton={customActionButton}
         issue={issue}
-        handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
-        handleUpdate={
-          issueActions[EIssueActions.UPDATE] ? async (data) => handleIssues(data, EIssueActions.UPDATE) : undefined
-        }
-        handleRemoveFromView={
-          issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
-        }
-        handleArchive={
-          issueActions[EIssueActions.ARCHIVE] ? async () => handleIssues(issue, EIssueActions.ARCHIVE) : undefined
-        }
-        handleRestore={
-          issueActions[EIssueActions.RESTORE] ? async () => handleIssues(issue, EIssueActions.RESTORE) : undefined
-        }
+        handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+        handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+        handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
+        handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+        handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
         readOnly={!isEditingAllowed || isCompletedCycle}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [issueActions, handleIssues]
+    [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   const handleDeleteIssue = async () => {
-    if (!handleDragDrop) return;
+    if (!handleDragDrop || !dragState.draggedIssueId) return;
     await handleDragDrop(
       dragState.source,
       dragState.destination,
       workspaceSlug?.toString(),
       projectId?.toString(),
-      issues,
       sub_group_by,
       group_by,
       issueMap,
       issueIds,
-      viewId
+      updateIssue,
+      removeIssue
     ).finally(() => {
-      handleIssues(issueMap[dragState.draggedIssueId!], EIssueActions.DELETE);
+      const draggedIssue = issueMap[dragState.draggedIssueId!];
+      removeIssue(draggedIssue.project_id, draggedIssue.id);
       setDeleteIssueModal(false);
       setDragState({});
       captureIssueEvent({
@@ -230,18 +195,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const handleKanbanFilters = (toggle: "group_by" | "sub_group_by", value: string) => {
     if (workspaceSlug && projectId) {
-      let _kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (_kanbanFilters.includes(value)) _kanbanFilters = _kanbanFilters.filter((_value) => _value != value);
-      else _kanbanFilters.push(value);
-      issuesFilter.updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.KANBAN_FILTERS,
-        {
-          [toggle]: _kanbanFilters,
-        },
-        viewId
-      );
+      let kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+      if (kanbanFilters.includes(value)) kanbanFilters = kanbanFilters.filter((_value) => _value != value);
+      else kanbanFilters.push(value);
+      updateFilters(projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
+        [toggle]: kanbanFilters,
+      });
     }
   };
 
@@ -263,7 +222,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       )}
 
       <div
-        className="flex relative h-full w-full overflow-auto bg-custom-background-90 vertical-scrollbar horizontal-scrollbar scrollbar-lg"
+        className="vertical-scrollbar horizontal-scrollbar scrollbar-lg relative flex h-full w-full overflow-auto bg-custom-background-90"
         ref={scrollableContainerRef}
       >
         <div className="relative h-max w-max min-w-full bg-custom-background-90 px-2">
@@ -291,14 +250,14 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               </Droppable>
             </div>
 
-            <div className="w-max h-max">
+            <div className="h-max w-max">
               <KanBanView
                 issuesMap={issueMap}
                 issueIds={issueIds}
                 displayProperties={displayProperties}
                 sub_group_by={sub_group_by}
                 group_by={group_by}
-                handleIssues={handleIssues}
+                updateIssue={updateIssue}
                 quickActions={renderQuickActions}
                 handleKanbanFilters={handleKanbanFilters}
                 kanbanFilters={kanbanFilters}

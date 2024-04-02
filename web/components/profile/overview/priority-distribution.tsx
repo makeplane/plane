@@ -1,12 +1,12 @@
 // ui
-import { BarGraph, ProfileEmptyState } from "components/ui";
+import { IUserProfileData } from "@plane/types";
 import { Loader } from "@plane/ui";
+import { BarGraph, ProfileEmptyState } from "@/components/ui";
 // image
+import { capitalizeFirstLetter } from "@/helpers/string.helper";
 import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // helpers
-import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { IUserProfileData } from "@plane/types";
 
 type Props = {
   userProfile: IUserProfileData | undefined;

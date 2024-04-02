@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import {
   BarChart2,
@@ -10,24 +10,24 @@ import {
   ContrastIcon,
   FileText,
   LayersIcon,
-  LayoutGrid,
   PenSquare,
   Search,
   Settings,
   Bell,
+  Home,
 } from "lucide-react";
+import { IWorkspace } from "@plane/types";
 import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
 // hooks
-import { useUser, useWorkspace } from "hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
 // types
-import { IWorkspace } from "@plane/types";
-// assets
 import projectEmoji from "public/emoji/project-emoji.svg";
+// assets
 
 const workspaceLinks = [
   {
-    Icon: LayoutGrid,
-    name: "Dashboard",
+    Icon: Home,
+    name: "Home",
   },
   {
     Icon: BarChart2,
@@ -86,8 +86,9 @@ type Props = {
   watch?: UseFormWatch<IWorkspace>;
   userFullName?: string;
 };
-var timer: number = 0;
-var lastWorkspaceName: string = "";
+
+let timer: number = 0;
+let lastWorkspaceName: string = "";
 
 export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { workspaceName, showProject, control, setValue, watch, userFullName } = props;

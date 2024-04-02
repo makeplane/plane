@@ -1,22 +1,22 @@
 import { useState } from "react";
-import Image from "next/image";
 import { observer } from "mobx-react-lite";
+import Image from "next/image";
 import { X } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useUser } from "hooks/store";
-// components
-import { TourSidebar } from "components/onboarding";
-// ui
 import { Button } from "@plane/ui";
+import { TourSidebar } from "@/components/onboarding";
+import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
+import { useApplication, useEventTracker, useUser } from "@/hooks/store";
+// components
+// ui
 // assets
-import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
-import IssuesTour from "public/onboarding/issues.webp";
 import CyclesTour from "public/onboarding/cycles.webp";
+import IssuesTour from "public/onboarding/issues.webp";
 import ModulesTour from "public/onboarding/modules.webp";
-import ViewsTour from "public/onboarding/views.webp";
 import PagesTour from "public/onboarding/pages.webp";
+import ViewsTour from "public/onboarding/views.webp";
+import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
 // constants
-import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "constants/event-tracker";
 
 type Props = {
   onComplete: () => void;

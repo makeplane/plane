@@ -1,21 +1,22 @@
 import { useEffect, useState, useRef, FC } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
-// hooks
-import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { createIssuePayload } from "helpers/issue.helper";
-import { cn } from "helpers/common.helper";
-// types
 import { IProject, TIssue } from "@plane/types";
+// hooks
+import { setPromiseToast } from "@plane/ui";
+import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { createIssuePayload } from "@/helpers/issue.helper";
+import { useEventTracker, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// helpers
+// ui
+// types
 // constants
-import { ISSUE_CREATED } from "constants/event-tracker";
 
 interface IInputProps {
   formKey: string;
@@ -70,7 +71,6 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
   // hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
-  const { setToastAlert } = useToast();
 
   const projectDetail = (projectId && getProjectById(projectId.toString())) || undefined;
 
@@ -110,31 +110,35 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
       target_date: renderFormattedPayloadDate(targetDate),
     });
 
-    try {
-      quickAddCallback &&
-        (await quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId).then((res) => {
+    if (quickAddCallback) {
+      const quickAddPromise = quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId);
+      setPromiseToast<any>(quickAddPromise, {
+        loading: "Adding issue...",
+        success: {
+          title: "Success!",
+          message: () => "Issue created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: (err) => err?.message || "Some error occurred. Please try again.",
+        },
+      });
+
+      await quickAddPromise
+        .then((res) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Gantt quick add" },
             path: router.asPath,
           });
-        }));
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Issue created successfully.",
-      });
-    } catch (err: any) {
-      captureIssueEvent({
-        eventName: ISSUE_CREATED,
-        payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
-        path: router.asPath,
-      });
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: err?.message || "Some error occurred. Please try again.",
-      });
+        })
+        .catch(() => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
+            path: router.asPath,
+          });
+        });
     }
   };
   return (
@@ -159,7 +163,7 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
       ) : (
         <button
           type="button"
-          className="sticky bottom-0 z-[1] flex w-full cursor-pointer items-center gap-2 p-3 py-3 text-custom-primary-100 bg-custom-background-100 border-custom-border-200 border-t-[1px]"
+          className="sticky bottom-0 z-[1] flex w-full cursor-pointer items-center gap-2 border-t-[1px] border-custom-border-200 bg-custom-background-100 p-3 py-3 text-custom-primary-100"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-3.5 w-3.5 stroke-2" />

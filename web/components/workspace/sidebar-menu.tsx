@@ -1,25 +1,27 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-// hooks
-import { useApplication, useEventTracker, useUser } from "hooks/store";
-// components
-import { NotificationPopover } from "components/notifications";
+import { Crown } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
-import { Crown } from "lucide-react";
+// components
+import { NotificationPopover } from "@/components/notifications";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { SIDEBAR_MENU_ITEMS } from "constants/dashboard";
-import { SIDEBAR_CLICKED } from "constants/event-tracker";
+import { SIDEBAR_MENU_ITEMS } from "@/constants/dashboard";
+import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helper
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useApplication, useEventTracker, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const WorkspaceSidebarMenu = observer(() => {
   // store hooks
   const { theme: themeStore } = useApplication();
   const { captureEvent } = useEventTracker();
+  const { isMobile } = usePlatformOS();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -50,6 +52,7 @@ export const WorkspaceSidebarMenu = observer(() => {
                   position="right"
                   className="ml-2"
                   disabled={!themeStore?.sidebarCollapsed}
+                  isMobile={isMobile}
                 >
                   <div
                     className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
@@ -65,7 +68,7 @@ export const WorkspaceSidebarMenu = observer(() => {
                         })}
                       />
                     }
-                    {!themeStore?.sidebarCollapsed && link.label}
+                    {!themeStore?.sidebarCollapsed && <p className="leading-5">{link.label}</p>}
                     {!themeStore?.sidebarCollapsed && link.key === "active-cycles" && (
                       <Crown className="h-3.5 w-3.5 text-amber-400" />
                     )}

@@ -53,7 +53,6 @@ NGINX_PORT=80
 NEXT_PUBLIC_DEPLOY_URL="http://localhost/spaces"
 ```
 
-
 ## {PROJECT_FOLDER}/apiserver/.env
 
 ​

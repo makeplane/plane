@@ -1,27 +1,26 @@
 # Python imports
-import zoneinfo
-import json
 from urllib.parse import urlparse
 
+import zoneinfo
 
 # Django imports
 from django.conf import settings
-from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError
 from django.utils import timezone
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 # Third party imports
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from sentry_sdk import capture_exception
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
 from plane.api.rate_limit import ApiKeyRateThrottle
-from plane.utils.paginator import BasePaginator
 from plane.bgtasks.webhook_task import send_webhook
+from plane.utils.exception_logger import log_exception
+from plane.utils.paginator import BasePaginator
 
 
 class TimezoneMixin:
@@ -107,27 +106,23 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
             if isinstance(e, ValidationError):
                 return Response(
-                    {
-                        "error": "The provided payload is not valid please try with a valid payload"
-                    },
+                    {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if isinstance(e, ObjectDoesNotExist):
                 return Response(
-                    {"error": f"The required object does not exist."},
+                    {"error": "The requested resource does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
                 return Response(
-                    {"error": f" The required key does not exist."},
+                    {"error": "The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if settings.DEBUG:
-                print(e)
-            capture_exception(e)
+            log_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

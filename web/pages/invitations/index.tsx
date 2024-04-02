@@ -1,38 +1,37 @@
 import React, { useState, ReactElement } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
-import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
+import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
 // services
-import { WorkspaceService } from "services/workspace.service";
-import { UserService } from "services/user.service";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { EmptyState } from "@/components/common";
+import { PageHead } from "@/components/core";
+import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
+import { ROLE } from "@/constants/workspace";
+import { truncateText } from "@/helpers/string.helper";
+import { getUserRole } from "@/helpers/user.helper";
+import { useEventTracker, useUser } from "@/hooks/store";
+import { UserAuthWrapper } from "@/layouts/auth-layout";
+import DefaultLayout from "@/layouts/default-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { UserService } from "@/services/user.service";
+import { WorkspaceService } from "@/services/workspace.service";
 // hooks
-import { useEventTracker, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // layouts
-import DefaultLayout from "layouts/default-layout";
-import { UserAuthWrapper } from "layouts/auth-layout";
 // ui
-import { Button } from "@plane/ui";
 // images
+import emptyInvitation from "public/empty-state/invitation.svg";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
-import emptyInvitation from "public/empty-state/invitation.svg";
 // helpers
-import { truncateText } from "helpers/string.helper";
-import { getUserRole } from "helpers/user.helper";
 // types
-import { NextPageWithLayout } from "lib/types";
-import type { IWorkspaceMemberInvitation } from "@plane/types";
 // constants
-import { ROLE } from "constants/workspace";
-import { MEMBER_ACCEPTED } from "constants/event-tracker";
 // components
-import { EmptyState } from "components/common";
-import { PageHead } from "components/core";
 // services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();
@@ -48,8 +47,6 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   // next-themes
   const { theme } = useTheme();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS", () => workspaceService.userWorkspaceInvitations());
 
@@ -68,8 +65,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
 
   const submitInvitations = () => {
     if (invitationsRespond.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one invitation.",
       });
@@ -80,7 +77,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
 
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then((res) => {
+      .then(() => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
         const invitation = invitations?.find((i) => i.id === firstInviteId);
@@ -88,6 +85,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
         joinWorkspaceMetricGroup(redirectWorkspace?.id);
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
           role: getUserRole(invitation?.role!),
           project_id: undefined,
           accepted_from: "App",
@@ -101,8 +99,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
             router.push(`/${redirectWorkspace?.slug}`);
           })
           .catch(() => {
-            setToastAlert({
-              type: "error",
+            setToast({
+              type: TOAST_TYPE.ERROR,
               title: "Error!",
               message: "Something went wrong, Please try again.",
             });
@@ -116,8 +114,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
           state: "FAILED",
           element: "Workspace invitations page",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong, Please try again.",
         });
@@ -222,7 +220,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
                 description="You can see here if someone invites you to a workspace."
                 image={emptyInvitation}
                 primaryButton={{
-                  text: "Back to dashboard",
+                  text: "Back to home",
                   onClick: () => router.push("/"),
                 }}
               />

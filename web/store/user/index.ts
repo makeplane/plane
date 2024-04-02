@@ -1,9 +1,9 @@
 import { action, observable, runInAction, makeObservable } from "mobx";
-// services
-import { UserService } from "services/user.service";
-import { AuthService } from "services/auth.service";
 // interfaces
 import { IUser, IUserSettings } from "@plane/types";
+// services
+import { AuthService } from "@/services/auth.service";
+import { UserService } from "@/services/user.service";
 // store
 import { RootStore } from "../root.store";
 import { IUserMembershipStore, UserMembershipStore } from "./user-membership.store";
@@ -22,7 +22,6 @@ export interface IUserRootStore {
   fetchCurrentUser: () => Promise<IUser>;
   fetchCurrentUserInstanceAdminStatus: () => Promise<boolean>;
   fetchCurrentUserSettings: () => Promise<IUserSettings>;
-  fetchUserDashboardInfo: (workspaceSlug: string, month: number) => Promise<any>;
   // crud actions
   updateUserOnBoard: () => Promise<void>;
   updateTourCompleted: () => Promise<void>;
@@ -68,7 +67,6 @@ export class UserRootStore implements IUserRootStore {
       fetchCurrentUser: action,
       fetchCurrentUserInstanceAdminStatus: action,
       fetchCurrentUserSettings: action,
-      fetchUserDashboardInfo: action,
       updateUserOnBoard: action,
       updateTourCompleted: action,
       updateCurrentUser: action,
@@ -129,22 +127,6 @@ export class UserRootStore implements IUserRootStore {
       });
       return response;
     });
-
-  /**
-   * Fetches the current user dashboard info
-   * @returns Promise<IUserWorkspaceDashboard>
-   */
-  fetchUserDashboardInfo = async (workspaceSlug: string, month: number) => {
-    try {
-      const response = await this.userService.userWorkspaceDashboard(workspaceSlug, month);
-      runInAction(() => {
-        this.dashboardInfo = response;
-      });
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
 
   /**
    * Updates the user onboarding status

@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Dialog, Transition } from "@headlessui/react";
+import { useRouter } from "next/router";
 import { AlertTriangle } from "lucide-react";
-// hooks
-import { useEventTracker, usePage } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/ui";
-// types
-import { useProjectPages } from "hooks/store/use-project-page";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PAGE_DELETED } from "constants/event-tracker";
+import { PAGE_DELETED } from "@/constants/event-tracker";
+// hooks
+import { useEventTracker, usePage } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-page";
+// types
 
 type TConfirmPageDeletionProps = {
   pageId: string;
@@ -31,9 +30,6 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   const { deletePage } = useProjectPages();
   const { capturePageEvent } = useEventTracker();
   const pageStore = usePage(pageId);
-
-  // toast alert
-  const { setToastAlert } = useToast();
 
   if (!pageStore) return null;
 
@@ -60,8 +56,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
           },
         });
         handleClose();
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Page deleted successfully.",
         });
@@ -74,8 +70,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
             state: "FAILED",
           },
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Page could not be deleted. Please try again.",
         });

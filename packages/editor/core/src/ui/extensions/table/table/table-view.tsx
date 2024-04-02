@@ -213,10 +213,11 @@ function createToolbox({
               { className: "colorPicker grid" },
               Object.entries(colors).map(([colorName, colorValue]) =>
                 h("div", {
-                  className: "colorPickerItem",
+                  className: "colorPickerItem flex items-center justify-center",
                   style: `background-color: ${colorValue.backgroundColor}; 
-                            color: ${colorValue.textColor || "inherit"};`,
-                  innerHTML: colorValue?.icon || "",
+          color: ${colorValue.textColor || "inherit"};`,
+                  innerHTML:
+                    colorValue.icon ?? `<span class="text-md" style:"color: ${colorValue.backgroundColor}>A</span>`,
                   onClick: () => onSelectColor(colorValue),
                 })
               )

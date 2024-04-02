@@ -1,11 +1,12 @@
 import { observer } from "mobx-react-lite";
-// services
-import { AuthService } from "services/auth.service";
-// hooks
-import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { GitHubSignInButton, GoogleSignInButton } from "components/account";
+import { GitHubSignInButton, GoogleSignInButton } from "@/components/account";
+// hooks
+import { useApplication } from "@/hooks/store";
+// services
+import { AuthService } from "@/services/auth.service";
 
 type Props = {
   handleSignInRedirection: () => Promise<void>;
@@ -17,8 +18,6 @@ const authService = new AuthService();
 
 export const OAuthOptions: React.FC<Props> = observer((props) => {
   const { handleSignInRedirection, type } = props;
-  // toast alert
-  const { setToastAlert } = useToast();
   // mobx store
   const {
     config: { envConfig },
@@ -39,9 +38,9 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         if (response) handleSignInRedirection();
       } else throw Error("Cant find credentials");
     } catch (err: any) {
-      setToastAlert({
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error signing in!",
-        type: "error",
         message: err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
@@ -60,9 +59,9 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         if (response) handleSignInRedirection();
       } else throw Error("Cant find credentials");
     } catch (err: any) {
-      setToastAlert({
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error signing in!",
-        type: "error",
         message: err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
@@ -77,7 +76,7 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
       </div>
       <div className={`mx-auto mt-7 grid gap-4 overflow-hidden sm:w-96 ${areBothOAuthEnabled ? "grid-cols-2" : ""}`}>
         {envConfig?.google_client_id && (
-          <div className="h-[42px] flex items-center !overflow-hidden">
+          <div className="flex h-[42px] items-center !overflow-hidden">
             <GoogleSignInButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} type={type} />
           </div>
         )}

@@ -1,27 +1,30 @@
 import { useState, ReactElement } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react-lite";
-// hooks
-import { useProject } from "hooks/store";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
-import { PageHead } from "components/core";
-import { ProjectSettingHeader } from "components/headers";
+import { PageHead } from "@/components/core";
+import { ProjectSettingHeader } from "@/components/headers";
 import {
+  ArchiveRestoreProjectModal,
+  ArchiveProjectSelection,
   DeleteProjectModal,
   DeleteProjectSection,
   ProjectDetailsForm,
   ProjectDetailsFormLoader,
-} from "components/project";
+} from "@/components/project";
+// hooks
+import { useProject } from "@/hooks/store";
+// layouts
+import { AppLayout } from "@/layouts/app-layout";
+import { ProjectSettingLayout } from "@/layouts/settings-layout";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const GeneralSettingsPage: NextPageWithLayout = observer(() => {
   // states
   const [selectProject, setSelectedProject] = useState<string | null>(null);
+  const [archiveProject, setArchiveProject] = useState<boolean>(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -42,12 +45,21 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      {currentProjectDetails && (
-        <DeleteProjectModal
-          project={currentProjectDetails}
-          isOpen={Boolean(selectProject)}
-          onClose={() => setSelectedProject(null)}
-        />
+      {currentProjectDetails && workspaceSlug && projectId && (
+        <>
+          <ArchiveRestoreProjectModal
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            isOpen={archiveProject}
+            onClose={() => setArchiveProject(false)}
+            archive
+          />
+          <DeleteProjectModal
+            project={currentProjectDetails}
+            isOpen={Boolean(selectProject)}
+            onClose={() => setSelectedProject(null)}
+          />
+        </>
       )}
 
       <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
@@ -63,10 +75,16 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
         )}
 
         {isAdmin && (
-          <DeleteProjectSection
-            projectDetails={currentProjectDetails}
-            handleDelete={() => setSelectedProject(currentProjectDetails.id ?? null)}
-          />
+          <>
+            <ArchiveProjectSelection
+              projectDetails={currentProjectDetails}
+              handleArchive={() => setArchiveProject(true)}
+            />
+            <DeleteProjectSection
+              projectDetails={currentProjectDetails}
+              handleDelete={() => setSelectedProject(currentProjectDetails.id ?? null)}
+            />
+          </>
         )}
       </div>
     </>

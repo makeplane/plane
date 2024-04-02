@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { observer } from "mobx-react";
+import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
+import { observer } from "mobx-react";
 // components
-import { FilterHeader, FilterOption } from "components/issues";
-import { useApplication, useModule } from "hooks/store";
-// ui
 import { Loader, DiceIcon } from "@plane/ui";
+import { FilterHeader, FilterOption } from "@/components/issues";
+import { useApplication, useModule } from "@/hooks/store";
+// ui
 
 type Props = {
   appliedFilters: string[] | null;
@@ -29,16 +29,24 @@ export const FilterModule: React.FC<Props> = observer((props) => {
   const moduleIds = projectId ? getProjectModuleIds(projectId) : undefined;
   const modules = moduleIds?.map((projectId) => getModuleById(projectId)!) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const filteredOptions = sortBy(
-    modules?.filter((module) => module.name.toLowerCase().includes(searchQuery.toLowerCase())),
-    (module) => module.name.toLowerCase()
-  );
+
+  const sortedOptions = useMemo(() => {
+    const filteredOptions = (modules || []).filter((module) =>
+      module.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return sortBy(filteredOptions, [
+      (module) => !appliedFilters?.includes(module.id),
+      (module) => module.name.toLowerCase(),
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const handleViewToggle = () => {
-    if (!filteredOptions) return;
+    if (!sortedOptions) return;
 
-    if (itemsToRender === filteredOptions.length) setItemsToRender(5);
-    else setItemsToRender(filteredOptions.length);
+    if (itemsToRender === sortedOptions.length) setItemsToRender(5);
+    else setItemsToRender(sortedOptions.length);
   };
 
   return (
@@ -50,10 +58,10 @@ export const FilterModule: React.FC<Props> = observer((props) => {
       />
       {previewEnabled && (
         <div>
-          {filteredOptions ? (
-            filteredOptions.length > 0 ? (
+          {sortedOptions ? (
+            sortedOptions.length > 0 ? (
               <>
-                {filteredOptions.slice(0, itemsToRender).map((cycle) => (
+                {sortedOptions.slice(0, itemsToRender).map((cycle) => (
                   <FilterOption
                     key={cycle.id}
                     isChecked={appliedFilters?.includes(cycle.id) ? true : false}
@@ -62,13 +70,13 @@ export const FilterModule: React.FC<Props> = observer((props) => {
                     title={cycle.name}
                   />
                 ))}
-                {filteredOptions.length > 5 && (
+                {sortedOptions.length > 5 && (
                   <button
                     type="button"
                     className="ml-8 text-xs font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
-                    {itemsToRender === filteredOptions.length ? "View less" : "View all"}
+                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
                   </button>
                 )}
               </>

@@ -2,8 +2,11 @@ export const CycleModuleListLayout = () => (
   <div className="h-full overflow-y-auto animate-pulse">
     <div className="flex h-full w-full justify-between">
       <div className="flex h-full w-full flex-col overflow-y-auto">
-        {[...Array(5)].map(() => (
-          <div className="flex w-full items-center justify-between gap-5 border-b border-custom-border-100 flex-col sm:flex-row px-5 py-6">
+        {[...Array(5)].map((i) => (
+          <div
+            key={i}
+            className="flex w-full items-center justify-between gap-5 border-b border-custom-border-100 flex-col sm:flex-row px-5 py-6"
+          >
             <div className="relative flex w-full items-center gap-3 justify-between overflow-hidden">
               <div className="relative w-full flex items-center gap-3 overflow-hidden">
                 <div className="flex items-center gap-4 truncate">

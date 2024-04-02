@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
-//hooks
-import { useCalendarView } from "hooks/store";
-// icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Popover, Transition } from "@headlessui/react";
+//hooks
+// icons
 // constants
-import { MONTHS_LIST } from "constants/calendar";
-import { ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { MONTHS_LIST } from "@/constants/calendar";
+import { getDate } from "@/helpers/date-time.helper";
+import { useCalendarView } from "@/hooks/store";
+import { ICycleIssuesFilter } from "@/store/issue/cycle";
+import { IModuleIssuesFilter } from "@/store/issue/module";
+import { IProjectIssuesFilter } from "@/store/issue/project";
+import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+// helpers
 
 interface Props {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -47,8 +49,10 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
 
     const daysList = Object.keys(allDaysOfActiveWeek);
 
-    const firstDay = new Date(daysList[0]);
-    const lastDay = new Date(daysList[daysList.length - 1]);
+    const firstDay = getDate(daysList[0]);
+    const lastDay = getDate(daysList[daysList.length - 1]);
+
+    if (!firstDay || !lastDay) return "Week view";
 
     if (firstDay.getMonth() === lastDay.getMonth() && firstDay.getFullYear() === lastDay.getFullYear())
       return `${MONTHS_LIST[firstDay.getMonth() + 1].title} ${firstDay.getFullYear()}`;

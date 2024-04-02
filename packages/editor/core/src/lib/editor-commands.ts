@@ -4,18 +4,18 @@ import { findTableAncestor } from "src/lib/utils";
 import { UploadImage } from "src/types/upload-image";
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
-  else editor.chain().focus().toggleHeading({ level: 1 }).run();
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().setNode("heading", { level: 1 }).run();
+  else editor.chain().focus().clearNodes().toggleHeading({ level: 1 }).run();
 };
 
 export const toggleHeadingTwo = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
-  else editor.chain().focus().toggleHeading({ level: 2 }).run();
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().setNode("heading", { level: 2 }).run();
+  else editor.chain().focus().clearNodes().toggleHeading({ level: 2 }).run();
 };
 
 export const toggleHeadingThree = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
-  else editor.chain().focus().toggleHeading({ level: 3 }).run();
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().setNode("heading", { level: 3 }).run();
+  else editor.chain().focus().clearNodes().toggleHeading({ level: 3 }).run();
 };
 
 export const toggleBold = (editor: Editor, range?: Range) => {
@@ -37,10 +37,10 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
   // Check if code block is active then toggle code block
   if (editor.isActive("codeBlock")) {
     if (range) {
-      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+      editor.chain().focus().deleteRange(range).clearNodes().toggleCodeBlock().run();
       return;
     }
-    editor.chain().focus().toggleCodeBlock().run();
+    editor.chain().focus().clearNodes().toggleCodeBlock().run();
     return;
   }
 
@@ -49,32 +49,32 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
 
   if (isSelectionEmpty) {
     if (range) {
-      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+      editor.chain().focus().deleteRange(range).clearNodes().toggleCodeBlock().run();
       return;
     }
-    editor.chain().focus().toggleCodeBlock().run();
+    editor.chain().focus().clearNodes().toggleCodeBlock().run();
   } else {
     if (range) {
-      editor.chain().focus().deleteRange(range).toggleCode().run();
+      editor.chain().focus().deleteRange(range).clearNodes().toggleCode().run();
       return;
     }
-    editor.chain().focus().toggleCode().run();
+    editor.chain().focus().clearNodes().toggleCode().run();
   }
 };
 
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleOrderedList().run();
-  else editor.chain().focus().toggleOrderedList().run();
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().toggleOrderedList().run();
+  else editor.chain().focus().clearNodes().toggleOrderedList().run();
 };
 
 export const toggleBulletList = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleBulletList().run();
-  else editor.chain().focus().toggleBulletList().run();
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().toggleBulletList().run();
+  else editor.chain().focus().clearNodes().toggleBulletList().run();
 };
 
 export const toggleTaskList = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleTaskList().run();
-  else editor.chain().focus().toggleTaskList().run();
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().toggleTaskList().run();
+  else editor.chain().focus().clearNodes().toggleTaskList().run();
 };
 
 export const toggleStrike = (editor: Editor, range?: Range) => {
@@ -83,8 +83,8 @@ export const toggleStrike = (editor: Editor, range?: Range) => {
 };
 
 export const toggleBlockquote = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleBlockquote().run();
-  else editor.chain().focus().toggleBlockquote().run();
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().toggleBlockquote().run();
+  else editor.chain().focus().clearNodes().toggleBlockquote().run();
 };
 
 export const insertTableCommand = (editor: Editor, range?: Range) => {
@@ -97,8 +97,8 @@ export const insertTableCommand = (editor: Editor, range?: Range) => {
       }
     }
   }
-  if (range) editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3 }).run();
-  else editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run();
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().insertTable({ rows: 3, cols: 3 }).run();
+  else editor.chain().focus().clearNodes().insertTable({ rows: 3, cols: 3 }).run();
 };
 
 export const unsetLinkEditor = (editor: Editor) => {

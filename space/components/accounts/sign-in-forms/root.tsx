@@ -2,11 +2,6 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import useSignInRedirection from "hooks/use-sign-in-redirection";
-// services
-import { AppConfigService } from "services/app-config.service";
-// components
-import { LatestFeatureBlock } from "components/common";
 import {
   EmailForm,
   UniqueCodeForm,
@@ -16,7 +11,12 @@ import {
   OptionalSetPasswordForm,
   CreatePasswordForm,
   SelfHostedSignInForm,
-} from "components/accounts";
+} from "@/components/accounts";
+import { LatestFeatureBlock } from "@/components/common";
+import { AppConfigService } from "@/services/app-config.service";
+import useSignInRedirection from "hooks/use-sign-in-redirection";
+// services
+// components
 
 export enum ESignInSteps {
   EMAIL = "EMAIL",

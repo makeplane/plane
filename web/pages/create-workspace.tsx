@@ -1,23 +1,23 @@
 import React, { useState, ReactElement } from "react";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
+import { IWorkspace } from "@plane/types";
 // hooks
-import { useUser } from "hooks/store";
+import { PageHead } from "@/components/core";
+import { CreateWorkspaceForm } from "@/components/workspace";
+import { useUser } from "@/hooks/store";
 // layouts
-import DefaultLayout from "layouts/default-layout";
-import { UserAuthWrapper } from "layouts/auth-layout";
+import { UserAuthWrapper } from "@/layouts/auth-layout";
+import DefaultLayout from "@/layouts/default-layout";
 // components
-import { CreateWorkspaceForm } from "components/workspace";
-import { PageHead } from "components/core";
 // images
+import { NextPageWithLayout } from "@/lib/types";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
-import { IWorkspace } from "@plane/types";
-import { NextPageWithLayout } from "lib/types";
 
 const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   // router
@@ -66,7 +66,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
               <CreateWorkspaceForm
                 onSubmit={onSubmit}
                 defaultValues={defaultValues}
-                setDefaultValues={setDefaultValues}
+                setDefaultValues={setDefaultValues as any}
               />
             </div>
           </div>

@@ -98,7 +98,7 @@
   top: 0;
   bottom: -2px;
   width: 4px;
-  z-index: 99;
+  z-index: 5;
   background-color: #d9e4ff;
   pointer-events: none;
 }
@@ -111,7 +111,7 @@
 .tableWrapper .tableControls .rowsControl {
   transition: opacity ease-in 100ms;
   position: absolute;
-  z-index: 99;
+  z-index: 5;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -198,7 +198,7 @@
 
 .tableWrapper .tableControls .tableToolbox .toolboxItem:hover,
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem:hover {
-  background-color: rgba(var(--color-background-100), 0.5);
+  background-color: rgba(var(--color-background-80), 0.6);
 }
 
 .tableWrapper .tableControls .tableToolbox .toolboxItem .iconContainer,

@@ -1,10 +1,10 @@
 import { FC } from "react";
-import { Inbox } from "lucide-react";
 import { observer } from "mobx-react";
+import { Inbox } from "lucide-react";
 // hooks
-import { useInboxIssues } from "hooks/store";
+import { InboxSidebarLoader } from "@/components/ui";
+import { useInboxIssues } from "@/hooks/store";
 // ui
-import { InboxSidebarLoader } from "components/ui";
 // components
 import { InboxIssueList, InboxIssueFilterSelection, InboxIssueAppliedFilter } from "../";
 

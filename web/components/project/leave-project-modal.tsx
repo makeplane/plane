@@ -1,18 +1,19 @@
 import { FC, Fragment } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
+// headless ui
 import { AlertTriangleIcon } from "lucide-react";
-import { observer } from "mobx-react-lite";
-// hooks
-import { useEventTracker, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-import { Button, Input } from "@plane/ui";
-// types
+import { Dialog, Transition } from "@headlessui/react";
+// icons
 import { IProject } from "@plane/types";
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
+import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
+// hooks
+import { useEventTracker, useUser } from "@/hooks/store";
+// types
 
 type FormData = {
   projectName: string;
@@ -40,8 +41,6 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   const {
     membership: { leaveProject },
   } = useUser();
-  // toast
-  const { setToastAlert } = useToast();
 
   const {
     control,
@@ -71,8 +70,8 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
               });
             })
             .catch(() => {
-              setToastAlert({
-                type: "error",
+              setToast({
+                type: TOAST_TYPE.ERROR,
                 title: "Error!",
                 message: "Something went wrong please try again later.",
               });
@@ -82,22 +81,22 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
               });
             });
         } else {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Please confirm leaving the project by typing the 'Leave Project'.",
           });
         }
       } else {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Please enter the project name as shown in the description.",
         });
       }
     } else {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please fill all fields.",
       });

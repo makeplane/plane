@@ -1,7 +1,7 @@
 // types
+import { weeks, months } from "../data";
 import { ChartDataType } from "../types";
 // data
-import { weeks, months } from "../data";
 // helpers
 import { getDatesBetweenTwoDates, getWeeksByMonthAndYear } from "./helpers";
 

@@ -1,23 +1,24 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react";
 // hooks
-import { useCycle, useProject } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
+import { EmptyState } from "@/components/common";
+import { PageHead } from "@/components/core";
+import { CycleDetailsSidebar } from "@/components/cycles";
+import { CycleMobileHeader } from "@/components/cycles/cycle-mobile-header";
+import { CycleIssuesHeader } from "@/components/headers";
+import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
+import { useCycle, useProject } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { AppLayout } from "@/layouts/app-layout";
 // components
-import { PageHead } from "components/core";
-import { CycleIssuesHeader } from "components/headers";
-import { CycleDetailsSidebar } from "components/cycles";
-import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // ui
-import { EmptyState } from "components/common";
 // assets
+import { NextPageWithLayout } from "@/lib/types";
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
-import { NextPageWithLayout } from "lib/types";
 
 const CycleDetailPage: NextPageWithLayout = observer(() => {
   // router
@@ -67,7 +68,7 @@ const CycleDetailPage: NextPageWithLayout = observer(() => {
             </div>
             {cycleId && !isSidebarCollapsed && (
               <div
-                className="flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 py-3.5 duration-300 vertical-scrollbar scrollbar-sm"
+                className="flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 duration-300 vertical-scrollbar scrollbar-sm"
                 style={{
                   boxShadow:
                     "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
@@ -85,7 +86,7 @@ const CycleDetailPage: NextPageWithLayout = observer(() => {
 
 CycleDetailPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<CycleIssuesHeader />} withProjectWrapper>
+    <AppLayout header={<CycleIssuesHeader />} mobileHeader={<CycleMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

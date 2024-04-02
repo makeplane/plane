@@ -1,9 +1,9 @@
 // ui
-import { BarGraph, ProfileEmptyState } from "components/ui";
+import { IDefaultAnalyticsResponse } from "@plane/types";
+import { BarGraph, ProfileEmptyState } from "@/components/ui";
 // image
 import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // types
-import { IDefaultAnalyticsResponse } from "@plane/types";
 
 type Props = {
   defaultAnalytics: IDefaultAnalyticsResponse;

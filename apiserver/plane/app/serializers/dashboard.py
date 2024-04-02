@@ -18,9 +18,4 @@ class WidgetSerializer(BaseSerializer):
 
     class Meta:
         model = Widget
-        fields = [
-            "id",
-            "key",
-            "is_visible",
-            "widget_filters"
-        ]
+        fields = ["id", "key", "is_visible", "widget_filters"]

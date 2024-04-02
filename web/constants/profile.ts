@@ -63,4 +63,9 @@ export const PROFILE_ADMINS_TAB = [
     label: "Subscribed",
     selected: "/[workspaceSlug]/profile/[userId]/subscribed",
   },
+  {
+    route: "activity",
+    label: "Activity",
+    selected: "/[workspaceSlug]/profile/[userId]/activity",
+  },
 ];

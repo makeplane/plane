@@ -1,5 +1,5 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject } from "react";
+import { useImperativeHandle, useRef, MutableRefObject, useState } from "react";
 import { CoreEditorProps } from "src/ui/props";
 import { CoreEditorExtensions } from "src/ui/extensions";
 import { EditorProps } from "@tiptap/pm/view";
@@ -8,6 +8,8 @@ import { DeleteImage } from "src/types/delete-image";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
 import { UploadImage } from "src/types/upload-image";
+import { Selection } from "@tiptap/pm/state";
+import { insertContentAtSavedSelection } from "src/helpers/insert-content-at-cursor-position";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
@@ -70,8 +72,10 @@ export const useEditor = ({
       onCreate: async ({ editor }) => {
         onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
+      onTransaction: async ({ editor }) => {
+        setSavedSelection(editor.state.selection);
+      },
       onUpdate: async ({ editor }) => {
-        // for instant feedback loop
         setIsSubmitting?.("submitting");
         setShouldShowAlert?.(true);
         onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
@@ -83,12 +87,19 @@ export const useEditor = ({
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;
 
+  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
+
   useImperativeHandle(forwardedRef, () => ({
     clearEditor: () => {
       editorRef.current?.commands.clearContent();
     },
     setEditorValue: (content: string) => {
       editorRef.current?.commands.setContent(content);
+    },
+    setEditorValueAtCursorPosition: (content: string) => {
+      if (savedSelection) {
+        insertContentAtSavedSelection(editorRef, content, savedSelection);
+      }
     },
   }));
 

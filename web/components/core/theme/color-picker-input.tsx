@@ -1,5 +1,6 @@
 import { FC, Fragment } from "react";
 // react-form
+import { ColorResult, SketchPicker } from "react-color";
 import {
   Control,
   Controller,
@@ -11,14 +12,13 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 // react-color
-import { ColorResult, SketchPicker } from "react-color";
 // component
+import { Palette } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
+import { IUserTheme } from "@plane/types";
 import { Input } from "@plane/ui";
 // icons
-import { Palette } from "lucide-react";
 // types
-import { IUserTheme } from "@plane/types";
 
 type Props = {
   name: keyof IUserTheme;

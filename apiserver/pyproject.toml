@@ -16,3 +16,10 @@ exclude = '''
         | venv
     )/
 '''
+
+[tool.ruff]
+line-length = 79
+exclude = [
+    "**/__init__.py",
+]
+

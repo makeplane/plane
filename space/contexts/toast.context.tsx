@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useReducer } from "react";
 // uuid
 import { v4 as uuid } from "uuid";
 // components
-import ToastAlert from "components/ui/toast-alert";
+import ToastAlert from "@/components/ui/toast-alert";
 
 export const toastContext = createContext<ContextType>({} as ContextType);
 

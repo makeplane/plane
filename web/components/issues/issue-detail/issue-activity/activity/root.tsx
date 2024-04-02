@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityList } from "./activity-list";
 
@@ -23,6 +23,7 @@ export const IssueActivityRoot: FC<TIssueActivityRoot> = observer((props) => {
     <div>
       {activityIds.map((activityId, index) => (
         <IssueActivityList
+          key={activityId}
           activityId={activityId}
           ends={index === 0 ? "top" : index === activityIds.length - 1 ? "bottom" : undefined}
         />

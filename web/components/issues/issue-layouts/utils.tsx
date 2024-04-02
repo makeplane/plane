@@ -1,19 +1,23 @@
-import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
-// stores
-import { IMemberRootStore } from "store/member";
-import { IProjectStore } from "store/project/project.store";
-import { IStateStore } from "store/state.store";
-import { ILabelStore } from "store/label.store";
-import { ICycleStore } from "store/cycle.store";
-import { IModuleStore } from "store/module.store";
-// helpers
-import { renderEmoji } from "helpers/emoji.helper";
-// constants
-import { STATE_GROUPS } from "constants/state";
-import { ISSUE_PRIORITIES } from "constants/issue";
-// types
-import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
 import { ContrastIcon } from "lucide-react";
+import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
+import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+// components
+import { ProjectLogo } from "@/components/project";
+// stores
+import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
+import { STATE_GROUPS } from "@/constants/state";
+import { ICycleStore } from "@/store/cycle.store";
+import { ILabelStore } from "@/store/label.store";
+import { IMemberRootStore } from "@/store/member";
+import { IModuleStore } from "@/store/module.store";
+import { IProjectStore } from "@/store/project/project.store";
+import { IStateStore } from "@/store/state.store";
+// helpers
+// constants
+// types
+
+export const isWorkspaceLevel = (type: EIssuesStoreType) =>
+  [EIssuesStoreType.PROFILE, EIssuesStoreType.GLOBAL].includes(type) ? true : false;
 
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,
@@ -23,7 +27,8 @@ export const getGroupByColumns = (
   label: ILabelStore,
   projectState: IStateStore,
   member: IMemberRootStore,
-  includeNone?: boolean
+  includeNone?: boolean,
+  isWorkspaceLevel?: boolean
 ): IGroupByColumn[] | undefined => {
   switch (groupBy) {
     case "project":
@@ -39,7 +44,7 @@ export const getGroupByColumns = (
     case "priority":
       return getPriorityColumns();
     case "labels":
-      return getLabelsColumns(label) as any;
+      return getLabelsColumns(label, isWorkspaceLevel) as any;
     case "assignees":
       return getAssigneeColumns(member) as any;
     case "created_by":
@@ -62,7 +67,11 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
       return {
         id: project.id,
         name: project.name,
-        icon: <div className="w-6 h-6">{renderEmoji(project.emoji || "")}</div>,
+        icon: (
+          <div className="w-6 h-6 grid place-items-center flex-shrink-0">
+            <ProjectLogo logo={project.logo_props} />
+          </div>
+        ),
         payload: { project_id: project.id },
       };
     }) as any;
@@ -112,19 +121,19 @@ const getModuleColumns = (projectStore: IProjectStore, moduleStore: IModuleStore
   const modules = [];
 
   moduleIds.map((moduleId) => {
-    const _module = getModuleById(moduleId);
-    if (_module)
+    const moduleInfo = getModuleById(moduleId);
+    if (moduleInfo)
       modules.push({
-        id: _module.id,
-        name: _module.name,
-        icon: <DiceIcon className="w-3.5 h-3.5" />,
-        payload: { module_ids: [_module.id] },
+        id: moduleInfo.id,
+        name: moduleInfo.name,
+        icon: <DiceIcon className="h-3.5 w-3.5" />,
+        payload: { module_ids: [moduleInfo.id] },
       });
   }) as any;
   modules.push({
     id: "None",
     name: "None",
-    icon: <DiceIcon className="w-3.5 h-3.5" />,
+    icon: <DiceIcon className="h-3.5 w-3.5" />,
   });
 
   return modules as any;
@@ -138,7 +147,7 @@ const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefine
     id: state.id,
     name: state.name,
     icon: (
-      <div className="w-3.5 h-3.5 rounded-full">
+      <div className="h-3.5 w-3.5 rounded-full">
         <StateGroupIcon stateGroup={state.group} color={state.color} width="14" height="14" />
       </div>
     ),
@@ -153,7 +162,7 @@ const getStateGroupColumns = () => {
     id: stateGroup.key,
     name: stateGroup.label,
     icon: (
-      <div className="w-3.5 h-3.5 rounded-full">
+      <div className="h-3.5 w-3.5 rounded-full">
         <StateGroupIcon stateGroup={stateGroup.key} width="14" height="14" />
       </div>
     ),
@@ -172,18 +181,19 @@ const getPriorityColumns = () => {
   }));
 };
 
-const getLabelsColumns = (label: ILabelStore) => {
-  const { projectLabels } = label;
+const getLabelsColumns = (label: ILabelStore, isWorkspaceLevel: boolean = false) => {
+  const { workspaceLabels, projectLabels } = label;
 
-  if (!projectLabels) return;
-
-  const labels = [...projectLabels, { id: "None", name: "None", color: "#666" }];
+  const labels = [
+    ...(isWorkspaceLevel ? workspaceLabels || [] : projectLabels || []),
+    { id: "None", name: "None", color: "#666" },
+  ];
 
   return labels.map((label) => ({
     id: label.id,
     name: label.name,
     icon: (
-      <div className="w-[12px] h-[12px] rounded-full" style={{ backgroundColor: label.color ? label.color : "#666" }} />
+      <div className="h-[12px] w-[12px] rounded-full" style={{ backgroundColor: label.color ? label.color : "#666" }} />
     ),
     payload: label?.id === "None" ? {} : { label_ids: [label.id] },
   }));

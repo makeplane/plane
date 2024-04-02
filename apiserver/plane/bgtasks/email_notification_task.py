@@ -1,32 +1,36 @@
+import logging
 from datetime import datetime
+
 from bs4 import BeautifulSoup
 
 # Third party imports
 from celery import shared_task
-from sentry_sdk import capture_exception
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.template.loader import render_to_string
 
 # Django imports
 from django.utils import timezone
-from django.core.mail import EmailMultiAlternatives, get_connection
-from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.conf import settings
 
 # Module imports
-from plane.db.models import EmailNotificationLog, User, Issue
+from plane.db.models import EmailNotificationLog, Issue, User
 from plane.license.utils.instance_value import get_email_configuration
 from plane.settings.redis import redis_instance
+from plane.utils.exception_logger import log_exception
+
 
 # acquire and delete redis lock
 def acquire_lock(lock_id, expire_time=300):
     redis_client = redis_instance()
     """Attempt to acquire a lock with a specified expiration time."""
-    return redis_client.set(lock_id, 'true', nx=True, ex=expire_time)
+    return redis_client.set(lock_id, "true", nx=True, ex=expire_time)
+
 
 def release_lock(lock_id):
     """Release a lock."""
     redis_client = redis_instance()
     redis_client.delete(lock_id)
+
 
 @shared_task
 def stack_email_notification():
@@ -101,31 +105,31 @@ def create_payload(notification_data):
 
                 # Append old_value if it's not empty and not already in the list
                 if old_value:
-                    data.setdefault(actor_id, {}).setdefault(
-                        field, {}
-                    ).setdefault("old_value", []).append(
-                        old_value
-                    ) if old_value not in data.setdefault(
-                        actor_id, {}
-                    ).setdefault(
-                        field, {}
-                    ).get(
-                        "old_value", []
-                    ) else None
+                    (
+                        data.setdefault(actor_id, {})
+                        .setdefault(field, {})
+                        .setdefault("old_value", [])
+                        .append(old_value)
+                        if old_value
+                        not in data.setdefault(actor_id, {})
+                        .setdefault(field, {})
+                        .get("old_value", [])
+                        else None
+                    )
 
                 # Append new_value if it's not empty and not already in the list
                 if new_value:
-                    data.setdefault(actor_id, {}).setdefault(
-                        field, {}
-                    ).setdefault("new_value", []).append(
-                        new_value
-                    ) if new_value not in data.setdefault(
-                        actor_id, {}
-                    ).setdefault(
-                        field, {}
-                    ).get(
-                        "new_value", []
-                    ) else None
+                    (
+                        data.setdefault(actor_id, {})
+                        .setdefault(field, {})
+                        .setdefault("new_value", [])
+                        .append(new_value)
+                        if new_value
+                        not in data.setdefault(actor_id, {})
+                        .setdefault(field, {})
+                        .get("new_value", [])
+                        else None
+                    )
 
                 if not data.get("actor_id", {}).get("activity_time", False):
                     data[actor_id]["activity_time"] = str(
@@ -136,22 +140,24 @@ def create_payload(notification_data):
 
     return data
 
+
 def process_mention(mention_component):
-    soup = BeautifulSoup(mention_component, 'html.parser')
-    mentions = soup.find_all('mention-component')
+    soup = BeautifulSoup(mention_component, "html.parser")
+    mentions = soup.find_all("mention-component")
     for mention in mentions:
-        user_id = mention['id']
+        user_id = mention["id"]
         user = User.objects.get(pk=user_id)
         user_name = user.display_name
         highlighted_name = f"@{user_name}"
         mention.replace_with(highlighted_name)
     return str(soup)
 
+
 def process_html_content(content):
     processed_content_list = []
     for html_content in content:
         processed_content = process_mention(html_content)
-        processed_content_list.append(processed_content)  
+        processed_content_list.append(processed_content)
     return processed_content_list
 
 
@@ -169,7 +175,7 @@ def send_email_notification(
         if acquire_lock(lock_id=lock_id):
             # get the redis instance
             ri = redis_instance()
-            base_api = (ri.get(str(issue_id)).decode())
+            base_api = ri.get(str(issue_id)).decode()
             data = create_payload(notification_data=notification_data)
 
             # Get email configurations
@@ -179,6 +185,7 @@ def send_email_notification(
                 EMAIL_HOST_PASSWORD,
                 EMAIL_PORT,
                 EMAIL_USE_TLS,
+                EMAIL_USE_SSL,
                 EMAIL_FROM,
             ) = get_email_configuration()
 
@@ -206,8 +213,12 @@ def send_email_notification(
                         }
                     )
                 if mention:
-                    mention["new_value"] = process_html_content(mention.get("new_value"))
-                    mention["old_value"] = process_html_content(mention.get("old_value"))
+                    mention["new_value"] = process_html_content(
+                        mention.get("new_value")
+                    )
+                    mention["old_value"] = process_html_content(
+                        mention.get("old_value")
+                    )
                     comments.append(
                         {
                             "actor_comments": mention,
@@ -220,7 +231,9 @@ def send_email_notification(
                     )
                 activity_time = changes.pop("activity_time")
                 # Parse the input string into a datetime object
-                formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
+                formatted_time = datetime.strptime(
+                    activity_time, "%Y-%m-%d %H:%M:%S"
+                ).strftime("%H:%M %p")
 
                 if changes:
                     template_data.append(
@@ -237,12 +250,14 @@ def send_email_notification(
                             },
                             "activity_time": str(formatted_time),
                         }
-                )
+                    )
 
             summary = "Updates were made to the issue by"
 
             # Send the mail
-            subject = f"{issue.project.identifier}-{issue.sequence_id} {issue.name}"
+            subject = (
+                f"{issue.project.identifier}-{issue.sequence_id} {issue.name}"
+            )
             context = {
                 "data": template_data,
                 "summary": summary,
@@ -257,7 +272,7 @@ def send_email_notification(
                 },
                 "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",
                 "project_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/",
-                "workspace":str(issue.project.workspace.slug),
+                "workspace": str(issue.project.workspace.slug),
                 "project": str(issue.project.name),
                 "user_preference": f"{base_api}/profile/preferences/email",
                 "comments": comments,
@@ -274,6 +289,7 @@ def send_email_notification(
                     username=EMAIL_HOST_USER,
                     password=EMAIL_HOST_PASSWORD,
                     use_tls=EMAIL_USE_TLS == "1",
+                    use_ssl=EMAIL_USE_SSL == "1",
                 )
 
                 msg = EmailMultiAlternatives(
@@ -285,7 +301,9 @@ def send_email_notification(
                 )
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
+                logging.getLogger("plane").info("Email Sent Successfully")
 
+                # Update the logs
                 EmailNotificationLog.objects.filter(
                     pk__in=email_notification_ids
                 ).update(sent_at=timezone.now())
@@ -294,15 +312,20 @@ def send_email_notification(
                 release_lock(lock_id=lock_id)
                 return
             except Exception as e:
-                capture_exception(e)
+                log_exception(e)
                 # release the lock
                 release_lock(lock_id=lock_id)
                 return
         else:
-            print("Duplicate task recived. Skipping...")
+            logging.getLogger("plane").info(
+                "Duplicate email received skipping"
+            )
             return
     except (Issue.DoesNotExist, User.DoesNotExist) as e:
-        if settings.DEBUG:
-            print(e)
+        log_exception(e)
+        release_lock(lock_id=lock_id)
+        return
+    except Exception as e:
+        log_exception(e)
         release_lock(lock_id=lock_id)
         return

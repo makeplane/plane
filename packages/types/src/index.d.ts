@@ -1,12 +1,11 @@
 export * from "./users";
 export * from "./workspace";
-export * from "./cycles";
+export * from "./cycle";
 export * from "./dashboard";
-export * from "./projects";
+export * from "./project";
 export * from "./state";
-export * from "./invitation";
 export * from "./issues";
-export * from "./modules";
+export * from "./module";
 export * from "./views";
 export * from "./integration";
 export * from "./pages";
@@ -15,7 +14,6 @@ export * from "./estimate";
 export * from "./importer";
 
 // FIXME: Remove this after development and the refactor/mobx-store-issue branch is stable
-export * from "./inbox";
 export * from "./inbox/root";
 
 export * from "./analytics";
@@ -31,11 +29,3 @@ export * from "./auth";
 export * from "./api_token";
 export * from "./instance";
 export * from "./app";
-
-export type NestedKeyOf<ObjectType extends object> = {
-  [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
-    ? ObjectType[Key] extends { pop: any; push: any }
-      ? `${Key}`
-      : `${Key}` | `${Key}.${NestedKeyOf<ObjectType[Key]>}`
-    : `${Key}`;
-}[keyof ObjectType & (string | number)];

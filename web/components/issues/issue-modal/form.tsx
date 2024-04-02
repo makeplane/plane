@@ -1,21 +1,14 @@
 import React, { FC, useState, useRef, useEffect, Fragment } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
-// editor
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import type { TIssue, ISearchIssueResponse } from "@plane/types";
+// editor
 // hooks
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
-// services
-import { AIService } from "services/ai.service";
-import { FileService } from "services/file.service";
-// components
-import { GptAssistantPopover } from "components/core";
-import { ParentIssuesListModal } from "components/issues";
-import { IssueLabelSelect } from "components/issues/select";
-import { CreateLabelModal } from "components/labels";
+import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { GptAssistantPopover } from "@/components/core";
 import {
   CycleDropdown,
   DateDropdown,
@@ -25,13 +18,22 @@ import {
   ProjectDropdown,
   MemberDropdown,
   StateDropdown,
-} from "components/dropdowns";
+} from "@/components/dropdowns";
+import { ParentIssuesListModal } from "@/components/issues";
+import { IssueLabelSelect } from "@/components/issues/select";
+import { CreateLabelModal } from "@/components/labels";
+import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
+import { getChangedIssuefields } from "@/helpers/issue.helper";
+import { shouldRenderProject } from "@/helpers/project.helper";
+import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "@/hooks/store";
+import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
+// services
+import { AIService } from "@/services/ai.service";
+import { FileService } from "@/services/file.service";
+// components
 // ui
-import { Button, CustomMenu, Input, Loader, ToggleSwitch } from "@plane/ui";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import type { TIssue, ISearchIssueResponse } from "@plane/types";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -51,6 +53,7 @@ const defaultValues: Partial<TIssue> = {
 
 export interface IssueFormProps {
   data?: Partial<TIssue>;
+  issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange?: (formData: Partial<TIssue> | null) => void;
@@ -92,6 +95,7 @@ const getTabIndex = (key: string) => TAB_INDICES.findIndex((tabIndex) => tabInde
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     data,
+    issueTitleRef,
     onChange,
     onClose,
     onSubmit,
@@ -118,6 +122,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // store hooks
   const {
     config: { envConfig },
+    router: { projectId: routeProjectId },
   } = useApplication();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
@@ -125,11 +130,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  // toast alert
-  const { setToastAlert } = useToast();
+  const { fetchCycles } = useProjectIssueProperties();
   // form info
   const {
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty, isSubmitting, dirtyFields },
     handleSubmit,
     reset,
     watch,
@@ -159,6 +163,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         parent_id: formData.parent_id,
       });
     }
+    if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug, projectId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
@@ -169,7 +174,19 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const issueName = watch("name");
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
-    await onSubmit(formData, is_draft_issue);
+    const submitData = !data?.id
+      ? formData
+      : {
+          ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
+          project_id: getValues("project_id"),
+          id: data.id,
+          description_html: formData.description_html ?? "<p></p>",
+        };
+
+    // this condition helps to move the issues from draft to project issues
+    if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
+
+    await onSubmit(submitData, is_draft_issue);
 
     setGptAssistantModal(false);
 
@@ -183,8 +200,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
-    editorRef.current?.setEditorValue(`${watch("description_html")}`);
+    editorRef.current?.setEditorValueAtCursorPosition(response);
   };
 
   const handleAutoGenerateDescription = async () => {
@@ -199,8 +215,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       })
       .then((res) => {
         if (res.response === "")
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "Issue title isn't informative enough to generate the description. Please try with a different title.",
@@ -211,14 +227,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         const error = err?.data?.error;
 
         if (err.status === 429)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "Some error occurred. Please try again.",
           });
@@ -236,10 +252,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const startDate = watch("start_date");
   const targetDate = watch("target_date");
 
-  const minDate = startDate ? new Date(startDate) : null;
+  const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = targetDate ? new Date(targetDate) : null;
+  const maxDate = getDate(targetDate);
   maxDate?.setDate(maxDate.getDate());
 
   const projectDetails = getProjectById(projectId);
@@ -299,7 +315,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         handleFormChange();
                       }}
                       buttonVariant="border-with-text"
-                      // TODO: update tabIndex logic
+                      renderCondition={(project) => shouldRenderProject(project)}
                       tabIndex={getTabIndex("project_id")}
                     />
                   </div>
@@ -360,17 +376,18 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       onChange(e.target.value);
                       handleFormChange();
                     }}
-                    ref={ref}
+                    ref={issueTitleRef || ref}
                     hasError={Boolean(errors.name)}
                     placeholder="Issue Title"
-                    className="resize-none text-xl w-full"
+                    className="w-full resize-none text-xl"
                     tabIndex={getTabIndex("name")}
+                    autoFocus
                   />
                 )}
               />
               <div className="relative">
                 {data?.description_html === undefined ? (
-                  <Loader className="min-h-[7rem] space-y-2 py-2 border border-custom-border-200 rounded-md p-2 overflow-hidden">
+                  <Loader className="min-h-[7rem] space-y-2 overflow-hidden rounded-md border border-custom-border-200 p-2 py-2">
                     <Loader.Item width="100%" height="26px" />
                     <div className="flex items-center gap-2">
                       <Loader.Item width="26px" height="26px" />
@@ -384,18 +401,18 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     <div className="flex items-center gap-2">
                       <Loader.Item width="50%" height="26px" />
                     </div>
-                    <div className="absolute bottom-3.5 right-3.5 z-10 border-0.5 flex items-center gap-2">
+                    <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex items-center gap-2">
                       <Loader.Item width="100px" height="26px" />
                       <Loader.Item width="50px" height="26px" />
                     </div>
                   </Loader>
                 ) : (
                   <Fragment>
-                    <div className="absolute bottom-3.5 right-3.5 z-10 border-0.5 flex items-center gap-2">
+                    <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex items-center gap-2">
                       {issueName && issueName.trim() !== "" && envConfig?.has_openai_configured && (
                         <button
                           type="button"
-                          className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs bg-custom-background-80 ${
+                          className={`flex items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs ${
                             iAmFeelingLucky ? "cursor-wait" : ""
                           }`}
                           onClick={handleAutoGenerateDescription}
@@ -456,13 +473,13 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           }
                           initialValue={data?.description_html}
                           customClassName="min-h-[7rem] border-custom-border-100"
-                          onChange={(description: Object, description_html: string) => {
+                          onChange={(description: any, description_html: string) => {
                             onChange(description_html);
                             handleFormChange();
                           }}
                           mentionHighlights={mentionHighlights}
                           mentionSuggestions={mentionSuggestions}
-                          // tabIndex={2}
+                          tabIndex={getTabIndex("description_html")}
                         />
                       )}
                     />
@@ -588,6 +605,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChange(cycleId);
                             handleFormChange();
                           }}
+                          placeholder="Cycle"
                           value={value}
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("cycle_id")}
@@ -609,6 +627,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChange(moduleIds);
                             handleFormChange();
                           }}
+                          placeholder="Modules"
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("module_ids")}
                           multiple
@@ -642,7 +661,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
+                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
                     >
                       {watch("parent_id") ? (
                         <div className="flex items-center gap-1 text-custom-text-200">
@@ -698,6 +717,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         setSelectedParentIssue(issue);
                       }}
                       projectId={projectId}
+                      issueId={data?.id}
                     />
                   )}
                 />
@@ -706,19 +726,24 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           </div>
         </div>
         <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-100 px-5 pt-5">
-          <div
-            className="flex cursor-default items-center gap-1.5"
-            onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
-            }}
-            tabIndex={getTabIndex("create_more")}
-          >
-            <div className="flex cursor-pointer items-center justify-center">
-              <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-            </div>
-            <span className="text-xs">Create more</span>
+          <div>
+            {!data?.id && (
+              <div
+                className="inline-flex cursor-default items-center gap-1.5"
+                onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
+                }}
+                tabIndex={getTabIndex("create_more")}
+              >
+                <div className="flex cursor-pointer items-center justify-center">
+                  <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
+                </div>
+                <span className="text-xs">Create more</span>
+              </div>
+            )}
           </div>
+
           <div className="flex items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={getTabIndex("discard_button")}>
               Discard

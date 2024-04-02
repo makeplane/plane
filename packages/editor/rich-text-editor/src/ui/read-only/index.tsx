@@ -9,6 +9,7 @@ interface IRichTextReadOnlyEditor {
   borderOnFocus?: boolean;
   customClassName?: string;
   mentionHighlights?: string[];
+  tabIndex?: number;
 }
 
 interface RichTextReadOnlyEditorProps extends IRichTextReadOnlyEditor {

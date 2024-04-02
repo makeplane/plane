@@ -1,37 +1,45 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import { Controller, useForm } from "react-hook-form";
-import { Disclosure, Transition } from "@headlessui/react";
 import isEmpty from "lodash/isEmpty";
-// services
-import { CycleService } from "services/cycle.service";
-// hooks
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { SidebarProgressStats } from "components/core";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { CycleDeleteModal } from "components/cycles/delete-modal";
-// ui
-import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { Controller, useForm } from "react-hook-form";
 // icons
-import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { findHowManyDaysLeft, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import {
+  ArchiveRestoreIcon,
+  ChevronDown,
+  LinkIcon,
+  Trash2,
+  UserCircle2,
+  AlertCircle,
+  ChevronRight,
+  CalendarClock,
+} from "lucide-react";
+import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { ICycle } from "@plane/types";
+// ui
+import { Avatar, ArchiveIcon, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
+// components
+import { SidebarProgressStats } from "@/components/core";
+import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { ArchiveCycleModal, CycleDeleteModal } from "@/components/cycles";
+import { DateRangeDropdown } from "@/components/dropdowns";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { CYCLE_UPDATED } from "constants/event-tracker";
-// fetch-keys
-import { CYCLE_STATUS } from "constants/cycle";
-import { DateRangeDropdown } from "components/dropdowns";
+import { CYCLE_STATUS } from "@/constants/cycle";
+import { CYCLE_UPDATED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
+import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
+// services
+import { CycleService } from "@/services/cycle.service";
 
 type Props = {
   cycleId: string;
   handleClose: () => void;
+  isArchived?: boolean;
 };
 
 const defaultValues: Partial<ICycle> = {
@@ -44,8 +52,9 @@ const cycleService = new CycleService();
 
 // TODO: refactor the whole component
 export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
-  const { cycleId, handleClose } = props;
+  const { cycleId, handleClose, isArchived } = props;
   // states
+  const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   // router
   const router = useRouter();
@@ -55,13 +64,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { getCycleById, updateCycleDetails } = useCycle();
+  const { getCycleById, updateCycleDetails, restoreCycle } = useCycle();
   const { getUserDetails } = useMember();
   // derived values
   const cycleDetails = getCycleById(cycleId);
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const { control, reset } = useForm({
     defaultValues,
@@ -98,18 +105,39 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Link Copied!",
           message: "Cycle link copied to clipboard.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Some error occurred",
         });
       });
+  };
+
+  const handleRestoreCycle = async () => {
+    if (!workspaceSlug || !projectId) return;
+
+    await restoreCycle(workspaceSlug.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Restore success",
+          message: "Your cycle can be found in project cycles.",
+        });
+        router.push(`/${workspaceSlug.toString()}/projects/${projectId.toString()}/cycles/${cycleId}`);
+      })
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Cycle could not be restored. Please try again.",
+        })
+      );
   };
 
   useEffect(() => {
@@ -147,14 +175,14 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     if (isDateValid) {
       submitChanges(payload, "date_range");
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Cycle updated successfully.",
       });
     } else {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message:
           "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
@@ -186,8 +214,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
 
-  const isStartValid = new Date(`${cycleDetails?.start_date}`) <= new Date();
-  const isEndValid = new Date(`${cycleDetails?.end_date}`) >= new Date(`${cycleDetails?.start_date}`);
+  const startDate = getDate(cycleDetails?.start_date);
+  const endDate = getDate(cycleDetails?.end_date);
+
+  const isStartValid = startDate && startDate <= new Date();
+  const isEndValid = endDate && startDate && endDate >= startDate;
 
   const progressPercentage = cycleDetails
     ? isCompleted && cycleDetails?.progress_snapshot
@@ -228,19 +259,28 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <>
+    <div className="relative">
       {cycleDetails && workspaceSlug && projectId && (
-        <CycleDeleteModal
-          cycle={cycleDetails}
-          isOpen={cycleDeleteModal}
-          handleClose={() => setCycleDeleteModal(false)}
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-        />
+        <>
+          <ArchiveCycleModal
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            cycleId={cycleId}
+            isOpen={archiveCycleModal}
+            handleClose={() => setArchiveCycleModal(false)}
+          />
+          <CycleDeleteModal
+            cycle={cycleDetails}
+            isOpen={cycleDeleteModal}
+            handleClose={() => setCycleDeleteModal(false)}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+          />
+        </>
       )}
 
       <>
-        <div className="flex w-full items-center justify-between">
+        <div className="sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 py-5">
           <div>
             <button
               className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
@@ -250,22 +290,54 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             </button>
           </div>
           <div className="flex items-center gap-3.5">
-            <button onClick={handleCopyText}>
-              <LinkIcon className="h-3 w-3 text-custom-text-300" />
-            </button>
-            {!isCompleted && isEditingAllowed && (
+            {!isArchived && (
+              <button onClick={handleCopyText}>
+                <LinkIcon className="h-3 w-3 text-custom-text-300" />
+              </button>
+            )}
+            {isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
-                <CustomMenu.MenuItem
-                  onClick={() => {
-                    setTrackElement("CYCLE_PAGE_SIDEBAR");
-                    setCycleDeleteModal(true);
-                  }}
-                >
-                  <span className="flex items-center justify-start gap-2">
-                    <Trash2 className="h-3 w-3" />
-                    <span>Delete cycle</span>
-                  </span>
-                </CustomMenu.MenuItem>
+                {!isArchived && (
+                  <CustomMenu.MenuItem onClick={() => setArchiveCycleModal(true)} disabled={!isCompleted}>
+                    {isCompleted ? (
+                      <div className="flex items-center gap-2">
+                        <ArchiveIcon className="h-3 w-3" />
+                        Archive cycle
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2">
+                        <ArchiveIcon className="h-3 w-3" />
+                        <div className="-mt-1">
+                          <p>Archive cycle</p>
+                          <p className="text-xs text-custom-text-400">
+                            Only completed cycle <br /> can be archived.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CustomMenu.MenuItem>
+                )}
+                {isArchived && (
+                  <CustomMenu.MenuItem onClick={handleRestoreCycle}>
+                    <span className="flex items-center justify-start gap-2">
+                      <ArchiveRestoreIcon className="h-3 w-3" />
+                      <span>Restore cycle</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )}
+                {!isCompleted && (
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      setTrackElement("CYCLE_PAGE_SIDEBAR");
+                      setCycleDeleteModal(true);
+                    }}
+                  >
+                    <span className="flex items-center justify-start gap-2">
+                      <Trash2 className="h-3 w-3" />
+                      <span>Delete cycle</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )}
               </CustomMenu>
             )}
           </div>
@@ -291,9 +363,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         {cycleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {cycleDetails.description}
-          </span>
+          <TextArea
+            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-custom-text-200"
+            value={cycleDetails.description}
+            disabled
+          />
         )}
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
@@ -302,7 +376,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <CalendarClock className="h-4 w-4" />
               <span className="text-base">Date range</span>
             </div>
-            <div className="w-3/5 h-7">
+            <div className="h-7 w-3/5">
               <Controller
                 control={control}
                 name="start_date"
@@ -317,8 +391,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                         buttonVariant="background-with-text"
                         minDate={new Date()}
                         value={{
-                          from: startDateValue ? new Date(startDateValue) : undefined,
-                          to: endDateValue ? new Date(endDateValue) : undefined,
+                          from: getDate(startDateValue),
+                          to: getDate(endDateValue),
                         }}
                         onSelect={(val) => {
                           onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
@@ -330,6 +404,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           to: "End date",
                         }}
                         required={cycleDetails.status !== "draft"}
+                        disabled={isArchived}
                       />
                     )}
                   />
@@ -509,6 +584,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </>
-    </>
+    </div>
   );
 });

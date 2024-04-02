@@ -1,10 +1,10 @@
 import { FC, useState, Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
 import { Search, X } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // components
-import { ShortcutCommandsList } from "components/command-palette";
-// ui
 import { Input } from "@plane/ui";
+import { ShortcutCommandsList } from "@/components/command-palette";
+// ui
 
 type Props = {
   isOpen: boolean;
@@ -36,18 +36,18 @@ export const ShortcutsModal: FC<Props> = (props) => {
           <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-20 h-full w-full overflow-y-auto">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enterTo="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          >
-            <Dialog.Panel className="h-full w-full">
-              <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative flex h-full items-center justify-center">
                 <div className="flex h-[61vh] w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-custom-background-100 p-5 shadow-custom-shadow-md transition-all sm:w-[28rem]">
                   <Dialog.Title as="h3" className="flex justify-between">
                     <span className="text-lg font-medium">Keyboard shortcuts</span>
@@ -71,9 +71,9 @@ export const ShortcutsModal: FC<Props> = (props) => {
                   </div>
                   <ShortcutCommandsList searchQuery={query} />
                 </div>
-              </div>
-            </Dialog.Panel>
-          </Transition.Child>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
         </div>
       </Dialog>
     </Transition.Root>

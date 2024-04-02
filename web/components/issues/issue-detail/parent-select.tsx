@@ -1,15 +1,16 @@
 import React from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { Pencil, X } from "lucide-react";
 // hooks
-import { useIssueDetail, useProject } from "hooks/store";
 // components
-import { ParentIssuesListModal } from "components/issues";
-// ui
 import { Tooltip } from "@plane/ui";
+import { ParentIssuesListModal } from "@/components/issues";
+// ui
 // helpers
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
+import { useIssueDetail, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { TIssueOperations } from "./root";
 
@@ -35,7 +36,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
   const parentIssue = issue?.parent_id ? getIssueById(issue.parent_id) : undefined;
   const parentIssueProjectDetails =
     parentIssue && parentIssue.project_id ? getProjectById(parentIssue.project_id) : undefined;
-
+  const { isMobile } = usePlatformOS();
   const handleParentIssue = async (_issueId: string | null = null) => {
     try {
       await issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: _issueId });
@@ -73,7 +74,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
       >
         {issue.parent_id && parentIssue ? (
           <div className="flex items-center gap-1 bg-green-500/20 text-green-700 rounded px-1.5 py-1">
-            <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name}>
+            <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name} isMobile={isMobile}>
               <Link
                 href={`/${workspaceSlug}/projects/${projectId}/issues/${parentIssue?.id}`}
                 target="_blank"
@@ -86,7 +87,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
             </Tooltip>
 
             {!disabled && (
-              <Tooltip tooltipContent="Remove" position="bottom">
+              <Tooltip tooltipContent="Remove" position="bottom" isMobile={isMobile}>
                 <span
                   onClick={(e) => {
                     e.preventDefault();

@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { XCircle } from "lucide-react";
-// components
-import { DeleteApiTokenModal } from "components/api-token";
-// ui
-import { Tooltip } from "@plane/ui";
-// helpers
-import { renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
-// types
 import { IApiToken } from "@plane/types";
+// components
+import { Tooltip } from "@plane/ui";
+import { DeleteApiTokenModal } from "@/components/api-token";
+import { renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// ui
+// helpers
+// types
 
 type Props = {
   token: IApiToken;
@@ -17,12 +18,14 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
   const { token } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   return (
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
       <div className="group relative flex flex-col justify-center border-b border-custom-border-200 px-4 py-3">
-        <Tooltip tooltipContent="Delete token">
+        <Tooltip tooltipContent="Delete token" isMobile={isMobile}>
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"

@@ -463,7 +463,7 @@ def filter_start_target_date_issues(params, filter, method):
         filter["target_date__isnull"] = False
         filter["start_date__isnull"] = False
     return filter
-    
+
 
 def issue_filters(query_params, method):
     filter = {}

@@ -1,17 +1,18 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
+// icons
 import { Pencil, Trash2 } from "lucide-react";
-// store hooks
-import { useEventTracker, useGlobalView } from "hooks/store";
-// components
-import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "components/workspace";
 // ui
 import { CustomMenu } from "@plane/ui";
+// components
+import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
 // helpers
-import { truncateText } from "helpers/string.helper";
-import { calculateTotalFilters } from "helpers/filter.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { truncateText } from "@/helpers/string.helper";
+// store hooks
+import { useEventTracker, useGlobalView } from "@/hooks/store";
 
 type Props = { viewId: string };
 

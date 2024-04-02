@@ -1,9 +1,9 @@
 import { makeObservable } from "mobx";
 // services
-import { IssueArchiveService, IssueDraftService, IssueService } from "services/issue";
+import { computedFn } from "mobx-utils";
+import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 // types
 import { TIssue } from "@plane/types";
-import { computedFn } from "mobx-utils";
 import { IIssueDetail } from "./root.store";
 
 export interface IIssueStoreActions {
@@ -18,7 +18,7 @@ export interface IIssueStoreActions {
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
-  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<TIssue>;
+  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addModulesToIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<any>;
   removeModulesFromIssue: (
     workspaceSlug: string,

@@ -2,19 +2,20 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { APITokenService } from "services/api_token.service";
-// hooks
-import useToast from "hooks/use-toast";
-// components
-import { CreateApiTokenForm, GeneratedTokenDetails } from "components/api-token";
-// helpers
-import { csvDownload } from "helpers/download.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
-// types
 import { IApiToken } from "@plane/types";
+// services
+import { TOAST_TYPE, setToast } from "@plane/ui";
+
+import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-token";
+import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { csvDownload } from "@/helpers/download.helper";
+import { APITokenService } from "@/services/api_token.service";
+// ui
+// components
+// helpers
+// types
 // fetch-keys
-import { API_TOKENS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -32,8 +33,6 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -76,10 +75,10 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
         );
       })
       .catch((err) => {
-        setToastAlert({
-          message: err.message,
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error",
+          message: err.message,
         });
 
         throw err;

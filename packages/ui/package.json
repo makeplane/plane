@@ -2,7 +2,7 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.16.0",
+  "version": "0.17.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -14,7 +14,6 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --external react --minify",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
-    "lint": "eslint src/",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
@@ -23,9 +22,11 @@
     "@headlessui/react": "^1.7.17",
     "@popperjs/core": "^2.11.8",
     "clsx": "^2.0.0",
+    "emoji-picker-react": "^4.5.16",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "react-popper": "^2.3.0",
+    "sonner": "^1.4.2",
     "tailwind-merge": "^2.0.0"
   },
   "devDependencies": {

@@ -1,8 +1,9 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 // components
+import { useIssueDetail } from "@/hooks/store";
 import { LabelListItem } from "./label-list-item";
 // hooks
-import { useIssueDetail } from "hooks/store";
 // types
 import { TLabelOperations } from "./root";
 
@@ -14,7 +15,7 @@ type TLabelList = {
   disabled: boolean;
 };
 
-export const LabelList: FC<TLabelList> = (props) => {
+export const LabelList: FC<TLabelList> = observer((props) => {
   const { workspaceSlug, projectId, issueId, labelOperations, disabled } = props;
   // hooks
   const {
@@ -29,6 +30,7 @@ export const LabelList: FC<TLabelList> = (props) => {
     <>
       {issueLabels.map((labelId) => (
         <LabelListItem
+          key={labelId}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
@@ -39,4 +41,4 @@ export const LabelList: FC<TLabelList> = (props) => {
       ))}
     </>
   );
-};
+});

@@ -1,18 +1,18 @@
 import React from "react";
 
+import isEmpty from "lodash/isEmpty";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-import isEmpty from "lodash/isEmpty";
 // component
+import { AlertCircle } from "lucide-react";
 import { Button, TransferIcon } from "@plane/ui";
 // icon
-import { AlertCircle } from "lucide-react";
 // services
-import { CycleService } from "services/cycle.service";
+import { CYCLE_DETAILS } from "@/constants/fetch-keys";
+import { CycleService } from "@/services/cycle.service";
 // fetch-key
-import { CYCLE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   handleClick: () => void;

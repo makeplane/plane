@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
+// icons
 import { Plus } from "lucide-react";
-// store hooks
-import { useEventTracker, useGlobalView, useUser } from "hooks/store";
 // components
-import { CreateUpdateWorkspaceViewModal } from "components/workspace";
+import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
-import { GLOBAL_VIEW_OPENED } from "constants/event-tracker";
+import { GLOBAL_VIEW_OPENED } from "@/constants/event-tracker";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "@/constants/workspace";
+// store hooks
+import { useEventTracker, useGlobalView, useUser } from "@/hooks/store";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;
@@ -69,7 +70,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
         activeTabElement.scrollIntoView({ behavior: "smooth", inline: diff > 500 ? "center" : "nearest" });
       }
     }
-  }, [globalViewId, currentWorkspaceViews, containerRef]);
+  }, [globalViewId, currentWorkspaceViews, containerRef, captureEvent]);
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 

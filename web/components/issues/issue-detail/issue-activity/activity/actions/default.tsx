@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { LayersIcon } from "@plane/ui";
+import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
 // icons
-import { LayersIcon } from "@plane/ui";
 
 type TIssueDefaultActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 

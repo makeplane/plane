@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { AlertTriangle } from "lucide-react";
-// hooks
-import { useEventTracker, useProjectState } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-import { Button } from "@plane/ui";
-// types
+import { Dialog, Transition } from "@headlessui/react";
 import type { IState } from "@plane/types";
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { STATE_DELETED } from "constants/event-tracker";
+import { STATE_DELETED } from "@/constants/event-tracker";
+// hooks
+import { useEventTracker, useProjectState } from "@/hooks/store";
+// types
 
 type Props = {
   isOpen: boolean;
@@ -29,8 +28,6 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureProjectStateEvent } = useEventTracker();
   const { deleteState } = useProjectState();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -55,15 +52,15 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
       })
       .catch((err) => {
         if (err.status === 400)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "This state contains some issues within it, please move them to some other state to delete this state.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });

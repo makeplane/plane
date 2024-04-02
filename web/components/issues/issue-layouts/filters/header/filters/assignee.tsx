@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMember } from "hooks/store";
-// components
-import { FilterHeader, FilterOption } from "components/issues";
-// ui
 import { Avatar, Loader } from "@plane/ui";
+import { FilterHeader, FilterOption } from "@/components/issues";
+import { useMember } from "@/hooks/store";
+// components
+// ui
 
 type Props = {
   appliedFilters: string[] | null;
@@ -24,15 +25,23 @@ export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = memberIds?.filter((memberId) =>
-    getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const sortedOptions = useMemo(() => {
+    const filteredOptions = (memberIds || []).filter(
+      (memberId) => getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return sortBy(filteredOptions, [
+      (memberId) => !(appliedFilters ?? []).includes(memberId),
+      (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const handleViewToggle = () => {
-    if (!filteredOptions) return;
+    if (!sortedOptions) return;
 
-    if (itemsToRender === filteredOptions.length) setItemsToRender(5);
-    else setItemsToRender(filteredOptions.length);
+    if (itemsToRender === sortedOptions.length) setItemsToRender(5);
+    else setItemsToRender(sortedOptions.length);
   };
 
   return (
@@ -44,10 +53,10 @@ export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
       />
       {previewEnabled && (
         <div>
-          {filteredOptions ? (
-            filteredOptions.length > 0 ? (
+          {sortedOptions ? (
+            sortedOptions.length > 0 ? (
               <>
-                {filteredOptions.slice(0, itemsToRender).map((memberId) => {
+                {sortedOptions.slice(0, itemsToRender).map((memberId) => {
                   const member = getUserDetails(memberId);
 
                   if (!member) return null;
@@ -61,13 +70,13 @@ export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
                     />
                   );
                 })}
-                {filteredOptions.length > 5 && (
+                {sortedOptions.length > 5 && (
                   <button
                     type="button"
                     className="ml-8 text-xs font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
-                    {itemsToRender === filteredOptions.length ? "View less" : "View all"}
+                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
                   </button>
                 )}
               </>

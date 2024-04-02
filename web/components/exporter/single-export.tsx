@@ -1,10 +1,10 @@
 import { useState, FC } from "react";
 // ui
+import { IExportData } from "@plane/types";
 import { Button } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
 // types
-import { IExportData } from "@plane/types";
 
 type Props = {
   service: IExportData;
@@ -18,7 +18,8 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
 
   const checkExpiry = (inputDateString: string) => {
     const currentDate = new Date();
-    const expiryDate = new Date(inputDateString);
+    const expiryDate = getDate(inputDateString);
+    if (!expiryDate) return false;
     expiryDate.setDate(expiryDate.getDate() + 7);
     return expiryDate > currentDate;
   };
@@ -38,12 +39,12 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
               service.status === "completed"
                 ? "bg-green-500/20 text-green-500"
                 : service.status === "processing"
-                ? "bg-yellow-500/20 text-yellow-500"
-                : service.status === "failed"
-                ? "bg-red-500/20 text-red-500"
-                : service.status === "expired"
-                ? "bg-orange-500/20 text-orange-500"
-                : ""
+                  ? "bg-yellow-500/20 text-yellow-500"
+                  : service.status === "failed"
+                    ? "bg-red-500/20 text-red-500"
+                    : service.status === "expired"
+                      ? "bg-orange-500/20 text-orange-500"
+                      : ""
             }`}
           >
             {refreshing ? "Refreshing..." : service.status}

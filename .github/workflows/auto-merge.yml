@@ -1,0 +1,84 @@
+name: Auto Merge or Create PR on Push
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "sync/**"
+
+env:
+  CURRENT_BRANCH: ${{ github.ref_name }}
+  SOURCE_BRANCH: ${{ secrets.SYNC_SOURCE_BRANCH_NAME }} # The sync branch such as "sync/ce"
+  TARGET_BRANCH: ${{ secrets.SYNC_TARGET_BRANCH_NAME }} # The target branch that you would like to merge changes like develop
+  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }} # Personal access token required to modify contents and workflows
+  REVIEWER: ${{ secrets.SYNC_PR_REVIEWER }}
+
+jobs:
+  Check_Branch:
+    runs-on: ubuntu-latest
+    outputs:
+      BRANCH_MATCH: ${{ steps.check-branch.outputs.MATCH }}
+    steps:
+      - name: Check if current branch matches the secret
+        id: check-branch
+        run: |
+          if [ "$CURRENT_BRANCH" = "$SOURCE_BRANCH" ]; then
+            echo "MATCH=true" >> $GITHUB_OUTPUT
+          else
+            echo "MATCH=false" >> $GITHUB_OUTPUT
+          fi
+
+  Auto_Merge:
+    if: ${{ needs.Check_Branch.outputs.BRANCH_MATCH == 'true' }}
+    needs: [Check_Branch]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
+
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Setup GH CLI and Git Config
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+
+      - name: Check for merge conflicts
+        id: conflicts
+        run: |
+          git fetch origin $TARGET_BRANCH
+          git checkout $TARGET_BRANCH
+          # Attempt to merge the main branch into the current branch
+          if $(git merge --no-commit --no-ff $SOURCE_BRANCH); then
+            echo "No merge conflicts detected."
+            echo "HAS_CONFLICTS=false" >> $GITHUB_ENV
+          else
+            echo "Merge conflicts detected."
+            echo "HAS_CONFLICTS=true" >> $GITHUB_ENV
+            git merge --abort
+          fi
+
+      - name: Merge Change to Target Branch
+        if: env.HAS_CONFLICTS == 'false'
+        run: |
+          git commit -m "Merge branch '$SOURCE_BRANCH' into $TARGET_BRANCH"
+          git push origin $TARGET_BRANCH
+
+      - name: Create PR to Target Branch
+        if: env.HAS_CONFLICTS == 'true'
+        run: |
+          # Replace 'username' with the actual GitHub username of the reviewer.
+          PR_URL=$(gh pr create --base $TARGET_BRANCH --head $SOURCE_BRANCH --title "sync: merge conflicts need to be resolved" --body "" --reviewer $REVIEWER)
+          echo "Pull Request created: $PR_URL"

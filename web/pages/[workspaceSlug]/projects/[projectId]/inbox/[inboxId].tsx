@@ -1,18 +1,18 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react";
 // hooks
-import { useProject, useInboxIssues } from "hooks/store";
+import { PageHead } from "@/components/core";
+import { ProjectInboxHeader } from "@/components/headers";
+import { InboxSidebarRoot, InboxContentRoot } from "@/components/inbox";
+import { InboxLayoutLoader } from "@/components/ui";
+import { useProject, useInboxIssues } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { AppLayout } from "@/layouts/app-layout";
 // components
-import { InboxLayoutLoader } from "components/ui";
-import { PageHead } from "components/core";
-import { ProjectInboxHeader } from "components/headers";
-import { InboxSidebarRoot, InboxContentRoot } from "components/inbox";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const router = useRouter();

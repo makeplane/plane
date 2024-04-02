@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// hooks
-import { useLabel, useMember, useProjectState } from "hooks/store";
-// components
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
-// ui
-import { Button, Input, TextArea } from "@plane/ui";
-// types
 import { IProjectView, IIssueFilterOptions } from "@plane/types";
+// hooks
+import { Button, Input, TextArea } from "@plane/ui";
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { useLabel, useMember, useProjectState } from "@/hooks/store";
+// components
+// ui
+// types
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 type Props = {
   data?: IProjectView | null;
@@ -212,8 +212,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-            ? "Creating View..."
-            : "Create View"}
+              ? "Creating View..."
+              : "Create View"}
         </Button>
       </div>
     </form>

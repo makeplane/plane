@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useUser } from "hooks/store";
-// ui
 import { Button } from "@plane/ui";
+import { useUser } from "@/hooks/store";
+// ui
 
 type Props = {
   isOpen: boolean;
@@ -73,7 +73,7 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         {currentUser?.id === userDetails.id
                           ? "Leave workspace?"
-                          : `Remove ${userDetails.display_name}?`}
+                          : `Remove ${userDetails?.display_name}?`}
                       </Dialog.Title>
                       <div className="mt-2">
                         {currentUser?.id === userDetails.id ? (
@@ -84,7 +84,7 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                         ) : (
                           <p className="text-sm text-custom-text-200">
                             Are you sure you want to remove member-{" "}
-                            <span className="font-bold">{userDetails.display_name}</span>? They will no longer have
+                            <span className="font-bold">{userDetails?.display_name}</span>? They will no longer have
                             access to this workspace. This action cannot be undone.
                           </p>
                         )}
@@ -102,8 +102,8 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                         ? "Leaving"
                         : "Leave"
                       : isRemoving
-                      ? "Removing"
-                      : "Remove"}
+                        ? "Removing"
+                        : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

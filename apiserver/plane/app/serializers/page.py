@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .issue import IssueFlatSerializer, LabelLiteSerializer
+from .issue import LabelLiteSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
 from plane.db.models import (
@@ -12,8 +12,6 @@ from plane.db.models import (
     PageFavorite,
     PageLabel,
     Label,
-    Issue,
-    Module,
 )
 
 

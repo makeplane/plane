@@ -1,34 +1,36 @@
 # Python imports
 import json
+
 import requests
+
+# Third Party imports
+from celery import shared_task
 
 # Django imports
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
-# Third Party imports
-from celery import shared_task
-from sentry_sdk import capture_exception
+from plane.app.serializers import IssueActivitySerializer
+from plane.bgtasks.notification_task import notifications
 
 # Module imports
 from plane.db.models import (
-    User,
-    Issue,
-    Project,
-    Label,
-    IssueActivity,
-    State,
-    Cycle,
-    Module,
-    IssueReaction,
     CommentReaction,
+    Cycle,
+    Issue,
+    IssueActivity,
     IssueComment,
+    IssueReaction,
     IssueSubscriber,
+    Label,
+    Module,
+    Project,
+    State,
+    User,
 )
-from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
 from plane.settings.redis import redis_instance
+from plane.utils.exception_logger import log_exception
 
 
 # Track Changes in name
@@ -53,7 +55,7 @@ def track_name(
                 field="name",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated the name to",
+                comment="updated the name to",
                 epoch=epoch,
             )
         )
@@ -96,7 +98,7 @@ def track_description(
                     field="description",
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    comment=f"updated the description to",
+                    comment="updated the description to",
                     epoch=epoch,
                 )
             )
@@ -130,22 +132,26 @@ def track_parent(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=f"{old_parent.project.identifier}-{old_parent.sequence_id}"
-                if old_parent is not None
-                else "",
-                new_value=f"{new_parent.project.identifier}-{new_parent.sequence_id}"
-                if new_parent is not None
-                else "",
+                old_value=(
+                    f"{old_parent.project.identifier}-{old_parent.sequence_id}"
+                    if old_parent is not None
+                    else ""
+                ),
+                new_value=(
+                    f"{new_parent.project.identifier}-{new_parent.sequence_id}"
+                    if new_parent is not None
+                    else ""
+                ),
                 field="parent",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated the parent issue to",
-                old_identifier=old_parent.id
-                if old_parent is not None
-                else None,
-                new_identifier=new_parent.id
-                if new_parent is not None
-                else None,
+                comment="updated the parent issue to",
+                old_identifier=(
+                    old_parent.id if old_parent is not None else None
+                ),
+                new_identifier=(
+                    new_parent.id if new_parent is not None else None
+                ),
                 epoch=epoch,
             )
         )
@@ -173,7 +179,7 @@ def track_priority(
                 field="priority",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated the priority to",
+                comment="updated the priority to",
                 epoch=epoch,
             )
         )
@@ -206,7 +212,7 @@ def track_state(
                 field="state",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated the state to",
+                comment="updated the state to",
                 old_identifier=old_state.id,
                 new_identifier=new_state.id,
                 epoch=epoch,
@@ -233,16 +239,20 @@ def track_target_date(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=current_instance.get("target_date")
-                if current_instance.get("target_date") is not None
-                else "",
-                new_value=requested_data.get("target_date")
-                if requested_data.get("target_date") is not None
-                else "",
+                old_value=(
+                    current_instance.get("target_date")
+                    if current_instance.get("target_date") is not None
+                    else ""
+                ),
+                new_value=(
+                    requested_data.get("target_date")
+                    if requested_data.get("target_date") is not None
+                    else ""
+                ),
                 field="target_date",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated the target date to",
+                comment="updated the target date to",
                 epoch=epoch,
             )
         )
@@ -265,16 +275,20 @@ def track_start_date(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=current_instance.get("start_date")
-                if current_instance.get("start_date") is not None
-                else "",
-                new_value=requested_data.get("start_date")
-                if requested_data.get("start_date") is not None
-                else "",
+                old_value=(
+                    current_instance.get("start_date")
+                    if current_instance.get("start_date") is not None
+                    else ""
+                ),
+                new_value=(
+                    requested_data.get("start_date")
+                    if requested_data.get("start_date") is not None
+                    else ""
+                ),
                 field="start_date",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated the start date to ",
+                comment="updated the start date to ",
                 epoch=epoch,
             )
         )
@@ -334,7 +348,7 @@ def track_labels(
                 field="labels",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"removed label ",
+                comment="removed label ",
                 old_identifier=label.id,
                 new_identifier=None,
                 epoch=epoch,
@@ -364,7 +378,6 @@ def track_assignees(
         else set()
     )
 
-
     added_assignees = requested_assignees - current_assignees
     dropped_assginees = current_assignees - requested_assignees
 
@@ -381,7 +394,7 @@ def track_assignees(
                 field="assignees",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"added assignee ",
+                comment="added assignee ",
                 new_identifier=assignee.id,
                 epoch=epoch,
             )
@@ -414,7 +427,7 @@ def track_assignees(
                 field="assignees",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"removed assignee ",
+                comment="removed assignee ",
                 old_identifier=assignee.id,
                 epoch=epoch,
             )
@@ -439,16 +452,20 @@ def track_estimate_points(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=current_instance.get("estimate_point")
-                if current_instance.get("estimate_point") is not None
-                else "",
-                new_value=requested_data.get("estimate_point")
-                if requested_data.get("estimate_point") is not None
-                else "",
+                old_value=(
+                    current_instance.get("estimate_point")
+                    if current_instance.get("estimate_point") is not None
+                    else ""
+                ),
+                new_value=(
+                    requested_data.get("estimate_point")
+                    if requested_data.get("estimate_point") is not None
+                    else ""
+                ),
                 field="estimate_point",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated the estimate point to ",
+                comment="updated the estimate point to ",
                 epoch=epoch,
             )
         )
@@ -529,7 +546,7 @@ def track_closed_to(
                 field="state",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"Plane updated the state to ",
+                comment="Plane updated the state to ",
                 old_identifier=None,
                 new_identifier=updated_state.id,
                 epoch=epoch,
@@ -552,7 +569,7 @@ def create_issue_activity(
             issue_id=issue_id,
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"created the issue",
+            comment="created the issue",
             verb="created",
             actor_id=actor_id,
             epoch=epoch,
@@ -635,7 +652,7 @@ def delete_issue_activity(
         IssueActivity(
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"deleted the issue",
+            comment="deleted the issue",
             verb="deleted",
             actor_id=actor_id,
             field="issue",
@@ -666,7 +683,7 @@ def create_comment_activity(
             issue_id=issue_id,
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"created a comment",
+            comment="created a comment",
             verb="created",
             actor_id=actor_id,
             field="comment",
@@ -703,7 +720,7 @@ def update_comment_activity(
                 issue_id=issue_id,
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated a comment",
+                comment="updated a comment",
                 verb="updated",
                 actor_id=actor_id,
                 field="comment",
@@ -732,7 +749,7 @@ def delete_comment_activity(
             issue_id=issue_id,
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"deleted the comment",
+            comment="deleted the comment",
             verb="deleted",
             actor_id=actor_id,
             field="comment",
@@ -932,7 +949,11 @@ def delete_module_issue_activity(
             project_id=project_id,
             workspace_id=workspace_id,
             comment=f"removed this issue from {module_name}",
-            old_identifier=requested_data.get("module_id") if requested_data.get("module_id") is not None else None,
+            old_identifier=(
+                requested_data.get("module_id")
+                if requested_data.get("module_id") is not None
+                else None
+            ),
             epoch=epoch,
         )
     )
@@ -960,7 +981,7 @@ def create_link_activity(
             issue_id=issue_id,
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"created a link",
+            comment="created a link",
             verb="created",
             actor_id=actor_id,
             field="link",
@@ -994,7 +1015,7 @@ def update_link_activity(
                 issue_id=issue_id,
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated a link",
+                comment="updated a link",
                 verb="updated",
                 actor_id=actor_id,
                 field="link",
@@ -1026,7 +1047,7 @@ def delete_link_activity(
             issue_id=issue_id,
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"deleted the link",
+            comment="deleted the link",
             verb="deleted",
             actor_id=actor_id,
             field="link",
@@ -1059,7 +1080,7 @@ def create_attachment_activity(
             issue_id=issue_id,
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"created an attachment",
+            comment="created an attachment",
             verb="created",
             actor_id=actor_id,
             field="attachment",
@@ -1085,7 +1106,7 @@ def delete_attachment_activity(
             issue_id=issue_id,
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"deleted the attachment",
+            comment="deleted the attachment",
             verb="deleted",
             actor_id=actor_id,
             field="attachment",
@@ -1362,12 +1383,15 @@ def create_issue_relation_activity(
                     verb="created",
                     old_value="",
                     new_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                    field="blocking"
-                    if requested_data.get("relation_type") == "blocked_by"
-                    else (
-                        "blocked_by"
-                        if requested_data.get("relation_type") == "blocking"
-                        else requested_data.get("relation_type")
+                    field=(
+                        "blocking"
+                        if requested_data.get("relation_type") == "blocked_by"
+                        else (
+                            "blocked_by"
+                            if requested_data.get("relation_type")
+                            == "blocking"
+                            else requested_data.get("relation_type")
+                        )
                     ),
                     project_id=project_id,
                     workspace_id=workspace_id,
@@ -1418,12 +1442,14 @@ def delete_issue_relation_activity(
             verb="deleted",
             old_value=f"{issue.project.identifier}-{issue.sequence_id}",
             new_value="",
-            field="blocking"
-            if requested_data.get("relation_type") == "blocked_by"
-            else (
-                "blocked_by"
-                if requested_data.get("relation_type") == "blocking"
-                else requested_data.get("relation_type")
+            field=(
+                "blocking"
+                if requested_data.get("relation_type") == "blocked_by"
+                else (
+                    "blocked_by"
+                    if requested_data.get("relation_type") == "blocking"
+                    else requested_data.get("relation_type")
+                )
             ),
             project_id=project_id,
             workspace_id=workspace_id,
@@ -1449,7 +1475,7 @@ def create_draft_issue_activity(
             issue_id=issue_id,
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"drafted the issue",
+            comment="drafted the issue",
             field="draft",
             verb="created",
             actor_id=actor_id,
@@ -1476,14 +1502,14 @@ def update_draft_issue_activity(
     )
     if (
         requested_data.get("is_draft") is not None
-        and requested_data.get("is_draft") == False
+        and requested_data.get("is_draft") is False
     ):
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"created the issue",
+                comment="created the issue",
                 verb="updated",
                 actor_id=actor_id,
                 epoch=epoch,
@@ -1495,7 +1521,7 @@ def update_draft_issue_activity(
                 issue_id=issue_id,
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated the draft issue",
+                comment="updated the draft issue",
                 field="draft",
                 verb="updated",
                 actor_id=actor_id,
@@ -1518,7 +1544,7 @@ def delete_draft_issue_activity(
         IssueActivity(
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"deleted the draft issue",
+            comment="deleted the draft issue",
             field="draft",
             verb="deleted",
             actor_id=actor_id,
@@ -1557,7 +1583,7 @@ def issue_activity(
                 try:
                     issue.updated_at = timezone.now()
                     issue.save(update_fields=["updated_at"])
-                except Exception as e:
+                except Exception:
                     pass
 
         ACTIVITY_MAPPER = {
@@ -1623,7 +1649,7 @@ def issue_activity(
                             headers=headers,
                         )
             except Exception as e:
-                capture_exception(e)
+                log_exception(e)
 
         if notification:
             notifications.delay(
@@ -1644,8 +1670,5 @@ def issue_activity(
 
         return
     except Exception as e:
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
+        log_exception(e)
         return

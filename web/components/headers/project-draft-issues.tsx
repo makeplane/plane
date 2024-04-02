@@ -1,18 +1,19 @@
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useIssues, useLabel, useMember, useProject, useProjectState } from "hooks/store";
-// components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
-// ui
-import { Breadcrumbs, LayersIcon } from "@plane/ui";
-// helper
-import { renderEmoji } from "helpers/emoji.helper";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { useRouter } from "next/router";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+// hooks
+// components
+import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
+import { BreadcrumbLink } from "@/components/common";
+
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+// ui
+// helper
+import { ProjectLogo } from "@/components/project";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
   // router
@@ -28,7 +29,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
-
+  const { isMobile } = usePlatformOS();
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleFiltersUpdate = useCallback(
@@ -37,8 +38,10 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -73,11 +76,17 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
     },
     [workspaceSlug, projectId, updateFilters]
   );
+
+  const issueCount = currentProjectDetails
+    ? issueFilters?.displayFilters?.sub_issue
+      ? currentProjectDetails.draft_issues + currentProjectDetails.draft_sub_issues
+      : currentProjectDetails.draft_issues
+    : undefined;
+
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <SidebarHamburgerToggle />
-        <div>
+        <div className="flex items-center gap-2.5">
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
@@ -86,13 +95,9 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
                   href={`/${workspaceSlug}/projects`}
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
-                    currentProjectDetails?.emoji ? (
-                      renderEmoji(currentProjectDetails.emoji)
-                    ) : currentProjectDetails?.icon_prop ? (
-                      renderEmoji(currentProjectDetails.icon_prop)
-                    ) : (
-                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                        {currentProjectDetails?.name.charAt(0)}
+                    currentProjectDetails && (
+                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                       </span>
                     )
                   }
@@ -107,6 +112,17 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
               }
             />
           </Breadcrumbs>
+          {issueCount && issueCount > 0 ? (
+            <Tooltip
+              isMobile={isMobile}
+              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in project's draft`}
+              position="bottom"
+            >
+              <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                {issueCount}
+              </span>
+            </Tooltip>
+          ) : null}
         </div>
 
         <div className="ml-auto flex items-center gap-2">

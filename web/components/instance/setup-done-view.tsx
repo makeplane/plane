@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication } from "hooks/store";
-// ui
-import { Button } from "@plane/ui";
 import { UserCog2 } from "lucide-react";
+import { Button } from "@plane/ui";
+import { useApplication } from "@/hooks/store";
+// ui
 // images
 import instanceSetupDone from "public/instance-setup-done.webp";
 import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";

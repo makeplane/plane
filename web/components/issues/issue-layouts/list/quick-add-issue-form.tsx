@@ -1,19 +1,20 @@
-import { FC, useEffect, useState, useRef, use } from "react";
+import { FC, useEffect, useState, useRef } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
-import { observer } from "mobx-react-lite";
-// hooks
-import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// constants
 import { TIssue, IProject } from "@plane/types";
+// hooks
+import { setPromiseToast } from "@plane/ui";
+import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { createIssuePayload } from "@/helpers/issue.helper";
+import { useEventTracker, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// ui
 // types
-import { createIssuePayload } from "helpers/issue.helper";
+// helper
 // constants
-import { ISSUE_CREATED } from "constants/event-tracker";
 
 interface IInputProps {
   formKey: string;
@@ -77,7 +78,6 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
 
   useKeypress("Escape", handleClose);
   useOutsideClickDetector(ref, handleClose);
-  const { setToastAlert } = useToast();
 
   const {
     reset,
@@ -101,31 +101,35 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
       ...formData,
     });
 
-    try {
-      quickAddCallback &&
-        (await quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId).then((res) => {
+    if (quickAddCallback) {
+      const quickAddPromise = quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId);
+      setPromiseToast<any>(quickAddPromise, {
+        loading: "Adding issue...",
+        success: {
+          title: "Success!",
+          message: () => "Issue created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: (err) => err?.message || "Some error occurred. Please try again.",
+        },
+      });
+
+      await quickAddPromise
+        .then((res) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "List quick add" },
             path: router.asPath,
           });
-        }));
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Issue created successfully.",
-      });
-    } catch (err: any) {
-      captureIssueEvent({
-        eventName: ISSUE_CREATED,
-        payload: { ...payload, state: "FAILED", element: "List quick add" },
-        path: router.asPath,
-      });
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: err?.message || "Some error occurred. Please try again.",
-      });
+        })
+        .catch(() => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...payload, state: "FAILED", element: "List quick add" },
+            path: router.asPath,
+          });
+        });
     }
   };
 

@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor-extensions",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "Package that powers Plane's Editor with extensions",
   "private": true,
   "main": "./dist/index.mjs",
@@ -33,7 +33,6 @@
     "@tiptap/pm": "^2.1.13",
     "@tiptap/react": "^2.1.13",
     "@tiptap/suggestion": "^2.1.13",
-    "eslint-config-next": "13.2.4",
     "lucide-react": "^0.294.0",
     "tippy.js": "^6.3.7"
   },
@@ -41,7 +40,7 @@
     "@types/node": "18.15.3",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
-    "eslint": "8.36.0",
+    "eslint-config-custom": "*",
     "postcss": "^8.4.29",
     "tailwind-config-custom": "*",
     "tsconfig": "*",

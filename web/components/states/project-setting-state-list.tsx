@@ -1,20 +1,20 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react-lite";
 // hooks
-import { useEventTracker, useProjectState } from "hooks/store";
-// components
-import { CreateUpdateStateInline, DeleteStateModal, StateGroup, StatesListItem } from "components/states";
-// ui
-import { Loader } from "@plane/ui";
-// icons
 import { Plus } from "lucide-react";
+import { Loader } from "@plane/ui";
+import { CreateUpdateStateInline, DeleteStateModal, StateGroup, StatesListItem } from "@/components/states";
+import { STATES_LIST } from "@/constants/fetch-keys";
+import { sortByField } from "@/helpers/array.helper";
+import { orderStateGroups } from "@/helpers/state.helper";
+import { useEventTracker, useProjectState } from "@/hooks/store";
+// components
+// ui
+// icons
 // helpers
-import { orderStateGroups } from "helpers/state.helper";
-import { sortByField } from "helpers/array.helper";
 // fetch-keys
-import { STATES_LIST } from "constants/fetch-keys";
 
 export const ProjectSettingStateList: React.FC = observer(() => {
   // router

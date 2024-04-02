@@ -95,14 +95,19 @@ class ProjectLiteSerializer(BaseSerializer):
             "identifier",
             "name",
             "cover_image",
-            "icon_prop",
-            "emoji",
+            "logo_props",
             "description",
         ]
         read_only_fields = fields
 
 
 class ProjectListSerializer(DynamicBaseSerializer):
+    total_issues = serializers.IntegerField(read_only=True)
+    archived_issues = serializers.IntegerField(read_only=True)
+    archived_sub_issues = serializers.IntegerField(read_only=True)
+    draft_issues = serializers.IntegerField(read_only=True)
+    draft_sub_issues = serializers.IntegerField(read_only=True)
+    sub_issues = serializers.IntegerField(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)

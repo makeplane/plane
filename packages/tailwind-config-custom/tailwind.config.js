@@ -198,6 +198,31 @@ module.exports = {
             300: convertToRGB("--color-onboarding-border-300"),
           },
         },
+        toast: {
+          text: {
+            success: convertToRGB("--color-toast-success-text"),
+            error: convertToRGB("--color-toast-error-text"),
+            warning: convertToRGB("--color-toast-warning-text"),
+            info: convertToRGB("--color-toast-info-text"),
+            loading: convertToRGB("--color-toast-loading-text"),
+            secondary: convertToRGB("--color-toast-secondary-text"),
+            tertiary: convertToRGB("--color-toast-tertiary-text"),
+          },
+          background: {
+            success: convertToRGB("--color-toast-success-background"),
+            error: convertToRGB("--color-toast-error-background"),
+            warning: convertToRGB("--color-toast-warning-background"),
+            info: convertToRGB("--color-toast-info-background"),
+            loading: convertToRGB("--color-toast-loading-background"),
+          },
+          border: {
+            success: convertToRGB("--color-toast-success-border"),
+            error: convertToRGB("--color-toast-error-border"),
+            warning: convertToRGB("--color-toast-warning-border"),
+            info: convertToRGB("--color-toast-info-border"),
+            loading: convertToRGB("--color-toast-loading-border"),
+          },
+        },
       },
       keyframes: {
         leftToaster: {

@@ -1,16 +1,16 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { CalendarCheck2 } from "lucide-react";
-// hooks
-import { useProjectState } from "hooks/store";
-// components
-import { DateDropdown } from "components/dropdowns";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
-import { cn } from "helpers/common.helper";
-// types
 import { TIssue } from "@plane/types";
+// hooks
+// components
+import { DateDropdown } from "@/components/dropdowns";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { useProjectState } from "@/hooks/store";
+// types
 
 type Props = {
   issue: TIssue;
@@ -30,7 +30,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <DateDropdown
         value={issue.target_date}
-        minDate={issue.start_date ? new Date(issue.start_date) : undefined}
+        minDate={getDate(issue.start_date)}
         onChange={(data) => {
           const targetDate = data ? renderFormattedPayloadDate(data) : null;
           onChange(

@@ -1,18 +1,18 @@
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-// hooks
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 import debounce from "lodash/debounce";
-// components
-import { Loader, TextArea } from "@plane/ui";
+import { observer } from "mobx-react";
+import { Controller, useForm } from "react-hook-form";
 import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
-// types
 import { TIssue } from "@plane/types";
+// hooks
+import { Loader, TextArea } from "@plane/ui";
+import { useMention, useWorkspace } from "@/hooks/store";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+// components
+// types
+import { FileService } from "@/services/file.service";
 import { TIssueOperations } from "./issue-detail";
 // services
-import { FileService } from "services/file.service";
-import { useMention, useWorkspace } from "hooks/store";
-import { observer } from "mobx-react";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -71,16 +71,10 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
     async (formData: Partial<TIssue>) => {
       if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
 
-      await issueOperations.update(
-        workspaceSlug,
-        projectId,
-        issueId,
-        {
-          name: formData.name ?? "",
-          description_html: formData.description_html ?? "<p></p>",
-        },
-        false
-      );
+      await issueOperations.update(workspaceSlug, projectId, issueId, {
+        name: formData.name ?? "",
+        description_html: formData.description_html ?? "<p></p>",
+      });
     },
     [workspaceSlug, projectId, issueId, issueOperations]
   );
@@ -142,7 +136,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
                   debouncedFormSave();
                 }}
                 required
-                className="min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
+                className="block min-h-min w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
                 hasError={Boolean(errors?.name)}
                 role="textbox"
               />
@@ -179,7 +173,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
                   setIsSubmitting={setIsSubmitting}
                   dragDropEnabled
                   customClassName="min-h-[150px] shadow-sm"
-                  onChange={(description: Object, description_html: string) => {
+                  onChange={(description: any, description_html: string) => {
                     setShowAlert(true);
                     setIsSubmitting("submitting");
                     onChange(description_html);

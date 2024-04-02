@@ -1,14 +1,14 @@
+import concat from "lodash/concat";
+import pull from "lodash/pull";
+import set from "lodash/set";
+import uniq from "lodash/uniq";
+import update from "lodash/update";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import set from "lodash/set";
-import update from "lodash/update";
-import concat from "lodash/concat";
-import uniq from "lodash/uniq";
-import pull from "lodash/pull";
 // services
-import { InboxIssueService } from "services/inbox/inbox-issue.service";
+import { InboxIssueService } from "@/services/inbox/inbox-issue.service";
 // types
-import { RootStore } from "store/root.store";
+import { RootStore } from "@/store/root.store";
 import type {
   TInboxIssueDetailIdMap,
   TInboxIssueDetailMap,

@@ -1,22 +1,23 @@
 import React from "react";
 import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } from "lucide-react";
-// components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-// ui
-import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
-// hooks
-import { useEventTracker } from "hooks/store";
-// helpers
-import { getNumberCount } from "helpers/string.helper";
-// type
 import type { NotificationType, NotificationCount } from "@plane/types";
-// constants
+// components
+import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+// ui
+// hooks
 import {
   ARCHIVED_NOTIFICATIONS,
   NOTIFICATIONS_READ,
   SNOOZED_NOTIFICATIONS,
   UNREAD_NOTIFICATIONS,
-} from "constants/event-tracker";
+} from "@/constants/event-tracker";
+import { getNumberCount } from "@/helpers/string.helper";
+import { useEventTracker } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// helpers
+// type
+// constants
 
 type NotificationHeaderProps = {
   notificationCount?: NotificationCount | null;
@@ -52,6 +53,8 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
   } = props;
   // store hooks
   const { captureEvent } = useEventTracker();
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   const notificationTabs: Array<{
     label: string;
@@ -84,7 +87,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
         </div>
 
         <div className="flex items-center justify-center gap-x-4 text-custom-text-200">
-          <Tooltip tooltipContent="Refresh">
+          <Tooltip tooltipContent="Refresh" isMobile={isMobile}>
             <button
               type="button"
               onClick={() => {
@@ -94,7 +97,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
             </button>
           </Tooltip>
-          <Tooltip tooltipContent="Unread notifications">
+          <Tooltip tooltipContent="Unread notifications" isMobile={isMobile}>
             <button
               type="button"
               onClick={() => {
@@ -154,7 +157,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
             </CustomMenu.MenuItem>
           </CustomMenu>
           <div className="hidden md:block">
-            <Tooltip tooltipContent="Close">
+            <Tooltip tooltipContent="Close" isMobile={isMobile}>
               <button type="button" onClick={() => closePopover()}>
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -178,8 +181,8 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 {snoozed
                   ? "Snoozed Notifications"
                   : readNotification
-                  ? "Unread Notifications"
-                  : "Archived Notifications"}
+                    ? "Unread Notifications"
+                    : "Archived Notifications"}
               </span>
             </h4>
           </button>

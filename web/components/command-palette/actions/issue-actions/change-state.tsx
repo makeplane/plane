@@ -1,15 +1,15 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useProjectState, useIssues } from "hooks/store";
-// ui
-import { Spinner, StateGroupIcon } from "@plane/ui";
-// icons
 import { Check } from "lucide-react";
-// types
 import { TIssue } from "@plane/types";
-import { EIssuesStoreType } from "constants/issue";
+import { Spinner, StateGroupIcon } from "@plane/ui";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useProjectState, useIssues } from "@/hooks/store";
+// ui
+// icons
+// types
 
 type Props = {
   closePalette: () => void;

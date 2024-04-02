@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
+import { UserCircle2 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // hooks
-import { useApplication, useWorkspace } from "hooks/store";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { MAX_FILE_SIZE } from "@/constants/common";
+import { useApplication, useWorkspace } from "@/hooks/store";
 // services
-import { FileService } from "services/file.service";
-// hooks
-import useToast from "hooks/use-toast";
+import { FileService } from "@/services/file.service";
 // ui
-import { Button } from "@plane/ui";
 // icons
-import { UserCircle2 } from "lucide-react";
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
 
 type Props = {
   handleRemove?: () => void;
@@ -36,8 +34,6 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
 
   const {
     config: { envConfig },
@@ -83,8 +79,8 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
         if (value && currentWorkspace) fileService.deleteFile(currentWorkspace.id, value);
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

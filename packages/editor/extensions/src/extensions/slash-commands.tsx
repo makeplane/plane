@@ -85,7 +85,10 @@ const getSuggestionItems =
         searchTerms: ["p", "paragraph"],
         icon: <CaseSensitive className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").run();
+          if (range) {
+            editor.chain().focus().deleteRange(range).clearNodes().run();
+          }
+          editor.chain().focus().clearNodes().run();
         },
       },
       {
@@ -327,7 +330,7 @@ const renderItems = () => {
       // @ts-ignore
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.querySelector("#editor-container"),
+        appendTo: () => document.querySelector(".active-editor") ?? document.querySelector("#editor-container"),
         content: component.element,
         showOnCreate: true,
         interactive: true,

@@ -1,32 +1,32 @@
 import { useEffect, useState, ReactElement } from "react";
-import Image from "next/image";
-import { useTheme } from "next-themes";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
+import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
-import { Controller, useForm } from "react-hook-form";
-// hooks
-import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-import useUserAuth from "hooks/use-user-auth";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// layouts
-import DefaultLayout from "layouts/default-layout";
-import { UserAuthWrapper } from "layouts/auth-layout";
-// components
-import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "components/onboarding";
-import { PageHead } from "components/core";
-// ui
-import { Avatar, Spinner } from "@plane/ui";
-// images
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-// types
 import { IUser, TOnboardingSteps } from "@plane/types";
-import { NextPageWithLayout } from "lib/types";
+// hooks
+import { Avatar, Spinner } from "@plane/ui";
+import { PageHead } from "@/components/core";
+import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "@/components/onboarding";
+import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
+import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+import useUserAuth from "@/hooks/use-user-auth";
+// services
+import { UserAuthWrapper } from "@/layouts/auth-layout";
+import DefaultLayout from "@/layouts/default-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { WorkspaceService } from "@/services/workspace.service";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+// layouts
+// components
+// ui
+// images
+// types
 // constants
-import { USER_ONBOARDING_COMPLETED } from "constants/event-tracker";
 
 // services
 const workspaceService = new WorkspaceService();
@@ -166,8 +166,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
-                              ? value
-                              : currentUser?.email
+                                ? value
+                                : currentUser?.email
                           }
                           src={currentUser?.avatar}
                           size={35}
@@ -182,8 +182,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             {currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
-                              ? value
-                              : null}
+                                ? value
+                                : null}
                           </p>
                         )}
 

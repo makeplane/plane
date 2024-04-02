@@ -1,24 +1,35 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-// hooks
-import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import EmojiIconPicker from "components/emoji-icon-picker";
-import { ImagePickerPopover } from "components/core";
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // icons
-import { Lock } from "lucide-react";
-// types
+import { Info, Lock } from "lucide-react";
 import { IProject, IWorkspace } from "@plane/types";
-// helpers
-import { renderEmoji } from "helpers/emoji.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
+// ui
+import {
+  Button,
+  CustomSelect,
+  Input,
+  TextArea,
+  TOAST_TYPE,
+  setToast,
+  CustomEmojiIconPicker,
+  EmojiIconPickerTypes,
+  Tooltip,
+} from "@plane/ui";
+// components
+import { ImagePickerPopover } from "@/components/core";
 // constants
-import { NETWORK_CHOICES } from "constants/project";
+import { PROJECT_UPDATED } from "@/constants/event-tracker";
+import { NETWORK_CHOICES } from "@/constants/project";
+// helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
+import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { useEventTracker, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { ProjectService } from "services/project";
-import { PROJECT_UPDATED } from "constants/event-tracker";
+import { ProjectService } from "@/services/project";
+// types
+import { ProjectLogo } from "./project-logo";
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
@@ -33,8 +44,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   // store hooks
   const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
-  // toast alert
-  const { setToastAlert } = useToast();
+  const { isMobile } = usePlatformOS();
   // form info
   const {
     handleSubmit,
@@ -48,7 +58,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   } = useForm<IProject>({
     defaultValues: {
       ...project,
-      emoji_and_icon: project.emoji ?? project.icon_prop,
       workspace: (project.workspace as IWorkspace).id,
     },
   });
@@ -57,7 +66,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     if (project && projectId !== getValues("id")) {
       reset({
         ...project,
-        emoji_and_icon: project.emoji ?? project.icon_prop,
         workspace: (project.workspace as IWorkspace).id,
       });
     }
@@ -84,8 +92,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             element: "Project general settings",
           },
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Project updated successfully",
         });
@@ -95,8 +103,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           eventName: PROJECT_UPDATED,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Project could not be updated. Please try again.",
         });
@@ -111,14 +119,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       identifier: formData.identifier,
       description: formData.description,
       cover_image: formData.cover_image,
+      logo_props: formData.logo_props,
     };
-    if (typeof formData.emoji_and_icon === "object") {
-      payload.emoji = null;
-      payload.icon_prop = formData.emoji_and_icon;
-    } else {
-      payload.emoji = formData.emoji_and_icon;
-      payload.icon_prop = null;
-    }
+
     if (project.identifier !== formData.identifier)
       await projectService
         .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
@@ -141,20 +144,39 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
             <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90">
-              <div className="grid h-7 w-7 place-items-center">
-                <Controller
-                  control={control}
-                  name="emoji_and_icon"
-                  render={({ field: { value, onChange } }) => (
-                    <EmojiIconPicker
-                      label={value ? renderEmoji(value) : "Icon"}
-                      value={value}
-                      onChange={onChange}
-                      disabled={!isAdmin}
-                    />
-                  )}
-                />
-              </div>
+              <Controller
+                control={control}
+                name="logo_props"
+                render={({ field: { value, onChange } }) => (
+                  <CustomEmojiIconPicker
+                    label={
+                      <span className="grid h-7 w-7 place-items-center">
+                        <ProjectLogo logo={value} className="text-lg" />
+                      </span>
+                    }
+                    onChange={(val) => {
+                      let logoValue = {};
+
+                      if (val.type === "emoji")
+                        logoValue = {
+                          value: convertHexEmojiToDecimal(val.value.unified),
+                          url: val.value.imageUrl,
+                        };
+                      else if (val.type === "icon") logoValue = val.value;
+
+                      onChange({
+                        in_use: val.type,
+                        [val.type]: logoValue,
+                      });
+                    }}
+                    defaultIconColor={value?.in_use && value.in_use === "icon" ? value?.icon?.color : undefined}
+                    defaultOpen={
+                      value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
+                    }
+                    disabled={!isAdmin}
+                  />
+                )}
+              />
             </div>
             <div className="flex flex-col gap-1 truncate text-white">
               <span className="truncate text-lg font-semibold">{watch("name")}</span>
@@ -210,6 +232,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               />
             )}
           />
+          <span className="text-xs text-red-500">
+            <>{errors?.name?.message}</>
+          </span>
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Description</h4>
@@ -230,39 +255,54 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             )}
           />
         </div>
-        <div className="flex w-full items-center justify-between gap-10">
+        <div className="flex w-full justify-between gap-10">
           <div className="flex w-1/2 flex-col gap-1">
-            <h4 className="text-sm">Identifier</h4>
-            <Controller
-              control={control}
-              name="identifier"
-              rules={{
-                required: "Identifier is required",
-                validate: (value) => /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
-                minLength: {
-                  value: 1,
-                  message: "Identifier must at least be of 1 character",
-                },
-                maxLength: {
-                  value: 12,
-                  message: "Identifier must at most be of 5 characters",
-                },
-              }}
-              render={({ field: { value, ref } }) => (
-                <Input
-                  id="identifier"
-                  name="identifier"
-                  type="text"
-                  value={value}
-                  onChange={handleIdentifierChange}
-                  ref={ref}
-                  hasError={Boolean(errors.identifier)}
-                  placeholder="Enter identifier"
-                  className="w-full font-medium"
-                  disabled={!isAdmin}
-                />
-              )}
-            />
+            <h4 className="text-sm">Project ID</h4>
+            <div className="relative">
+              <Controller
+                control={control}
+                name="identifier"
+                rules={{
+                  required: "Project ID is required",
+                  validate: (value) =>
+                    /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) ||
+                    "Only Alphanumeric & Non-latin characters are allowed.",
+                  minLength: {
+                    value: 1,
+                    message: "Project ID must at least be of 1 character",
+                  },
+                  maxLength: {
+                    value: 5,
+                    message: "Project ID must at most be of 5 characters",
+                  },
+                }}
+                render={({ field: { value, ref } }) => (
+                  <Input
+                    id="identifier"
+                    name="identifier"
+                    type="text"
+                    value={value}
+                    onChange={handleIdentifierChange}
+                    ref={ref}
+                    hasError={Boolean(errors.identifier)}
+                    placeholder="Enter Project ID"
+                    className="w-full font-medium"
+                    disabled={!isAdmin}
+                  />
+                )}
+              />
+              <Tooltip
+                isMobile={isMobile}
+                tooltipContent="Helps you identify issues in the project uniquely, (e.g. APP-123). Max 5 characters."
+                className="text-sm"
+                position="right-top"
+              >
+                <Info className="absolute right-2 top-2.5 h-4 w-4 text-custom-text-400" />
+              </Tooltip>
+            </div>
+            <span className="text-xs text-red-500">
+              <>{errors?.identifier?.message}</>
+            </span>
           </div>
           <div className="flex w-1/2 flex-col gap-1">
             <h4 className="text-sm">Network</h4>

@@ -1,5 +1,6 @@
 // services
-import { APIService } from "services/api.service";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "@/services/api.service";
 // types
 import type {
   TIssue,
@@ -9,11 +10,9 @@ import type {
   IUserProfileData,
   IUserProfileProjectSegregation,
   IUserSettings,
-  IUserWorkspaceDashboard,
   IUserEmailNotificationSettings,
 } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "helpers/common.helper";
 
 export class UserService extends APIService {
   constructor() {
@@ -113,20 +112,8 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserActivity(): Promise<IUserActivityResponse> {
-    return this.get(`/api/users/me/activities/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async userWorkspaceDashboard(workspaceSlug: string, month: number): Promise<IUserWorkspaceDashboard> {
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/dashboard/`, {
-      params: {
-        month: month,
-      },
-    })
+  async getUserActivity(params: { per_page: number; cursor?: string }): Promise<IUserActivityResponse> {
+    return this.get("/api/users/me/activities/", { params })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -160,8 +147,31 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserProfileActivity(workspaceSlug: string, userId: string): Promise<IUserActivityResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/?per_page=15`)
+  async getUserProfileActivity(
+    workspaceSlug: string,
+    userId: string,
+    params: {
+      per_page: number;
+      cursor?: string;
+    }
+  ): Promise<IUserActivityResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/`, {
+      params,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async downloadProfileActivity(
+    workspaceSlug: string,
+    userId: string,
+    data: {
+      date: string;
+    }
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/export/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

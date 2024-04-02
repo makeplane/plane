@@ -1,5 +1,5 @@
 // hooks
-import { useCurrentTime } from "hooks/use-current-time";
+import { useCurrentTime } from "@/hooks/use-current-time";
 
 type Props = {
   timeZone: string | undefined;

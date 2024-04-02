@@ -1,13 +1,15 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
-import { useApplication, useModule } from "hooks/store";
 // ui
 import { Tooltip, ModuleStatusIcon } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { MODULE_STATUS } from "@/constants/module";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 // constants
-import { MODULE_STATUS } from "constants/module";
+import { useApplication, useModule } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   moduleId: string;
@@ -24,6 +26,8 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
   const { getModuleById } = useModule();
   // derived values
   const moduleDetails = getModuleById(moduleId);
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   return (
     <div
@@ -35,6 +39,7 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
+        isMobile={isMobile}
         tooltipContent={
           <div className="space-y-1">
             <h5>{moduleDetails?.name}</h5>
@@ -54,8 +59,6 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
 
 export const ModuleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { moduleId } = props;
-  // router
-  const router = useRouter();
   // store hooks
   const {
     router: { workspaceSlug },
@@ -65,14 +68,12 @@ export const ModuleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const moduleDetails = getModuleById(moduleId);
 
   return (
-    <div
+    <Link
       className="relative flex h-full w-full items-center gap-2"
-      onClick={() =>
-        router.push(`/${workspaceSlug}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`)
-      }
+      href={`/${workspaceSlug}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`}
     >
       <ModuleStatusIcon status={moduleDetails?.status ?? "backlog"} height="16px" width="16px" />
       <h6 className="flex-grow truncate text-sm font-medium">{moduleDetails?.name}</h6>
-    </div>
+    </Link>
   );
 });

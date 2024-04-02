@@ -1,4 +1,4 @@
-import { objToQueryParams } from "helpers/string.helper";
+import { objToQueryParams } from "@/helpers/string.helper";
 import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "@plane/types";
 
 const paramsToKey = (params: any) => {
@@ -164,7 +164,7 @@ export const USER_ISSUES = (workspaceSlug: string, params: any) => {
 
   return `USER_ISSUES_${workspaceSlug.toUpperCase()}_${paramsKey}`;
 };
-export const USER_ACTIVITY = "USER_ACTIVITY";
+export const USER_ACTIVITY = (params: { cursor?: string }) => `USER_ACTIVITY_${params?.cursor}`;
 export const USER_WORKSPACE_DASHBOARD = (workspaceSlug: string) =>
   `USER_WORKSPACE_DASHBOARD_${workspaceSlug.toUpperCase()}`;
 export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${projectId.toUpperCase()}`;
@@ -284,8 +284,13 @@ export const getPaginatedNotificationKey = (index: number, prevData: any, worksp
 // profile
 export const USER_PROFILE_DATA = (workspaceSlug: string, userId: string) =>
   `USER_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
-export const USER_PROFILE_ACTIVITY = (workspaceSlug: string, userId: string) =>
-  `USER_WORKSPACE_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
+export const USER_PROFILE_ACTIVITY = (
+  workspaceSlug: string,
+  userId: string,
+  params: {
+    cursor?: string;
+  }
+) => `USER_WORKSPACE_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${params?.cursor}`;
 export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: string) =>
   `USER_PROFILE_PROJECT_SEGREGATION_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
 export const USER_PROFILE_ISSUES = (workspaceSlug: string, userId: string, params: any) => {

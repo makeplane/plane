@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
+import { IAnalyticsParams, TXAxisValues } from "@plane/types";
 
 // ui
 import { CustomSelect } from "@plane/ui";
 // types
-import { IAnalyticsParams, TXAxisValues } from "@plane/types";
+import { ANALYTICS_X_AXIS_VALUES } from "@/constants/analytics";
 // constants
-import { ANALYTICS_X_AXIS_VALUES } from "constants/analytics";
 
 type Props = {
   value: TXAxisValues;

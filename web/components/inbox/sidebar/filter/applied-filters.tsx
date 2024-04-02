@@ -1,16 +1,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // mobx store
-import { useInboxIssues } from "hooks/store";
 // icons
 import { X } from "lucide-react";
+import { TInboxIssueFilterOptions, TIssuePriorities } from "@plane/types";
 import { PriorityIcon } from "@plane/ui";
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+import { INBOX_STATUS } from "@/constants/inbox";
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // types
-import { TInboxIssueFilterOptions, TIssuePriorities } from "@plane/types";
+import { useInboxIssues } from "@/hooks/store";
 // constants
-import { INBOX_STATUS } from "constants/inbox";
 
 type TInboxIssueAppliedFilter = { workspaceSlug: string; projectId: string; inboxId: string };
 
@@ -80,12 +80,12 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
                             priority === "urgent"
                               ? "bg-red-500/20 text-red-500"
                               : priority === "high"
-                              ? "bg-orange-500/20 text-orange-500"
-                              : priority === "medium"
-                              ? "bg-yellow-500/20 text-yellow-500"
-                              : priority === "low"
-                              ? "bg-green-500/20 text-green-500"
-                              : "bg-custom-background-90 text-custom-text-200"
+                                ? "bg-orange-500/20 text-orange-500"
+                                : priority === "medium"
+                                  ? "bg-yellow-500/20 text-yellow-500"
+                                  : priority === "low"
+                                    ? "bg-green-500/20 text-green-500"
+                                    : "bg-custom-background-90 text-custom-text-200"
                           }`}
                         >
                           <div className="relative flex items-center gap-1">

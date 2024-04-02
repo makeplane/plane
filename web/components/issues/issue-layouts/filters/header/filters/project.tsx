@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 // components
-import { FilterHeader, FilterOption } from "components/issues";
-// hooks
-import { useProject } from "hooks/store";
-// ui
 import { Loader } from "@plane/ui";
+import { FilterHeader, FilterOption } from "@/components/issues";
+// hooks
+import { ProjectLogo } from "@/components/project";
+import { useProject } from "@/hooks/store";
+// components
+// ui
 // helpers
-import { renderEmoji } from "helpers/emoji.helper";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -25,13 +27,23 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
   // derived values
   const projects = workspaceProjectIds?.map((projectId) => getProjectById(projectId)!) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const filteredOptions = projects?.filter((project) => project.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const sortedOptions = useMemo(() => {
+    const filteredOptions = (projects || []).filter((project) =>
+      project.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    return sortBy(filteredOptions, [
+      (project) => !(appliedFilters ?? []).includes(project.id),
+      (project) => project.name.toLowerCase(),
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const handleViewToggle = () => {
-    if (!filteredOptions) return;
+    if (!sortedOptions) return;
 
-    if (itemsToRender === filteredOptions.length) setItemsToRender(5);
-    else setItemsToRender(filteredOptions.length);
+    if (itemsToRender === sortedOptions.length) setItemsToRender(5);
+    else setItemsToRender(sortedOptions.length);
   };
 
   return (
@@ -43,39 +55,29 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
       />
       {previewEnabled && (
         <div>
-          {filteredOptions ? (
-            filteredOptions.length > 0 ? (
+          {sortedOptions ? (
+            sortedOptions.length > 0 ? (
               <>
-                {filteredOptions.slice(0, itemsToRender).map((project) => (
+                {sortedOptions.slice(0, itemsToRender).map((project) => (
                   <FilterOption
                     key={`project-${project.id}`}
                     isChecked={appliedFilters?.includes(project.id) ? true : false}
                     onClick={() => handleUpdate(project.id)}
                     icon={
-                      project.emoji ? (
-                        <span className="grid flex-shrink-0 place-items-center text-sm">
-                          {renderEmoji(project.emoji)}
-                        </span>
-                      ) : project.icon_prop ? (
-                        <div className="-my-1 grid flex-shrink-0 place-items-center">
-                          {renderEmoji(project.icon_prop)}
-                        </div>
-                      ) : (
-                        <span className="mr-1 grid flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                          {project?.name.charAt(0)}
-                        </span>
-                      )
+                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                        <ProjectLogo logo={project.logo_props} className="text-sm" />
+                      </span>
                     }
                     title={project.name}
                   />
                 ))}
-                {filteredOptions.length > 5 && (
+                {sortedOptions.length > 5 && (
                   <button
                     type="button"
                     className="ml-8 text-xs font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
-                    {itemsToRender === filteredOptions.length ? "View less" : "View all"}
+                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
                   </button>
                 )}
               </>

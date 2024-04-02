@@ -1,17 +1,16 @@
 import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
-// store hooks
-import { useEstimate } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-import { Button, Input, TextArea } from "@plane/ui";
-// helpers
-import { checkDuplicates } from "helpers/array.helper";
-// types
 import { IEstimate, IEstimateFormData } from "@plane/types";
+// store hooks
+import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
+import { checkDuplicates } from "@/helpers/array.helper";
+import { useEstimate } from "@/hooks/store";
+// ui
+// helpers
+// types
 
 type Props = {
   isOpen: boolean;
@@ -40,8 +39,6 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { createEstimate, updateEstimate } = useEstimate();
   // form info
-  // toast alert
-  const { setToastAlert } = useToast();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -67,8 +64,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
         const error = err?.error;
         const errorString = Array.isArray(error) ? error[0] : error;
 
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message:
             errorString ?? err.status === 400
@@ -89,8 +86,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
         const error = err?.error;
         const errorString = Array.isArray(error) ? error[0] : error;
 
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: errorString ?? "Estimate could not be updated. Please try again.",
         });
@@ -99,8 +96,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
 
   const onSubmit = async (formData: FormValues) => {
     if (!formData.name || formData.name === "") {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Estimate title cannot be empty.",
       });
@@ -115,8 +112,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
       formData.value5 === "" ||
       formData.value6 === ""
     ) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Estimate point cannot be empty.",
       });
@@ -131,8 +128,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
       formData.value5.length > 20 ||
       formData.value6.length > 20
     ) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Estimate point cannot have more than 20 characters.",
       });
@@ -149,8 +146,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
         formData.value6,
       ])
     ) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Estimate points cannot have duplicate values.",
       });
@@ -272,7 +269,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                         {Array(6)
                           .fill(0)
                           .map((_, i) => (
-                            <div className="flex items-center">
+                            <div className="flex items-center" key={i}>
                               <span className="flex h-full items-center rounded-lg bg-custom-background-80">
                                 <span className="rounded-lg px-2 text-sm text-custom-text-200">{i + 1}</span>
                                 <span className="rounded-r-lg bg-custom-background-100">
@@ -315,8 +312,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                          ? "Creating Estimate..."
-                          : "Create Estimate"}
+                            ? "Creating Estimate..."
+                            : "Create Estimate"}
                       </Button>
                     </div>
                   </form>

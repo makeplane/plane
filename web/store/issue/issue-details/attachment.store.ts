@@ -1,14 +1,14 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import set from "lodash/set";
-import update from "lodash/update";
 import concat from "lodash/concat";
-import uniq from "lodash/uniq";
 import pull from "lodash/pull";
+import set from "lodash/set";
+import uniq from "lodash/uniq";
+import update from "lodash/update";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // services
-import { IssueAttachmentService } from "services/issue";
+import { IssueAttachmentService } from "@/services/issue";
 // types
-import { IIssueDetail } from "./root.store";
 import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap } from "@plane/types";
+import { IIssueDetail } from "./root.store";
 
 export interface IIssueAttachmentStoreActions {
   addAttachments: (issueId: string, attachments: TIssueAttachment[]) => void;

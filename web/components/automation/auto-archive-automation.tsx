@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProject, useUser } from "hooks/store";
 // component
-import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
-import { SelectMonthModal } from "components/automation";
-// icon
 import { ArchiveRestore } from "lucide-react";
-// constants
-import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
-// types
 import { IProject } from "@plane/types";
+import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
+import { SelectMonthModal } from "@/components/automation";
+// icon
+// constants
+import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
+import { useProject, useUser } from "@/hooks/store";
+// types
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;

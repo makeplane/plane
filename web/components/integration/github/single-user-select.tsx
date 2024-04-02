@@ -1,14 +1,14 @@
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// ui
-import { Avatar, CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
-// types
 import { IGithubRepoCollaborator } from "@plane/types";
+// services
+import { Avatar, CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
+import { WORKSPACE_MEMBERS } from "@/constants/fetch-keys";
+import { WorkspaceService } from "@/services/workspace.service";
+// ui
+// types
 import { IUserDetails } from "./root";
 // fetch-keys
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   collaborator: IGithubRepoCollaborator;
@@ -44,16 +44,27 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
     workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
 
-  const options = members?.map((member) => ({
-    value: member.member.display_name,
-    query: member.member.display_name ?? "",
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
+  const options = members
+    ?.map((member) => {
+      if (!member?.member) return;
+      return {
+        value: member.member?.display_name,
+        query: member.member?.display_name ?? "",
+        content: (
+          <div className="flex items-center gap-2">
+            <Avatar name={member?.member?.display_name} src={member?.member?.avatar} />
+            {member.member?.display_name}
+          </div>
+        ),
+      };
+    })
+    .filter((member) => !!member) as
+    | {
+        value: string;
+        query: string;
+        content: JSX.Element;
+      }[]
+    | undefined;
 
   return (
     <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-custom-background-80 px-2 py-3">

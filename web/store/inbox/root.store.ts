@@ -1,8 +1,8 @@
 // types
-import { RootStore } from "store/root.store";
+import { RootStore } from "@/store/root.store";
 import { IInbox, Inbox } from "./inbox.store";
-import { IInboxIssue, InboxIssue } from "./inbox_issue.store";
 import { IInboxFilter, InboxFilter } from "./inbox_filter.store";
+import { IInboxIssue, InboxIssue } from "./inbox_issue.store";
 
 export interface IInboxRootStore {
   rootStore: RootStore;

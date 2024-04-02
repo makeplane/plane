@@ -2,11 +2,11 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { CalendarDays } from "lucide-react";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
 
 type TIssueTargetDateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 

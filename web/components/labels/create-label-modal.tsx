@@ -1,19 +1,18 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Controller, useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 import { TwitterPicker } from "react-color";
-import { Dialog, Popover, Transition } from "@headlessui/react";
+import { Controller, useForm } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
-// hooks
-import { useLabel } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-import { Button, Input } from "@plane/ui";
-// types
+import { Dialog, Popover, Transition } from "@headlessui/react";
 import type { IIssueLabel, IState } from "@plane/types";
+// hooks
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@/constants/label";
+import { useLabel } from "@/hooks/store";
+// ui
+// types
 // constants
-import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
 
 // types
 type Props = {
@@ -64,8 +63,6 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
     reset(defaultValues);
   };
 
-  const { setToastAlert } = useToast();
-
   const onSubmit = async (formData: IIssueLabel) => {
     if (!workspaceSlug) return;
 
@@ -75,9 +72,9 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
         if (onSuccess) onSuccess(res);
       })
       .catch((error) => {
-        setToastAlert({
+        setToast({
           title: "Oops!",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
           message: error?.error ?? "Error while adding the label",
         });
         reset(formData);

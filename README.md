@@ -17,10 +17,10 @@
 </p>
 
 <p align="center">
-    <a href="http://www.plane.so"><b>Website</b></a> •
-    <a href="https://github.com/makeplane/plane/releases"><b>Releases</b></a> •
-    <a href="https://twitter.com/planepowers"><b>Twitter</b></a> •
-    <a href="https://docs.plane.so/"><b>Documentation</b></a>
+    <a href="https://dub.sh/plane-website-readme"><b>Website</b></a> •
+    <a href="https://git.new/releases"><b>Releases</b></a> •
+    <a href="https://dub.sh/planepowershq"><b>Twitter</b></a> •
+    <a href="https://dub.sh/planedocs"><b>Documentation</b></a>
 </p>
 
 <p>
@@ -40,30 +40,28 @@
     </a>
 </p>
 
-Meet [Plane](https://plane.so). An open-source software development tool to manage issues, sprints, and product roadmaps with peace of mind. 🧘‍♀️
+Meet [Plane](https://dub.sh/plane-website-readme). An open-source software development tool to manage issues, sprints, and product roadmaps with peace of mind. 🧘‍♀️
 
-> Plane is still in its early days, not everything will be perfect yet, and hiccups may happen. Please let us know of any suggestions, ideas, or bugs that you encounter on our [Discord](https://discord.com/invite/A92xrEGCge) or GitHub issues, and we will use your feedback to improve on our upcoming releases.
-
-
+> Plane is still in its early days, not everything will be perfect yet, and hiccups may happen. Please let us know of any suggestions, ideas, or bugs that you encounter on our [Discord](https://discord.com/invite/A92xrEGCge) or GitHub issues, and we will use your feedback to improve in our upcoming releases.
 
 ## ⚡ Installation
 
 The easiest way to get started with Plane is by creating a [Plane Cloud](https://app.plane.so) account where we offer a hosted solution for users.
 
-If you want more control over your data prefer to self-host Plane, please refer to our [deployment documentation](https://docs.plane.so/docker-compose).
+If you want more control over your data, prefer to self-host Plane, please refer to our [deployment documentation](https://docs.plane.so/docker-compose).
 
-| Installation Methods	      | Documentation Link                                                                                       | 
-|-----------------|----------------------------------------------------------------------------------------------------------|
-| Docker          | [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://docs.plane.so/docker-compose)                  |
-| Kubernetes      | [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://docs.plane.so/kubernetes)        |
+| Installation Methods | Documentation Link                                                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Docker               | [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://docs.plane.so/self-hosting/methods/docker-compose)         |
+| Kubernetes           | [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://docs.plane.so/kubernetes) |
 
-`Instance admin` can configure instance settings using our  [God-mode](https://docs.plane.so/instance-admin) feature.
+`Instance admin` can configure instance settings using our [God-mode](https://docs.plane.so/instance-admin) feature.
 
 ## 🚀 Features
 
-- **Issues**: Quickly create issues and add details using a powerful, rich text editor that supports file uploads. Add sub-properties and references to problems for better organization and tracking.
+- **Issues**: Quickly create issues and add details using a powerful rich text editor that supports file uploads. Add sub-properties and references to problems for better organization and tracking.
 
-- **Cycles**
+- **Cycles**:
   Keep up your team's momentum with Cycles. Gain insights into your project's progress with burn-down charts and other valuable features.
 
 - **Modules**: Break down your large projects into smaller, more manageable modules. Assign modules between teams to track and plan your project's progress easily.
@@ -74,15 +72,13 @@ If you want more control over your data prefer to self-host Plane, please refer 
 
 - **Analytics**: Get insights into all your Plane data in real-time. Visualize issue data to spot trends, remove blockers, and progress your work.
 
-- **Drive** (*coming soon*): The drive helps you share documents, images, videos, or any other files that make sense to you or your team and align on the problem/solution.
+- **Drive** (_coming soon_): The drive helps you share documents, images, videos, or any other files that make sense to you or your team and align on the problem/solution.
 
-
-
-## 🛠️ Contributors Quick Start
+## 🛠️ Quick start for contributors
 
 > Development system must have docker engine installed and running.
 
-Setting up local environment is extremely easy and straight forward. Follow the below step and you will be ready to contribute
+Setting up local environment is extremely easy and straight forward. Follow the below step and you will be ready to contribute - 
 
 1. Clone the code locally using:
    ```
@@ -101,10 +97,10 @@ Setting up local environment is extremely easy and straight forward. Follow the 
    ./setup.sh
    ```
 5. Open the code on VSCode or similar equivalent IDE.
-6. Review the `.env` files available in various folders. 
+6. Review the `.env` files available in various folders.
    Visit [Environment Setup](./ENV_SETUP.md) to know about various environment variables used in system.
 7. Run the docker command to initiate services:
-    ```
+   ```
    docker compose -f docker-compose-local.yml up -d
    ```
 
@@ -119,6 +115,7 @@ The Plane community can be found on [GitHub Discussions](https://github.com/orgs
 Ask questions, report bugs, join discussions, voice ideas, make feature requests, or share your projects.
 
 ### Repo Activity
+
 ![Plane Repo Activity](https://repobeats.axiom.co/api/embed/2523c6ed2f77c082b7908c33e2ab208981d76c39.svg "Repobeats analytics image")
 
 ## 📸 Screenshots
@@ -181,17 +178,18 @@ Ask questions, report bugs, join discussions, voice ideas, make feature requests
 
 ## ⛓️ Security
 
-If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. 
+If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports.
 
 Email squawk@plane.so to disclose any security vulnerabilities.
 
 ## ❤️ Contribute
 
-There are many ways to contribute to Plane, including:  
--   Submitting  [bugs](https://github.com/makeplane/plane/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%F0%9F%90%9Bbug&projects=&template=--bug-report.yaml&title=%5Bbug%5D%3A+) and [feature requests](https://github.com/makeplane/plane/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%E2%9C%A8feature&projects=&template=--feature-request.yaml&title=%5Bfeature%5D%3A+)  for various components.
--   Reviewing  [the documentation](https://docs.plane.so/)  and submitting  [pull requests](https://github.com/makeplane/plane), from fixing typos to adding new features.
--   Speaking or writing about Plane or any other ecosystem integration and  [letting us know](https://discord.com/invite/A92xrEGCge)!
--   Upvoting  [popular feature requests](https://github.com/makeplane/plane/issues)  to show your support.
+There are many ways to contribute to Plane, including:
+
+- Submitting [bugs](https://github.com/makeplane/plane/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%F0%9F%90%9Bbug&projects=&template=--bug-report.yaml&title=%5Bbug%5D%3A+) and [feature requests](https://github.com/makeplane/plane/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%E2%9C%A8feature&projects=&template=--feature-request.yaml&title=%5Bfeature%5D%3A+) for various components.
+- Reviewing [the documentation](https://docs.plane.so/) and submitting [pull requests](https://github.com/makeplane/plane), from fixing typos to adding new features.
+- Speaking or writing about Plane or any other ecosystem integration and [letting us know](https://discord.com/invite/A92xrEGCge)!
+- Upvoting [popular feature requests](https://github.com/makeplane/plane/issues) to show your support.
 
 ### We couldn't have done this without you.
 

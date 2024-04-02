@@ -1,6 +1,6 @@
 // icons
-import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
 import { FileText } from "lucide-react";
+import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
 // types
 import { TTourSteps } from "./root";
 

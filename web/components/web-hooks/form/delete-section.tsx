@@ -1,5 +1,5 @@
-import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { Disclosure, Transition } from "@headlessui/react";
 import { Button } from "@plane/ui";
 
 type Props = {

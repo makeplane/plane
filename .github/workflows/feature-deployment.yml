@@ -1,0 +1,199 @@
+name: Feature Preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      web-build:
+        required: false
+        description: 'Build Web'
+        type: boolean
+        default: true
+      space-build:
+        required: false
+        description: 'Build Space'
+        type: boolean
+        default: false
+
+env:
+  BUILD_WEB: ${{ github.event.inputs.web-build }}
+  BUILD_SPACE: ${{ github.event.inputs.space-build }}
+
+jobs:
+  setup-feature-build:
+    name: Feature Build Setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        run: |
+          echo "BUILD_WEB=$BUILD_WEB" 
+          echo "BUILD_SPACE=$BUILD_SPACE"
+    outputs:
+      web-build: ${{ env.BUILD_WEB}} 
+      space-build: ${{env.BUILD_SPACE}}
+
+  feature-build-web:
+    if: ${{ needs.setup-feature-build.outputs.web-build == 'true' }}
+    needs: setup-feature-build
+    name: Feature Build Web
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
+      AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
+      NEXT_PUBLIC_API_BASE_URL: ${{ vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL }}
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install AWS cli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install awscli
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: plane
+      - name: Install Dependencies
+        run: |
+          cd $GITHUB_WORKSPACE/plane
+          yarn install
+      - name: Build Web
+        id: build-web
+        run: |
+          cd $GITHUB_WORKSPACE/plane
+          yarn build --filter=web
+          cd $GITHUB_WORKSPACE
+
+          TAR_NAME="web.tar.gz"
+          tar -czf $TAR_NAME ./plane
+
+          FILE_EXPIRY=$(date -u -d "+2 days" +"%Y-%m-%dT%H:%M:%SZ")
+          aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
+     
+  feature-build-space:
+    if: ${{ needs.setup-feature-build.outputs.space-build == 'true' }}
+    needs: setup-feature-build
+    name: Feature Build Space
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
+      AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
+      NEXT_PUBLIC_DEPLOY_WITH_NGINX: 1
+      NEXT_PUBLIC_API_BASE_URL: ${{ vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL }}
+    outputs:
+      do-build: ${{ needs.setup-feature-build.outputs.space-build }}
+      s3-url: ${{ steps.build-space.outputs.S3_PRESIGNED_URL }}
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install AWS cli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install awscli
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: plane
+      - name: Install Dependencies
+        run: |
+          cd $GITHUB_WORKSPACE/plane
+          yarn install
+      - name: Build Space
+        id: build-space
+        run: |
+          cd $GITHUB_WORKSPACE/plane
+          yarn build --filter=space
+          cd $GITHUB_WORKSPACE
+
+          TAR_NAME="space.tar.gz"
+          tar -czf $TAR_NAME ./plane
+
+          FILE_EXPIRY=$(date -u -d "+2 days" +"%Y-%m-%dT%H:%M:%SZ")
+          aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
+
+  feature-deploy:
+    if: ${{ always() && (needs.setup-feature-build.outputs.web-build == 'true' || needs.setup-feature-build.outputs.space-build == 'true') }}
+    needs: [feature-build-web, feature-build-space]
+    name: Feature Deploy
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
+      AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
+      KUBE_CONFIG_FILE: ${{ secrets.FEATURE_PREVIEW_KUBE_CONFIG }}
+    steps:
+      - name: Install AWS cli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install awscli
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+      - name: Kubectl Setup
+        run: |
+          curl -LO "https://dl.k8s.io/release/${{ vars.FEATURE_PREVIEW_KUBE_VERSION }}/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG_FILE" > ~/.kube/config
+          chmod 600 ~/.kube/config
+      - name: HELM Setup
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+      - name: App Deploy
+        run: |
+          WEB_S3_URL=""
+          if [ ${{ env.BUILD_WEB }} == true ]; then
+            WEB_S3_URL=$(aws s3 presign s3://${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}/${{github.sha}}/web.tar.gz --expires-in 3600)
+          fi
+
+          SPACE_S3_URL=""
+          if [ ${{ env.BUILD_SPACE }} == true ]; then
+            SPACE_S3_URL=$(aws s3 presign s3://${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}/${{github.sha}}/space.tar.gz --expires-in 3600)
+          fi
+
+          if [ ${{ env.BUILD_WEB }} == true ] || [ ${{ env.BUILD_SPACE }} == true ]; then
+
+            helm --kube-insecure-skip-tls-verify repo add feature-preview ${{ vars.FEATURE_PREVIEW_HELM_CHART_URL }} 
+
+            APP_NAMESPACE="${{ vars.FEATURE_PREVIEW_NAMESPACE }}"
+            DEPLOY_SCRIPT_URL="${{ vars.FEATURE_PREVIEW_DEPLOY_SCRIPT_URL }}"
+
+            METADATA=$(helm --kube-insecure-skip-tls-verify install feature-preview/${{ vars.FEATURE_PREVIEW_HELM_CHART_NAME }} \
+                --generate-name \
+                --namespace $APP_NAMESPACE \
+                --set ingress.primaryDomain=${{vars.FEATURE_PREVIEW_PRIMARY_DOMAIN || 'feature.plane.tools' }} \
+                --set web.image=${{vars.FEATURE_PREVIEW_DOCKER_BASE}} \
+                --set web.enabled=${{ env.BUILD_WEB || false }} \
+                --set web.artifact_url=$WEB_S3_URL \
+                --set space.image=${{vars.FEATURE_PREVIEW_DOCKER_BASE}} \
+                --set space.enabled=${{ env.BUILD_SPACE || false }} \
+                --set space.artifact_url=$SPACE_S3_URL \
+                --set shared_config.deploy_script_url=$DEPLOY_SCRIPT_URL \
+                --set shared_config.api_base_url=${{vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL}} \
+                --output json \
+                --timeout 1000s)
+
+            APP_NAME=$(echo $METADATA | jq -r '.name')
+
+            INGRESS_HOSTNAME=$(kubectl get ingress -n feature-builds --insecure-skip-tls-verify \
+                -o jsonpath='{.items[?(@.metadata.annotations.meta\.helm\.sh\/release-name=="'$APP_NAME'")]}' | \
+                jq -r '.spec.rules[0].host')
+
+            echo "****************************************"
+            echo "APP NAME ::: $APP_NAME"
+            echo "INGRESS HOSTNAME ::: $INGRESS_HOSTNAME"
+            echo "****************************************"
+          fi

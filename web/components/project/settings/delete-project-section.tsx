@@ -1,12 +1,10 @@
 import React from "react";
-
-// ui
+import { ChevronRight, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { Button, Loader } from "@plane/ui";
-// icons
-import { ChevronDown, ChevronUp } from "lucide-react";
 // types
 import { IProject } from "@plane/types";
+// ui
+import { Button, Loader } from "@plane/ui";
 
 export interface IDeleteProjectSection {
   projectDetails: IProject;
@@ -17,12 +15,12 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
   const { projectDetails, handleDelete } = props;
 
   return (
-    <Disclosure as="div" className="border-t border-custom-border-100">
+    <Disclosure as="div" className="border-t border-custom-border-100 py-4">
       {({ open }) => (
         <div className="w-full">
-          <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
+          <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
             <span className="text-xl tracking-tight">Delete Project</span>
-            {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+            {open ? <ChevronUp className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           </Disclosure.Button>
 
           <Transition
@@ -35,7 +33,7 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
             leaveTo="transform opacity-0"
           >
             <Disclosure.Panel>
-              <div className="flex flex-col gap-8">
+              <div className="flex flex-col gap-8 pt-4">
                 <span className="text-sm tracking-tight">
                   The danger zone of the project delete page is a critical area that requires careful consideration and
                   attention. When deleting a project, all of the data and resources within that project will be

@@ -25,16 +25,20 @@ type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   const items: BubbleMenuItem[] = [
-    BoldItem(props.editor),
-    ItalicItem(props.editor),
-    UnderLineItem(props.editor),
-    StrikeThroughItem(props.editor),
+    ...(props.editor.isActive("code")
+      ? []
+      : [
+          BoldItem(props.editor),
+          ItalicItem(props.editor),
+          UnderLineItem(props.editor),
+          StrikeThroughItem(props.editor),
+        ]),
     CodeItem(props.editor),
   ];
 
   const bubbleMenuProps: EditorBubbleMenuProps = {
     ...props,
-    shouldShow: ({ view, state, editor }) => {
+    shouldShow: ({ state, editor }) => {
       const { selection } = state;
 
       const { empty } = selection;
@@ -64,6 +68,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   const [isLinkSelectorOpen, setIsLinkSelectorOpen] = useState(false);
 
   const [isSelecting, setIsSelecting] = useState(false);
+
   useEffect(() => {
     function handleMouseDown() {
       function handleMouseMove() {
@@ -108,20 +113,25 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
               }}
             />
           )}
-          <LinkSelector
-            editor={props.editor!!}
-            isOpen={isLinkSelectorOpen}
-            setIsOpen={() => {
-              setIsLinkSelectorOpen(!isLinkSelectorOpen);
-              setIsNodeSelectorOpen(false);
-            }}
-          />
+          {!props.editor.isActive("code") && (
+            <LinkSelector
+              editor={props.editor}
+              isOpen={isLinkSelectorOpen}
+              setIsOpen={() => {
+                setIsLinkSelectorOpen(!isLinkSelectorOpen);
+                setIsNodeSelectorOpen(false);
+              }}
+            />
+          )}
           <div className="flex">
             {items.map((item) => (
               <button
                 key={item.name}
                 type="button"
-                onClick={item.command}
+                onClick={(e) => {
+                  item.command();
+                  e.stopPropagation();
+                }}
                 className={cn(
                   "p-2 text-custom-text-300 transition-colors hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5",
                   {
