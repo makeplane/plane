@@ -330,19 +330,21 @@ const CommandList: FC<Props> = ({ items, command }) => {
   ) : null;
 };
 
+interface CommandListInstance {
+  onKeyDown: (props: { event: KeyboardEvent }) => boolean;
+}
 const renderItems = () => {
-  let component: ReactRenderer | null = null;
+  let component: ReactRenderer<CommandListInstance, typeof CommandList> | null = null;
   let popup: any | null = null;
 
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component = new ReactRenderer(CommandList, {
         props,
-        // @ts-ignore
         editor: props.editor,
       });
 
-      // @ts-ignore
+      // @ts-expect-error Tippy overloads are messed up
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
         appendTo: () => document.querySelector(".active-editor"),
@@ -368,7 +370,6 @@ const renderItems = () => {
         return true;
       }
 
-      // @ts-ignore
       return component?.ref?.onKeyDown(props);
     },
     onExit: () => {
