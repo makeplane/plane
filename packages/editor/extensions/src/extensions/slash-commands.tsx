@@ -347,7 +347,7 @@ const renderItems = () => {
       // @ts-expect-error Tippy overloads are messed up
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.querySelector(".active-editor"),
+        appendTo: () => document.querySelector(".active-editor") ?? document.querySelector("#editor-container"),
         content: component.element,
         showOnCreate: true,
         interactive: true,
@@ -390,6 +390,7 @@ export const SlashCommand = (
   Command.configure({
     suggestion: {
       items: getSuggestionItems(uploadFile, setIsSubmitting, additionalOptions),
+      // @ts-expect-error onKeyDown error
       render: renderItems,
     },
   });
