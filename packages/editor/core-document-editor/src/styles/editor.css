@@ -271,3 +271,30 @@ span:focus .fake-cursor {
   position: relative;
   z-index: 1;
 }
+
+/* typography */
+.prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 2rem;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 1.4rem;
+  margin-bottom: 1px;
+  font-weight: 600;
+}
+
+.prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 1rem;
+  margin-bottom: 1px;
+}
+
+.prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 0.25rem;
+  margin-bottom: 1px;
+}
+
+.prose :where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 0;
+}
