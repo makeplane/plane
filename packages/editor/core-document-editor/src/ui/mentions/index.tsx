@@ -24,6 +24,7 @@ export const Mentions = ({
     suggestion: {
       // @ts-ignore
       render: () => {
+        if (!mentionSuggestions) return;
         let component: ReactRenderer | null = null;
         let popup: any | null = null;
 
