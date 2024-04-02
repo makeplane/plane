@@ -15,6 +15,12 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
   if (editor.commands.undoInputRule()) {
     return true;
   }
+  // Check if a node range is selected, and if so, fall back to default backspace functionality
+  const { from, to } = editor.state.selection;
+  if (from !== to) {
+    // A range is selected, not just a cursor position; fall back to default behavior
+    return false; // Let the editor handle backspace by default
+  }
 
   // if the current item is NOT inside a list item &
   // the previous item is a list (orderedList or bulletList)
@@ -40,11 +46,14 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
 
     const $lastItemPos = editor.state.doc.resolve($listPos.start() + lastItem.pos + 1);
 
-    return editor
-      .chain()
-      .cut({ from: $anchor.start() - 1, to: $anchor.end() + 1 }, $lastItemPos.end())
-      .joinForward()
-      .run();
+    // Check if positions are within the valid range
+    const startPos = $anchor.start() - 1;
+    const endPos = $anchor.end() + 1;
+    if (startPos < 0 || endPos > editor.state.doc.content.size) {
+      return false; // Invalid position, abort operation
+    }
+
+    return editor.chain().cut({ from: startPos, to: endPos }, $lastItemPos.end()).joinForward().run();
   }
 
   // if the cursor is not inside the current node type
