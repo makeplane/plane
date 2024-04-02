@@ -35,6 +35,7 @@ class Page(ProjectBaseModel):
     )
     archived_at = models.DateField(null=True)
     is_locked = models.BooleanField(default=False)
+    view_props = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Page"
