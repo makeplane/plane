@@ -8,7 +8,7 @@ import {
   IssuePeekOverview,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
-  ProjectViewGanttLayout,
+  BaseGanttRoot,
   ProjectViewKanBanLayout,
   ProjectViewListLayout,
   ProjectViewSpreadsheetLayout,
@@ -28,7 +28,7 @@ const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undef
     case EIssueLayoutTypes.CALENDAR:
       return <ProjectViewCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <ProjectViewGanttLayout />;
+      return <BaseGanttRoot />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <ProjectViewSpreadsheetLayout />;
     default:

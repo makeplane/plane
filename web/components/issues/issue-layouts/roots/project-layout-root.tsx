@@ -8,7 +8,7 @@ import { Spinner } from "@plane/ui";
 import {
   ListLayout,
   CalendarLayout,
-  GanttLayout,
+  BaseGanttRoot,
   KanBanLayout,
   ProjectAppliedFiltersRoot,
   ProjectSpreadsheetLayout,
@@ -30,7 +30,7 @@ const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined
     case EIssueLayoutTypes.CALENDAR:
       return <CalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <GanttLayout />;
+      return <BaseGanttRoot />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <ProjectSpreadsheetLayout />;
     default:

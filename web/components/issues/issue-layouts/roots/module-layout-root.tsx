@@ -8,7 +8,7 @@ import {
   IssuePeekOverview,
   ModuleAppliedFiltersRoot,
   ModuleCalendarLayout,
-  ModuleGanttLayout,
+  BaseGanttRoot,
   ModuleKanBanLayout,
   ModuleListLayout,
   ModuleSpreadsheetLayout,
@@ -28,7 +28,7 @@ const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined 
     case EIssueLayoutTypes.CALENDAR:
       return <ModuleCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <ModuleGanttLayout />;
+      return <BaseGanttRoot />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <ModuleSpreadsheetLayout />;
     default:

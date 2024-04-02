@@ -9,7 +9,7 @@ import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
 import {
   CycleAppliedFiltersRoot,
   CycleCalendarLayout,
-  CycleGanttLayout,
+  BaseGanttRoot,
   CycleKanBanLayout,
   CycleListLayout,
   CycleSpreadsheetLayout,
@@ -30,7 +30,7 @@ const CycleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }
     case EIssueLayoutTypes.CALENDAR:
       return <CycleCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <CycleGanttLayout />;
+      return <BaseGanttRoot />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <CycleSpreadsheetLayout />;
     default:
