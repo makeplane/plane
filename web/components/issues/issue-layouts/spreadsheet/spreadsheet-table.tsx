@@ -87,7 +87,7 @@ export const SpreadsheetTable = observer((props: Props) => {
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
   return (
-    <table className="overflow-y-auto" onKeyDown={handleKeyBoardNavigation}>
+    <table className="overflow-y-auto bg-custom-background-100" onKeyDown={handleKeyBoardNavigation}>
       <SpreadsheetHeader
         displayProperties={displayProperties}
         displayFilters={displayFilters}
@@ -112,7 +112,14 @@ export const SpreadsheetTable = observer((props: Props) => {
           />
         ))}
       </tbody>
-      {canLoadMoreIssues && <tfoot ref={intersectionRef}>Loading...</tfoot>}
+      {canLoadMoreIssues && (
+        <tfoot
+          ref={intersectionRef}
+          className="h-11 w-full flex items-center border-b-[0.5px] border-custom-border-200"
+        >
+          <div className="mx-4 h-4 animate-pulse bg-custom-background-80 w-full" />
+        </tfoot>
+      )}
     </table>
   );
 });

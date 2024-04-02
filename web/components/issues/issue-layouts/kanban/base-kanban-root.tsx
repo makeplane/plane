@@ -78,7 +78,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   useSWR(
     `ISSUE_KANBAN_LAYOUT_${storeType}_${group_by}_${sub_group_by}`,
-    () => fetchIssues("init-loader", { canGroup: true, perPageCount: 30 }),
+    () => fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
