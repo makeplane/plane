@@ -32,6 +32,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
       {activityComments.map((activityComment, index) =>
         activityComment.activity_type === "COMMENT" ? (
           <IssueCommentCard
+            projectId={projectId}
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
             commentId={activityComment.id}
