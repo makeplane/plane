@@ -50,12 +50,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
 
   const { updateMarkings } = useEditorMarkings();
 
-  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
-
-  const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
-    setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
-  };
-
   const editor = useEditor({
     onChange(json, html) {
       updateMarkings(html);
@@ -73,7 +67,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     forwardedRef,
     mentionHighlights,
     mentionSuggestions,
-    extensions: DocumentEditorExtensions(fileHandler.upload, setHideDragHandleFunction),
+    extensions: DocumentEditorExtensions(fileHandler.upload),
   });
 
   if (!editor) {
@@ -87,18 +81,15 @@ const DocumentEditor = (props: IDocumentEditor) => {
   });
 
   return (
-    <div className="frame-renderer h-full w-full">
-      <PageRenderer
-        tabIndex={tabIndex}
-        hideDragHandle={hideDragHandleOnMouseLeave}
-        readonly={false}
-        editor={editor}
-        editorContentCustomClassNames={editorContentCustomClassNames}
-        editorClassNames={editorClassNames}
-        title={title}
-        updatePageTitle={updatePageTitle}
-      />
-    </div>
+    <PageRenderer
+      tabIndex={tabIndex}
+      readonly={false}
+      editor={editor}
+      editorContentCustomClassNames={editorContentCustomClassNames}
+      editorClassNames={editorClassNames}
+      title={title}
+      updatePageTitle={updatePageTitle}
+    />
   );
 };
 
