@@ -7,7 +7,11 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils import timezone
 
 # Third party imports
-from plane.db.models import Profile, User, WorkspaceMemberInvite
+from plane.db.models import (
+    Profile,
+    User,
+    WorkspaceMemberInvite,
+)
 from plane.license.utils.instance_value import get_configuration_value
 
 

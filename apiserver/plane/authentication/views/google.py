@@ -9,6 +9,7 @@ from django.views import View
 
 from plane.authentication.provider.oauth.google import GoogleOAuthProvider
 from plane.authentication.utils.login import user_login
+from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
@@ -71,9 +72,14 @@ class GoogleCallbackEndpoint(View):
                 code=code,
             )
             user = provider.authenticate()
-            process_workspace_project_invitations(user=user)
+            # Login the user and record his device info
             user_login(request=request, user=user)
-            url = referer + "?" + urlencode({"success": "true"})
+            # Process workspace and project invitations
+            process_workspace_project_invitations(user=user)
+            # Get the redirection path
+            path = get_redirection_path(user=user)
+            # redirect to referer path
+            url = referer + path
             return HttpResponseRedirect(url)
         except ImproperlyConfigured as e:
             url = referer + "?" + urlencode({"error": str(e)})
