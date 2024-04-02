@@ -4,9 +4,9 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
+import { ESignInSteps } from "@/components/accounts";
+import { checkEmailValidity } from "@/helpers/string.helper";
 // constants
-import { ESignInSteps } from "components/accounts";
 
 type Props = {
   email: string;

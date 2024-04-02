@@ -3,19 +3,19 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
+import { IPasswordSignInData } from "@plane/types";
 // services
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { ESignInSteps, ForgotPasswordPopover } from "components/account";
-import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "constants/event-tracker";
-import { checkEmailValidity } from "helpers/string.helper";
-import { useApplication, useEventTracker } from "hooks/store";
-import { AuthService } from "services/auth.service";
+import { ESignInSteps, ForgotPasswordPopover } from "@/components/account";
+import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "@/constants/event-tracker";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { useApplication, useEventTracker } from "@/hooks/store";
+import { AuthService } from "@/services/auth.service";
 // hooks
 // components
 // ui
 // helpers
 // types
-import { IPasswordSignInData } from "@plane/types";
 // constants
 
 type Props = {

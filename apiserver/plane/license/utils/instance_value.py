@@ -65,6 +65,10 @@ def get_email_configuration():
                 "default": os.environ.get("EMAIL_USE_TLS", "1"),
             },
             {
+                "key": "EMAIL_USE_SSL",
+                "default": os.environ.get("EMAIL_USE_SSL", "0"),
+            },
+            {
                 "key": "EMAIL_FROM",
                 "default": os.environ.get(
                     "EMAIL_FROM", "Team Plane <team@mailer.plane.so>"

@@ -1,16 +1,16 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+import { TIssue } from "@plane/types";
 // components
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import { EmptyState } from "components/common";
-import { IssuePeekOverview } from "components/issues";
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "constants/event-tracker";
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+import { EmptyState } from "@/components/common";
+import { IssuePeekOverview } from "@/components/issues";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-tracker";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
 import emptyIssue from "public/empty-state/issue.svg";
-import { TIssue } from "@plane/types";
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
 // ui
@@ -376,7 +376,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             />
           </div>
           <div
-            className="fixed right-0 z-[5] h-full w-full min-w-[300px] space-y-5 overflow-hidden border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:w-1/2 md:relative md:w-1/3 lg:min-w-80 xl:min-w-96"
+            className="fixed right-0 z-[5] h-full w-full min-w-[300px] overflow-hidden border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:w-1/2 md:relative md:w-1/3 lg:min-w-80 xl:min-w-96"
             style={themeStore.issueDetailSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
           >
             <IssueDetailsSidebar

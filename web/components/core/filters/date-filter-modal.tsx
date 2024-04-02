@@ -1,13 +1,14 @@
 import { Fragment } from "react";
+
 import { DayPicker } from "react-day-picker";
 import { Controller, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
+
 import { X } from "lucide-react";
-// components
-// ui
+import { Dialog, Transition } from "@headlessui/react";
+
 import { Button } from "@plane/ui";
-// helpers
-import { renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
+
+import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
 import { DateFilterSelect } from "./date-filter-select";
 
 type Props = {
@@ -44,7 +45,10 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
     handleClose();
   };
 
-  const isInvalid = watch("filterType") === "range" ? new Date(watch("date1")) > new Date(watch("date2")) : false;
+  const date1 = getDate(watch("date1"));
+  const date2 = getDate(watch("date1"));
+
+  const isInvalid = watch("filterType") === "range" && date1 && date2 ? date1 > date2 : false;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -87,31 +91,45 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                     <Controller
                       control={control}
                       name="date1"
-                      render={({ field: { value, onChange } }) => (
-                        <DayPicker
-                          selected={value ? new Date(value) : undefined}
-                          defaultMonth={value ? new Date(value) : undefined}
-                          onSelect={(date) => onChange(date)}
-                          mode="single"
-                          disabled={[{ after: new Date(watch("date2")) }]}
-                          className="border border-custom-border-200 p-3 rounded-md"
-                        />
-                      )}
+                      render={({ field: { value, onChange } }) => {
+                        const dateValue = getDate(value);
+                        const date2Value = getDate(watch("date2"));
+                        return (
+                          <DayPicker
+                            selected={dateValue}
+                            defaultMonth={dateValue}
+                            onSelect={(date) => {
+                              if (!date) return;
+                              onChange(date);
+                            }}
+                            mode="single"
+                            disabled={date2Value ? [{ after: date2Value }] : undefined}
+                            className="border border-custom-border-200 p-3 rounded-md"
+                          />
+                        );
+                      }}
                     />
                     {watch("filterType") === "range" && (
                       <Controller
                         control={control}
                         name="date2"
-                        render={({ field: { value, onChange } }) => (
-                          <DayPicker
-                            selected={value ? new Date(value) : undefined}
-                            defaultMonth={value ? new Date(value) : undefined}
-                            onSelect={(date) => onChange(date)}
-                            mode="single"
-                            disabled={[{ before: new Date(watch("date1")) }]}
-                            className="border border-custom-border-200 p-3 rounded-md"
-                          />
-                        )}
+                        render={({ field: { value, onChange } }) => {
+                          const dateValue = getDate(value);
+                          const date1Value = getDate(watch("date1"));
+                          return (
+                            <DayPicker
+                              selected={dateValue}
+                              defaultMonth={dateValue}
+                              onSelect={(date) => {
+                                if (!date) return;
+                                onChange(date);
+                              }}
+                              mode="single"
+                              disabled={date1Value ? [{ before: date1Value }] : undefined}
+                              className="border border-custom-border-200 p-3 rounded-md"
+                            />
+                          );
+                        }}
                       />
                     )}
                   </div>

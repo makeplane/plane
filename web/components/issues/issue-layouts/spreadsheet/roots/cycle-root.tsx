@@ -2,8 +2,8 @@ import React, { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
-import { EIssuesStoreType } from "constants/issue";
-import { useCycle } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useCycle } from "@/hooks/store";
 // components
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";

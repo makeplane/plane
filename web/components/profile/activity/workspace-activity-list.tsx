@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
-import { UserService } from "services/user.service";
+import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
+import { UserService } from "@/services/user.service";
 // components
 import { ActivityList } from "./activity-list";
 // fetch-keys

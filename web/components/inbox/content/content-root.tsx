@@ -1,15 +1,15 @@
 import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { TIssue } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { EUserProjectRoles } from "constants/project";
-import { useEventTracker, useInboxIssues, useIssueDetail, useUser } from "hooks/store";
+import { EUserProjectRoles } from "@/constants/project";
+import { useEventTracker, useInboxIssues, useIssueDetail, useUser } from "@/hooks/store";
 // ui
 // types
-import { TIssue } from "@plane/types";
-import { TIssueOperations } from "./root";
 import { InboxIssueMainContent } from "./main-content";
+import { TIssueOperations } from "./root";
 import { InboxIssueDetailsSidebar } from "./sidebar";
 // constants
 

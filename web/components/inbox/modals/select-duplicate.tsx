@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
-// icons
 import { Search } from "lucide-react";
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+// hooks
+// icons
+// components
 // ui
-import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
-// fetch-keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { useProject, useProjectState } from "hooks/store";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
 // services
-import { IssueService } from "services/issue";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
+import { PROJECT_ISSUES_LIST } from "@/constants/fetch-keys";
+import { useProject, useProjectState } from "@/hooks/store";
+import { IssueService } from "@/services/issue";
 
 type Props = {
   isOpen: boolean;
@@ -158,12 +162,15 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                           </ul>
                         </li>
                       ) : (
-                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                          <LayersIcon height="56" width="56" />
-                          <h3 className="text-sm text-custom-text-200">
-                            No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
-                          </h3>
+                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                          <EmptyState
+                            type={
+                              query === ""
+                                ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE
+                                : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
+                            }
+                            layout="screen-simple"
+                          />
                         </div>
                       )}
                     </Combobox.Options>

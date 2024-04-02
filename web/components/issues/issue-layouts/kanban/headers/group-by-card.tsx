@@ -3,16 +3,16 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
+import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ExistingIssuesListModal } from "components/core";
-import { CreateUpdateIssueModal } from "components/issues";
+import { ExistingIssuesListModal } from "@/components/core";
+import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // hooks
-import { useEventTracker } from "hooks/store";
+import { useEventTracker } from "@/hooks/store";
 // types
-import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";
 import { KanbanStoreType } from "../base-kanban-root";
 
 interface IHeaderGroupByCard {

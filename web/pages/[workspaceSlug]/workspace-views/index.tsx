@@ -6,16 +6,16 @@ import { observer } from "mobx-react";
 import { Search } from "lucide-react";
 import { Input } from "@plane/ui";
 // icons
-import { PageHead } from "components/core";
-import { GlobalIssuesHeader } from "components/headers";
-import { GlobalDefaultViewListItem, GlobalViewsList } from "components/workspace";
+import { PageHead } from "@/components/core";
+import { GlobalIssuesHeader } from "@/components/headers";
+import { GlobalDefaultViewListItem, GlobalViewsList } from "@/components/workspace";
 // types
 // constants
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // hooks
-import { useWorkspace } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
+import { useWorkspace } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
 
 const WorkspaceViewsPage: NextPageWithLayout = observer(() => {
   const [query, setQuery] = useState("");

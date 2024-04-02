@@ -3,15 +3,15 @@
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // components
-import { IssueKanBanHeader } from "components/issues/board-views/kanban/header";
-import { IssueKanBanBlock } from "components/issues/board-views/kanban/block";
+import { IssueKanBanBlock } from "@/components/issues/board-views/kanban/block";
+import { IssueKanBanHeader } from "@/components/issues/board-views/kanban/header";
 // ui
-import { Icon } from "components/ui";
+import { Icon } from "@/components/ui";
 // interfaces
-import { IIssueState, IIssue } from "types/issue";
 // mobx hook
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+import { RootStore } from "@/store/root";
+import { IIssueState, IIssue } from "types/issue";
 
 export const IssueKanbanView = observer(() => {
   const store: RootStore = useMobxStore();

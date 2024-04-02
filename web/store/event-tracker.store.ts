@@ -13,7 +13,7 @@ import {
   getProjectStateEventPayload,
   getWorkspaceEventPayload,
   getPageEventPayload,
-} from "constants/event-tracker";
+} from "@/constants/event-tracker";
 import { RootStore } from "./root.store";
 
 export interface IEventTrackerStore {

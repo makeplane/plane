@@ -1,8 +1,8 @@
 import { linearGradientDef } from "@nivo/core";
 // assets
-import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+import { BarChart2, Briefcase, CheckCircle, Home } from "lucide-react";
 import { ContrastIcon } from "@plane/ui";
-import { Props } from "components/icons/types";
+import { Props } from "@/components/icons/types";
 import CompletedIssuesDark from "public/empty-state/dashboard/dark/completed-issues.svg";
 import OverdueIssuesDark from "public/empty-state/dashboard/dark/overdue-issues.svg";
 import UpcomingIssuesDark from "public/empty-state/dashboard/dark/upcoming-issues.svg";
@@ -257,12 +257,12 @@ export const SIDEBAR_MENU_ITEMS: {
   Icon: React.FC<Props>;
 }[] = [
   {
-    key: "dashboard",
-    label: "Dashboard",
+    key: "home",
+    label: "Home",
     href: ``,
     access: EUserWorkspaceRoles.GUEST,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
-    Icon: LayoutGrid,
+    Icon: Home,
   },
   {
     key: "analytics",

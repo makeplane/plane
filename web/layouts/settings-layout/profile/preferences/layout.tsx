@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChevronDown } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { useApplication } from "hooks/store";
-import { ProfileSettingsLayout } from "layouts/settings-layout";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { useApplication } from "@/hooks/store";
+import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 import { ProfilePreferenceSettingsSidebar } from "./sidebar";
 
 interface IProfilePreferenceSettingsLayout {
@@ -73,9 +73,7 @@ export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayou
         <ProfilePreferenceSettingsSidebar />
         <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
           {header}
-          <div className="h-full w-full overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">
-            {children}
-          </div>
+          <div className="h-full w-full overflow-hidden">{children}</div>
         </main>
       </div>
     </ProfileSettingsLayout>

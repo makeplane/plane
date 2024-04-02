@@ -4,15 +4,15 @@ import { useTheme } from "next-themes";
 // ui
 import { Spinner, setPromiseToast } from "@plane/ui";
 // components
-import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
+import { CustomThemeSelector, ThemeSwitch, PageHead } from "@/components/core";
 // constants
-import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
+import { I_THEME_OPTION, THEME_OPTIONS } from "@/constants/themes";
 // hooks
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 // layouts
-import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
+import { ProfilePreferenceSettingsLayout } from "@/layouts/settings-layout/profile/preferences";
 // type
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
   // states
@@ -54,7 +54,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
     <>
       <PageHead title="Profile - Theme Prefrence" />
       {currentUser ? (
-        <div className="mx-auto mt-10 h-full w-full overflow-y-auto px-6 pb-8 md:mt-14 lg:px-20">
+        <div className="mx-auto mt-10 h-full w-full overflow-y-auto px-6 pb-8 md:mt-14 lg:px-20 vertical-scrollbar scrollbar-md">
           <div className="flex items-center border-b border-custom-border-100 pb-3.5">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>

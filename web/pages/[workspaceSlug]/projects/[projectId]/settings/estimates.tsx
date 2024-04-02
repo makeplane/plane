@@ -1,17 +1,17 @@
 import { ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { PageHead } from "components/core";
-import { EstimatesList } from "components/estimates";
-import { ProjectSettingHeader } from "components/headers";
-import { EUserProjectRoles } from "constants/project";
-import { useUser, useProject } from "hooks/store";
+import { PageHead } from "@/components/core";
+import { EstimatesList } from "@/components/estimates";
+import { ProjectSettingHeader } from "@/components/headers";
+import { EUserProjectRoles } from "@/constants/project";
+import { useUser, useProject } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
+import { AppLayout } from "@/layouts/app-layout";
+import { ProjectSettingLayout } from "@/layouts/settings-layout";
 // components
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
 
 const EstimatesSettingsPage: NextPageWithLayout = observer(() => {

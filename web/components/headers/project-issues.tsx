@@ -2,15 +2,15 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // hooks
-import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
+import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import { ProjectLogo } from "@/components/project";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
 import {
   useApplication,
   useEventTracker,
@@ -19,13 +19,12 @@ import {
   useProjectState,
   useUser,
   useMember,
-} from "hooks/store";
-import { useIssues } from "hooks/store/use-issues";
+} from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 // components
 // ui
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-import { ProjectLogo } from "components/project";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 // helper
 
@@ -52,7 +51,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
-
+  const { isMobile } = usePlatformOS();
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleFiltersUpdate = useCallback(
@@ -61,8 +60,10 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -102,6 +103,12 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
+  const issueCount = currentProjectDetails
+    ? issueFilters?.displayFilters?.sub_issue
+      ? currentProjectDetails?.total_issues + currentProjectDetails?.sub_issues
+      : currentProjectDetails?.total_issues
+    : undefined;
+
   return (
     <>
       <ProjectAnalyticsModal
@@ -110,10 +117,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         projectDetails={currentProjectDetails ?? undefined}
       />
       <div className="relative z-[15] items-center gap-x-2 gap-y-4">
-        <div className="flex items-center gap-2 p-4 border-b border-custom-border-200 bg-custom-sidebar-background-100">
+        <div className="flex items-center gap-2 p-4 bg-custom-sidebar-background-100">
           <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-            <SidebarHamburgerToggle />
-            <div>
+            <div className="flex items-center gap-2.5">
               <Breadcrumbs onBack={() => router.back()}>
                 <Breadcrumbs.BreadcrumbItem
                   type="text"
@@ -145,6 +151,17 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                   }
                 />
               </Breadcrumbs>
+              {issueCount && issueCount > 0 ? (
+                <Tooltip
+                  isMobile={isMobile}
+                  tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in this project`}
+                  position="bottom"
+                >
+                  <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                    {issueCount}
+                  </span>
+                </Tooltip>
+              ) : null}
             </div>
             {currentProjectDetails?.is_deployed && deployUrl && (
               <a
@@ -212,9 +229,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </Button>
             </>
           )}
-        </div>
-        <div className="block md:hidden">
-          <IssuesMobileHeader />
         </div>
       </div>
     </>

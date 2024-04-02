@@ -2,16 +2,16 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // hooks
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { useEventTracker, useMember, useUser } from "hooks/store";
-import { EUserProjectRoles } from "constants/project";
-import { PROJECT_MEMBER_ADDED } from "constants/event-tracker";
-import { ROLE } from "constants/workspace";
+import { PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+import { ROLE } from "@/constants/workspace";
+import { useEventTracker, useMember, useUser } from "@/hooks/store";
 // constants
 
 type Props = {
@@ -211,9 +211,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                               rules={{ required: "Please select a member" }}
                               render={({ field: { value, onChange } }) => {
                                 const selectedMember = getWorkspaceMemberDetails(value);
-
-                                if (!selectedMember?.member) return <></>;
-
                                 return (
                                   <CustomSearchSelect
                                     value={value}

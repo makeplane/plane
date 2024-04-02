@@ -2,7 +2,7 @@ import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
+import { IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart/types";
 import { IssuesSidebarBlock } from "./issues/block";
 // types
 

@@ -1,12 +1,13 @@
 import React from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_LINKS } from "constants/workspace";
-import { useUser } from "hooks/store";
+import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_LINKS } from "@/constants/workspace";
+import { useUser } from "@/hooks/store";
 // constants
 
-export const WorkspaceSettingsSidebar = () => {
+export const WorkspaceSettingsSidebar = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -44,4 +45,4 @@ export const WorkspaceSettingsSidebar = () => {
       </div>
     </div>
   );
-};
+});

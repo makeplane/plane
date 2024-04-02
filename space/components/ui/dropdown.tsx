@@ -1,9 +1,9 @@
 import { Fragment, useState, useRef } from "react";
 import Link from "next/link";
+import { Check, ChevronLeft } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
 import useOutSideClick from "hooks/use-outside-click";
-import { Check, ChevronLeft } from "lucide-react";
 
 type ItemOptionType = {
   display: React.ReactNode;

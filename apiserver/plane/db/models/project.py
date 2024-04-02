@@ -114,6 +114,7 @@ class Project(BaseModel):
         null=True,
         related_name="default_state",
     )
+    archived_at = models.DateTimeField(null=True)
 
     def __str__(self):
         """Return name of the project"""

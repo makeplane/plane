@@ -1,18 +1,18 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { Listbox, Transition } from "@headlessui/react";
 import { MoveRight } from "lucide-react";
+import { Listbox, Transition } from "@headlessui/react";
 // hooks
-import useToast from "hooks/use-toast";
 // ui
-import { Icon } from "components/ui";
+import { Icon } from "@/components/ui";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
 // store
-import { IPeekMode } from "store/issue_details";
-import { RootStore } from "store/root";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+import { IPeekMode } from "@/store/issue_details";
+import { RootStore } from "@/store/root";
 // lib
-import { useMobxStore } from "lib/mobx/store-provider";
+import useToast from "hooks/use-toast";
 // types
 import { IIssue } from "types/issue";
 

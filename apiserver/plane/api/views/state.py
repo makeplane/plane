@@ -29,6 +29,7 @@ class StateAPIEndpoint(BaseAPIView):
                 project__project_projectmember__is_active=True,
             )
             .filter(is_triage=False)
+            .filter(project__archived_at__isnull=True)
             .select_related("project")
             .select_related("workspace")
             .distinct()

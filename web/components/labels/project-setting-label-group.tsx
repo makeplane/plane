@@ -7,14 +7,14 @@ import {
   Droppable,
 } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
+import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 
 // store
 // icons
-import { ChevronDown, Pencil, Trash2 } from "lucide-react";
-// types
-import useDraggableInPortal from "hooks/use-draggable-portal";
 import { IIssueLabel } from "@plane/types";
+// types
+import useDraggableInPortal from "@/hooks/use-draggable-portal";
 import { CreateUpdateLabelInline } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
 import { ProjectSettingLabelItem } from "./project-setting-label-item";

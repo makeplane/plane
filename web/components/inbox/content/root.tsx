@@ -1,10 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Inbox } from "lucide-react";
+import { InboxIssueActionsHeader } from "@/components/inbox";
 // hooks
-import { useInboxIssues, useProjectInbox } from "hooks/store";
+import { useInboxIssues, useProjectInbox } from "@/hooks/store";
 // components
-import { InboxIssueActionsHeader, InboxIssueMainContent, InboxIssueDetailsSidebar } from "components/inbox";
 
 type TInboxContentRoot = {
   workspaceSlug: string;

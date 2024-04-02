@@ -1,15 +1,15 @@
 import size from "lodash/size";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// hooks
-import { useApplication, useEventTracker, useIssues } from "hooks/store";
-// components
-import { EmptyState } from "components/empty-state";
-// constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { EmptyStateType } from "constants/empty-state";
-// types
 import { IIssueFilterOptions } from "@plane/types";
+// hooks
+// components
+import { EmptyState } from "@/components/empty-state";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { useApplication, useEventTracker, useIssues } from "@/hooks/store";
+// types
 
 export const ProjectEmptyState: React.FC = observer(() => {
   // router
@@ -34,7 +34,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     issuesFilter.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, {
       ...newFilters,

@@ -1,15 +1,15 @@
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { IIssueFilterOptions } from "@plane/types";
 // hooks
 import { Button } from "@plane/ui";
-import { AppliedFiltersList } from "components/issues";
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { useIssues, useLabel, useProjectState, useProjectView } from "hooks/store";
+import { AppliedFiltersList } from "@/components/issues";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { useIssues, useLabel, useProjectState, useProjectView } from "@/hooks/store";
 // components
 // ui
 // types
-import { IIssueFilterOptions } from "@plane/types";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -67,7 +67,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId || !viewId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     updateFilters(
       workspaceSlug.toString(),

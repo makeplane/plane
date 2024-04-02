@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { EIssuesStoreType } from "constants/issue";
+import { EIssuesStoreType } from "@/constants/issue";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
 

@@ -7,11 +7,11 @@ import { CalendarDays } from "lucide-react";
 // ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // components
-import { InboxIssueStatus } from "components/inbox";
+import { InboxIssueStatus } from "@/components/inbox";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 // store
-import { IInboxIssueStore } from "store/inbox-issue.store";
+import { IInboxIssueStore } from "@/store/inbox-issue.store";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;

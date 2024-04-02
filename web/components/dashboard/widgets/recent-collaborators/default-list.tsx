@@ -37,21 +37,36 @@ export const DefaultCollaboratorsList: React.FC<Props> = (props) => {
       />
     );
 
+  const showViewMoreButton = pageCount < totalPages && resultsCount !== 0;
+  const showViewLessButton = pageCount > 1;
+
   return (
     <>
       <div className="mt-7 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
         {collaboratorsPages}
       </div>
-      {pageCount < totalPages && resultsCount !== 0 && (
+      {(showViewLessButton || showViewMoreButton) && (
         <div className="flex items-center justify-center text-xs w-full">
-          <Button
-            variant="link-primary"
-            size="sm"
-            className="my-3 hover:bg-custom-primary-100/20"
-            onClick={handleLoadMore}
-          >
-            Load more
-          </Button>
+          {showViewLessButton && (
+            <Button
+              variant="link-primary"
+              size="sm"
+              className="my-3 hover:bg-custom-primary-100/20"
+              onClick={() => setPageCount(1)}
+            >
+              View less
+            </Button>
+          )}
+          {showViewMoreButton && (
+            <Button
+              variant="link-primary"
+              size="sm"
+              className="my-3 hover:bg-custom-primary-100/20"
+              onClick={handleLoadMore}
+            >
+              View more
+            </Button>
+          )}
         </div>
       )}
     </>

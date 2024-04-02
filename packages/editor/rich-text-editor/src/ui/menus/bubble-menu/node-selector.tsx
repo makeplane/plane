@@ -26,7 +26,7 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
     {
       name: "Text",
       icon: TextIcon,
-      command: () => editor.chain().focus().toggleNode("paragraph", "paragraph").run(),
+      command: () => editor.chain().focus().clearNodes().run(),
       isActive: () => editor.isActive("paragraph") && !editor.isActive("bulletList") && !editor.isActive("orderedList"),
     },
     HeadingOneItem(editor),
@@ -47,7 +47,10 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
     <div className="relative h-full">
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          setIsOpen(!isOpen);
+          e.stopPropagation();
+        }}
         className="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5"
       >
         <span>{activeItem?.name}</span>
@@ -60,9 +63,10 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
             <button
               key={item.name}
               type="button"
-              onClick={() => {
+              onClick={(e) => {
                 item.command();
                 setIsOpen(false);
+                e.stopPropagation();
               }}
               className={cn(
                 "flex items-center justify-between rounded-sm px-2 py-1 text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100",

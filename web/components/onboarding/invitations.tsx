@@ -2,22 +2,22 @@ import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 // hooks
 import { CheckCircle2, Search } from "lucide-react";
+import { IWorkspaceMemberInvitation } from "@plane/types";
 import { Button } from "@plane/ui";
-import { MEMBER_ACCEPTED } from "constants/event-tracker";
-import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
-import { ROLE } from "constants/workspace";
-import { truncateText } from "helpers/string.helper";
-import { getUserRole } from "helpers/user.helper";
-import { useEventTracker, useUser, useWorkspace } from "hooks/store";
+import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
+import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "@/constants/fetch-keys";
+import { ROLE } from "@/constants/workspace";
+import { truncateText } from "@/helpers/string.helper";
+import { getUserRole } from "@/helpers/user.helper";
+import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
 // components
 // helpers
 // services
-import { WorkspaceService } from "services/workspace.service";
+import { WorkspaceService } from "@/services/workspace.service";
 // constants
 // types
-import { IWorkspaceMemberInvitation } from "@plane/types";
 // icons
-import {} from "hooks/store/use-event-tracker";
+import {} from "@/hooks/store/use-event-tracker";
 
 type Props = {
   handleNextStep: () => void;

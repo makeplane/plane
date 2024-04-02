@@ -1,44 +1,45 @@
-import requests
-import uuid
 import hashlib
-import json
 import hmac
+import json
+import logging
+import uuid
 
-# Django imports
-from django.conf import settings
-from django.core.serializers.json import DjangoJSONEncoder
-from django.core.mail import EmailMultiAlternatives, get_connection
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+import requests
 
 # Third party imports
 from celery import shared_task
-from sentry_sdk import capture_exception
 
-from plane.db.models import (
-    Webhook,
-    WebhookLog,
-    Project,
-    Issue,
-    Cycle,
-    Module,
-    ModuleIssue,
-    CycleIssue,
-    IssueComment,
-    User,
-)
-from plane.api.serializers import (
-    ProjectSerializer,
-    CycleSerializer,
-    ModuleSerializer,
-    CycleIssueSerializer,
-    ModuleIssueSerializer,
-    IssueCommentSerializer,
-    IssueExpandSerializer,
-)
+# Django imports
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.core.serializers.json import DjangoJSONEncoder
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # Module imports
+from plane.api.serializers import (
+    CycleIssueSerializer,
+    CycleSerializer,
+    IssueCommentSerializer,
+    IssueExpandSerializer,
+    ModuleIssueSerializer,
+    ModuleSerializer,
+    ProjectSerializer,
+)
+from plane.db.models import (
+    Cycle,
+    CycleIssue,
+    Issue,
+    IssueComment,
+    Module,
+    ModuleIssue,
+    Project,
+    User,
+    Webhook,
+    WebhookLog,
+)
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.exception_logger import log_exception
 
 SERIALIZER_MAPPER = {
     "project": ProjectSerializer,
@@ -174,7 +175,7 @@ def webhook_task(self, webhook, slug, event, event_data, action, current_site):
     except Exception as e:
         if settings.DEBUG:
             print(e)
-        capture_exception(e)
+        log_exception(e)
         return
 
 
@@ -241,7 +242,7 @@ def send_webhook(event, payload, kw, action, slug, bulk, current_site):
     except Exception as e:
         if settings.DEBUG:
             print(e)
-        capture_exception(e)
+        log_exception(e)
         return
 
 
@@ -256,6 +257,7 @@ def send_webhook_deactivation_email(
         EMAIL_HOST_PASSWORD,
         EMAIL_PORT,
         EMAIL_USE_TLS,
+        EMAIL_USE_SSL,
         EMAIL_FROM,
     ) = get_email_configuration()
 
@@ -284,6 +286,7 @@ def send_webhook_deactivation_email(
             username=EMAIL_HOST_USER,
             password=EMAIL_HOST_PASSWORD,
             use_tls=EMAIL_USE_TLS == "1",
+            use_ssl=EMAIL_USE_SSL == "1",
         )
 
         msg = EmailMultiAlternatives(
@@ -295,8 +298,8 @@ def send_webhook_deactivation_email(
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
-
+        logging.getLogger("plane").info("Email sent successfully.")
         return
     except Exception as e:
-        print(e)
+        log_exception(e)
         return

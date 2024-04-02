@@ -7,17 +7,22 @@ import { Inbox } from "lucide-react";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { PageHead } from "components/core";
-import { ProjectInboxHeader } from "components/headers";
-import { InboxIssueList, InboxIssueFilterSelection, InboxIssueAppliedFilter, InboxContentRoot } from "components/inbox";
-import { InboxLayoutLoader } from "components/ui";
+import { PageHead } from "@/components/core";
+import { ProjectInboxHeader } from "@/components/headers";
+import {
+  InboxIssueList,
+  InboxIssueFilterSelection,
+  InboxIssueAppliedFilter,
+  InboxContentRoot,
+} from "@/components/inbox";
+import { InboxLayoutLoader } from "@/components/ui";
 // hooks
-import { useProject, useProjectInbox } from "hooks/store";
-import { useIntersectionObserver } from "hooks/use-intersection-observer";
+import { useProject, useProjectInbox } from "@/hooks/store";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { AppLayout } from "@/layouts/app-layout";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
   // ref

@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 // ui
 import { StateGroupIcon } from "@plane/ui";
-// hooks
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
 import {
   IssueDescriptionInput,
@@ -13,7 +10,10 @@ import {
   IssueReaction,
   IssueUpdateStatus,
   TIssueOperations,
-} from "components/issues";
+} from "@/components/issues";
+// hooks
+import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import { InboxIssueStatus } from "../inbox-issue-status";
 
 type Props = {

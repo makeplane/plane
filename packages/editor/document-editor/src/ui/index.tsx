@@ -47,6 +47,8 @@ interface IDocumentEditor {
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
+
+  tabIndex?: number;
 }
 interface DocumentEditorProps extends IDocumentEditor {
   forwardedRef?: React.Ref<EditorHandle>;
@@ -79,6 +81,7 @@ const DocumentEditor = ({
   cancelUploadImage,
   onActionCompleteHandler,
   rerenderOnPropsChange,
+  tabIndex,
 }: IDocumentEditor) => {
   const { markings, updateMarkings } = useEditorMarkings();
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
@@ -160,6 +163,7 @@ const DocumentEditor = ({
         </div>
         <div className="h-full w-full md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
           <PageRenderer
+            tabIndex={tabIndex}
             onActionCompleteHandler={onActionCompleteHandler}
             hideDragHandle={hideDragHandleOnMouseLeave}
             readonly={false}

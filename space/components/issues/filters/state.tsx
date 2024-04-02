@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 // components
-import { FilterHeader, FilterOption } from "./helpers";
 // ui
 import { Loader, StateGroupIcon } from "@plane/ui";
 // types
 import { IIssueState } from "types/issue";
+import { FilterHeader, FilterOption } from "./helpers";
 
 type Props = {
   appliedFilters: string[] | null;

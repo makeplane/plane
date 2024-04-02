@@ -1,8 +1,8 @@
 import { FC, ReactNode } from "react";
 import { MessageCircle } from "lucide-react";
 // hooks
-import { calculateTimeAgo } from "helpers/date-time.helper";
-import { useIssueDetail } from "hooks/store";
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { useIssueDetail } from "@/hooks/store";
 // helpers
 
 type TIssueCommentBlock = {

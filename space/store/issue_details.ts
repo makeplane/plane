@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 // store
 import { RootStore } from "./root";
 // services
-import IssueService from "services/issue.service";
+import IssueService from "@/services/issue.service";
 import { IIssue, IVote } from "types/issue";
 
 export type IPeekMode = "side" | "modal" | "full";

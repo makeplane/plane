@@ -1,9 +1,6 @@
 import { MutableRefObject } from "react";
 import { Droppable } from "@hello-pangea/dnd";
 // hooks
-import { useProjectState } from "hooks/store";
-//components
-//types
 import {
   TGroupedIssues,
   TIssue,
@@ -12,6 +9,9 @@ import {
   TSubGroupedIssues,
   TUnGroupedIssues,
 } from "@plane/types";
+import { useProjectState } from "@/hooks/store";
+//components
+//types
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {
@@ -36,7 +36,7 @@ interface IKanbanGroup {
   viewId?: string;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
-  groupByVisibilityToggle: boolean;
+  groupByVisibilityToggle?: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   isDragStarted?: boolean;
 }

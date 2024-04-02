@@ -2,10 +2,10 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { DraggableProvidedDragHandleProps, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { useRouter } from "next/router";
 import { X, Pencil } from "lucide-react";
-// hooks
-import { useLabel } from "hooks/store";
-// types
 import { IIssueLabel } from "@plane/types";
+// hooks
+import { useLabel } from "@/hooks/store";
+// types
 // components
 import { CreateUpdateLabelInline } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";

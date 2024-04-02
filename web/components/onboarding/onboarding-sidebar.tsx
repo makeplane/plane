@@ -10,24 +10,24 @@ import {
   ContrastIcon,
   FileText,
   LayersIcon,
-  LayoutGrid,
   PenSquare,
   Search,
   Settings,
   Bell,
+  Home,
 } from "lucide-react";
+import { IWorkspace } from "@plane/types";
 import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
 // hooks
-import { useUser, useWorkspace } from "hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
 // types
 import projectEmoji from "public/emoji/project-emoji.svg";
-import { IWorkspace } from "@plane/types";
 // assets
 
 const workspaceLinks = [
   {
-    Icon: LayoutGrid,
-    name: "Dashboard",
+    Icon: Home,
+    name: "Home",
   },
   {
     Icon: BarChart2,

@@ -3,20 +3,20 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
+import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import { Search } from "lucide-react";
-import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
-
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { EIssuesStoreType } from "constants/issue";
-import { useIssues, useProject } from "hooks/store";
-import { IssueService } from "services/issue";
+import { IUser, TIssue } from "@plane/types";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
+import { PROJECT_ISSUES_LIST } from "@/constants/fetch-keys";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues, useProject } from "@/hooks/store";
+import { IssueService } from "@/services/issue";
 // ui
 // icons
 // types
-import { IUser, TIssue } from "@plane/types";
-// fetch keys
 // store hooks
 // components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
@@ -178,12 +178,15 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                           </ul>
                         </li>
                       ) : (
-                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                          <LayersIcon height="56" width="56" />
-                          <h3 className="text-custom-text-200">
-                            No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
-                          </h3>
+                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                          <EmptyState
+                            type={
+                              query === ""
+                                ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE
+                                : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
+                            }
+                            layout="screen-simple"
+                          />
                         </div>
                       )}
                     </Combobox.Options>

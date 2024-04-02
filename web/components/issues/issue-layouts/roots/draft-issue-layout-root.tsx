@@ -3,10 +3,10 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { IssuePeekOverview } from "components/issues/peek-overview";
-import { ActiveLoader } from "components/ui";
-import { EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
+import { ActiveLoader } from "@/components/ui";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 // components
 import { ProjectDraftEmptyState } from "../empty-states";
 import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";

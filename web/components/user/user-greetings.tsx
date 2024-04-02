@@ -1,8 +1,8 @@
 import { FC } from "react";
 // hooks
-import { useCurrentTime } from "hooks/use-current-time";
-// types
 import { IUser } from "@plane/types";
+import { useCurrentTime } from "@/hooks/use-current-time";
+// types
 
 export interface IUserGreetingsView {
   user: IUser;

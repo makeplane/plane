@@ -1,20 +1,20 @@
 import { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 // components
+import { Briefcase } from "lucide-react";
+import { Avatar, Button } from "@plane/ui";
+import { ProjectLogo } from "@/components/common";
+import { IssueFiltersDropdown } from "@/components/issues/filters";
+// ui
+// lib
+import { useMobxStore } from "@/lib/mobx/store-provider";
+// store
+import { RootStore } from "@/store/root";
+import { TIssueBoardKeys } from "types/issue";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarTheme } from "./theme";
-import { IssueFiltersDropdown } from "components/issues/filters";
-import { ProjectLogo } from "components/common";
-// ui
-import { Avatar, Button } from "@plane/ui";
-import { Briefcase } from "lucide-react";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
-// store
-import { RootStore } from "store/root";
-import { TIssueBoardKeys } from "types/issue";
 
 const IssueNavbar = observer(() => {
   const {

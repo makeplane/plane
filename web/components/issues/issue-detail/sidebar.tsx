@@ -27,7 +27,13 @@ import {
   TOAST_TYPE,
   setToast,
 } from "@plane/ui";
-import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
+import {
+  DateDropdown,
+  EstimateDropdown,
+  PriorityDropdown,
+  MemberDropdown,
+  StateDropdown,
+} from "@/components/dropdowns";
 // ui
 // helpers
 import {
@@ -39,14 +45,17 @@ import {
   IssueParentSelect,
   IssueLabel,
   ArchiveIssueModal,
-} from "components/issues";
-import { STATE_GROUPS } from "constants/state";
+} from "@/components/issues";
+// helpers
 // types
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
-import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
+import { STATE_GROUPS } from "@/constants/state";
+import { cn } from "@/helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+// types
+import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import type { TIssueOperations } from "./root";
 import { IssueSubscription } from "./subscription";
@@ -78,7 +87,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-
+  const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
 
@@ -101,7 +110,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleArchiveIssue = async () => {
     if (!issueOperations.archive) return;
     await issueOperations.archive(workspaceSlug, projectId, issueId);
-    router.push(`/${workspaceSlug}/projects/${projectId}/archived-issues/${issue.id}`);
+    router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issue.id}`);
   };
   // derived values
   const projectDetails = getProjectById(issue.project_id);
@@ -111,10 +120,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const isInArchivableGroup =
     !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
   return (
@@ -138,7 +147,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
             )}
             <div className="flex flex-wrap items-center gap-2.5 text-custom-text-300">
-              <Tooltip tooltipContent="Copy link">
+              <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
                 <button
                   type="button"
                   className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"
@@ -149,6 +158,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </Tooltip>
               {isArchivingAllowed && (
                 <Tooltip
+                  isMobile={isMobile}
                   tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
                 >
                   <button
@@ -170,7 +180,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 </Tooltip>
               )}
               {is_editable && (
-                <Tooltip tooltipContent="Delete">
+                <Tooltip tooltipContent="Delete" isMobile={isMobile}>
                   <button
                     type="button"
                     className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"

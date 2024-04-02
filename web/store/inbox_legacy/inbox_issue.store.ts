@@ -6,9 +6,9 @@ import update from "lodash/update";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // services
-import { InboxIssueService } from "services/inbox/inbox-issue.service";
+import { InboxIssueService } from "@/services/inbox/inbox-issue.service";
 // types
-import { RootStore } from "store/root.store";
+import { RootStore } from "@/store/root.store";
 import type {
   TInboxIssueDetailIdMap,
   TInboxIssueDetailMap,

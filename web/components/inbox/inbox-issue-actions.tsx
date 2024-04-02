@@ -12,13 +12,12 @@ import {
   DeleteInboxIssueModal,
   SelectDuplicateInboxIssueModal,
   InboxIssueSnooze,
-} from "components/inbox";
-import { EUserProjectRoles } from "constants/project";
+} from "@/components/inbox";
+import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useUser, useProjectInbox } from "hooks/store";
+import { useUser, useProjectInbox } from "@/hooks/store";
 // store types
-import type { IInboxIssueStore } from "store/inbox-issue.store";
-import { set } from "lodash";
+import type { IInboxIssueStore } from "@/store/inbox-issue.store";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;

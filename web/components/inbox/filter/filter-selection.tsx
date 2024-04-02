@@ -3,12 +3,12 @@ import { observer } from "mobx-react-lite";
 // ui
 import { PriorityIcon } from "@plane/ui";
 // components
-import { MultiLevelDropdown } from "components/ui";
+import { MultiLevelDropdown } from "@/components/ui";
 // constants
-import { INBOX_STATUS } from "constants/inbox";
-import { ISSUE_PRIORITIES } from "constants/issue";
+import { INBOX_STATUS } from "@/constants/inbox";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
 // hooks
-import { useProjectInbox } from "hooks/store";
+import { useProjectInbox } from "@/hooks/store";
 // types
 // import { TInboxIssueFilterOptions } from "@plane/types";
 

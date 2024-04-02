@@ -2,21 +2,21 @@ import { useState, FC, useRef, useEffect } from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
+import { Disclosure, Transition } from "@headlessui/react";
+import { IProject } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { cn } from "helpers/common.helper";
-import { orderJoinedProjects } from "helpers/project.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+import { CreateProjectModal, ProjectSidebarListItem } from "@/components/project";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { cn } from "@/helpers/common.helper";
+import { orderJoinedProjects } from "@/helpers/project.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
 // ui
 // components
 // helpers
 // constants
-import { IProject } from "@plane/types";
 
 export const ProjectSidebarList: FC = observer(() => {
   // states
@@ -116,9 +116,14 @@ export const ProjectSidebarList: FC = observer(() => {
       )}
       <div
         ref={containerRef}
-        className={cn("h-full space-y-2 overflow-y-auto px-4 vertical-scrollbar scrollbar-md", {
-          "border-t border-custom-sidebar-border-300": isScrolled,
-        })}
+        className={cn(
+          "h-full space-y-2 !overflow-y-scroll pl-4 vertical-scrollbar",
+          isCollapsed ? "scrollbar-sm" : "scrollbar-md",
+          {
+            "border-t border-custom-sidebar-border-300": isScrolled,
+            "pr-1": !isCollapsed,
+          }
+        )}
       >
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">

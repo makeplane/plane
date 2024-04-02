@@ -1,18 +1,18 @@
-import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { History, MessageSquare } from "lucide-react";
+import { RichReadOnlyEditor } from "@plane/rich-text-editor";
+import { IUserActivityResponse } from "@plane/types";
 // editor
 // hooks
 // components
-import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
+import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 // ui
-import { ActivitySettingsLoader } from "components/ui";
+import { ActivitySettingsLoader } from "@/components/ui";
 // helpers
-import { calculateTimeAgo } from "helpers/date-time.helper";
-import { useUser } from "hooks/store";
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { useUser } from "@/hooks/store";
 // types
-import { IUserActivityResponse } from "@plane/types";
 
 type Props = {
   activity: IUserActivityResponse | undefined;

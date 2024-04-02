@@ -1,15 +1,15 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { ICycle } from "@plane/types";
 // hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { CYCLE_DELETED } from "constants/event-tracker";
-import { useEventTracker, useCycle } from "hooks/store";
+import { CYCLE_DELETED } from "@/constants/event-tracker";
+import { useEventTracker, useCycle } from "@/hooks/store";
 // components
 // types
-import { ICycle } from "@plane/types";
 // constants
 
 interface ICycleDelete {
@@ -103,7 +103,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                         <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-500/20">
                           <AlertTriangle width={16} strokeWidth={2} className="text-red-600" />
                         </div>
-                        <div className="text-xl font-medium 2xl:text-2xl">Delete Cycle</div>
+                        <div className="text-xl font-medium 2xl:text-2xl">Delete cycle</div>
                       </div>
                       <span>
                         <p className="text-sm text-custom-text-200">
@@ -118,8 +118,8 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                           Cancel
                         </Button>
 
-                        <Button variant="danger" size="sm" tabIndex={1} onClick={formSubmit}>
-                          {loader ? "Deleting..." : "Delete Cycle"}
+                        <Button variant="danger" size="sm" tabIndex={1} onClick={formSubmit} loading={loader}>
+                          {loader ? "Deleting" : "Delete"}
                         </Button>
                       </div>
                     </div>

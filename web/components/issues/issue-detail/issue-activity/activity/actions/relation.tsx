@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// hooks
-import { issueRelationObject } from "components/issues/issue-detail/relation-select";
-import { useIssueDetail } from "hooks/store";
-// components
 import { TIssueRelationTypes } from "@plane/types";
+// hooks
+import { issueRelationObject } from "@/components/issues/issue-detail/relation-select";
+import { useIssueDetail } from "@/hooks/store";
+// components
 import { IssueActivityBlockComponent } from "./";
 // component helpers
 // types

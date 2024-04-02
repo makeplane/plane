@@ -11,6 +11,7 @@ import useSWR, { mutate } from "swr";
 // services
 // components
 import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
+import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 import { UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import {
   GithubImportConfigure,
@@ -18,19 +19,18 @@ import {
   GithubRepoDetails,
   GithubImportUsers,
   GithubImportConfirm,
-} from "components/integration";
+} from "@/components/integration";
 // icons
 // images
+import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
+import { IntegrationService, GithubIntegrationService } from "@/services/integrations";
 import GithubLogo from "public/services/github.png";
-import { IntegrationService, GithubIntegrationService } from "services/integrations";
 // hooks
 // components
 // icons
 // images
 // types
-import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 // fetch-keys
-import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
 export type TIntegrationSteps = "import-configure" | "import-data" | "repo-details" | "import-users" | "import-confirm";
 export interface IIntegrationData {

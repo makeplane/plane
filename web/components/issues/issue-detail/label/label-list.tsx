@@ -1,6 +1,7 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 // components
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 import { LabelListItem } from "./label-list-item";
 // hooks
 // types
@@ -14,7 +15,7 @@ type TLabelList = {
   disabled: boolean;
 };
 
-export const LabelList: FC<TLabelList> = (props) => {
+export const LabelList: FC<TLabelList> = observer((props) => {
   const { workspaceSlug, projectId, issueId, labelOperations, disabled } = props;
   // hooks
   const {
@@ -40,4 +41,4 @@ export const LabelList: FC<TLabelList> = (props) => {
       ))}
     </>
   );
-};
+});

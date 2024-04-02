@@ -17,7 +17,7 @@ import {
   SpreadsheetStateColumn,
   SpreadsheetSubIssueColumn,
   SpreadsheetUpdatedOnColumn,
-} from "components/issues/issue-layouts/spreadsheet";
+} from "@/components/issues/issue-layouts/spreadsheet";
 import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
 
 export const SPREADSHEET_PROPERTY_DETAILS: {
