@@ -70,7 +70,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
         <PageToolbar editorRef={editorRef?.current} />
       )}
       <div className="flex flex-grow items-center justify-end gap-3">
-        {is_locked && archived_at && (
+        {isContentEditable && (
           <div
             className={cn("fadeIn absolute right-[120px] flex items-center gap-x-2 transition-all duration-300", {
               fadeOut: isSubmitting === "saved",

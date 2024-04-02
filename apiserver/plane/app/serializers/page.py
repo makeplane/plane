@@ -3,9 +3,6 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .issue import LabelLiteSerializer
-from .workspace import WorkspaceLiteSerializer
-from .project import ProjectLiteSerializer
 from plane.db.models import (
     Page,
     PageLog,
@@ -34,7 +31,7 @@ class PageSerializer(BaseSerializer):
             "labels",
             "parent",
             "is_favorite",
-            "is_locked", 
+            "is_locked",
             "archived_at",
             "workspace",
             "project",
@@ -42,6 +39,7 @@ class PageSerializer(BaseSerializer):
             "updated_at",
             "created_by",
             "updated_by",
+            "view_props",
         ]
         read_only_fields = [
             "workspace",
@@ -102,10 +100,10 @@ class PageSerializer(BaseSerializer):
 
 
 class PageDetailSerializer(PageSerializer):
-    description_html = serializers.CharField() 
+    description_html = serializers.CharField()
 
     class Meta(PageSerializer.Meta):
-        fields = PageSerializer.Meta.fields + ['description_html']
+        fields = PageSerializer.Meta.fields + ["description_html"]
 
 
 class SubPageSerializer(BaseSerializer):
