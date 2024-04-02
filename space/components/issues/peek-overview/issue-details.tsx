@@ -1,15 +1,24 @@
 import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 import { IssueReactions } from "@/components/issues/peek-overview";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+import { RootStore } from "@/store/root";
+// hooks
+import { useMention } from "hooks/use-mention";
 // types
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 import { IIssue } from "types/issue";
 
 type Props = {
   issueDetails: IIssue;
+  workspace_slug: string;
 };
 
-export const PeekOverviewIssueDetails: React.FC<Props> = ({ issueDetails }) => {
-  const mentionConfig = useEditorSuggestions();
+export const PeekOverviewIssueDetails: React.FC<Props> = ({ issueDetails, workspace_slug }) => {
+  const { project }: RootStore = useMobxStore();
+
+  const { mentionHighlights } = useMention({
+    workspaceSlug: workspace_slug as string,
+    projectId: project?.project?.id as string,
+  });
 
   return (
     <div className="space-y-2">
@@ -28,7 +37,7 @@ export const PeekOverviewIssueDetails: React.FC<Props> = ({ issueDetails }) => {
               : issueDetails.description_html
           }
           customClassName="p-3 min-h-[50px] shadow-sm"
-          mentionHighlights={mentionConfig.mentionHighlights}
+          mentionHighlights={mentionHighlights}
         />
       )}
       <IssueReactions />

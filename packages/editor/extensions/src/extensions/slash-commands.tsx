@@ -390,7 +390,6 @@ export const SlashCommand = (
   Command.configure({
     suggestion: {
       items: getSuggestionItems(uploadFile, setIsSubmitting, additionalOptions),
-      // @ts-expect-error onKeyDown error
       render: renderItems,
     },
   });

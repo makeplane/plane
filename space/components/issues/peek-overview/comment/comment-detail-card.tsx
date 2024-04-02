@@ -1,23 +1,25 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+// icons
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
-// mobx store
 // components
 import { LiteReadOnlyEditorWithRef, LiteTextEditorWithRef } from "@plane/lite-text-editor";
 
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
+// hooks
+import { useMention } from "@/hooks/use-mention";
+// mobx store
 import { useMobxStore } from "@/lib/mobx/store-provider";
-// types
 // services
 import fileService from "@/services/file.service";
 import { RootStore } from "@/store/root";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
-
+// types
 import { Comment } from "types/issue";
+
 type Props = {
   workspaceSlug: string;
   comment: Comment;
@@ -33,7 +35,10 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   // states
   const [isEditing, setIsEditing] = useState(false);
 
-  const mentionsConfig = useEditorSuggestions();
+  const { mentionHighlights } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: project.project?.id as string,
+  });
 
   const editorRef = React.useRef<any>(null);
 
@@ -114,6 +119,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     ref={editorRef}
                     value={value}
                     debouncedUpdatesEnabled={false}
+                    mentionHighlights={mentionHighlights}
                     customClassName="min-h-[50px] p-3 shadow-sm"
                     onChange={(comment_json: unknown, comment_html: string) => {
                       onChange(comment_html);
@@ -144,7 +150,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
               ref={showEditorRef}
               value={comment.comment_html}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              mentionHighlights={mentionsConfig.mentionHighlights}
+              mentionHighlights={mentionHighlights}
             />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
           </div>

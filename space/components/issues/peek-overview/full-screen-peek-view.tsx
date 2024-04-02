@@ -13,10 +13,11 @@ import { IIssue } from "types/issue";
 type Props = {
   handleClose: () => void;
   issueDetails: IIssue | undefined;
+  workspace_slug: string;
 };
 
 export const FullScreenPeekView: React.FC<Props> = observer((props) => {
-  const { handleClose, issueDetails } = props;
+  const { handleClose, issueDetails, workspace_slug } = props;
 
   return (
     <div className="grid h-full w-full grid-cols-10 divide-x divide-custom-border-200 overflow-hidden">
@@ -28,7 +29,7 @@ export const FullScreenPeekView: React.FC<Props> = observer((props) => {
           <div className="h-full w-full overflow-y-auto px-6">
             {/* issue title and description */}
             <div className="w-full">
-              <PeekOverviewIssueDetails issueDetails={issueDetails} />
+              <PeekOverviewIssueDetails workspace_slug={workspace_slug} issueDetails={issueDetails} />
             </div>
             {/* divider */}
             <div className="my-5 h-[1] w-full border-t border-custom-border-200" />

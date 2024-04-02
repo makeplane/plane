@@ -13,6 +13,7 @@ export const MentionNodeView = (props) => {
 
   useEffect(() => {
     const hightlights = async () => {
+      if (!props.extension.options.mentionHighlights) return;
       const userId = await props.extension.options.mentionHighlights();
       setHighlightsState(userId);
     };

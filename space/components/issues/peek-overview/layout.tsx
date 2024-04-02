@@ -80,7 +80,7 @@ export const IssuePeekOverview: React.FC = observer(() => {
             leaveTo="translate-x-full"
           >
             <Dialog.Panel className="fixed right-0 top-0 z-20 h-full w-1/2 bg-custom-background-100 shadow-custom-shadow-sm">
-              <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
+              <SidePeekView workspace_slug={workspace_slug} handleClose={handleClose} issueDetails={issueDetails} />
             </Dialog.Panel>
           </Transition.Child>
         </Dialog>
@@ -114,10 +114,14 @@ export const IssuePeekOverview: React.FC = observer(() => {
                 }`}
               >
                 {issueDetailStore.peekMode === "modal" && (
-                  <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
+                  <SidePeekView workspace_slug={workspace_slug} handleClose={handleClose} issueDetails={issueDetails} />
                 )}
                 {issueDetailStore.peekMode === "full" && (
-                  <FullScreenPeekView handleClose={handleClose} issueDetails={issueDetails} />
+                  <FullScreenPeekView
+                    workspace_slug={workspace_slug}
+                    handleClose={handleClose}
+                    issueDetails={issueDetails}
+                  />
                 )}
               </div>
             </Dialog.Panel>
