@@ -36,7 +36,6 @@ export const CycleCalendarLayout: React.FC = observer(() => {
       addIssuesToView={addIssuesToView}
       viewId={cycleId.toString()}
       isCompletedCycle={isCompletedCycle}
-      storeType={EIssuesStoreType.CYCLE}
     />
   );
 });

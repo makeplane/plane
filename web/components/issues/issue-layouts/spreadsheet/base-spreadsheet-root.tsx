@@ -8,6 +8,7 @@ import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constan
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useIssues, useUser } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // views
 // stores
@@ -25,17 +26,17 @@ export type SpreadsheetStoreType =
 interface IBaseSpreadsheetRoot {
   viewId?: string;
   QuickActions: FC<IQuickActionProps>;
-  storeType: SpreadsheetStoreType;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const { viewId, QuickActions, storeType, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  const { viewId, QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
   // router
   const router = useRouter();
   const { projectId } = router.query;
   // store hooks
+  const storeType = useIssueStore() as SpreadsheetStoreType;
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -108,7 +109,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   if (!Array.isArray(issueIds)) return null;
 
   return (
-    <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.SPREADSHEET}>
+    <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
       <SpreadsheetView
         displayProperties={issuesFilter.issueFilters?.displayProperties ?? {}}
         displayFilters={issuesFilter.issueFilters?.displayFilters ?? {}}

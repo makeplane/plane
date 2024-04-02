@@ -18,6 +18,7 @@ import {
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useGlobalView, useIssues, useUser } from "@/hooks/store";
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // store
@@ -159,21 +160,23 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   const nextPageResults = getPaginationData(ALL_ISSUES, undefined)?.nextPageResults;
 
   return (
-    <IssueLayoutHOC storeType={EIssuesStoreType.GLOBAL} layout={EIssueLayoutTypes.SPREADSHEET}>
-      <SpreadsheetView
-        displayProperties={issueFilters?.displayProperties ?? {}}
-        displayFilters={issueFilters?.displayFilters ?? {}}
-        handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-        issueIds={Array.isArray(issueIds) ? issueIds : []}
-        quickActions={renderQuickActions}
-        updateIssue={updateIssue}
-        canEditProperties={canEditProperties}
-        viewId={globalViewId.toString()}
-        canLoadMoreIssues={!!nextPageResults}
-        loadMoreIssues={fetchNextPages}
-      />
-      {/* peek overview */}
-      <IssuePeekOverview />
-    </IssueLayoutHOC>
+    <IssuesStoreContext.Provider value={EIssuesStoreType.GLOBAL}>
+      <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
+        <SpreadsheetView
+          displayProperties={issueFilters?.displayProperties ?? {}}
+          displayFilters={issueFilters?.displayFilters ?? {}}
+          handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+          issueIds={Array.isArray(issueIds) ? issueIds : []}
+          quickActions={renderQuickActions}
+          updateIssue={updateIssue}
+          canEditProperties={canEditProperties}
+          viewId={globalViewId.toString()}
+          canLoadMoreIssues={!!nextPageResults}
+          loadMoreIssues={fetchNextPages}
+        />
+        {/* peek overview */}
+        <IssuePeekOverview />
+      </IssueLayoutHOC>
+    </IssuesStoreContext.Provider>
   );
 });

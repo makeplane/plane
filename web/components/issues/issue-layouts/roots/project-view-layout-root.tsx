@@ -16,6 +16,7 @@ import {
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // types
 
 const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
@@ -57,14 +58,16 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId || !viewId) return <></>;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden">
-      <ProjectViewAppliedFiltersRoot />
-      <div className="relative h-full w-full overflow-auto">
-        <ProjectViewIssueLayout activeLayout={activeLayout} />
-      </div>
+    <IssuesStoreContext.Provider value={EIssuesStoreType.PROJECT_VIEW}>
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
+        <ProjectViewAppliedFiltersRoot />
+        <div className="relative h-full w-full overflow-auto">
+          <ProjectViewIssueLayout activeLayout={activeLayout} />
+        </div>
 
-      {/* peek overview */}
-      <IssuePeekOverview />
-    </div>
+        {/* peek overview */}
+        <IssuePeekOverview />
+      </div>
+    </IssuesStoreContext.Provider>
   );
 });

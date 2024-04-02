@@ -6,8 +6,9 @@ import {
   ListLayoutLoader,
   SpreadsheetLayoutLoader,
 } from "@/components/ui";
-import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EIssueLayoutTypes } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 import { IssueLayoutEmptyState } from "./empty-states";
 
 const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
@@ -30,13 +31,13 @@ const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
 
 interface Props {
   children: string | JSX.Element | JSX.Element[];
-  storeType: EIssuesStoreType;
   layout: EIssueLayoutTypes;
 }
 
 export const IssueLayoutHOC = observer((props: Props) => {
-  const { storeType, layout } = props;
+  const { layout } = props;
 
+  const storeType = useIssueStore();
   const { issues } = useIssues(storeType);
 
   if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {

@@ -35,6 +35,8 @@ import { STATE_GROUPS } from "@/constants/state";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // services
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
+import { ModuleService } from "@/services/module.service";
+import { CycleService } from "@/services/cycle.service";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -66,6 +68,36 @@ export interface IBaseIssuesStore {
     subGroupId: string | undefined,
     isSubGroupCumulative: boolean
   ) => number | undefined;
+
+  addIssueToCycle: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    issueIds: string[],
+    fetchAddedIssues?: boolean
+  ) => Promise<void>;
+  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
+
+  addIssuesToModule: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueIds: string[],
+    fetchAddedIssues?: boolean
+  ) => Promise<void>;
+  removeIssuesFromModule: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueIds: string[]
+  ) => Promise<void>;
+  addModulesToIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
+  removeModulesFromIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    moduleIds: string[]
+  ) => Promise<void>;
 }
 
 const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
@@ -128,6 +160,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
   issueService;
   issueArchiveService;
   issueDraftService;
+  moduleService;
+  cycleService;
   // root store
   rootIssueStore;
   issueFilterStore;
@@ -142,9 +176,12 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
       paginationOptions: observable,
       // computed
+      moduleId: computed,
+      cycleId: computed,
       orderBy: computed,
       groupBy: computed,
       subGroupBy: computed,
+      orderByKey: computed,
       issueGroupKey: computed,
       issueSubGroupKey: computed,
       // action
@@ -162,9 +199,17 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       createDraftIssue: action,
       updateDraftIssue: action,
       issueQuickAdd: action.bound,
-      removeIssue: action,
-      archiveIssue: action,
-      removeBulkIssues: action,
+      removeIssue: action.bound,
+      archiveIssue: action.bound,
+      removeBulkIssues: action.bound,
+
+      addIssueToCycle: action.bound,
+      removeIssueFromCycle: action.bound,
+
+      addIssuesToModule: action.bound,
+      removeIssuesFromModule: action.bound,
+      addModulesToIssue: action.bound,
+      removeModulesFromIssue: action.bound,
     });
     this.rootIssueStore = _rootStore;
     this.issueFilterStore = issueFilterStore;
@@ -174,6 +219,16 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     this.issueService = new IssueService();
     this.issueArchiveService = new IssueArchiveService();
     this.issueDraftService = new IssueDraftService();
+    this.moduleService = new ModuleService();
+    this.cycleService = new CycleService();
+  }
+
+  get moduleId() {
+    return this.rootIssueStore.moduleId;
+  }
+
+  get cycleId() {
+    return this.rootIssueStore.cycleId;
   }
 
   get orderBy() {
@@ -324,11 +379,19 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     }
   }
 
-  async updateIssue(workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) {
+  async updateIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>,
+    shouldSync = true
+  ) {
     const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
     try {
       this.rootIssueStore.issues.updateIssue(issueId, data);
       this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+
+      if (!shouldSync) return;
 
       await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
     } catch (error) {
@@ -425,6 +488,156 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     }
   }
 
+  async addIssueToCycle(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    issueIds: string[],
+    fetchAddedIssues = true
+  ) {
+    try {
+      await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
+        issues: issueIds,
+      });
+
+      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
+
+      runInAction(() => {
+        if (this.cycleId === cycleId) issueIds.forEach((issueId) => this.addIssueToList(issueId));
+        else if (this.cycleId) issueIds.forEach((issueId) => this.removeIssueFromList(issueId));
+      });
+
+      issueIds.forEach((issueId) => {
+        this.updateIssue(workspaceSlug, projectId, issueId, { cycle_id: cycleId }, false);
+      });
+
+      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async removeIssueFromCycle(workspaceSlug: string, projectId: string, cycleId: string, issueId: string) {
+    try {
+      await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+      runInAction(() => {
+        this.cycleId === cycleId && this.removeIssueFromList(issueId);
+      });
+
+      this.updateIssue(workspaceSlug, projectId, issueId, { cycle_id: null }, false);
+      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async addIssuesToModule(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueIds: string[],
+    fetchAddedIssues = true
+  ) {
+    try {
+      await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+        issues: issueIds,
+      });
+
+      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
+
+      runInAction(() => {
+        this.moduleId === moduleId && issueIds.forEach((issueId) => this.addIssueToList(issueId));
+      });
+
+      issueIds.forEach((issueId) => {
+        const issueModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+        const updatedIssueModuleIds = uniq(concat(issueModuleIds, [moduleId]));
+        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: updatedIssueModuleIds }, false);
+      });
+
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async removeIssuesFromModule(workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) {
+    try {
+      const response = await this.moduleService.removeIssuesFromModuleBulk(
+        workspaceSlug,
+        projectId,
+        moduleId,
+        issueIds
+      );
+
+      runInAction(() => {
+        this.moduleId === moduleId && issueIds.forEach((issueId) => this.removeIssueFromList(issueId));
+      });
+
+      runInAction(() => {
+        issueIds.forEach((issueId) => {
+          const issueModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+          const updatedIssueModuleIds = pull(issueModuleIds, moduleId);
+          this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: updatedIssueModuleIds }, false);
+        });
+      });
+
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async addModulesToIssue(workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) {
+    try {
+      const issueToModule = await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
+        modules: moduleIds,
+      });
+
+      runInAction(() => {
+        moduleIds.forEach((moduleId) => {
+          this.moduleId === moduleId && this.addIssueToList(issueId);
+        });
+
+        const issueModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+        const updatedIssueModuleIds = uniq(concat(issueModuleIds, moduleIds));
+        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: updatedIssueModuleIds }, false);
+      });
+
+      return issueToModule;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async removeModulesFromIssue(workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) {
+    try {
+      runInAction(() => {
+        let issueModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+
+        moduleIds.forEach((moduleId) => {
+          this.moduleId === moduleId && this.removeIssueFromList(issueId);
+          issueModuleIds = pull(issueModuleIds, moduleId);
+        });
+
+        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: issueModuleIds }, false);
+      });
+
+      const response = await this.moduleService.removeModulesFromIssueBulk(
+        workspaceSlug,
+        projectId,
+        issueId,
+        moduleIds
+      );
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   addIssue(issue: TIssue) {
     runInAction(() => {
       this.rootIssueStore.issues.addIssue([issue]);
@@ -452,7 +665,11 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     this.updateIssueList(issue, undefined, EIssueGroupedAction.DELETE);
   }
 
-  updateIssueList(issue?: TIssue, issueBeforeUpdate?: TIssue, action?: EIssueGroupedAction) {
+  updateIssueList(
+    issue?: TIssue,
+    issueBeforeUpdate?: TIssue,
+    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
+  ) {
     if (!issue) return;
     const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);
     runInAction(() => {
@@ -509,7 +726,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
   getUpdateDetails = (
     issue?: Partial<TIssue>,
     issueBeforeUpdate?: Partial<TIssue>,
-    action?: EIssueGroupedAction
+    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
   ): { path: string[]; action: EIssueGroupedAction }[] => {
     const orderByUpdates = this.getOrderByUpdateDetails(issue, issueBeforeUpdate);
     if (!this.issueGroupKey || !issue)
@@ -517,7 +734,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
     const groupActionsArray = this.getDifference(
       this.getArrayStringArray(issue[this.issueGroupKey], this.groupBy),
-      this.getArrayStringArray(issueBeforeUpdate?.[this.issueGroupKey], this.groupBy)
+      this.getArrayStringArray(issueBeforeUpdate?.[this.issueGroupKey], this.groupBy),
+      action
     );
 
     if (!this.issueSubGroupKey)
@@ -531,7 +749,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
     const subGroupActionsArray = this.getDifference(
       this.getArrayStringArray(issue[this.issueSubGroupKey], this.subGroupBy),
-      this.getArrayStringArray(issueBeforeUpdate?.[this.issueSubGroupKey], this.subGroupBy)
+      this.getArrayStringArray(issueBeforeUpdate?.[this.issueSubGroupKey], this.subGroupBy),
+      action
     );
 
     return [

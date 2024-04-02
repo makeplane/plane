@@ -2,10 +2,11 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// hooks
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+// hooks
 import { useIssues } from "@/hooks/store";
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // components
 import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";
 import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
@@ -45,13 +46,15 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden">
-      <DraftIssueAppliedFiltersRoot />
-      <div className="relative h-full w-full overflow-auto">
-        <DraftIssueLayout activeLayout={activeLayout} />
-        {/* issue peek overview */}
-        <IssuePeekOverview is_draft />
+    <IssuesStoreContext.Provider value={EIssuesStoreType.DRAFT}>
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
+        <DraftIssueAppliedFiltersRoot />
+        <div className="relative h-full w-full overflow-auto">
+          <DraftIssueLayout activeLayout={activeLayout} />
+          {/* issue peek overview */}
+          <IssuePeekOverview is_draft />
+        </div>
       </div>
-    </div>
+    </IssuesStoreContext.Provider>
   );
 });

@@ -2,7 +2,6 @@ import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { ProjectIssueQuickActions } from "@/components/issues";
-import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { useUser } from "@/hooks/store";
 // components
@@ -24,7 +23,6 @@ export const ProfileIssuesListLayout: FC = observer(() => {
   return (
     <BaseListRoot
       QuickActions={ProjectIssueQuickActions}
-      storeType={EIssuesStoreType.PROFILE}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />
   );

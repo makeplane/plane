@@ -207,11 +207,11 @@ export class IssueStore implements IIssueStore {
   };
 
   removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
-    const _module = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeIssueFromModule(
+    const _module = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeIssuesFromModule(
       workspaceSlug,
       projectId,
       moduleId,
-      issueId
+      [issueId]
     );
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
     return _module;

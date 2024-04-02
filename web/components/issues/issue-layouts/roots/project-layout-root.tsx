@@ -19,6 +19,7 @@ import {
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
 const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
   switch (props.activeLayout) {
@@ -59,20 +60,22 @@ export const ProjectLayoutRoot: FC = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden">
-      <ProjectAppliedFiltersRoot />
-      <div className="relative h-full w-full overflow-auto bg-custom-background-90">
-        {/* mutation loader */}
-        {issues?.loader === "mutation" && (
-          <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
-            <Spinner className="w-4 h-4" />
-          </div>
-        )}
-        <ProjectIssueLayout activeLayout={activeLayout} />
-      </div>
+    <IssuesStoreContext.Provider value={EIssuesStoreType.PROJECT}>
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
+        <ProjectAppliedFiltersRoot />
+        <div className="relative h-full w-full overflow-auto bg-custom-background-90">
+          {/* mutation loader */}
+          {issues?.loader === "mutation" && (
+            <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
+              <Spinner className="w-4 h-4" />
+            </div>
+          )}
+          <ProjectIssueLayout activeLayout={activeLayout} />
+        </div>
 
-      {/* peek overview */}
-      <IssuePeekOverview />
-    </div>
+        {/* peek overview */}
+        <IssuePeekOverview />
+      </div>
+    </IssuesStoreContext.Provider>
   );
 });

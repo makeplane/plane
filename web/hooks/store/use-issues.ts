@@ -53,8 +53,8 @@ export type TStoreIssues = {
     issuesFilter: IDraftIssuesFilter;
   };
   [EIssuesStoreType.DEFAULT]: defaultIssueStore & {
-    issues: undefined;
-    issuesFilter: undefined;
+    issues: IProjectIssues;
+    issuesFilter: IProjectIssuesFilter;
   };
 };
 
@@ -109,8 +109,8 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
       }) as TStoreIssues[T];
     default:
       return merge(defaultStore, {
-        issues: undefined,
-        issuesFilter: undefined,
+        issues: context.issue.projectIssues,
+        issuesFilter: context.issue.projectIssuesFilter,
       }) as TStoreIssues[T];
   }
 };

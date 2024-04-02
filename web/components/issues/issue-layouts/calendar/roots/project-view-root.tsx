@@ -2,7 +2,6 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
 import { ProjectIssueQuickActions } from "@/components/issues";
-import { EIssuesStoreType } from "@/constants/issue";
 // components
 // types
 import { BaseCalendarRoot } from "../base-calendar-root";
@@ -13,11 +12,5 @@ export const ProjectViewCalendarLayout: React.FC = observer(() => {
   const router = useRouter();
   const { viewId } = router.query;
 
-  return (
-    <BaseCalendarRoot
-      QuickActions={ProjectIssueQuickActions}
-      viewId={viewId?.toString()}
-      storeType={EIssuesStoreType.PROJECT_VIEW}
-    />
-  );
+  return <BaseCalendarRoot QuickActions={ProjectIssueQuickActions} viewId={viewId?.toString()} />;
 });

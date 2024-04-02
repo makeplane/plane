@@ -1,7 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { EIssuesStoreType } from "@/constants/issue";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
 // constants
@@ -12,5 +11,5 @@ export const ProjectViewGanttLayout: React.FC = observer(() => {
   const router = useRouter();
   const { viewId } = router.query;
 
-  return <BaseGanttRoot viewId={viewId?.toString()} storeType={EIssuesStoreType.PROJECT_VIEW} />;
+  return <BaseGanttRoot viewId={viewId?.toString()} />;
 });

@@ -14,11 +14,10 @@ import {
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "@/components/issues";
 import { ListLoaderItemRow } from "@/components/ui";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 // utils
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 //components
@@ -45,7 +44,6 @@ export interface IGroupByList {
     viewId?: string
   ) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
-  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   viewId?: string;
   isCompletedCycle?: boolean;
@@ -66,13 +64,14 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     quickAddCallback,
     viewId,
     disableIssueCreation,
-    storeType,
     addIssuesToView,
     getPaginationData,
     getGroupIssueCount,
     isCompletedCycle = false,
     loadMoreIssues,
   } = props;
+
+  const storeType = useIssueStore();
   // store hooks
   const member = useMember();
   const project = useProject();
@@ -165,7 +164,6 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                     count={groupIssueCount}
                     issuePayload={_list.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
-                    storeType={storeType}
                     addIssuesToView={addIssuesToView}
                   />
                 </div>
@@ -232,7 +230,6 @@ export interface IList {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
@@ -256,7 +253,6 @@ export const List: React.FC<IList> = (props) => {
     getPaginationData,
     getGroupIssueCount,
     disableIssueCreation,
-    storeType,
     addIssuesToView,
     loadMoreIssues,
     isCompletedCycle = false,
@@ -280,7 +276,6 @@ export const List: React.FC<IList> = (props) => {
         getGroupIssueCount={getGroupIssueCount}
         viewId={viewId}
         disableIssueCreation={disableIssueCreation}
-        storeType={storeType}
         addIssuesToView={addIssuesToView}
         isCompletedCycle={isCompletedCycle}
       />

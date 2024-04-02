@@ -36,7 +36,6 @@ export const CycleListLayout: React.FC = observer(() => {
     <BaseListRoot
       QuickActions={CycleIssueQuickActions}
       viewId={cycleId?.toString()}
-      storeType={EIssuesStoreType.CYCLE}
       addIssuesToView={addIssuesToView}
       canEditPropertiesBasedOnProject={canEditIssueProperties}
       isCompletedCycle={isCompletedCycle}

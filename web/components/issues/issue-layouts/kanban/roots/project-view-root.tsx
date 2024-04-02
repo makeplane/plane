@@ -2,7 +2,6 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { EIssuesStoreType } from "@/constants/issue";
 // constant
 // types
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
@@ -14,11 +13,5 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
   const { viewId } = router.query;
 
-  return (
-    <BaseKanBanRoot
-      QuickActions={ProjectIssueQuickActions}
-      storeType={EIssuesStoreType.PROJECT_VIEW}
-      viewId={viewId?.toString()}
-    />
-  );
+  return <BaseKanBanRoot QuickActions={ProjectIssueQuickActions} viewId={viewId?.toString()} />;
 });

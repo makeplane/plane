@@ -292,9 +292,9 @@ const useModuleIssueActions = () => {
   const removeIssueFromView = useCallback(
     async (projectId: string | undefined | null, issueId: string) => {
       if (!moduleId || !workspaceSlug || !projectId) return;
-      return await issues.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+      return await issues.removeIssuesFromModule(workspaceSlug, projectId, moduleId, [issueId]);
     },
-    [issues.removeIssueFromModule, moduleId, workspaceSlug]
+    [issues.removeIssuesFromModule, moduleId, workspaceSlug]
   );
   const archiveIssue = useCallback(
     async (projectId: string | undefined | null, issueId: string) => {

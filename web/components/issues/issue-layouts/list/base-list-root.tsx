@@ -8,6 +8,7 @@ import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { useIssues, useUser } from "@/hooks/store";
 // hooks
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
 import { IssueLayoutHOC } from "../issue-layout-HOC";
@@ -25,21 +26,14 @@ type ListStoreType =
 interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
   viewId?: string;
-  storeType: ListStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
 }
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const {
-    QuickActions,
-    viewId,
-    storeType,
-    addIssuesToView,
-    canEditPropertiesBasedOnProject,
-    isCompletedCycle = false,
-  } = props;
+  const { QuickActions, viewId, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
 
+  const storeType = useIssueStore() as ListStoreType;
   const { issuesFilter, issues } = useIssues(storeType);
   const { fetchIssues, fetchNextIssues, updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue } =
     useIssuesActions(storeType);
@@ -114,7 +108,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   );
 
   return (
-    <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.LIST}>
+    <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative h-full w-full bg-custom-background-90`}>
         <List
           issuesMap={issueMap}
@@ -132,7 +126,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           enableIssueQuickAdd={!!enableQuickAdd}
           canEditProperties={canEditProperties}
           disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-          storeType={storeType}
           addIssuesToView={addIssuesToView}
           isCompletedCycle={isCompletedCycle}
         />

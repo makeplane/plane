@@ -23,11 +23,11 @@ import {
   useProject,
   useProjectState,
 } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 // components
-import { KanbanStoreType } from "./base-kanban-root";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
 
@@ -61,7 +61,6 @@ export interface IGroupByKanBan {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -90,7 +89,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     loadMoreIssues,
     viewId,
     disableIssueCreation,
-    storeType,
     addIssuesToView,
     canEditProperties,
     scrollableContainerRef,
@@ -98,6 +96,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     showEmptyGroup = true,
     subGroupIssueHeaderCount,
   } = props;
+
+  const storeType = useIssueStore();
 
   const member = useMember();
   const project = useProject();
@@ -173,7 +173,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                     count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
                     issuePayload={subList.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
-                    storeType={storeType}
                     addIssuesToView={addIssuesToView}
                     kanbanFilters={kanbanFilters}
                     handleKanbanFilters={handleKanbanFilters}
@@ -243,7 +242,6 @@ export interface IKanBan {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -270,7 +268,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     quickAddCallback,
     viewId,
     disableIssueCreation,
-    storeType,
     addIssuesToView,
     canEditProperties,
     scrollableContainerRef,
@@ -301,7 +298,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       quickAddCallback={quickAddCallback}
       viewId={viewId}
       disableIssueCreation={disableIssueCreation}
-      storeType={storeType}
       addIssuesToView={addIssuesToView}
       canEditProperties={canEditProperties}
       scrollableContainerRef={scrollableContainerRef}

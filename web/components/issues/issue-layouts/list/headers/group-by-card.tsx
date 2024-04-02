@@ -11,8 +11,8 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // ui
 // mobx
 // hooks
-import { EIssuesStoreType } from "@/constants/issue";
 import { useEventTracker } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 // types
 
 interface IHeaderGroupByCard {
@@ -21,16 +21,16 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
 export const HeaderGroupByCard = observer(
-  ({ icon, title, count, issuePayload, disableIssueCreation, storeType, addIssuesToView }: IHeaderGroupByCard) => {
+  ({ icon, title, count, issuePayload, disableIssueCreation, addIssuesToView }: IHeaderGroupByCard) => {
     const router = useRouter();
     const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
     // hooks
     const { setTrackElement } = useEventTracker();
+    const storeType = useIssueStore();
 
     const [isOpen, setIsOpen] = useState(false);
 
