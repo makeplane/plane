@@ -34,7 +34,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { cn } from "@/helpers/common.helper";
 import { getNumberCount } from "@/helpers/string.helper";
 // hooks
-import { useApplication, useEventTracker, useInbox, useProject } from "@/hooks/store";
+import { useApplication, useEventTracker, useProject } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // helpers
@@ -95,7 +95,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const { theme: themeStore } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
-  const { getInboxesByProjectId, getInboxById } = useInbox();
   const { isMobile } = usePlatformOS();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -109,8 +108,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // derived values
   const project = getProjectById(projectId);
   const isCollapsed = themeStore.sidebarCollapsed;
-  const inboxesMap = project?.inbox_view ? getInboxesByProjectId(projectId) : undefined;
-  const inboxDetails = inboxesMap && inboxesMap.length > 0 ? getInboxById(inboxesMap[0]) : undefined;
+  // const inboxesMap = project?.inbox_view ? getInboxesByProjectId(projectId) : undefined;
+  // const inboxDetails = inboxesMap && inboxesMap.length > 0 ? getInboxById(inboxesMap[0]) : undefined;
+  const inboxDetails: any = undefined;
   // auth
   const isAdmin = project?.member_role === EUserProjectRoles.ADMIN;
   const isViewerOrGuest =

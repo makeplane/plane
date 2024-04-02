@@ -26,7 +26,7 @@ type Props = {
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId, issueId, issueOperations, is_editable } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, is_editable } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks

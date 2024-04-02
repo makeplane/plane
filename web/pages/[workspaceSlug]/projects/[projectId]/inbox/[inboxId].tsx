@@ -5,7 +5,7 @@ import useSWR from "swr";
 // hooks
 import { PageHead } from "@/components/core";
 import { ProjectInboxHeader } from "@/components/headers";
-import { InboxSidebarRoot, InboxContentRoot } from "@/components/inbox";
+import { InboxContentRoot } from "@/components/inbox";
 import { InboxLayoutLoader } from "@/components/ui";
 import { useProject, useInboxIssues } from "@/hooks/store";
 // layouts
@@ -19,10 +19,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
   // store hooks
   const { currentProjectDetails } = useProject();
-  const {
-    filters: { fetchInboxFilters },
-    issues: { fetchInboxIssues },
-  } = useInboxIssues();
+  const inboxIssues: any = useInboxIssues(inboxId as string);
   // fetching the Inbox filters and issues
   const { isLoading } = useSWR(
     workspaceSlug && projectId && currentProjectDetails && currentProjectDetails?.inbox_view
@@ -30,8 +27,8 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
       : null,
     async () => {
       if (workspaceSlug && projectId && inboxId && currentProjectDetails && currentProjectDetails?.inbox_view) {
-        await fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
-        await fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
+        await inboxIssues?.fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
+        await inboxIssues?.fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
       }
     }
   );
@@ -50,19 +47,20 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
       <PageHead title={pageTitle} />
       <div className="relative flex h-full overflow-hidden">
         <div className="flex-shrink-0 w-[340px] h-full border-r border-custom-border-300">
-          <InboxSidebarRoot
+          {/* <InboxSidebarRoot
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
             inboxId={inboxId.toString()}
-          />
+          /> */}
         </div>
         <div className="w-full">
-          <InboxContentRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            inboxId={inboxId.toString()}
-            inboxIssueId={inboxIssueId?.toString() || undefined}
-          />
+          {inboxIssueId && (
+            <InboxContentRoot
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              inboxIssueId={inboxIssueId?.toString()}
+            />
+          )}
         </div>
       </div>
     </>

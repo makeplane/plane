@@ -118,7 +118,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
             <InboxContentRoot
               workspaceSlug={workspaceSlug.toString()}
               projectId={projectId.toString()}
-              inboxIssueId={inboxIssueId?.toString() || undefined}
+              inboxIssueId={inboxIssueId?.toString()}
             />
           ) : (
             <div className="grid h-full place-items-center p-4 text-custom-text-200">

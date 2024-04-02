@@ -7,7 +7,6 @@ import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { IEstimateStore, EstimateStore } from "./estimate.store";
 import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
-import { IInboxRootStore, InboxRootStore } from "./inbox_legacy/root.store";
 import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 import { ILabelStore, LabelStore } from "./label.store";
 import { IMemberRootStore, MemberRootStore } from "./member";
@@ -38,7 +37,6 @@ export class RootStore {
   projectView: IProjectViewStore;
   globalView: IGlobalViewStore;
   issue: IIssueRootStore;
-  inbox: IInboxRootStore;
   state: IStateStore;
   label: ILabelStore;
   estimate: IEstimateStore;
@@ -62,7 +60,6 @@ export class RootStore {
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this);
-    this.inbox = new InboxRootStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
@@ -85,7 +82,6 @@ export class RootStore {
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this);
-    this.inbox = new InboxRootStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);

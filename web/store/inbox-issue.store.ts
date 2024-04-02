@@ -3,7 +3,6 @@ import { makeObservable, observable, runInAction, action } from "mobx";
 import { InboxIssueService } from "services/inbox";
 // types
 import { TIssue, TInboxIssue } from "@plane/types";
-import { ca } from "date-fns/locale";
 
 export interface IInboxIssueStore {
   id: string;

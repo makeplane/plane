@@ -1,8 +1,8 @@
+// types
+import type { TInboxIssue, TIssue, TInboxIssueListResponse } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // helpers
-// types
-import type { TInboxIssue, TIssue, TInboxIssueListResponse } from "@plane/types";
 
 export class InboxIssueService extends APIService {
   constructor() {

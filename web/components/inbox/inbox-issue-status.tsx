@@ -3,12 +3,13 @@ import { observer } from "mobx-react";
 // hooks
 import { INBOX_STATUS } from "@/constants/inbox";
 // store
-import { IInboxIssueStore } from "@/store/inbox-issue.store";
+// import { IInboxIssueStore } from "@/store/inbox-issue.store";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
-  inboxIssue: IInboxIssueStore;
+  // inboxIssue: IInboxIssueStore; // FIXME: inbox-issue
+  inboxIssue: any;
   iconSize?: number;
   showDescription?: boolean;
 };
