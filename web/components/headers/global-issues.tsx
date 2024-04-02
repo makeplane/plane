@@ -56,8 +56,10 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);

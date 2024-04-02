@@ -21,6 +21,8 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
   const { styles: infoPopoverStyles, attributes: infoPopoverAttributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-start",
   });
+  // derived values
+  const { created_at, updated_at } = pageStore;
 
   return (
     <div onMouseEnter={() => setIsPopoverOpen(true)} onMouseLeave={() => setIsPopoverOpen(false)}>
@@ -38,14 +40,14 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
             <h6 className="text-xs text-custom-text-400">Last updated on</h6>
             <h5 className="flex items-center gap-1 text-sm">
               <History className="h-3 w-3" />
-              {renderFormattedDate(pageStore.updated_at)}
+              {renderFormattedDate(updated_at)}
             </h5>
           </div>
           <div className="space-y-1.5">
             <h6 className="text-xs text-custom-text-400">Created on</h6>
             <h5 className="flex items-center gap-1 text-sm">
               <Calendar className="h-3 w-3" />
-              {renderFormattedDate(pageStore.created_at)}
+              {renderFormattedDate(created_at)}
             </h5>
           </div>
         </div>

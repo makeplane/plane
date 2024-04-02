@@ -14,6 +14,7 @@ import {
   useFloating,
   useInteractions,
 } from "@floating-ui/react";
+import BlockMenu from "../menu//block-menu";
 // ui
 import { TextArea } from "@plane/ui";
 
@@ -183,6 +184,11 @@ export const PageRenderer = (props: IPageRenderer) => {
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}
           />
+          {editor && editor.isEditable && (
+            <>
+              <BlockMenu editor={editor} />
+            </>
+          )}
         </EditorContainer>
       </div>
       {isOpen && linkViewProps && coordinates && (

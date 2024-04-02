@@ -141,12 +141,14 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           {activityTab === "all" ? (
             <div className="space-y-3">
               <IssueActivityCommentRoot
+                projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 issueId={issueId}
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
               />
               <IssueCommentCreate
+                projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
@@ -157,12 +159,14 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           ) : (
             <div className="space-y-3">
               <IssueCommentRoot
+                projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 issueId={issueId}
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
               />
               <IssueCommentCreate
+                projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}

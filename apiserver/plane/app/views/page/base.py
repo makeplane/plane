@@ -29,6 +29,8 @@ from plane.db.models import (
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
 
+from plane.bgtasks.page_transaction_task import page_transaction
+
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
     # Your SQL query
@@ -93,6 +95,8 @@ class PageViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
+            # capture the page transaction
+            page_transaction.delay(request.data, None, serializer.data["id"])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -129,6 +133,17 @@ class PageViewSet(BaseViewSet):
             serializer = PageSerializer(page, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                # capture the page transaction
+                if request.data.get("description_html"):
+                    page_transaction.delay(
+                        new_value=request.data,
+                        old_value=json.dumps(
+                            {
+                                "description_html": page.description_html,
+                            }
+                        ),
+                        page_id=pk,
+                    )
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST

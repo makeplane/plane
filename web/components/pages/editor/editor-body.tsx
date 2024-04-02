@@ -52,14 +52,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     sidePeekVisible,
     updateMarkings,
   } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() ?? "")?.id ?? "";
+  const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html ?? "<p></p>";
   const { description_html, isContentEditable, updateName, isSubmitting, setIsSubmitting } = pageStore;

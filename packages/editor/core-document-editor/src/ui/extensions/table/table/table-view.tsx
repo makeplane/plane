@@ -177,7 +177,7 @@ const rowsToolboxItems: ToolboxItem[] = [
     action: (args: any) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
-    label: "Delete row",
+    label: "Delete Row",
     icon: icons.deleteRow,
     action: ({ editor }: { editor: Editor }) => editor.chain().focus().deleteRow().run(),
   },

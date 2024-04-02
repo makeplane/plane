@@ -29,6 +29,22 @@ export const ListKeymap = Extension.create<ListKeymapOptions>({
 
   addKeyboardShortcuts() {
     return {
+      Tab: () => {
+        if (this.editor.commands.sinkListItem("listItem")) {
+          return true;
+        } else if (this.editor.commands.sinkListItem("taskItem")) {
+          return true;
+        }
+        return true;
+      },
+      "Shift-Tab": () => {
+        if (this.editor.commands.liftListItem("listItem")) {
+          return true;
+        } else if (this.editor.commands.liftListItem("taskItem")) {
+          return true;
+        }
+        return true;
+      },
       Delete: ({ editor }) => {
         let handled = false;
 

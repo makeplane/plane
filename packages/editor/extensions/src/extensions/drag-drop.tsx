@@ -1,9 +1,13 @@
 import { Extension } from "@tiptap/core";
 
-import { PluginKey, NodeSelection, Plugin } from "@tiptap/pm/state";
-// @ts-ignore
+import { NodeSelection, Plugin, PluginKey } from "@tiptap/pm/state";
+// @ts-expect-error __serializeForClipboard's is not exported
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
-import React from "react";
+
+export interface DragHandleOptions {
+  dragHandleWidth: number;
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
+}
 
 function createDragHandleElement(): HTMLElement {
   const dragHandleElement = document.createElement("div");
@@ -29,13 +33,8 @@ function createDragHandleElement(): HTMLElement {
   return dragHandleElement;
 }
 
-export interface DragHandleOptions {
-  dragHandleWidth: number;
-  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
-}
-
 function absoluteRect(node: Element) {
-  const data = node?.getBoundingClientRect();
+  const data = node.getBoundingClientRect();
 
   return {
     top: data.top,
@@ -57,34 +56,18 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
             "pre",
             "blockquote",
             "h1, h2, h3",
-            "[data-type=horizontalRule]",
             ".tableWrapper",
+            "[data-type=horizontalRule]",
           ].join(", ")
         )
     );
 }
 
-function nodePosAtDOM(node: Element, view: EditorView) {
-  const boundingRect = node?.getBoundingClientRect();
-
-  if (node.nodeName === "IMG") {
-    return view.posAtCoords({
-      left: boundingRect.left + 1,
-      top: boundingRect.top + 1,
-    })?.pos;
-  }
-
-  if (node.nodeName === "PRE") {
-    return (
-      view.posAtCoords({
-        left: boundingRect.left + 1,
-        top: boundingRect.top + 1,
-      })?.pos! - 1
-    );
-  }
+function nodePosAtDOM(node: Element, view: EditorView, options: DragHandleOptions) {
+  const boundingRect = node.getBoundingClientRect();
 
   return view.posAtCoords({
-    left: boundingRect.left + 1,
+    left: boundingRect.left + 50 + options.dragHandleWidth,
     top: boundingRect.top + 1,
   })?.inside;
 }
@@ -96,14 +79,14 @@ function DragHandle(options: DragHandleOptions) {
     if (!event.dataTransfer) return;
 
     const node = nodeDOMAtCoords({
-      x: event.clientX + options.dragHandleWidth + 50,
+      x: event.clientX + 50 + options.dragHandleWidth,
       y: event.clientY,
     });
 
     if (!(node instanceof Element)) return;
 
-    const nodePos = nodePosAtDOM(node, view);
-    if (nodePos === null || nodePos === undefined || nodePos < 0) return;
+    const nodePos = nodePosAtDOM(node, view, options);
+    if (nodePos == null || nodePos < 0) return;
 
     view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
 
@@ -132,9 +115,9 @@ function DragHandle(options: DragHandleOptions) {
 
     if (!(node instanceof Element)) return;
 
-    const nodePos = nodePosAtDOM(node, view);
+    const nodePos = nodePosAtDOM(node, view, options);
 
-    if (nodePos === null || nodePos === undefined || nodePos < 0) return;
+    if (nodePos === null || nodePos === undefined) return;
 
     view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
   }
@@ -192,11 +175,11 @@ function DragHandle(options: DragHandleOptions) {
           }
 
           const node = nodeDOMAtCoords({
-            x: event.clientX + options.dragHandleWidth,
+            x: event.clientX + 50 + options.dragHandleWidth,
             y: event.clientY,
           });
 
-          if (!(node instanceof Element)) {
+          if (!(node instanceof Element) || node.matches("ul, ol")) {
             hideDragHandle();
             return;
           }
@@ -207,7 +190,7 @@ function DragHandle(options: DragHandleOptions) {
 
           const rect = absoluteRect(node);
 
-          rect.top += (lineHeight - 24) / 2;
+          rect.top += (lineHeight - 20) / 2;
           rect.top += paddingTop;
           // Li markers
           if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
@@ -218,21 +201,22 @@ function DragHandle(options: DragHandleOptions) {
           if (!dragHandleElement) return;
 
           dragHandleElement.style.left = `${rect.left - rect.width}px`;
-          dragHandleElement.style.top = `${rect.top + 3}px`;
+          dragHandleElement.style.top = `${rect.top}px`;
           showDragHandle();
         },
         keydown: () => {
           hideDragHandle();
         },
-        wheel: () => {
+        mousewheel: () => {
           hideDragHandle();
         },
-        // dragging className is used for CSS
-        dragstart: (view) => {
+        dragenter: (view) => {
           view.dom.classList.add("dragging");
+          hideDragHandle();
         },
         drop: (view) => {
           view.dom.classList.remove("dragging");
+          hideDragHandle();
         },
         dragend: (view) => {
           view.dom.classList.remove("dragging");

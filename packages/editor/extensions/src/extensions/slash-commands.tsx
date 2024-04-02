@@ -54,7 +54,20 @@ const Command = Extension.create<SlashCommandOptions>({
           props.command({ editor, range });
         },
         allow({ editor }: { editor: Editor }) {
-          return !editor.isActive("table");
+          const { selection } = editor.state;
+
+          const parentNode = selection.$from.node(selection.$from.depth);
+          const blockType = parentNode.type.name;
+
+          if (blockType === "codeBlock") {
+            return false;
+          }
+
+          if (editor.isActive("table")) {
+            return false;
+          }
+
+          return true;
         },
         allowSpaces: true,
       },
@@ -186,7 +199,7 @@ const getSuggestionItems =
         searchTerms: ["img", "photo", "picture", "media"],
         icon: <ImageIcon className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          insertImageCommand(editor, uploadFile, setIsSubmitting, range);
+          insertImageCommand(editor, uploadFile, setIsSubmitting, null, range);
         },
       },
       {
@@ -330,7 +343,7 @@ const renderItems = () => {
       // @ts-ignore
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.querySelector("#editor-container"),
+        appendTo: () => document.querySelector(".active-editor"),
         content: component.element,
         showOnCreate: true,
         interactive: true,

@@ -35,7 +35,8 @@ export class MentionStore implements IMentionStore {
       const memberDetails = this.rootStore.memberRoot.project.getProjectMemberDetails(memberId);
 
       return {
-        id: `${memberDetails?.member?.id}`,
+        entity_name: "user_mention",
+        entity_identifier: `${memberDetails?.member?.id}`,
         type: "User",
         title: `${memberDetails?.member?.display_name}`,
         subtitle: memberDetails?.member?.email ?? "",

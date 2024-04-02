@@ -17,6 +17,7 @@ import { TActivityOperations } from "../root";
 const fileService = new FileService();
 
 type TIssueCommentCreate = {
+  projectId: string;
   workspaceSlug: string;
   activityOperations: TActivityOperations;
   showAccessSpecifier?: boolean;
@@ -41,11 +42,14 @@ const commentAccess: commentAccessType[] = [
 ];
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
-  const { workspaceSlug, activityOperations, showAccessSpecifier = false } = props;
+  const { workspaceSlug, projectId, activityOperations, showAccessSpecifier = false } = props;
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
 
-  const { mentionHighlights, mentionSuggestions } = useMention();
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: projectId as string,
+  });
 
   // refs
   const editorRef = useRef<any>(null);
@@ -88,6 +92,9 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <LiteTextEditorWithRef
+                onEnterKeyPress={(e) => {
+                  handleSubmit(onSubmit)(e);
+                }}
                 cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.getDeleteImageFunction(workspaceId)}

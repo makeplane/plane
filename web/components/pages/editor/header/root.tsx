@@ -45,17 +45,14 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     config: { envConfig },
-    router: { workspaceSlug },
   } = useApplication();
   // derived values
-  const isSubmitting = pageStore.isSubmitting;
+  const { archived_at, isContentEditable, isSubmitting, is_locked } = pageStore;
 
   const handleAiAssistance = async (response: string) => {
-    if (!workspaceSlug || !projectId || !editorRef) return;
+    if (!editorRef) return;
     editorRef.current?.setEditorValueAtCursorPosition(response);
   };
-  // auth
-  const isContentEditable = pageStore.isContentEditable;
 
   if (!editorRef.current && !readOnlyEditorRef.current) return null;
 
@@ -73,7 +70,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
         <PageToolbar editorRef={editorRef?.current} />
       )}
       <div className="flex flex-grow items-center justify-end gap-3">
-        {!pageStore.is_locked && !pageStore.archived_at && (
+        {is_locked && archived_at && (
           <div
             className={cn("fadeIn absolute right-[120px] flex items-center gap-x-2 transition-all duration-300", {
               fadeOut: isSubmitting === "saved",
@@ -85,16 +82,16 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
             </span>
           </div>
         )}
-        {pageStore.is_locked && (
+        {is_locked && (
           <div className="flex h-7 items-center gap-2 rounded-full bg-custom-background-80 px-3 py-0.5 text-xs font-medium text-custom-text-300">
             <Lock className="h-3 w-3" />
             <span>Locked</span>
           </div>
         )}
-        {pageStore.archived_at && (
+        {archived_at && (
           <div className="flex h-7 items-center gap-2 rounded-full bg-blue-500/20 px-3 py-0.5 text-xs font-medium text-blue-500">
             <ArchiveIcon className="h-3 w-3" />
-            <span>Archived at {renderFormattedDate(pageStore.archived_at)}</span>
+            <span>Archived at {renderFormattedDate(archived_at)}</span>
           </div>
         )}
         {isContentEditable && envConfig?.has_openai_configured && (

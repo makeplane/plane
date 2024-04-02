@@ -52,29 +52,23 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       })
     );
 
-  const handleLockPage = async () => {
-    try {
-      await lock();
-    } catch (error) {
+  const handleLockPage = async () =>
+    await lock().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Page could not be locked. Please try again later.",
-      });
-    }
-  };
+      })
+    );
 
-  const handleUnlockPage = async () => {
-    try {
-      await unlock();
-    } catch (error) {
+  const handleUnlockPage = async () =>
+    await unlock().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Page could not be unlocked. Please try again later.",
-      });
-    }
-  };
+      })
+    );
 
   // menu items list
   const MENU_ITEMS: {
@@ -101,7 +95,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       shouldRender: true,
     },
     {
-      key: "copy-page-;ink",
+      key: "copy-page-link",
       action: () => {
         copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${pageStore.id}`).then(() =>
           setToast({

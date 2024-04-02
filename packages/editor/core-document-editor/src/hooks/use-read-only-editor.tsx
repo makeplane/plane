@@ -3,18 +3,17 @@ import { useImperativeHandle, useRef, MutableRefObject } from "react";
 import { CoreReadOnlyEditorExtensions } from "src/ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "src/ui/read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
-import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { EditorReadOnlyRefApi } from "src/types/editor-ref-api";
 import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
+import { IMentionHighlight } from "src/types/mention-suggestion";
 
 interface CustomReadOnlyEditorProps {
   value: string;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
   extensions?: any;
   editorProps?: EditorProps;
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
   handleEditorReady?: (value: boolean) => void;
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
 }
 
 export const useReadOnlyEditor = ({
@@ -24,7 +23,6 @@ export const useReadOnlyEditor = ({
   editorProps = {},
   handleEditorReady,
   mentionHighlights,
-  mentionSuggestions,
 }: CustomReadOnlyEditorProps) => {
   const editor = useCustomEditor({
     editable: false,
@@ -38,8 +36,7 @@ export const useReadOnlyEditor = ({
     },
     extensions: [
       ...CoreReadOnlyEditorExtensions({
-        mentionSuggestions: mentionSuggestions ?? [],
-        mentionHighlights: mentionHighlights ?? [],
+        mentionHighlights: mentionHighlights,
       }),
       ...extensions,
     ],

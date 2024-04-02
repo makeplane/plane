@@ -53,7 +53,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
       onMouseLeave={() => {
         hideDragHandle?.();
       }}
-      className={`cursor-text ${editorClassNames}`}
+      className={`cursor-text ${editorClassNames} ${editor?.isFocused && editor?.isEditable ? "active-editor" : ""}`}
     >
       {children}
     </div>

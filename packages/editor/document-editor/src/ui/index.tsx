@@ -10,6 +10,7 @@ import {
 import { DocumentEditorExtensions } from "src/ui/extensions";
 import { useEditorMarkings } from "src/hooks/use-editor-markings";
 import { PageRenderer } from "src/ui/components/page-renderer";
+import { IMentionHighlight, IMentionSuggestion } from "@plane/editor-core";
 
 interface IDocumentEditor {
   title: string;
@@ -25,6 +26,8 @@ interface IDocumentEditor {
   editorContentCustomClassNames?: string;
   onChange: (json: object, html: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  mentionHighlights: () => Promise<IMentionHighlight[]>;
+  mentionSuggestions: () => Promise<IMentionSuggestion[]>;
   updatePageTitle: (title: string) => void;
   tabIndex?: number;
 }
@@ -37,6 +40,8 @@ const DocumentEditor = (props: IDocumentEditor) => {
     value,
     fileHandler,
     customClassName,
+    mentionHighlights,
+    mentionSuggestions,
     handleEditorReady,
     forwardedRef,
     updatePageTitle,
@@ -66,6 +71,8 @@ const DocumentEditor = (props: IDocumentEditor) => {
     deleteFile: fileHandler.delete,
     cancelUploadImage: fileHandler.cancel,
     forwardedRef,
+    mentionHighlights,
+    mentionSuggestions,
     extensions: DocumentEditorExtensions(fileHandler.upload, setHideDragHandleFunction),
   });
 
@@ -80,16 +87,18 @@ const DocumentEditor = (props: IDocumentEditor) => {
   });
 
   return (
-    <PageRenderer
-      tabIndex={tabIndex}
-      hideDragHandle={hideDragHandleOnMouseLeave}
-      readonly={false}
-      editor={editor}
-      editorContentCustomClassNames={editorContentCustomClassNames}
-      editorClassNames={editorClassNames}
-      title={title}
-      updatePageTitle={updatePageTitle}
-    />
+    <div className="frame-renderer h-full w-full">
+      <PageRenderer
+        tabIndex={tabIndex}
+        hideDragHandle={hideDragHandleOnMouseLeave}
+        readonly={false}
+        editor={editor}
+        editorContentCustomClassNames={editorContentCustomClassNames}
+        editorClassNames={editorClassNames}
+        title={title}
+        updatePageTitle={updatePageTitle}
+      />
+    </div>
   );
 };
 

@@ -134,6 +134,7 @@ export async function startImageUpload(
     const transaction = view.state.tr.insert(pos - 1, node).setMeta(uploadKey, { remove: { id } });
 
     view.dispatch(transaction);
+    view.focus();
   } catch (error) {
     console.error("Upload error: ", error);
     removePlaceholder(view, id);

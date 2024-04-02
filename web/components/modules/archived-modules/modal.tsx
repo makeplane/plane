@@ -31,7 +31,7 @@ export const ArchiveModuleModal: React.FC<Props> = (props) => {
     handleClose();
   };
 
-  const handleArchiveIssue = async () => {
+  const handleArchiveModule = async () => {
     setIsArchiving(true);
     await archiveModule(workspaceSlug, projectId, moduleId)
       .then(() => {
@@ -89,7 +89,7 @@ export const ArchiveModuleModal: React.FC<Props> = (props) => {
                     <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button size="sm" tabIndex={1} onClick={handleArchiveIssue} loading={isArchiving}>
+                    <Button size="sm" tabIndex={1} onClick={handleArchiveModule} loading={isArchiving}>
                       {isArchiving ? "Archiving" : "Archive"}
                     </Button>
                   </div>

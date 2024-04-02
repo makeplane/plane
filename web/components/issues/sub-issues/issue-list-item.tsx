@@ -158,7 +158,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 <CustomMenu.MenuItem
                   onClick={() => {
                     handleIssueCrudState("delete", parentIssueId, issue);
-                    toggleDeleteIssueModal(true);
+                    toggleDeleteIssueModal(issue.id);
                   }}
                 >
                   <div className="flex items-center gap-2">

@@ -1,7 +1,12 @@
 import { forwardRef, MutableRefObject, useEffect } from "react";
 // hooks
 import { useEditorMarkings } from "src/hooks/use-editor-markings";
-import { EditorReadOnlyRefApi, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-document-core";
+import {
+  EditorReadOnlyRefApi,
+  getEditorClassNames,
+  IMentionHighlight,
+  useReadOnlyEditor,
+} from "@plane/editor-document-core";
 // components
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
@@ -12,15 +17,18 @@ interface IDocumentReadOnlyEditor {
   tabIndex?: number;
   title: string;
   handleEditorReady?: (value: boolean) => void;
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
 }
 
 const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
-  const { customClassName, value, title, forwardedRef, tabIndex, handleEditorReady } = props;
+  const { customClassName, value, title, forwardedRef, tabIndex, handleEditorReady, mentionHighlights } = props;
   const { updateMarkings } = useEditorMarkings();
 
   const editor = useReadOnlyEditor({
     value,
+    mentionHighlights,
     forwardedRef,
     handleEditorReady,
     extensions: [IssueWidgetPlaceholder()],

@@ -1,4 +1,5 @@
 import { Droppable } from "@hello-pangea/dnd";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
 import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
 // components
@@ -19,7 +20,7 @@ type Props = {
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
   quickAddCallback?: (

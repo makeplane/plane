@@ -4,6 +4,7 @@ import {
   EditorContainer,
   EditorContentWrapper,
   getEditorClassNames,
+  IMentionHighlight,
   IMentionSuggestion,
   RestoreImage,
   UploadImage,
@@ -34,8 +35,8 @@ export type IRichTextEditor = {
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
   tabIndex?: number;
 };
 
@@ -79,7 +80,7 @@ const RichTextEditor = ({
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
 
-  const editor = useEditor({
+  const editorVal = useEditor({
     onChange,
     debouncedUpdatesEnabled,
     setIsSubmitting,
@@ -106,6 +107,9 @@ const RichTextEditor = ({
   //   if (editor && initialValue && editor.getHTML() != initialValue) editor.commands.setContent(initialValue);
   // }, [editor, initialValue]);
   //
+  if (!editorVal) return null;
+
+  const { editor } = editorVal;
   if (!editor) return null;
 
   return (

@@ -101,10 +101,18 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     const { query } = router;
 
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekModule: moduleId },
-    });
+    if (query.peekModule) {
+      delete query.peekModule;
+      router.push({
+        pathname: router.pathname,
+        query: { ...query },
+      });
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekModule: moduleId },
+      });
+    }
   };
 
   if (!moduleDetails) return null;

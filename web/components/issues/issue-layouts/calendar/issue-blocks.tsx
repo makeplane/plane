@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
 import { TIssue, TIssueMap } from "@plane/types";
 // components
@@ -12,7 +13,7 @@ type Props = {
   date: Date;
   issues: TIssueMap | undefined;
   issueIdList: string[] | null;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
   isDragDisabled?: boolean;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;

@@ -65,7 +65,7 @@ export class PageStore implements IPageStore {
   updated_at: Date | undefined;
   // helpers
   oldName: string = "";
-  // disposers
+  // reactions
   disposers: Array<() => void> = [];
   // service
   pageService: PageService;
@@ -269,7 +269,9 @@ export class PageStore implements IPageStore {
   });
 
   cleanup = action("cleanup", () => {
-    this.disposers.forEach((disposer) => {
+    console.log("Cleaning up...", this.disposers);
+    this.disposers.forEach((disposer, index) => {
+      console.log("disposer", index, disposer);
       disposer();
     });
   });

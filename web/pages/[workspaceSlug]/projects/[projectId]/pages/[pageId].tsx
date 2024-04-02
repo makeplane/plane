@@ -42,7 +42,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   useEffect(
     () => () => {
-      if (pageStore) pageStore.cleanup?.();
+      if (pageStore.cleanup) pageStore.cleanup();
     },
     [pageStore]
   );
