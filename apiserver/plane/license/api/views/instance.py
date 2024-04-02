@@ -391,7 +391,7 @@ class InstanceAdminSignInEndpoint(View):
 
         # get tokens for user
         user_login(request=request, user=user)
-        url = referer + "?" + urlencode({"success": "true"})
+        url = referer + "/god-mode"
         return HttpResponseRedirect(url)
 
 
