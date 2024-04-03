@@ -1,6 +1,6 @@
 # Python imports
 import uuid
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urljoin
 
 # Django import
 from django.core.exceptions import ImproperlyConfigured
@@ -80,7 +80,7 @@ class GitHubCallbackEndpoint(View):
             # Get the redirection path
             path = get_redirection_path(user=user)
             # redirect to referer path
-            url = referer + path
+            url = urljoin(referer, path)
             return HttpResponseRedirect(url)
         except ImproperlyConfigured as e:
             url = referer + "?" + urlencode({"error": str(e)})

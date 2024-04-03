@@ -7,7 +7,7 @@ def get_redirection_path(user):
 
     # Redirect to onboarding if the user is not onboarded yet
     if not profile.is_onboarded:
-        return "/onboarding"
+        return "onboarding"
 
     # Redirect to the last workspace if the user has last workspace
     if profile.last_workspace_id and Workspace.objects.filter(
@@ -20,7 +20,7 @@ def get_redirection_path(user):
             workspace_member__member_id=user.id,
             workspace_member__is_active=True,
         )
-        return f"/{workspace.slug}"
+        return f"{workspace.slug}"
 
     fallback_workspace = (
         Workspace.objects.filter(
@@ -32,11 +32,11 @@ def get_redirection_path(user):
     )
     # Redirect to fallback workspace
     if fallback_workspace:
-        return f"/{fallback_workspace.slug}"
+        return f"{fallback_workspace.slug}"
 
     # Redirect to invitations if the user has unaccepted invitations
     if WorkspaceMemberInvite.objects.filter(email=user.email).count():
-        return "/invitations"
+        return "invitations"
 
     # Redirect the user to create workspace
-    return "/create-workspace"
+    return "create-workspace"
