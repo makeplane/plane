@@ -1,5 +1,6 @@
 import { enableStaticRendering } from "mobx-react-lite";
 // root stores
+import { ProjectInboxStore, IProjectInboxStore } from "@/store/inbox/project-inbox.store";
 import { AppRootStore, IAppRootStore } from "./application";
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
@@ -14,7 +15,6 @@ import { IMentionStore, MentionStore } from "./mention.store";
 import { IModuleStore, ModulesStore } from "./module.store";
 import { IModuleFilterStore, ModuleFilterStore } from "./module_filter.store";
 import { IProjectRootStore, ProjectRootStore } from "./project";
-import { ProjectInboxStore, IProjectInboxStore } from "./project-inbox.store";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { IStateStore, StateStore } from "./state.store";

@@ -1,13 +1,13 @@
 // icons
 import { AlertTriangle, CheckCircle2, Clock, Copy, LucideIcon, XCircle } from "lucide-react";
 // types
-import { TInboxIssueOrderByOptions } from "@plane/types";
+import { TInboxIssueStatus } from "@plane/types";
 // helpers
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 
 export const INBOX_STATUS: {
   key: string;
-  status: number;
+  status: TInboxIssueStatus;
   icon: LucideIcon;
   title: string;
   description: (snoozedTillDate: Date) => JSX.Element;
@@ -67,7 +67,7 @@ export const INBOX_STATUS: {
 
 export const INBOX_ISSUE_SOURCE = "in-app";
 
-export const INBOX_ISSUE_ORDER_BY_OPTIONS: { key: TInboxIssueOrderByOptions; label: string }[] = [
+export const INBOX_ISSUE_ORDER_BY_OPTIONS: { key: any; label: string }[] = [
   {
     key: "issue__created_at",
     label: "Date created",

@@ -11,7 +11,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterStatus: React.FC<Props> = observer((props) => {
+export const FilterPriority: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
