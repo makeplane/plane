@@ -58,7 +58,7 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
             "pre",
             "blockquote",
             "h1, h2, h3",
-            ".tableWrapper",
+            ".table-wrapper",
             "[data-type=horizontalRule]",
           ].join(", ")
         )

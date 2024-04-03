@@ -380,7 +380,7 @@ export class TableView implements NodeView {
     this.root = h(
       "div",
       {
-        className: "tableWrapper controls--disabled",
+        className: "table-wrapper controls--disabled",
       },
       this.controls,
       this.table
