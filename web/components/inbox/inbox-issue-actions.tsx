@@ -1,21 +1,24 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // icons
-import { CheckCircle2, ChevronDown, ChevronUp, FileStack, Trash2, XCircle } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, ExternalLink, FileStack, Link, Trash2 } from "lucide-react";
 // ui
-import { Button } from "@plane/ui";
+import { Button, ControlLink, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   AcceptIssueModal,
   DeclineIssueModal,
   DeleteInboxIssueModal,
+  InboxIssueSnoozeModal,
+  InboxIssueStatus,
   SelectDuplicateInboxIssueModal,
-  InboxIssueSnooze,
 } from "@/components/inbox";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useUser, useProjectInbox } from "@/hooks/store";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useUser, useProjectInbox, useProject } from "@/hooks/store";
+// helpers
 // store types
 import type { IInboxIssueStore } from "@/store/inbox-issue.store";
 
@@ -27,10 +30,8 @@ type TInboxIssueActionsHeader = {
 
 export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssue } = props;
-  // router
-  const router = useRouter();
   // states
-
+  const [isSnoozeDateModalOpen, setIsSnoozeDateModalOpen] = useState(false);
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
   const [acceptIssueModal, setAcceptIssueModal] = useState(false);
   const [declineIssueModal, setDeclineIssueModal] = useState(false);
@@ -41,14 +42,21 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
+  const router = useRouter();
+  const { getProjectById } = useProject();
 
-  console.log("inboxIssue", inboxIssue);
+  const issue = inboxIssue?.issue;
   // derived values
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const canMarkAsDuplicate = isAllowed && inboxIssue?.status === -2;
   const canMarkAsAccepted = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsDeclined = isAllowed && inboxIssue?.status === -2;
   const canDelete = isAllowed || inboxIssue?.created_by === currentUser?.id;
+  const isCompleted = inboxIssue?.status === 1;
+
+  const currentInboxIssueId = inboxIssue?.issue.id;
+
+  const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
 
   const handleInboxIssueDuplicate = (issueId: string) => {
     inboxIssue?.updateDuplicateTo(issueId);
@@ -65,20 +73,61 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   };
 
   const handleInboxIssueDelete = async () => {
-    if (!inboxIssue) return;
-    deleteInboxIssue(workspaceSlug, projectId, inboxIssue.id);
+    if (!inboxIssue || !currentInboxIssueId) return;
+    deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId);
   };
 
-  const handleInboxIssueNavigation = (direction: "prev" | "next") => {
-    const currentIssueIndex = inboxIssuesArray.findIndex((issue) => issue.id === inboxIssue?.id);
-    const nextIssue = inboxIssuesArray[currentIssueIndex + 1];
-    const prevIssue = inboxIssuesArray[currentIssueIndex - 1];
-    if (direction === "next" && nextIssue) {
-      router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${nextIssue.id}`);
-    } else if (direction === "prev" && prevIssue) {
-      router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${prevIssue.id}`);
-    }
+  const handleInboxSIssueSnooze = async (date: Date) => {
+    inboxIssue?.updateSnoozeTill(date);
+    setIsSnoozeDateModalOpen(false);
   };
+
+  const handleCopyIssueLink = () =>
+    copyUrlToClipboard(issueLink).then(() =>
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Link copied",
+        message: "Issue link copied to clipboard",
+      })
+    );
+
+  const currentIssueIndex = inboxIssuesArray.findIndex((issue) => issue.issue.id === currentInboxIssueId) ?? 0;
+
+  const handleInboxIssueNavigation = useCallback(
+    (direction: "next" | "prev") => {
+      if (!inboxIssuesArray || !currentInboxIssueId) return;
+      console.log("comming here");
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement && (activeElement.classList.contains("tiptap") || activeElement.id === "title-input")) return;
+      const nextIssueIndex =
+        direction === "next"
+          ? (currentIssueIndex + 1) % inboxIssuesArray.length
+          : (currentIssueIndex - 1 + inboxIssuesArray.length) % inboxIssuesArray.length;
+      const nextIssueId = inboxIssuesArray[nextIssueIndex].issue.id;
+      if (!nextIssueId) return;
+      router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${nextIssueId}`);
+    },
+    [currentInboxIssueId, currentIssueIndex, inboxIssuesArray, projectId, router, workspaceSlug]
+  );
+
+  const onKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "ArrowUp") {
+        handleInboxIssueNavigation("prev");
+      } else if (e.key === "ArrowDown") {
+        handleInboxIssueNavigation("next");
+      }
+    },
+    [handleInboxIssueNavigation]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onKeyDown]);
 
   if (!inboxIssue) return null;
 
@@ -112,83 +161,111 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           onClose={() => setDeleteIssueModal(false)}
           onSubmit={handleInboxIssueDelete}
         />
+
+        {isSnoozeDateModalOpen && (
+          <InboxIssueSnoozeModal
+            isOpen={isSnoozeDateModalOpen}
+            handleClose={() => setIsSnoozeDateModalOpen(false)}
+            value={inboxIssue?.snoozed_till}
+            onConfirm={handleInboxSIssueSnooze}
+          />
+        )}
       </>
 
       <div className="relative flex h-full w-full items-center justify-between gap-2 px-4">
-        <div className="flex items-center gap-x-2">
-          <button
-            type="button"
-            className="rounded border border-custom-border-200 bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
-            onClick={() => handleInboxIssueNavigation("prev")}
-          >
-            <ChevronUp size={14} strokeWidth={2} />
-          </button>
-          <button
-            type="button"
-            className="rounded border border-custom-border-200 bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
-            onClick={() => handleInboxIssueNavigation("next")}
-          >
-            <ChevronDown size={14} strokeWidth={2} />
-          </button>
-          {/* <div className="text-sm">
-            {currentIssueIndex + 1}/{inboxIssues?.length ?? 0}
-          </div> */}
+        <div className="flex items-center gap-4">
+          {issue?.project_id && issue.sequence_id && (
+            <h3 className="text-base font-medium text-custom-text-300">
+              {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
+            </h3>
+          )}
+          <InboxIssueStatus inboxIssue={inboxIssue} showDescription />
         </div>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-x-2">
+            <button
+              type="button"
+              className="rounded border border-custom-border-200 p-1.5"
+              onClick={() => handleInboxIssueNavigation("prev")}
+            >
+              <ChevronUp size={14} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              className="rounded border border-custom-border-200 p-1.5"
+              onClick={() => handleInboxIssueNavigation("next")}
+            >
+              <ChevronDown size={14} strokeWidth={2} />
+            </button>
+          </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {canMarkAsAccepted && <InboxIssueSnooze value={inboxIssue?.snoozed_till} onConfirm={() => {}} />}
+          <div className="flex flex-wrap items-center gap-3">
+            {canMarkAsAccepted && (
+              <div className="flex-shrink-0">
+                <Button variant="neutral-primary" size="sm" onClick={() => setAcceptIssueModal(true)}>
+                  Accept
+                </Button>
+              </div>
+            )}
 
-          {canMarkAsDuplicate && (
-            <div className="flex-shrink-0">
-              <Button
-                variant="neutral-primary"
-                size="sm"
-                prependIcon={<FileStack size={14} strokeWidth={2} />}
-                onClick={() => setSelectDuplicateIssue(true)}
-              >
-                Mark as duplicate
-              </Button>
-            </div>
-          )}
+            {canMarkAsDeclined && (
+              <div className="flex-shrink-0">
+                <Button variant="neutral-primary" size="sm" onClick={() => setDeclineIssueModal(true)}>
+                  Decline
+                </Button>
+              </div>
+            )}
 
-          {canMarkAsAccepted && (
-            <div className="flex-shrink-0">
-              <Button
-                variant="neutral-primary"
-                size="sm"
-                prependIcon={<CheckCircle2 className="text-green-500" size={14} strokeWidth={2} />}
-                onClick={() => setAcceptIssueModal(true)}
-              >
-                Accept
-              </Button>
-            </div>
-          )}
-
-          {canMarkAsDeclined && (
-            <div className="flex-shrink-0">
-              <Button
-                variant="neutral-primary"
-                size="sm"
-                prependIcon={<XCircle className="text-red-500" size={14} strokeWidth={2} />}
-                onClick={() => setDeclineIssueModal(true)}
-              >
-                Decline
-              </Button>
-            </div>
-          )}
-
-          {canDelete && (
-            <div className="flex-shrink-0">
-              <Button
-                variant="neutral-primary"
-                size="sm"
-                prependIcon={<Trash2 className="text-red-500" size={14} strokeWidth={2} />}
-                onClick={() => setDeleteIssueModal(true)}
-              >
-                Delete
-              </Button>
-            </div>
-          )}
+            {isCompleted ? (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="neutral-primary"
+                  prependIcon={<Link className="h-2.5 w-2.5" />}
+                  size="sm"
+                  onClick={handleCopyIssueLink}
+                >
+                  Copy issue link
+                </Button>
+                <ControlLink
+                  href={`/${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`}
+                  onClick={() =>
+                    router.push(`/${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`)
+                  }
+                >
+                  <Button variant="neutral-primary" prependIcon={<ExternalLink className="h-2.5 w-2.5" />} size="sm">
+                    Open issue
+                  </Button>
+                </ControlLink>
+              </div>
+            ) : (
+              <CustomMenu verticalEllipsis placement="bottom-start">
+                {canMarkAsAccepted && (
+                  <CustomMenu.MenuItem onClick={() => setIsSnoozeDateModalOpen(true)}>
+                    <div className="flex items-center gap-2">
+                      <Clock size={14} strokeWidth={2} />
+                      Snooze
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
+                {canMarkAsDuplicate && (
+                  <CustomMenu.MenuItem onClick={() => setSelectDuplicateIssue(true)}>
+                    <div className="flex items-center gap-2">
+                      <FileStack size={14} strokeWidth={2} />
+                      Mark as duplicate
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
+                {canDelete && (
+                  <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
+                    <div className="flex items-center gap-2">
+                      <Trash2 size={14} strokeWidth={2} />
+                      Delete
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
+              </CustomMenu>
+            )}
+          </div>
         </div>
       </div>
     </>

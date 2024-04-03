@@ -1,40 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 // ui
-import { StateGroupIcon } from "@plane/ui";
-// components
+import { TIssue } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
 import {
   IssueDescriptionInput,
   IssueTitleInput,
   IssueActivity,
   IssueReaction,
-  IssueUpdateStatus,
   TIssueOperations,
 } from "@/components/issues";
-// hooks
-import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-import { InboxIssueStatus } from "../inbox-issue-status";
+// components
+import { IInboxIssueStore } from "@/store/inbox-issue.store";
+import { InboxIssueDetailsSidebar } from "./sidebar";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
-  inboxId: string;
-  issueId: string;
-  issueOperations: TIssueOperations;
+  inboxIssue: IInboxIssueStore;
   is_editable: boolean;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, is_editable } = props;
+  const { workspaceSlug, projectId, inboxIssue, is_editable } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
   const { currentUser } = useUser();
-  const { projectStates } = useProjectState();
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
@@ -48,10 +43,8 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
     }
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
-  const issue = issueId ? getIssueById(issueId) : undefined;
+  const issue = inboxIssue.issue;
   if (!issue) return <></>;
-
-  const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
 
   const issueDescription =
     issue.description_html !== undefined || issue.description_html !== null
@@ -60,22 +53,77 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         : "<p></p>"
       : undefined;
 
+  const issueOperations: TIssueOperations = useMemo(
+    () => ({
+      fetch: async () => {
+        try {
+          await inboxIssue.fetchInboxIssue();
+        } catch (error) {
+          console.error("Error fetching the parent issue");
+        }
+      },
+      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+        try {
+          await inboxIssue.updateInboxIssue(data);
+          // captureIssueEvent({
+          //   eventName: "Inbox issue updated",
+          //   payload: { ...data, state: "SUCCESS", element: "Inbox" },
+          //   updates: {
+          //     changed_property: Object.keys(data).join(","),
+          //     change_details: Object.values(data).join(","),
+          //   },
+          //   path: router.asPath,
+          // });
+        } catch (error) {
+          setToast({
+            title: "Issue update failed",
+            type: TOAST_TYPE.ERROR,
+            message: "Issue update failed",
+          });
+          // captureIssueEvent({
+          //   eventName: "Inbox issue updated",
+          //   payload: { state: "SUCCESS", element: "Inbox" },
+          //   updates: {
+          //     changed_property: Object.keys(data).join(","),
+          //     change_details: Object.values(data).join(","),
+          //   },
+          //   path: router.asPath,
+          // });
+        }
+      },
+      remove: async () => {
+        try {
+          await inboxIssue.deleteInboxIssue();
+          setToast({
+            title: "Issue deleted successfully",
+            type: TOAST_TYPE.SUCCESS,
+            message: "Issue deleted successfully",
+          });
+          // captureIssueEvent({
+          //   eventName: "Inbox issue deleted",
+          //   payload: { id: issueId, state: "SUCCESS", element: "Inbox" },
+          //   path: router.asPath,
+          // });
+        } catch (error) {
+          // captureIssueEvent({
+          //   eventName: "Inbox issue deleted",
+          //   payload: { id: issueId, state: "FAILED", element: "Inbox" },
+          //   path: router.asPath,
+          // });
+          setToast({
+            title: "Issue delete failed",
+            type: TOAST_TYPE.ERROR,
+            message: "Issue delete failed",
+          });
+        }
+      },
+    }),
+    [inboxIssue]
+  );
+
   return (
     <>
       <div className="rounded-lg space-y-4">
-        <InboxIssueStatus workspaceSlug={workspaceSlug} projectId={projectId} inboxIssue={issueId} showDescription />
-
-        <div className="mb-2.5 flex items-center">
-          {currentIssueState && (
-            <StateGroupIcon
-              className="mr-3 h-4 w-4"
-              stateGroup={currentIssueState.group}
-              color={currentIssueState.color}
-            />
-          )}
-          <IssueUpdateStatus isSubmitting={isSubmitting} issueDetail={issue} />
-        </div>
-
         <IssueTitleInput
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
@@ -102,14 +150,22 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           <IssueReaction
             workspaceSlug={workspaceSlug}
             projectId={projectId}
-            issueId={issueId}
+            issueId={issue.id}
             currentUser={currentUser}
           />
         )}
       </div>
 
+      <InboxIssueDetailsSidebar
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issue.id}
+        issueOperations={issueOperations}
+        is_editable={is_editable}
+      />
+
       <div className="pb-12">
-        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} />
       </div>
     </>
   );
