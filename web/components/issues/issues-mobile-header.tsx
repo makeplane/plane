@@ -132,6 +132,8 @@ export const IssuesMobileHeader = observer(() => {
               labels={projectLabels}
               memberIds={projectMemberIds ?? undefined}
               states={projectStates}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
         </div>
@@ -154,6 +156,8 @@ export const IssuesMobileHeader = observer(() => {
               handleDisplayFiltersUpdate={handleDisplayFilters}
               displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
         </div>
