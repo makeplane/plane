@@ -79,6 +79,8 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     });
   };
 
+  if (!block.data) return null;
+
   return (
     <div
       className="relative min-w-full w-max"

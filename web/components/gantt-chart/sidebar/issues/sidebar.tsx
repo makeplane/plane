@@ -33,7 +33,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
     showAllBlocks = false,
   } = props;
 
-  const intersectionRef = useRef<HTMLSpanElement | null>(null);
+  const intersectionRef = useRef<HTMLDivElement | null>(null);
 
   useIntersectionObserver(ganttContainerRef, intersectionRef, loadMoreBlocks, "50% 0% 50% 0%");
 
@@ -99,7 +99,9 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
                     />
                   ))}
                   {canLoadMoreBlocks && (
-                    <span ref={intersectionRef} className="h-5 w-10 bg-custom-background-80 rounded animate-pulse" />
+                    <div ref={intersectionRef} className="p-2">
+                      <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
+                    </div>
                   )}
                 </>
               ) : (

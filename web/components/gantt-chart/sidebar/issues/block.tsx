@@ -29,6 +29,8 @@ export const IssuesSidebarBlock: React.FC<Props> = observer((props) => {
 
   const duration = findTotalDaysInRange(block.start_date, block.target_date);
 
+  if (!block.data) return null;
+
   return (
     <div
       className={cn({
