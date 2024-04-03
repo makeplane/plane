@@ -12,7 +12,7 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // hooks
 import { useEventTracker } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 
 interface IHeaderGroupByCard {
@@ -47,7 +47,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
   // hooks
-  const storeType = useIssueStore();
+  const storeType = useIssueStoreType();
   const { setTrackElement } = useEventTracker();
   // router
   const router = useRouter();

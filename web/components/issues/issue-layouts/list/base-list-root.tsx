@@ -2,13 +2,13 @@ import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // types
-import { TGroupedIssues, TIssue } from "@plane/types";
+import { GroupByColumnTypes, TGroupedIssues, TIssue } from "@plane/types";
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { useIssues, useUser } from "@/hooks/store";
 // hooks
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
 import { IssueLayoutHOC } from "../issue-layout-HOC";
@@ -32,7 +32,7 @@ interface IBaseListRoot {
 export const BaseListRoot = observer((props: IBaseListRoot) => {
   const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
 
-  const storeType = useIssueStore() as ListStoreType;
+  const storeType = useIssueStoreType() as ListStoreType;
   const { issuesFilter, issues } = useIssues(storeType);
   const {
     fetchIssues,
@@ -54,7 +54,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
 
-  const group_by = displayFilters?.group_by || null;
+  const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
   useSWR(
@@ -104,16 +104,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [fetchNextIssues]
   );
 
-  const getPaginationData = useCallback(
-    (groupId?: string) => issues?.getPaginationData(groupId, undefined),
-    [issues?.getPaginationData]
-  );
-
-  const getGroupIssueCount = useCallback(
-    (groupId?: string) => issues?.getGroupIssueCount(groupId, undefined, false),
-    [issues?.getGroupIssueCount]
-  );
-
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative h-full w-full bg-custom-background-90`}>
@@ -126,8 +116,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           groupedIssueIds={groupedIssueIds ?? {}}
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
-          getPaginationData={getPaginationData}
-          getGroupIssueCount={getGroupIssueCount}
           quickAddCallback={quickAddIssue}
           enableIssueQuickAdd={!!enableQuickAdd}
           canEditProperties={canEditProperties}

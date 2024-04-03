@@ -12,7 +12,7 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // mobx
 // hooks
 import { useEventTracker } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 
 interface IHeaderGroupByCard {
@@ -30,7 +30,7 @@ export const HeaderGroupByCard = observer(
     const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
     // hooks
     const { setTrackElement } = useEventTracker();
-    const storeType = useIssueStore();
+    const storeType = useIssueStoreType();
 
     const [isOpen, setIsOpen] = useState(false);
 

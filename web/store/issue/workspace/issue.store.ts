@@ -66,7 +66,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
   fetchIssues = async (workspaceSlug: string, viewId: string, loadType: TLoader, options: IssuePaginationOptions) => {
     try {
       runInAction(() => {
-        this.loader = loadType;
+        this.setLoader(loadType);
       });
       this.clear();
       const params = this.issueFilterStore?.getFilterParams(viewId, options, undefined, undefined, undefined);
@@ -75,7 +75,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
       this.onfetchIssues(response, options);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined);
       throw error;
     }
   };
@@ -84,7 +84,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     const cursorObject = this.getPaginationData(groupId, subGroupId);
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
-      this.loader = "pagination";
+      this.setLoader("pagination", groupId, subGroupId);
 
       const params = this.issueFilterStore?.getFilterParams(
         viewId,
@@ -98,7 +98,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
       this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };

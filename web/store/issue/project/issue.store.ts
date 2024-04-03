@@ -66,7 +66,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
   ) => {
     try {
       runInAction(() => {
-        this.loader = loadType;
+        this.setLoader(loadType);
       });
       this.clear();
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
@@ -76,7 +76,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined);
       throw error;
     }
   };
@@ -85,7 +85,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
-      this.loader = "pagination";
+      this.setLoader("pagination", groupId, subGroupId);
 
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
@@ -98,7 +98,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };

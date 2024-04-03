@@ -35,7 +35,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   // store
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },
-    issues: { loader, getPaginationData, groupedIssueIds, fetchIssues, fetchNextIssues },
+    issues: { getIssueLoader, getPaginationData, groupedIssueIds, fetchIssues, fetchNextIssues },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue, removeIssue, archiveIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
 
@@ -152,7 +152,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     [canEditProperties, removeIssue, updateIssue, archiveIssue]
   );
 
-  if (loader === "init-loader" || !globalViewId || !groupedIssueIds) {
+  if (getIssueLoader() === "init-loader" || !globalViewId || !groupedIssueIds) {
     return <SpreadsheetLayoutLoader />;
   }
 

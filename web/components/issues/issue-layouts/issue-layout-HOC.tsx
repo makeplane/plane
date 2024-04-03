@@ -8,7 +8,7 @@ import {
 } from "@/components/ui";
 import { EIssueLayoutTypes } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { IssueLayoutEmptyState } from "./empty-states";
 
 const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
@@ -37,12 +37,12 @@ interface Props {
 export const IssueLayoutHOC = observer((props: Props) => {
   const { layout } = props;
 
-  const storeType = useIssueStore();
+  const storeType = useIssueStoreType();
   const { issues } = useIssues(storeType);
 
   const issueCount = issues.getGroupIssueCount(undefined, undefined, false);
 
-  if (issues?.loader === "init-loader" || issueCount === undefined) {
+  if (issues?.getIssueLoader() === "init-loader" || issueCount === undefined) {
     return <ActiveLoader layout={layout} />;
   }
 

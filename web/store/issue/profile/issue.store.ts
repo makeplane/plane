@@ -95,7 +95,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
   ) => {
     try {
       runInAction(() => {
-        this.loader = loadType;
+        this.setLoader(loadType);
       });
       this.clear();
 
@@ -117,7 +117,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       this.onfetchIssues(response, options);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined);
       throw error;
     }
   };
@@ -126,7 +126,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
-      this.loader = "pagination";
+      this.setLoader("pagination", groupId, subGroupId);
 
       let params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
@@ -149,7 +149,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };

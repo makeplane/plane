@@ -8,7 +8,7 @@ import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constan
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useIssues, useUser } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // views
 // stores
@@ -35,7 +35,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const router = useRouter();
   const { projectId } = router.query;
   // store hooks
-  const storeType = useIssueStore() as SpreadsheetStoreType;
+  const storeType = useIssueStoreType() as SpreadsheetStoreType;
   const {
     membership: { currentProjectRole },
   } = useUser();

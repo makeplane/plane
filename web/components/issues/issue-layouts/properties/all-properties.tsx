@@ -25,7 +25,7 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { IssuePropertyLabels } from "../properties/labels";
@@ -50,7 +50,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   // store hooks
   const { labelMap } = useLabel();
   const { captureIssueEvent } = useEventTracker();
-  const storeType = useIssueStore();
+  const storeType = useIssueStoreType();
   const {
     issues: { addModulesToIssue, removeModulesFromIssue },
   } = useIssues(storeType);

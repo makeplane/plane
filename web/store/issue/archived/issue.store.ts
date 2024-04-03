@@ -67,7 +67,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
   ) => {
     try {
       runInAction(() => {
-        this.loader = loadType;
+        this.setLoader(loadType);
       });
       this.clear();
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
@@ -76,7 +76,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
       this.onfetchIssues(response, options);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined);
       throw error;
     }
   };
@@ -85,7 +85,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
-      this.loader = "pagination";
+      this.setLoader("pagination", groupId, subGroupId);
 
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
@@ -98,7 +98,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
       this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };

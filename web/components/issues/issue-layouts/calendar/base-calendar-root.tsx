@@ -12,7 +12,7 @@ import { EIssuesStoreType, EIssueGroupByToServerOptions } from "@/constants/issu
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useIssues, useUser, useCalendarView } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
@@ -38,7 +38,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const { workspaceSlug, projectId } = router.query;
 
   // hooks
-  const storeType = useIssueStore() as CalendarStoreType;
+  const storeType = useIssueStoreType() as CalendarStoreType;
   const {
     membership: { currentProjectRole },
   } = useUser();

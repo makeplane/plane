@@ -9,7 +9,6 @@ import {
   IIssueMap,
   TSubGroupedIssues,
   TIssueKanbanFilters,
-  TPaginationData,
 } from "@plane/types";
 // constants
 // hooks
@@ -23,7 +22,7 @@ import {
   useProject,
   useProjectState,
 } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
@@ -39,7 +38,6 @@ export interface IGroupByKanBan {
     subGroupId: string | undefined,
     isSubGroupCumulative: boolean
   ) => number | undefined;
-  getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
@@ -68,7 +66,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     issuesMap,
     groupedIssueIds,
     getGroupIssueCount,
-    getPaginationData,
     displayProperties,
     sub_group_by,
     group_by,
@@ -90,7 +87,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     subGroupIssueHeaderCount,
   } = props;
 
-  const storeType = useIssueStore();
+  const storeType = useIssueStoreType();
 
   const member = useMember();
   const project = useProject();
@@ -178,8 +175,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   groupId={subList.id}
                   issuesMap={issuesMap}
                   groupedIssueIds={groupedIssueIds}
-                  getGroupIssueCount={getGroupIssueCount}
-                  getPaginationData={getPaginationData}
                   peekIssueId={peekIssue?.issueId ?? ""}
                   displayProperties={displayProperties}
                   sub_group_by={sub_group_by}
@@ -207,7 +202,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 export interface IKanBan {
   issuesMap: IIssueMap;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
-  getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (
     groupId: string | undefined,
     subGroupId: string | undefined,
@@ -240,7 +234,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     issuesMap,
     groupedIssueIds,
     getGroupIssueCount,
-    getPaginationData,
     displayProperties,
     sub_group_by,
     group_by,
@@ -268,7 +261,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       issuesMap={issuesMap}
       groupedIssueIds={groupedIssueIds}
       getGroupIssueCount={getGroupIssueCount}
-      getPaginationData={getPaginationData}
       displayProperties={displayProperties}
       group_by={group_by}
       sub_group_by={sub_group_by}

@@ -15,7 +15,7 @@ import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constan
 import { EUserProjectRoles } from "@/constants/project";
 //hooks
 import { useEventTracker, useIssues, useUser } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // ui
 // types
@@ -52,7 +52,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const storeType = useIssueStore() as KanbanStoreType;
+  const storeType = useIssueStoreType() as KanbanStoreType;
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -87,7 +87,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const fetchMoreIssues = useCallback(
     (groupId?: string, subgroupId?: string) => {
-      if (issues.loader !== "pagination") {
+      if (issues?.getIssueLoader(groupId, subgroupId) !== "pagination") {
         fetchNextIssues(groupId, subgroupId);
       }
     },
@@ -289,7 +289,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                 enableQuickIssueCreate={enableQuickAdd}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
                 quickAddCallback={quickAddIssue}
-                getPaginationData={issues.getPaginationData}
                 disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
                 canEditProperties={canEditProperties}
                 addIssuesToView={addIssuesToView}

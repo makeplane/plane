@@ -1,14 +1,14 @@
 import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
+import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 //components
+import { getDisplayPropertiesCount } from "../utils";
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
-import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";
-import { getDisplayPropertiesCount } from "../utils";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
