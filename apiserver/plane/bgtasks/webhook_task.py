@@ -219,7 +219,7 @@ def send_webhook(event, payload, kw, action, slug, bulk, current_site):
                             event_id=(
                                 payload.get("id")
                                 if isinstance(payload, dict)
-                                else None
+                                else kw.get("pk")
                             ),
                             many=False,
                         )
