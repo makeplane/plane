@@ -1,47 +1,89 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+
 // components
+// ui
+import { IIssueLabel } from "@plane/types";
+import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
-// constants
-import { INBOX_STATUS } from "@/constants/inbox";
+import { useProjectInbox } from "@/hooks/store";
+// types
+
+const LabelIcons = ({ color }: { color: string }) => (
+  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
+);
 
 type Props = {
-  appliedFilters: number[] | null;
-  handleUpdate: (val: number) => void;
+  labels: IIssueLabel[] | undefined;
   searchQuery: string;
 };
 
-export const FilterLabel: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, searchQuery } = props;
-  // states
+export const FilterLabels: React.FC<Props> = (props) => {
+  const { labels, searchQuery } = props;
+
+  const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const filteredOptions = INBOX_STATUS.filter((s) => s.key.includes(searchQuery.toLowerCase()));
+  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+
+  const filterValue = inboxFilters?.label || [];
+
+  const appliedFiltersCount = filterValue?.length ?? 0;
+
+  const filteredOptions = labels?.filter((label) => label.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const handleViewToggle = () => {
+    if (!filteredOptions) return;
+
+    if (itemsToRender === filteredOptions.length) setItemsToRender(5);
+    else setItemsToRender(filteredOptions.length);
+  };
+
+  const handleFilterValue = (value: string): string[] =>
+    filterValue?.includes(value) ? filterValue.filter((v) => v !== value) : [...filterValue, value];
 
   return (
     <>
       <FilterHeader
-        title={`Issue Status ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Label${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div>
-          {filteredOptions.length > 0 ? (
-            filteredOptions.map((status) => (
-              <FilterOption
-                key={status.key}
-                isChecked={appliedFilters?.includes(status.status) ? true : false}
-                onClick={() => handleUpdate(status.status)}
-                title={status.title}
-              />
-            ))
+          {filteredOptions ? (
+            filteredOptions.length > 0 ? (
+              <>
+                {filteredOptions.slice(0, itemsToRender).map((label) => (
+                  <FilterOption
+                    key={label?.id}
+                    isChecked={filterValue?.includes(label?.id) ? true : false}
+                    onClick={() => handleInboxIssueFilters("label", handleFilterValue(label.id))}
+                    icon={<LabelIcons color={label.color} />}
+                    title={label.name}
+                  />
+                ))}
+                {filteredOptions.length > 5 && (
+                  <button
+                    type="button"
+                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    onClick={handleViewToggle}
+                  >
+                    {itemsToRender === filteredOptions.length ? "View less" : "View all"}
+                  </button>
+                )}
+              </>
+            ) : (
+              <p className="text-xs italic text-custom-text-400">No matches found</p>
+            )
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <Loader className="space-y-2">
+              <Loader.Item height="20px" />
+              <Loader.Item height="20px" />
+              <Loader.Item height="20px" />
+            </Loader>
           )}
         </div>
       )}
     </>
   );
-});
+};

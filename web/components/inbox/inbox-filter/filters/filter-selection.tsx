@@ -6,8 +6,8 @@ import {
   FilterStatus,
   FilterPriority,
   FilterMember,
-  FilterLabel,
   FilterDate,
+  FilterLabels,
 } from "@/components/inbox/inbox-filter/filters";
 // hooks
 import { useMember, useLabel } from "@/hooks/store";
@@ -53,23 +53,33 @@ export const InboxIssueFilterSelection: FC = observer(() => {
         </div>
         {/* assignees */}
         <div className="py-2">
-          <FilterMember filterKey="assignee" searchQuery={filtersSearchQuery} memberIds={projectMemberIds ?? []} />
+          <FilterMember
+            filterKey="assignee"
+            label="Assignee"
+            searchQuery={filtersSearchQuery}
+            memberIds={projectMemberIds ?? []}
+          />
         </div>
         {/* Created By */}
         <div className="py-2">
-          <FilterMember filterKey="created_by" searchQuery={filtersSearchQuery} memberIds={projectMemberIds ?? []} />
+          <FilterMember
+            filterKey="created_by"
+            label="Created By"
+            searchQuery={filtersSearchQuery}
+            memberIds={projectMemberIds ?? []}
+          />
         </div>
         {/* Labels */}
         <div className="py-2">
-          <FilterLabel searchQuery={filtersSearchQuery} labels={projectLabels ?? []} />
+          <FilterLabels searchQuery={filtersSearchQuery} labels={projectLabels ?? []} />
         </div>
         {/* Created at */}
         <div className="py-2">
-          <FilterDate key="created_at" searchQuery={filtersSearchQuery} />
+          <FilterDate filterKey="created_at" label="Created at" searchQuery={filtersSearchQuery} />
         </div>
         {/* Updated at */}
         <div className="py-2">
-          <FilterDate key="updated_at" searchQuery={filtersSearchQuery} />
+          <FilterDate filterKey="updated_at" label="Updated at" searchQuery={filtersSearchQuery} />
         </div>
       </div>
     </div>

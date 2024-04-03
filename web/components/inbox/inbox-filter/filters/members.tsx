@@ -5,25 +5,28 @@ import { TInboxIssueFilterMemberKeys } from "@plane/types";
 // hooks
 import { Avatar, Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
-import { useMember } from "@/hooks/store";
+import { useMember, useProjectInbox } from "@/hooks/store";
 // components
 // ui
 
 type Props = {
   filterKey: TInboxIssueFilterMemberKeys;
+  label?: string;
   memberIds: string[] | undefined;
   searchQuery: string;
 };
 
 export const FilterMember: React.FC<Props> = observer((props: Props) => {
-  const { filterKey, memberIds, searchQuery } = props;
+  const { filterKey, label = "Members", memberIds, searchQuery } = props;
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // hooks
+  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getUserDetails } = useMember();
   // derived values
-  const appliedFiltersCount = appliedFilters?.length ?? 0;
+  const filterValue = inboxFilters?.[filterKey] || [];
+  const appliedFiltersCount = filterValue?.length ?? 0;
 
   const sortedOptions = useMemo(() => {
     const filteredOptions = (memberIds || []).filter((memberId) =>
@@ -31,7 +34,7 @@ export const FilterMember: React.FC<Props> = observer((props: Props) => {
     );
 
     return sortBy(filteredOptions, [
-      (memberId) => !(appliedFilters ?? []).includes(memberId),
+      (memberId) => !filterValue.includes(memberId),
       (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,10 +47,13 @@ export const FilterMember: React.FC<Props> = observer((props: Props) => {
     else setItemsToRender(sortedOptions.length);
   };
 
+  const handleFilterValue = (value: string): string[] =>
+    filterValue?.includes(value) ? filterValue.filter((v) => v !== value) : [...filterValue, value];
+
   return (
     <>
       <FilterHeader
-        title={`Assignee${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${label} ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -62,9 +68,9 @@ export const FilterMember: React.FC<Props> = observer((props: Props) => {
                   if (!member) return null;
                   return (
                     <FilterOption
-                      key={`assignees-${member.id}`}
-                      isChecked={appliedFilters?.includes(member.id) ? true : false}
-                      onClick={() => handleUpdate(member.id)}
+                      key={`members-${member.id}`}
+                      isChecked={filterValue?.includes(member.id) ? true : false}
+                      onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(member.id))}
                       icon={<Avatar name={member.display_name} src={member.avatar} showTooltip={false} size="md" />}
                       title={member.display_name}
                     />
