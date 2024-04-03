@@ -150,16 +150,16 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
 
   return (
     <CustomMenu maxHeight="md" placement="bottom-start" verticalEllipsis closeOnSelect>
-      <CustomMenu.MenuItem className="flex w-full items-center justify-between gap-2">
+      <CustomMenu.MenuItem
+        className="flex w-full items-center justify-between gap-2"
+        onClick={() =>
+          updateViewProps({
+            full_width: !view_props?.full_width,
+          })
+        }
+      >
         Full width
-        <ToggleSwitch
-          value={!!view_props?.full_width}
-          onChange={() =>
-            updateViewProps({
-              full_width: !view_props?.full_width,
-            })
-          }
-        />
+        <ToggleSwitch value={!!view_props?.full_width} onChange={() => {}} />
       </CustomMenu.MenuItem>
       {MENU_ITEMS.map((item) => {
         if (!item.shouldRender) return null;

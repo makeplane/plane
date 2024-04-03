@@ -93,9 +93,29 @@ export class PageStore implements IPageStore {
     this.oldName = page?.name || "";
 
     makeObservable(this, {
-      // observables
+      // loaders
       isSubmitting: observable.ref,
       loader: observable.ref,
+      // page properties
+      id: observable,
+      name: observable,
+      description_html: observable,
+      color: observable,
+      labels: observable.ref,
+      owned_by: observable,
+      access: observable,
+      is_favorite: observable,
+      is_locked: observable,
+      archived_at: observable,
+      workspace: observable,
+      project: observable,
+      created_by: observable,
+      updated_by: observable,
+      created_at: observable,
+      updated_at: observable,
+      view_props: observable.ref,
+      // helpers
+      oldName: observable,
       // computed
       asJSON: computed,
       isCurrentUserOwner: computed,
