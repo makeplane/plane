@@ -131,7 +131,9 @@ class PageViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = PageSerializer(page, data=request.data, partial=True)
+            serializer = PageDetailSerializer(
+                page, data=request.data, partial=True
+            )
             if serializer.is_valid():
                 serializer.save()
                 # capture the page transaction
