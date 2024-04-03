@@ -250,6 +250,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 labels={projectLabels}
                 memberIds={projectMemberIds ?? undefined}
                 states={projectStates}
+                cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
             <FiltersDropdown title="Display" placement="bottom-end">

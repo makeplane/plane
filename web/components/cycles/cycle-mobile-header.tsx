@@ -152,6 +152,8 @@ export const CycleMobileHeader = () => {
               labels={projectLabels}
               memberIds={projectMemberIds ?? undefined}
               states={projectStates}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
         </div>
