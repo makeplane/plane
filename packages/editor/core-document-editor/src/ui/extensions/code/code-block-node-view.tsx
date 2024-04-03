@@ -4,6 +4,7 @@ import { common, createLowlight } from "lowlight";
 import ts from "highlight.js/lib/languages/typescript";
 import { CopyIcon, CheckIcon } from "lucide-react";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import { cn } from "src/lib/utils";
 
 // we just have ts support for now
 const lowlight = createLowlight(common);
@@ -31,14 +32,17 @@ export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) 
   return (
     <NodeViewWrapper className="code-block relative">
       <button
-        className="group absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 rounded-md bg-custom-background-100
-        hover:bg-custom-background-90 focus:outline-none focus:ring-2 focus:ring-offset-2
-        focus:ring-custom-border-200 active:bg-custom-background-90 transition duration-150 ease-in-out"
         type="button"
+        className={cn(
+          "group absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 rounded-md bg-custom-background-100 hover:bg-custom-background-90 active:bg-custom-background-90 border border-custom-border-200 transition duration-150 ease-in-out",
+          {
+            "bg-green-500/10 hover:bg-green-500/10 active:bg-green-500/10": copied,
+          }
+        )}
         onClick={copyToClipboard}
       >
         {copied ? (
-          <CheckIcon className="h-3 w-3 text-green-500" />
+          <CheckIcon className="h-3 w-3 text-green-500" strokeWidth={3} />
         ) : (
           <CopyIcon className="h-3 w-3 text-custom-text-300 group-hover:text-custom-text-100" />
         )}

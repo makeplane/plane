@@ -77,6 +77,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (!description_html) return null;
+
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
       <div

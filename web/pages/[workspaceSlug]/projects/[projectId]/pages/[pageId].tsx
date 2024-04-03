@@ -3,17 +3,22 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
+// document-editor
 import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
+// types
 import { TPage } from "@plane/types";
+// ui
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
-import { PageDetailsHeader } from "@/components/headers/page-details";
+import { PageDetailsHeader } from "@/components/headers";
 import { IssuePeekOverview } from "@/components/issues";
 import { PageEditorBody, PageEditorHeaderRoot } from "@/components/pages";
 // hooks
 import { usePage, useProjectPages } from "@/hooks/store";
+// layouts
 import { AppLayout } from "@/layouts/app-layout";
+// lib
 import { NextPageWithLayout } from "@/lib/types";
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
@@ -26,7 +31,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const readOnlyEditorRef = useRef<EditorRefApi>(null);
   // router
   const router = useRouter();
-  const { projectId, pageId } = router.query;
+  const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
   const { createPage, getPageById } = useProjectPages(projectId?.toString() ?? "");
   const pageStore = usePage(pageId?.toString() ?? "");
@@ -82,13 +87,15 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       description_html: currentPageValues.description_html,
     };
 
-    await handleCreatePage(formData).catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be duplicated. Please try again later.",
-      })
-    );
+    await handleCreatePage(formData)
+      .then((res) => router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res?.id}`))
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be duplicated. Please try again later.",
+        })
+      );
   };
 
   return (

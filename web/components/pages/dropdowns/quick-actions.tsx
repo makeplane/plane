@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ArchiveRestoreIcon, ExternalLink, Link, Lock, Pencil, Trash2, UsersRound } from "lucide-react";
+import { ArchiveRestoreIcon, ExternalLink, Link, Lock, Trash2, UsersRound } from "lucide-react";
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DeletePageModal } from "@/components/pages";
@@ -22,7 +22,7 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
   // store hooks
   const { access, archive, archived_at, makePublic, makePrivate, restore } = usePage(pageId);
 
-  const pageLink = `${workspaceSlug}/projects/${projectId}/cycles/${pageId}`;
+  const pageLink = `${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
   const handleCopyText = () =>
     copyUrlToClipboard(pageLink).then(() => {
       setToast({
@@ -70,17 +70,6 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-          }}
-        >
-          <span className="flex items-center gap-2">
-            <Pencil className="h-3 w-3" />
-            Edit
-          </span>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
             if (archived_at) restore();
             else archive();
           }}
@@ -99,27 +88,29 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
             )}
           </span>
         </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            access === 0 ? makePrivate() : makePublic();
-          }}
-        >
-          <span className="flex items-center gap-2">
-            {access === 0 ? (
-              <>
-                <Lock className="h-3 w-3" />
-                Make private
-              </>
-            ) : (
-              <>
-                <UsersRound className="h-3 w-3" />
-                Make public
-              </>
-            )}
-          </span>
-        </CustomMenu.MenuItem>
+        {!archived_at && (
+          <CustomMenu.MenuItem
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              access === 0 ? makePrivate() : makePublic();
+            }}
+          >
+            <span className="flex items-center gap-2">
+              {access === 0 ? (
+                <>
+                  <Lock className="h-3 w-3" />
+                  Make private
+                </>
+              ) : (
+                <>
+                  <UsersRound className="h-3 w-3" />
+                  Make public
+                </>
+              )}
+            </span>
+          </CustomMenu.MenuItem>
+        )}
         {archived_at && (
           <CustomMenu.MenuItem
             onClick={(e) => {

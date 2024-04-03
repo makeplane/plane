@@ -303,6 +303,12 @@ span:focus .fake-cursor {
   line-height: 1.5;
 }
 
+/* .prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+.prose :where(ul):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  font-size: 1rem;
+  margin: 0;
+} */
+
 .prose :where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 0;
 }
