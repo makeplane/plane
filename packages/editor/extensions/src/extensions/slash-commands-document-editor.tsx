@@ -341,7 +341,7 @@ const renderItems = () => {
       // @ts-expect-error Tippy overloads are messed up
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.querySelector("#editor-container"),
+        appendTo: () => document.querySelector(".active-editor") ?? document.querySelector("#editor-container"),
         content: component.element,
         showOnCreate: true,
         interactive: true,
