@@ -14,11 +14,10 @@ import {
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "@/components/issues";
 import { ListLoaderItemRow } from "@/components/ui";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 // utils
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 //components
@@ -38,16 +37,9 @@ export interface IGroupByList {
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
-  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  viewId?: string;
   isCompletedCycle?: boolean;
   loadMoreIssues: (groupId?: string) => void;
 }
@@ -64,15 +56,15 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     showEmptyGroup,
     canEditProperties,
     quickAddCallback,
-    viewId,
     disableIssueCreation,
-    storeType,
     addIssuesToView,
     getPaginationData,
     getGroupIssueCount,
     isCompletedCycle = false,
     loadMoreIssues,
   } = props;
+
+  const storeType = useIssueStore();
   // store hooks
   const member = useMember();
   const project = useProject();
@@ -165,7 +157,6 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                     count={groupIssueCount}
                     issuePayload={_list.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
-                    storeType={storeType}
                     addIssuesToView={addIssuesToView}
                   />
                 </div>
@@ -200,7 +191,6 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                     <ListQuickAddIssueForm
                       prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}
                       quickAddCallback={quickAddCallback}
-                      viewId={viewId}
                     />
                   </div>
                 )}
@@ -224,15 +214,8 @@ export interface IList {
   showEmptyGroup: boolean;
   enableIssueQuickAdd: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
-  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
@@ -248,7 +231,6 @@ export const List: React.FC<IList> = (props) => {
     updateIssue,
     quickActions,
     quickAddCallback,
-    viewId,
     displayProperties,
     showEmptyGroup,
     enableIssueQuickAdd,
@@ -256,7 +238,6 @@ export const List: React.FC<IList> = (props) => {
     getPaginationData,
     getGroupIssueCount,
     disableIssueCreation,
-    storeType,
     addIssuesToView,
     loadMoreIssues,
     isCompletedCycle = false,
@@ -278,9 +259,7 @@ export const List: React.FC<IList> = (props) => {
         quickAddCallback={quickAddCallback}
         getPaginationData={getPaginationData}
         getGroupIssueCount={getGroupIssueCount}
-        viewId={viewId}
         disableIssueCreation={disableIssueCreation}
-        storeType={storeType}
         addIssuesToView={addIssuesToView}
         isCompletedCycle={isCompletedCycle}
       />

@@ -9,6 +9,7 @@ import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/
 // hooks
 import { EIssuesStoreType } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
+import { IssuesStoreContext } from "../../hooks/use-issue-layout-store";
 // constants
 
 interface IProfileIssuesPage {
@@ -46,7 +47,7 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   const activeLayout = issueFilters?.displayFilters?.layout || undefined;
 
   return (
-    <>
+    <IssuesStoreContext.Provider value={EIssuesStoreType.PROFILE}>
       <ProfileIssuesAppliedFiltersRoot />
       <div className="-z-1 relative h-full w-full overflow-auto">
         {activeLayout === "list" ? (
@@ -57,6 +58,6 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
       </div>
       {/* peek overview */}
       <IssuePeekOverview />
-    </>
+    </IssuesStoreContext.Provider>
   );
 });

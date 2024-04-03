@@ -15,6 +15,7 @@ import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constan
 import { EUserProjectRoles } from "@/constants/project";
 //hooks
 import { useEventTracker, useIssues, useUser } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // ui
 // types
@@ -34,8 +35,6 @@ export type KanbanStoreType =
   | EIssuesStoreType.PROFILE;
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;
-  viewId?: string;
-  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
@@ -48,18 +47,12 @@ type KanbanDragState = {
 };
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const {
-    QuickActions,
-    viewId,
-    storeType,
-    addIssuesToView,
-    canEditPropertiesBasedOnProject,
-    isCompletedCycle = false,
-  } = props;
+  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
+  const storeType = useIssueStore() as KanbanStoreType;
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -68,6 +61,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     fetchIssues,
     fetchNextIssues,
+    quickAddIssue,
     updateIssue,
     removeIssue,
     removeIssueFromView,
@@ -84,7 +78,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   useSWR(
     `ISSUE_KANBAN_LAYOUT_${storeType}_${group_by}_${sub_group_by}`,
-    () => fetchIssues("init-loader", { canGroup: true, perPageCount: 30 }),
+    () => fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -243,7 +237,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
-    <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.KANBAN}>
+    <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
       <DeleteIssueModal
         dataId={dragState.draggedIssueId}
         isOpen={deleteIssueModal}
@@ -294,12 +288,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                 kanbanFilters={kanbanFilters}
                 enableQuickIssueCreate={enableQuickAdd}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
-                quickAddCallback={issues?.quickAddIssue}
+                quickAddCallback={quickAddIssue}
                 getPaginationData={issues.getPaginationData}
-                viewId={viewId}
                 disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
                 canEditProperties={canEditProperties}
-                storeType={storeType}
                 addIssuesToView={addIssuesToView}
                 scrollableContainerRef={scrollableContainerRef}
                 isDragStarted={isDragStarted}

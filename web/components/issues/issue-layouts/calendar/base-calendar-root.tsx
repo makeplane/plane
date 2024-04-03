@@ -12,6 +12,7 @@ import { EIssuesStoreType, EIssueLayoutTypes, EIssueGroupByToServerOptions } fro
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useIssues, useUser, useCalendarView } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // types
 import { IssueLayoutHOC } from "../issue-layout-HOC";
@@ -26,20 +27,19 @@ type CalendarStoreType =
 
 interface IBaseCalendarRoot {
   QuickActions: FC<IQuickActionProps>;
-  storeType: CalendarStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  viewId?: string;
   isCompletedCycle?: boolean;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { QuickActions, storeType, addIssuesToView, viewId, isCompletedCycle = false } = props;
+  const { QuickActions, addIssuesToView, isCompletedCycle = false } = props;
 
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   // hooks
+  const storeType = useIssueStore() as CalendarStoreType;
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -47,6 +47,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const {
     fetchIssues,
     fetchNextIssues,
+    quickAddIssue,
     updateIssue,
     removeIssue,
     removeIssueFromView,
@@ -130,7 +131,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   );
 
   return (
-    <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.CALENDAR}>
+    <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
       <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
         <DragDropContext onDragEnd={onDragEnd}>
           <CalendarChart
@@ -159,8 +160,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
             getPaginationData={getPaginationData}
             getGroupIssueCount={getGroupIssueCount}
             addIssuesToView={addIssuesToView}
-            quickAddCallback={issues.quickAddIssue}
-            viewId={viewId}
+            quickAddCallback={quickAddIssue}
             readOnly={!isEditingAllowed || isCompletedCycle}
             updateFilters={updateFilters}
           />

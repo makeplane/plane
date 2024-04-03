@@ -26,14 +26,8 @@ type Props = {
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  viewId?: string;
   readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
@@ -53,7 +47,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     disableIssueCreation,
     quickAddCallback,
     addIssuesToView,
-    viewId,
     readOnly = false,
     selectedDate,
     setSelectedDate,
@@ -120,7 +113,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                   disableIssueCreation={disableIssueCreation}
                   enableQuickIssueCreate={enableQuickIssueCreate}
                   quickAddCallback={quickAddCallback}
-                  viewId={viewId}
                   readOnly={readOnly}
                 />
 

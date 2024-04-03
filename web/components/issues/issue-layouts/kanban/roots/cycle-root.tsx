@@ -36,8 +36,6 @@ export const CycleKanBanLayout: React.FC = observer(() => {
   return (
     <BaseKanBanRoot
       QuickActions={CycleIssueQuickActions}
-      viewId={cycleId?.toString() ?? ""}
-      storeType={EIssuesStoreType.CYCLE}
       addIssuesToView={addIssuesToView}
       canEditPropertiesBasedOnProject={canEditIssueProperties}
       isCompletedCycle={isCompletedCycle}

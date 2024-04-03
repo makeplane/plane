@@ -8,7 +8,7 @@ import {
   IssuePeekOverview,
   ModuleAppliedFiltersRoot,
   ModuleCalendarLayout,
-  ModuleGanttLayout,
+  BaseGanttRoot,
   ModuleKanBanLayout,
   ModuleListLayout,
   ModuleSpreadsheetLayout,
@@ -16,6 +16,7 @@ import {
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // types
 
 const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
@@ -27,7 +28,7 @@ const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined 
     case EIssueLayoutTypes.CALENDAR:
       return <ModuleCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <ModuleGanttLayout />;
+      return <BaseGanttRoot />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <ModuleSpreadsheetLayout />;
     default:
@@ -59,13 +60,15 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout || undefined;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden">
-      <ModuleAppliedFiltersRoot />
-      <div className="h-full w-full overflow-auto">
-        <ModuleIssueLayout activeLayout={activeLayout} />
+    <IssuesStoreContext.Provider value={EIssuesStoreType.MODULE}>
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
+        <ModuleAppliedFiltersRoot />
+        <div className="h-full w-full overflow-auto">
+          <ModuleIssueLayout activeLayout={activeLayout} />
+        </div>
+        {/* peek overview */}
+        <IssuePeekOverview />
       </div>
-      {/* peek overview */}
-      <IssuePeekOverview />
-    </div>
+    </IssuesStoreContext.Provider>
   );
 });

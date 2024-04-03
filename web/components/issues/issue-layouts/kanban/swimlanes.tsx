@@ -11,10 +11,11 @@ import {
   TIssueKanbanFilters,
   TPaginationData,
 } from "@plane/types";
-// components
+// hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
+// components
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
-import { KanbanStoreType } from "./base-kanban-root";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
@@ -32,14 +33,10 @@ interface ISubGroupSwimlaneHeader {
   list: IGroupByColumn[];
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  storeType: KanbanStoreType;
   showEmptyGroup: boolean;
 }
 
-const visibilitySubGroupByGroupCount = (
-  subGroupIssueCount: number,
-  showEmptyGroup: boolean
-): boolean => {
+const visibilitySubGroupByGroupCount = (subGroupIssueCount: number, showEmptyGroup: boolean): boolean => {
   let subGroupHeaderVisibility = true;
 
   if (showEmptyGroup) subGroupHeaderVisibility = true;
@@ -51,44 +48,34 @@ const visibilitySubGroupByGroupCount = (
   return subGroupHeaderVisibility;
 };
 
-const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(({
-  getGroupIssueCount,  sub_group_by,
-  group_by,
-  storeType,
-  list,
-  kanbanFilters,
-  handleKanbanFilters,
-  showEmptyGroup,
-}) => (
-  <div className="relative flex h-max min-h-full w-full items-center gap-2">
-    {list &&
-      list.length > 0 &&
-      list.map((_list: IGroupByColumn) => {
-        const groupCount = getGroupIssueCount(_list?.id, undefined, false) ?? 0;
+const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
+  ({ getGroupIssueCount, sub_group_by, group_by, list, kanbanFilters, handleKanbanFilters, showEmptyGroup }) => (
+    <div className="relative flex h-max min-h-full w-full items-center gap-2">
+      {list &&
+        list.length > 0 &&
+        list.map((_list: IGroupByColumn) => {
+          const groupCount = getGroupIssueCount(_list?.id, undefined, false) ?? 0;
 
-        const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(
-          groupCount,
-          showEmptyGroup
-        );
+          const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(groupCount, showEmptyGroup);
 
-        if (subGroupByVisibilityToggle === false) return <></>;
+          if (subGroupByVisibilityToggle === false) return <></>;
 
-        return (
-          <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
-            <HeaderGroupByCard
-              sub_group_by={sub_group_by}
-              group_by={group_by}
-              column_id={_list.id}
-              icon={_list.icon}
-              title={_list.name}
-              count={groupCount}
-              kanbanFilters={kanbanFilters}
-              handleKanbanFilters={handleKanbanFilters}
-              issuePayload={_list.payload}
-              storeType={storeType}
-            />
-          </div>
-        )})}
+          return (
+            <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
+              <HeaderGroupByCard
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                column_id={_list.id}
+                icon={_list.icon}
+                title={_list.name}
+                count={groupCount}
+                kanbanFilters={kanbanFilters}
+                handleKanbanFilters={handleKanbanFilters}
+                issuePayload={_list.payload}
+              />
+            </div>
+          );
+        })}
     </div>
   )
 );
@@ -112,17 +99,10 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
-  storeType: KanbanStoreType;
   enableQuickIssueCreate: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
@@ -136,7 +116,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     sub_group_by,
     group_by,
     list,
-    storeType,
     updateIssue,
     quickActions,
     displayProperties,
@@ -148,12 +127,14 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     canEditProperties,
     addIssuesToView,
     quickAddCallback,
-    viewId,
     scrollableContainerRef,
     isDragStarted,
   } = props;
 
-  const visibilitySubGroupBy = (_list: IGroupByColumn, subGroupCount: number): { showGroup: boolean; showIssues: boolean } => {
+  const visibilitySubGroupBy = (
+    _list: IGroupByColumn,
+    subGroupCount: number
+  ): { showGroup: boolean; showIssues: boolean } => {
     const subGroupVisibility = {
       showGroup: true,
       showIssues: true,
@@ -202,7 +183,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     sub_group_by={sub_group_by}
                     group_by={group_by}
                     sub_group_id={_list.id}
-                    storeType={storeType}
                     updateIssue={updateIssue}
                     quickActions={quickActions}
                     kanbanFilters={kanbanFilters}
@@ -212,7 +192,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     canEditProperties={canEditProperties}
                     addIssuesToView={addIssuesToView}
                     quickAddCallback={quickAddCallback}
-                    viewId={viewId}
                     scrollableContainerRef={scrollableContainerRef}
                     isDragStarted={isDragStarted}
                     loadMoreIssues={loadMoreIssues}
@@ -248,16 +227,9 @@ export interface IKanBanSwimLanes {
   showEmptyGroup: boolean;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
-  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   enableQuickIssueCreate: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
@@ -272,7 +244,6 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     sub_group_by,
     group_by,
     updateIssue,
-    storeType,
     quickActions,
     kanbanFilters,
     handleKanbanFilters,
@@ -284,9 +255,10 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     canEditProperties,
     addIssuesToView,
     quickAddCallback,
-    viewId,
     scrollableContainerRef,
   } = props;
+
+  const storeType = useIssueStore();
 
   const member = useMember();
   const project = useProject();
@@ -330,7 +302,6 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           kanbanFilters={kanbanFilters}
           handleKanbanFilters={handleKanbanFilters}
           list={groupByList}
-          storeType={storeType}
           showEmptyGroup={showEmptyGroup}
         />
       </div>
@@ -357,9 +328,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           addIssuesToView={addIssuesToView}
           canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
-          viewId={viewId}
           scrollableContainerRef={scrollableContainerRef}
-          storeType={storeType}
         />
       )}
     </div>

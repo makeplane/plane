@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
 // hooks
 import { CycleDropdown } from "@/components/dropdowns";
-import { EIssuesStoreType } from "@/constants/issue";
 import { useEventTracker, useIssues } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 // components
 // types
 // constants
@@ -23,10 +23,11 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
   // props
   const { issue, disabled, onClose } = props;
   // hooks
+  const storeType = useIssueStore();
   const { captureIssueEvent } = useEventTracker();
   const {
     issues: { addIssueToCycle, removeIssueFromCycle },
-  } = useIssues(EIssuesStoreType.CYCLE);
+  } = useIssues(storeType);
 
   const handleCycle = useCallback(
     async (cycleId: string | null) => {

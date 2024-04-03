@@ -23,13 +23,7 @@ type Props = {
     | ((projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
     | undefined;
   openIssuesListModal?: (() => void) | null;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   canEditProperties: (projectId: string | undefined) => boolean;
   canLoadMoreIssues: boolean;
   loadMoreIssues: () => void;
@@ -46,7 +40,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     quickActions,
     updateIssue,
     quickAddCallback,
-    viewId,
     canEditProperties,
     enableQuickCreateIssue,
     disableIssueCreation,
@@ -90,7 +83,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
       <div className="border-t border-custom-border-100">
         <div className="z-5 sticky bottom-0 left-0 mb-3">
           {enableQuickCreateIssue && !disableIssueCreation && (
-            <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
+            <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} />
           )}
         </div>
       </div>

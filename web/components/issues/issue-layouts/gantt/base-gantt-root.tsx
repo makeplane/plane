@@ -13,6 +13,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { getIssueBlocksStructure } from "@/helpers/issue.helper";
 //hooks
 import { useIssues, useUser } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 
 import { ALL_ISSUES } from "@/store/issue/helpers/base-issues.store";
@@ -23,19 +24,15 @@ type GanttStoreType =
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW;
-interface IBaseGanttRoot {
-  viewId?: string;
-  storeType: GanttStoreType;
-}
 
-export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { viewId, storeType } = props;
+export const BaseGanttRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const storeType = useIssueStore() as GanttStoreType;
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
-  const { fetchIssues, fetchNextIssues, updateIssue } = useIssuesActions(storeType);
+  const { fetchIssues, fetchNextIssues, updateIssue, quickAddIssue } = useIssuesActions(storeType);
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -83,7 +80,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
-    <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.GANTT}>
+    <IssueLayoutHOC layout={EIssueLayoutTypes.GANTT}>
       <div className="h-full w-full">
         <GanttChartRoot
           border={false}
@@ -100,9 +97,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
           enableAddBlock={isAllowed}
           quickAdd={
-            enableIssueCreation && isAllowed ? (
-              <GanttQuickAddIssueForm quickAddCallback={issues.quickAddIssue} viewId={viewId} />
-            ) : undefined
+            enableIssueCreation && isAllowed ? <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} /> : undefined
           }
           loadMoreBlocks={loadMoreIssues}
           canLoadMoreBlocks={nextPageResults}

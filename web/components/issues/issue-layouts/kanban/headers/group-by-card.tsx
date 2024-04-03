@@ -12,8 +12,8 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // hooks
 import { useEventTracker } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 // types
-import { KanbanStoreType } from "../base-kanban-root";
 
 interface IHeaderGroupByCard {
   sub_group_by: string | null;
@@ -26,7 +26,6 @@ interface IHeaderGroupByCard {
   handleKanbanFilters: any;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
@@ -41,7 +40,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     handleKanbanFilters,
     issuePayload,
     disableIssueCreation,
-    storeType,
     addIssuesToView,
   } = props;
   const verticalAlignPosition = sub_group_by ? false : kanbanFilters?.group_by.includes(column_id);
@@ -49,6 +47,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
   // hooks
+  const storeType = useIssueStore();
   const { setTrackElement } = useEventTracker();
   // router
   const router = useRouter();

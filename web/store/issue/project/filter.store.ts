@@ -70,13 +70,15 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
 
   get issueFilters() {
     const projectId = this.rootIssueStore.projectId;
+    console.log("projectId", projectId);
     if (!projectId) return undefined;
 
     const displayFilters = this.filters[projectId] || undefined;
+    console.log("displayFilters", displayFilters);
     if (isEmpty(displayFilters)) return undefined;
 
     const _filters: IIssueFilters = this.computedIssueFilters(displayFilters);
-
+    console.log("_filters", _filters);
     return _filters;
   }
 

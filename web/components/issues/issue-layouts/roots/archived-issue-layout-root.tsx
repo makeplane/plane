@@ -12,6 +12,7 @@ import {
 import { EIssuesStoreType } from "@/constants/issue";
 // ui
 import { useIssues } from "@/hooks/store";
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -32,14 +33,14 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
 
   if (!workspaceSlug || !projectId) return <></>;
   return (
-    <>
+    <IssuesStoreContext.Provider value={EIssuesStoreType.ARCHIVED}>
       <ArchivedIssueAppliedFiltersRoot />
-        <Fragment>
-          <div className="relative h-full w-full overflow-auto">
-            <ArchivedIssueListLayout />
-          </div>
-          <IssuePeekOverview is_archived />
-        </Fragment>
-    </>
+      <Fragment>
+        <div className="relative h-full w-full overflow-auto">
+          <ArchivedIssueListLayout />
+        </div>
+        <IssuePeekOverview is_archived />
+      </Fragment>
+    </IssuesStoreContext.Provider>
   );
 });

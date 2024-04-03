@@ -44,14 +44,8 @@ type Props = {
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  viewId?: string;
   readOnly?: boolean;
   updateFilters?: (
     projectId: string,
@@ -74,7 +68,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     addIssuesToView,
     getPaginationData,
     getGroupIssueCount,
-    viewId,
     updateFilters,
     readOnly = false,
   } = props;
@@ -143,7 +136,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                       quickActions={quickActions}
                       quickAddCallback={quickAddCallback}
                       addIssuesToView={addIssuesToView}
-                      viewId={viewId}
                       readOnly={readOnly}
                     />
                   ))}
@@ -165,7 +157,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                 quickActions={quickActions}
                 quickAddCallback={quickAddCallback}
                 addIssuesToView={addIssuesToView}
-                viewId={viewId}
                 readOnly={readOnly}
               />
             )}
@@ -190,7 +181,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
               quickAddCallback={quickAddCallback}
               addIssuesToView={addIssuesToView}
-              viewId={viewId}
               readOnly={readOnly}
               isDragDisabled
               isMobileView

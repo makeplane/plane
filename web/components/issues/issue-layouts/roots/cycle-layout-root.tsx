@@ -9,7 +9,7 @@ import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
 import {
   CycleAppliedFiltersRoot,
   CycleCalendarLayout,
-  CycleGanttLayout,
+  BaseGanttRoot,
   CycleKanBanLayout,
   CycleListLayout,
   CycleSpreadsheetLayout,
@@ -19,6 +19,7 @@ import {
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useCycle, useIssues } from "@/hooks/store";
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
 const CycleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
   switch (props.activeLayout) {
@@ -29,7 +30,7 @@ const CycleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }
     case EIssueLayoutTypes.CALENDAR:
       return <CycleCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <CycleGanttLayout />;
+      return <BaseGanttRoot />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <CycleSpreadsheetLayout />;
     default:
@@ -66,7 +67,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId || !cycleId) return <></>;
 
   return (
-    <>
+    <IssuesStoreContext.Provider value={EIssuesStoreType.CYCLE}>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         {cycleStatus === "completed" && (
@@ -83,6 +84,6 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         {/* peek overview */}
         <IssuePeekOverview />
       </div>
-    </>
+    </IssuesStoreContext.Provider>
   );
 });

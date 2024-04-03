@@ -20,11 +20,12 @@ import {
 // types
 // constants
 import { ISSUE_UPDATED } from "@/constants/event-tracker";
-import { EIssuesStoreType } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+// hooks
 import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "@/hooks/store";
+import { useIssueStore } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { IssuePropertyLabels } from "../properties/labels";
@@ -49,12 +50,13 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   // store hooks
   const { labelMap } = useLabel();
   const { captureIssueEvent } = useEventTracker();
+  const storeType = useIssueStore();
   const {
     issues: { addModulesToIssue, removeModulesFromIssue },
-  } = useIssues(EIssuesStoreType.MODULE);
+  } = useIssues(storeType);
   const {
     issues: { addIssueToCycle, removeIssueFromCycle },
-  } = useIssues(EIssuesStoreType.CYCLE);
+  } = useIssues(storeType);
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();

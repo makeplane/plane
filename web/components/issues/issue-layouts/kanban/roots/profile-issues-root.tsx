@@ -1,7 +1,6 @@
 import { observer } from "mobx-react-lite";
 // hooks
 import { ProjectIssueQuickActions } from "@/components/issues";
-import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { useUser } from "@/hooks/store";
 // components
@@ -23,7 +22,6 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   return (
     <BaseKanBanRoot
       QuickActions={ProjectIssueQuickActions}
-      storeType={EIssuesStoreType.PROFILE}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />
   );

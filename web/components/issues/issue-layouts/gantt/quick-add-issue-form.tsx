@@ -50,13 +50,7 @@ const Inputs: FC<IInputProps> = (props) => {
 type IGanttQuickAddIssueForm = {
   prePopulatedData?: Partial<TIssue>;
   onSuccess?: (data: TIssue) => Promise<void> | void;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
 };
 
 const defaultValues: Partial<TIssue> = {
@@ -64,7 +58,7 @@ const defaultValues: Partial<TIssue> = {
 };
 
 export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observer((props) => {
-  const { prePopulatedData, quickAddCallback, viewId } = props;
+  const { prePopulatedData, quickAddCallback } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -111,7 +105,7 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId);
+      const quickAddPromise = quickAddCallback(projectId.toString(), { ...payload });
       setPromiseToast<any>(quickAddPromise, {
         loading: "Adding issue...",
         success: {
