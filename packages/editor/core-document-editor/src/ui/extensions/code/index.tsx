@@ -7,8 +7,14 @@ const lowlight = createLowlight(common);
 lowlight.register("ts", ts);
 
 import { Selection } from "@tiptap/pm/state";
+import { ReactNodeViewRenderer } from "@tiptap/react";
+import { CodeBlockComponent } from "./code-block-node-view";
 
 export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
+  addNodeView() {
+    return ReactNodeViewRenderer(CodeBlockComponent);
+  },
+
   addKeyboardShortcuts() {
     return {
       Tab: ({ editor }) => {
