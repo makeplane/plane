@@ -12,7 +12,10 @@ import { TInboxIssueFilter, TInboxIssueSorting, TInboxIssuesQueryParams, TPagina
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { RootStore } from "@/store/root.store";
 
+type TCurrentTab = "open" | "closed";
+
 export interface IProjectInboxStore {
+  currentTab: TCurrentTab;
   isLoading: boolean;
   inboxFilters: Partial<TInboxIssueFilter>;
   inboxSorting: Partial<TInboxIssueSorting>;
@@ -34,6 +37,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   // constants
   PER_PAGE_COUNT = 10;
   // observables
+  currentTab: TCurrentTab = "open";
   isLoading: boolean = false;
   inboxFilters: Partial<TInboxIssueFilter> = {};
   inboxSorting: Partial<TInboxIssueSorting> = {
@@ -49,6 +53,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
+      currentTab: observable.ref,
       isLoading: observable.ref,
       inboxFilters: observable,
       inboxSorting: observable,
@@ -81,10 +86,17 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   // actions
   handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) =>
-    runInAction(() => set(this.inboxFilters, key, value));
+    set(this.inboxFilters, key, value);
 
   handleInboxIssueSorting = <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) =>
-    runInAction(() => set(this.inboxSorting, key, value));
+    set(this.inboxSorting, key, value);
+
+  handleCurrentTab = (tab: TCurrentTab) => {
+    set(this, "currentTab", tab);
+    set(this, "inboxFilters", undefined);
+    set(this, "inboxSorting", undefined);
+    // fetch issues every time the tab changes
+  };
 
   /**
    * fetch inbox issues
