@@ -129,11 +129,8 @@ export class ProjectPageStore implements IProjectPageStore {
    * @param {TPageNavigationTabs} pageType
    */
   getAllPages = async (pageType: TPageNavigationTabs) => {
-    console.log("Running", pageType);
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
-      console.log("Inside workspaceSlug", workspaceSlug);
-      console.log("Inside projectId", projectId);
       if (!workspaceSlug || !projectId) return undefined;
 
       const currentPageIds = this.pageIds;
@@ -143,10 +140,7 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      console.log("Fetching from store...");
-
       const pages = await this.service.fetchAll(workspaceSlug, projectId);
-      console.log("pagesResponse", pages);
       runInAction(() => {
         for (const page of pages) if (page?.id) set(this.data, [page.id], new PageStore(this.store, page));
         this.loader = undefined;
@@ -207,7 +201,7 @@ export class ProjectPageStore implements IProjectPageStore {
       if (!workspaceSlug || !projectId) return undefined;
 
       runInAction(() => {
-        this.loader = "init-loader";
+        this.loader = "mutation-loader";
         this.error = undefined;
       });
 

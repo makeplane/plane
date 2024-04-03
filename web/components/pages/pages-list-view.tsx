@@ -17,10 +17,6 @@ export const PagesListView: React.FC<TPageView> = observer((props) => {
   const { workspaceSlug, projectId, pageType, children } = props;
   // store hooks
   const { getAllPages } = useProjectPages(projectId);
-
-  console.log("projectId", projectId);
-  console.log("pageType", pageType);
-
   // fetching pages list
   useSWR(
     projectId && pageType ? `PROJECT_PAGES_${projectId}_${pageType}` : null,
