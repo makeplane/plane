@@ -202,18 +202,18 @@ function createToolbox({
   const toolbox = tippy(triggerButton, {
     content: h(
       "div",
-      { className: "tableToolbox" },
+      { className: "table-toolbox" },
       items.map((item, index) => {
         if (item.label === "Pick color") {
           return h("div", { className: "flex flex-col" }, [
             h("div", { className: "divider" }),
-            h("div", { className: "colorPickerLabel" }, item.label),
+            h("div", { className: "color-picker-label" }, item.label),
             h(
               "div",
-              { className: "colorPicker grid" },
+              { className: "color-picker grid" },
               Object.entries(colors).map(([colorName, colorValue]) =>
                 h("div", {
-                  className: "colorPickerItem flex items-center justify-center",
+                  className: "color-picker-item flex items-center justify-center",
                   style: `background-color: ${colorValue.backgroundColor}; 
           color: ${colorValue.textColor || "inherit"};`,
                   innerHTML:
@@ -228,12 +228,12 @@ function createToolbox({
           return h(
             "div",
             {
-              className: "toolboxItem",
+              className: "toolbox-item",
               itemType: "div",
               onClick: () => onClickItem(item),
             },
             [
-              h("div", { className: "iconContainer", innerHTML: item.icon }),
+              h("div", { className: "icon-container", innerHTML: item.icon }),
               h("div", { className: "label" }, item.label),
             ]
           );
@@ -290,27 +290,27 @@ export class TableView implements NodeView {
     if (editor.isEditable) {
       this.rowsControl = h(
         "div",
-        { className: "rowsControl" },
+        { className: "rows-control" },
         h("div", {
           itemType: "button",
-          className: "rowsControlDiv",
+          className: "rows-control-div",
           onClick: () => this.selectRow(),
         })
       );
 
       this.columnsControl = h(
         "div",
-        { className: "columnsControl" },
+        { className: "columns-control" },
         h("div", {
           itemType: "button",
-          className: "columnsControlDiv",
+          className: "columns-control-div",
           onClick: () => this.selectColumn(),
         })
       );
 
       this.controls = h(
         "div",
-        { className: "tableControls", contentEditable: "false" },
+        { className: "table-controls", contentEditable: "false" },
         this.rowsControl,
         this.columnsControl
       );
@@ -331,7 +331,7 @@ export class TableView implements NodeView {
       };
 
       this.columnsToolbox = createToolbox({
-        triggerButton: this.columnsControl.querySelector(".columnsControlDiv"),
+        triggerButton: this.columnsControl.querySelector(".columns-control-div"),
         items: columnsToolboxItems,
         colors: columnColors,
         onSelectColor: (color) => setCellsBackgroundColor(this.editor, color),

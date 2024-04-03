@@ -1,3 +1,4 @@
+/* drag handle */
 .drag-handle {
   position: fixed;
   opacity: 1;
@@ -12,40 +13,12 @@
   background-color: rgb(var(--color-background-90));
 }
 
-.ProseMirror:not(.dragging) .ProseMirror-selectednode {
-  padding: 4px 0px;
-  outline: none !important;
-  cursor: grab;
-  /* background-color: #1f2937; */
-  background-color: rgba(var(--color-primary-100), 0.2);
-  transition: background-color 0.2s;
-  box-shadow: none;
-}
-
 .drag-handle:hover {
-  background-color: #4d4d4d;
+  background-color: rgba(var(--color-background-80));
   cursor: grab;
   transition: background-color 0.2s;
 }
 
-.ProseMirror img {
-  transition: filter 0.1s ease-in-out;
-
-  &:hover {
-    cursor: pointer;
-    filter: brightness(90%);
-  }
-
-  &.ProseMirror-selectednode {
-    outline: 3px solid #5abbf7;
-    filter: brightness(90%);
-  }
-}
-:not(.dragging) .ProseMirror-selectednode.table-wrapper {
-  padding: 4px 2px;
-  background-color: rgba(var(--color-primary-300), 0.1) !important;
-  box-shadow: rgba(var(--color-primary-100)) 0px 0px 0px 2px inset !important;
-}
 .drag-handle:active {
   background-color: #4d4d4d;
   transition: background-color 0.2s;
@@ -85,4 +58,35 @@
   width: 3px;
   background-color: rgba(var(--color-text-200));
   border-radius: 50%;
+}
+/* end drag handle */
+
+.ProseMirror:not(.dragging) .ProseMirror-selectednode {
+  padding: 4px 0px;
+  outline: none !important;
+  cursor: grab;
+  /* background-color: #1f2937; */
+  background-color: rgba(var(--color-primary-100), 0.2);
+  transition: background-color 0.2s;
+  box-shadow: none;
+}
+
+.ProseMirror img {
+  transition: filter 0.1s ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+    filter: brightness(90%);
+  }
+
+  &.ProseMirror-selectednode {
+    outline: 3px solid #5abbf7;
+    filter: brightness(90%);
+  }
+}
+
+:not(.dragging) .ProseMirror-selectednode.table-wrapper {
+  padding: 4px 2px;
+  background-color: rgba(var(--color-primary-300), 0.1) !important;
+  box-shadow: rgba(var(--color-primary-100)) 0px 0px 0px 2px inset !important;
 }

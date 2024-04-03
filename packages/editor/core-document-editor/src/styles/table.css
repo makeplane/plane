@@ -67,21 +67,21 @@
   pointer-events: none;
 }
 
-.colorPicker {
+.color-picker {
   display: grid;
   padding: 8px 8px;
   grid-template-columns: repeat(6, 1fr);
   gap: 5px;
 }
 
-.colorPickerLabel {
+.color-picker-label {
   font-size: 0.85rem;
   color: #6b7280;
   padding: 8px 8px;
   padding-bottom: 0px;
 }
 
-.colorPickerItem {
+.color-picker-item {
   margin: 2px 0px;
   width: 24px;
   height: 24px;
@@ -108,12 +108,12 @@
   pointer-events: none;
 }
 
-.table-wrapper .tableControls {
+.table-wrapper .table-controls {
   position: absolute;
 }
 
-.table-wrapper .tableControls .columnsControl,
-.table-wrapper .tableControls .rowsControl {
+.table-wrapper .table-controls .columns-control,
+.table-wrapper .table-controls .rows-control {
   transition: opacity ease-in 100ms;
   position: absolute;
   z-index: 5;
@@ -122,31 +122,31 @@
   align-items: center;
 }
 
-.table-wrapper .tableControls .columnsControl {
+.table-wrapper .table-controls .columns-control {
   height: 20px;
   transform: translateY(-50%);
 }
 
-.table-wrapper .tableControls .columnsControl .columnsControlDiv {
+.table-wrapper .table-controls .columns-control .columns-control-div {
   color: white;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath fill='%238F95B2' d='M4.5 10.5c-.825 0-1.5.675-1.5 1.5s.675 1.5 1.5 1.5S6 12.825 6 12s-.675-1.5-1.5-1.5zm15 0c-.825 0-1.5.675-1.5 1.5s.675 1.5 1.5 1.5S21 12.825 21 12s-.675-1.5-1.5-1.5zm-7.5 0c-.825 0-1.5.675-1.5 1.5s.675 1.5 1.5 1.5 1.5-.675 1.5-1.5-.675-1.5-1.5-1.5z'/%3E%3C/svg%3E");
   width: 30px;
   height: 15px;
 }
 
-.table-wrapper .tableControls .rowsControl {
+.table-wrapper .table-controls .rows-control {
   width: 20px;
   transform: translateX(-50%);
 }
 
-.table-wrapper .tableControls .rowsControl .rowsControlDiv {
+.table-wrapper .table-controls .rows-control .rows-control-div {
   color: white;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath fill='%238F95B2' d='M12 3c-.825 0-1.5.675-1.5 1.5S11.175 6 12 6s1.5-.675 1.5-1.5S12.825 3 12 3zm0 15c-.825 0-1.5.675-1.5 1.5S11.175 21 12 21s1.5-.675 1.5-1.5S12.825 18 12 18zm0-7.5c-.825 0-1.5.675-1.5 1.5s.675 1.5 1.5 1.5 1.5-.675 1.5-1.5-.675-1.5-1.5-1.5z'/%3E%3C/svg%3E");
   height: 30px;
   width: 15px;
 }
 
-.table-wrapper .tableControls .rowsControlDiv {
+.table-wrapper .table-controls .rows-control-div {
   background-color: #d9e4ff;
   border: 1px solid rgba(var(--color-border-200));
   border-radius: 2px;
@@ -161,7 +161,7 @@
   cursor: pointer;
 }
 
-.table-wrapper .tableControls .columnsControlDiv {
+.table-wrapper .table-controls .columns-control-div {
   background-color: #d9e4ff;
   border: 1px solid rgba(var(--color-border-200));
   border-radius: 2px;
@@ -175,8 +175,7 @@
   box-shadow: #000 0px 2px 4px;
   cursor: pointer;
 }
-.table-wrapper .tableControls .tableToolbox,
-.table-wrapper .tableControls .tableColorPickerToolbox {
+.table-wrapper .table-controls .table-toolbox {
   border: 1px solid rgba(var(--color-border-300));
   background-color: rgba(var(--color-background-100));
   border-radius: 5px;
@@ -188,8 +187,7 @@
   gap: 0.25rem;
 }
 
-.table-wrapper .tableControls .tableToolbox .toolboxItem,
-.table-wrapper .tableControls .tableColorPickerToolbox .toolboxItem {
+.table-wrapper .table-controls .table-toolbox .toolbox-item {
   background-color: rgba(var(--color-background-100));
   display: flex;
   align-items: center;
@@ -201,15 +199,11 @@
   transition: all 0.2s;
 }
 
-.table-wrapper .tableControls .tableToolbox .toolboxItem:hover,
-.table-wrapper .tableControls .tableColorPickerToolbox .toolboxItem:hover {
+.table-wrapper .table-controls .table-toolbox .toolbox-item:hover {
   background-color: rgba(var(--color-background-80), 0.6);
 }
 
-.table-wrapper .tableControls .tableToolbox .toolboxItem .iconContainer,
-.table-wrapper .tableControls .tableColorPickerToolbox .toolboxItem .iconContainer,
-.table-wrapper .tableControls .tableToolbox .toolboxItem .colorContainer,
-.table-wrapper .tableControls .tableColorPickerToolbox .toolboxItem .colorContainer {
+.table-wrapper .table-controls .table-toolbox .toolbox-item .icon-container {
   padding: 4px 0px;
   display: flex;
   align-items: center;
@@ -218,28 +212,24 @@
   height: 1.75rem;
 }
 
-.table-wrapper .tableControls .tableToolbox .toolboxItem .iconContainer svg,
-.table-wrapper .tableControls .tableColorPickerToolbox .toolboxItem .iconContainer svg,
-.table-wrapper .tableControls .tableToolbox .toolboxItem .colorContainer svg,
-.table-wrapper .tableControls .tableColorPickerToolbox .toolboxItem .colorContainer svg {
+.table-wrapper .table-controls .table-toolbox .toolbox-item .icon-container svg {
   width: 1rem;
   height: 1rem;
 }
 
-.tableToolbox {
+.table-toolbox {
   background-color: rgba(var(--color-background-100));
 }
 
-.table-wrapper .tableControls .tableToolbox .toolboxItem .label,
-.table-wrapper .tableControls .tableColorPickerToolbox .toolboxItem .label {
+.table-wrapper .table-controls .table-toolbox .toolbox-item .label {
   font-size: 0.85rem;
   color: rgba(var(--color-text-300));
 }
 
-.resize-cursor .table-wrapper .tableControls .rowsControl,
-.table-wrapper.controls--disabled .tableControls .rowsControl,
-.resize-cursor .table-wrapper .tableControls .columnsControl,
-.table-wrapper.controls--disabled .tableControls .columnsControl {
+.resize-cursor .table-wrapper .table-controls .rows-control,
+.table-wrapper.controls--disabled .table-controls .rows-control,
+.resize-cursor .table-wrapper .table-controls .columns-control,
+.table-wrapper.controls--disabled .table-controls .columns-control {
   opacity: 0;
   pointer-events: none;
 }

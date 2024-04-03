@@ -172,7 +172,6 @@ export class PageStore implements IPageStore {
     const descriptionDisposer = reaction(
       () => this.description_html,
       (description_html) => {
-        console.log("Reacting...");
         //TODO: Fix reaction to only run when the data is changed, not when the page is loaded
         const { workspaceSlug, projectId } = this.store.app.router;
         if (!workspaceSlug || !projectId || !this.id) return;
@@ -285,7 +284,6 @@ export class PageStore implements IPageStore {
   });
 
   updateDescription = action("updateDescription", (description_html: string) => {
-    console.log("Updating description from the store");
     this.description_html = description_html;
   });
 
@@ -294,9 +292,7 @@ export class PageStore implements IPageStore {
   });
 
   cleanup = action("cleanup", () => {
-    console.log("Cleaning up...", this.disposers);
-    this.disposers.forEach((disposer, index) => {
-      console.log("disposer", index, disposer);
+    this.disposers.forEach((disposer) => {
       disposer();
     });
   });
