@@ -3,7 +3,7 @@ import { Clipboard, Copy, Link, Lock } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
 // ui
-import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -28,6 +28,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     canCurrentUserDuplicatePage,
     canCurrentUserLockPage,
     restore,
+    view_props,
+    updateViewProps,
   } = pageStore;
   // store hooks
   const {
@@ -148,6 +150,17 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
 
   return (
     <CustomMenu maxHeight="md" placement="bottom-start" verticalEllipsis closeOnSelect>
+      <CustomMenu.MenuItem className="flex w-full items-center justify-between gap-2">
+        Full width
+        <ToggleSwitch
+          value={!!view_props?.full_width}
+          onChange={() =>
+            updateViewProps({
+              full_width: !view_props?.full_width,
+            })
+          }
+        />
+      </CustomMenu.MenuItem>
       {MENU_ITEMS.map((item) => {
         if (!item.shouldRender) return null;
         return (

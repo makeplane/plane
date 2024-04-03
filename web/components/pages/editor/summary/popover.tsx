@@ -3,11 +3,14 @@ import { usePopper } from "react-popper";
 import { List } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // components
 import { PageContentBrowser } from "./content-browser";
 
 type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  isFullWidth: boolean;
   markings: IMarking[];
   sidePeekVisible: boolean;
   setSidePeekVisible: (sidePeekState: boolean) => void;
@@ -39,7 +42,11 @@ export const PageSummaryPopover: React.FC<Props> = (props) => {
       >
         <List className="h-4 w-4" />
       </button>
-      <div className="block md:hidden">
+      <div
+        className={cn("block md:hidden", {
+          // "md:hidden": !isFullWidth,
+        })}
+      >
         {sidePeekVisible && (
           <div
             className="z-10 max-h-80 w-64 overflow-y-auto rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 p-3 shadow-custom-shadow-rg"

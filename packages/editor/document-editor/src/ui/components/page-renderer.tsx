@@ -148,6 +148,9 @@ export const PageRenderer = (props: IPageRenderer) => {
           <TextArea
             onChange={(e) => handlePageTitleChange(e.target.value)}
             className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none rounded-none"
+            style={{
+              lineHeight: "1.2",
+            }}
             placeholder="Untitled Page"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -170,11 +173,7 @@ export const PageRenderer = (props: IPageRenderer) => {
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}
           />
-          {editor && editor.isEditable && (
-            <>
-              <BlockMenu editor={editor} />
-            </>
-          )}
+          {editor && editor.isEditable && <BlockMenu editor={editor} />}
         </EditorContainer>
       </div>
       {isOpen && linkViewProps && coordinates && (

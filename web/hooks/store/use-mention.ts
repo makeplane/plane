@@ -75,6 +75,7 @@ export const useMention = ({ workspaceSlug, projectId }: { workspaceSlug: string
       return projectMembersRef.current.map((memberDetails) => ({
         entity_name: "user_mention",
         entity_identifier: `${memberDetails?.member?.id}`,
+        id: `${memberDetails?.member?.id}`,
         type: "User",
         title: `${memberDetails?.member?.display_name}`,
         subtitle: memberDetails?.member?.email ?? "",
@@ -87,6 +88,7 @@ export const useMention = ({ workspaceSlug, projectId }: { workspaceSlug: string
       return members.map((memberDetails) => ({
         entity_name: "user_mention",
         entity_identifier: `${memberDetails?.member?.id}`,
+        id: `${memberDetails?.member?.id}`,
         type: "User",
         title: `${memberDetails?.member?.display_name}`,
         subtitle: memberDetails?.member?.email ?? "",

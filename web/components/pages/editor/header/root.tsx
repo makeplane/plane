@@ -47,7 +47,8 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     config: { envConfig },
   } = useApplication();
   // derived values
-  const { archived_at, isContentEditable, isSubmitting, is_locked } = pageStore;
+  const { archived_at, isContentEditable, isSubmitting, is_locked, view_props } = pageStore;
+  const isFullWidth = !!view_props?.full_width;
 
   const handleAiAssistance = async (response: string) => {
     if (!editorRef) return;
@@ -58,9 +59,15 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <div className="flex items-center border-b border-custom-border-200 px-3 py-2 md:px-5">
-      <div className="flex-shrink-0 md:w-56 lg:w-72">
+      <div
+        className={cn("flex-shrink-0", {
+          "w-56 lg:w-72": !isFullWidth,
+          "w-[10%]": isFullWidth,
+        })}
+      >
         <PageSummaryPopover
           editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
+          isFullWidth={isFullWidth}
           markings={markings}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}

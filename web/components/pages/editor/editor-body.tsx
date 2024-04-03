@@ -17,7 +17,7 @@ import { PageContentBrowser } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useMention, useWorkspace } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
@@ -54,14 +54,20 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html ?? "<p></p>";
+  const isFullWidth = !!pageStore?.view_props?.full_width;
   const { description_html, isContentEditable, updateName, isSubmitting, setIsSubmitting } = pageStore;
+  // store hooks
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+    projectId: projectId?.toString() ?? "",
+  });
 
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
@@ -73,19 +79,25 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
       <div
-        className={cn(
-          "sticky top-0 hidden h-full w-56 flex-shrink-0 -translate-x-full p-5 duration-200 md:block lg:w-72",
-          {
-            "translate-x-0": sidePeekVisible,
-          }
-        )}
+        className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full p-5 duration-200 md:block", {
+          "translate-x-0": sidePeekVisible,
+          "w-56 lg:w-72": !isFullWidth,
+          "w-[10%]": isFullWidth,
+        })}
       >
-        <PageContentBrowser
-          editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
-          markings={markings}
-        />
+        {!isFullWidth && (
+          <PageContentBrowser
+            editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current}
+            markings={markings}
+          />
+        )}
       </div>
-      <div className="h-full w-full pt-5 px-5 md:w-[calc(100%-14rem)] md:pr-0 lg:w-[calc(100%-18rem-18rem)]">
+      <div
+        className={cn("h-full w-full pt-5 px-5 md:pr-0", {
+          "md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]": !isFullWidth,
+          "w-[80%]": isFullWidth,
+        })}
+      >
         {isContentEditable ? (
           <Controller
             name="description_html"
@@ -111,6 +123,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                   handleSubmit();
                   updateMarkings(description_html);
                 }}
+                mentionHighlights={mentionHighlights}
+                mentionSuggestions={mentionSuggestions}
               />
             )}
           />
@@ -124,7 +138,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           />
         )}
       </div>
-      <div className="hidden h-full w-56 flex-shrink-0 lg:block lg:w-72" />
+      <div
+        className={cn("hidden lg:block h-full flex-shrink-0", {
+          "w-56 lg:w-72": !isFullWidth,
+          "w-[10%]": isFullWidth,
+        })}
+      />
     </div>
   );
 });

@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import tippy, { Instance } from "tippy.js";
-
+import { Copy, LucideIcon, Trash2 } from "lucide-react";
 import { Editor } from "@tiptap/react";
-import { CopyIcon, DeleteIcon } from "lucide-react";
 
 interface BlockMenuProps {
   editor: Editor;
@@ -76,51 +75,63 @@ export default function BlockMenu(props: BlockMenuProps) {
     };
   }, [handleClickDragHandle]);
 
+  const MENU_ITEMS: {
+    icon: LucideIcon;
+    key: string;
+    label: string;
+    onClick: (e: React.MouseEvent) => void;
+  }[] = [
+    {
+      icon: Trash2,
+      key: "delete",
+      label: "Delete",
+      onClick: (e) => {
+        editor.commands.deleteSelection();
+        popup.current?.hide();
+        e.preventDefault();
+        e.stopPropagation();
+      },
+    },
+    {
+      icon: Copy,
+      key: "duplicate",
+      label: "Duplicate",
+      onClick: (e) => {
+        const { view } = editor;
+        const { state } = view;
+        const { selection } = state;
+
+        editor
+          .chain()
+          .insertContentAt(selection.to, selection.content().content.firstChild!.toJSON(), {
+            updateSelection: true,
+          })
+          .focus(selection.to + 1, { scrollIntoView: false }) // Focus the editor at the end
+          .run();
+
+        popup.current?.hide();
+        e.preventDefault();
+        e.stopPropagation();
+      },
+    },
+  ];
+
   return (
     <div
       ref={menuRef}
-      className="z-50 max-h-[300px] w-24 overflow-y-auto rounded-lg border border-gray-200 bg-white px-1 py-2 shadow-lg"
+      className="z-10 max-h-60 min-w-[12rem] rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg overflow-y-scroll"
     >
-      <button
-        className="flex w-full items-center gap-2 rounded-lg px-2 py-1 text-xs text-gray-600 hover:bg-gray-50"
-        onClick={(e) => {
-          editor.commands.deleteSelection();
-          popup.current?.hide();
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-      >
-        <div className="grid place-items-center">
-          <DeleteIcon className="h-3 w-3" />
-        </div>
-        <p className="truncate">Delete</p>
-      </button>
-
-      <button
-        className="flex w-full items-center gap-2 rounded-lg px-2 py-1 text-xs text-gray-600 hover:bg-gray-50"
-        onClick={(e) => {
-          const { view } = editor;
-          const { state } = view;
-          const { selection } = state;
-
-          editor
-            .chain()
-            .insertContentAt(selection.to, selection.content().content.firstChild!.toJSON(), {
-              updateSelection: true,
-            })
-            .focus(selection.to + 1, { scrollIntoView: false }) // Focus the editor at the end
-            .run();
-
-          popup.current?.hide();
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-      >
-        <div className="grid place-items-center">
-          <CopyIcon className="h-3 w-3" />
-        </div>
-        <p className="truncate">Duplicate</p>
-      </button>
+      {MENU_ITEMS.map((item) => (
+        <button
+          key={item.key}
+          type="button"
+          className="w-full flex items-center gap-2 rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80 truncate"
+          onClick={item.onClick}
+        >
+          <item.icon className="h-3 w-3" />
+          {item.label}
+        </button>
+      ))}
     </div>
   );
 }

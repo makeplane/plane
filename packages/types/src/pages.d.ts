@@ -1,22 +1,27 @@
 import { EPageAccess } from "./enums";
 
 export type TPage = {
-  id: string | undefined;
-  name: string | undefined;
-  description_html: string | undefined;
-  color: string | undefined;
-  labels: string[] | undefined;
-  owned_by: string | undefined;
   access: EPageAccess | undefined;
+  archived_at: string | null | undefined;
+  color: string | undefined;
+  created_at: Date | undefined;
+  created_by: string | undefined;
+  description_html: string | undefined;
+  id: string | undefined;
   is_favorite: boolean;
   is_locked: boolean;
-  archived_at: string | null | undefined;
-  workspace: string | undefined;
+  labels: string[] | undefined;
+  name: string | undefined;
+  owned_by: string | undefined;
   project: string | undefined;
-  created_by: string | undefined;
-  updated_by: string | undefined;
-  created_at: Date | undefined;
   updated_at: Date | undefined;
+  updated_by: string | undefined;
+  view_props: TPageViewProps | undefined;
+  workspace: string | undefined;
+};
+
+export type TPageViewProps = {
+  full_width?: boolean;
 };
 
 // page filters
