@@ -5,16 +5,16 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // headless ui
+import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import { AlertTriangle } from "lucide-react";
+import { IUser, IImporterService } from "@plane/types";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
-import { IntegrationService } from "services/integrations/integration.service";
+import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+import { IntegrationService } from "@/services/integrations/integration.service";
 // ui
 // icons
 // types
-import { IUser, IImporterService } from "@plane/types";
 // fetch-keys
 
 type Props = {

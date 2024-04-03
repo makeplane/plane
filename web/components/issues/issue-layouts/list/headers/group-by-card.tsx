@@ -3,17 +3,17 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
+import { TIssue, ISearchIssueResponse } from "@plane/types";
 // components
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
-import { ExistingIssuesListModal } from "components/core";
-import { CreateUpdateIssueModal } from "components/issues";
+import { ExistingIssuesListModal } from "@/components/core";
+import { CreateUpdateIssueModal } from "@/components/issues";
 // ui
 // mobx
 // hooks
-import { EIssuesStoreType } from "constants/issue";
-import { useEventTracker } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useEventTracker } from "@/hooks/store";
 // types
-import { TIssue, ISearchIssueResponse } from "@plane/types";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
@@ -70,8 +70,8 @@ export const HeaderGroupByCard = observer(
             {icon ? icon : <CircleDashed className="h-3.5 w-3.5" strokeWidth={2} />}
           </div>
 
-          <div className="flex w-full flex-row items-center gap-1">
-            <div className="line-clamp-1 font-medium text-custom-text-100">{title}</div>
+          <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
+            <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
             <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
           </div>
 

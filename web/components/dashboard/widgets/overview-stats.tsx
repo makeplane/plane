@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { TOverviewStatsWidgetResponse } from "@plane/types";
 // hooks
-import { WidgetLoader } from "components/dashboard/widgets";
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { useDashboard } from "hooks/store";
+import { WidgetLoader } from "@/components/dashboard/widgets";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { useDashboard } from "@/hooks/store";
 // components
 // helpers
 // types
-import { TOverviewStatsWidgetResponse } from "@plane/types";
 
 export type WidgetProps = {
   dashboardId: string;

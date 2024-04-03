@@ -31,6 +31,7 @@ class CycleWriteSerializer(BaseSerializer):
             "workspace",
             "project",
             "owned_by",
+            "archived_at",
         ]
 
 

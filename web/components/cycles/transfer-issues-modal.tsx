@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { AlertCircle, Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 // ui
-import { AlertCircle, Search, X } from "lucide-react";
 //icons
 import { ContrastIcon, TransferIcon, TOAST_TYPE, setToast } from "@plane/ui";
-import { EIssuesStoreType } from "constants/issue";
-import { useCycle, useIssues } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useCycle, useIssues } from "@/hooks/store";
 //icons
 // constants
 

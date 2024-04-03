@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { IGithubRepoCollaborator } from "@plane/types";
 // services
 import { Avatar, CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
-import { WorkspaceService } from "services/workspace.service";
+import { WORKSPACE_MEMBERS } from "@/constants/fetch-keys";
+import { WorkspaceService } from "@/services/workspace.service";
 // ui
 // types
-import { IGithubRepoCollaborator } from "@plane/types";
 import { IUserDetails } from "./root";
 // fetch-keys
 

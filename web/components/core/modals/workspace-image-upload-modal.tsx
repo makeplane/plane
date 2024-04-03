@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
+import { UserCircle2 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // hooks
-import { UserCircle2 } from "lucide-react";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { MAX_FILE_SIZE } from "constants/common";
-import { useApplication, useWorkspace } from "hooks/store";
+import { MAX_FILE_SIZE } from "@/constants/common";
+import { useApplication, useWorkspace } from "@/hooks/store";
 // services
-import { FileService } from "services/file.service";
+import { FileService } from "@/services/file.service";
 // ui
 // icons
 // constants

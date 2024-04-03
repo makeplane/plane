@@ -5,6 +5,7 @@ from .project.base import (
     ProjectFavoritesViewSet,
     ProjectPublicCoverImagesEndpoint,
     ProjectDeployBoardViewSet,
+    ProjectArchiveUnarchiveEndpoint,
 )
 
 from .project.invite import (
@@ -90,6 +91,7 @@ from .cycle.base import (
     CycleDateCheckEndpoint,
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
+    CycleArchiveUnarchiveEndpoint,
     CycleUserPropertiesEndpoint,
 )
 from .cycle.issue import (
@@ -168,6 +170,7 @@ from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
+    ModuleArchiveUnarchiveEndpoint,
     ModuleUserPropertiesEndpoint,
 )
 

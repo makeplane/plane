@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 // types
-import { WidgetProps } from "components/dashboard/widgets";
+import { WidgetProps } from "@/components/dashboard/widgets";
 // components
 import { DefaultCollaboratorsList } from "./default-list";
 import { SearchedCollaboratorsList } from "./search-list";

@@ -2,12 +2,12 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // hooks
-import { useProject } from "hooks/store";
-// ui
 import { Button, getButtonStyling } from "@plane/ui";
+import { useProject } from "@/hooks/store";
+// ui
 // components
-import { ProjectFeaturesList } from "./settings";
 import { ProjectLogo } from "./project-logo";
+import { ProjectFeaturesList } from "./settings";
 
 type Props = {
   workspaceSlug: string;

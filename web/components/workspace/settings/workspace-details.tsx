@@ -1,24 +1,24 @@
 import { useEffect, useState, FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
+import { Disclosure, Transition } from "@headlessui/react";
+import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { WorkspaceImageUploadModal } from "components/core";
-import { DeleteWorkspaceModal } from "components/workspace";
+import { WorkspaceImageUploadModal } from "@/components/core";
+import { DeleteWorkspaceModal } from "@/components/workspace";
 // constants
-import { WORKSPACE_UPDATED } from "constants/event-tracker";
-import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
+import { WORKSPACE_UPDATED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "@/constants/workspace";
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
 // services
-import { FileService } from "services/file.service";
+import { FileService } from "@/services/file.service";
 // types
-import { IWorkspace } from "@plane/types";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { AlertTriangle } from "lucide-react";
+import type { IIssueLabel } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { useLabel } from "hooks/store";
+import { useLabel } from "@/hooks/store";
 // icons
 // ui
 // types
-import type { IIssueLabel } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

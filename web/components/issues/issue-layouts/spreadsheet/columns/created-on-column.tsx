@@ -1,9 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-// helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-// types
 import { TIssue } from "@plane/types";
+// helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+// types
 
 type Props = {
   issue: TIssue;

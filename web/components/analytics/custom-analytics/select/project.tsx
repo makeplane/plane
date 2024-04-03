@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 // hooks
 import { CustomSearchSelect } from "@plane/ui";
-import { useProject } from "hooks/store";
+import { useProject } from "@/hooks/store";
 // ui
 
 type Props = {

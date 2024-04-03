@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useInboxIssues } from "hooks/store";
+import { useInboxIssues } from "@/hooks/store";
 // components
 import { InboxIssueListItem } from "../";
 

@@ -91,6 +91,7 @@ class IssueManager(models.Manager):
                 | models.Q(issue_inbox__isnull=True)
             )
             .exclude(archived_at__isnull=False)
+            .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
         )
 

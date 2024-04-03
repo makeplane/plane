@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+import { IProjectView, IIssueFilterOptions } from "@plane/types";
 // hooks
 import { Button, Input, TextArea } from "@plane/ui";
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { useLabel, useMember, useProjectState } from "hooks/store";
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { useLabel, useMember, useProjectState } from "@/hooks/store";
 // components
 // ui
 // types
-import { IProjectView, IIssueFilterOptions } from "@plane/types";
 // constants
 
 type Props = {

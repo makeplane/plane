@@ -1,27 +1,25 @@
-import Image from "next/image";
 import { observer } from "mobx-react-lite";
+import Image from "next/image";
 // hooks
-import { useApplication, useEventTracker, useProject, useProjectFilter } from "hooks/store";
 // components
-import { EmptyState } from "components/empty-state";
-import { ProjectCard } from "components/project";
-import { ProjectsLoader } from "components/ui";
+import { EmptyState } from "@/components/empty-state";
+import { ProjectCard } from "@/components/project";
+import { ProjectsLoader } from "@/components/ui";
 // assets
+import { EmptyStateType } from "@/constants/empty-state";
+import { useApplication, useEventTracker, useProject, useProjectFilter } from "@/hooks/store";
 import AllFiltersImage from "public/empty-state/project/all-filters.svg";
 import NameFilterImage from "public/empty-state/project/name-filter.svg";
 // constants
-import { EmptyStateType } from "constants/empty-state";
 
 export const ProjectCardList = observer(() => {
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds, filteredProjectIds, getProjectById } = useProject();
-  const { searchQuery } = useProjectFilter();
+  const { searchQuery, currentWorkspaceDisplayFilters } = useProjectFilter();
 
-  if (!filteredProjectIds) return <ProjectsLoader />;
-
-  if (workspaceProjectIds?.length === 0)
+  if (workspaceProjectIds?.length === 0 && !currentWorkspaceDisplayFilters?.archived_projects)
     return (
       <EmptyState
         type={EmptyStateType.WORKSPACE_PROJECTS}
@@ -31,6 +29,9 @@ export const ProjectCardList = observer(() => {
         }}
       />
     );
+
+  if (!filteredProjectIds) return <ProjectsLoader />;
+
   if (filteredProjectIds.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">

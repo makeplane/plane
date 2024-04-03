@@ -74,6 +74,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
+            .filter(project__archived_at__isnull=True)
             .filter(cycle_id=self.kwargs.get("cycle_id"))
             .select_related("project")
             .select_related("workspace")
@@ -142,7 +143,8 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),

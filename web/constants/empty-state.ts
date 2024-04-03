@@ -51,6 +51,7 @@ export enum EmptyStateType {
   PROJECT_CYCLE_ACTIVE = "project-cycle-active",
   PROJECT_CYCLE_ALL = "project-cycle-all",
   PROJECT_CYCLE_COMPLETED_NO_ISSUES = "project-cycle-completed-no-issues",
+  PROJECT_ARCHIVED_NO_CYCLES = "project-archived-no-cycles",
   PROJECT_EMPTY_FILTER = "project-empty-filter",
   PROJECT_ARCHIVED_EMPTY_FILTER = "project-archived-empty-filter",
   PROJECT_DRAFT_EMPTY_FILTER = "project-draft-empty-filter",
@@ -59,10 +60,10 @@ export enum EmptyStateType {
   PROJECT_DRAFT_NO_ISSUES = "project-draft-no-issues",
   VIEWS_EMPTY_SEARCH = "views-empty-search",
   PROJECTS_EMPTY_SEARCH = "projects-empty-search",
-  COMMANDK_EMPTY_SEARCH = "commandK-empty-search",
   MEMBERS_EMPTY_SEARCH = "members-empty-search",
   PROJECT_MODULE_ISSUES = "project-module-issues",
   PROJECT_MODULE = "project-module",
+  PROJECT_ARCHIVED_NO_MODULES = "project-archived-no-modules",
   PROJECT_VIEW = "project-view",
   PROJECT_PAGE = "project-page",
   PROJECT_PAGE_ALL = "project-page-all",
@@ -71,6 +72,24 @@ export enum EmptyStateType {
   PROJECT_PAGE_SHARED = "project-page-shared",
   PROJECT_PAGE_ARCHIVED = "project-page-archived",
   PROJECT_PAGE_RECENT = "project-page-recent",
+
+  COMMAND_K_SEARCH_EMPTY_STATE = "command-k-search-empty-state",
+  ISSUE_RELATION_SEARCH_EMPTY_STATE = "issue-relation-search-empty-state",
+  ISSUE_RELATION_EMPTY_STATE = "issue-relation-empty-state",
+  ISSUE_COMMENT_EMPTY_STATE = "issue-comment-empty-state",
+
+  NOTIFICATION_MY_ISSUE_EMPTY_STATE = "notification-my-issues-empty-state",
+  NOTIFICATION_CREATED_EMPTY_STATE = "notification-created-empty-state",
+  NOTIFICATION_SUBSCRIBED_EMPTY_STATE = "notification-subscribed-empty-state",
+  NOTIFICATION_ARCHIVED_EMPTY_STATE = "notification-archived-empty-state",
+  NOTIFICATION_SNOOZED_EMPTY_STATE = "notification-snoozed-empty-state",
+  NOTIFICATION_UNREAD_EMPTY_STATE = "notification-unread-empty-state",
+
+  ACTIVE_CYCLE_PROGRESS_EMPTY_STATE = "active-cycle-progress-empty-state",
+  ACTIVE_CYCLE_CHART_EMPTY_STATE = "active-cycle-chart-empty-state",
+  ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE = "active-cycle-priority-issue-empty-state",
+  ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE = "active-cycle-assignee-empty-state",
+  ACTIVE_CYCLE_LABEL_EMPTY_STATE = "active-cycle-label-empty-state",
 }
 
 const emptyStateDetails = {
@@ -112,9 +131,9 @@ const emptyStateDetails = {
   },
   [EmptyStateType.WORKSPACE_PROJECTS]: {
     key: EmptyStateType.WORKSPACE_PROJECTS,
-    title: "Start a Project",
+    title: "No active projects",
     description:
-      "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal.",
+      "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
     path: "/empty-state/onboarding/projects",
     primaryButton: {
       text: "Start your first project",
@@ -297,6 +316,12 @@ const emptyStateDetails = {
       "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly.",
     path: "/empty-state/cycle/completed-no-issues",
   },
+  [EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES]: {
+    key: EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES,
+    title: "No archived cycles yet",
+    description: "To tidy up your project, archive completed cycles. Find them here once archived.",
+    path: "/empty-state/archived/empty-cycles",
+  },
   [EmptyStateType.PROJECT_CYCLE_ALL]: {
     key: EmptyStateType.PROJECT_CYCLE_ALL,
     title: "No cycles",
@@ -357,7 +382,7 @@ const emptyStateDetails = {
     key: EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES,
     title: "No archived issues yet",
     description:
-      "Archived issues help you remove issues you completed or cancelled from focus. You can set automation to auto archive issues and find them here.",
+      "Manually or through automation, you can archive issues that are completed or cancelled. Find them here once archived.",
     path: "/empty-state/archived/empty-issues",
     primaryButton: {
       text: "Set automation",
@@ -383,11 +408,6 @@ const emptyStateDetails = {
     title: "No matching projects",
     description: "No projects detected with the matching criteria. Create a new project instead.",
     path: "/empty-state/search/project",
-  },
-  [EmptyStateType.COMMANDK_EMPTY_SEARCH]: {
-    key: EmptyStateType.COMMANDK_EMPTY_SEARCH,
-    title: "No results found. ",
-    path: "/empty-state/search/search",
   },
   [EmptyStateType.MEMBERS_EMPTY_SEARCH]: {
     key: EmptyStateType.MEMBERS_EMPTY_SEARCH,
@@ -425,6 +445,12 @@ const emptyStateDetails = {
     },
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
+  },
+  [EmptyStateType.PROJECT_ARCHIVED_NO_MODULES]: {
+    key: EmptyStateType.PROJECT_ARCHIVED_NO_MODULES,
+    title: "No archived Modules yet",
+    description: "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
+    path: "/empty-state/archived/empty-modules",
   },
   // project views
   [EmptyStateType.PROJECT_VIEW]: {
@@ -503,6 +529,91 @@ const emptyStateDetails = {
     },
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
+  },
+
+  [EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE]: {
+    key: EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE,
+    title: "No results found",
+    path: "/empty-state/search/search",
+  },
+  [EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE]: {
+    key: EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE,
+    title: "No maching issues found",
+    path: "/empty-state/search/search",
+  },
+  [EmptyStateType.ISSUE_RELATION_EMPTY_STATE]: {
+    key: EmptyStateType.ISSUE_RELATION_EMPTY_STATE,
+    title: "No issues found",
+    path: "/empty-state/search/issues",
+  },
+  [EmptyStateType.ISSUE_COMMENT_EMPTY_STATE]: {
+    key: EmptyStateType.ISSUE_COMMENT_EMPTY_STATE,
+    title: "No comments yet",
+    description: "Comments can be used as a discussion and follow-up space for the issues",
+    path: "/empty-state/search/comments",
+  },
+
+  [EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE]: {
+    key: EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE,
+    title: "No issues assigned",
+    description: "Updates for issues assigned to you can be \n seen here",
+    path: "/empty-state/search/notification",
+  },
+
+  [EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE]: {
+    key: EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE,
+    title: "No updates to issues",
+    description: "Updates to issues created by you can be \n seen here",
+    path: "/empty-state/search/notification",
+  },
+  [EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE]: {
+    key: EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE,
+    title: "No updates to issues",
+    description: "Updates to any issue you are \n subscribed to can be seen here",
+    path: "/empty-state/search/notification",
+  },
+  [EmptyStateType.NOTIFICATION_UNREAD_EMPTY_STATE]: {
+    key: EmptyStateType.NOTIFICATION_UNREAD_EMPTY_STATE,
+    title: "No unread notifications",
+    description: "Congratulations, you are up-to-date \n with everything happening in the issues \n you care about",
+    path: "/empty-state/search/notification",
+  },
+  [EmptyStateType.NOTIFICATION_SNOOZED_EMPTY_STATE]: {
+    key: EmptyStateType.NOTIFICATION_SNOOZED_EMPTY_STATE,
+    title: "No snoozed notifications yet",
+    description: "Any notification you snooze for later will \n be available here to act upon",
+    path: "/empty-state/search/snooze",
+  },
+  [EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE]: {
+    key: EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE,
+    title: "No archived notifications yet",
+    description: "Any notification you archive will be \n available here to help you focus",
+    path: "/empty-state/search/archive",
+  },
+  [EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE]: {
+    key: EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE,
+    title: "Add issues to the cycle to view it's \n progress",
+    path: "/empty-state/active-cycle/progress",
+  },
+  [EmptyStateType.ACTIVE_CYCLE_CHART_EMPTY_STATE]: {
+    key: EmptyStateType.ACTIVE_CYCLE_CHART_EMPTY_STATE,
+    title: "Add issues to the cycle to view the \n burndown chart.",
+    path: "/empty-state/active-cycle/chart",
+  },
+  [EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE]: {
+    key: EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE,
+    title: "Observe high priority issues tackled in \n the cycle at a glance.",
+    path: "/empty-state/active-cycle/priority",
+  },
+  [EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE]: {
+    key: EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE,
+    title: "Add assignees to issues to see a \n breakdown of work by assignees.",
+    path: "/empty-state/active-cycle/assignee",
+  },
+  [EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE]: {
+    key: EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
+    title: "Add labels to issues to see the \n breakdown of work by labels.",
+    path: "/empty-state/active-cycle/label",
   },
 } as const;
 

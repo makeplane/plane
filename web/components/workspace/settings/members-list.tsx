@@ -3,10 +3,10 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
-import { MembersSettingsLoader } from "components/ui";
-import { WorkspaceInvitationsListItem, WorkspaceMembersListItem } from "components/workspace";
+import { MembersSettingsLoader } from "@/components/ui";
+import { WorkspaceInvitationsListItem, WorkspaceMembersListItem } from "@/components/workspace";
 // hooks
-import { useMember } from "hooks/store";
+import { useMember } from "@/hooks/store";
 
 export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props) => {
   const { searchQuery } = props;

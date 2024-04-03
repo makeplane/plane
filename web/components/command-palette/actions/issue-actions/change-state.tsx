@@ -3,13 +3,13 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
 import { Check } from "lucide-react";
+import { TIssue } from "@plane/types";
 import { Spinner, StateGroupIcon } from "@plane/ui";
-import { EIssuesStoreType } from "constants/issue";
-import { useProjectState, useIssues } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useProjectState, useIssues } from "@/hooks/store";
 // ui
 // icons
 // types
-import { TIssue } from "@plane/types";
 
 type Props = {
   closePalette: () => void;

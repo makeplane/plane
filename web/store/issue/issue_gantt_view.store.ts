@@ -1,8 +1,8 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // helpers
-import { ChartDataType, TGanttViews } from "components/gantt-chart";
-import { currentViewDataWithView } from "components/gantt-chart/data";
+import { ChartDataType, TGanttViews } from "@/components/gantt-chart";
+import { currentViewDataWithView } from "@/components/gantt-chart/data";
 // types
 
 export interface IGanttStore {

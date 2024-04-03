@@ -1,11 +1,11 @@
 import React, { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { IUserEmailNotificationSettings } from "@plane/types";
 // ui
 import { Button, Checkbox, TOAST_TYPE, setToast } from "@plane/ui";
 // services
-import { UserService } from "services/user.service";
+import { UserService } from "@/services/user.service";
 // types
-import { IUserEmailNotificationSettings } from "@plane/types";
 
 interface IEmailNotificationFormProps {
   data: IUserEmailNotificationSettings;

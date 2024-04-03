@@ -6,8 +6,8 @@ import update from "lodash/update";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
 // services
-import { CycleService } from "services/cycle.service";
-import { IssueService } from "services/issue";
+import { CycleService } from "@/services/cycle.service";
+import { IssueService } from "@/services/issue";
 // types
 import { TIssue, TSubGroupedIssues, TGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";

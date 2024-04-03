@@ -26,7 +26,7 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
     {
       name: "Text",
       icon: TextIcon,
-      command: () => editor.chain().focus().toggleNode("paragraph", "paragraph").run(),
+      command: () => editor.chain().focus().clearNodes().run(),
       isActive: () => editor.isActive("paragraph") && !editor.isActive("bulletList") && !editor.isActive("orderedList"),
     },
     HeadingOneItem(editor),

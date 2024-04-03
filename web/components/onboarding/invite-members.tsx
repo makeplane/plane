@@ -12,30 +12,30 @@ import {
   useFieldArray,
   useForm,
 } from "react-hook-form";
+import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // icons
-import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
+import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
+import { OnboardingStepIndicator } from "@/components/onboarding/step-indicator";
 // constants
-import { MEMBER_INVITED } from "constants/event-tracker";
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { MEMBER_INVITED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 // helpers
-import { getUserRole } from "helpers/user.helper";
+import { getUserRole } from "@/helpers/user.helper";
 // hooks
-import { useEventTracker } from "hooks/store";
-import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
+import { useEventTracker } from "@/hooks/store";
+import useDynamicDropdownPosition from "@/hooks/use-dynamic-dropdown";
 // assets
+import { WorkspaceService } from "@/services/workspace.service";
 import userDark from "public/onboarding/user-dark.svg";
 import userLight from "public/onboarding/user-light.svg";
 import user1 from "public/users/user-1.png";
 import user2 from "public/users/user-2.png";
 // services
-import { WorkspaceService } from "services/workspace.service";
 // types
-import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 
 type Props = {
   finishOnboarding: () => Promise<void>;

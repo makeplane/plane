@@ -2,23 +2,23 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // hooks
 import {
   DurationFilterDropdown,
   IssuesByStateGroupEmptyState,
   WidgetLoader,
   WidgetProps,
-} from "components/dashboard/widgets";
-import { PieGraph } from "components/ui";
-import { STATE_GROUPS } from "constants/state";
-import { getCustomDates } from "helpers/dashboard.helper";
-import { useDashboard } from "hooks/store";
+} from "@/components/dashboard/widgets";
+import { PieGraph } from "@/components/ui";
+import { EDurationFilters, STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "@/constants/dashboard";
+import { STATE_GROUPS } from "@/constants/state";
+import { getCustomDates } from "@/helpers/dashboard.helper";
+import { useDashboard } from "@/hooks/store";
 // components
 // helpers
 // types
-import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // constants
-import { EDurationFilters, STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
 
 const WIDGET_KEY = "issues_by_state_groups";
 

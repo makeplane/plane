@@ -5,12 +5,12 @@ import { Plus } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
-import { renderFormattedDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { renderFormattedDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
+import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useGanttChart } from "../hooks/use-gantt-chart";
 import { IBlockUpdateData, IGanttBlock } from "../types";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 
 type Props = {
   block: IGanttBlock;

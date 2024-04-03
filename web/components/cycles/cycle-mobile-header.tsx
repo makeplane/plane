@@ -3,14 +3,14 @@ import router from "next/router";
 //components
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 // constants
-import { ProjectAnalyticsModal } from "components/analytics";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
-import { useIssues, useCycle, useProjectState, useLabel, useMember } from "hooks/store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+import { useIssues, useCycle, useProjectState, useLabel, useMember } from "@/hooks/store";
 
 export const CycleMobileHeader = () => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -109,7 +109,7 @@ export const CycleMobileHeader = () => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="flex justify-evenly py-2 border-b border-custom-border-200">
+      <div className="flex justify-evenly py-2 border-b border-custom-border-200 md:hidden bg-custom-background-100">
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-custom-text-200 text-sm"

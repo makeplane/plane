@@ -2,18 +2,18 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // ui
+import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { AlertTriangle } from "lucide-react";
+import { IWorkspaceView } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { GLOBAL_VIEW_DELETED } from "constants/event-tracker";
+import { GLOBAL_VIEW_DELETED } from "@/constants/event-tracker";
 // store hooks
-import { useGlobalView, useEventTracker } from "hooks/store";
+import { useGlobalView, useEventTracker } from "@/hooks/store";
 // ui
 // types
-import { IWorkspaceView } from "@plane/types";
 
 type Props = {
   data: IWorkspaceView;

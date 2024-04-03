@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { Button } from "@plane/ui";
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 // ui
 
 type Props = {

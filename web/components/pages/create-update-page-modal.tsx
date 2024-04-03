@@ -1,14 +1,14 @@
 import React, { FC } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
+import { IPage } from "@plane/types";
 // components
-import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
-import { useEventTracker } from "hooks/store";
+import { PAGE_CREATED, PAGE_UPDATED } from "@/constants/event-tracker";
+import { useEventTracker } from "@/hooks/store";
 // hooks
 // types
-import { useProjectPages } from "hooks/store/use-project-page";
-import { IPageStore } from "store/page.store";
-import { IPage } from "@plane/types";
+import { useProjectPages } from "@/hooks/store/use-project-page";
+import { IPageStore } from "@/store/page.store";
 import { PageForm } from "./page-form";
 // constants
 

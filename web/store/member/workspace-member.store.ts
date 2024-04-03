@@ -3,12 +3,12 @@ import sortBy from "lodash/sortBy";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // services
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { WorkspaceService } from "services/workspace.service";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { WorkspaceService } from "@/services/workspace.service";
 // types
-import { IRouterStore } from "store/application/router.store";
-import { RootStore } from "store/root.store";
-import { IUserRootStore } from "store/user";
+import { IRouterStore } from "@/store/application/router.store";
+import { RootStore } from "@/store/root.store";
+import { IUserRootStore } from "@/store/user";
 import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // constants
 import { IMemberRootStore } from ".";

@@ -2,15 +2,15 @@ import React, { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 // headless ui
+import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // icons
-import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
 // ui
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
-import { useApplication } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useApplication } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // assets
 import packageJson from "package.json";
 

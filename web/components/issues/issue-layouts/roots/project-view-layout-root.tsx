@@ -13,11 +13,11 @@ import {
   ProjectViewKanBanLayout,
   ProjectViewListLayout,
   ProjectViewSpreadsheetLayout,
-} from "components/issues";
-import { ActiveLoader } from "components/ui";
+} from "@/components/issues";
+import { ActiveLoader } from "@/components/ui";
 // constants
-import { EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 // types
 
 export const ProjectViewLayoutRoot: React.FC = observer(() => {

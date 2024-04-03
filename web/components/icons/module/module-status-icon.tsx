@@ -1,4 +1,5 @@
 // icons
+import { TModuleStatus } from "@plane/types";
 import {
   ModuleBacklogIcon,
   ModuleCancelledIcon,
@@ -6,9 +7,8 @@ import {
   ModuleInProgressIcon,
   ModulePausedIcon,
   ModulePlannedIcon,
-} from "components/icons";
+} from "@/components/icons";
 // types
-import { TModuleStatus } from "@plane/types";
 
 type Props = {
   status: TModuleStatus;

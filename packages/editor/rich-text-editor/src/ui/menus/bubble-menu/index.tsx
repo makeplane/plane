@@ -25,16 +25,20 @@ type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   const items: BubbleMenuItem[] = [
-    BoldItem(props.editor),
-    ItalicItem(props.editor),
-    UnderLineItem(props.editor),
-    StrikeThroughItem(props.editor),
+    ...(props.editor.isActive("code")
+      ? []
+      : [
+          BoldItem(props.editor),
+          ItalicItem(props.editor),
+          UnderLineItem(props.editor),
+          StrikeThroughItem(props.editor),
+        ]),
     CodeItem(props.editor),
   ];
 
   const bubbleMenuProps: EditorBubbleMenuProps = {
     ...props,
-    shouldShow: ({ view, state, editor }) => {
+    shouldShow: ({ state, editor }) => {
       const { selection } = state;
 
       const { empty } = selection;
@@ -64,6 +68,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   const [isLinkSelectorOpen, setIsLinkSelectorOpen] = useState(false);
 
   const [isSelecting, setIsSelecting] = useState(false);
+
   useEffect(() => {
     function handleMouseDown() {
       function handleMouseMove() {
@@ -108,14 +113,16 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
               }}
             />
           )}
-          <LinkSelector
-            editor={props.editor!!}
-            isOpen={isLinkSelectorOpen}
-            setIsOpen={() => {
-              setIsLinkSelectorOpen(!isLinkSelectorOpen);
-              setIsNodeSelectorOpen(false);
-            }}
-          />
+          {!props.editor.isActive("code") && (
+            <LinkSelector
+              editor={props.editor}
+              isOpen={isLinkSelectorOpen}
+              setIsOpen={() => {
+                setIsLinkSelectorOpen(!isLinkSelectorOpen);
+                setIsNodeSelectorOpen(false);
+              }}
+            />
+          )}
           <div className="flex">
             {items.map((item) => (
               <button

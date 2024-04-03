@@ -2,7 +2,7 @@ import { Command } from "cmdk";
 import { ContrastIcon, FileText } from "lucide-react";
 // hooks
 import { DiceIcon, PhotoFilterIcon } from "@plane/ui";
-import { useApplication, useEventTracker } from "hooks/store";
+import { useApplication, useEventTracker } from "@/hooks/store";
 // ui
 
 type Props = {

@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
+import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 // store hooks
 import { Avatar } from "@plane/ui";
-import { useDashboard, useMember, useUser } from "hooks/store";
+import { useDashboard, useMember, useUser } from "@/hooks/store";
 // components
-import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 import { WidgetLoader } from "../loaders";
 // ui
 // types

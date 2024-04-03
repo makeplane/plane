@@ -1,9 +1,9 @@
 // icons
 import { Globe2, Lock, LucideIcon } from "lucide-react";
-import { SettingIcon } from "components/icons";
+import { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
+import { SettingIcon } from "@/components/icons";
 // types
-import { Props } from "components/icons/types";
-import { TProjectOrderByOptions } from "@plane/types";
+import { Props } from "@/components/icons/types";
 
 export enum EUserProjectRoles {
   GUEST = 5,
@@ -116,14 +116,6 @@ export const PROJECT_SETTINGS_LINKS: {
     Icon: SettingIcon,
   },
   {
-    key: "integrations",
-    label: "Integrations",
-    href: `/settings/integrations`,
-    access: EUserProjectRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations`,
-    Icon: SettingIcon,
-  },
-  {
     key: "estimates",
     label: "Estimates",
     href: `/settings/estimates`,
@@ -160,5 +152,19 @@ export const PROJECT_ORDER_BY_OPTIONS: {
   {
     key: "members_length",
     label: "Number of members",
+  },
+];
+
+export const PROJECT_DISPLAY_FILTER_OPTIONS: {
+  key: TProjectAppliedDisplayFilterKeys;
+  label: string;
+}[] = [
+  {
+    key: "my_projects",
+    label: "My projects",
+  },
+  {
+    key: "archived_projects",
+    label: "Archived",
   },
 ];

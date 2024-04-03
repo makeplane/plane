@@ -3,17 +3,17 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { EmptyState } from "components/common";
-import { PageHead } from "components/core";
-import { ProjectViewIssuesHeader } from "components/headers";
-import { ProjectViewLayoutRoot } from "components/issues";
-import { useProject, useProjectView } from "hooks/store";
+import { EmptyState } from "@/components/common";
+import { PageHead } from "@/components/core";
+import { ProjectViewIssuesHeader } from "@/components/headers";
+import { ProjectViewLayoutRoot } from "@/components/issues";
+import { useProject, useProjectView } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { AppLayout } from "@/layouts/app-layout";
 // components
 // ui
 // assets
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 import emptyView from "public/empty-state/view.svg";
 // types
 

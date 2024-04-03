@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { capitalizeFirstLetter } from "helpers/string.helper";
+import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { capitalizeFirstLetter } from "@/helpers/string.helper";
 // constants
-import { DATE_AFTER_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
   editable: boolean | undefined;

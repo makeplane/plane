@@ -1,4 +1,4 @@
-import { RootStore } from "store/root.store";
+import { RootStore } from "@/store/root.store";
 import { IProjectPublishStore, ProjectPublishStore } from "./project-publish.store";
 import { IProjectStore, ProjectStore } from "./project.store";
 import { IProjectFilterStore, ProjectFilterStore } from "./project_filter.store";

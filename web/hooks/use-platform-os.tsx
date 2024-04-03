@@ -8,5 +8,5 @@ export const usePlatformOS = () => {
 
     if (isMobile) setIsMobile(isMobile);
   }, []);
-  return {isMobile};
-}
+  return { isMobile };
+};

@@ -2,31 +2,32 @@ import { Fragment, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Tab } from "@headlessui/react";
+import { TCycleFilters } from "@plane/types";
 // hooks
-import { useEventTracker, useCycle, useProject, useCycleFilter } from "hooks/store";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-// components
-import { PageHead } from "components/core";
-import { CyclesHeader } from "components/headers";
+import { PageHead } from "@/components/core";
 import {
   CyclesView,
   CycleCreateUpdateModal,
   CyclesViewHeader,
   CycleAppliedFiltersList,
   ActiveCycleRoot,
-} from "components/cycles";
-import { EmptyState } from "components/empty-state";
+} from "@/components/cycles";
+import CyclesListMobileHeader from "@/components/cycles/cycles-list-mobile-header";
+import { EmptyState } from "@/components/empty-state";
+import { CyclesHeader } from "@/components/headers";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
+import { CYCLE_TABS_LIST } from "@/constants/cycle";
+import { EmptyStateType } from "@/constants/empty-state";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { useEventTracker, useCycle, useProject, useCycleFilter } from "@/hooks/store";
+// layouts
+import { AppLayout } from "@/layouts/app-layout";
+// components
 // ui
-import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
 // helpers
-import { calculateTotalFilters } from "helpers/filter.helper";
 // types
-import { NextPageWithLayout } from "lib/types";
-import { TCycleFilters } from "@plane/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
-import { CYCLE_TABS_LIST } from "constants/cycle";
-import { EmptyStateType } from "constants/empty-state";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // states
@@ -47,7 +48,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const pageTitle = project?.name ? `${project?.name} - Cycles` : undefined;
   // selected display filters
   const cycleTab = currentProjectDisplayFilters?.active_tab;
-  const cycleLayout = currentProjectDisplayFilters?.layout;
+  const cycleLayout = currentProjectDisplayFilters?.layout ?? "list";
 
   const handleRemoveFilter = (key: keyof TCycleFilters, value: string | null) => {
     if (!projectId) return;
@@ -120,14 +121,12 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                 <ActiveCycleRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
               </Tab.Panel>
               <Tab.Panel as="div" className="h-full overflow-y-auto">
-                {cycleTab && cycleLayout && (
-                  <CyclesView
-                    layout={cycleLayout}
-                    workspaceSlug={workspaceSlug.toString()}
-                    projectId={projectId.toString()}
-                    peekCycle={peekCycle?.toString()}
-                  />
-                )}
+                <CyclesView
+                  layout={cycleLayout}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
+                />
               </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
@@ -139,7 +138,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
 
 ProjectCyclesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<CyclesHeader />} withProjectWrapper>
+    <AppLayout header={<CyclesHeader />} mobileHeader={<CyclesListMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

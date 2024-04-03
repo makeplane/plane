@@ -1,17 +1,17 @@
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react";
 import { Star, User2 } from "lucide-react";
 // hooks
-import { useCycle, useEventTracker, useMember } from "hooks/store";
-// components
-import { CycleQuickActions } from "components/cycles";
-// ui
 import { Avatar, AvatarGroup, setPromiseToast } from "@plane/ui";
+import { CycleQuickActions } from "@/components/cycles";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useCycle, useEventTracker, useMember } from "@/hooks/store";
+// components
+// ui
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
 
 type Props = {
   cycleId: string;

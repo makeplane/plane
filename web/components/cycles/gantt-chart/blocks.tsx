@@ -1,13 +1,13 @@
-import Link from "next/link";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip, ContrastIcon } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { useApplication, useCycle } from "hooks/store";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useApplication, useCycle } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   cycleId: string;
@@ -35,12 +35,12 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-            ? "#f7ae59"
-            : cycleStatus === "completed"
-            ? "#3f76ff"
-            : cycleStatus === "draft"
-            ? "rgb(var(--color-text-200))"
-            : "",
+              ? "#f7ae59"
+              : cycleStatus === "completed"
+                ? "#3f76ff"
+                : cycleStatus === "draft"
+                  ? "rgb(var(--color-text-200))"
+                  : "",
       }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`)}
     >
@@ -87,12 +87,12 @@ export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-            ? "#f7ae59"
-            : cycleStatus === "completed"
-            ? "#3f76ff"
-            : cycleStatus === "draft"
-            ? "rgb(var(--color-text-200))"
-            : ""
+              ? "#f7ae59"
+              : cycleStatus === "completed"
+                ? "#3f76ff"
+                : cycleStatus === "draft"
+                  ? "rgb(var(--color-text-200))"
+                  : ""
         }`}
       />
       <h6 className="flex-grow truncate text-sm font-medium">{cycleDetails?.name}</h6>

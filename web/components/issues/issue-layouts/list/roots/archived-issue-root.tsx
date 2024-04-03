@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { ArchivedIssueQuickActions } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
+import { ArchivedIssueQuickActions } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
 // components
 // types
 // constants

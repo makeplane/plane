@@ -2,8 +2,8 @@ import { observer } from "mobx-react-lite";
 
 // icons
 import { X } from "lucide-react";
-// types
 import { IIssueLabel } from "@plane/types";
+// types
 
 type Props = {
   handleRemove: (val: string) => void;

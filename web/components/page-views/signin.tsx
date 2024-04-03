@@ -3,10 +3,10 @@ import { observer } from "mobx-react-lite";
 import Image from "next/image";
 // hooks
 import { Spinner } from "@plane/ui";
-import { SignInRoot } from "components/account";
-import { PageHead } from "components/core";
-import { useApplication, useUser } from "hooks/store";
-import useSignInRedirection from "hooks/use-sign-in-redirection";
+import { SignInRoot } from "@/components/account";
+import { PageHead } from "@/components/core";
+import { useApplication, useUser } from "@/hooks/store";
+import useSignInRedirection from "@/hooks/use-sign-in-redirection";
 // components
 // ui
 // images

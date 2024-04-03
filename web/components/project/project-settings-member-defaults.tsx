@@ -3,17 +3,17 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
+import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // ui
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { MemberSelect } from "components/project";
+import { MemberSelect } from "@/components/project";
 // constants
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
-import { EUserProjectRoles } from "constants/project";
+import { PROJECT_MEMBERS } from "@/constants/fetch-keys";
+import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useProject, useUser } from "hooks/store";
+import { useProject, useUser } from "@/hooks/store";
 // types
-import { IProject, IUserLite, IWorkspace } from "@plane/types";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,

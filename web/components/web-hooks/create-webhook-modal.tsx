@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 // ui
 import { Dialog, Transition } from "@headlessui/react";
+import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 // helpers
-import { csvDownload } from "helpers/download.helper";
+import { csvDownload } from "@/helpers/download.helper";
 // types
-import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
 // utils

@@ -2,16 +2,16 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
+import { IState } from "@plane/types";
 import { Tooltip, StateGroupIcon } from "@plane/ui";
 // icons
 // helpers
-import { addSpaceIfCamelCase } from "helpers/string.helper";
-import { useEventTracker, useProjectState } from "hooks/store";
+import { addSpaceIfCamelCase } from "@/helpers/string.helper";
+import { useEventTracker, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { IState } from "@plane/types";
 
 type Props = {
   index: number;

@@ -1,7 +1,7 @@
 "use client";
 
 // helpers
-import { renderFullDate } from "helpers/date-time.helper";
+import { renderFullDate } from "@/helpers/date-time.helper";
 
 export const dueDateIconDetails = (
   date: string,

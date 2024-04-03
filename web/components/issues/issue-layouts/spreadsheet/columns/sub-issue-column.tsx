@@ -1,11 +1,11 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// hooks
-import { cn } from "helpers/common.helper";
-import { useApplication } from "hooks/store";
-// types
 import { TIssue } from "@plane/types";
+// hooks
+import { cn } from "@/helpers/common.helper";
+import { useApplication } from "@/hooks/store";
+// types
 // helpers
 
 type Props = {
@@ -23,7 +23,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
 
   const redirectToIssueDetail = () => {
     router.push({
-      pathname: `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archived-issues" : "issues"}/${
+      pathname: `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
         issue.id
       }`,
       hash: "sub-issues",

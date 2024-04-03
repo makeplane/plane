@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { StateGroupIcon } from "@plane/ui";
-import { FilterHeader, FilterOption } from "components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues";
 // icons
-import { STATE_GROUPS } from "constants/state";
+import { STATE_GROUPS } from "@/constants/state";
 // constants
 
 type Props = {

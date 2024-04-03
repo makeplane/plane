@@ -3,20 +3,20 @@ import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { Camera, User2 } from "lucide-react";
+import { IUser } from "@plane/types";
 import { Button, Input } from "@plane/ui";
 // components
-import { UserImageUploadModal } from "components/core";
-import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboarding";
+import { UserImageUploadModal } from "@/components/core";
+import { OnboardingSidebar, OnboardingStepIndicator } from "@/components/onboarding";
 // constants
-import { USER_DETAILS } from "constants/event-tracker";
+import { USER_DETAILS } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
 // assets
+import { FileService } from "@/services/file.service";
 import IssuesSvg from "public/onboarding/onboarding-issues.webp";
 // services
-import { FileService } from "services/file.service";
 // types
-import { IUser } from "@plane/types";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",

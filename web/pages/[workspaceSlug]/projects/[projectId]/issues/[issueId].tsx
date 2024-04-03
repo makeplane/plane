@@ -4,16 +4,16 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // layouts
 import { Loader } from "@plane/ui";
-import { PageHead } from "components/core";
+import { PageHead } from "@/components/core";
 // components
-import { ProjectIssueDetailsHeader } from "components/headers";
-import { IssueDetailRoot } from "components/issues";
+import { ProjectIssueDetailsHeader } from "@/components/headers";
+import { IssueDetailRoot } from "@/components/issues";
 // ui
 // types
 // store hooks
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
+import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
 
 const IssueDetailsPage: NextPageWithLayout = observer(() => {
   // router

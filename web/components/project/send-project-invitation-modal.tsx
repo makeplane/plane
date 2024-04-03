@@ -2,16 +2,16 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // hooks
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { useEventTracker, useMember, useUser } from "hooks/store";
-import { EUserProjectRoles } from "constants/project";
-import { PROJECT_MEMBER_ADDED } from "constants/event-tracker";
-import { ROLE } from "constants/workspace";
+import { PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+import { ROLE } from "@/constants/workspace";
+import { useEventTracker, useMember, useUser } from "@/hooks/store";
 // constants
 
 type Props = {
@@ -142,9 +142,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       if (!memberDetails?.member) return;
       return {
         value: `${memberDetails?.member.id}`,
-        query: `${memberDetails?.member.first_name} ${
-          memberDetails?.member.last_name
-        } ${memberDetails?.member.display_name.toLowerCase()}`,
+        query: `${memberDetails?.member.first_name} ${memberDetails?.member
+          .last_name} ${memberDetails?.member.display_name.toLowerCase()}`,
         content: (
           <div className="flex w-full items-center gap-2">
             <div className="flex-shrink-0 pt-0.5">

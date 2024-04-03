@@ -149,7 +149,8 @@ def dashboard_assigned_issues(self, request, slug):
                 ArrayAgg(
                     "assignees__id",
                     distinct=True,
-                    filter=~Q(assignees__id__isnull=True),
+                    filter=~Q(assignees__id__isnull=True)
+                    & Q(assignees__member_project__is_active=True),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -303,7 +304,8 @@ def dashboard_created_issues(self, request, slug):
                 ArrayAgg(
                     "assignees__id",
                     distinct=True,
-                    filter=~Q(assignees__id__isnull=True),
+                    filter=~Q(assignees__id__isnull=True)
+                    & Q(assignees__member_project__is_active=True),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -471,6 +473,7 @@ def dashboard_recent_activity(self, request, slug):
         workspace__slug=slug,
         project__project_projectmember__member=request.user,
         project__project_projectmember__is_active=True,
+        project__archived_at__isnull=True,
         actor=request.user,
     ).select_related("actor", "workspace", "issue", "project")[:8]
 
@@ -486,6 +489,7 @@ def dashboard_recent_projects(self, request, slug):
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             actor=request.user,
         )
         .values_list("project_id", flat=True)
@@ -500,6 +504,7 @@ def dashboard_recent_projects(self, request, slug):
         additional_projects = Project.objects.filter(
             project_projectmember__member=request.user,
             project_projectmember__is_active=True,
+            archived_at__isnull=True,
             workspace__slug=slug,
         ).exclude(id__in=unique_project_ids)
 
@@ -522,6 +527,7 @@ def dashboard_recent_collaborators(self, request, slug):
             actor=OuterRef("member"),
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
         )
         .values("actor")
         .annotate(num_activities=Count("pk"))
@@ -534,6 +540,7 @@ def dashboard_recent_collaborators(self, request, slug):
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
         )
         .annotate(
             num_activities=Coalesce(

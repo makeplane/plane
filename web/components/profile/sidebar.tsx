@@ -4,24 +4,24 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // ui
+import { ChevronDown, Pencil } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // icons
-import { ChevronDown, Pencil } from "lucide-react";
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
 // fetch-keys
-import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+import { ProjectLogo } from "@/components/project";
+import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useApplication, useProject, useUser } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { UserService } from "services/user.service";
+import { UserService } from "@/services/user.service";
 // components
 import { ProfileSidebarTime } from "./time";
-import { ProjectLogo } from "components/project";
 
 // services
 const userService = new UserService();

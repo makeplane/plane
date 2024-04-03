@@ -11,3 +11,7 @@ export * from "./sidebar";
 export * from "./module-card-item";
 export * from "./module-list-item";
 export * from "./module-peek-overview";
+export * from "./quick-actions";
+
+// archived modules
+export * from "./archived-modules";
