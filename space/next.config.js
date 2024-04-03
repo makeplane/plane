@@ -27,7 +27,7 @@ const nextConfig = {
   output: "standalone",
 };
 
-if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0"), 10) {
+if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0", 10)) {
   module.exports = withSentryConfig(nextConfig,
     { silent: true, authToken: process.env.SENTRY_AUTH_TOKEN },
     { hideSourceMaps: true }
