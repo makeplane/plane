@@ -1,7 +1,7 @@
 // icons
 import { AlertTriangle, CheckCircle2, Clock, Copy, LucideIcon, XCircle } from "lucide-react";
 // types
-import { TInboxIssueStatus } from "@plane/types";
+import { TInboxIssueSortingOrderByKeys, TInboxIssueSortingSortByKeys, TInboxIssueStatus } from "@plane/types";
 // helpers
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 
@@ -67,7 +67,7 @@ export const INBOX_STATUS: {
 
 export const INBOX_ISSUE_SOURCE = "in-app";
 
-export const INBOX_ISSUE_ORDER_BY_OPTIONS: { key: any; label: string }[] = [
+export const INBOX_ISSUE_ORDER_BY_OPTIONS: { key: TInboxIssueSortingOrderByKeys; label: string }[] = [
   {
     key: "issue__created_at",
     label: "Date created",
@@ -79,5 +79,16 @@ export const INBOX_ISSUE_ORDER_BY_OPTIONS: { key: any; label: string }[] = [
   {
     key: "issue__sequence_id",
     label: "ID",
+  },
+];
+
+export const INBOX_ISSUE_SORT_BY_OPTIONS: { key: TInboxIssueSortingSortByKeys; label: string }[] = [
+  {
+    key: "asc",
+    label: "Ascending",
+  },
+  {
+    key: "desc",
+    label: "Descending",
   },
 ];

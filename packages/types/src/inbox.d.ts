@@ -1,24 +1,29 @@
 import { TPaginationInfo } from "./common";
+import { TIssuePriorities } from "./issues";
 import { TIssue } from "./issues/base";
 
 export type TInboxIssueStatus = -2 | -1 | 0 | 1 | 2;
 
+export type TInboxIssueFilterMemberKeys = "assignee" | "created_by";
+
+export type TInboxIssueFilterDateKeys = "created_at" | "updated_at";
+
 export type TInboxIssueFilter = {
-  priority: string[] | undefined;
-  label: string[] | undefined;
-  assignee: string[] | undefined;
-  create_by: string[] | undefined;
-  created_at: string[] | undefined;
-  updated_at: string[] | undefined;
+  [key in TInboxIssueFilterMemberKeys]: string[] | undefined;
+} & {
+  [key in TInboxIssueFilterDateKeys]: string[] | undefined;
+} & {
   inbox_status: TInboxIssueStatus[] | undefined;
+  priority: TIssuePriorities[] | undefined;
+  label: string[] | undefined;
 };
 
 export type TInboxIssueSortingKeys = "order_by" | "sort_by";
 
 export type TInboxIssueSortingOrderByKeys =
-  | "created_at"
-  | "updated_at"
-  | "sequence_id";
+  | "issue__created_at"
+  | "issue__updated_at"
+  | "issue__sequence_id";
 
 export type TInboxIssueSortingSortByKeys = "asc" | "desc";
 

@@ -2,7 +2,7 @@ export * from "./root";
 // filters
 export * from "./filters";
 // sorting
-export * from "./order-by";
+export * from "./sorting";
 // applied filters
 export * from "./applied-filters";
 export * from "./applied-priority-filters";

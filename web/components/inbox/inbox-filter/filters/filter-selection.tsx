@@ -53,11 +53,11 @@ export const InboxIssueFilterSelection: FC = observer(() => {
         </div>
         {/* assignees */}
         <div className="py-2">
-          <FilterMember searchQuery={filtersSearchQuery} memberIds={projectMemberIds ?? []} />
+          <FilterMember filterKey="assignee" searchQuery={filtersSearchQuery} memberIds={projectMemberIds ?? []} />
         </div>
         {/* Created By */}
         <div className="py-2">
-          <FilterMember searchQuery={filtersSearchQuery} memberIds={projectMemberIds ?? []} />
+          <FilterMember filterKey="created_by" searchQuery={filtersSearchQuery} memberIds={projectMemberIds ?? []} />
         </div>
         {/* Labels */}
         <div className="py-2">
@@ -65,11 +65,11 @@ export const InboxIssueFilterSelection: FC = observer(() => {
         </div>
         {/* Created at */}
         <div className="py-2">
-          <FilterDate searchQuery={filtersSearchQuery} />
+          <FilterDate key="created_at" searchQuery={filtersSearchQuery} />
         </div>
         {/* Updated at */}
         <div className="py-2">
-          <FilterDate searchQuery={filtersSearchQuery} />
+          <FilterDate key="updated_at" searchQuery={filtersSearchQuery} />
         </div>
       </div>
     </div>

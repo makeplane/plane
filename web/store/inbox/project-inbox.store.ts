@@ -2,12 +2,7 @@
 // import keyBy from "lodash/keyBy";
 // import mapValues from "lodash/mapValues";
 // import reduce from "lodash/reduce";
-import concat from "lodash/concat";
-import includes from "lodash/includes";
-import pull from "lodash/pull";
 import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
 import { action, computed, makeObservable, observable } from "mobx";
 // services
 import { InboxIssueService } from "services/inbox";
@@ -41,7 +36,10 @@ export class ProjectInboxStore implements IProjectInboxStore {
   // observables
   isLoading: boolean = false;
   inboxFilters: Partial<TInboxIssueFilter> = {};
-  inboxSorting: Partial<TInboxIssueSorting> = {};
+  inboxSorting: Partial<TInboxIssueSorting> = {
+    order_by: "issue__created_at",
+    sort_by: "desc",
+  };
   inboxIssuePaginationInfo: TPaginationInfo | undefined = undefined;
   inboxIssues: Record<string, IInboxIssueStore> = {};
   // store

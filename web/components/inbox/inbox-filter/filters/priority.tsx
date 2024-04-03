@@ -1,40 +1,49 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
+import { TIssuePriorities } from "@plane/types";
+import { PriorityIcon } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
-import { INBOX_STATUS } from "@/constants/inbox";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
+// hooks
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type Props = {
-  appliedFilters: number[] | null;
-  handleUpdate: (val: number) => void;
   searchQuery: string;
 };
 
 export const FilterPriority: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, searchQuery } = props;
+  const { searchQuery } = props;
+  // hooks
+  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
+  // derived values
+  const filterValue = inboxFilters?.priority || [];
+  const appliedFiltersCount = filterValue?.length ?? 0;
+  const filteredOptions = ISSUE_PRIORITIES.filter((p) => p.key.includes(searchQuery.toLowerCase()));
 
-  const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const filteredOptions = INBOX_STATUS.filter((s) => s.key.includes(searchQuery.toLowerCase()));
+  const handleFilterValue = (value: TIssuePriorities): TIssuePriorities[] =>
+    filterValue?.includes(value) ? filterValue.filter((v) => v !== value) : [...filterValue, value];
 
   return (
     <>
       <FilterHeader
-        title={`Issue Status ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Priority${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div>
           {filteredOptions.length > 0 ? (
-            filteredOptions.map((status) => (
+            filteredOptions.map((priority) => (
               <FilterOption
-                key={status.key}
-                isChecked={appliedFilters?.includes(status.status) ? true : false}
-                onClick={() => handleUpdate(status.status)}
-                title={status.title}
+                key={priority.key}
+                isChecked={filterValue?.includes(priority.key) ? true : false}
+                onClick={() => handleInboxIssueFilters("priority", handleFilterValue(priority.key))}
+                icon={<PriorityIcon priority={priority.key} className="h-3.5 w-3.5" />}
+                title={priority.title}
               />
             ))
           ) : (
