@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
 require("dotenv").config({ path: ".env" });
 const { withSentryConfig } = require("@sentry/nextjs");
@@ -26,8 +27,11 @@ const nextConfig = {
   output: "standalone",
 };
 
-if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0")) {
-  module.exports = withSentryConfig(nextConfig, { silent: true }, { hideSourceMaps: true });
+if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0", 10)) {
+  module.exports = withSentryConfig(nextConfig,
+    { silent: true, authToken: process.env.SENTRY_AUTH_TOKEN },
+    { hideSourceMaps: true }
+  );
 } else {
   module.exports = nextConfig;
 }

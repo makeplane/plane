@@ -113,8 +113,6 @@ export const CommandPalette: FC = observer(() => {
   const canPerformWorkspaceCreateActions = useCallback(
     (showToast: boolean = true) => {
       const isAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-      console.log("currentWorkspaceRole", currentWorkspaceRole);
-      console.log("isAllowed", isAllowed);
       if (!isAllowed && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,

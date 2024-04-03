@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { LayoutGrid, Zap } from "lucide-react";
+import { Home, Zap } from "lucide-react";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
@@ -25,9 +25,7 @@ export const WorkspaceDashboardHeader = () => {
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                link={
-                  <BreadcrumbLink label="Dashboard" icon={<LayoutGrid className="h-4 w-4 text-custom-text-300" />} />
-                }
+                link={<BreadcrumbLink label="Home" icon={<Home className="h-4 w-4 text-custom-text-300" />} />}
               />
             </Breadcrumbs>
           </div>
