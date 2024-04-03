@@ -1,12 +1,11 @@
-import React, { useState } from "react";
-
-// components
-// ui
+import { FC, useState } from "react";
+import { observer } from "mobx-react";
 import { IIssueLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
+// components
 import { FilterHeader, FilterOption } from "@/components/issues";
+// hooks
 import { useProjectInbox } from "@/hooks/store";
-// types
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
@@ -17,7 +16,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterLabels: React.FC<Props> = (props) => {
+export const FilterLabels: FC<Props> = observer((props) => {
   const { labels, searchQuery } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);
@@ -86,4 +85,4 @@ export const FilterLabels: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+});

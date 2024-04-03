@@ -3,7 +3,7 @@
 // import mapValues from "lodash/mapValues";
 // import reduce from "lodash/reduce";
 import set from "lodash/set";
-import { action, computed, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // services
 import { InboxIssueService } from "services/inbox";
 // types
@@ -81,10 +81,10 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   // actions
   handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) =>
-    set(this.inboxFilters, key, value);
+    runInAction(() => set(this.inboxFilters, key, value));
 
   handleInboxIssueSorting = <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) =>
-    set(this.inboxSorting, key, value);
+    runInAction(() => set(this.inboxSorting, key, value));
 
   /**
    * fetch inbox issues

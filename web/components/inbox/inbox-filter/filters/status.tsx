@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { FC, useState } from "react";
+import { observer } from "mobx-react";
 // types
 import { TInboxIssueStatus } from "@plane/types";
 // components
@@ -13,7 +13,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterStatus: React.FC<Props> = observer((props) => {
+export const FilterStatus: FC<Props> = observer((props) => {
   const { searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

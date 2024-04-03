@@ -1,13 +1,12 @@
-import { useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { TInboxIssueFilterMemberKeys } from "@plane/types";
-// hooks
 import { Avatar, Loader } from "@plane/ui";
-import { FilterHeader, FilterOption } from "@/components/issues";
-import { useMember, useProjectInbox } from "@/hooks/store";
 // components
-// ui
+import { FilterHeader, FilterOption } from "@/components/issues";
+// hooks
+import { useMember, useProjectInbox } from "@/hooks/store";
 
 type Props = {
   filterKey: TInboxIssueFilterMemberKeys;
@@ -16,14 +15,14 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterMember: React.FC<Props> = observer((props: Props) => {
+export const FilterMember: FC<Props> = observer((props: Props) => {
   const { filterKey, label = "Members", memberIds, searchQuery } = props;
-  // states
-  const [itemsToRender, setItemsToRender] = useState(5);
-  const [previewEnabled, setPreviewEnabled] = useState(true);
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getUserDetails } = useMember();
+  // states
+  const [itemsToRender, setItemsToRender] = useState(5);
+  const [previewEnabled, setPreviewEnabled] = useState(true);
   // derived values
   const filterValue = inboxFilters?.[filterKey] || [];
   const appliedFiltersCount = filterValue?.length ?? 0;

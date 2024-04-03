@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { FC, useState } from "react";
+import { observer } from "mobx-react";
 import { TIssuePriorities } from "@plane/types";
 import { PriorityIcon } from "@plane/ui";
 // components
@@ -13,7 +13,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterPriority: React.FC<Props> = observer((props) => {
+export const FilterPriority: FC<Props> = observer((props) => {
   const { searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
