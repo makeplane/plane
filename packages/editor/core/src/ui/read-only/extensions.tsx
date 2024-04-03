@@ -27,17 +27,17 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "list-disc list-outside leading-3",
+        class: "",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "list-decimal list-outside leading-3 -mt-2 -mb-2",
+        class: "",
       },
     },
     listItem: {
       HTMLAttributes: {
-        class: "leading-normal -mb-2",
+        class: "not-prose my-4",
       },
     },
     code: false,
@@ -51,7 +51,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
   }),
   CustomHorizontalRule.configure({
-    HTMLAttributes: { class: "mt-4 mb-4" },
+    HTMLAttributes: { class: "my-4" },
   }),
   CustomLinkExtension.configure({
     openOnClick: true,

@@ -211,7 +211,10 @@ class PageViewSet(BaseViewSet):
 
         unarchive_archive_page_and_descendants(pk, datetime.now())
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"archived_at": str(datetime.now())},
+            status=status.HTTP_200_OK,
+        )
 
     def unarchive(self, request, slug, project_id, pk):
         page = Page.objects.get(
