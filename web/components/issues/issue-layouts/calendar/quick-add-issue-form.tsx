@@ -88,7 +88,6 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
       : { cycle: true, target_date: "none" }
     : { target_date: "none" };
 
-  console.log("ExistingIssuesListModalPayload", ExistingIssuesListModalPayload);
   const {
     reset,
     handleSubmit,
