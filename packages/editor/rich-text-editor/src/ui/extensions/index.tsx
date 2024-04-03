@@ -11,17 +11,16 @@ export const RichTextEditorExtensions = (
   SlashCommand(uploadFile, setIsSubmitting),
   dragDropEnabled === true && DragAndDrop(setHideDragHandle),
   Placeholder.configure({
-    placeholder: ({ node }) => {
+    placeholder: ({ editor, node }) => {
       if (node.type.name === "heading") {
         return `Heading ${node.attrs.level}`;
       }
-      if (node.type.name === "image" || node.type.name === "table") {
+
+      if (editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image")) {
         return "";
       }
-      if (node.type.name === "codeBlock") {
-        return "Type in your code here...";
-      }
-      return "Press '/' for commands...";
+
+      return "Press '/' for commands... \n SS";
     },
     includeChildren: true,
   }),
