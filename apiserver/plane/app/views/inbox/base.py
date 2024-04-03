@@ -175,30 +175,20 @@ class InboxIssueViewSet(BaseViewSet):
         inbox_id = Inbox.objects.filter(
             workspace_id=workspace.id, project_id=project_id
         ).first()
-        inbox_issue = InboxIssue.objects.filter(
-            inbox_id=inbox_id.id,
-            project_id=project_id,
-        ).select_related("issue")
+        filters = issue_filters(request.GET, "GET", "issue__")
+        inbox_issue = (
+            InboxIssue.objects.filter(
+                inbox_id=inbox_id.id, project_id=project_id, **filters
+            ).select_related("issue")
+        ).order_by(request.GET.get("order_by", "-issue__created_at"))
         # inbox status filter
         inbox_status = [
             item
-            for item in request.GET.get("inbox_status", "-2").split(",")
+            for item in request.GET.get("status", "-2").split(",")
             if item != "null"
         ]
         if inbox_status:
             inbox_issue = inbox_issue.filter(status__in=inbox_status)
-
-        # issue issue priority filter
-        if request.GET.get("priority", False):
-            issue_priority = [
-                item
-                for item in request.GET.get("priority", "none").split(",")
-                if item != "null"
-            ]
-            if issue_priority:
-                inbox_issue = inbox_issue.filter(
-                    issue__priority__in=issue_priority
-                )
 
         return self.paginate(
             request=request,
@@ -409,8 +399,43 @@ class InboxIssueViewSet(BaseViewSet):
         inbox_id = Inbox.objects.filter(
             workspace_id=workspace.id, project_id=project_id
         ).first()
-        inbox_issue = InboxIssue.objects.get(
-            inbox_id=inbox_id.id, issue_id=issue_id, project_id=project_id
+        inbox_issue = (
+            InboxIssue.objects.select_related("issue")
+            .prefetch_related(
+                "issue__assignees",
+                "issue__labels",
+                "issue__issue_module__module",
+            )
+            .annotate(cycle_id=F("issue__issue_cycle__cycle_id"))
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__labels__id",
+                        distinct=True,
+                        filter=~Q(issue__labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__assignees__id",
+                        distinct=True,
+                        filter=~Q(issue__assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue__issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .get(
+                inbox_id=inbox_id.id, issue_id=issue_id, project_id=project_id
+            )
         )
         issue = InboxIssueDetailSerializer(inbox_issue).data
         return Response(
