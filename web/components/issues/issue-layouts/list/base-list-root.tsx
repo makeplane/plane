@@ -59,7 +59,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   useSWR(
     `ISSUE_LIST_LAYOUT_${storeType}_${group_by}`,
-    () => fetchIssues("init-loader", { canGroup: true, perPageCount: 50 }),
+    () => fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
