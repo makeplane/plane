@@ -1,3 +1,4 @@
+/* drag handle */
 .drag-handle {
   position: fixed;
   opacity: 1;
@@ -12,40 +13,12 @@
   background-color: rgb(var(--color-background-90));
 }
 
-.ProseMirror:not(.dragging) .ProseMirror-selectednode {
-  padding: 4px 0px;
-  outline: none !important;
-  cursor: grab;
-  /* background-color: #1f2937; */
-  background-color: rgba(var(--color-primary-100), 0.2);
-  transition: background-color 0.2s;
-  box-shadow: none;
-}
-
 .drag-handle:hover {
-  background-color: #4d4d4d;
+  background-color: rgba(var(--color-background-80));
   cursor: grab;
   transition: background-color 0.2s;
 }
 
-.ProseMirror img {
-  transition: filter 0.1s ease-in-out;
-
-  &:hover {
-    cursor: pointer;
-    filter: brightness(90%);
-  }
-
-  &.ProseMirror-selectednode {
-    outline: 3px solid #5abbf7;
-    filter: brightness(90%);
-  }
-}
-:not(.dragging) .ProseMirror-selectednode.tableWrapper {
-  padding: 4px 2px;
-  background-color: rgba(var(--color-primary-300), 0.1) !important;
-  box-shadow: rgba(var(--color-primary-100)) 0px 0px 0px 2px inset !important;
-}
 .drag-handle:active {
   background-color: #4d4d4d;
   transition: background-color 0.2s;
@@ -86,42 +59,34 @@
   background-color: rgba(var(--color-text-200));
   border-radius: 50%;
 }
+/* end drag handle */
 
-/* block menu */
-.blockMenu {
-  padding: 0.25rem;
-  display: flex;
-  flex-direction: column;
-  width: 200px;
-  gap: 0.25rem;
+.ProseMirror:not(.dragging) .ProseMirror-selectednode {
+  padding: 4px 0px;
+  outline: none !important;
+  cursor: grab;
+  /* background-color: #1f2937; */
+  background-color: rgba(var(--color-primary-100), 0.2);
+  transition: background-color 0.2s;
+  box-shadow: none;
 }
-.blockMenu .action {
-  background: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: none;
-  padding: 0.1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
+
+.ProseMirror img {
+  transition: filter 0.1s ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+    filter: brightness(90%);
+  }
+
+  &.ProseMirror-selectednode {
+    outline: 3px solid #5abbf7;
+    filter: brightness(90%);
+  }
 }
-.blockMenu .action:disabled {
-  cursor: not-allowed;
-}
-.blockMenu .action:hover {
-  background-color: rgba(var(--color-text-200));
-}
-.blockMenu .action .actionIconContainer {
-  width: 1.75rem;
-  height: 1.75rem;
-  border: 1px solid red;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.blockMenu .action .actionName {
-  font-family: inherit;
-  font-size: 0.95rem;
+
+:not(.dragging) .ProseMirror-selectednode.table-wrapper {
+  padding: 4px 2px;
+  background-color: rgba(var(--color-primary-300), 0.1) !important;
+  box-shadow: rgba(var(--color-primary-100)) 0px 0px 0px 2px inset !important;
 }

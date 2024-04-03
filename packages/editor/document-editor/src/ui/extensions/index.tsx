@@ -8,11 +8,12 @@ export const DocumentEditorExtensions = (uploadFile: UploadImage) => [
   SlashCommandDocumentEditor(uploadFile),
   DragAndDrop(),
   Placeholder.configure({
-    placeholder: ({ node }) => {
+    placeholder: ({ editor, node }) => {
       if (node.type.name === "heading") {
         return `Heading ${node.attrs.level}`;
       }
-      if (node.type.name === "image" || node.type.name === "table") {
+
+      if (editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image")) {
         return "";
       }
 

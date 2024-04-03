@@ -49,7 +49,7 @@
 /* Custom list item styles */
 
 /* Custom gap cursor styles  */
-.ProseMirror-gapcursor:after {
+.ProseMirror-gapcursor::after {
   border-top: 1px solid rgb(var(--color-text-100)) !important;
 }
 
@@ -178,7 +178,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 
-  &:before {
+  &::before {
     content: "";
     box-sizing: border-box;
     position: absolute;
@@ -214,7 +214,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 }
 
 .ProseMirror pre {
-  font-family: "JetBrainsMono", monospace;
+  font-family: JetBrainsMono, monospace;
   tab-size: 2;
 }
 
@@ -246,9 +246,11 @@ div[data-type="horizontalRule"] {
   49% {
     border-color: unset;
   }
+
   50% {
     border-color: transparent;
   }
+
   99% {
     border-color: transparent;
   }

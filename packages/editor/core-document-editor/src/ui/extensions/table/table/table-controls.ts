@@ -20,7 +20,7 @@ export function tableControls() {
         mousemove: (view, event) => {
           const pluginState = key.getState(view.state);
 
-          if (!(event.target as HTMLElement).closest(".tableWrapper") && pluginState.values.hoveredTable) {
+          if (!(event.target as HTMLElement).closest(".table-wrapper") && pluginState.values.hoveredTable) {
             return view.dispatch(
               view.state.tr.setMeta(key, {
                 setHoveredTable: null,

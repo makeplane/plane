@@ -12,6 +12,10 @@
   display: none;
 }
 
+.ProseMirror code {
+  color: rgba(var(--color-primary-100));
+}
+
 .ProseMirror code::before,
 .ProseMirror code::after {
   display: none;
@@ -45,7 +49,7 @@
 /* Custom list item styles */
 
 /* Custom gap cursor styles  */
-.ProseMirror-gapcursor:after {
+.ProseMirror-gapcursor::after {
   border-top: 1px solid rgb(var(--color-text-100)) !important;
 }
 
@@ -54,6 +58,28 @@
 ul[data-type="taskList"] li > label {
   margin-right: 0.2rem;
   user-select: none;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"] {
+  border: 1px solid rgba(var(--color-border-300)) !important;
+  outline: none;
+  border-radius: 2px;
+  transform: scale(1.2);
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"]:hover {
+  background-color: rgba(var(--color-background-80)) !important;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
+  background-color: rgba(var(--color-primary-100)) !important;
+  border-color: rgba(var(--color-primary-100)) !important;
+  color: white !important;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
+  background-color: rgba(var(--color-primary-300)) !important;
+  border-color: rgba(var(--color-primary-300)) !important;
 }
 
 @media screen and (max-width: 768px) {
@@ -85,7 +111,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
     background-color: rgb(var(--color-background-90));
   }
 
-  &::before {
+  /* &::before {
     content: "";
     width: 0.5em;
     height: 0.5em;
@@ -94,7 +120,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
     box-shadow: inset 1em 1em;
     transform-origin: center;
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-  }
+  } */
 
   &:checked::before {
     transform: scale(1);
@@ -102,7 +128,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
 }
 
 ul[data-type="taskList"] li[data-checked="true"] > div > p {
-  color: rgb(var(--color-text-200));
+  color: rgb(var(--color-text-400));
   text-decoration: line-through;
   text-decoration-thickness: 2px;
 }
@@ -152,7 +178,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 
-  &:before {
+  &::before {
     content: "";
     box-sizing: border-box;
     position: absolute;
@@ -188,7 +214,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 }
 
 .ProseMirror pre {
-  font-family: "JetBrainsMono", monospace;
+  font-family: JetBrainsMono, monospace;
   tab-size: 2;
 }
 
@@ -220,11 +246,13 @@ div[data-type="horizontalRule"] {
   49% {
     border-color: unset;
   }
+
   50% {
-    border-color: #fff;
+    border-color: transparent;
   }
+
   99% {
-    border-color: #fff;
+    border-color: transparent;
   }
 }
 
