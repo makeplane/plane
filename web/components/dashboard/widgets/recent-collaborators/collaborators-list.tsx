@@ -7,8 +7,7 @@ import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 // ui
 import { Avatar } from "@plane/ui";
 // hooks
-import { useStore } from "@/hooks";
-import { useDashboard, useMember } from "@/hooks/store";
+import { useDashboard, useMember, useUser } from "@/hooks/store";
 // components
 import { WidgetLoader } from "../loaders";
 
@@ -21,9 +20,7 @@ type CollaboratorListItemProps = {
 const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((props) => {
   const { issueCount, userId, workspaceSlug } = props;
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const { getUserDetails } = useMember();
   // derived values
   const userDetails = getUserDetails(userId);

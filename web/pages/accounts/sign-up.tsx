@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Spinner } from "@plane/ui";
 import { SignUpRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
-import { useApplication, useUser } from "@/hooks/store";
+import { useInstance, useUser } from "@/hooks/store";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // components
@@ -17,10 +17,8 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 const SignUpPage: NextPageWithLayout = observer(() => {
   // store hooks
-  const {
-    instance: { instance },
-    user: { data: currentUser },
-  } = useStore();
+  const { instance } = useInstance();
+  const { data: currentUser } = useUser();
 
   if (currentUser || !instance?.config)
     return (

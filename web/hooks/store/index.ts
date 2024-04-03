@@ -28,3 +28,4 @@ export * from "./use-user";
 export * from "./use-instance";
 export * from "./use-app-theme";
 export * from "./use-command-palette";
+export * from "./use-app-router";

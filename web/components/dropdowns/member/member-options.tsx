@@ -7,8 +7,7 @@ import { Combobox } from "@headlessui/react";
 //components
 import { Avatar } from "@plane/ui";
 //store
-import { useStore } from "@/hooks";
-import { useApplication, useMember } from "@/hooks/store";
+import { useUser, useMember, useAppRouter } from "@/hooks/store";
 
 interface Props {
   projectId?: string;
@@ -19,23 +18,19 @@ interface Props {
 
 export const MemberOptions = observer((props: Props) => {
   const { projectId, referenceElement, placement, isOpen } = props;
-
+  // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // refs
   const inputRef = useRef<HTMLInputElement | null>(null);
-
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const {
     getUserDetails,
     project: { getProjectMemberIds, fetchProjectMembers },
     workspace: { workspaceMemberIds },
   } = useMember();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",

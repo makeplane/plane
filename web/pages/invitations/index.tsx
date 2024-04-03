@@ -5,34 +5,36 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
+// icons
 import { CheckCircle2 } from "lucide-react";
+// types
 import type { IWorkspaceMemberInvitation } from "@plane/types";
-// services
+// ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
+// constants
 import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
 import { ROLE } from "@/constants/workspace";
+// helpers
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
+// hooks
 import { useEventTracker, useUser } from "@/hooks/store";
+// layouts
 import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
+// types
 import { NextPageWithLayout } from "@/lib/types";
+// services
 import { UserService } from "@/services/user.service";
 import { WorkspaceService } from "@/services/workspace.service";
-// hooks
-// layouts
-// ui
 // images
 import emptyInvitation from "public/empty-state/invitation.svg";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
-// helpers
-// types
-// constants
-// components
-// services
+
 const workspaceService = new WorkspaceService();
 const userService = new UserService();
 
@@ -40,16 +42,11 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   // states
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
-  // store hooks
-  const { captureEvent, joinWorkspaceMetricGroup } = useEventTracker();
-  const {
-    user: { data: currentUser },
-  } = useStore();
-  const {
-    // currentUserSettings
-  } = useUser();
   // router
   const router = useRouter();
+  // store hooks
+  const { captureEvent, joinWorkspaceMetricGroup } = useEventTracker();
+  const { data: currentUser } = useUser();
   // next-themes
   const { theme } = useTheme();
 

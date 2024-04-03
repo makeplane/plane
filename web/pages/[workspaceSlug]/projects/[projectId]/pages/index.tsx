@@ -12,7 +12,7 @@ import { RecentPagesList, CreateUpdatePageModal } from "@/components/pages";
 import { PagesLoader } from "@/components/ui";
 import { EmptyStateType } from "@/constants/empty-state";
 import { PAGE_TABS_LIST } from "@/constants/page";
-import { useApplication, useEventTracker, useUser, useProject } from "@/hooks/store";
+import { useUser, useEventTracker, useProject, useCommandPalette } from "@/hooks/store";
 import { useProjectPages } from "@/hooks/store/use-project-page";
 import useLocalStorage from "@/hooks/use-local-storage";
 import useUserAuth from "@/hooks/use-user-auth";
@@ -51,12 +51,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   // store hooks
-  const {
-    user: { data: currentUser, isLoading: currentUserLoader },
-  } = useStore();
-  const {
-    commandPalette: { toggleCreatePageModal },
-  } = useApplication();
+  const { data: currentUser, isLoading: currentUserLoader } = useUser();
+  const { toggleCreatePageModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { getProjectById } = useProject();
   const { fetchProjectPages, fetchArchivedProjectPages, loader, archivedPageLoader, projectPageIds, archivedPageIds } =
