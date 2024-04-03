@@ -1,5 +1,5 @@
 # Python imports
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urljoin
 
 # Django imports
 from django.core.exceptions import ValidationError
@@ -69,7 +69,7 @@ class SignInAuthEndpoint(View):
             # Get the redirection path
             path = get_redirection_path(user=user)
             # redirect to referer path
-            url = referer + path
+            url = urljoin(referer, path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             url = referer + "?" + urlencode({"error": str(e)})
@@ -124,7 +124,7 @@ class SignUpAuthEndpoint(View):
             # Get the redirection path
             path = get_redirection_path(user=user)
             # redirect to referer path
-            url = referer + path
+            url = urljoin(referer, path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             url = referer + "?" + urlencode({"error": str(e)})
