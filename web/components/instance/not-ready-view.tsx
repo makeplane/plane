@@ -1,20 +1,23 @@
 import { FC } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
+// icons
+import { UserCog2 } from "lucide-react";
+// ui
+import { getButtonStyling } from "@plane/ui";
 // images
 import instanceNotReady from "public/instance/plane-instance-not-ready.webp";
 import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
-import { Button } from "@plane/ui";
-import { UserRoundCog } from "lucide-react";
 
 type TInstanceNotReady = {
   isGodModeEnabled: boolean;
   handleGodModeStateChange?: (state: boolean) => void;
 };
 
-export const InstanceNotReady: FC<TInstanceNotReady> = (props) => {
-  const { isGodModeEnabled, handleGodModeStateChange } = props;
+export const InstanceNotReady: FC<TInstanceNotReady> = () => {
+  // const { isGodModeEnabled, handleGodModeStateChange } = props;
 
   const { resolvedTheme } = useTheme();
 
@@ -34,11 +37,10 @@ export const InstanceNotReady: FC<TInstanceNotReady> = (props) => {
             <div className="flex w-full flex-col items-center gap-5 py-12 pb-20">
               <h3 className="text-2xl font-medium">Your Plane instance isn{"'"}t ready yet</h3>
               <p className="text-sm">Ask your Instance Admin to complete set-up first.</p>
-              {isGodModeEnabled && handleGodModeStateChange && (
-                <Button prependIcon={<UserRoundCog />} onClick={() => handleGodModeStateChange(true)}>
-                  Get Started
-                </Button>
-              )}
+              <Link href="/god-mode" className={`${getButtonStyling("primary", "md")} mt-4`}>
+                <UserCog2 className="h-3.5 w-3.5" />
+                Get started
+              </Link>
             </div>
           </div>
         </div>

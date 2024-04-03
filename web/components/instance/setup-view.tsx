@@ -2,9 +2,9 @@ import { useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // components
-import { InstanceSetupFormRoot } from "components/instance";
+import { InstanceSetupFormRoot } from "@/components/instance";
 // hooks
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 

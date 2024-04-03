@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
+import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 //components
-import { Check, Search } from "lucide-react";
 import { DiceIcon } from "@plane/ui";
 //store
-import { cn } from "helpers/common.helper";
-import { useApplication, useModule } from "hooks/store";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useModule } from "@/hooks/store";
 //hooks
 //icon
 //types

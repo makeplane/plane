@@ -1,19 +1,18 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useApplication, useEventTracker, useDashboard, useProject } from "hooks/store";
 // components
-import { DashboardWidgets } from "components/dashboard";
-import { EmptyState } from "components/empty-state";
-import { IssuePeekOverview } from "components/issues";
-import { TourRoot } from "components/onboarding";
-import { UserGreetingsView } from "components/user";
-// ui
 import { Spinner } from "@plane/ui";
+import { DashboardWidgets } from "@/components/dashboard";
+import { EmptyState } from "@/components/empty-state";
+import { IssuePeekOverview } from "@/components/issues";
+import { TourRoot } from "@/components/onboarding";
+import { UserGreetingsView } from "@/components/user";
+// ui
 // constants
-// import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
-import { EmptyStateType } from "constants/empty-state";
-import { useStore } from "hooks";
+import { EmptyStateType } from "@/constants/empty-state";
+import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
+import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
@@ -64,7 +63,7 @@ export const WorkspaceDashboardView = observer(() => {
           {joinedProjectIds.length > 0 ? (
             <>
               <IssuePeekOverview />
-              <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
+              <div className="vertical-scrollbar scrollbar-lg flex h-full w-full flex-col space-y-7 overflow-y-auto bg-custom-background-90 p-7">
                 {currentUser && <UserGreetingsView user={currentUser} />}
 
                 <DashboardWidgets />

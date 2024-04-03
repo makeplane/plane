@@ -1,13 +1,13 @@
 import { FC, useMemo } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
+import { IUser } from "@plane/types";
 // components
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-import { renderEmoji } from "helpers/emoji.helper";
-import { useIssueDetail, useMember } from "hooks/store";
+import { renderEmoji } from "@/helpers/emoji.helper";
+import { formatTextList } from "@/helpers/issue.helper";
+import { useIssueDetail, useMember } from "@/hooks/store";
 // helper
-import { formatTextList } from "helpers/issue.helper";
 // types
-import { IUser } from "@plane/types";
 import { ReactionSelector } from "./reaction-selector";
 
 export type TIssueCommentReaction = {
@@ -87,7 +87,7 @@ export const IssueCommentReaction: FC<TIssueCommentReaction> = observer((props) 
   };
 
   return (
-    <div className="mt-4 relative flex items-center gap-1.5">
+    <div className="relative mt-4 flex items-center gap-1.5">
       <ReactionSelector
         size="md"
         position="top"

@@ -2,17 +2,17 @@ import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
-import { AuthService } from "services/authentication.service";
+import { Button, Input } from "@plane/ui";
+import { ESignInSteps } from "@/components/accounts";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { AuthService } from "@/services/authentication.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Input } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData } from "types/auth";
 // constants
-import { ESignInSteps } from "components/accounts";
 
 type Props = {
   handleStepChange: (step: ESignInSteps) => void;

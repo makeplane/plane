@@ -5,11 +5,11 @@ import useSWR from "swr";
 // hooks
 import { Plus } from "lucide-react";
 import { Loader } from "@plane/ui";
-import { CreateUpdateStateInline, DeleteStateModal, StateGroup, StatesListItem } from "components/states";
-import { STATES_LIST } from "constants/fetch-keys";
-import { sortByField } from "helpers/array.helper";
-import { orderStateGroups } from "helpers/state.helper";
-import { useEventTracker, useProjectState } from "hooks/store";
+import { CreateUpdateStateInline, DeleteStateModal, StateGroup, StatesListItem } from "@/components/states";
+import { STATES_LIST } from "@/constants/fetch-keys";
+import { sortByField } from "@/helpers/array.helper";
+import { orderStateGroups } from "@/helpers/state.helper";
+import { useEventTracker, useProjectState } from "@/hooks/store";
 // components
 // ui
 // icons

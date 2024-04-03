@@ -1,12 +1,9 @@
 import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Copy } from "lucide-react";
+import { IFormattedInstanceConfiguration } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// types
-import { IFormattedInstanceConfiguration } from "@plane/types";
-// hooks
-// import { useApplication } from "hooks/store";
 
 export interface IInstanceGoogleConfigForm {
   config: IFormattedInstanceConfiguration;

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react";
-// components
-import { FilterHeader, FilterOption } from "components/issues";
-// types
-import { ISSUE_GROUP_BY_OPTIONS } from "constants/issue";
+import { observer } from "mobx-react-lite";
 import { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
+// components
+import { FilterHeader, FilterOption } from "@/components/issues";
+// types
+import { ISSUE_GROUP_BY_OPTIONS } from "@/constants/issue";
 // constants
 
 type Props = {

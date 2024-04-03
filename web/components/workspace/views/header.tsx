@@ -5,12 +5,12 @@ import { useRouter } from "next/router";
 // icons
 import { Plus } from "lucide-react";
 // components
-import { CreateUpdateWorkspaceViewModal } from "components/workspace";
+import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
-import { GLOBAL_VIEW_OPENED } from "constants/event-tracker";
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
+import { GLOBAL_VIEW_OPENED } from "@/constants/event-tracker";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "@/constants/workspace";
 // store hooks
-import { useEventTracker, useGlobalView, useUser } from "hooks/store";
+import { useEventTracker, useGlobalView, useUser } from "@/hooks/store";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;

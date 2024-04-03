@@ -1,18 +1,5 @@
 import { MutableRefObject } from "react";
-import { observer } from "mobx-react";
-// constants
-// hooks
-import {
-  useCycle,
-  useIssueDetail,
-  useKanbanView,
-  useLabel,
-  useMember,
-  useModule,
-  useProject,
-  useProjectState,
-} from "hooks/store";
-// types
+import { observer } from "mobx-react-lite";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -24,12 +11,25 @@ import {
   TUnGroupedIssues,
   TIssueKanbanFilters,
 } from "@plane/types";
+// constants
+// hooks
+import {
+  useCycle,
+  useIssueDetail,
+  useKanbanView,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+} from "@/hooks/store";
+// types
 // parent components
-import { getGroupByColumns } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 // components
+import { KanbanStoreType } from "./base-kanban-root";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
-import { KanbanStoreType } from "./base-kanban-root";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
@@ -102,7 +102,9 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     moduleInfo,
     label,
     projectState,
-    member
+    member,
+    true,
+    isWorkspaceLevel(storeType)
   );
 
   if (!list) return null;
@@ -134,7 +136,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className={`relative w-full flex gap-2 ${sub_group_by ? "h-full" : "h-full"}`}>
+    <div className={`relative flex w-full gap-2 ${sub_group_by ? "h-full" : "h-full"}`}>
       {list &&
         list.length > 0 &&
         list.map((subList: IGroupByColumn) => {
@@ -144,7 +146,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
           return (
             <div
               key={subList.id}
-              className={`relative flex flex-shrink-0 flex-col group ${
+              className={`group relative flex flex-shrink-0 flex-col ${
                 groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
               } `}
             >

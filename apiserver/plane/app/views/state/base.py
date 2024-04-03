@@ -33,6 +33,7 @@ class StateViewSet(BaseViewSet):
             .filter(
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
             )
             .filter(~Q(name="Triage"))
             .select_related("project")

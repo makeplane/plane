@@ -2,21 +2,23 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
+// icons
 import { Eye, EyeOff, XCircle } from "lucide-react";
-// services
-import { AuthService } from "services/auth.service";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// hooks
-import { useEventTracker } from "hooks/store";
-import { useStore } from "hooks";
-// components
-import { ESignInSteps, ForgotPasswordPopover } from "components/account";
-// constants
-import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "constants/event-tracker";
-// helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IPasswordSignInData } from "@plane/types";
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { ESignInSteps, ForgotPasswordPopover } from "@/components/account";
+// constants
+import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "@/constants/event-tracker";
+// helpers
+import { checkEmailValidity } from "@/helpers/string.helper";
+// hooks
+import { useStore } from "@/hooks"; // TODO: fix this import with the correct path
+import { useEventTracker } from "@/hooks/store";
+// services
+import { AuthService } from "@/services/auth.service";
 
 type Props = {
   email: string;

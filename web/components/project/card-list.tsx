@@ -1,27 +1,25 @@
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
-import { observer } from "mobx-react";
 // hooks
-import { useApplication, useEventTracker, useProject, useProjectFilter } from "hooks/store";
 // components
-import { EmptyState } from "components/empty-state";
-import { ProjectCard } from "components/project";
-import { ProjectsLoader } from "components/ui";
+import { EmptyState } from "@/components/empty-state";
+import { ProjectCard } from "@/components/project";
+import { ProjectsLoader } from "@/components/ui";
 // assets
+import { EmptyStateType } from "@/constants/empty-state";
+import { useApplication, useEventTracker, useProject, useProjectFilter } from "@/hooks/store";
 import AllFiltersImage from "public/empty-state/project/all-filters.svg";
 import NameFilterImage from "public/empty-state/project/name-filter.svg";
 // constants
-import { EmptyStateType } from "constants/empty-state";
 
 export const ProjectCardList = observer(() => {
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds, filteredProjectIds, getProjectById } = useProject();
-  const { searchQuery } = useProjectFilter();
+  const { searchQuery, currentWorkspaceDisplayFilters } = useProjectFilter();
 
-  if (!filteredProjectIds) return <ProjectsLoader />;
-
-  if (workspaceProjectIds?.length === 0)
+  if (workspaceProjectIds?.length === 0 && !currentWorkspaceDisplayFilters?.archived_projects)
     return (
       <EmptyState
         type={EmptyStateType.WORKSPACE_PROJECTS}
@@ -31,17 +29,20 @@ export const ProjectCardList = observer(() => {
         }}
       />
     );
+
+  if (!filteredProjectIds) return <ProjectsLoader />;
+
   if (filteredProjectIds.length === 0)
     return (
-      <div className="h-full w-full grid place-items-center">
+      <div className="grid h-full w-full place-items-center">
         <div className="text-center">
           <Image
             src={searchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
+            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching projects"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching projects</h5>
-          <p className="text-custom-text-400 text-base whitespace-pre-line">
+          <h5 className="mb-1 mt-7 text-xl font-medium">No matching projects</h5>
+          <p className="whitespace-pre-line text-base text-custom-text-400">
             {searchQuery.trim() === ""
               ? "Remove the filters to see all projects"
               : "No projects detected with the matching\ncriteria. Create a new project instead"}
@@ -51,7 +52,7 @@ export const ProjectCardList = observer(() => {
     );
 
   return (
-    <div className="h-full w-full overflow-y-auto p-8 vertical-scrollbar scrollbar-lg">
+    <div className="vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto p-8">
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {filteredProjectIds.map((projectId) => {
           const projectDetails = getProjectById(projectId);

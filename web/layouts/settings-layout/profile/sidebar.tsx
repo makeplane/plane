@@ -6,14 +6,13 @@ import { useTheme } from "next-themes";
 import { mutate } from "swr";
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useApplication, useUser, useWorkspace } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROFILE_ACTION_LINKS } from "constants/profile";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useStore } from "hooks";
+import { PROFILE_ACTION_LINKS } from "@/constants/profile";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 const WORKSPACE_ACTION_LINKS = [
   {
@@ -47,6 +46,7 @@ export const ProfileLayoutSidebar = observer(() => {
   // const { currentUserSettings } = useUser();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
+
   const workspacesList = Object.values(workspaces ?? {});
 
   // redirect url for normal mode
@@ -132,13 +132,19 @@ export const ProfileLayoutSidebar = observer(() => {
           {!sidebarCollapsed && (
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
           )}
-          <div className="mt-2 h-full space-y-1.5 overflow-y-auto vertical-scrollbar scrollbar-sm">
+          <div className="vertical-scrollbar scrollbar-sm mt-2 h-full space-y-1.5 overflow-y-auto">
             {PROFILE_ACTION_LINKS.map((link) => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
               return (
                 <Link key={link.key} href={link.href} className="block w-full" onClick={handleItemClick}>
-                  <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed} isMobile={isMobile}>
+                  <Tooltip
+                    tooltipContent={link.label}
+                    position="right"
+                    className="ml-2"
+                    disabled={!sidebarCollapsed}
+                    isMobile={isMobile}
+                  >
                     <div
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                         link.highlight(router.pathname)
@@ -160,7 +166,7 @@ export const ProfileLayoutSidebar = observer(() => {
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
           )}
           {workspacesList && workspacesList.length > 0 && (
-            <div className="mt-2 h-full space-y-1.5 overflow-y-auto vertical-scrollbar scrollbar-sm">
+            <div className="vertical-scrollbar scrollbar-sm mt-2 h-full space-y-1.5 overflow-y-auto">
               {workspacesList.map((workspace) => (
                 <Link
                   key={workspace.id}
@@ -201,7 +207,13 @@ export const ProfileLayoutSidebar = observer(() => {
           <div className="mt-1.5">
             {WORKSPACE_ACTION_LINKS.map((link) => (
               <Link className="block w-full" key={link.key} href={link.href} onClick={handleItemClick}>
-                <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed} isMobile={isMobile}>
+                <Tooltip
+                  tooltipContent={link.label}
+                  position="right"
+                  className="ml-2"
+                  disabled={!sidebarCollapsed}
+                  isMobile={isMobile}
+                >
                   <div
                     className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
                       sidebarCollapsed ? "justify-center" : ""

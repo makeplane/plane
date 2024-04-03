@@ -18,8 +18,7 @@
     "NEXT_PUBLIC_POSTHOG_HOST",
     "NEXT_PUBLIC_GOD_MODE",
     "NEXT_PUBLIC_POSTHOG_DEBUG",
-    "JITSU_TRACKER_ACCESS_KEY",
-    "JITSU_TRACKER_HOST"
+    "SENTRY_AUTH_TOKEN"
   ],
   "pipeline": {
     "build": {

@@ -8,12 +8,12 @@ import {
   ListFilter,
   MoveRight,
 } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 //hooks
-import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
-import useLocalStorage from "hooks/use-local-storage";
+import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/spreadsheet";
+import useLocalStorage from "@/hooks/use-local-storage";
 //types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 //constants
 
 interface Props {

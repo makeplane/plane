@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-// hooks
-import { useEventTracker } from "hooks/store";
-import { useStore } from "hooks";
-import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
 import {
   SignInEmailForm,
@@ -12,10 +8,14 @@ import {
   SignInPasswordForm,
   OAuthOptions,
   SignInOptionalSetPasswordForm,
-} from "components/account";
-import { LatestFeatureBlock } from "components/common";
+} from "@/components/account";
+import { LatestFeatureBlock } from "@/components/common";
 // constants
-import { NAVIGATE_TO_SIGNUP } from "constants/event-tracker";
+import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
+// hooks
+import { useStore } from "@/hooks";
+import { useEventTracker } from "@/hooks/store";
+import useSignInRedirection from "@/hooks/use-sign-in-redirection";
 
 export enum ESignInSteps {
   EMAIL = "EMAIL",
@@ -119,7 +119,7 @@ export const SignInRoot = observer(() => {
               <Link
                 href="/accounts/sign-up"
                 onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
-                className="text-custom-primary-100 font-medium underline"
+                className="font-medium text-custom-primary-100 underline"
               >
                 Sign up
               </Link>

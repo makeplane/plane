@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
 import { Spinner } from "@plane/ui";
-import { SpreadsheetQuickAddIssueForm } from "components/issues";
-import { useProject } from "hooks/store";
-import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { SpreadsheetQuickAddIssueForm } from "@/components/issues";
+import { useProject } from "@/hooks/store";
 import { SpreadsheetTable } from "./spreadsheet-table";
 // types
 //hooks
@@ -63,7 +63,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     );
 
   return (
-    <div className="relative flex flex-col h-full w-full overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
+    <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
       <div ref={portalRef} className="spreadsheet-menu-portal" />
       <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
         <SpreadsheetTable

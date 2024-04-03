@@ -4,25 +4,24 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // ui
+import { ChevronDown, Pencil } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // icons
-import { ChevronDown, Pencil } from "lucide-react";
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
 // fetch-keys
-import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+import { ProjectLogo } from "@/components/project";
+import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useApplication, useProject } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useStore } from "hooks";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useApplication, useProject, useUser } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { UserService } from "services/user.service";
+import { UserService } from "@/services/user.service";
 // components
 import { ProfileSidebarTime } from "./time";
-import { ProjectLogo } from "components/project";
 
 // services
 const userService = new UserService();
@@ -155,7 +154,7 @@ export const ProfileSidebar = observer(() => {
                       <div className="w-full">
                         <Disclosure.Button className="flex w-full items-center justify-between gap-2">
                           <div className="flex w-3/4 items-center gap-2">
-                            <span className="grid place-items-center flex-shrink-0 h-7 w-7">
+                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
                               <ProjectLogo logo={projectDetails.logo_props} />
                             </span>
                             <div className="truncate break-words text-sm font-medium">{projectDetails.name}</div>

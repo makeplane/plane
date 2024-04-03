@@ -10,8 +10,8 @@ import { AlertCircle } from "lucide-react";
 import { Button, TransferIcon } from "@plane/ui";
 // icon
 // services
-import { CYCLE_DETAILS } from "constants/fetch-keys";
-import { CycleService } from "services/cycle.service";
+import { CYCLE_DETAILS } from "@/constants/fetch-keys";
+import { CycleService } from "@/services/cycle.service";
 // fetch-key
 
 type Props = {

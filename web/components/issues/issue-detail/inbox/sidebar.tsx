@@ -4,12 +4,12 @@ import { CalendarCheck2, Signal, Tag } from "lucide-react";
 // hooks
 // components
 import { DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
-import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
-import { IssueLabel, TIssueOperations } from "components/issues";
+import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
+import { IssueLabel, TIssueOperations } from "@/components/issues";
 // icons
 // helper
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { useIssueDetail, useProject, useProjectState } from "hooks/store";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -33,7 +33,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const projectDetails = issue ? getProjectById(issue.project_id) : null;
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
@@ -52,12 +52,12 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
       </div>
 
       <div className="h-full w-full overflow-y-auto px-5">
-        <h5 className="text-sm font-medium my-4">Properties</h5>
+        <h5 className="my-4 text-sm font-medium">Properties</h5>
         <div className={`divide-y-2 divide-custom-border-200 ${!is_editable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* State */}
-            <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
@@ -67,7 +67,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 projectId={projectId?.toString() ?? ""}
                 disabled={!is_editable}
                 buttonVariant="transparent-with-text"
-                className="w-3/5 flex-grow group"
+                className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName="text-sm"
                 dropdownArrow
@@ -75,8 +75,8 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             </div>
             {/* Assignee */}
-            <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Assignees</span>
               </div>
@@ -88,7 +88,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 placeholder="Add assignees"
                 multiple
                 buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
-                className="w-3/5 flex-grow group"
+                className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm justify-between ${
                   issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
@@ -99,8 +99,8 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             </div>
             {/* Priority */}
-            <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <Signal className="h-4 w-4 flex-shrink-0" />
                 <span>Priority</span>
               </div>
@@ -116,11 +116,11 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
           </div>
         </div>
-        <div className={`divide-y-2 divide-custom-border-200 mt-3 ${!is_editable ? "opacity-60" : ""}`}>
+        <div className={`mt-3 divide-y-2 divide-custom-border-200 ${!is_editable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Due Date */}
-            <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
                 <span>Due date</span>
               </div>
@@ -135,7 +135,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 minDate={minDate ?? undefined}
                 disabled={!is_editable}
                 buttonVariant="transparent-with-text"
-                className="w-3/5 flex-grow group"
+                className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
                 hideIcon
@@ -143,12 +143,12 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             </div>
             {/* Labels */}
-            <div className="flex items-center gap-2 min-h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex min-h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <Tag className="h-4 w-4 flex-shrink-0" />
                 <span>Labels</span>
               </div>
-              <div className="w-3/5 flex-grow min-h-8 h-full pt-1">
+              <div className="h-full min-h-8 w-3/5 flex-grow pt-1">
                 <IssueLabel
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}

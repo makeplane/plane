@@ -5,43 +5,42 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Tab } from "@headlessui/react";
 // hooks
-import { useApplication, useEventTracker, useProject } from "hooks/store";
-import { useProjectPages } from "hooks/store/use-project-page";
-import useLocalStorage from "hooks/use-local-storage";
-import useUserAuth from "hooks/use-user-auth";
-import useSize from "hooks/use-window-size";
+import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/empty-state";
+import { PagesHeader } from "@/components/headers";
+import { RecentPagesList, CreateUpdatePageModal } from "@/components/pages";
+import { PagesLoader } from "@/components/ui";
+import { EmptyStateType } from "@/constants/empty-state";
+import { PAGE_TABS_LIST } from "@/constants/page";
+import { useApplication, useEventTracker, useUser, useProject } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-page";
+import useLocalStorage from "@/hooks/use-local-storage";
+import useUserAuth from "@/hooks/use-user-auth";
+import useSize from "@/hooks/use-window-size";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { AppLayout } from "@/layouts/app-layout";
 // components
-import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
-import { EmptyState } from "components/empty-state";
-import { PagesHeader } from "components/headers";
-import { PagesLoader } from "components/ui";
-import { PageHead } from "components/core";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
-import { PAGE_TABS_LIST } from "constants/page";
-import { EmptyStateType } from "constants/empty-state";
-import { useStore } from "hooks";
 
-const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
+const AllPagesList = dynamic<any>(() => import("@/components/pages").then((a) => a.AllPagesList), {
   ssr: false,
 });
 
-const FavoritePagesList = dynamic<any>(() => import("components/pages").then((a) => a.FavoritePagesList), {
+const FavoritePagesList = dynamic<any>(() => import("@/components/pages").then((a) => a.FavoritePagesList), {
   ssr: false,
 });
 
-const PrivatePagesList = dynamic<any>(() => import("components/pages").then((a) => a.PrivatePagesList), {
+const PrivatePagesList = dynamic<any>(() => import("@/components/pages").then((a) => a.PrivatePagesList), {
   ssr: false,
 });
 
-const ArchivedPagesList = dynamic<any>(() => import("components/pages").then((a) => a.ArchivedPagesList), {
+const ArchivedPagesList = dynamic<any>(() => import("@/components/pages").then((a) => a.ArchivedPagesList), {
   ssr: false,
 });
 
-const SharedPagesList = dynamic<any>(() => import("components/pages").then((a) => a.SharedPagesList), {
+const SharedPagesList = dynamic<any>(() => import("@/components/pages").then((a) => a.SharedPagesList), {
   ssr: false,
 });
 
@@ -102,14 +101,14 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
 
   const MobileTabList = () => (
-    <Tab.List as="div" className="flex items-center justify-between border-b border-custom-border-200 px-3 pt-3 mb-4">
+    <Tab.List as="div" className="mb-4 flex items-center justify-between border-b border-custom-border-200 px-3 pt-3">
       <div className="flex flex-wrap items-center gap-4">
         {PAGE_TABS_LIST.map((tab) => (
           <Tab
             key={tab.key}
             className={({ selected }) =>
-              `text-sm outline-none pb-3 ${
-                selected ? "border-custom-primary-100 text-custom-primary-100 border-b" : ""
+              `pb-3 text-sm outline-none ${
+                selected ? "border-b border-custom-primary-100 text-custom-primary-100" : ""
               }`
             }
           >
@@ -134,8 +133,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               projectId={projectId.toString()}
             />
           )}
-          <div className="flex h-full flex-col md:space-y-5 overflow-hidden md:py-6">
-            <div className="justify-between gap-4 hidden md:flex px-6">
+          <div className="flex h-full flex-col overflow-hidden md:space-y-5 md:py-6">
+            <div className="hidden justify-between gap-4 px-6 md:flex">
               <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
             </div>
             <Tab.Group
@@ -163,7 +162,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               {windowWidth < 768 ? (
                 <MobileTabList />
               ) : (
-                <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex px-6">
+                <Tab.List as="div" className="mb-6 hidden items-center justify-between px-6 md:flex">
                   <div className="flex flex-wrap items-center gap-4">
                     {PAGE_TABS_LIST.map((tab) => (
                       <Tab
@@ -184,7 +183,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               )}
 
               <Tab.Panels as={Fragment}>
-                <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto vertical-scrollbar scrollbar-lg pl-6">
+                <Tab.Panel as="div" className="vertical-scrollbar scrollbar-lg h-full space-y-5 overflow-y-auto pl-6">
                   <RecentPagesList />
                 </Tab.Panel>
                 <Tab.Panel as="div" className="h-full overflow-hidden pl-6">

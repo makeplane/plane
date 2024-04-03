@@ -2,9 +2,9 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // mobx store
-import { ModuleIssueQuickActions } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { ModuleIssueQuickActions } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 // components
 // types
 // constants

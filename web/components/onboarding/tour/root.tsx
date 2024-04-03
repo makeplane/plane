@@ -4,10 +4,9 @@ import Image from "next/image";
 import { X } from "lucide-react";
 // hooks
 import { Button } from "@plane/ui";
-import { TourSidebar } from "components/onboarding";
-import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "constants/event-tracker";
-import { useApplication, useEventTracker } from "hooks/store";
-import { useStore } from "hooks";
+import { TourSidebar } from "@/components/onboarding";
+import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
+import { useApplication, useEventTracker, useUser } from "@/hooks/store";
 // components
 // ui
 // assets

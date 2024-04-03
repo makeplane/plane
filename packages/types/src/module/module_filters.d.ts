@@ -26,6 +26,11 @@ export type TModuleFilters = {
   target_date?: string[] | null;
 };
 
+export type TModuleFiltersByState = {
+  default: TModuleFilters;
+  archived: TModuleFilters;
+};
+
 export type TModuleStoredFilters = {
   display_filters?: TModuleDisplayFilters;
   filters?: TModuleFilters;

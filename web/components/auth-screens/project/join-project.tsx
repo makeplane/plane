@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // hooks
 import { ClipboardList } from "lucide-react";
 import { Button } from "@plane/ui";
-import { useProject, useUser } from "hooks/store";
+import { useProject, useUser } from "@/hooks/store";
 // ui
 // icons
 // images

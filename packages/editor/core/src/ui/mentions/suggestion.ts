@@ -22,7 +22,7 @@ export const Suggestion = (suggestions: IMentionSuggestion[]) => ({
         // @ts-ignore
         popup = tippy("body", {
           getReferenceClientRect: props.clientRect,
-          appendTo: () => document.querySelector("#editor-container"),
+          appendTo: () => document.querySelector(".active-editor") ?? document.querySelector("#editor-container"),
           content: reactRenderer.element,
           showOnCreate: true,
           interactive: true,

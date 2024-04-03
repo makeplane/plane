@@ -1,12 +1,12 @@
 import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
+import { TModuleOrderByOptions } from "@plane/types";
 // ui
 import { CustomMenu, getButtonStyling } from "@plane/ui";
 // helpers
-import { cn } from "helpers/common.helper";
+import { MODULE_ORDER_BY_OPTIONS } from "@/constants/module";
+import { cn } from "@/helpers/common.helper";
 // types
-import { TModuleOrderByOptions } from "@plane/types";
 // constants
-import { MODULE_ORDER_BY_OPTIONS } from "constants/module";
 
 type Props = {
   onChange: (value: TModuleOrderByOptions) => void;

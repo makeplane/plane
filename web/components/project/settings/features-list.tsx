@@ -1,13 +1,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { FileText, Inbox } from "lucide-react";
+import { IProject } from "@plane/types";
 // ui
 import { ContrastIcon, DiceIcon, PhotoFilterIcon, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // hooks
-import { useEventTracker, useProject } from "hooks/store";
-import { useStore } from "hooks";
+import { useEventTracker, useProject, useUser } from "@/hooks/store";
 // types
-import { IProject } from "@plane/types";
 
 type Props = {
   workspaceSlug: string;
@@ -82,13 +81,13 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
       {PROJECT_FEATURES_LIST.map((feature) => (
         <div
           key={feature.property}
-          className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 pt-4 pb-2 last:border-b-0"
+          className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 pb-2 pt-4 last:border-b-0"
         >
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center rounded bg-custom-primary-50/10 p-3">{feature.icon}</div>
             <div className="">
               <h4 className="text-sm font-medium leading-5">{feature.title}</h4>
-              <p className="text-sm tracking-tight text-custom-text-300 leading-5">{feature.description}</p>
+              <p className="text-sm leading-5 tracking-tight text-custom-text-300">{feature.description}</p>
             </div>
           </div>
           <ToggleSwitch

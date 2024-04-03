@@ -1,22 +1,22 @@
 import React, { Fragment } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
+import { Bell } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
-import { useApplication } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useUserNotification from "hooks/use-user-notifications";
-import { usePlatformOS } from "hooks/use-platform-os";
 // icons
-import { Bell } from "lucide-react";
 // components
 import { Tooltip } from "@plane/ui";
-import { EmptyState } from "components/empty-state";
-import { NotificationsLoader } from "components/ui";
-import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
+import { EmptyState } from "@/components/empty-state";
+import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "@/components/notifications";
+import { NotificationsLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "constants/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
 // helpers
-import { getNumberCount } from "helpers/string.helper";
+import { getNumberCount } from "@/helpers/string.helper";
+import { useApplication } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import useUserNotification from "@/hooks/use-user-notifications";
 
 export const NotificationPopover = observer(() => {
   // states
@@ -81,7 +81,7 @@ export const NotificationPopover = observer(() => {
         }
         onSuccess={() => setSelectedNotificationForSnooze(null)}
       />
-      <Popover ref={notificationPopoverRef} className="md:relative w-full">
+      <Popover ref={notificationPopoverRef} className="w-full md:relative">
         <>
           <Tooltip
             tooltipContent="Notifications"
@@ -126,7 +126,7 @@ export const NotificationPopover = observer(() => {
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel
-              className="absolute top-0 left-[280px] md:-top-36 md:ml-8 md:h-[50vh] z-10 flex h-full w-[100vw] flex-col rounded-xl md:border border-custom-border-300 bg-custom-background-100 shadow-lg md:left-full md:w-[36rem]"
+              className="absolute left-[280px] top-0 z-10 flex h-full w-[100vw] flex-col rounded-xl border-custom-border-300 bg-custom-background-100 shadow-lg md:-top-36 md:left-full md:ml-8 md:h-[50vh] md:w-[36rem] md:border"
               static
             >
               <NotificationHeader
@@ -147,7 +147,7 @@ export const NotificationPopover = observer(() => {
 
               {notifications ? (
                 notifications.length > 0 ? (
-                  <div className="h-full overflow-y-auto vertical-scrollbar scrollbar-md">
+                  <div className="vertical-scrollbar scrollbar-md h-full overflow-y-auto">
                     <div className="divide-y divide-custom-border-100">
                       {notifications.map((notification: any) => (
                         <NotificationCard

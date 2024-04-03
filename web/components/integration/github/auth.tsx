@@ -1,11 +1,11 @@
-import { observer } from "mobx-react";
-// hooks
-import { Button } from "@plane/ui";
-import useIntegrationPopup from "hooks/use-integration-popup";
-// ui
+import { observer } from "mobx-react-lite";
 // types
 import { IWorkspaceIntegration } from "@plane/types";
-import { useStore } from "hooks";
+// ui
+import { Button } from "@plane/ui";
+// hooks
+import { useStore } from "@/hooks";
+import useIntegrationPopup from "@/hooks/use-integration-popup";
 
 type Props = {
   workspaceIntegration: false | IWorkspaceIntegration | undefined;

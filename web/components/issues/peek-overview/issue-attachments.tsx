@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 // hooks
-import { useEventTracker, useIssueDetail } from "hooks/store";
-// components
-import { IssueAttachmentUpload, IssueAttachmentsList, TAttachmentOperations } from "components/issues";
-// ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { IssueAttachmentUpload, IssueAttachmentsList, TAttachmentOperations } from "@/components/issues";
+import { useEventTracker, useIssueDetail } from "@/hooks/store";
+// components
+// ui
 
 type Props = {
   disabled: boolean;

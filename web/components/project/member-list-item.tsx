@@ -7,15 +7,14 @@ import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ConfirmProjectMemberRemove } from "components/project";
+import { ConfirmProjectMemberRemove } from "@/components/project";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
-import { EUserProjectRoles } from "constants/project";
-import { ROLE } from "constants/workspace";
+import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+import { ROLE } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
-import { useStore } from "hooks";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useEventTracker, useMember, useProject, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   userId: string;

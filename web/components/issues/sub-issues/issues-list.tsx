@@ -1,9 +1,9 @@
 import { FC } from "react";
-import { observer } from "mobx-react";
-// hooks
-import { useIssueDetail } from "hooks/store";
-// components
+import { observer } from "mobx-react-lite";
 import { TIssue } from "@plane/types";
+// hooks
+import { useIssueDetail } from "@/hooks/store";
+// components
 import { IssueListItem } from "./issue-list-item";
 // types
 import { TSubIssueOperations } from "./root";

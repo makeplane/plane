@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 // headless ui
+import { Rocket, Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import { ProjectService } from "services/project";
-// hooks
-import useDebounce from "hooks/use-debounce";
-import { usePlatformOS } from "hooks/use-platform-os";
-// components
-import { IssueSearchModalEmptyState } from "components/core";
-// ui
-import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-// icons
-import { Rocket, Search } from "lucide-react";
-// types
 import { ISearchIssueResponse } from "@plane/types";
+import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { IssueSearchModalEmptyState } from "@/components/core";
+import useDebounce from "@/hooks/use-debounce";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { ProjectService } from "@/services/project";
+// hooks
+// components
+// ui
+// icons
+// types
 
 type Props = {
   isOpen: boolean;

@@ -2,19 +2,19 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { History } from "lucide-react";
-// hooks
-// components
-import { Avatar, getButtonStyling } from "@plane/ui";
-import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
-import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
-// ui
-// helpers
-import { cn } from "helpers/common.helper";
-import { calculateTimeAgo } from "helpers/date-time.helper";
-import { useDashboard } from "hooks/store";
-import { useStore } from "hooks";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
+// UI
+import { Avatar, getButtonStyling } from "@plane/ui";
+// components
+import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
+import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
+// hooks
+import { useStore } from "@/hooks";
+import { useDashboard } from "@/hooks/store";
 
 const WIDGET_KEY = "recent_activity";
 

@@ -1,10 +1,11 @@
 import sortBy from "lodash/sortBy";
-// helpers
-import { satisfiesDateFilter } from "helpers/filter.helper";
 // types
 import { IProject, TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { getDate } from "@/helpers/date-time.helper";
+import { satisfiesDateFilter } from "@/helpers/filter.helper";
 
 /**
  * Updates the sort order of the project.
@@ -85,12 +86,15 @@ export const shouldFilterProject = (
       fallsInFilters = fallsInFilters && filters.members.some((memberId) => memberIds.includes(memberId));
     }
     if (filterKey === "created_at" && filters.created_at && filters.created_at.length > 0) {
+      const createdDate = getDate(project.created_at);
       filters.created_at.forEach((dateFilter) => {
-        fallsInFilters = fallsInFilters && satisfiesDateFilter(new Date(project.created_at), dateFilter);
+        fallsInFilters = fallsInFilters && !!createdDate && satisfiesDateFilter(createdDate, dateFilter);
       });
     }
   });
   if (displayFilters.my_projects && !project.is_member) fallsInFilters = false;
+  if (displayFilters.archived_projects && !project.archived_at) fallsInFilters = false;
+  if (project.archived_at) fallsInFilters = displayFilters.archived_projects ? fallsInFilters : false;
 
   return fallsInFilters;
 };

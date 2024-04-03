@@ -51,6 +51,7 @@ export enum EmptyStateType {
   PROJECT_CYCLE_ACTIVE = "project-cycle-active",
   PROJECT_CYCLE_ALL = "project-cycle-all",
   PROJECT_CYCLE_COMPLETED_NO_ISSUES = "project-cycle-completed-no-issues",
+  PROJECT_ARCHIVED_NO_CYCLES = "project-archived-no-cycles",
   PROJECT_EMPTY_FILTER = "project-empty-filter",
   PROJECT_ARCHIVED_EMPTY_FILTER = "project-archived-empty-filter",
   PROJECT_DRAFT_EMPTY_FILTER = "project-draft-empty-filter",
@@ -62,6 +63,7 @@ export enum EmptyStateType {
   MEMBERS_EMPTY_SEARCH = "members-empty-search",
   PROJECT_MODULE_ISSUES = "project-module-issues",
   PROJECT_MODULE = "project-module",
+  PROJECT_ARCHIVED_NO_MODULES = "project-archived-no-modules",
   PROJECT_VIEW = "project-view",
   PROJECT_PAGE = "project-page",
   PROJECT_PAGE_ALL = "project-page-all",
@@ -82,6 +84,12 @@ export enum EmptyStateType {
   NOTIFICATION_ARCHIVED_EMPTY_STATE = "notification-archived-empty-state",
   NOTIFICATION_SNOOZED_EMPTY_STATE = "notification-snoozed-empty-state",
   NOTIFICATION_UNREAD_EMPTY_STATE = "notification-unread-empty-state",
+
+  ACTIVE_CYCLE_PROGRESS_EMPTY_STATE = "active-cycle-progress-empty-state",
+  ACTIVE_CYCLE_CHART_EMPTY_STATE = "active-cycle-chart-empty-state",
+  ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE = "active-cycle-priority-issue-empty-state",
+  ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE = "active-cycle-assignee-empty-state",
+  ACTIVE_CYCLE_LABEL_EMPTY_STATE = "active-cycle-label-empty-state",
 }
 
 const emptyStateDetails = {
@@ -123,9 +131,9 @@ const emptyStateDetails = {
   },
   [EmptyStateType.WORKSPACE_PROJECTS]: {
     key: EmptyStateType.WORKSPACE_PROJECTS,
-    title: "Start a Project",
+    title: "No active projects",
     description:
-      "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal.",
+      "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
     path: "/empty-state/onboarding/projects",
     primaryButton: {
       text: "Start your first project",
@@ -308,6 +316,12 @@ const emptyStateDetails = {
       "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly.",
     path: "/empty-state/cycle/completed-no-issues",
   },
+  [EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES]: {
+    key: EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES,
+    title: "No archived cycles yet",
+    description: "To tidy up your project, archive completed cycles. Find them here once archived.",
+    path: "/empty-state/archived/empty-cycles",
+  },
   [EmptyStateType.PROJECT_CYCLE_ALL]: {
     key: EmptyStateType.PROJECT_CYCLE_ALL,
     title: "No cycles",
@@ -368,7 +382,7 @@ const emptyStateDetails = {
     key: EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES,
     title: "No archived issues yet",
     description:
-      "Archived issues help you remove issues you completed or cancelled from focus. You can set automation to auto archive issues and find them here.",
+      "Manually or through automation, you can archive issues that are completed or cancelled. Find them here once archived.",
     path: "/empty-state/archived/empty-issues",
     primaryButton: {
       text: "Set automation",
@@ -431,6 +445,12 @@ const emptyStateDetails = {
     },
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
+  },
+  [EmptyStateType.PROJECT_ARCHIVED_NO_MODULES]: {
+    key: EmptyStateType.PROJECT_ARCHIVED_NO_MODULES,
+    title: "No archived Modules yet",
+    description: "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
+    path: "/empty-state/archived/empty-modules",
   },
   // project views
   [EmptyStateType.PROJECT_VIEW]: {
@@ -569,6 +589,31 @@ const emptyStateDetails = {
     title: "No archived notifications yet",
     description: "Any notification you archive will be \n available here to help you focus",
     path: "/empty-state/search/archive",
+  },
+  [EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE]: {
+    key: EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE,
+    title: "Add issues to the cycle to view it's \n progress",
+    path: "/empty-state/active-cycle/progress",
+  },
+  [EmptyStateType.ACTIVE_CYCLE_CHART_EMPTY_STATE]: {
+    key: EmptyStateType.ACTIVE_CYCLE_CHART_EMPTY_STATE,
+    title: "Add issues to the cycle to view the \n burndown chart.",
+    path: "/empty-state/active-cycle/chart",
+  },
+  [EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE]: {
+    key: EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE,
+    title: "Observe high priority issues tackled in \n the cycle at a glance.",
+    path: "/empty-state/active-cycle/priority",
+  },
+  [EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE]: {
+    key: EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE,
+    title: "Add assignees to issues to see a \n breakdown of work by assignees.",
+    path: "/empty-state/active-cycle/assignee",
+  },
+  [EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE]: {
+    key: EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
+    title: "Add labels to issues to see the \n breakdown of work by labels.",
+    path: "/empty-state/active-cycle/label",
   },
 } as const;
 

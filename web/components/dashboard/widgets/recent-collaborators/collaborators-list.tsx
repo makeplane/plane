@@ -2,15 +2,15 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-// store hooks
-import { Avatar } from "@plane/ui";
-import { useDashboard, useMember } from "hooks/store";
-import { useStore } from "hooks";
-// components
-import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
-import { WidgetLoader } from "../loaders";
-// ui
 // types
+import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
+// ui
+import { Avatar } from "@plane/ui";
+// hooks
+import { useStore } from "@/hooks";
+import { useDashboard, useMember } from "@/hooks/store";
+// components
+import { WidgetLoader } from "../loaders";
 
 type CollaboratorListItemProps = {
   issueCount: number;
@@ -42,10 +42,10 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
           showTooltip={false}
         />
       </div>
-      <h6 className="mt-6 text-xs font-semibold group-hover:underline truncate">
+      <h6 className="mt-6 truncate text-xs font-semibold group-hover:underline">
         {isCurrentUser ? "You" : userDetails?.display_name}
       </h6>
-      <p className="text-sm mt-2">
+      <p className="mt-2 text-sm">
         {issueCount} active issue{issueCount > 1 ? "s" : ""}
       </p>
     </Link>

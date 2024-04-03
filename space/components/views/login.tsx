@@ -1,11 +1,11 @@
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 
 // mobx
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// components
-import { SignInRoot, UserLoggedIn } from "components/accounts";
 import { Loader } from "@plane/ui";
+import { SignInRoot, UserLoggedIn } from "@/components/accounts";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+// components
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text-new.png";
 

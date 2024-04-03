@@ -1,26 +1,16 @@
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-// import { useRouter } from "next/router";
-// import { useTheme } from "next-themes";
-// import { mutate } from "swr";
-// components
-import { Menu, Transition } from "@headlessui/react";
 // icons
 import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
-// hooks
-import { usePlatformOS } from "hooks/use-platform-os";
-import {
-  Avatar,
-  Tooltip,
-  //  TOAST_TYPE, setToast
-} from "@plane/ui";
-import {
-  useApplication,
-  //  useUser
-} from "hooks/store";
-import { useStore } from "hooks";
+// headless ui
+import { Menu, Transition } from "@headlessui/react";
 // ui
+import { Avatar, Tooltip } from "@plane/ui";
+// hooks
+import { useStore } from "@/hooks";
+import { useApplication } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 // Static Data
 const PROFILE_LINKS = [

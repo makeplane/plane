@@ -1,21 +1,19 @@
 import { Fragment, ReactNode, useRef, useState } from "react";
-import { observer } from "mobx-react";
-import { Combobox } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 import { ChevronDown } from "lucide-react";
-// hooks
+import { Combobox } from "@headlessui/react";
+// ui
 import { ContrastIcon } from "@plane/ui";
-import { cn } from "helpers/common.helper";
-import { useCycle } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// components
-import { DropdownButton } from "../buttons";
-// icons
 // helpers
-// types
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useCycle } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// local components and constants
+import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { TDropdownProps } from "../types";
-// constants
 import { CycleOptions } from "./cycle-options";
 
 type Props = TDropdownProps & {
@@ -41,7 +39,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     hideIcon = false,
     onChange,
     onClose,
-    placeholder = "Cycle",
+    placeholder = "",
     placement,
     projectId,
     showTooltip = false,
@@ -132,8 +130,8 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
               variant={buttonVariant}
             >
               {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
-              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate max-w-40">{selectedName ?? placeholder}</span>
+              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
+                <span className="max-w-40 flex-grow truncate">{selectedName ?? placeholder}</span>
               )}
               {dropdownArrow && (
                 <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />

@@ -1,15 +1,15 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 // hooks
-import { useApplication } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
+import { Loader } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
+import { useApplication } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 // components
-import { EmptyState } from "components/empty-state";
 import { PagesListItem } from "./list-item";
 // ui
-import { Loader } from "@plane/ui";
 // constants
-import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
 
 type IPagesListView = {
   pageIds: string[];

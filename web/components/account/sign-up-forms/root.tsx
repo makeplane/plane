@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-// hooks
-import { useEventTracker } from "hooks/store";
-import useSignInRedirection from "hooks/use-sign-in-redirection";
-import { useStore } from "hooks";
 // components
 import {
   OAuthOptions,
@@ -12,9 +8,13 @@ import {
   SignUpOptionalSetPasswordForm,
   SignUpPasswordForm,
   SignUpUniqueCodeForm,
-} from "components/account";
+} from "@/components/account";
 // constants
-import { NAVIGATE_TO_SIGNIN } from "constants/event-tracker";
+import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
+// hooks
+import { useStore } from "@/hooks";
+import { useEventTracker } from "@/hooks/store";
+import useSignInRedirection from "@/hooks/use-sign-in-redirection";
 
 export enum ESignUpSteps {
   EMAIL = "EMAIL",
@@ -89,12 +89,12 @@ export const SignUpRoot = observer(() => {
       {isOAuthEnabled && signInStep && OAUTH_ENABLED_STEPS.includes(signInStep) && (
         <>
           <OAuthOptions />
-          <p className="text-xs text-onboarding-text-300 text-center mt-6">
+          <p className="mt-6 text-center text-xs text-onboarding-text-300">
             Already using Plane?{" "}
             <Link
               href="/"
               onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
-              className="text-custom-primary-100 font-medium underline"
+              className="font-medium text-custom-primary-100 underline"
             >
               Sign in
             </Link>

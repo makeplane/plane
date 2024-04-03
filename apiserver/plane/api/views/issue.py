@@ -357,6 +357,7 @@ class LabelAPIEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
+            .filter(project__archived_at__isnull=True)
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
@@ -489,6 +490,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
+            .filter(project__archived_at__isnull=True)
             .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
@@ -618,6 +620,7 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
+            .filter(project__archived_at__isnull=True)
             .select_related("workspace", "project", "issue", "actor")
             .annotate(
                 is_member=Exists(
@@ -793,6 +796,7 @@ class IssueActivityAPIEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
+            .filter(project__archived_at__isnull=True)
             .select_related("actor", "workspace", "issue", "project")
         ).order_by(request.GET.get("order_by", "created_at"))
 

@@ -2,16 +2,16 @@ import { ReactElement, useState } from "react";
 import { observer } from "mobx-react";
 //hooks
 import { Button } from "@plane/ui";
-import { PageHead } from "components/core";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { ProfileActivityListPage } from "components/profile";
-import { useApplication } from "hooks/store";
+import { PageHead } from "@/components/core";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { ProfileActivityListPage } from "@/components/profile";
+import { useApplication } from "@/hooks/store";
 // layouts
-import { ProfileSettingsLayout } from "layouts/settings-layout";
+import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // components
 // ui
 // type
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const PER_PAGE = 100;
 
@@ -41,17 +41,19 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
       />
     );
 
+  const isLoadMoreVisible = pageCount < totalPages && resultsCount !== 0;
+
   return (
     <>
       <PageHead title="Profile - Activity" />
-      <section className="mx-auto mt-5 md:mt-16 h-full w-full flex flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
-        <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
+      <section className="mx-auto h-full w-full flex flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
+        <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5 mt-5 md:mt-16">
           <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
           <h3 className="text-xl font-medium">Activity</h3>
         </div>
-        <div className="h-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-md">
+        <div className="h-full w-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-md">
           {activityPages}
-          {pageCount < totalPages && resultsCount !== 0 && (
+          {isLoadMoreVisible && (
             <div className="flex items-center justify-center text-xs w-full">
               <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
                 Load more

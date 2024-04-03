@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// hooks
+// ui
 import { StateGroupIcon } from "@plane/ui";
-import { IssueAttachmentRoot, IssueUpdateStatus } from "components/issues";
-import { useIssueDetail, useProjectState } from "hooks/store";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
+// components
+import { IssueAttachmentRoot, IssueUpdateStatus } from "@/components/issues";
+// hooks
+import { useStore } from "@/hooks";
+import { useIssueDetail, useProjectState } from "@/hooks/store";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // components
 import { IssueDescriptionInput } from "../description-input";
 import { SubIssuesRoot } from "../sub-issues";
@@ -12,10 +15,7 @@ import { IssueTitleInput } from "../title-input";
 import { IssueActivity } from "./issue-activity";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
-// ui
-// types
 import { TIssueOperations } from "./root";
-import { useStore } from "hooks";
 
 type Props = {
   workspaceSlug: string;
@@ -64,7 +64,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="space-y-4 rounded-lg">
         {issue.parent_id && (
           <IssueParentDetail
             workspaceSlug={workspaceSlug}

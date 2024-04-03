@@ -3,18 +3,17 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
 import { Button } from "@plane/ui";
-import { UserProfileHeader } from "components/headers";
-import { DownloadActivityButton, WorkspaceActivityListPage } from "components/profile";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { useUser } from "hooks/store";
+import { UserProfileHeader } from "@/components/headers";
+import { DownloadActivityButton, WorkspaceActivityListPage } from "@/components/profile";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { useUser } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProfileAuthWrapper } from "layouts/user-profile-layout";
+import { AppLayout } from "@/layouts/app-layout";
+import { ProfileAuthWrapper } from "@/layouts/user-profile-layout";
 // components
 // ui
 // types
-import { NextPageWithLayout } from "lib/types";
-import { useStore } from "hooks";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
 
 const PER_PAGE = 100;
@@ -57,15 +56,15 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
     currentUser?.id === userId && !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <div className="h-full w-full py-5 flex flex-col overflow-hidden">
+    <div className="flex h-full w-full flex-col overflow-hidden py-5">
       <div className="flex items-center justify-between gap-2 px-5 md:px-9">
         <h3 className="text-lg font-medium">Recent activity</h3>
         {canDownloadActivity && <DownloadActivityButton />}
       </div>
-      <div className="h-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-md px-5 md:px-9">
+      <div className="vertical-scrollbar scrollbar-md flex h-full flex-col overflow-y-auto px-5 md:px-9">
         {activityPages}
         {pageCount < totalPages && resultsCount !== 0 && (
-          <div className="flex items-center justify-center text-xs w-full">
+          <div className="flex w-full items-center justify-center text-xs">
             <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
               Load more
             </Button>

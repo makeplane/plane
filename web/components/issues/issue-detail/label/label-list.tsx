@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // components
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 import { LabelListItem } from "./label-list-item";
 // hooks
 // types

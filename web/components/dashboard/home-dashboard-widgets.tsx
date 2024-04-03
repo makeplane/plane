@@ -1,4 +1,5 @@
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
+import { TWidgetKeys } from "@plane/types";
 // hooks
 import {
   AssignedIssuesWidget,
@@ -10,11 +11,10 @@ import {
   RecentCollaboratorsWidget,
   RecentProjectsWidget,
   WidgetProps,
-} from "components/dashboard";
-import { useApplication, useDashboard } from "hooks/store";
+} from "@/components/dashboard";
+import { useApplication, useDashboard } from "@/hooks/store";
 // components
 // types
-import { TWidgetKeys } from "@plane/types";
 
 const WIDGETS_LIST: {
   [key in TWidgetKeys]: { component: React.FC<WidgetProps>; fullWidth: boolean };
@@ -42,7 +42,7 @@ export const DashboardWidgets = observer(() => {
   if (!workspaceSlug || !homeDashboardId) return null;
 
   return (
-    <div className="grid lg:grid-cols-2 gap-7">
+    <div className="grid gap-7 lg:grid-cols-2">
       {Object.entries(WIDGETS_LIST).map(([key, widget]) => {
         const WidgetComponent = widget.component;
         // if the widget doesn't exist, return null

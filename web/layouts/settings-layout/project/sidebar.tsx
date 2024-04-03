@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 // ui
 import { Loader } from "@plane/ui";
 // hooks
-import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "constants/project";
-import { useUser } from "hooks/store";
+import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
+import { useUser } from "@/hooks/store";
 // constants
 
 export const ProjectSettingsSidebar = () => {

@@ -6,16 +6,15 @@ import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { mutate } from "swr";
 // ui
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // icons
-import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
+import { IWorkspace } from "@plane/types";
 // plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
-import { useStore } from "hooks";
+import { useApplication, useUser, useWorkspace } from "@/hooks/store";
 // types
-import { IWorkspace } from "@plane/types";
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
   {
@@ -161,9 +160,9 @@ export const WorkspaceSidebarDropdown = observer(() => {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items as={Fragment}>
-                <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg divide-y divide-custom-border-100 outline-none">
-                  <div className="flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll mb-2 px-4 vertical-scrollbar scrollbar-sm">
-                    <h6 className="sticky top-0 z-10 h-full w-full pt-3 pb-1 text-sm font-medium text-custom-sidebar-text-400 bg-custom-sidebar-background-100">
+                <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
+                  <div className="vertical-scrollbar scrollbar-sm mb-2 flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll px-4">
+                    <h6 className="sticky top-0 z-10 h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-sidebar-text-400">
                       {currentUser?.email}
                     </h6>
                     {workspacesList ? (
@@ -229,7 +228,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     <Link href="/create-workspace" className="w-full">
                       <Menu.Item
                         as="div"
-                        className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80 font-medium"
+                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
                       >
                         <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
                         Create workspace
@@ -246,7 +245,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                       >
                         <Menu.Item
                           as="div"
-                          className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 font-medium"
+                          className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                         >
                           <link.icon className="h-4 w-4 flex-shrink-0" />
                           {link.name}
@@ -258,7 +257,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     <Menu.Item
                       as="button"
                       type="button"
-                      className="w-full flex items-center gap-2 rounded px-2 py-1 text-sm text-red-600 hover:bg-custom-sidebar-background-80 font-medium"
+                      className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm font-medium text-red-600 hover:bg-custom-sidebar-background-80"
                       onClick={handleSignOut}
                     >
                       <LogOut className="h-4 w-4 flex-shrink-0" />

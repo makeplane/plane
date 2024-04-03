@@ -2,7 +2,7 @@ import { Command } from "cmdk";
 import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
 // hooks
 import { DiscordIcon } from "@plane/ui";
-import { useApplication } from "hooks/store";
+import { useApplication } from "@/hooks/store";
 // ui
 
 type Props = {
@@ -69,7 +69,9 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
       <Command.Item
         onSelect={() => {
           closePalette();
-          (window as any)?.$crisp.push(["do", "chat:open"]);
+          if (window) {
+            window.$crisp.push(["do", "chat:show"]);
+          }
         }}
         className="focus:outline-none"
       >

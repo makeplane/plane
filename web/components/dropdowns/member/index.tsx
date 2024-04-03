@@ -1,21 +1,22 @@
 import { Fragment, useRef, useState } from "react";
-import { observer } from "mobx-react";
-import { Combobox } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 import { ChevronDown } from "lucide-react";
+// headless ui
+import { Combobox } from "@headlessui/react";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
-import { cn } from "helpers/common.helper";
-import { useMember } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useMember } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { ButtonAvatars } from "./avatar";
-// helpers
-// types
-import { MemberOptions } from "./member-options";
-import { MemberDropdownProps } from "./types";
 // constants
+import { MemberOptions } from "./member-options";
+// types
+import { MemberDropdownProps } from "./types";
 
 type Props = {
   projectId?: string;
@@ -37,6 +38,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     onChange,
     onClose,
     placeholder = "Members",
+    tooltipContent,
     placement,
     projectId,
     showTooltip = false,
@@ -52,6 +54,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
 
   const { getUserDetails } = useMember();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const comboboxProps: any = {
     value,
     onChange,
@@ -123,7 +126,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
               className={buttonClassName}
               isActive={isOpen}
               tooltipHeading={placeholder}
-              tooltipContent={`${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
+              tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
               showTooltip={showTooltip}
               variant={buttonVariant}
             >

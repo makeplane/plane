@@ -3,6 +3,7 @@
 # Python imports
 import os
 import ssl
+from datetime import timedelta
 from urllib.parse import urlparse
 
 import certifi
@@ -23,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]

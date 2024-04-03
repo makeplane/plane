@@ -5,7 +5,9 @@ import { useTheme } from "next-themes";
 // hooks
 import { useStore } from "hooks";
 // helpers
-import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
+import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
+// hooks
+import { useApplication, useUser } from "@/hooks/store";
 
 type TStoreWrapper = {
   children: ReactNode;

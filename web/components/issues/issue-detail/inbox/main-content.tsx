@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// hooks
+// ui
 import { StateGroupIcon } from "@plane/ui";
-import { IssueUpdateStatus, TIssueOperations } from "components/issues";
-import { useIssueDetail, useProjectState } from "hooks/store";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
+import { IssueUpdateStatus, TIssueOperations } from "@/components/issues";
+// hooks
+import { useStore } from "@/hooks";
+import { useIssueDetail, useProjectState } from "@/hooks/store";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+// local components
 import { InboxIssueStatus } from "../../../inbox/inbox-issue-status";
 import { IssueDescriptionInput } from "../../description-input";
 import { IssueTitleInput } from "../../title-input";
 import { IssueActivity } from "../issue-activity";
 import { IssueReaction } from "../reactions";
-import { useStore } from "hooks";
-// ui
 
 type Props = {
   workspaceSlug: string;
@@ -62,7 +63,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="space-y-4 rounded-lg">
         <InboxIssueStatus
           workspaceSlug={workspaceSlug}
           projectId={projectId}

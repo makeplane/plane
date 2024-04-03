@@ -1,18 +1,19 @@
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
-import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
-import { useApplication, useEventTracker, useModule, useModuleFilter } from "hooks/store";
 // components
-import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
-import { EmptyState } from "components/empty-state";
+import { EmptyState } from "@/components/empty-state";
+import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
 // ui
-import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
 // assets
-import NameFilterImage from "public/empty-state/module/name-filter.svg";
-import AllFiltersImage from "public/empty-state/module/all-filters.svg";
 // constants
-import { EmptyStateType } from "constants/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { useApplication, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
+import AllFiltersImage from "public/empty-state/module/all-filters.svg";
+import NameFilterImage from "public/empty-state/module/name-filter.svg";
 
 export const ModulesListView: React.FC = observer(() => {
   // router
@@ -22,9 +23,11 @@ export const ModulesListView: React.FC = observer(() => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { getFilteredModuleIds, loader } = useModule();
-  const { currentProjectDisplayFilters: displayFilters, searchQuery } = useModuleFilter();
+  const { currentProjectDisplayFilters: displayFilters, searchQuery, currentProjectFilters } = useModuleFilter();
   // derived values
   const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
+
+  const totalFilters = calculateTotalFilters(currentProjectFilters ?? {});
 
   if (loader || !filteredModuleIds)
     return (
@@ -35,17 +38,17 @@ export const ModulesListView: React.FC = observer(() => {
       </>
     );
 
-  if (filteredModuleIds.length === 0)
+  if (totalFilters > 0 && filteredModuleIds.length === 0)
     return (
-      <div className="h-full w-full grid place-items-center">
+      <div className="grid h-full w-full place-items-center">
         <div className="text-center">
           <Image
             src={searchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
+            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching modules"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching modules</h5>
-          <p className="text-custom-text-400 text-base">
+          <h5 className="mb-1 mt-7 text-xl font-medium">No matching modules</h5>
+          <p className="text-base text-custom-text-400">
             {searchQuery.trim() === ""
               ? "Remove the filters to see all modules"
               : "Remove the search criteria to see all modules"}
@@ -61,7 +64,7 @@ export const ModulesListView: React.FC = observer(() => {
           {displayFilters?.layout === "list" && (
             <div className="h-full overflow-y-auto">
               <div className="flex h-full w-full justify-between">
-                <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
+                <div className="vertical-scrollbar scrollbar-lg flex h-full w-full flex-col overflow-y-auto">
                   {filteredModuleIds.map((moduleId) => (
                     <ModuleListItem key={moduleId} moduleId={moduleId} />
                   ))}
@@ -81,7 +84,7 @@ export const ModulesListView: React.FC = observer(() => {
                     peekModule
                       ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
                       : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
-                  } auto-rows-max transition-all vertical-scrollbar scrollbar-lg`}
+                  } vertical-scrollbar scrollbar-lg auto-rows-max transition-all`}
                 >
                   {filteredModuleIds.map((moduleId) => (
                     <ModuleCardItem key={moduleId} moduleId={moduleId} />

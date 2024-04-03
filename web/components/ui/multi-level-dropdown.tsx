@@ -1,9 +1,9 @@
 import { Fragment, useState } from "react";
 
 // headless ui
+import { Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // ui
-import { Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { Loader } from "@plane/ui";
 // icons
 

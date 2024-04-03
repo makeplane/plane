@@ -1,15 +1,16 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+// icons
 import { XCircle } from "lucide-react";
-import { observer } from "mobx-react";
-// services
-import { AuthService } from "services/auth.service";
+// types
+import { IEmailCheckData } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
-// types
-import { IEmailCheckData } from "@plane/types";
+import { checkEmailValidity } from "@/helpers/string.helper";
+// services
+import { AuthService } from "@/services/auth.service";
 
 type Props = {
   onSubmit: (isPasswordAutoset: boolean) => void;

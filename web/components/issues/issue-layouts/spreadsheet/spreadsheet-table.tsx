@@ -1,8 +1,8 @@
 import { MutableRefObject, useCallback, useEffect, useRef } from "react";
-import { observer } from "mobx-react";
-//types
-import { useTableKeyboardNavigation } from "hooks/use-table-keyboard-navigation";
+import { observer } from "mobx-react-lite";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
+//types
+import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 //components
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";

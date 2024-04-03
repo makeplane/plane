@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-// hooks
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
+import { MAX_FILE_SIZE } from "@/constants/common";
 // helpers
-import { generateFileName } from "helpers/attachment.helper";
-import { useStore } from "hooks";
-// types
+import { generateFileName } from "@/helpers/attachment.helper";
+// hooks
+import { useStore } from "@/hooks";
+// components
 import { TAttachmentOperations } from "./root";
 
 type TAttachmentOperationsModal = Exclude<TAttachmentOperations, "remove">;

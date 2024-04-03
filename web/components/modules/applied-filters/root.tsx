@@ -1,10 +1,10 @@
 import { X } from "lucide-react";
-// components
-import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "components/modules";
-// helpers
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-// types
 import { TModuleFilters } from "@plane/types";
+// components
+import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "@/components/modules";
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+// types
 
 type Props = {
   appliedFilters: TModuleFilters;

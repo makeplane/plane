@@ -4,7 +4,7 @@ import { FC, ReactNode } from "react";
 import useSWR from "swr";
 // hooks
 import { Spinner } from "@plane/ui";
-import { useUser, useWorkspace } from "hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
 // ui
 import { useUserProfile } from "hooks/store/use-user-profile";
 
@@ -24,20 +24,20 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   const { error } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
     shouldRetryOnError: false,
   });
-  // fetching user account Details
-  useSWR("USER_ACCOUNTS", () => fetchUserAccounts(), { shouldRetryOnError: false });
-  // fetching user profile
-  useSWR("CURRENT_USER_PROFILE", () => fetchUserProfile(), {
+  // fetching current user instance admin status
+  useSWRImmutable("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
+    shouldRetryOnError: false,
+  });
+  // fetching user settings
+  const { isLoading: userSettingsLoader } = useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
     shouldRetryOnError: false,
   });
   // fetching all workspaces
-  useSWR("USER_WORKSPACES_LIST", () => fetchWorkspaces(), {
+  const { isLoading: workspaceLoader } = useSWR("USER_WORKSPACES_LIST", () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
 
-  console.log("error", error);
-
-  if (!data && !error) {
+  if ((!currentUser && !currentUserError) || userSettingsLoader || workspaceLoader) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">

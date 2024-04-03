@@ -2,32 +2,28 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect, useState } from "react";
 import useSWR from "swr";
+import { ChevronDown } from "lucide-react";
+import { Menu, Transition } from "@headlessui/react";
+import { IUser, TOnboardingSteps } from "@plane/types";
 // hooks
-import {
-  // useEventTracker,
-  useUser,
-  useUserProfile,
-  useWorkspace,
-} from "hooks/store";
-// hooks
-import { Spinner } from "@plane/ui";
-import { PageHead } from "components/core";
-import {
-  InviteMembers,
-  JoinWorkspaces,
-  OnboardingHeader,
-  SwitchOrDeleteAccountModal,
-  UserDetails,
-} from "components/onboarding";
-// import { USER_ONBOARDING_COMPLETED } from "constants/event-tracker";
-import useUserAuth from "hooks/use-user-auth";
+import { Avatar, Spinner } from "@plane/ui";
+import { PageHead } from "@/components/core";
+import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "@/components/onboarding";
+import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
+import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+import useUserAuth from "@/hooks/use-user-auth";
 // services
-import { UserAuthWrapper } from "layouts/auth-layout";
-import DefaultLayout from "layouts/default-layout";
-import { NextPageWithLayout } from "lib/types";
-import { WorkspaceService } from "services/workspace.service";
+import { UserAuthWrapper } from "@/layouts/auth-layout";
+import DefaultLayout from "@/layouts/default-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { WorkspaceService } from "@/services/workspace.service";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+// layouts
+// components
+// ui
+// images
 // types
-import { TOnboardingSteps, TUserProfile } from "@plane/types";
+// constants
 
 // services
 const workspaceService = new WorkspaceService();

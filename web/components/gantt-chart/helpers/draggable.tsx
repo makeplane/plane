@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowRight } from "lucide-react";
 // hooks
-import { IGanttBlock } from "components/gantt-chart";
+import { IGanttBlock } from "@/components/gantt-chart";
 // helpers
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 // constants
 import { SIDEBAR_WIDTH } from "../constants";
 import { useGanttChart } from "../hooks/use-gantt-chart";

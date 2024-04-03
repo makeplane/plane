@@ -2,16 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
+import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 //components
-import { Check, Search } from "lucide-react";
 import { Avatar } from "@plane/ui";
 //store
-import { useApplication, useMember } from "hooks/store";
-import { useStore } from "hooks";
-//hooks
-//icon
-//types
+import { useStore } from "@/hooks";
+import { useApplication, useMember } from "@/hooks/store";
 
 interface Props {
   projectId?: string;
@@ -118,7 +115,7 @@ export const MemberOptions = observer((props: Props) => {
                   key={option.value}
                   value={option.value}
                   className={({ active, selected }) =>
-                    `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
+                    `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                       active ? "bg-custom-background-80" : ""
                     } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                   }
@@ -132,10 +129,10 @@ export const MemberOptions = observer((props: Props) => {
                 </Combobox.Option>
               ))
             ) : (
-              <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
+              <p className="px-1.5 py-1 italic text-custom-text-400">No matching results</p>
             )
           ) : (
-            <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+            <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
           )}
         </div>
       </div>

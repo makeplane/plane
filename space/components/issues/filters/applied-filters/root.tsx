@@ -1,12 +1,12 @@
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // components
-import { AppliedFiltersList } from "./filters-list";
 // store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
-import { IIssueFilterOptions } from "store/issues/types";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+import { IIssueFilterOptions } from "@/store/issues/types";
+import { RootStore } from "@/store/root";
+import { AppliedFiltersList } from "./filters-list";
 
 export const IssueAppliedFilters: FC = observer(() => {
   const router = useRouter();

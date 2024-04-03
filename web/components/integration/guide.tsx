@@ -4,25 +4,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
-// services
-import { IntegrationService } from "services/integrations";
-// components
-import { ImportExportSettingsLoader } from "components/ui";
-import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
-import { EmptyState } from "components/empty-state";
-// ui
-import { Button } from "@plane/ui";
 // icons
 import { RefreshCw } from "lucide-react";
 // types
 import { IImporterService } from "@plane/types";
+// ui
+import { Button } from "@plane/ui";
+// components
+import { EmptyState } from "@/components/empty-state";
+import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
+import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
-import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
-import { IMPORTERS_LIST } from "constants/workspace";
-import { EmptyStateType } from "constants/empty-state";
-import { useStore } from "hooks";
+import { EmptyStateType } from "@/constants/empty-state";
+import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+import { IMPORTERS_LIST } from "@/constants/workspace";
+// hooks
+// import { useUser } from "@/hooks/store";
+import { useStore } from "@/hooks";
+import useUserAuth from "@/hooks/use-user-auth";
+// services
+import { IntegrationService } from "@/services/integrations";
 
 // services
 const integrationService = new IntegrationService();
@@ -139,7 +140,7 @@ const IntegrationGuide = observer(() => {
                       </div>
                     </div>
                   ) : (
-                    <div className="h-full w-full flex items-center justify-center">
+                    <div className="flex h-full w-full items-center justify-center">
                       <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" />
                     </div>
                   )

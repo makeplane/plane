@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { ExternalLink, Link, RotateCcw, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, ExternalLink, Link, Trash2 } from "lucide-react";
 // hooks
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 
-import { DeleteIssueModal } from "components/issues";
+import { DeleteIssueModal } from "@/components/issues";
 // ui
 // components
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useEventTracker, useIssues, useUser } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useEventTracker, useIssues, useUser } from "@/hooks/store";
 // components
 // helpers
 // types
@@ -35,7 +35,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER && !readOnly;
   const isRestoringAllowed = handleRestore && isEditingAllowed;
 
-  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/archived-issues/${issue.id}`;
+  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/archives/issues/${issue.id}`;
 
   const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
   const handleCopyIssueLink = () =>
@@ -67,7 +67,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         {isRestoringAllowed && (
           <CustomMenu.MenuItem onClick={handleRestore}>
             <div className="flex items-center gap-2">
-              <RotateCcw className="h-3 w-3" />
+              <ArchiveRestoreIcon className="h-3 w-3" />
               Restore
             </div>
           </CustomMenu.MenuItem>

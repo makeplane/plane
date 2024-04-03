@@ -3,19 +3,19 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { CornerDownLeft, XCircle } from "lucide-react";
 // services
-import { AuthService } from "services/authentication.service";
-import { UserService } from "services/user.service";
-// hooks
-import useToast from "hooks/use-toast";
-import useTimer from "hooks/use-timer";
-// ui
 import { Button, Input } from "@plane/ui";
+import { ESignInSteps } from "@/components/accounts";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { AuthService } from "@/services/authentication.service";
+import { UserService } from "@/services/user.service";
+// hooks
+import useTimer from "hooks/use-timer";
+import useToast from "hooks/use-toast";
+// ui
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData, IMagicSignInData } from "types/auth";
 // constants
-import { ESignInSteps } from "components/accounts";
 
 type Props = {
   email: string;
