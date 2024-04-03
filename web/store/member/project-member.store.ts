@@ -6,7 +6,7 @@ import { computedFn } from "mobx-utils";
 import { EUserProjectRoles } from "@/constants/project";
 import { ProjectMemberService } from "@/services/project";
 // types
-import { IRouterStore } from "@/store/application/router.store";
+import { IRouterStore } from "@/store/router.store";
 import { RootStore } from "@/store/root.store";
 import { IUserRootStore } from "@/store/user";
 import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite } from "@plane/types";

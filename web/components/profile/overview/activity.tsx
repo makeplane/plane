@@ -1,23 +1,22 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-//hooks
+// ui
 import { Loader } from "@plane/ui";
+// components
 import { ActivityMessage, IssueLink } from "@/components/core";
 import { ProfileEmptyState } from "@/components/ui";
+// constants
 import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
+// helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { useUser } from "@/hooks/store";
+//hooks
+import { useStore } from "@/hooks";
 // services
 import { UserService } from "@/services/user.service";
+// assets
 import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
-// components
-// ui
-// image
-// helpers
-// fetch-keys
 
-// services
 const userService = new UserService();
 
 export const ProfileActivity = observer(() => {

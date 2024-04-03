@@ -12,7 +12,7 @@ import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers
 import { resolveGeneralTheme } from "@/helpers/theme.helper";
 // hooks
-import { useApplication, useUser, useWorkspace } from "@/hooks/store";
+import { useInstance, useWorkspace, useUser } from "@/hooks/store";
 // layouts
 import InstanceLayout from "@/layouts/instance-layout";
 // dynamic imports
@@ -32,13 +32,11 @@ export interface IAppProvider {
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
   // store hooks
+  const { instance } = useInstance();
   const {
-    instance: { instance },
-    user: {
-      data: currentUser,
-      membership: { currentProjectRole, currentWorkspaceRole },
-    },
-  } = useStore();
+    data: currentUser,
+    membership: { currentProjectRole, currentWorkspaceRole },
+  } = useUser();
   const { currentWorkspace } = useWorkspace();
   // themes
   const { resolvedTheme } = useTheme();

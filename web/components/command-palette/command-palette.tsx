@@ -21,8 +21,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useStore } from "@/hooks";
-import { useApplication, useEventTracker, useIssues, useUser } from "@/hooks/store";
+import { useEventTracker, useIssues, useUser, useAppTheme, useCommandPalette } from "@/hooks/store";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -34,16 +33,11 @@ export const CommandPalette: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, cycleId, moduleId } = router.query;
   // store hooks
-  const {
-    commandPalette,
-    theme: { toggleSidebar },
-  } = useApplication();
+  const { toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const {
-    user: { data: currentUser },
-  } = useStore();
-  const {
     membership: { currentWorkspaceRole, currentProjectRole },
+    data: currentUser,
   } = useUser();
   const {
     issues: { removeIssue },
@@ -70,7 +64,7 @@ export const CommandPalette: FC = observer(() => {
     toggleDeleteIssueModal,
     isAnyModalOpen,
     createIssueStoreType,
-  } = commandPalette;
+  } = useCommandPalette();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,

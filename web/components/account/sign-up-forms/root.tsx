@@ -12,8 +12,7 @@ import {
 // constants
 import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 // hooks
-import { useStore } from "@/hooks";
-import { useEventTracker } from "@/hooks/store";
+import { useEventTracker, useInstance } from "@/hooks/store";
 import useSignInRedirection from "@/hooks/use-sign-in-redirection";
 
 export enum ESignUpSteps {
@@ -32,9 +31,7 @@ export const SignUpRoot = observer(() => {
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // mobx store
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
   const { captureEvent } = useEventTracker();
 
   // step 1 submit handler- email verification

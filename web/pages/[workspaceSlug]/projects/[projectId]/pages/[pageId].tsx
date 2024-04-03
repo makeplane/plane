@@ -6,54 +6,47 @@ import useSWR from "swr";
 import { Sparkle } from "lucide-react";
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
 import { IPage } from "@plane/types";
-// hooks
-
+// ui
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { GptAssistantPopover, PageHead } from "@/components/core";
 import { PageDetailsHeader } from "@/components/headers/page-details";
 import { IssuePeekOverview } from "@/components/issues";
+// constants
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
 import { getDate } from "@/helpers/date-time.helper";
-import { useApplication, usePage, useUser, useWorkspace } from "@/hooks/store";
+// hooks
+import { useInstance, usePage, useUser, useWorkspace } from "@/hooks/store";
 import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// services
-import { AppLayout } from "@/layouts/app-layout";
-import { NextPageWithLayout } from "@/lib/types";
-import { FileService } from "@/services/file.service";
 // layouts
-// components
-// ui
-// assets
-// helpers
+import { AppLayout } from "@/layouts/app-layout";
 // types
-// fetch-keys
-// constants
-
+import { NextPageWithLayout } from "@/lib/types";
 // services
+import { FileService } from "@/services/file.service";
+
 const fileService = new FileService();
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // refs
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editorRef = useRef<any>(null);
   // router
   const router = useRouter();
-
   const { workspaceSlug, projectId, pageId } = router.query;
-  const workspaceStore = useWorkspace();
-  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
-
   // store hooks
+  const workspaceStore = useWorkspace();
+  const { instance } = useInstance();
   const {
-    instance: { instance },
-    user: { data: currentUser },
-  } = useStore();
-
-  const {
+    data: currentUser,
     membership: { currentProjectRole },
   } = useUser();
+  // derived values
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
 
   const { handleSubmit, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },

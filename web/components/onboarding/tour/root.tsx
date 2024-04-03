@@ -2,13 +2,15 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { X } from "lucide-react";
-// hooks
-import { Button } from "@plane/ui";
-import { TourSidebar } from "@/components/onboarding";
-import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
-import { useApplication, useEventTracker, useUser } from "@/hooks/store";
-// components
 // ui
+import { Button } from "@plane/ui";
+// components
+import { TourSidebar } from "@/components/onboarding";
+// constants
+import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
+// hooks
+import { useStore } from "@/hooks";
+import { useApplication, useEventTracker } from "@/hooks/store";
 // assets
 import CyclesTour from "public/onboarding/cycles.webp";
 import IssuesTour from "public/onboarding/issues.webp";

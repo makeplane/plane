@@ -1,6 +1,6 @@
+import { ReactElement, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { ReactElement, useEffect, useState } from "react";
 import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";

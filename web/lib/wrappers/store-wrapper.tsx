@@ -2,12 +2,10 @@ import { ReactNode, useEffect, FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-// hooks
-import { useStore } from "hooks";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 // hooks
-import { useApplication, useUser } from "@/hooks/store";
+import { useStore } from "@/hooks";
 
 type TStoreWrapper = {
   children: ReactNode;

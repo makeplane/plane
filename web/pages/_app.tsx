@@ -1,10 +1,10 @@
 import { ReactElement } from "react";
+import { ReactElement } from "react";
 import { AppProps } from "next/app";
+import { AppProps } from "next/app";
+import Head from "next/head";
 import Head from "next/head";
 import { ThemeProvider } from "next-themes";
-import { AppProps } from "next/app";
-import Head from "next/head";
-import { ReactElement } from "react";
 // styles
 import "@/styles/globals.css";
 import "@/styles/command-pallette.css";

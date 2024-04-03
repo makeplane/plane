@@ -6,7 +6,7 @@ import { computedFn } from "mobx-utils";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { WorkspaceService } from "@/services/workspace.service";
 // types
-import { IRouterStore } from "@/store/application/router.store";
+import { IRouterStore } from "@/store/router.store";
 import { RootStore } from "@/store/root.store";
 import { IUserRootStore } from "@/store/user";
 import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";

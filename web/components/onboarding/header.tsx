@@ -5,9 +5,9 @@ import { Menu, Transition } from "@headlessui/react";
 // ui
 import { Avatar } from "@plane/ui";
 // images
+import { useUser } from "hooks/store";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // store
-import { useUser } from "hooks/store";
 
 export type OnboardingHeaderProps = {
   fullName: string;

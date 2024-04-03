@@ -13,17 +13,14 @@ import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "@/component
 import { cn } from "@/helpers/common.helper";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { useStore } from "@/hooks";
-import { useDashboard } from "@/hooks/store";
+import { useDashboard, useUser } from "@/hooks/store";
 
 const WIDGET_KEY = "recent_activity";
 
 export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   // derived values
   const { fetchWidgetStats, getWidgetStats } = useDashboard();
   const widgetStats = getWidgetStats<TRecentActivityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);

@@ -9,8 +9,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { MAX_FILE_SIZE } from "@/constants/common";
 // hooks
-import { useStore } from "@/hooks";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace, useInstance } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -34,10 +33,8 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const {
-    instance: { instance },
-  } = useStore();
+  // store hooks
+  const { instance } = useInstance();
   const { currentWorkspace } = useWorkspace();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);

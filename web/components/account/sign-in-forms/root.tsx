@@ -13,8 +13,7 @@ import { LatestFeatureBlock } from "@/components/common";
 // constants
 import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // hooks
-import { useStore } from "@/hooks";
-import { useEventTracker } from "@/hooks/store";
+import { useEventTracker, useInstance } from "@/hooks/store";
 import useSignInRedirection from "@/hooks/use-sign-in-redirection";
 
 export enum ESignInSteps {
@@ -32,9 +31,7 @@ export const SignInRoot = observer(() => {
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // hooks
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
   const { captureEvent } = useEventTracker();
   // derived values
   const isSmtpConfigured = instance?.config?.is_smtp_configured;

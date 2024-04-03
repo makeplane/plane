@@ -16,8 +16,7 @@ import { ANALYTICS } from "@/constants/fetch-keys";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useStore } from "@/hooks";
-import { useCycle, useModule, useProject, useWorkspace } from "@/hooks/store";
+import { useCycle, useModule, useProject, useWorkspace, useUser } from "@/hooks/store";
 // services
 import { AnalyticsService } from "@/services/analytics.service";
 
@@ -35,9 +34,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const { workspaceProjectIds, getProjectById } = useProject();
   const { getWorkspaceById } = useWorkspace();
 

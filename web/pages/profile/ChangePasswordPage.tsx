@@ -2,21 +2,23 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+// ui
 import { Button, Input, Spinner, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import { PageHead } from "components/core";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { useApplication } from "hooks/store";
-import { NextPageWithLayout } from "lib/types";
+// components
+import { PageHead } from "@/components/core";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar";
+// hooks
+import { useAppTheme, useUser } from "@/hooks/store";
+// types
+import { NextPageWithLayout } from "@/lib/types";
+// local components
 import { FormValues, userService } from "./change-password";
-import { useStore } from "hooks";
 
 const ChangePasswordPage: NextPageWithLayout = observer(() => {
   const [isPageLoading, setIsPageLoading] = useState(true);
   // hooks
-  const { theme: themeStore } = useApplication();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { toggleSidebar } = useAppTheme();
+  const { user: currentUser } = useUser();
 
   const router = useRouter();
 
@@ -70,7 +72,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
       <PageHead title="Profile - Change Password" />
       <div className="flex h-full flex-col">
         <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
-          <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
+          <SidebarHamburgerToggle onClick={() => toggleSidebar()} />
         </div>
         <form
           onSubmit={handleSubmit(handleChangePassword)}

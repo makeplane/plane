@@ -11,8 +11,8 @@ import { UserGreetingsView } from "@/components/user";
 // ui
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
-import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
+import { useStore } from "@/hooks";
+import { useApplication, useEventTracker, useDashboard, useProject } from "@/hooks/store";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks

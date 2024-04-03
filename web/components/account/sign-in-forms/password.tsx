@@ -15,8 +15,7 @@ import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "@/constants/event-tracke
 // helpers
 import { checkEmailValidity } from "@/helpers/string.helper";
 // hooks
-import { useStore } from "@/hooks"; // TODO: fix this import with the correct path
-import { useEventTracker } from "@/hooks/store";
+import { useEventTracker, useInstance } from "@/hooks/store";
 // services
 import { AuthService } from "@/services/auth.service";
 
@@ -44,9 +43,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   // states
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
   const { captureEvent } = useEventTracker();
   // derived values
   const isSmtpConfigured = instance?.config?.is_smtp_configured;

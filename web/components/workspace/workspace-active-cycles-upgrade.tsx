@@ -10,7 +10,7 @@ import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useStore } from "@/hooks";
 
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   // store hooks

@@ -26,9 +26,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { invitation_id, email, slug } = router.query;
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
 
   const { data: invitationDetail, error } = useSWR(
     invitation_id && slug && WORKSPACE_INVITATION(invitation_id.toString()),

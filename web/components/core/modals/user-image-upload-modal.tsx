@@ -8,8 +8,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { MAX_FILE_SIZE } from "@/constants/common";
 // hooks
-import { useStore } from "@/hooks";
-// import { useApplication } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -31,9 +30,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   // store hooks
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 

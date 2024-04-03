@@ -2,7 +2,7 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { CommandPalette } from "@/components/command-palette";
-import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar";
 // layouts
 import { UserAuthWrapper, WorkspaceAuthWrapper, ProjectAuthWrapper } from "@/layouts/auth-layout";
 import { AppSidebar } from "./sidebar";

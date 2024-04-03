@@ -1,14 +1,12 @@
 import { observer } from "mobx-react";
-// hooks
-import { useStore } from "hooks";
 // components
-import { GithubOAuthButton, GoogleOAuthButton } from "components/account";
+import { GithubOAuthButton, GoogleOAuthButton } from "@/components/account";
+// hooks
+import { useInstance } from "@/hooks/store";
 
 export const OAuthOptions: React.FC = observer(() => {
   // hooks
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
 
   // derived values
   const areBothOAuthEnabled = instance?.config?.is_google_enabled && instance?.config?.is_github_enabled;

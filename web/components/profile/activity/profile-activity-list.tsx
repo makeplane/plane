@@ -2,23 +2,22 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
+// icons
 import { History, MessageSquare } from "lucide-react";
+// editor
 import { RichReadOnlyEditor } from "@plane/rich-text-editor";
-// hooks
+// components
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 import { ActivitySettingsLoader } from "@/components/ui";
+// constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
+// helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { useUser } from "@/hooks/store";
+// hooks
+import { useStore } from "@/hooks";
 // services
 import { UserService } from "@/services/user.service";
-// editor
-// components
-// ui
-// helpers
-// fetch-keys
 
-// services
 const userService = new UserService();
 
 type Props = {

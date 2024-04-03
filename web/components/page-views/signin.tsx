@@ -2,14 +2,13 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { Spinner } from "@plane/ui";
+// components
 import { SignInRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
-import { useApplication, useUser } from "@/hooks/store";
+// hooks
+import { useStore } from "@/hooks";
 import useSignInRedirection from "@/hooks/use-sign-in-redirection";
-// components
-import { PageHead } from "components/core";
-import { SignInRoot } from "components/account";
-// images
+// assets
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 export type AuthType = "sign-in" | "sign-up";

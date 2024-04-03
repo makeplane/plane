@@ -1,4 +1,3 @@
-export * from "./use-application";
 export * from "./use-calendar-view";
 export * from "./use-cycle-filter";
 export * from "./use-cycle";
@@ -26,3 +25,6 @@ export * from "./use-inbox";
 export * from "./use-inbox-issues";
 export * from "./use-user-profile";
 export * from "./use-user";
+export * from "./use-instance";
+export * from "./use-app-theme";
+export * from "./use-command-palette";

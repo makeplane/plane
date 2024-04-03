@@ -12,8 +12,7 @@ import { Button, Input, Loader } from "@plane/ui";
 // constants
 import { MAX_FILE_SIZE } from "@/constants/common";
 // hooks
-import { useStore } from "@/hooks";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace, useInstance } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // services
@@ -63,9 +62,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
   const { currentWorkspace } = useWorkspace();
 
   const { data: unsplashImages, error: unsplashError } = useSWR(

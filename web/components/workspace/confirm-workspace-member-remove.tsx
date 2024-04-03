@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import { Button } from "@plane/ui";
-import { useUser } from "@/hooks/store";
 // ui
 import { Button } from "@plane/ui";
+// hooks
+import { useStore } from "@/hooks";
 
 export type Props = {
   isOpen: boolean;

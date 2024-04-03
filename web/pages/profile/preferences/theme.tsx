@@ -22,14 +22,9 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
   const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
   // store hooks
   const {
-    // updateCurrentUserTheme
+    data: currentUser,
+    profile: { data: userProfile },
   } = useUser();
-  const {
-    user: {
-      data: currentUser,
-      profile: { data: userProfile },
-    },
-  } = useStore();
   // computed
   const userTheme = userProfile?.theme;
   // hooks

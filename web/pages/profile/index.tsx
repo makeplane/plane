@@ -23,12 +23,12 @@ import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components
 // ui
 // icons
 // components
-import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar";
 // constants
 import { TIME_ZONES } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
 // hooks
-import { useApplication, useUser } from "@/hooks/store";
+import { useAppTheme, useUser } from "@/hooks/store";
 import useUserAuth from "@/hooks/use-user-auth";
 import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // layouts
@@ -67,15 +67,13 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   } = useForm<IUser>({ defaultValues });
   // store hooks
   const {
-    user: {
-      data: currentUser,
-      updateCurrentUser,
-      profile: { isLoading: currentUserLoader },
-    },
-  } = useStore();
+    data: currentUser,
+    updateCurrentUser,
+    profile: { isLoading: currentUserLoader },
+  } = useUser();
+  const { toggleSidebar } = useAppTheme();
   // custom hooks
   const {} = useUserAuth({ user: currentUser || null, isLoading: currentUserLoader });
-  const { theme: themeStore } = useApplication();
 
   useEffect(() => {
     reset({ ...defaultValues, ...currentUser });
@@ -105,10 +103,6 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
         message: () => `There was some error in updating your profile. Please try again.`,
       },
     });
-
-    // setTimeout(() => {
-    //   setIsLoading(false);
-    // }, 300);
   };
 
   const handleDelete = (url: string | null | undefined, updateUser: boolean = false) => {
@@ -156,7 +150,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
       <PageHead title="Profile - General Settings" />
       <div className="flex h-full flex-col">
         <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
-          <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
+          <SidebarHamburgerToggle onClick={() => toggleSidebar()} />
         </div>
         <div className="overflow-hidden">
           <Controller

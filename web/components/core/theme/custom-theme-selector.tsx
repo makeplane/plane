@@ -6,8 +6,7 @@ import { IUserTheme } from "@plane/types";
 // ui
 import { Button, InputColorPicker } from "@plane/ui";
 // hooks
-import { useStore } from "@/hooks";
-// import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store";
 
 const inputRules = {
   required: "Background color is required",
@@ -27,10 +26,8 @@ const inputRules = {
 
 export const CustomThemeSelector: React.FC = observer(() => {
   const {
-    user: {
-      profile: { data: userProfile },
-    },
-  } = useStore();
+    profile: { data: userProfile },
+  } = useUser();
 
   const userTheme: any = userProfile?.theme;
   // hooks

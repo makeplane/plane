@@ -10,8 +10,7 @@ import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useStore } from "@/hooks";
-import { useApplication, useIssues } from "@/hooks/store";
+import { useCommandPalette, useIssues, useUser } from "@/hooks/store";
 
 type Props = {
   closePalette: () => void;
@@ -24,19 +23,15 @@ type Props = {
 
 export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const { closePalette, issueDetails, pages, setPages, setPlaceholder, setSearchTerm } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // hooks
   const {
     issues: { updateIssue },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const {
-    commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
-  } = useApplication();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { toggleCommandPaletteModal, toggleDeleteIssueModal } = useCommandPalette();
+  const { data: currentUser } = useUser();
 
   const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issueDetails) return;
