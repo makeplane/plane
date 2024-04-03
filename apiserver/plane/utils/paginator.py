@@ -709,6 +709,8 @@ class BasePaginator:
 
         if on_results:
             results = on_results(cursor_result.results)
+        else:
+            results = cursor_result.results
 
         if group_by_field_name:
             results = paginator.process_results(results=results)
