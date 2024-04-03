@@ -1,21 +1,28 @@
 import { ReactElement, useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // types
 import { TPageNavigationTabs } from "@plane/types";
 // components
 import { PagesHeader } from "@/components/headers";
 import { PagesListRoot, PagesListView, CreateUpdatePageModal } from "@/components/pages";
+// hooks
+import { useApplication } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // lib
 import { NextPageWithLayout } from "@/lib/types";
 
-const ProjectPagesPage: NextPageWithLayout = () => {
+const ProjectPagesPage: NextPageWithLayout = observer(() => {
+  // states
+  const [modalOpen, setModalOpen] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, type } = router.query;
-  // state
-  const [modalOpen, setModalOpen] = useState(false);
+  const { type } = router.query;
+  // store hooks
+  const {
+    router: { workspaceSlug, projectId },
+  } = useApplication();
 
   const currentPageType = (): TPageNavigationTabs => {
     const pageType = type?.toString();
@@ -44,7 +51,7 @@ const ProjectPagesPage: NextPageWithLayout = () => {
       />
     </>
   );
-};
+});
 
 ProjectPagesPage.getLayout = function getLayout(page: ReactElement) {
   return (

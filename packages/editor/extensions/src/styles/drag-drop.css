@@ -20,7 +20,7 @@
 }
 
 .drag-handle:active {
-  background-color: #4d4d4d;
+  background-color: rgba(var(--color-background-80));
   transition: background-color 0.2s;
   cursor: grabbing;
 }
@@ -62,13 +62,21 @@
 /* end drag handle */
 
 .ProseMirror:not(.dragging) .ProseMirror-selectednode {
-  padding: 4px 0px;
-  outline: none !important;
+  position: relative;
   cursor: grab;
-  /* background-color: #1f2937; */
+  outline: none !important;
+  box-shadow: none;
+}
+
+.ProseMirror:not(.dragging) .ProseMirror-selectednode::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
   background-color: rgba(var(--color-primary-100), 0.2);
   transition: background-color 0.2s;
-  box-shadow: none;
 }
 
 .ProseMirror img {
