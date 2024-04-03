@@ -63,6 +63,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const pageDescription = pageStore?.description_html ?? "<p></p>";
   const isFullWidth = !!pageStore?.view_props?.full_width;
   const { description_html, isContentEditable, updateName, isSubmitting, setIsSubmitting } = pageStore;
+
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -135,6 +136,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             value={pageDescription}
             handleEditorReady={handleReadOnlyEditorReady}
             customClassName="tracking-tight w-full px-0 !border-none"
+            mentionHighlights={mentionHighlights}
           />
         )}
       </div>
