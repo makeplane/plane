@@ -33,7 +33,7 @@ export interface IProjectInboxStore {
   handleInboxIssueSorting: <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   fetchInboxIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
   // fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
-  // createInboxIssue: (workspaceSlug: string, projectId: string, data: any) => Promise<void>;
+  createInboxIssue: (workspaceSlug: string, projectId: string, data: any) => Promise<void>;
   // deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
 }
 
@@ -69,7 +69,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
       handleInboxIssueSorting: action,
       fetchInboxIssues: action,
       // fetchInboxIssueById: action,
-      // createInboxIssue: action,
+      createInboxIssue: action,
       // deleteInboxIssue: action,
     });
     this.inboxIssueService = new InboxIssueService();
@@ -86,8 +86,9 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   handleCurrentTab = (tab: TInboxIssueCurrentTab) => {
     set(this, "currentTab", tab);
     set(this, "inboxFilters", undefined);
-    set(this, "inboxSorting", undefined);
-    if (tab === "closed") set(this.inboxFilters, "inbox_status", [-1, 0, 1, 2]);
+    set(this, ["inboxSorting", "order_by"], "issue__created_at");
+    set(this, ["inboxSorting", "sort_by"], "desc");
+    if (tab === "closed") set(this, ["inboxFilters", "inbox_status"], [-1, 0, 1, 2]);
     const { workspaceSlug, projectId } = this.store.app.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId);
   };
@@ -148,15 +149,20 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
    * @param data
    * @returns
    */
-  // createInboxIssue = async (workspaceSlug: string, projectId: string, data: Partial<TInboxIssue>) => {
-  //   try {
-  //     const inboxIssueResponse = await this.inboxIssueService.create(workspaceSlug, projectId, data);
+  createInboxIssue = async (workspaceSlug: string, projectId: string, data: Partial<TInboxIssue>) => {
+    try {
+      const inboxIssueResponse = await this.inboxIssueService.create(workspaceSlug, projectId, data);
 
-  //     this.inboxIssues[response.id] = new InboxIssueStore(workspaceSlug, projectId, response);
-  //     return response;
-  //   } catch {}
-  //   runInAction(() => {});
-  // };
+      runInAction(() => {
+        set(
+          this.inboxIssues,
+          inboxIssueResponse?.id,
+          new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse)
+        );
+      });
+    } catch {}
+    runInAction(() => {});
+  };
 
   /**
    * delete inbox issue
