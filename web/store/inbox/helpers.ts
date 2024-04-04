@@ -1,3 +1,4 @@
+import isEmpty from "lodash/isEmpty";
 // types
 import {
   TInboxIssueFilter,
@@ -25,11 +26,12 @@ export class InboxIssueHelpers implements IInboxIssueHelpers {
     paginationCursor: string
   ) => {
     const filters: Partial<Record<keyof TInboxIssueFilter, string>> = {};
-    Object.keys(inboxFilters).forEach((key) => {
-      const filterKey = key as keyof TInboxIssueFilter;
-      if (inboxFilters[filterKey] && inboxFilters[filterKey]?.length)
-        filters[filterKey] = inboxFilters[filterKey]?.join(",");
-    });
+    !isEmpty(inboxFilters) &&
+      Object.keys(inboxFilters).forEach((key) => {
+        const filterKey = key as keyof TInboxIssueFilter;
+        if (inboxFilters[filterKey] && inboxFilters[filterKey]?.length)
+          filters[filterKey] = inboxFilters[filterKey]?.join(",");
+      });
 
     const sorting: TInboxIssueSortingOrderByQueryParam = {
       order_by: "-issue__created_at",
