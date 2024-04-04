@@ -3,7 +3,7 @@ import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pan
 import { observer } from "mobx-react-lite";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks
-import { Tooltip, ControlLink } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { cn } from "@/helpers/common.helper";
 import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
@@ -11,9 +11,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-// ui
-// types
-// helper
 
 interface IssueBlockProps {
   peekIssueId?: string;
@@ -44,17 +41,6 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   // hooks
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
-  const { setPeekIssue } = useIssueDetail();
-
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   return (
     <>
@@ -72,19 +58,11 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <span>{issue.name}</span>
         </Tooltip>
       ) : (
-        <ControlLink
-          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
-            issue.id
-          }`}
-          target="_blank"
-          onClick={() => handleIssuePeekOverview(issue)}
-          className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
-          disabled={!!issue?.tempId}
-        >
+        <span className="w-full line-clamp-1 text-sm text-custom-text-100">
           <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
             <span>{issue.name}</span>
           </Tooltip>
-        </ControlLink>
+        </span>
       )}
 
       <IssueProperties
@@ -116,8 +94,25 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
     issueIds,
   } = props;
 
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const { setPeekIssue } = useIssueDetail();
+
   const issue = issuesMap[issueId];
 
+  const handleIssuePeekOverview = (issue: TIssue) =>
+    workspaceSlug &&
+    issue &&
+    issue.project_id &&
+    issue.id &&
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+
+  const handleControlLinkClick = () => {
+    window.open(
+      `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}`
+    );
+  };
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
@@ -139,10 +134,21 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
           <div
             className={cn(
               "rounded border-[0.5px] w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
-              { "hover:cursor-grab": !isDragDisabled },
+              { "hover:cursor-pointer": !isDragDisabled },
               { "border-custom-primary-100": snapshot.isDragging },
               { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }
             )}
+            // if ctrl click execute handleControlLinkClick
+            onClick={(e) => {
+              if (e.ctrlKey || e.metaKey) {
+                handleControlLinkClick();
+              } else {
+                const target = e.target as Element;
+                if (!target.closest("[role='listbox']")) {
+                  handleIssuePeekOverview(issue);
+                }
+              }
+            }}
           >
             <RenderIfVisible
               classNames="space-y-2 px-3 py-2"
@@ -169,3 +175,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
 });
 
 KanbanIssueBlock.displayName = "KanbanIssueBlock";
+
+// href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
+//   issue.id
+// }`}
+// target="_blank"
+// onClick={() => handleIssuePeekOverview(issue)}
+// disabled={!!issue?.tempId}
