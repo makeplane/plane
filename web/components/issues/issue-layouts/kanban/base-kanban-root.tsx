@@ -38,6 +38,7 @@ export interface IBaseKanBanLayout {
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
+  viewId?: string | undefined;
 }
 
 type KanbanDragState = {
@@ -47,7 +48,7 @@ type KanbanDragState = {
 };
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -77,8 +78,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const group_by: string | null = displayFilters?.group_by || null;
 
   useSWR(
-    `ISSUE_KANBAN_LAYOUT_${storeType}_${group_by}_${sub_group_by}`,
-    () => fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }),
+    `ISSUE_KANBAN_LAYOUT_${storeType}_${group_by}_${sub_group_by}_${viewId}`,
+    () => fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }, viewId),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,

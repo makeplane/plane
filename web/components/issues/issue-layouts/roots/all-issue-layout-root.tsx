@@ -35,7 +35,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   // store
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },
-    issues: { getIssueLoader, getPaginationData, groupedIssueIds, fetchIssues, fetchNextIssues },
+    issues: { clear, getIssueLoader, getPaginationData, groupedIssueIds, fetchIssues, fetchNextIssues },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue, removeIssue, archiveIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
 
@@ -92,7 +92,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
     async () => {
       if (workspaceSlug && globalViewId) {
-        await fetchAllGlobalViews(workspaceSlug.toString());
+        clear();
         await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
         await fetchIssues(
           workspaceSlug.toString(),

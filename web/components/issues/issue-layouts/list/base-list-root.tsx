@@ -27,10 +27,11 @@ interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  viewId?: string | undefined;
   isCompletedCycle?: boolean;
 }
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
 
   const storeType = useIssueStoreType() as ListStoreType;
   const { issuesFilter, issues } = useIssues(storeType);
@@ -58,8 +59,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
   useSWR(
-    `ISSUE_LIST_LAYOUT_${storeType}_${group_by}`,
-    () => fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }),
+    `ISSUE_LIST_LAYOUT_${storeType}_${group_by}_${viewId}`,
+    () => fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,

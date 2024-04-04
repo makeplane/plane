@@ -257,6 +257,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       ],
       display_properties: true,
       display_filters: {
+        order_by: [],
         type: [null, "active", "backlog"],
       },
       extra_options: {

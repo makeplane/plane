@@ -9,6 +9,7 @@ import {
   TIssueKanbanFilters,
   TIssuesResponse,
   TLoader,
+  TProfileViews,
 } from "@plane/types";
 import { useCallback, useMemo } from "react";
 
@@ -16,7 +17,7 @@ interface IssueActions {
   fetchIssues: (
     loadType: TLoader,
     options: IssuePaginationOptions,
-    userViewId?: "assigned" | "created" | "subscribed"
+    viewId?: string
   ) => Promise<TIssuesResponse | undefined>;
   fetchNextIssues: (groupId?: string, subGroupId?: string) => Promise<TIssuesResponse | undefined>;
   removeIssue: (projectId: string | undefined | null, issueId: string) => Promise<void>;
@@ -365,9 +366,15 @@ const useProfileIssueActions = () => {
   } = useApplication();
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions, viewId?: "assigned" | "created" | "subscribed") => {
+    async (loadType: TLoader, options: IssuePaginationOptions, viewId?: string) => {
       if (!workspaceSlug || !userId || !viewId) return;
-      return issues.fetchIssues(workspaceSlug.toString(), userId.toString(), loadType, options, viewId);
+      return issues.fetchIssues(
+        workspaceSlug.toString(),
+        userId.toString(),
+        loadType,
+        options,
+        viewId as TProfileViews
+      );
     },
     [issues.fetchIssues, workspaceSlug, userId]
   );
