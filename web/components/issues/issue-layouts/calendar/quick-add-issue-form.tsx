@@ -82,9 +82,11 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
   const [isExistingIssueModalOpen, setIsExistingIssueModalOpen] = useState(false);
   // derived values
   const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
-  const ExistingIssuesListModalPayload = moduleId
-    ? { module: moduleId.toString(), target_date: "none" }
-    : { cycle: true, target_date: "none" };
+  const ExistingIssuesListModalPayload = addIssuesToView
+    ? moduleId
+      ? { module: moduleId.toString(), target_date: "none" }
+      : { cycle: true, target_date: "none" }
+    : { target_date: "none" };
 
   const {
     reset,
@@ -234,33 +236,22 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
             block: isMenuOpen,
           })}
         >
-          {addIssuesToView ? (
-            <CustomMenu
-              placement="bottom-start"
-              menuButtonOnClick={() => setIsMenuOpen(true)}
-              onMenuClose={() => setIsMenuOpen(false)}
-              className="w-full"
-              customButtonClassName="w-full"
-              customButton={
-                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100">
-                  <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
-                  <span className="text-sm font-medium flex-shrink-0 text-custom-primary-100">New Issue</span>
-                </div>
-              }
-            >
-              <CustomMenu.MenuItem onClick={handleNewIssue}>New Issue</CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={handleExistingIssue}>Add existing issue</CustomMenu.MenuItem>
-            </CustomMenu>
-          ) : (
-            <button
-              type="button"
-              className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100"
-              onClick={handleNewIssue}
-            >
-              <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-              <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-            </button>
-          )}
+          <CustomMenu
+            placement="bottom-start"
+            menuButtonOnClick={() => setIsMenuOpen(true)}
+            onMenuClose={() => setIsMenuOpen(false)}
+            className="w-full"
+            customButtonClassName="w-full"
+            customButton={
+              <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100">
+                <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
+                <span className="text-sm font-medium flex-shrink-0 text-custom-primary-100">New Issue</span>
+              </div>
+            }
+          >
+            <CustomMenu.MenuItem onClick={handleNewIssue}>New Issue</CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleExistingIssue}>Add existing issue</CustomMenu.MenuItem>
+          </CustomMenu>
         </div>
       )}
     </>

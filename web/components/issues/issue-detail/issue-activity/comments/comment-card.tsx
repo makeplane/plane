@@ -27,10 +27,11 @@ type TIssueCommentCard = {
   activityOperations: TActivityOperations;
   ends: "top" | "bottom" | undefined;
   showAccessSpecifier?: boolean;
+  disabled?: boolean;
 };
 
 export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
-  const { workspaceSlug, commentId, activityOperations, ends, showAccessSpecifier = false } = props;
+  const { workspaceSlug, commentId, activityOperations, ends, showAccessSpecifier = false, disabled = false } = props;
   // hooks
   const {
     comment: { getCommentById },
@@ -85,7 +86,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
       commentId={commentId}
       quickActions={
         <>
-          {currentUser?.id === comment.actor && (
+          {!disabled && currentUser?.id === comment.actor && (
             <CustomMenu ellipsis>
               <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
                 <Pencil className="h-3 w-3" />
@@ -188,6 +189,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
             projectId={comment?.project_detail?.id}
             commentId={comment.id}
             currentUser={currentUser}
+            disabled={disabled}
           />
         </div>
       </>

@@ -89,6 +89,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
           projectId={issue.project_id}
           issueId={issueId}
           currentUser={currentUser}
+          disabled={disabled}
         />
       )}
     </div>

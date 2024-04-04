@@ -53,7 +53,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         }
       )}
     >
-      <div className="flex">
+      <div className="flex w-full">
         <div className="flex flex-grow items-center gap-3">
           {displayProperties && displayProperties?.key && (
             <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">

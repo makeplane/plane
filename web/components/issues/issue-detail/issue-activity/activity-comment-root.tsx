@@ -13,10 +13,11 @@ type TIssueActivityCommentRoot = {
   issueId: string;
   activityOperations: TActivityOperations;
   showAccessSpecifier?: boolean;
+  disabled?: boolean;
 };
 
 export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
-  const { workspaceSlug, issueId, activityOperations, showAccessSpecifier } = props;
+  const { workspaceSlug, issueId, activityOperations, showAccessSpecifier, disabled } = props;
   // hooks
   const {
     activity: { getActivityCommentByIssueId },
@@ -37,6 +38,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
             activityOperations={activityOperations}
             ends={index === 0 ? "top" : index === activityComments.length - 1 ? "bottom" : undefined}
             showAccessSpecifier={showAccessSpecifier}
+            disabled={disabled}
           />
         ) : activityComment.activity_type === "ACTIVITY" ? (
           <IssueActivityList

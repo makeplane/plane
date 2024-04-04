@@ -9,13 +9,14 @@ import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/com
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // hooks
-import { useIssues, useLabel, useMember, useProjectState } from "@/hooks/store";
+import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
 export const ArchivedIssuesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
+  const { currentProjectDetails } = useProject();
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.ARCHIVED);
@@ -89,6 +90,8 @@ export const ArchivedIssuesHeader: FC = observer(() => {
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
             }
+            cycleViewDisabled={!currentProjectDetails?.cycle_view}
+            moduleViewDisabled={!currentProjectDetails?.module_view}
           />
         </FiltersDropdown>
       </div>
