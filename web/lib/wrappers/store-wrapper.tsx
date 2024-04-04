@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 // hooks
-import { useStore } from "@/hooks";
+import { useAppRouter, useAppTheme, useUser } from "@/hooks/store";
 
 type TStoreWrapper = {
   children: ReactNode;
@@ -18,17 +18,13 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
   // router
   const router = useRouter();
   // store hooks
+  const { setQuery } = useAppRouter();
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const {
-    router: { setQuery },
-    theme: { sidebarCollapsed, toggleSidebar },
-    user: {
-      profile: { data: userProfile },
-    },
-  } = useStore();
+    profile: { data: userProfile },
+  } = useUser();
   // states
   const [dom, setDom] = useState<undefined | HTMLElement>();
-
-  // fetching application Config
 
   /**
    * Sidebar collapsed fetching from local storage

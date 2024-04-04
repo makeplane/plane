@@ -1,13 +1,13 @@
-import { Spinner } from "@plane/ui";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { useEffect } from "react";
+// ui
+import { Spinner } from "@plane/ui";
 // components
 import { SignInRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
 // hooks
-import { useStore } from "@/hooks";
-import { useUser } from "@/hooks/store";
+import { useInstance, useUser } from "@/hooks/store";
 import useSignInRedirection from "@/hooks/use-sign-in-redirection";
 // assets
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
@@ -16,12 +16,8 @@ export type AuthType = "sign-in" | "sign-up";
 
 export const SignInView = observer(() => {
   // store hooks
-  const {
-    instance: { instance },
-  } = useStore();
-
+  const { instance } = useInstance();
   const { data: currentUser } = useUser();
-
   // sign in redirection hook
   const { isRedirecting, handleRedirection } = useSignInRedirection();
 

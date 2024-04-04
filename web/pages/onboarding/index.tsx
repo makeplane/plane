@@ -2,30 +2,30 @@ import { ReactElement, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { ChevronDown } from "lucide-react";
-import { Menu, Transition } from "@headlessui/react";
-import { IUser, TOnboardingSteps } from "@plane/types";
-// hooks
-import { Avatar, Spinner } from "@plane/ui";
+// types
+import { TOnboardingSteps, TUserProfile } from "@plane/types";
+// ui
+import { Spinner } from "@plane/ui";
+// components
 import { PageHead } from "@/components/core";
-import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "@/components/onboarding";
-import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
-import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+import {
+  InviteMembers,
+  JoinWorkspaces,
+  UserDetails,
+  SwitchOrDeleteAccountModal,
+  OnboardingHeader,
+} from "@/components/onboarding";
+// hooks
+import { useUser, useWorkspace, useUserProfile } from "@/hooks/store";
 import useUserAuth from "@/hooks/use-user-auth";
-// services
+// layouts
 import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
+// lib types
 import { NextPageWithLayout } from "@/lib/types";
-import { WorkspaceService } from "@/services/workspace.service";
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-// layouts
-// components
-// ui
-// images
-// types
-// constants
-
 // services
+import { WorkspaceService } from "@/services/workspace.service";
+
 const workspaceService = new WorkspaceService();
 
 const OnboardingPage: NextPageWithLayout = observer(() => {
@@ -128,6 +128,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
     };
 
     handleStepChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, invitations, step, updateCurrentUser, workspacesList]);
 
   return (

@@ -9,7 +9,7 @@ import { Loader } from "@plane/ui";
 // fetch-keys
 import { SLACK_CHANNEL_INFO } from "@/constants/fetch-keys";
 // hooks
-import { useStore } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 // services
 import { AppInstallationService } from "@/services/app_installation.service";
@@ -22,9 +22,7 @@ const appInstallationService = new AppInstallationService();
 
 export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
   // store hooks
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
   // states
   const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
   const [slackChannel, setSlackChannel] = useState<ISlackIntegration | null>(null);

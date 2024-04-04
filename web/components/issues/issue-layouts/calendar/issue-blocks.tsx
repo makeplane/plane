@@ -2,24 +2,12 @@ import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
-// icons
-import { MoreHorizontal } from "lucide-react";
-// ui
+// types
 import { TIssue, TIssueMap } from "@plane/types";
-import { Tooltip, ControlLink } from "@plane/ui";
-
-// helpers
-import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/issues";
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { cn } from "helpers/common.helper";
-// hooks
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { usePlatformOS } from "hooks/use-platform-os";
-// helpers
-// types
 // components
-// types
+import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/issues";
+// helpers
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 
 type Props = {
   date: Date;

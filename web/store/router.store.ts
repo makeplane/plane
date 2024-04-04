@@ -1,5 +1,5 @@
-import { action, makeObservable, observable, computed, runInAction } from "mobx";
 import { ParsedUrlQuery } from "node:querystring";
+import { action, makeObservable, observable, computed, runInAction } from "mobx";
 
 export interface IRouterStore {
   // observables

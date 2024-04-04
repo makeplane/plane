@@ -1,7 +1,7 @@
-import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { FC } from "react";
+import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
 // ui
 import {
   ArchiveIcon,

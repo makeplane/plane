@@ -1,5 +1,5 @@
-import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 // icons
 import { AlertTriangle } from "lucide-react";
 // headless ui
@@ -9,6 +9,7 @@ import { IUserLite } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 // hooks
+import { useUser } from "@/hooks/store";
 
 type Props = {
   data: IUserLite;

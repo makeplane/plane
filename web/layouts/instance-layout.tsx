@@ -1,11 +1,12 @@
 import { FC, ReactNode, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// ui
 import { Spinner } from "@plane/ui";
-// hooks
-import { useStore } from "hooks";
 // components
-import { InstanceNotReady, MiniGodModeForm } from "components/instance";
+import { InstanceNotReady, MiniGodModeForm } from "@/components/instance";
+// hooks
+import { useInstance } from "@/hooks/store";
 
 type TInstanceLayout = {
   children: ReactNode;
@@ -14,9 +15,7 @@ type TInstanceLayout = {
 const InstanceLayout: FC<TInstanceLayout> = observer((props) => {
   const { children } = props;
   // store
-  const {
-    instance: { isLoading, instance, error, fetchInstanceInfo },
-  } = useStore();
+  const { isLoading, instance, error, fetchInstanceInfo } = useInstance();
   // states
   const [isGodModeEnabled, setIsGodModeEnabled] = useState(false);
   const handleGodModeStateChange = (state: boolean) => setIsGodModeEnabled(state);
@@ -28,7 +27,7 @@ const InstanceLayout: FC<TInstanceLayout> = observer((props) => {
   // loading state
   if (isLoading)
     return (
-      <div className="relative w-full h-screen flex justify-center items-center">
+      <div className="relative flex h-screen w-full items-center justify-center">
         <Spinner />
       </div>
     );
@@ -36,7 +35,7 @@ const InstanceLayout: FC<TInstanceLayout> = observer((props) => {
   // something went wrong while in the request
   if (error && error?.status === "error")
     return (
-      <div className="w-screen h-screen relative flex justify-center items-center">
+      <div className="relative flex h-screen w-screen items-center justify-center">
         Something went wrong. please try again later
       </div>
     );

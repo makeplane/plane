@@ -1,4 +1,8 @@
-import { IIssueLabel } from "@plane/types";
+import { FC, useState } from "react";
+import { observer } from "mobx-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+// icons
 import {
   AlertCircle,
   Archive,
@@ -11,10 +15,8 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-import { observer } from "mobx-react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { FC, useState } from "react";
+// types
+import { IIssueLabel } from "@plane/types";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components

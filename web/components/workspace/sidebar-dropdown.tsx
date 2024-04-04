@@ -1,19 +1,20 @@
+import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment, useState } from "react";
+import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { mutate } from "swr";
+// icons
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
-import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
-// icons
+// types
 import { IWorkspace } from "@plane/types";
 // plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useApplication, useUser, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
 // types
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
@@ -53,9 +54,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    theme: { sidebarCollapsed, toggleSidebar },
-  } = useApplication();
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser } = useUser();
   const {
     updateCurrentUser,

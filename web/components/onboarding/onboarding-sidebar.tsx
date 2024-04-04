@@ -1,5 +1,7 @@
-import { IWorkspace } from "@plane/types";
-import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
+import React, { useEffect } from "react";
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import {
   BarChart2,
   Bell,
@@ -14,10 +16,8 @@ import {
   Search,
   Settings,
 } from "lucide-react";
-import { useTheme } from "next-themes";
-import Image from "next/image";
-import React, { useEffect } from "react";
-import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
+import { IWorkspace } from "@plane/types";
+import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
 // hooks
 import { useUser, useWorkspace } from "@/hooks/store";
 // types

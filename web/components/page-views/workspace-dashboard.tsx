@@ -1,17 +1,17 @@
-import { observer } from "mobx-react";
 import { useEffect } from "react";
-// hooks
+import { observer } from "mobx-react";
+// ui
+import { Spinner } from "@plane/ui";
 // components
 import { DashboardWidgets } from "@/components/dashboard";
 import { EmptyState } from "@/components/empty-state";
 import { IssuePeekOverview } from "@/components/issues";
 import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
-import { Spinner } from "@plane/ui";
-// ui
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { useApplication, useDashboard, useEventTracker, useProject, useUser } from "@/hooks/store";
+// hooks
+import { useAppRouter, useCommandPalette, useDashboard, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
@@ -19,10 +19,8 @@ export const WorkspaceDashboardView = observer(() => {
     //  captureEvent,
     setTrackElement,
   } = useEventTracker();
-  const {
-    commandPalette: { toggleCreateProjectModal },
-    router: { workspaceSlug },
-  } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
+  const { workspaceSlug } = useAppRouter();
   const { data: currentUser } = useUser();
   // const { currentUser, updateTourCompleted } = useUser();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();

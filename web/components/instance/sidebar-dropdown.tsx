@@ -1,6 +1,6 @@
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Fragment } from "react";
 // icons
 import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 // headless ui

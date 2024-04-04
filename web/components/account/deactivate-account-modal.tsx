@@ -46,7 +46,7 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
         router.push("/");
         handleClose();
       })
-      .catch((err) =>
+      .catch((err: any) =>
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

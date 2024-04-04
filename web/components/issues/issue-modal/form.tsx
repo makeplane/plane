@@ -3,11 +3,13 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
-import type { TIssue, ISearchIssueResponse } from "@plane/types";
 // editor
-// hooks
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+// types
+import type { TIssue, ISearchIssueResponse } from "@plane/types";
+// ui
 import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { GptAssistantPopover } from "@/components/core";
 import {
   CycleDropdown,
@@ -22,18 +24,24 @@ import {
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
+// helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "@/hooks/store";
+// hooks
+import {
+  useAppRouter,
+  useEstimate,
+  useInstance,
+  useIssueDetail,
+  useMention,
+  useProject,
+  useWorkspace,
+} from "@/hooks/store";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
 import { AIService } from "@/services/ai.service";
 import { FileService } from "@/services/file.service";
-// components
-// ui
-// helpers
-// types
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -110,20 +118,16 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
-
   // refs
   const editorRef = useRef<any>(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
-
-  // store hooks
-  const {
-    config: { envConfig },
-    router: { projectId: routeProjectId },
-  } = useApplication();
+  const { projectId: routeProjectId } = useAppRouter();
+  const { instance } = useInstance();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
   const { mentionHighlights, mentionSuggestions } = useMention();

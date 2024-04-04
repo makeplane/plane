@@ -1,6 +1,6 @@
-import { FileText, Inbox } from "lucide-react";
-import { observer } from "mobx-react";
 import { FC } from "react";
+import { observer } from "mobx-react";
+import { FileText, Inbox } from "lucide-react";
 // types
 import { IProject } from "@plane/types";
 // ui

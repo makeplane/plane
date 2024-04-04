@@ -10,16 +10,14 @@ import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 import { ProjectLogo } from "@/components/project";
 import { EUserProjectRoles } from "@/constants/project";
-import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    commandPalette: { toggleCreateCycleModal },
-  } = useApplication();
+  const { toggleCreateCycleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },

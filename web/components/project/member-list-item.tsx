@@ -1,7 +1,7 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
 // icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
@@ -55,7 +55,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           await fetchProjects(workspaceSlug.toString());
           router.push(`/${workspaceSlug}/projects`);
         })
-        .catch((err) =>
+        .catch((err: any) =>
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error",

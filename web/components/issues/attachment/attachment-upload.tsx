@@ -6,7 +6,7 @@ import { MAX_FILE_SIZE } from "@/constants/common";
 // helpers
 import { generateFileName } from "@/helpers/attachment.helper";
 // hooks
-import { useStore } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 // components
 import { TAttachmentOperations } from "./root";
 
@@ -21,9 +21,7 @@ type Props = {
 export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
   const { workspaceSlug, disabled = false, handleAttachmentOperations } = props;
   // store hooks
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
   // states
   const [isLoading, setIsLoading] = useState(false);
 

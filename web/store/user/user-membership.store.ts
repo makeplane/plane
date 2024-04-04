@@ -92,7 +92,7 @@ export class UserMembershipStore implements IUserMembershipStore {
       leaveProject: action,
       fetchUserWorkspaceProjectsRole: action,
     });
-    this.router = _rootStore.app.router;
+    this.router = _rootStore.router;
     this.store = _rootStore;
     // services
     this.userService = new UserService();

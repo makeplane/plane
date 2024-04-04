@@ -10,15 +10,13 @@ import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useStore } from "@/hooks";
+import { useUser } from "@/hooks/store";
 
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   // store hooks
   const {
-    user: {
-      profile: { data: userProfile },
-    },
-  } = useStore();
+    profile: { data: userProfile },
+  } = useUser();
 
   const isDarkMode = userProfile?.theme.theme === "dark";
 

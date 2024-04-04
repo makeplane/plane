@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import useSWR, { mutate } from "swr";
 // icons
 import { RefreshCw } from "lucide-react";

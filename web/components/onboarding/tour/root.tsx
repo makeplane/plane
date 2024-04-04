@@ -1,7 +1,7 @@
-import { X } from "lucide-react";
-import { observer } from "mobx-react";
-import Image from "next/image";
 import { useState } from "react";
+import { observer } from "mobx-react";
+import Image, { StaticImageData } from "next/image";
+import { X } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // components
@@ -9,7 +9,7 @@ import { TourSidebar } from "@/components/onboarding";
 // constants
 import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
 // hooks
-import { useApplication, useEventTracker, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
 import CyclesTour from "public/onboarding/cycles.webp";
 import IssuesTour from "public/onboarding/issues.webp";
@@ -30,7 +30,7 @@ const TOUR_STEPS: {
   key: TTourSteps;
   title: string;
   description: string;
-  image: any;
+  image: StaticImageData;
   prevStep?: TTourSteps;
   nextStep?: TTourSteps;
 }[] = [
@@ -82,7 +82,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement, captureEvent } = useEventTracker();
   const { data: currentUser } = useUser();
 
@@ -171,7 +171,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     onClick={() => {
                       setTrackElement("Product tour");
                       onComplete();
-                      commandPaletteStore.toggleCreateProjectModal(true);
+                      toggleCreateProjectModal(true);
                     }}
                   >
                     Create my first project

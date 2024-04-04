@@ -1,5 +1,5 @@
-import { observer } from "mobx-react";
 import { FC, useEffect } from "react";
+import { observer } from "mobx-react";
 // store hooks
 import { TIssueOperations } from "@/components/issues";
 import { useIssueDetail, useProject, useUser } from "@/hooks/store";

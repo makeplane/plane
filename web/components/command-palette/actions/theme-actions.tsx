@@ -15,12 +15,6 @@ export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
   const { closePalette } = props;
   // states
   const [mounted, setMounted] = useState(false);
-  // store
-  // const {
-  //   user: {
-  //     profile: { updateUserProfile },
-  //   },
-  // } = useStore();
   // hooks
   const { setTheme } = useTheme();
 

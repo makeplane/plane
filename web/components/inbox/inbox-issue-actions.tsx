@@ -1,9 +1,9 @@
-import { Popover } from "@headlessui/react";
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
+import { Popover } from "@headlessui/react";
 // icons
 import type { TInboxDetailedStatus } from "@plane/types";
 // ui

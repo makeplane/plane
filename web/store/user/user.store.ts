@@ -1,14 +1,14 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
-// stores
-import { IAccountStore, AccountStore } from "store/user/account.store";
-import { ProfileStore, IProfileStore } from "store/user/profile.store";
-import { RootStore } from "store/root.store";
-import { IUserMembershipStore, UserMembershipStore } from "store/user/user-membership.store";
-// services
-import { AuthService } from "services/auth.service";
-import { UserService } from "services/user.service";
 // types
 import { IUser, IUserAccount } from "@plane/types";
+// services
+import { AuthService } from "@/services/auth.service";
+import { UserService } from "@/services/user.service";
+// stores
+import { RootStore } from "@/store/root.store";
+import { IAccountStore, AccountStore } from "@/store/user/account.store";
+import { ProfileStore, IProfileStore } from "@/store/user/profile.store";
+import { IUserMembershipStore, UserMembershipStore } from "@/store/user/user-membership.store";
 
 export interface IUserStore {
   // observables

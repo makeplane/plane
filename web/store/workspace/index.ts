@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import { WorkspaceService } from "@/services/workspace.service";
 import { IWorkspace } from "@plane/types";
+import { WorkspaceService } from "@/services/workspace.service";
 import { RootStore } from "../root.store";
 // types
 // services
@@ -61,7 +61,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     // services
     this.workspaceService = new WorkspaceService();
     // root store
-    this.router = _rootStore.app.router;
+    this.router = _rootStore.router;
     this.user = _rootStore.user;
     // sub-stores
     this.webhook = new WebhookStore(_rootStore);

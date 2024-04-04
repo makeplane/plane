@@ -1,6 +1,6 @@
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useEffect } from "react";
 import useSWR from "swr";
 // icons
 import { History, MessageSquare } from "lucide-react";
