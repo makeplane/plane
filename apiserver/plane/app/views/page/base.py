@@ -91,7 +91,13 @@ class PageViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         serializer = PageSerializer(
             data=request.data,
-            context={"project_id": project_id, "owned_by_id": request.user.id},
+            context={
+                "project_id": project_id,
+                "owned_by_id": request.user.id,
+                "description_html": request.data.get(
+                    "description_html", "<p></p>"
+                ),
+            },
         )
 
         if serializer.is_valid():
