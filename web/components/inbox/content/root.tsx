@@ -21,8 +21,6 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
 
   const { fetchActivities, fetchComments } = useIssueDetail();
 
-  // const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
-
   useSWR(
     workspaceSlug && projectId && inboxIssueId
       ? `INBOX_ISSUE_DETAIL_${workspaceSlug}_${projectId}_inbox_${inboxIssueId}`
@@ -38,7 +36,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
 
   const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  if (!inboxIssue) return <></>;
+  if (!inboxIssue) return <div className="border border-red-500" />;
   return (
     <>
       <div className="w-full h-full overflow-hidden relative flex flex-col">

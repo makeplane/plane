@@ -1,15 +1,19 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { CalendarDays } from "lucide-react";
 import { Tooltip, PriorityIcon } from "@plane/ui";
+// components
 import { InboxIssueStatus } from "@/components/inbox";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
 import { useLabel } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { IInboxIssueStore } from "@/store/inbox-issue.store";
+// store
+import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;
@@ -28,18 +32,18 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
   const { isMobile } = usePlatformOS();
   const issue = inboxIssue.issue;
 
-  // useEffect(() => {
-  //   if (issue.id === inboxIssueId) {
-  //     setTimeout(() => {
-  //       const issueItemCard = document.getElementById(`inbox-issue-list-item-${issue.id}`);
-  //       if (issueItemCard)
-  //         issueItemCard.scrollIntoView({
-  //           behavior: "smooth",
-  //           block: "center",
-  //         });
-  //     }, 200);
-  //   }
-  // }, [inboxIssueId, issue.id]);
+  useEffect(() => {
+    if (issue.id === inboxIssueId) {
+      setTimeout(() => {
+        const issueItemCard = document.getElementById(`inbox-issue-list-item-${issue.id}`);
+        if (issueItemCard)
+          issueItemCard.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+      }, 200);
+    }
+  }, [inboxIssueId, issue.id]);
 
   if (!issue) return <></>;
 

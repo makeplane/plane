@@ -67,6 +67,10 @@ export type TInboxIssue = {
   created_by: string;
 };
 
-export type TInboxIssueWithPagination = TPaginationInfo & {
+export type TInboxIssuePaginationInfo = TPaginationInfo & {
+  total_results: number;
+};
+
+export type TInboxIssueWithPagination = TInboxIssuePaginationInfo & {
   results: TInboxIssue[];
 };
