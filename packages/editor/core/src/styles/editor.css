@@ -12,10 +12,6 @@
   display: none;
 }
 
-.ProseMirror code {
-  color: rgba(var(--color-primary-100));
-}
-
 .ProseMirror code::before,
 .ProseMirror code::after {
   display: none;
@@ -32,8 +28,8 @@
 /* Custom image styles */
 .ProseMirror img {
   transition: filter 0.1s ease-in-out;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
+  margin-top: 4px;
+  margin-bottom: 4px;
 
   &:hover {
     cursor: pointer;
@@ -55,17 +51,21 @@
 
 /* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
 
+ul[data-type="taskList"] {
+  margin-top: 7px;
+}
+
+ul[data-type="taskList"] ul[data-type="taskList"] {
+  margin-top: 0.6rem;
+}
+
 ul[data-type="taskList"] li {
   font-size: 1rem;
   line-height: 1.5;
 }
 
-ul[data-type="taskList"] li ul[data-type="taskList"] {
-  margin-top: 0.9rem;
-}
-
 ul[data-type="taskList"] li > label {
-  margin: 0.25rem 0.2rem 0 0;
+  margin: 0.1rem 0.2rem 0 0;
   user-select: none;
 }
 
@@ -279,7 +279,14 @@ span:focus .fake-cursor {
   z-index: 1;
 }
 
-/* typography */
+/* numbered and bullet lists */
+ol ol,
+ul:not([data-type="taskList"]) ul:not([data-type~="taskList"]) {
+  margin-top: 0.45rem;
+}
+/* end numbered and bullet lists */
+
+/* tailwind typography */
 .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 2rem;
   margin-bottom: 4px;
@@ -320,3 +327,4 @@ span:focus .fake-cursor {
 .prose :where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 0;
 }
+/* end tailwind typography */

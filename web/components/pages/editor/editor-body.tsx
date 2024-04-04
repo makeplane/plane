@@ -17,7 +17,7 @@ import { PageContentBrowser } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useMention, useProjectPages, useWorkspace } from "@/hooks/store";
+import { useMention, useWorkspace } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
@@ -56,7 +56,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, pageId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values

@@ -27,17 +27,17 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "",
+        class: "list-disc pl-7 space-y-2",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "",
+        class: "list-decimal pl-7 space-y-2",
       },
     },
     listItem: {
       HTMLAttributes: {
-        class: "not-prose my-4",
+        class: "not-prose",
       },
     },
     code: false,
@@ -67,14 +67,14 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   CustomTypographyExtension,
   ReadOnlyImageExtension.configure({
     HTMLAttributes: {
-      class: "rounded-lg border border-custom-border-300",
+      class: "rounded-md",
     },
   }),
   TiptapUnderline,
   TextStyle,
   TaskList.configure({
     HTMLAttributes: {
-      class: "not-prose pl-2 space-y-4",
+      class: "not-prose pl-2 space-y-2",
     },
   }),
   TaskItem.configure({
