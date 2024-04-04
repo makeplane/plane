@@ -29,7 +29,7 @@ export interface IProjectPageStore {
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   // actions
-  getAllPages: (pageType?: TPageNavigationTabs) => Promise<TPage[] | undefined>;
+  getAllPages: (pageType: TPageNavigationTabs) => Promise<TPage[] | undefined>;
   getPageById: (pageId: string) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
@@ -128,7 +128,7 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch all the pages based on the navigation tab
    * @param {TPageNavigationTabs} pageType
    */
-  getAllPages = async (pageType: TPageNavigationTabs = "public") => {
+  getAllPages = async (pageType: TPageNavigationTabs) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !projectId) return undefined;
@@ -201,7 +201,7 @@ export class ProjectPageStore implements IProjectPageStore {
       if (!workspaceSlug || !projectId) return undefined;
 
       runInAction(() => {
-        this.loader = "init-loader";
+        this.loader = "mutation-loader";
         this.error = undefined;
       });
 

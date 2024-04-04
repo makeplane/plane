@@ -13,12 +13,12 @@ type TPagesListRoot = {
 export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // hooks
-  const { pageIds } = useProjectPages(projectId);
+  const { filteredPageIds } = useProjectPages(projectId);
 
-  if (!pageIds) return <></>;
+  if (!filteredPageIds) return <></>;
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto divide-y-[0.5px] divide-custom-border-200">
-      {pageIds.map((pageId) => (
+      {filteredPageIds.map((pageId) => (
         <PageListBlock key={pageId} workspaceSlug={workspaceSlug} projectId={projectId} pageId={pageId} />
       ))}
     </div>

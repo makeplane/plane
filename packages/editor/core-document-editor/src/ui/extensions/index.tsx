@@ -41,17 +41,17 @@ export const CoreEditorExtensions = (
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "",
+        class: "list-disc pl-7",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "",
+        class: "list-decimal pl-7",
       },
     },
     listItem: {
       HTMLAttributes: {
-        class: "",
+        class: "not-prose my-4",
       },
     },
     code: false,
@@ -68,10 +68,14 @@ export const CoreEditorExtensions = (
   // ListItem,
 
   CustomQuoteExtension.configure({
-    HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
+    HTMLAttributes: {
+      className: "border-l-4 border-custom-border-300",
+    },
   }),
   CustomHorizontalRule.configure({
-    HTMLAttributes: { class: "mt-4 mb-4" },
+    HTMLAttributes: {
+      class: "my-4",
+    },
   }),
   CustomKeymap,
   ListKeymap,
@@ -107,7 +111,7 @@ export const CoreEditorExtensions = (
   }),
   CustomCodeBlockExtension.configure({
     HTMLAttributes: {
-      class: "bg-custom-background-80 text-custom-text-100 rounded-lg p-8 pl-9 pr-4",
+      class: "",
     },
   }),
   CustomCodeMarkPlugin,

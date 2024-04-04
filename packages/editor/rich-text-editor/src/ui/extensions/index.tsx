@@ -20,7 +20,7 @@ export const RichTextEditorExtensions = (
         return "";
       }
 
-      return "Press '/' for commands... \n SS";
+      return "Press '/' for commands...";
     },
     includeChildren: true,
   }),
