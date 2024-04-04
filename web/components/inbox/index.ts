@@ -3,6 +3,6 @@ export * from "./inbox-filter";
 export * from "./sidebar";
 export * from "./content";
 
-export * from "./inbox-issue-snooze";
-export * from "./inbox-issue-actions";
-export * from "./inbox-issue-status";
+export * from "./modals/snooze-issue-modal";
+export * from "./content/inbox-issue-actions";
+export * from "./helper";

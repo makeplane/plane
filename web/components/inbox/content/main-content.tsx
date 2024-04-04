@@ -14,7 +14,7 @@ import {
 import { useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // components
-import { IInboxIssueStore } from "@/store/inbox-issue.store";
+import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { InboxIssueDetailsSidebar } from "./sidebar";
 
 type Props = {
