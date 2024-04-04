@@ -20,7 +20,7 @@ export const FilterStatus: FC<Props> = observer((props) => {
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // derived values
-  const filterValue = inboxFilters?.inbox_status || [];
+  const filterValue = inboxFilters?.status || [];
   const appliedFiltersCount = filterValue?.length ?? 0;
   const filteredOptions = INBOX_STATUS.filter((s) => s.key.includes(searchQuery.toLowerCase()));
 
@@ -41,7 +41,7 @@ export const FilterStatus: FC<Props> = observer((props) => {
               <FilterOption
                 key={status.key}
                 isChecked={filterValue?.includes(status.status) ? true : false}
-                onClick={() => handleInboxIssueFilters("inbox_status", handleFilterValue(status.status))}
+                onClick={() => handleInboxIssueFilters("status", handleFilterValue(status.status))}
                 title={status.title}
               />
             ))

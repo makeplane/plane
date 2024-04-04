@@ -1,3 +1,4 @@
+import reverse from "lodash/reverse";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -77,7 +78,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
 
   // computed
   get inboxIssuesArray() {
-    return Object.values(this.inboxIssues || {});
+    return reverse(Object.values(this.inboxIssues || {}));
   }
 
   getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId] || undefined);
@@ -88,7 +89,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
     set(this, "inboxFilters", undefined);
     set(this, ["inboxSorting", "order_by"], "issue__created_at");
     set(this, ["inboxSorting", "sort_by"], "desc");
-    if (tab === "closed") set(this, ["inboxFilters", "inbox_status"], [-1, 0, 1, 2]);
+    if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 0, 1, 2]);
     const { workspaceSlug, projectId } = this.store.app.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId);
   };
@@ -123,7 +124,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
         this.inboxFilters,
         this.inboxSorting,
         this.PER_PAGE_COUNT,
-        this.inboxIssuePaginationInfo?.next_cursor || ""
+        this.inboxIssuePaginationInfo?.next_cursor || `${this.PER_PAGE_COUNT}:0:0`
       );
       const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, queryParams);
 

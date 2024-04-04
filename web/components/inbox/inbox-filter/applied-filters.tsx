@@ -50,7 +50,7 @@ export const InboxIssueAppliedFilter: FC<InboxIssueAppliedFilterProps> = observe
                 </button>
               </div>
             )}
-            {key === "inbox_status" && (
+            {key === "status" && (
               <div className="flex flex-wrap items-center gap-1">
                 <InboxIssueAppliedStatusFilters
                   statuses={inboxFilters[key] || []}
