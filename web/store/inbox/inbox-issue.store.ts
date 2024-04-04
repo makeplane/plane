@@ -5,6 +5,7 @@ import { InboxIssueService } from "services/inbox";
 import { TIssue, TInboxIssue } from "@plane/types";
 
 export interface IInboxIssueStore {
+  isLoading: boolean;
   id: string;
   status: number;
   issue: Partial<TIssue>;
@@ -19,9 +20,8 @@ export interface IInboxIssueStore {
 }
 
 export class InboxIssueStore implements IInboxIssueStore {
-  // components helper observables
+  // observables
   isLoading: boolean = false;
-  // inbox issue observables
   id: string;
   status: number;
   issue: Partial<TIssue> = {};
@@ -62,10 +62,7 @@ export class InboxIssueStore implements IInboxIssueStore {
 
   fetchInboxIssue = async () => {
     try {
-      runInAction(() => {
-        this.isLoading = true;
-      });
-      // fetch inbox issue from the server
+      this.isLoading = true;
       const response = this.inboxIssueService.retrieve(this.workspaceSlug, this.projectId, this.id);
       runInAction(() => {
         this.isLoading = false;

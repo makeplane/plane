@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
-// ui
 import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// hooks
+// components
+import { InboxIssueProperties } from "@/components/inbox/content";
 import {
   IssueDescriptionInput,
   IssueTitleInput,
@@ -11,11 +11,11 @@ import {
   IssueReaction,
   TIssueOperations,
 } from "@/components/issues";
+// hooks
 import { useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// components
+// store types
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
-import { InboxIssueDetailsSidebar } from "./sidebar";
 
 type Props = {
   workspaceSlug: string;
@@ -156,7 +156,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         )}
       </div>
 
-      <InboxIssueDetailsSidebar
+      <InboxIssueProperties
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         issueId={issue.id}

@@ -1,14 +1,13 @@
 import { ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import { Inbox } from "lucide-react";
 // components
 import { PageHead } from "@/components/core";
 import { ProjectInboxHeader } from "@/components/headers";
-import { InboxSidebar, InboxIssueRoot } from "@/components/inbox";
-import { InboxLayoutLoader } from "@/components/ui";
+import { InboxIssueRoot } from "@/components/inbox";
 // hooks
-import { useProject, useProjectInbox } from "@/hooks/store";
+import { useProject } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // types
@@ -20,27 +19,17 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
   // hooks
   const { currentProjectDetails } = useProject();
-  const { inboxIssues, inboxIssuesArray, fetchInboxIssues } = useProjectInbox();
 
-  // return null when workspaceSlug or projectId is not available
-  if (!workspaceSlug || !projectId) return <></>;
+  if (!workspaceSlug || !projectId) return <div>PLease check your URL</div>;
 
-  // fetching inbox issues
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_INBOX_ISSUES_${workspaceSlug}_${projectId}` : null,
-    () => {
-      workspaceSlug && projectId && fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
-    },
-    { revalidateOnFocus: false }
-  );
-
-  if (!inboxIssues || !currentProjectDetails) {
+  // No access to inbox
+  if (currentProjectDetails?.inbox_view === false)
     return (
-      <div className="flex h-full flex-col">
-        <InboxLayoutLoader />
+      <div className="relative w-full h-full flex flex-col gap-3 justify-center items-center">
+        <Inbox size={60} strokeWidth={1.5} />
+        <div className="text-custom-text-200">No access to the inbox issues. Please contact your manager.</div>
       </div>
     );
-  }
 
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : "Plane - Inbox";
@@ -48,13 +37,12 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   return (
     <div className="flex h-full flex-col">
       <PageHead title={pageTitle} />
-      <div className="relative flex h-full overflow-hidden">
-        <InboxSidebar workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+      <div className="w-full h-full overflow-hidden">
         <InboxIssueRoot
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
-          inboxIssueId={inboxIssueId?.toString()}
-          inboxIssuesArrayLength={(inboxIssuesArray || []).length}
+          inboxIssueId={inboxIssueId?.toString() || undefined}
+          inboxAccessible={currentProjectDetails?.inbox_view || false}
         />
       </div>
     </div>

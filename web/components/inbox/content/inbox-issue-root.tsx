@@ -3,17 +3,17 @@ import { Inbox } from "lucide-react";
 // components
 import { InboxContentRoot } from "@/components/inbox";
 
-type IInboxIssueRootProps = {
+type IInboxIssueContentRootProps = {
   workspaceSlug: string;
   projectId: string;
   inboxIssueId: string | undefined;
   inboxIssuesArrayLength: number;
 };
 
-export const InboxIssueRoot: FC<IInboxIssueRootProps> = (props) => {
+export const InboxIssueContentRoot: FC<IInboxIssueContentRootProps> = (props) => {
   const { workspaceSlug, projectId, inboxIssueId, inboxIssuesArrayLength } = props;
   return (
-    <div className="w-3/5">
+    <div className="w-4/6">
       {inboxIssueId ? (
         <InboxContentRoot workspaceSlug={workspaceSlug} projectId={projectId} inboxIssueId={inboxIssueId} />
       ) : (

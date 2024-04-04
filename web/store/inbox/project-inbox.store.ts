@@ -21,7 +21,8 @@ import { InboxIssueHelpers } from "./helpers";
 
 export interface IProjectInboxStore {
   currentTab: TInboxIssueCurrentTab;
-  isLoading: boolean;
+  isLoading: "init-loading" | "pagination-loading" | undefined;
+  error: { message: string; status: "init-error" | "pagination-error" } | undefined;
   inboxFilters: Partial<TInboxIssueFilter>;
   inboxSorting: Partial<TInboxIssueSorting>;
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined;
@@ -49,7 +50,8 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   PER_PAGE_COUNT = 10;
   // observables
   currentTab: TInboxIssueCurrentTab = "open";
-  isLoading: boolean = false;
+  isLoading: "init-loading" | "pagination-loading" | undefined = "init-loading";
+  error: { message: string; status: "init-error" | "pagination-error" } | undefined = undefined;
   inboxFilters: Partial<TInboxIssueFilter> = {};
   inboxSorting: Partial<TInboxIssueSorting> = {
     order_by: "issue__created_at",
@@ -120,7 +122,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
    */
   fetchInboxIssues = async (workspaceSlug: string, projectId: string) => {
     try {
-      this.isLoading = true;
+      this.isLoading = "init-loading";
       this.inboxIssuePaginationInfo = undefined;
       this.inboxIssues = {};
 
@@ -133,7 +135,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
       const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, queryParams);
 
       runInAction(() => {
-        this.isLoading = false;
+        this.isLoading = undefined;
         set(this, "inboxIssuePaginationInfo", paginationInfo);
         if (results && results.length > 0)
           results.forEach((value: TInboxIssue) => {
@@ -142,7 +144,11 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
       });
     } catch (error) {
       console.error("Error fetching the inbox issues", error);
-      this.isLoading = false;
+      this.isLoading = undefined;
+      this.error = {
+        message: "Error fetching the inbox issues please try again later.",
+        status: "init-error",
+      };
       throw error;
     }
   };
@@ -159,7 +165,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
         (this.inboxIssuePaginationInfo?.total_results &&
           this.inboxIssuesArray.length < this.inboxIssuePaginationInfo?.total_results)
       ) {
-        this.isLoading = true;
+        this.isLoading = "pagination-loading";
 
         const queryParams = this.inboxIssueQueryParams(
           this.inboxFilters,
@@ -170,17 +176,21 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
         const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, queryParams);
 
         runInAction(() => {
-          this.isLoading = false;
+          this.isLoading = undefined;
           set(this, "inboxIssuePaginationInfo", paginationInfo);
           if (results && results.length > 0)
             results.forEach((value: TInboxIssue) => {
               set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
             });
         });
-      }
+      } else set(this, ["inboxIssuePaginationInfo", "next_page_results"], false);
     } catch (error) {
       console.error("Error fetching the inbox issues", error);
-      this.isLoading = false;
+      this.isLoading = undefined;
+      this.error = {
+        message: "Error fetching the paginated inbox issues please try again later.",
+        status: "pagination-error",
+      };
       throw error;
     }
   };
@@ -218,6 +228,11 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
             this.inboxIssues,
             inboxIssueResponse?.issue?.id,
             new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse)
+          );
+          set(
+            this,
+            ["inboxIssuePaginationInfo", "total_results"],
+            (this.inboxIssuePaginationInfo?.total_results || 0) + 1
           );
         });
       return inboxIssueResponse;

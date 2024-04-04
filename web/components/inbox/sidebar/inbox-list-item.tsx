@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, MouseEvent, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -45,18 +45,25 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
     }
   }, [inboxIssueId, issue.id]);
 
-  if (!issue) return <></>;
+  const handleIssueRedirection = (
+    event: MouseEvent<HTMLAnchorElement, MouseEvent>,
+    currentIssueId: string | undefined
+  ) => {
+    if (!inboxIssueId || inboxIssueId === currentIssueId) event.preventDefault();
+  };
 
+  if (!issue) return <></>;
   return (
     <>
       <Link
         id={`inbox-issue-list-item-${issue.id}`}
         key={`${projectId}_${issue.id}`}
         href={`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${issue.id}`}
+        onClick={(e) => handleIssueRedirection(e, issue.id)}
       >
         <div
           className={cn(
-            `flex flex-col gap-1.5 relative border-b border-custom-border-200 p-5 hover:bg-custom-primary/5 cursor-pointer`,
+            `flex flex-col gap-1.5 relative border border-t-transparent border-l-transparent border-r-transparent border-custom-border-200 p-5 hover:bg-custom-primary/5 cursor-pointer transition-all`,
             { "bg-custom-primary/5 border-custom-primary-100 border": inboxIssueId === issue.id }
           )}
         >

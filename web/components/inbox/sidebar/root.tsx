@@ -15,15 +15,26 @@ type IInboxSidebarProps = {
   projectId: string;
 };
 
+const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
+  {
+    key: "open",
+    label: "Open",
+  },
+  {
+    key: "closed",
+    label: "Closed",
+  },
+];
+
 export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // ref
   const containerRef = useRef<HTMLDivElement>(null);
   const elementRef = useRef<HTMLDivElement>(null);
   // store
+  const { currentProjectDetails } = useProject();
   const { currentTab, handleCurrentTab, inboxIssuesArray, inboxIssuePaginationInfo, fetchInboxPaginationIssues } =
     useProjectInbox();
-  const { currentProjectDetails } = useProject();
 
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
@@ -37,19 +48,8 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     rootMargin: "20%",
   });
 
-  const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
-    {
-      key: "open",
-      label: "Open",
-    },
-    {
-      key: "closed",
-      label: "Closed",
-    },
-  ];
-
   return (
-    <div className="flex-shrink-0 w-2/5 h-full border-r border-custom-border-300">
+    <div className="flex-shrink-0 w-2/6 h-full border-r border-custom-border-300">
       <div className="relative w-full h-full flex flex-col overflow-hidden">
         <div className="border-b border-custom-border-300 flex-shrink-0 w-full h-[50px] relative flex items-center gap-2 px-3 whitespace-nowrap">
           {tabNavigationOptions.map((option) => (
@@ -61,7 +61,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                   ? `text-custom-primary-100 bg-custom-primary-100/10`
                   : `hover:text-custom-text-200`
               )}
-              onClick={() => handleCurrentTab(option?.key)}
+              onClick={() => currentTab != option?.key && handleCurrentTab(option?.key)}
             >
               <div>{option?.label}</div>
               {option?.key === "open" && currentTab === option?.key && (

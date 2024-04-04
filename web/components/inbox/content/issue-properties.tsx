@@ -22,7 +22,7 @@ type Props = {
   is_editable: boolean;
 };
 
-export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
+export const InboxIssueProperties: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, is_editable } = props;
   // store hooks
   const { getIssueInboxByIssueId } = useProjectInbox();

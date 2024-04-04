@@ -50,7 +50,8 @@ export const ProjectInboxHeader: FC = observer(() => {
               }
             />
           </Breadcrumbs>
-          {isLoading && (
+
+          {isLoading === "pagination-loading" && (
             <div className="flex items-center gap-1.5 text-custom-text-300">
               <RefreshCcw className="h-3.5 w-3.5 animate-spin" />
               <p className="text-sm">Syncing...</p>
