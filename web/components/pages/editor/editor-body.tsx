@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Control, Controller } from "react-hook-form";
+import useSWR from "swr";
 // document editor
 import {
   DocumentEditorWithRef,
@@ -17,7 +18,7 @@ import { PageContentBrowser } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useMention, useWorkspace } from "@/hooks/store";
+import { useMention, useProjectPages, useWorkspace } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
@@ -54,9 +55,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
+  const { getPageById } = useProjectPages(projectId?.toString() ?? "");
   // derived values
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
   const pageTitle = pageStore?.name ?? "";
@@ -64,6 +66,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const isFullWidth = !!pageStore?.view_props?.full_width;
   const { description_html, isContentEditable, updateName, isSubmitting, setIsSubmitting } = pageStore;
 
+  // fetching page details
+  const { data: swrPageDetails } = useSWR(
+    pageId ? `PAGE_DETAILS_${pageId}` : null,
+    pageId ? () => getPageById(pageId.toString()) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+    }
+  );
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -76,6 +88,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(description_html ?? "<p></p>");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  console.log("swrPageDetails", swrPageDetails?.description_html);
 
   if (description_html === undefined) return null;
 
@@ -116,6 +130,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 }}
                 handleEditorReady={handleEditorReady}
                 value={pageDescription}
+                updatedValue={swrPageDetails?.description_html ?? "<p></p>"}
                 ref={editorRef}
                 updatePageTitle={updateName}
                 customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
@@ -136,6 +151,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             ref={readOnlyEditorRef}
             title={pageTitle}
             value={pageDescription}
+            updatedValue={swrPageDetails?.description_html ?? "<p></p>"}
             handleEditorReady={handleReadOnlyEditorReady}
             customClassName="tracking-tight w-full px-0 !border-none"
             mentionHighlights={mentionHighlights}
