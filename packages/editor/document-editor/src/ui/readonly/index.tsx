@@ -1,6 +1,4 @@
-import { forwardRef, MutableRefObject, useEffect } from "react";
-// hooks
-import { useEditorMarkings } from "src/hooks/use-editor-markings";
+import { forwardRef, MutableRefObject } from "react";
 import {
   EditorReadOnlyRefApi,
   getEditorClassNames,
@@ -19,7 +17,6 @@ interface IDocumentReadOnlyEditor {
   title: string;
   handleEditorReady?: (value: boolean) => void;
   mentionHighlights?: () => Promise<IMentionHighlight[]>;
-
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
 }
 
@@ -34,8 +31,6 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     handleEditorReady,
     mentionHighlights,
   } = props;
-  const { updateMarkings } = useEditorMarkings();
-
   const editor = useReadOnlyEditor({
     value,
     updatedValue,
@@ -44,12 +39,6 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     handleEditorReady,
     extensions: [IssueWidgetPlaceholder()],
   });
-
-  useEffect(() => {
-    if (editor) {
-      updateMarkings(editor.getHTML());
-    }
-  }, [editor, updateMarkings]);
 
   if (!editor) {
     return null;

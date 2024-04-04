@@ -1,5 +1,5 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject } from "react";
+import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
 import { CoreReadOnlyEditorExtensions } from "src/ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "src/ui/read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
@@ -11,6 +11,7 @@ interface CustomReadOnlyEditorProps {
   value: string;
   updatedValue: string;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
+  onStart?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
   handleEditorReady?: (value: boolean) => void;
@@ -20,35 +21,40 @@ interface CustomReadOnlyEditorProps {
 export const useReadOnlyEditor = ({
   value,
   updatedValue,
+  onStart,
   forwardedRef,
   extensions = [],
   editorProps = {},
   handleEditorReady,
   mentionHighlights,
 }: CustomReadOnlyEditorProps) => {
-  const editor = useCustomEditor(
-    {
-      editable: false,
-      content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-      editorProps: {
-        ...CoreReadOnlyEditorProps,
-        ...editorProps,
-      },
-      onCreate: async () => {
-        handleEditorReady?.(true);
-      },
-      extensions: [
-        ...CoreReadOnlyEditorExtensions({
-          mentionHighlights: mentionHighlights,
-        }),
-        ...extensions,
-      ],
-      onDestroy: () => {
-        handleEditorReady?.(false);
-      },
+  const editor = useCustomEditor({
+    editable: false,
+    content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+    editorProps: {
+      ...CoreReadOnlyEditorProps,
+      ...editorProps,
     },
-    [updatedValue]
-  );
+
+    onCreate: async ({ editor }) => {
+      handleEditorReady?.(true);
+      // onStart?.(getTrimmedHTML(editor.getHTML()));
+    },
+    extensions: [
+      ...CoreReadOnlyEditorExtensions({
+        mentionHighlights: mentionHighlights,
+      }),
+      ...extensions,
+    ],
+    onDestroy: () => {
+      handleEditorReady?.(false);
+    },
+  });
+
+  // for syncing swr data on tab refocus etc
+  useEffect(() => {
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(updatedValue);
+  }, [updatedValue]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
 

@@ -8,7 +8,6 @@ import {
   EditorRefApi,
 } from "@plane/editor-document-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
-import { useEditorMarkings } from "src/hooks/use-editor-markings";
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { IMentionHighlight, IMentionSuggestion } from "@plane/editor-core";
 
@@ -51,15 +50,9 @@ const DocumentEditor = (props: IDocumentEditor) => {
     tabIndex,
   } = props;
 
-  const { updateMarkings } = useEditorMarkings();
-
   const editor = useEditor({
     onChange(json, html) {
-      updateMarkings(html);
       onChange(json, html);
-    },
-    onStart(_json, html) {
-      updateMarkings(html);
     },
     restoreFile: fileHandler.restore,
     value,

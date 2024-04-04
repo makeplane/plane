@@ -21,7 +21,6 @@ interface CustomEditorProps {
   cancelUploadImage?: () => any;
   value: string;
   updatedValue: string;
-  onStart?: (json: object, html: string) => void;
   onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
@@ -39,7 +38,6 @@ export const useEditor = ({
   value,
   updatedValue,
   extensions = [],
-  onStart,
   onChange,
   forwardedRef,
   restoreFile,
@@ -65,9 +63,8 @@ export const useEditor = ({
       ...extensions,
     ],
     content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-    onCreate: async ({ editor }) => {
+    onCreate: async () => {
       handleEditorReady?.(true);
-      onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
     },
     onTransaction: async ({ editor }) => {
       setSavedSelection(editor.state.selection);
@@ -83,7 +80,7 @@ export const useEditor = ({
   // for syncing swr data on tab refocus etc
   useEffect(() => {
     if (editor && !editor.isDestroyed) editor?.commands.setContent(updatedValue);
-  }, [updatedValue, editor]);
+  }, [updatedValue]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
 
