@@ -82,7 +82,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               Open
               {currentTab === "open" && (
                 <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                  total issues
+                  {inboxIssuePaginationInfo?.total_results || 0}
                 </span>
               )}
             </Tab>
