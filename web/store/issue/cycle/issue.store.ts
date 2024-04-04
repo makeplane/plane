@@ -118,7 +118,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
   ) => {
     try {
       runInAction(() => {
-        this.loader = loadType;
+        this.setLoader(loadType);
       });
       this.clear();
 
@@ -128,7 +128,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       this.onfetchIssues(response, options);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined);
       throw error;
     }
   };
@@ -143,7 +143,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
-      this.loader = "pagination";
+      this.setLoader("pagination", groupId, subGroupId);
 
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
@@ -156,7 +156,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };
@@ -229,7 +229,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
 
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined);
       throw error;
     }
   };
@@ -259,7 +259,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
 
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined);
       throw error;
     }
   };

@@ -6,6 +6,7 @@ import { TIssue, TIssueMap, TPaginationData } from "@plane/types";
 import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/issues";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 // types
 
 type Props = {
@@ -32,8 +33,6 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     issueIdList,
     quickActions,
     loadMoreIssues,
-    getPaginationData,
-    getGroupIssueCount,
     isDragDisabled = false,
     enableQuickIssueCreate,
     disableIssueCreation,
@@ -45,10 +44,15 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   // states
   const formattedDatePayload = renderFormattedPayloadDate(date);
 
+  const {
+    issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
+  } = useIssuesStore();
+
   if (!formattedDatePayload) return null;
 
-  const dayIssueCount = getGroupIssueCount(formattedDatePayload);
-  const nextPageResults = getPaginationData(formattedDatePayload)?.nextPageResults;
+  const dayIssueCount = getGroupIssueCount(formattedDatePayload, undefined, false);
+  const nextPageResults = getPaginationData(formattedDatePayload, undefined)?.nextPageResults;
+  const isPaginating = !!getIssueLoader(formattedDatePayload);
 
   const shouldLoadMore =
     nextPageResults === undefined && dayIssueCount !== undefined
@@ -81,6 +85,12 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
         )
       )}
 
+      {isPaginating && (
+        <div className="p-1 px-2">
+          <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
+        </div>
+      )}
+
       {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
         <div className="px-1 md:px-2 py-1 border-custom-border-200 border-b md:border-none md:hidden group-hover:block">
           <CalendarQuickAddIssueForm
@@ -95,7 +105,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
         </div>
       )}
 
-      {shouldLoadMore && (
+      {shouldLoadMore && !isPaginating && (
         <div className="flex items-center px-2.5 py-1">
           <button
             type="button"

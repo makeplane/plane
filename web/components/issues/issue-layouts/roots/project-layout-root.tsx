@@ -65,7 +65,7 @@ export const ProjectLayoutRoot: FC = observer(() => {
         <ProjectAppliedFiltersRoot />
         <div className="relative h-full w-full overflow-auto bg-custom-background-90">
           {/* mutation loader */}
-          {issues?.loader === "mutation" && (
+          {issues?.getIssueLoader() === "mutation" && (
             <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
               <Spinner className="w-4 h-4" />
             </div>

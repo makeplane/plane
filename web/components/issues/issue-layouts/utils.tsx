@@ -1,5 +1,5 @@
 import { ContrastIcon } from "lucide-react";
-import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
+import { GroupByColumnTypes, IGroupByColumn, IIssueDisplayProperties, TCycleGroups } from "@plane/types";
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
 import { ProjectLogo } from "@/components/project";
@@ -239,4 +239,17 @@ const getCreatedByColumns = (member: IMemberRootStore) => {
       payload: {},
     };
   });
+};
+
+export const getDisplayPropertiesCount = (displayProperties: IIssueDisplayProperties, ignoreKey = false) => {
+  const propertyKeys = Object.keys(displayProperties) as (keyof IIssueDisplayProperties)[];
+
+  let count = 0;
+
+  for (const propertyKey of propertyKeys) {
+    if (ignoreKey && propertyKey === "key") continue;
+    if (displayProperties[propertyKey]) count++;
+  }
+
+  return count;
 };

@@ -77,7 +77,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
   ) => {
     try {
       runInAction(() => {
-        this.loader = loadType;
+        this.setLoader(loadType);
       });
       this.clear();
 
@@ -87,7 +87,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       this.onfetchIssues(response, options);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined);
       throw error;
     }
   };
@@ -102,7 +102,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
-      this.loader = "pagination";
+      this.setLoader("pagination", groupId, subGroupId);
 
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
@@ -115,7 +115,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };

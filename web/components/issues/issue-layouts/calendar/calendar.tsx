@@ -15,7 +15,7 @@ import type {
 import { Spinner } from "@plane/ui";
 import { CalendarHeader, CalendarIssueBlocks, CalendarWeekDays, CalendarWeekHeader } from "@/components/issues";
 import { MONTHS_LIST } from "@/constants/calendar";
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
@@ -29,6 +29,7 @@ import { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { ICalendarWeek } from "./types";
 // helpers
 // constants
@@ -109,84 +110,87 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           issuesFilterStore={issuesFilterStore}
           updateFilters={updateFilters}
         />
-        <div
-          className={cn("flex md:h-full w-full flex-col overflow-y-auto", {
-            "vertical-scrollbar scrollbar-lg": windowWidth > 768,
-          })}
-        >
-          <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
-          <div className="h-full w-full">
-            {layout === "month" && (
-              <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
-                {allWeeksOfActiveMonth &&
-                  Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
-                    <CalendarWeekDays
-                      selectedDate={selectedDate}
-                      setSelectedDate={setSelectedDate}
-                      issuesFilterStore={issuesFilterStore}
-                      key={weekIndex}
-                      week={week}
-                      issues={issues}
-                      groupedIssueIds={groupedIssueIds}
-                      loadMoreIssues={loadMoreIssues}
-                      getPaginationData={getPaginationData}
-                      getGroupIssueCount={getGroupIssueCount}
-                      enableQuickIssueCreate
-                      disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-                      quickActions={quickActions}
-                      quickAddCallback={quickAddCallback}
-                      addIssuesToView={addIssuesToView}
-                      readOnly={readOnly}
-                    />
-                  ))}
-              </div>
-            )}
-            {layout === "week" && (
-              <CalendarWeekDays
-                selectedDate={selectedDate}
-                setSelectedDate={setSelectedDate}
-                issuesFilterStore={issuesFilterStore}
-                week={issueCalendarView.allDaysOfActiveWeek}
+
+        <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
+          <div
+            className={cn("flex md:h-full w-full flex-col overflow-y-auto", {
+              "vertical-scrollbar scrollbar-lg": windowWidth > 768,
+            })}
+          >
+            <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
+            <div className="h-full w-full">
+              {layout === "month" && (
+                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
+                  {allWeeksOfActiveMonth &&
+                    Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
+                      <CalendarWeekDays
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        issuesFilterStore={issuesFilterStore}
+                        key={weekIndex}
+                        week={week}
+                        issues={issues}
+                        groupedIssueIds={groupedIssueIds}
+                        loadMoreIssues={loadMoreIssues}
+                        getPaginationData={getPaginationData}
+                        getGroupIssueCount={getGroupIssueCount}
+                        enableQuickIssueCreate
+                        disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+                        quickActions={quickActions}
+                        quickAddCallback={quickAddCallback}
+                        addIssuesToView={addIssuesToView}
+                        readOnly={readOnly}
+                      />
+                    ))}
+                </div>
+              )}
+              {layout === "week" && (
+                <CalendarWeekDays
+                  selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate}
+                  issuesFilterStore={issuesFilterStore}
+                  week={issueCalendarView.allDaysOfActiveWeek}
+                  issues={issues}
+                  groupedIssueIds={groupedIssueIds}
+                  loadMoreIssues={loadMoreIssues}
+                  getPaginationData={getPaginationData}
+                  getGroupIssueCount={getGroupIssueCount}
+                  enableQuickIssueCreate
+                  disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+                  quickActions={quickActions}
+                  quickAddCallback={quickAddCallback}
+                  addIssuesToView={addIssuesToView}
+                  readOnly={readOnly}
+                />
+              )}
+            </div>
+
+            {/* mobile view */}
+            <div className="md:hidden">
+              <p className="p-4 text-xl font-semibold">
+                {`${selectedDate.getDate()} ${
+                  MONTHS_LIST[selectedDate.getMonth() + 1].title
+                }, ${selectedDate.getFullYear()}`}
+              </p>
+              <CalendarIssueBlocks
+                date={selectedDate}
                 issues={issues}
-                groupedIssueIds={groupedIssueIds}
+                issueIdList={issueIdList}
                 loadMoreIssues={loadMoreIssues}
                 getPaginationData={getPaginationData}
                 getGroupIssueCount={getGroupIssueCount}
+                quickActions={quickActions}
                 enableQuickIssueCreate
                 disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-                quickActions={quickActions}
                 quickAddCallback={quickAddCallback}
                 addIssuesToView={addIssuesToView}
                 readOnly={readOnly}
+                isDragDisabled
+                isMobileView
               />
-            )}
+            </div>
           </div>
-
-          {/* mobile view */}
-          <div className="md:hidden">
-            <p className="p-4 text-xl font-semibold">
-              {`${selectedDate.getDate()} ${
-                MONTHS_LIST[selectedDate.getMonth() + 1].title
-              }, ${selectedDate.getFullYear()}`}
-            </p>
-            <CalendarIssueBlocks
-              date={selectedDate}
-              issues={issues}
-              issueIdList={issueIdList}
-              loadMoreIssues={loadMoreIssues}
-              getPaginationData={getPaginationData}
-              getGroupIssueCount={getGroupIssueCount}
-              quickActions={quickActions}
-              enableQuickIssueCreate
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-              quickAddCallback={quickAddCallback}
-              addIssuesToView={addIssuesToView}
-              readOnly={readOnly}
-              isDragDisabled
-              isMobileView
-            />
-          </div>
-        </div>
+        </IssueLayoutHOC>
       </div>
     </>
   );

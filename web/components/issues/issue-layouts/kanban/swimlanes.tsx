@@ -9,11 +9,10 @@ import {
   IIssueMap,
   TSubGroupedIssues,
   TIssueKanbanFilters,
-  TPaginationData,
 } from "@plane/types";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // components
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 import { KanBan } from "./default";
@@ -83,7 +82,6 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   issuesMap: IIssueMap;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
-  getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (
     groupId: string | undefined,
     subGroupId: string | undefined,
@@ -112,7 +110,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     issuesMap,
     groupedIssueIds,
     getGroupIssueCount,
-    getPaginationData,
     sub_group_by,
     group_by,
     list,
@@ -178,7 +175,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     issuesMap={issuesMap}
                     groupedIssueIds={groupedIssueIds}
                     getGroupIssueCount={getGroupIssueCount}
-                    getPaginationData={getPaginationData}
                     displayProperties={displayProperties}
                     sub_group_by={sub_group_by}
                     group_by={group_by}
@@ -208,7 +204,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
 export interface IKanBanSwimLanes {
   issuesMap: IIssueMap;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
-  getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (
     groupId: string | undefined,
     subGroupId: string | undefined,
@@ -239,7 +234,6 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     issuesMap,
     groupedIssueIds,
     getGroupIssueCount,
-    getPaginationData,
     displayProperties,
     sub_group_by,
     group_by,
@@ -258,7 +252,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     scrollableContainerRef,
   } = props;
 
-  const storeType = useIssueStore();
+  const storeType = useIssueStoreType();
 
   const member = useMember();
   const project = useProject();
@@ -311,7 +305,6 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issuesMap={issuesMap}
           list={subGroupByList}
           groupedIssueIds={groupedIssueIds}
-          getPaginationData={getPaginationData}
           getGroupIssueCount={getGroupIssueCount}
           displayProperties={displayProperties}
           group_by={group_by}

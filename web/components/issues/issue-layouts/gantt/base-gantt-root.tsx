@@ -13,7 +13,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { getIssueBlocksStructure } from "@/helpers/issue.helper";
 //hooks
 import { useIssues, useUser } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 
 import { ALL_ISSUES } from "@/store/issue/helpers/base-issues.store";
@@ -30,7 +30,7 @@ export const BaseGanttRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const storeType = useIssueStore() as GanttStoreType;
+  const storeType = useIssueStoreType() as GanttStoreType;
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
   const { fetchIssues, fetchNextIssues, updateIssue, quickAddIssue } = useIssuesActions(storeType);
   // store hooks

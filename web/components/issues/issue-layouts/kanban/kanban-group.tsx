@@ -2,19 +2,13 @@ import { MutableRefObject, useRef } from "react";
 import { Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react";
 // hooks
-import {
-  TGroupedIssues,
-  TIssue,
-  IIssueDisplayProperties,
-  IIssueMap,
-  TSubGroupedIssues,
-  TPaginationData,
-} from "@plane/types";
+import { TGroupedIssues, TIssue, IIssueDisplayProperties, IIssueMap, TSubGroupedIssues } from "@plane/types";
 //components
 import { KanbanIssueBlockLoader } from "@/components/ui/loader";
 //hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 //types
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
@@ -23,12 +17,6 @@ interface IKanbanGroup {
   issuesMap: IIssueMap;
   peekIssueId?: string;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
-  getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getGroupIssueCount: (
-    groupId: string | undefined,
-    subGroupId: string | undefined,
-    isSubGroupCumulative: boolean
-  ) => number | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
@@ -57,8 +45,6 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     issuesMap,
     displayProperties,
     groupedIssueIds,
-    getGroupIssueCount,
-    getPaginationData,
     peekIssueId,
     isDragDisabled,
     updateIssue,
@@ -73,6 +59,10 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   } = props;
   // hooks
   const projectState = useProjectState();
+
+  const {
+    issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
+  } = useIssuesStore();
 
   const intersectionRef = useRef<HTMLSpanElement | null>(null);
 
@@ -140,6 +130,20 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
   const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
 
+  const isPaginating = !!getIssueLoader(groupId, sub_group_id);
+
+  const loadMore = isPaginating ? (
+    <KanbanIssueBlockLoader />
+  ) : (
+    <div
+      className="w-full sticky bottom-0 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
+      onClick={() => loadMoreIssues(groupId, sub_group_id)}
+    >
+      {" "}
+      Load more &darr;
+    </div>
+  );
+
   const shouldLoadMore =
     nextPageResults === undefined && groupIssueCount !== undefined
       ? issueIds?.length < groupIssueCount
@@ -171,18 +175,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
             {provided.placeholder}
 
-            {shouldLoadMore &&
-              (isSubGroup ? (
-                <div
-                  className="w-full sticky bottom-0 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
-                  onClick={() => loadMoreIssues(groupId, sub_group_id)}
-                >
-                  {" "}
-                  Load more &darr;
-                </div>
-              ) : (
-                <KanbanIssueBlockLoader ref={intersectionRef} />
-              ))}
+            {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={intersectionRef} />)}
 
             {enableQuickIssueCreate && !disableIssueCreation && (
               <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">

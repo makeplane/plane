@@ -50,7 +50,7 @@ export const ALL_ISSUES = "All Issues";
 
 export interface IBaseIssuesStore {
   // observable
-  loader: TLoader;
+  loader: Record<string, TLoader>;
 
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | undefined;
   groupedIssueCount: TGroupedIssueCount;
@@ -63,6 +63,7 @@ export interface IBaseIssuesStore {
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
   getGroupArray(value: boolean | number | string | string[] | null, isDate?: boolean): string[];
   getPaginationData(groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined;
+  getIssueLoader(groupId?: string, subGroupId?: string): TLoader;
   getGroupIssueCount: (
     groupId: string | undefined,
     subGroupId: string | undefined,
@@ -146,7 +147,7 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
 };
 
 export class BaseIssuesStore implements IBaseIssuesStore {
-  loader: TLoader = "init-loader";
+  loader: Record<string, TLoader> = {};
   groupedIssueIds: TIssues | undefined = undefined;
   issuePaginationData: TIssuePaginationData = {};
 
@@ -169,7 +170,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
   constructor(_rootStore: IIssueRootStore, issueFilterStore: IBaseIssueFilterStore, isArchived = false) {
     makeObservable(this, {
       // observable
-      loader: observable.ref,
+      loader: observable,
       groupedIssueIds: observable,
       issuePaginationData: observable,
       groupedIssueCount: observable,
@@ -190,7 +191,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       onfetchIssues: action.bound,
       onfetchNexIssues: action.bound,
       clear: action.bound,
-      getPaginationData: action.bound,
+      setLoader: action.bound,
       addIssue: action.bound,
       removeIssueFromList: action.bound,
 
@@ -288,7 +289,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
     runInAction(() => {
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
-      this.loader = undefined;
+      this.loader[this.getGroupKey()] = undefined;
     });
 
     this.storePreviousPaginationValues(issuesResponse, options);
@@ -301,7 +302,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
     runInAction(() => {
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount, groupId, subGroupId);
-      this.loader = undefined;
+      this.loader[this.getGroupKey(groupId, subGroupId)] = undefined;
     });
 
     this.storePreviousPaginationValues(issuesResponse, undefined, groupId, subGroupId);
@@ -1312,13 +1313,23 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     set(this.issuePaginationData, [this.getGroupKey(groupId, subGroupId)], cursorObject);
   }
 
-  getGroupKey(groupId?: string, subGroupId?: string) {
+  setLoader(loaderValue: TLoader, groupId?: string, subGroupId?: string) {
+    runInAction(() => {
+      set(this.loader, this.getGroupKey(groupId, subGroupId), loaderValue);
+    });
+  }
+
+  getIssueLoader = (groupId?: string, subGroupId?: string) => {
+    return get(this.loader, this.getGroupKey(groupId, subGroupId));
+  };
+
+  getGroupKey = (groupId?: string, subGroupId?: string) => {
     if (groupId && subGroupId && subGroupId !== "null") return `${groupId}_${subGroupId}`;
 
     if (groupId) return groupId;
 
     return ALL_ISSUES;
-  }
+  };
 
   getPaginationData = computedFn(
     (groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined => {

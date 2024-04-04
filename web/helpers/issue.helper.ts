@@ -168,11 +168,11 @@ export const shouldHighlightIssueDueDate = (
 export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => {
   return {
     data: block,
-    id: block.id,
-    sort_order: block.sort_order,
-    start_date: getDate(block.start_date),
-    target_date: getDate(block.target_date),
-  }};
+    id: block?.id,
+    sort_order: block?.sort_order,
+    start_date: getDate(block?.start_date),
+    target_date: getDate(block?.target_date),
+  };};
 
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
   const changedFields: Partial<TIssue> = {};

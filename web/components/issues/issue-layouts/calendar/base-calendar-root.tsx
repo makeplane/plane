@@ -8,14 +8,13 @@ import { TGroupedIssues } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CalendarChart } from "@/components/issues";
 //constants
-import { EIssuesStoreType, EIssueLayoutTypes, EIssueGroupByToServerOptions } from "@/constants/issue";
+import { EIssuesStoreType, EIssueGroupByToServerOptions } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useIssues, useUser, useCalendarView } from "@/hooks/store";
-import { useIssueStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // types
-import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";
 
@@ -39,7 +38,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const { workspaceSlug, projectId } = router.query;
 
   // hooks
-  const storeType = useIssueStore() as CalendarStoreType;
+  const storeType = useIssueStoreType() as CalendarStoreType;
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -131,41 +130,37 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   );
 
   return (
-    <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
-      <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <CalendarChart
-            issuesFilterStore={issuesFilter}
-            issues={issueMap}
-            groupedIssueIds={groupedIssueIds}
-            layout={displayFilters?.calendar?.layout}
-            showWeekends={displayFilters?.calendar?.show_weekends ?? false}
-            issueCalendarView={issueCalendarView}
-            quickActions={(issue, customActionButton, placement) => (
-              <QuickActions
-                customActionButton={customActionButton}
-                issue={issue}
-                handleDelete={async () => removeIssue(issue.project_id, issue.id)}
-                handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
-                handleRemoveFromView={async () =>
-                  removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)
-                }
-                handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
-                handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-                readOnly={!isEditingAllowed || isCompletedCycle}
-                placements={placement}
-              />
-            )}
-            loadMoreIssues={loadMoreIssues}
-            getPaginationData={getPaginationData}
-            getGroupIssueCount={getGroupIssueCount}
-            addIssuesToView={addIssuesToView}
-            quickAddCallback={quickAddIssue}
-            readOnly={!isEditingAllowed || isCompletedCycle}
-            updateFilters={updateFilters}
-          />
-        </DragDropContext>
-      </div>
-    </IssueLayoutHOC>
+    <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
+      <DragDropContext onDragEnd={onDragEnd}>
+        <CalendarChart
+          issuesFilterStore={issuesFilter}
+          issues={issueMap}
+          groupedIssueIds={groupedIssueIds}
+          layout={displayFilters?.calendar?.layout}
+          showWeekends={displayFilters?.calendar?.show_weekends ?? false}
+          issueCalendarView={issueCalendarView}
+          quickActions={(issue, customActionButton, placement) => (
+            <QuickActions
+              customActionButton={customActionButton}
+              issue={issue}
+              handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+              handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+              handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
+              handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+              handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
+              readOnly={!isEditingAllowed || isCompletedCycle}
+              placements={placement}
+            />
+          )}
+          loadMoreIssues={loadMoreIssues}
+          getPaginationData={getPaginationData}
+          getGroupIssueCount={getGroupIssueCount}
+          addIssuesToView={addIssuesToView}
+          quickAddCallback={quickAddIssue}
+          readOnly={!isEditingAllowed || isCompletedCycle}
+          updateFilters={updateFilters}
+        />
+      </DragDropContext>
+    </div>
   );
 });

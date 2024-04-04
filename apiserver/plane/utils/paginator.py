@@ -336,11 +336,6 @@ class GroupedOffsetPaginator(OffsetPaginator):
             for group_id, issues in grouped_by_field_name.items()
         }
 
-        # ordering
-        for group_value, data in processed_results.items():
-            data["results"].sort(
-                key=lambda x: x.get("created_at"), reverse=True
-            )
         return processed_results
 
     def __query_grouper(self, results):
@@ -350,10 +345,6 @@ class GroupedOffsetPaginator(OffsetPaginator):
             if group_value in processed_results:
                 processed_results[str(group_value)]["results"].append(result)
 
-        for group_value, data in processed_results.items():
-            data["results"].sort(
-                key=lambda x: x.get("created_at"), reverse=True
-            )
         return processed_results
 
     def process_results(self, results):
@@ -596,11 +587,6 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                     str(sub_group_value)
                 ]["results"].append(result)
 
-        for group_value, processed_result in processed_results.items():
-            for sub_group_value, data in processed_result["result"].items():
-                data["results"].sort(
-                    key=lambda x: x.get("created_at"), reverse=True
-                )
         return processed_results
 
     def __query_grouper(self, results):
@@ -612,11 +598,6 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                 "results"
             ].append(result)
 
-        for group_value, processed_result in processed_results.items():
-            for sub_group_value, data in processed_result["results"].items():
-                data["results"].sort(
-                    key=lambda x: x.get("created_at"), reverse=True
-                )
         return processed_results
 
     def process_results(self, results):

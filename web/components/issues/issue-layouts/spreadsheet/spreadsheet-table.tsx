@@ -1,10 +1,12 @@
 import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
+import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 //components
+import { getDisplayPropertiesCount } from "../utils";
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
 
@@ -86,6 +88,8 @@ export const SpreadsheetTable = observer((props: Props) => {
 
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
+  const displayPropertiesCount = getDisplayPropertiesCount(displayProperties, true);
+
   return (
     <table className="overflow-y-auto bg-custom-background-100" onKeyDown={handleKeyBoardNavigation}>
       <SpreadsheetHeader
@@ -113,11 +117,8 @@ export const SpreadsheetTable = observer((props: Props) => {
         ))}
       </tbody>
       {canLoadMoreIssues && (
-        <tfoot
-          ref={intersectionRef}
-          className="h-11 w-full flex items-center border-b-[0.5px] border-custom-border-200"
-        >
-          <div className="mx-4 h-4 animate-pulse bg-custom-background-80 w-full" />
+        <tfoot ref={intersectionRef}>
+          <SpreadsheetIssueRowLoader columnCount={displayPropertiesCount} />
         </tfoot>
       )}
     </table>
