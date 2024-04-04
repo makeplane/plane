@@ -23,19 +23,13 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
   // store
-  const {
-    inboxIssues,
-    inboxIssuesArray,
-    // fetchInboxIssues,
-    // fetchInboxIssuesNextPage
-  } = useProjectInbox();
+  const { inboxIssues, inboxIssuesArray, fetchInboxIssues } = useProjectInbox();
   const { currentProjectDetails } = useProject();
 
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
-
-    // fetchInboxIssuesNextPage(workspaceSlug.toString(), projectId.toString());
-  }, [projectId, workspaceSlug]);
+    fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
+  }, [workspaceSlug, projectId, fetchInboxIssues]);
   // page observer
   useIntersectionObserver({
     containerRef,
@@ -45,16 +39,12 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   });
   // return null when workspaceSlug or projectId is not available
   if (!workspaceSlug || !projectId) return null;
+
   // fetching inbox issues
-  useSWR(
-    `PROJECT_INBOX_ISSUES_${projectId}`,
-    () => {
-      // fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
-    },
-    {
-      revalidateOnFocus: false,
-    }
-  );
+  useSWR(`PROJECT_INBOX_ISSUES_${projectId}`, () => fetchInboxIssues(workspaceSlug.toString(), projectId.toString()), {
+    revalidateOnFocus: false,
+  });
+
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : undefined;
 
@@ -65,10 +55,6 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
       </div>
     );
   }
-
-  // if (!inboxIssueId) {
-  //   router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${inboxIssues?.[0]?.issue.id}`);
-  // }
 
   return (
     <div className="flex h-full flex-col">

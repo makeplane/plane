@@ -1,43 +1,47 @@
-// import isArray from "lodash/isArray";
-// import keyBy from "lodash/keyBy";
-// import mapValues from "lodash/mapValues";
-// import reduce from "lodash/reduce";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // services
 import { InboxIssueService } from "services/inbox";
 // types
-import { TInboxIssueFilter, TInboxIssueSorting, TInboxIssuesQueryParams, TPaginationInfo } from "@plane/types";
+import {
+  TInboxIssue,
+  TInboxIssueCurrentTab,
+  TInboxIssueFilter,
+  TInboxIssueSorting,
+  TPaginationInfo,
+} from "@plane/types";
 // root store
-import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+import { IInboxIssueStore, InboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { RootStore } from "@/store/root.store";
-
-type TCurrentTab = "open" | "closed";
+// store helpers
+import { InboxIssueHelpers } from "./helpers";
 
 export interface IProjectInboxStore {
-  currentTab: TCurrentTab;
+  currentTab: TInboxIssueCurrentTab;
   isLoading: boolean;
   inboxFilters: Partial<TInboxIssueFilter>;
   inboxSorting: Partial<TInboxIssueSorting>;
   inboxIssuePaginationInfo: TPaginationInfo | undefined;
   inboxIssues: Record<string, IInboxIssueStore>;
   // computed
-  getInboxIssuesQueryParams: Partial<TInboxIssuesQueryParams> | undefined;
   inboxIssuesArray: IInboxIssueStore[];
+  getIssueInboxByIssueId: (issueId: string) => IInboxIssueStore | undefined;
   // actions
+  handleCurrentTab: (workspaceSlug: string, projectId: string, tab: TInboxIssueCurrentTab) => void;
   handleInboxIssueFilters: <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   handleInboxIssueSorting: <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => void; // if user sends me undefined, I will remove the value from the filter key
-  // fetchInboxIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
+  fetchInboxIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
   // fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
   // createInboxIssue: (workspaceSlug: string, projectId: string, data: any) => Promise<void>;
   // deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
 }
 
-export class ProjectInboxStore implements IProjectInboxStore {
+export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInboxStore {
   // constants
   PER_PAGE_COUNT = 10;
   // observables
-  currentTab: TCurrentTab = "open";
+  currentTab: TInboxIssueCurrentTab = "open";
   isLoading: boolean = false;
   inboxFilters: Partial<TInboxIssueFilter> = {};
   inboxSorting: Partial<TInboxIssueSorting> = {
@@ -46,12 +50,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
   inboxIssuePaginationInfo: TPaginationInfo | undefined = undefined;
   inboxIssues: Record<string, IInboxIssueStore> = {};
-  // store
-  rootStore;
   // services
   inboxIssueService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(private store: RootStore) {
+    super();
     makeObservable(this, {
       currentTab: observable.ref,
       isLoading: observable.ref,
@@ -60,105 +63,82 @@ export class ProjectInboxStore implements IProjectInboxStore {
       inboxIssuePaginationInfo: observable,
       inboxIssues: observable,
       // computed
-      getInboxIssuesQueryParams: computed,
-      // inboxIssuesArray: computed,
-      // getIssueInboxByIssueId: computed,
+      inboxIssuesArray: computed,
       // actions
       handleInboxIssueFilters: action,
       handleInboxIssueSorting: action,
-      // fetchInboxIssues: action,
+      fetchInboxIssues: action,
       // fetchInboxIssueById: action,
       // createInboxIssue: action,
       // deleteInboxIssue: action,
     });
-    this.rootStore = _rootStore;
     this.inboxIssueService = new InboxIssueService();
   }
 
+  // computed
   get inboxIssuesArray() {
     return Object.values(this.inboxIssues || {});
   }
 
-  // computed
-  get getInboxIssuesQueryParams() {
-    return undefined;
-  }
+  getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId] || undefined);
 
   // actions
-  handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) =>
-    set(this.inboxFilters, key, value);
-
-  handleInboxIssueSorting = <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) =>
-    set(this.inboxSorting, key, value);
-
-  handleCurrentTab = (tab: TCurrentTab) => {
+  handleCurrentTab = (workspaceSlug: string, projectId: string, tab: TInboxIssueCurrentTab) => {
     set(this, "currentTab", tab);
     set(this, "inboxFilters", undefined);
     set(this, "inboxSorting", undefined);
-    // fetch issues every time the tab changes
+    if (tab === "closed") set(this.inboxFilters, "inbox_status", [-1, 0, 1, 2]);
+    this.fetchInboxIssues(workspaceSlug, projectId);
+  };
+
+  handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => {
+    set(this.inboxFilters, key, value);
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId);
+  };
+
+  handleInboxIssueSorting = <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => {
+    set(this.inboxSorting, key, value);
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId);
   };
 
   /**
-   * fetch inbox issues
+   * @description fetch inbox issues with paginated data
    * @param workspaceSlug
    * @param projectId
    * @returns
    */
-  // fetchInboxIssues = async (workspaceSlug: string, projectId: string, params = {}) => {
-  //   try {
-  //     runInAction(() => {
-  //       this.isLoading = true;
-  //       this.inboxIssues = {};
-  //       this.inboxIssuePaginationInfo = undefined;
-  //     });
-  //     const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, {
-  //       ...params,
-  //       per_page: this.PER_PAGE_COUNT,
-  //     });
-  //     runInAction(() => {
-  //       this.inboxIssues = mapValues(
-  //         keyBy(results, "id"),
-  //         (value) => new InboxIssueStore(workspaceSlug, projectId, value)
-  //       );
-  //       this.isLoading = false;
-  //       this.inboxIssuePaginationInfo = { ...this.inboxIssuePaginationInfo, ...paginationInfo };
-  //     });
-  //     return results;
-  //   } catch (error) {
-  //     console.error("Error fetching the inbox issues", error);
-  //     this.isLoading = false;
-  //     throw error;
-  //   }
-  // };
+  fetchInboxIssues = async (workspaceSlug: string, projectId: string) => {
+    try {
+      runInAction(() => {
+        this.isLoading = true;
+        this.inboxIssues = {};
+        this.inboxIssuePaginationInfo = undefined;
+      });
 
-  /**
-   * fetch inbox issues next page
-   * @param workspaceSlug
-   * @param projectId
-   */
-  // fetchInboxIssuesNextPage = async (workspaceSlug: string, projectId: string) => {
-  //   if (this.inboxIssuePaginationInfo?.next_cursor && this.inboxIssuePaginationInfo?.next_page_results) {
-  //     runInAction(() => {
-  //       this.isLoading = true;
-  //     });
-  //     const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, {
-  //       ...this.inboxIssuePaginationInfo,
-  //       cursor: this.inboxIssuePaginationInfo.next_cursor,
-  //       per_page: this.PER_PAGE_COUNT,
-  //     });
-  //     runInAction(() => {
-  //       this.inboxIssues = {
-  //         ...this.inboxIssues,
-  //         ...mapValues(keyBy(results, "id"), (value) => new InboxIssueStore(workspaceSlug, projectId, value)),
-  //       };
-  //       this.isLoading = false;
-  //       this.inboxIssuePaginationInfo = {
-  //         ...this.inboxIssuePaginationInfo,
-  //         ...paginationInfo,
-  //       };
-  //     });
-  //   }
-  // };
+      const queryParams = this.inboxIssueQueryParams(
+        this.inboxFilters,
+        this.inboxSorting,
+        this.PER_PAGE_COUNT,
+        this.inboxIssuePaginationInfo?.next_cursor || ""
+      );
+      const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, queryParams);
+
+      runInAction(() => {
+        this.isLoading = false;
+        if (results && results.length > 0)
+          results.forEach((value: TInboxIssue) => {
+            set(this.inboxIssues, value?.id, new InboxIssueStore(workspaceSlug, projectId, value));
+          });
+        set(this, "inboxIssuePaginationInfo", paginationInfo);
+      });
+    } catch (error) {
+      console.error("Error fetching the inbox issues", error);
+      this.isLoading = false;
+      throw error;
+    }
+  };
 
   /**
    * create inbox issue
