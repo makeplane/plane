@@ -56,8 +56,12 @@ class PageSerializer(BaseSerializer):
         labels = validated_data.pop("labels", None)
         project_id = self.context["project_id"]
         owned_by_id = self.context["owned_by_id"]
+        description_html = self.context["description_html"]
         page = Page.objects.create(
-            **validated_data, project_id=project_id, owned_by_id=owned_by_id
+            **validated_data,
+            description_html=description_html,
+            project_id=project_id,
+            owned_by_id=owned_by_id,
         )
 
         if labels is not None:

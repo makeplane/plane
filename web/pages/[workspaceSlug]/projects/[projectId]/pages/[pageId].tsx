@@ -2,7 +2,6 @@ import { ReactElement, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import useSWR from "swr";
 // document-editor
 import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
 // types
@@ -33,7 +32,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
-  const { createPage, getPageById } = useProjectPages(projectId?.toString() ?? "");
+  const { createPage } = useProjectPages(projectId?.toString() ?? "");
   const pageStore = usePage(pageId?.toString() ?? "");
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
@@ -55,9 +54,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const handleEditorReady = (value: boolean) => setEditorReady(value);
 
   const handleReadOnlyEditorReady = () => setReadOnlyEditorReady(true);
-
-  // fetching page details
-  useSWR(pageId ? `PAGE_DETAILS_${pageId}` : null, pageId ? () => getPageById(pageId.toString()) : null);
 
   if (!pageStore || !pageStore.id)
     return (

@@ -9,6 +9,7 @@ import { IMentionHighlight } from "src/types/mention-suggestion";
 
 interface CustomReadOnlyEditorProps {
   value: string;
+  updatedValue: string;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
   extensions?: any;
   editorProps?: EditorProps;
@@ -18,32 +19,36 @@ interface CustomReadOnlyEditorProps {
 
 export const useReadOnlyEditor = ({
   value,
+  updatedValue,
   forwardedRef,
   extensions = [],
   editorProps = {},
   handleEditorReady,
   mentionHighlights,
 }: CustomReadOnlyEditorProps) => {
-  const editor = useCustomEditor({
-    editable: false,
-    content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-    editorProps: {
-      ...CoreReadOnlyEditorProps,
-      ...editorProps,
+  const editor = useCustomEditor(
+    {
+      editable: false,
+      content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+      editorProps: {
+        ...CoreReadOnlyEditorProps,
+        ...editorProps,
+      },
+      onCreate: async () => {
+        handleEditorReady?.(true);
+      },
+      extensions: [
+        ...CoreReadOnlyEditorExtensions({
+          mentionHighlights: mentionHighlights,
+        }),
+        ...extensions,
+      ],
+      onDestroy: () => {
+        handleEditorReady?.(false);
+      },
     },
-    onCreate: async () => {
-      handleEditorReady?.(true);
-    },
-    extensions: [
-      ...CoreReadOnlyEditorExtensions({
-        mentionHighlights: mentionHighlights,
-      }),
-      ...extensions,
-    ],
-    onDestroy: () => {
-      handleEditorReady?.(false);
-    },
-  });
+    [updatedValue]
+  );
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
 
