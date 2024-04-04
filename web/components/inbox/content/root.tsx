@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
 import { EUserProjectRoles } from "@/constants/project";
-import { useInboxIssues, useIssueDetail, useUser } from "@/hooks/store";
+import { useInboxIssues, useIssueDetail, useProjectInbox, useUser } from "@/hooks/store";
 
 type TInboxContentRoot = {
   workspaceSlug: string;
@@ -14,12 +14,13 @@ type TInboxContentRoot = {
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId } = props;
   // hooks
+  const { fetchInboxIssueById } = useProjectInbox();
   const inboxIssue = useInboxIssues(inboxIssueId);
   const {
     membership: { currentProjectRole },
   } = useUser();
 
-  const { fetchActivities, fetchComments } = useIssueDetail();
+  const { fetchReactions, fetchActivities, fetchComments } = useIssueDetail();
 
   useSWR(
     workspaceSlug && projectId && inboxIssueId
@@ -27,7 +28,8 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
       : null,
     async () => {
       if (workspaceSlug && projectId && inboxIssueId) {
-        await inboxIssue?.fetchInboxIssue();
+        await fetchInboxIssueById(workspaceSlug, projectId, inboxIssueId);
+        await fetchReactions(workspaceSlug, projectId, inboxIssueId);
         await fetchActivities(workspaceSlug, projectId, inboxIssueId);
         await fetchComments(workspaceSlug, projectId, inboxIssueId);
       }
@@ -36,7 +38,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
 
   const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  if (!inboxIssue) return <div className="border border-red-500" />;
+  if (!inboxIssue) return <></>;
   return (
     <>
       <div className="w-full h-full overflow-hidden relative flex flex-col">

@@ -136,7 +136,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
         set(this, "inboxIssuePaginationInfo", paginationInfo);
         if (results && results.length > 0)
           results.forEach((value: TInboxIssue) => {
-            set(this.inboxIssues, value?.id, new InboxIssueStore(workspaceSlug, projectId, value));
+            set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
           });
       });
     } catch (error) {
@@ -173,7 +173,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
           set(this, "inboxIssuePaginationInfo", paginationInfo);
           if (results && results.length > 0)
             results.forEach((value: TInboxIssue) => {
-              set(this.inboxIssues, value?.id, new InboxIssueStore(workspaceSlug, projectId, value));
+              set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
             });
         });
       }
@@ -195,7 +195,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
       const inboxIssue = await this.inboxIssueService.retrieve(workspaceSlug, projectId, inboxIssueId);
       if (inboxIssue)
         runInAction(() => {
-          set(this.inboxIssues, inboxIssue?.id, new InboxIssueStore(workspaceSlug, projectId, inboxIssue));
+          set(this.inboxIssues, inboxIssue?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, inboxIssue));
         });
     } catch {
       console.error("Error fetching the inbox issue with inbox issue id");

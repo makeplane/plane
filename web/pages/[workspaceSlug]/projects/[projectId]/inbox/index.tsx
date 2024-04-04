@@ -18,20 +18,21 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   /// router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
-  // store
-  const { inboxIssues, inboxIssuesArray, fetchInboxIssues } = useProjectInbox();
+  // hooks
   const { currentProjectDetails } = useProject();
+  const { inboxIssues, inboxIssuesArray, fetchInboxIssues } = useProjectInbox();
 
   // return null when workspaceSlug or projectId is not available
-  if (!workspaceSlug || !projectId) return null;
+  if (!workspaceSlug || !projectId) return <></>;
 
   // fetching inbox issues
-  useSWR(`PROJECT_INBOX_ISSUES_${projectId}`, () => fetchInboxIssues(workspaceSlug.toString(), projectId.toString()), {
-    revalidateOnFocus: false,
-  });
-
-  // derived values
-  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : undefined;
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_INBOX_ISSUES_${workspaceSlug}_${projectId}` : null,
+    () => {
+      workspaceSlug && projectId && fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
+    },
+    { revalidateOnFocus: false }
+  );
 
   if (!inboxIssues || !currentProjectDetails) {
     return (
@@ -41,6 +42,9 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
     );
   }
 
+  // derived values
+  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : "Plane - Inbox";
+
   return (
     <div className="flex h-full flex-col">
       <PageHead title={pageTitle} />
@@ -49,8 +53,8 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
         <InboxIssueRoot
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
-          inboxIssuesArray={inboxIssuesArray}
           inboxIssueId={inboxIssueId?.toString()}
+          inboxIssuesArrayLength={(inboxIssuesArray || []).length}
         />
       </div>
     </div>
