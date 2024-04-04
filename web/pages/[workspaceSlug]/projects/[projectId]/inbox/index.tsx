@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useRef } from "react";
+import { ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -9,16 +9,12 @@ import { InboxSidebar, InboxIssueRoot } from "@/components/inbox";
 import { InboxLayoutLoader } from "@/components/ui";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
-import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // types
 import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
-  // ref
-  const containerRef = useRef<HTMLDivElement>(null);
-  const elementRef = useRef<HTMLDivElement>(null);
   /// router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
@@ -26,17 +22,6 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const { inboxIssues, inboxIssuesArray, fetchInboxIssues } = useProjectInbox();
   const { currentProjectDetails } = useProject();
 
-  const fetchNextPages = useCallback(() => {
-    if (!workspaceSlug || !projectId) return;
-    fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
-  }, [workspaceSlug, projectId, fetchInboxIssues]);
-  // page observer
-  useIntersectionObserver({
-    containerRef,
-    elementRef,
-    callback: fetchNextPages,
-    rootMargin: "20%",
-  });
   // return null when workspaceSlug or projectId is not available
   if (!workspaceSlug || !projectId) return null;
 

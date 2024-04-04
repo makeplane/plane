@@ -1,5 +1,6 @@
 import {
   FC,
+  useCallback,
   useRef,
   // useState,
 } from "react";
@@ -10,6 +11,7 @@ import { Loader } from "@plane/ui";
 import { FiltersRoot } from "@/components/inbox";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { InboxIssueList } from "./inbox-list";
 
 type IInboxSidebarProps = {
@@ -23,8 +25,21 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const elementRef = useRef<HTMLDivElement>(null);
   // store
-  const { currentTab, handleCurrentTab, inboxIssuesArray, inboxIssuePaginationInfo } = useProjectInbox();
+  const { currentTab, handleCurrentTab, inboxIssuesArray, inboxIssuePaginationInfo, fetchInboxIssues } =
+    useProjectInbox();
   const { currentProjectDetails } = useProject();
+
+  const fetchNextPages = useCallback(() => {
+    if (!workspaceSlug || !projectId) return;
+    fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
+  }, [workspaceSlug, projectId, fetchInboxIssues]);
+  // page observer
+  useIntersectionObserver({
+    containerRef,
+    elementRef,
+    callback: fetchNextPages,
+    rootMargin: "20%",
+  });
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
