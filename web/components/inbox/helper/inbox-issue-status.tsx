@@ -2,8 +2,8 @@ import React from "react";
 import { observer } from "mobx-react";
 // constants
 import { INBOX_STATUS } from "@/constants/inbox";
+import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 // store
-import { IInboxIssueStore } from "@/store/inbox-issue.store";
 
 type Props = {
   inboxIssue: IInboxIssueStore;
