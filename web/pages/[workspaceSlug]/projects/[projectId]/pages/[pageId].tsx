@@ -67,8 +67,11 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const handleCreatePage = async (payload: Partial<TPage>) => await createPage(payload);
 
-  const handleUpdatePage = async (formData: TPage) =>
-    pageStore.updateDescription(formData.description_html ?? "<p></p>");
+  const handleUpdatePage = async (formData: TPage) => {
+    let updatedDescription = formData.description_html;
+    if (!updatedDescription || updatedDescription.trim() === "") updatedDescription = "<p></p>";
+    pageStore.updateDescription(updatedDescription);
+  };
 
   const handleDuplicatePage = async () => {
     const currentPageValues = getValues();
