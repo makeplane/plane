@@ -166,7 +166,7 @@ export const PageRenderer = (props: IPageRenderer) => {
           />
         )}
       </div>
-      <div className="relative flex-grow w-full pr-5" onMouseOver={handleLinkHover}>
+      <div className="flex-grow w-full pr-5" onMouseOver={handleLinkHover}>
         <EditorContainer editor={editor} editorClassNames={cn(editorClassNames, "pb-64")}>
           <EditorContentWrapper
             tabIndex={tabIndex}
