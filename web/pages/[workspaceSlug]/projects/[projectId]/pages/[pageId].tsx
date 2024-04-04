@@ -2,6 +2,7 @@ import { ReactElement, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 // document-editor
 import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
 // types
@@ -19,7 +20,6 @@ import { usePage, useProjectPages } from "@/hooks/store";
 import { AppLayout } from "@/layouts/app-layout";
 // lib
 import { NextPageWithLayout } from "@/lib/types";
-import useSWR from "swr";
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
