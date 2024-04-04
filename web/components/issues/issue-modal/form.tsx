@@ -684,15 +684,21 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
                         Change parent issue
                       </CustomMenu.MenuItem>
-                      <CustomMenu.MenuItem
-                        className="!p-1"
-                        onClick={() => {
-                          setValue("parent_id", null);
-                          handleFormChange();
-                        }}
-                      >
-                        Remove parent issue
-                      </CustomMenu.MenuItem>
+                      <Controller
+                        control={control}
+                        name="parent_id"
+                        render={({ field: { onChange } }) => (
+                          <CustomMenu.MenuItem
+                            className="!p-1"
+                            onClick={() => {
+                              onChange(null);
+                              handleFormChange();
+                            }}
+                          >
+                            Remove parent issue
+                          </CustomMenu.MenuItem>
+                        )}
+                      />
                     </>
                   </CustomMenu>
                 ) : (
