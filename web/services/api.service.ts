@@ -66,6 +66,7 @@ export abstract class APIService {
       data,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
+      withCredentials: true,
     });
   }
 
@@ -76,6 +77,7 @@ export abstract class APIService {
       data,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
+      withCredentials: true,
     });
   }
 
@@ -86,6 +88,7 @@ export abstract class APIService {
       data,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
+      withCredentials: true,
     });
   }
 
@@ -96,6 +99,7 @@ export abstract class APIService {
       data: data,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
+      withCredentials: true,
     });
   }
 
