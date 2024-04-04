@@ -3,6 +3,7 @@ import { Control, Controller, UseFormSetValue } from "react-hook-form";
 import { IAnalyticsParams } from "@plane/types";
 // hooks
 import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "@/components/analytics";
+import { ANALYTICS_X_AXIS_VALUES } from "@/constants/analytics";
 import { useProject } from "@/hooks/store";
 // components
 // types
@@ -18,7 +19,15 @@ type Props = {
 export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
   const { control, setValue, params, fullScreen, isProjectLevel } = props;
 
-  const { workspaceProjectIds: workspaceProjectIds } = useProject();
+  const { workspaceProjectIds: workspaceProjectIds, currentProjectDetails } = useProject();
+
+  const analyticsOptions = isProjectLevel
+    ? ANALYTICS_X_AXIS_VALUES.filter((v) => {
+        if (v.value === "issue_cycle__cycle_id" && !currentProjectDetails?.cycle_view) return false;
+        if (v.value === "issue_module__module_id" && !currentProjectDetails?.module_view) return false;
+        return true;
+      })
+    : ANALYTICS_X_AXIS_VALUES;
 
   return (
     <div
@@ -64,6 +73,7 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
                 onChange(val);
               }}
               params={params}
+              analyticsOptions={analyticsOptions}
             />
           )}
         />
@@ -74,7 +84,7 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
           name="segment"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <SelectSegment value={value} onChange={onChange} params={params} />
+            <SelectSegment value={value} onChange={onChange} params={params} analyticsOptions={analyticsOptions} />
           )}
         />
       </div>
