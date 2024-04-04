@@ -1,5 +1,5 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject, useState } from "react";
+import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
 import { CoreEditorProps } from "src/ui/props";
 import { CoreEditorExtensions } from "src/ui/extensions";
 import { EditorProps } from "@tiptap/pm/view";
@@ -47,41 +47,43 @@ export const useEditor = ({
   mentionHighlights,
   mentionSuggestions,
 }: CustomEditorProps) => {
-  const editor = useCustomEditor(
-    {
-      editorProps: {
-        ...CoreEditorProps(uploadFile),
-        ...editorProps,
-      },
-      extensions: [
-        ...CoreEditorExtensions(
-          {
-            mentionSuggestions: mentionSuggestions ?? [],
-            mentionHighlights: mentionHighlights ?? [],
-          },
-          deleteFile,
-          restoreFile,
-          cancelUploadImage
-        ),
-        ...extensions,
-      ],
-      content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-      onCreate: async ({ editor }) => {
-        handleEditorReady?.(true);
-        onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
-      },
-      onTransaction: async ({ editor }) => {
-        setSavedSelection(editor.state.selection);
-      },
-      onUpdate: async ({ editor }) => {
-        onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
-      },
-      onDestroy: async () => {
-        handleEditorReady?.(false);
-      },
+  const editor = useCustomEditor({
+    editorProps: {
+      ...CoreEditorProps(uploadFile),
+      ...editorProps,
     },
-    [updatedValue]
-  );
+    extensions: [
+      ...CoreEditorExtensions(
+        {
+          mentionSuggestions: mentionSuggestions ?? [],
+          mentionHighlights: mentionHighlights ?? [],
+        },
+        deleteFile,
+        restoreFile,
+        cancelUploadImage
+      ),
+      ...extensions,
+    ],
+    content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+    onCreate: async ({ editor }) => {
+      handleEditorReady?.(true);
+      onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
+    },
+    onTransaction: async ({ editor }) => {
+      setSavedSelection(editor.state.selection);
+    },
+    onUpdate: async ({ editor }) => {
+      onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
+    },
+    onDestroy: async () => {
+      handleEditorReady?.(false);
+    },
+  });
+
+  // for syncing swr data on tab refocus etc
+  useEffect(() => {
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(updatedValue);
+  }, [updatedValue, editor]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
 

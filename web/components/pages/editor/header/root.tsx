@@ -55,9 +55,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     editorRef.current?.setEditorValueAtCursorPosition(response);
   };
 
-  console.log("editorRef", editorRef.current);
-  console.log("editorReady", editorReady);
-
   if (!editorRef.current && !readOnlyEditorRef.current) return null;
 
   return (

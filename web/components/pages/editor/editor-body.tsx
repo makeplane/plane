@@ -89,8 +89,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log("swrPageDetails", swrPageDetails?.description_html);
-
   if (description_html === undefined) return null;
 
   return (
