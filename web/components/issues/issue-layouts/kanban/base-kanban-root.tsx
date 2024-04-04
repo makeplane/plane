@@ -1,9 +1,8 @@
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { TIssue } from "@plane/types";
 //ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -38,6 +37,7 @@ export interface IBaseKanBanLayout {
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
+  viewId?: string | undefined;
 }
 
 type KanbanDragState = {
@@ -47,7 +47,7 @@ type KanbanDragState = {
 };
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -76,14 +76,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const sub_group_by: string | null = displayFilters?.sub_group_by || null;
   const group_by: string | null = displayFilters?.group_by || null;
 
-  useSWR(
-    `ISSUE_KANBAN_LAYOUT_${storeType}_${group_by}_${sub_group_by}`,
-    () => fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }),
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  useEffect(() => {
+    fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }, viewId);
+  }, [fetchIssues, storeType, group_by, sub_group_by, viewId]);
 
   const fetchMoreIssues = useCallback(
     (groupId?: string, subgroupId?: string) => {

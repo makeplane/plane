@@ -1,8 +1,7 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { TGroupedIssues } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -28,10 +27,11 @@ interface IBaseCalendarRoot {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   isCompletedCycle?: boolean;
+  viewId?: string | undefined;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { QuickActions, addIssuesToView, isCompletedCycle = false } = props;
+  const { QuickActions, addIssuesToView, isCompletedCycle = false, viewId } = props;
 
   // router
   const router = useRouter();
@@ -66,23 +66,22 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const layout = displayFilters?.calendar?.layout ?? "month";
   const { startDate, endDate } = issueCalendarView.getStartAndEndDate(layout) ?? {};
 
-  useSWR(
-    startDate && endDate && layout ? `ISSUE_CALENDAR_LAYOUT_${storeType}_${startDate}_${endDate}_${layout}` : null,
-    startDate && endDate && layout
-      ? () =>
-          fetchIssues("init-loader", {
-            canGroup: true,
-            perPageCount: layout === "month" ? 4 : 30,
-            before: endDate,
-            after: startDate,
-            groupedBy: EIssueGroupByToServerOptions["target_date"],
-          })
-      : null,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  useEffect(() => {
+    startDate &&
+      endDate &&
+      layout &&
+      fetchIssues(
+        "init-loader",
+        {
+          canGroup: true,
+          perPageCount: layout === "month" ? 4 : 30,
+          before: endDate,
+          after: startDate,
+          groupedBy: EIssueGroupByToServerOptions["target_date"],
+        },
+        viewId
+      );
+  }, [fetchIssues, storeType, startDate, endDate, layout, viewId]);
 
   const onDragEnd = async (result: DropResult) => {
     if (!result) return;

@@ -35,7 +35,7 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   }, [type, setViewId]);
 
   useSWR(
-    workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}_${type}` : null,
+    workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}` : null,
     async () => {
       if (workspaceSlug && userId) {
         await fetchFilters(workspaceSlug, userId);

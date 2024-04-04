@@ -35,6 +35,7 @@ export interface IWorkspaceIssues extends IBaseIssuesStore {
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 
   quickAddIssue: undefined;
+  clear(): void;
 }
 
 export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues {

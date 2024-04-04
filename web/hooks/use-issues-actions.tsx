@@ -9,6 +9,7 @@ import {
   TIssueKanbanFilters,
   TIssuesResponse,
   TLoader,
+  TProfileViews,
 } from "@plane/types";
 import { useCallback, useMemo } from "react";
 
@@ -16,7 +17,7 @@ interface IssueActions {
   fetchIssues: (
     loadType: TLoader,
     options: IssuePaginationOptions,
-    userViewId?: "assigned" | "created" | "subscribed"
+    viewId?: string
   ) => Promise<TIssuesResponse | undefined>;
   fetchNextIssues: (groupId?: string, subGroupId?: string) => Promise<TIssuesResponse | undefined>;
   removeIssue: (projectId: string | undefined | null, issueId: string) => Promise<void>;
@@ -157,11 +158,11 @@ const useCycleIssueActions = () => {
   } = useApplication();
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions) => {
+    async (loadType: TLoader, options: IssuePaginationOptions, cycleId?: string) => {
       if (!workspaceSlug || !projectId || !cycleId) return;
       return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), loadType, options, cycleId.toString());
     },
-    [issues.fetchIssues, workspaceSlug, projectId, cycleId]
+    [issues.fetchIssues, workspaceSlug, projectId]
   );
   const fetchNextIssues = useCallback(
     async (groupId?: string, subGroupId?: string) => {
@@ -266,11 +267,11 @@ const useModuleIssueActions = () => {
   } = useApplication();
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions) => {
+    async (loadType: TLoader, options: IssuePaginationOptions, moduleId?: string) => {
       if (!workspaceSlug || !projectId || !moduleId) return;
       return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), loadType, options, moduleId.toString());
     },
-    [issues.fetchIssues, workspaceSlug, projectId, moduleId]
+    [issues.fetchIssues, workspaceSlug, projectId]
   );
   const fetchNextIssues = useCallback(
     async (groupId?: string, subGroupId?: string) => {
@@ -365,9 +366,15 @@ const useProfileIssueActions = () => {
   } = useApplication();
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions, viewId?: "assigned" | "created" | "subscribed") => {
+    async (loadType: TLoader, options: IssuePaginationOptions, viewId?: string) => {
       if (!workspaceSlug || !userId || !viewId) return;
-      return issues.fetchIssues(workspaceSlug.toString(), userId.toString(), loadType, options, viewId);
+      return issues.fetchIssues(
+        workspaceSlug.toString(),
+        userId.toString(),
+        loadType,
+        options,
+        viewId as TProfileViews
+      );
     },
     [issues.fetchIssues, workspaceSlug, userId]
   );

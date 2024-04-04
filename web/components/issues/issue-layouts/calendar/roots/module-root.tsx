@@ -26,5 +26,11 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
     [issues?.addIssuesToModule, workspaceSlug, projectId, moduleId]
   );
 
-  return <BaseCalendarRoot QuickActions={ModuleIssueQuickActions} addIssuesToView={addIssuesToView} />;
+  return (
+    <BaseCalendarRoot
+      QuickActions={ModuleIssueQuickActions}
+      addIssuesToView={addIssuesToView}
+      viewId={moduleId?.toString()}
+    />
+  );
 });

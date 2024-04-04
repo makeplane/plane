@@ -35,6 +35,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
       QuickActions={CycleIssueQuickActions}
       addIssuesToView={addIssuesToView}
       isCompletedCycle={isCompletedCycle}
+      viewId={cycleId?.toString()}
     />
   );
 });

@@ -1,6 +1,5 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 // types
 import { GroupByColumnTypes, TGroupedIssues, TIssue } from "@plane/types";
 // constants
@@ -27,10 +26,11 @@ interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  viewId?: string | undefined;
   isCompletedCycle?: boolean;
 }
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
 
   const storeType = useIssueStoreType() as ListStoreType;
   const { issuesFilter, issues } = useIssues(storeType);
@@ -57,14 +57,9 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
-  useSWR(
-    `ISSUE_LIST_LAYOUT_${storeType}_${group_by}`,
-    () => fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }),
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  useEffect(() => {
+    fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
+  }, [fetchIssues, storeType, group_by, viewId]);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
