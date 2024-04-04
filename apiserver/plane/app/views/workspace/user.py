@@ -36,7 +36,6 @@ from plane.app.permissions import (
 # Module imports
 from plane.app.serializers import (
     IssueActivitySerializer,
-    IssueSerializer,
     ProjectMemberSerializer,
     WorkSpaceSerializer,
     WorkspaceUserPropertiesSerializer,
@@ -56,7 +55,17 @@ from plane.db.models import (
     WorkspaceMember,
     WorkspaceUserProperties,
 )
+from plane.utils.grouper import (
+    issue_group_values,
+    issue_on_results,
+    issue_queryset_grouper,
+)
 from plane.utils.issue_filters import issue_filters
+from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.paginator import (
+    GroupedOffsetPaginator,
+    SubGroupedOffsetPaginator,
+)
 
 
 class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
@@ -100,22 +109,8 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, user_id):
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
-        filters = issue_filters(request.query_params, "GET")
 
-        # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
+        filters = issue_filters(request.query_params, "GET")
 
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = (
@@ -183,70 +178,112 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
             .order_by("created_at")
         ).distinct()
 
-        # Priority Ordering
-        if order_by_param == "priority" or order_by_param == "-priority":
-            priority_order = (
-                priority_order
-                if order_by_param == "priority"
-                else priority_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                priority_order=Case(
-                    *[
-                        When(priority=p, then=Value(i))
-                        for i, p in enumerate(priority_order)
-                    ],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")
+        # Issue queryset
+        issue_queryset = order_issue_queryset(
+            issue_queryset=issue_queryset,
+            order_by_param=order_by_param,
+        )
 
-        # State Ordering
-        elif order_by_param in [
-            "state__name",
-            "state__group",
-            "-state__name",
-            "-state__group",
-        ]:
-            state_order = (
-                state_order
-                if order_by_param in ["state__name", "state__group"]
-                else state_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                state_order=Case(
-                    *[
-                        When(state__group=state_group, then=Value(i))
-                        for i, state_group in enumerate(state_order)
-                    ],
-                    default=Value(len(state_order)),
-                    output_field=CharField(),
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+
+        # issue queryset
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset,
+            group_by=group_by,
+            sub_group_by=sub_group_by,
+        )
+
+        if group_by:
+            if sub_group_by:
+                if group_by == sub_group_by:
+                    return Response(
+                        {
+                            "error": "Group by and sub group by cannot have same parameters"
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                else:
+                    return self.paginate(
+                        request=request,
+                        order_by=(
+                            "priority_order"
+                            if order_by_param in ["priority", "-priority"]
+                            else order_by_param
+                        ),
+                        queryset=issue_queryset,
+                        on_results=lambda issues: issue_on_results(
+                            group_by=group_by,
+                            issues=issues,
+                            sub_group_by=sub_group_by,
+                        ),
+                        paginator_cls=SubGroupedOffsetPaginator,
+                        group_by_fields=issue_group_values(
+                            field=group_by,
+                            slug=slug,
+                            filters=filters,
+                        ),
+                        sub_group_by_fields=issue_group_values(
+                            field=sub_group_by,
+                            slug=slug,
+                            filters=filters,
+                        ),
+                        group_by_field_name=group_by,
+                        sub_group_by_field_name=sub_group_by,
+                        count_filter=Q(
+                            Q(issue_inbox__status=1)
+                            | Q(issue_inbox__status=-1)
+                            | Q(issue_inbox__status=2)
+                            | Q(issue_inbox__isnull=True),
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+            else:
+                # Group paginate
+                return self.paginate(
+                    request=request,
+                    order_by=(
+                        "priority_order"
+                        if order_by_param in ["priority", "-priority"]
+                        else order_by_param
+                    ),
+                    queryset=issue_queryset,
+                    on_results=lambda issues: issue_on_results(
+                        group_by=group_by,
+                        issues=issues,
+                        sub_group_by=sub_group_by,
+                    ),
+                    paginator_cls=GroupedOffsetPaginator,
+                    group_by_fields=issue_group_values(
+                        field=group_by,
+                        slug=slug,
+                        filters=filters,
+                    ),
+                    group_by_field_name=group_by,
+                    count_filter=Q(
+                        Q(issue_inbox__status=1)
+                        | Q(issue_inbox__status=-1)
+                        | Q(issue_inbox__status=2)
+                        | Q(issue_inbox__isnull=True),
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
                 )
-            ).order_by("state_order")
-        # assignee and label ordering
-        elif order_by_param in [
-            "labels__name",
-            "-labels__name",
-            "assignees__first_name",
-            "-assignees__first_name",
-        ]:
-            issue_queryset = issue_queryset.annotate(
-                max_values=Max(
-                    order_by_param[1::]
-                    if order_by_param.startswith("-")
-                    else order_by_param
-                )
-            ).order_by(
-                "-max_values"
-                if order_by_param.startswith("-")
-                else "max_values"
-            )
         else:
-            issue_queryset = issue_queryset.order_by(order_by_param)
-
-        issues = IssueSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
-        ).data
-        return Response(issues, status=status.HTTP_200_OK)
+            return self.paginate(
+                order_by=(
+                    "priority_order"
+                    if order_by_param in ["priority", "-priority"]
+                    else order_by_param
+                ),
+                request=request,
+                queryset=issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                ),
+            )
 
 
 class WorkspaceUserPropertiesEndpoint(BaseAPIView):
