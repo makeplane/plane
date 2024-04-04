@@ -2,26 +2,21 @@
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
+
+# Django imports
 from django.db.models import (
     Case,
-    CharField,
     Count,
     F,
     Func,
     IntegerField,
-    Max,
     OuterRef,
     Q,
-    UUIDField,
     Value,
     When,
 )
 from django.db.models.fields import DateField
-from django.db.models.functions import Cast, Coalesce, ExtractWeek
-
-# Django imports
+from django.db.models.functions import Cast, ExtractWeek
 from django.utils import timezone
 
 # Third party modules
@@ -147,33 +142,6 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
             )
             .order_by("created_at")
         ).distinct()
