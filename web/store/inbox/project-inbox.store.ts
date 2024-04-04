@@ -33,9 +33,9 @@ export interface IProjectInboxStore {
   handleInboxIssueFilters: <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   handleInboxIssueSorting: <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   fetchInboxIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
-  // fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
+  fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
   createInboxIssue: (workspaceSlug: string, projectId: string, data: any) => Promise<void>;
-  // deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
+  deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
 }
 
 export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInboxStore {
@@ -69,9 +69,9 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
       handleInboxIssueFilters: action,
       handleInboxIssueSorting: action,
       fetchInboxIssues: action,
-      // fetchInboxIssueById: action,
+      fetchInboxIssueById: action,
       createInboxIssue: action,
-      // deleteInboxIssue: action,
+      deleteInboxIssue: action,
     });
     this.inboxIssueService = new InboxIssueService();
   }
@@ -110,15 +110,10 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
    * @description fetch inbox issues with paginated data
    * @param workspaceSlug
    * @param projectId
-   * @returns
    */
   fetchInboxIssues = async (workspaceSlug: string, projectId: string) => {
     try {
-      runInAction(() => {
-        this.isLoading = true;
-        this.inboxIssues = {};
-        this.inboxIssuePaginationInfo = undefined;
-      });
+      this.isLoading = true;
 
       const queryParams = this.inboxIssueQueryParams(
         this.inboxFilters,
@@ -130,11 +125,11 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
 
       runInAction(() => {
         this.isLoading = false;
+        set(this, "inboxIssuePaginationInfo", paginationInfo);
         if (results && results.length > 0)
           results.forEach((value: TInboxIssue) => {
             set(this.inboxIssues, value?.id, new InboxIssueStore(workspaceSlug, projectId, value));
           });
-        set(this, "inboxIssuePaginationInfo", paginationInfo);
       });
     } catch (error) {
       console.error("Error fetching the inbox issues", error);
@@ -144,38 +139,59 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   };
 
   /**
-   * create inbox issue
+   * @description fetch inbox issue with issue id
+   * @param workspaceSlug
+   * @param projectId
+   * @param inboxIssueId
+   */
+  fetchInboxIssueById = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
+    try {
+      const inboxIssue = await this.inboxIssueService.retrieve(workspaceSlug, projectId, inboxIssueId);
+      if (inboxIssue)
+        runInAction(() => {
+          set(this.inboxIssues, inboxIssue?.id, new InboxIssueStore(workspaceSlug, projectId, inboxIssue));
+        });
+    } catch {
+      console.error("Error fetching the inbox issue with inbox issue id");
+    }
+  };
+
+  /**
+   * @description create inbox issue
    * @param workspaceSlug
    * @param projectId
    * @param data
-   * @returns
    */
   createInboxIssue = async (workspaceSlug: string, projectId: string, data: Partial<TInboxIssue>) => {
     try {
       const inboxIssueResponse = await this.inboxIssueService.create(workspaceSlug, projectId, data);
-
-      runInAction(() => {
-        set(
-          this.inboxIssues,
-          inboxIssueResponse?.id,
-          new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse)
-        );
-      });
-    } catch {}
-    runInAction(() => {});
+      if (inboxIssueResponse)
+        runInAction(() => {
+          set(
+            this.inboxIssues,
+            inboxIssueResponse?.id,
+            new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse)
+          );
+        });
+    } catch {
+      console.error("Error creating the inbox issue");
+    }
   };
 
   /**
-   * delete inbox issue
+   * @description delete inbox issue
    * @param workspaceSlug
    * @param projectId
    * @param inboxIssueId
-   * @returns
    */
-  // deleteInboxIssue = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
-  //   await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
-  //   runInAction(() => {
-  //     delete this.inboxIssues[inboxIssueId];
-  //   });
-  // };
+  deleteInboxIssue = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
+    try {
+      await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
+      runInAction(() => {
+        delete this.inboxIssues[inboxIssueId];
+      });
+    } catch {
+      console.error("Error removing the inbox issue");
+    }
+  };
 }
