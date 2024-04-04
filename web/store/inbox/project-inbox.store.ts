@@ -28,7 +28,7 @@ export interface IProjectInboxStore {
   inboxIssuesArray: IInboxIssueStore[];
   getIssueInboxByIssueId: (issueId: string) => IInboxIssueStore | undefined;
   // actions
-  handleCurrentTab: (workspaceSlug: string, projectId: string, tab: TInboxIssueCurrentTab) => void;
+  handleCurrentTab: (tab: TInboxIssueCurrentTab) => void;
   handleInboxIssueFilters: <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   handleInboxIssueSorting: <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   fetchInboxIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -83,12 +83,13 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId] || undefined);
 
   // actions
-  handleCurrentTab = (workspaceSlug: string, projectId: string, tab: TInboxIssueCurrentTab) => {
+  handleCurrentTab = (tab: TInboxIssueCurrentTab) => {
     set(this, "currentTab", tab);
     set(this, "inboxFilters", undefined);
     set(this, "inboxSorting", undefined);
     if (tab === "closed") set(this.inboxFilters, "inbox_status", [-1, 0, 1, 2]);
-    this.fetchInboxIssues(workspaceSlug, projectId);
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId);
   };
 
   handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => {
