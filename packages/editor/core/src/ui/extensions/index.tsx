@@ -96,12 +96,12 @@ export const CoreEditorExtensions = (
   TextStyle,
   TaskList.configure({
     HTMLAttributes: {
-      class: "not-prose pl-2",
+      class: "not-prose pl-2 space-y-4",
     },
   }),
   TaskItem.configure({
     HTMLAttributes: {
-      class: "flex items-start gap-1 my-4",
+      class: "flex",
     },
     nested: true,
   }),
