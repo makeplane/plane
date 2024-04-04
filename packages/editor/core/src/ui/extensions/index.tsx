@@ -51,7 +51,7 @@ export const CoreEditorExtensions = (
     },
     listItem: {
       HTMLAttributes: {
-        class: "not-prose",
+        class: "not-prose space-y-2",
       },
     },
     code: false,

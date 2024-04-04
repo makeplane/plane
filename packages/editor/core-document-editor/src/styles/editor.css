@@ -279,13 +279,6 @@ span:focus .fake-cursor {
   z-index: 1;
 }
 
-/* numbered and bullet lists */
-ol ol,
-ul:not([data-type="taskList"]) ul:not([data-type~="taskList"]) {
-  margin-top: 0.45rem;
-}
-/* end numbered and bullet lists */
-
 /* tailwind typography */
 .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 2rem;
