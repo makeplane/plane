@@ -11,6 +11,7 @@ import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
+import isNil from "lodash/isNil";
 // types
 import {
   TIssue,
@@ -421,6 +422,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
 
       await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
+
+      if (!isNil(data.is_draft) && !data.is_draft) this.removeIssueFromList(issueId);
     } catch (error) {
       this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
       this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
@@ -1001,7 +1004,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
         break;
     }
 
-    return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order]) : dataValues) : dataValues[0];
+    return isDataIdsArray ? dataValues : dataValues[0];
   }
 
   /**
@@ -1116,20 +1119,17 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       // Array
       case "labels__name":
         return this.getIssueIds(
-          orderBy(array, [
-            this.getSortOrderToFilterEmptyValues.bind(null, "label_ids"), //preferring sorting based on empty values to always keep the empty values below
-            (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "asc"),
-          ])
+          orderBy(
+            array, //preferring sorting based on empty values to always keep the empty values below
+            (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "asc")
+          )
         );
       case "-labels__name":
         return this.getIssueIds(
           orderBy(
-            array,
-            [
-              this.getSortOrderToFilterEmptyValues.bind(null, "label_ids"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "desc"),
-            ],
-            ["asc", "desc"]
+            array, //preferring sorting based on empty values to always keep the empty values below
+            (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "desc"),
+            "desc"
           )
         );
 
