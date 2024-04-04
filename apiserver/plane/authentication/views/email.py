@@ -26,10 +26,9 @@ class SignInAuthEndpoint(View):
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
-            url = (
-                referer
-                + "?"
-                + urlencode({"error": "Instance is not configured"})
+            url = urljoin(
+                referer,
+                "?" + urlencode({"error": "Instance is not configured"}),
             )
             return HttpResponseRedirect(url)
 
@@ -39,10 +38,10 @@ class SignInAuthEndpoint(View):
 
         ## Raise exception if any of the above are missing
         if not email or not password:
-            url = (
-                referer
-                + "?"
-                + urlencode({"error": "Both email and password are required"})
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode({"error": "Both email and password are required"}),
             )
             return HttpResponseRedirect(url)
 
@@ -51,10 +50,12 @@ class SignInAuthEndpoint(View):
         try:
             validate_email(email)
         except ValidationError:
-            url = (
-                referer
-                + "?"
-                + urlencode({"error": "Please provide a valid email address."})
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {"error": "Please provide a valid email address."}
+                ),
             )
             return HttpResponseRedirect(url)
         try:
@@ -72,7 +73,7 @@ class SignInAuthEndpoint(View):
             url = urljoin(referer, path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
-            url = referer + "?" + urlencode({"error": str(e)})
+            url = urljoin(referer, "?" + urlencode({"error": str(e)}))
             return HttpResponseRedirect(url)
 
 
@@ -84,10 +85,9 @@ class SignUpAuthEndpoint(View):
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
-            url = (
-                referer
-                + "?"
-                + urlencode({"error": "Instance is not configured"})
+            url = urljoin(
+                referer,
+                "?" + urlencode({"error": "Instance is not configured"}),
             )
             return HttpResponseRedirect(url)
 
@@ -95,10 +95,10 @@ class SignUpAuthEndpoint(View):
         password = request.POST.get("password", False)
         ## Raise exception if any of the above are missing
         if not email or not password:
-            url = (
-                referer
-                + "?"
-                + urlencode({"error": "Both email and password are required"})
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode({"error": "Both email and password are required"}),
             )
             return HttpResponseRedirect(url)
         # Validate the email
@@ -106,10 +106,12 @@ class SignUpAuthEndpoint(View):
         try:
             validate_email(email)
         except ValidationError:
-            url = (
-                referer
-                + "?"
-                + urlencode({"error": "Please provide a valid email address."})
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {"error": "Please provide a valid email address."}
+                ),
             )
             return HttpResponseRedirect(url)
         try:
@@ -127,5 +129,5 @@ class SignUpAuthEndpoint(View):
             url = urljoin(referer, path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
-            url = referer + "?" + urlencode({"error": str(e)})
+            url = urljoin(referer, "?" + urlencode({"error": str(e)}))
             return HttpResponseRedirect(url)

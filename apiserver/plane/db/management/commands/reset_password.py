@@ -2,7 +2,9 @@
 import getpass
 
 # Django imports
-from django.core.management import BaseCommand
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.core.management import BaseCommand, CommandError
 
 # Module imports
 from plane.db.models import User
@@ -45,6 +47,11 @@ class Command(BaseCommand):
         if password.strip() == "":
             self.stderr.write("Error: Blank passwords aren't allowed.")
             return
+
+        try:
+            validate_password(password=password)
+        except ValidationError as e:
+            raise CommandError(e.messages[0])
 
         # Set user password
         user.set_password(password)

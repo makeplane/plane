@@ -26,10 +26,9 @@ class GoogleOauthInitiateEndpoint(View):
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
-            url = (
-                referer
-                + "?"
-                + urlencode({"error": "Instance is not configured"})
+            url = urljoin(
+                referer,
+                "?" + urlencode({"error": "Instance is not configured"}),
             )
             return HttpResponseRedirect(url)
 
@@ -40,7 +39,7 @@ class GoogleOauthInitiateEndpoint(View):
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
         except ImproperlyConfigured as e:
-            url = referer + "?" + urlencode({"error": str(e)})
+            url = urljoin(referer, "?" + urlencode({"error": str(e)}))
             return HttpResponseRedirect(url)
 
 
@@ -51,18 +50,20 @@ class GoogleCallbackEndpoint(View):
         referer = request.session.get("referer")
 
         if state != request.session.get("state", ""):
-            url = referer + "?" + urlencode({"error": "State does not match"})
+            url = urljoin(
+                referer, "?" + urlencode({"error": "State does not match"})
+            )
             return HttpResponseRedirect(url)
 
         if not code:
-            url = (
-                referer
-                + "?"
+            url = urljoin(
+                referer,
+                "?"
                 + urlencode(
                     {
                         "error": "Something went wrong while fetching data from OAuth provider. Please try again after sometime."
                     }
-                )
+                ),
             )
             return HttpResponseRedirect(url)
 
@@ -82,5 +83,5 @@ class GoogleCallbackEndpoint(View):
             url = urljoin(referer, path)
             return HttpResponseRedirect(url)
         except ImproperlyConfigured as e:
-            url = referer + "?" + urlencode({"error": str(e)})
+            url = urljoin(referer, "?" + urlencode({"error": str(e)}))
             return HttpResponseRedirect(url)

@@ -77,10 +77,9 @@ class MagicSignInEndpoint(View):
         key = request.POST.get("key", "").strip().lower()
 
         if key == "" or user_token == "":
-            url = (
-                referer
-                + "?"
-                + urlencode({"error": "User token and key are required"})
+            url = urljoin(
+                referer,
+                "?" + urlencode({"error": "User token and key are required"}),
             )
             return HttpResponseRedirect(url)
         try:
@@ -99,5 +98,5 @@ class MagicSignInEndpoint(View):
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
-            url = referer + "?" + urlencode({"error": str(e)})
+            url = urljoin(referer, "?" + urlencode({"error": str(e)}))
             return HttpResponseRedirect(url)

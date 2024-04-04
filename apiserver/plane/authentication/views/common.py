@@ -1,9 +1,10 @@
 # Python imports
 import os
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urljoin
 
 # Django imports
 from django.contrib.auth import logout
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -17,7 +18,6 @@ from django.utils.encoding import (
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
 
-## Third Party Imports
 # Third party imports
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -78,10 +78,9 @@ class SignOutAuthEndpoint(View):
 
     def post(self, request):
         logout(request)
-        url = (
-            request.META.get("HTTP_REFERER", "/")
-            + "?"
-            + urlencode({"success": "true"})
+        url = urljoin(
+            request.META.get("HTTP_REFERER", "/"),
+            "?" + urlencode({"success": "true"}),
         )
         return HttpResponseRedirect(url)
 
@@ -188,11 +187,22 @@ class ResetPasswordEndpoint(View):
 
             # check if the token is valid for the user
             if not PasswordResetTokenGenerator().check_token(user, token):
-                url = referer + "?" + urlencode({"error": "Token is invalid"})
+                url = urljoin(
+                    referer, "?" + urlencode({"error": "Token is invalid"})
+                )
                 return HttpResponseRedirect(url)
 
             new_password = request.POST.get("new_password")
             # set_password also hashes the password that the user will get
+
+            try:
+                validate_password(password=new_password)
+            except ValidationError as e:
+                url = urljoin(
+                    referer, "?" + urlencode({"error": str(e.messages[0])})
+                )
+                return HttpResponseRedirect(url)
+
             user.set_password(new_password)
             user.is_password_autoset = False
             user.save()
@@ -200,15 +210,12 @@ class ResetPasswordEndpoint(View):
             # Generate access token for the user
             user_login(request=request, user=user)
             process_workspace_project_invitations(user=user)
-            url = referer + "?" + urlencode({"success": "true"})
+            url = urljoin(referer, "?" + urlencode({"success": "true"}))
             return HttpResponseRedirect(url)
         except DjangoUnicodeDecodeError:
-            url = (
-                referer
-                + "?"
-                + urlencode(
-                    {"error": "token is not valid, please check the new one"}
-                )
+            url = urljoin(
+                referer,
+                "?" + urlencode({"error": "The password token is not valid"}),
             )
             return HttpResponseRedirect(url)
 
@@ -223,6 +230,15 @@ class ChangePasswordEndpoint(APIView):
                     {"error": "Old password is not correct"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+            try:
+                validate_password(password=serializer.data.get("new_password"))
+            except ValidationError as e:
+                return Response(
+                    {"error": str(e.messages[0])},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # set_password also hashes the password that the user will get
             user.set_password(serializer.data.get("new_password"))
             user.is_password_autoset = False
@@ -252,6 +268,14 @@ class SetUserPasswordEndpoint(APIView):
         if not password and len(str(password)) < 8:
             return Response(
                 {"error": "Password is not valid"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            validate_password(password=password)
+        except ValidationError as e:
+            return Response(
+                {"error": str(e.messages[0])},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

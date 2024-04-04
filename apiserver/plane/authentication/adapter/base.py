@@ -3,7 +3,8 @@ import os
 import uuid
 
 # Django imports
-from django.core.exceptions import ImproperlyConfigured
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.utils import timezone
 
 # Third party imports
@@ -13,6 +14,10 @@ from plane.db.models import (
     WorkspaceMemberInvite,
 )
 from plane.license.utils.instance_value import get_configuration_value
+
+
+class AuthenticationException(Exception):
+    pass
 
 
 class Adapter:
@@ -71,6 +76,12 @@ class Adapter:
                 user.is_password_autoset = True
                 user.is_email_verified = True
             else:
+                # Validate password
+                try:
+                    validate_password(password=self.code)
+                except ValidationError as e:
+                    raise AuthenticationException(str(e.messages[0]))
+
                 user.set_password(self.code)
                 user.is_password_autoset = False
 
@@ -96,7 +107,3 @@ class Adapter:
             self.create_update_account(user=user)
 
         return user
-
-
-class AuthenticationException(Exception):
-    pass

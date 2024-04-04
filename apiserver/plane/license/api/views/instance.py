@@ -8,10 +8,11 @@ from smtplib import (
     SMTPSenderRefused,
     SMTPServerDisconnected,
 )
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urljoin
 
 # Django imports
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.mail import (
     BadHeaderError,
@@ -298,21 +299,22 @@ class InstanceAdminSignInEndpoint(View):
         # Check instance first
         instance = Instance.objects.first()
         if instance is None:
-            return Response(
-                {"error": "Instance is not configured"},
-                status=status.HTTP_400_BAD_REQUEST,
+            url = urljoin(
+                referer,
+                "?" + urlencode({"error": "Instance is not configured"}),
             )
+            return HttpResponseRedirect(url)
 
         # check if the instance is already activated
         if InstanceAdmin.objects.first():
-            url = (
-                referer
-                + "?"
+            url = urljoin(
+                referer,
+                "?"
                 + urlencode(
                     {
                         "error": "Admin for the instance has been already registered"
                     }
-                )
+                ),
             )
             return HttpResponseRedirect(url)
         # Get the email and password from all the user
@@ -325,10 +327,12 @@ class InstanceAdminSignInEndpoint(View):
 
         # return error if the email and password is not present
         if not email or not password or not first_name:
-            url = (
-                referer
-                + "?"
-                + urlencode({"error": "Email, name and password are required"})
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {"error": "Email, name and password are required"}
+                ),
             )
             return HttpResponseRedirect(url)
 
@@ -337,10 +341,12 @@ class InstanceAdminSignInEndpoint(View):
         try:
             validate_email(email)
         except ValidationError:
-            url = (
-                referer
-                + "?"
-                + urlencode({"error": "Please provide a valid email address."})
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {"error": "Please provide a valid email address."}
+                ),
             )
             return HttpResponseRedirect(url)
         # Check if already a user exists or not
@@ -350,17 +356,26 @@ class InstanceAdminSignInEndpoint(View):
         if user:
             # Check user password
             if not user.check_password(password):
-                url = (
-                    referer
-                    + "?"
+                url = urljoin(
+                    referer,
+                    "?"
                     + urlencode(
                         {
                             "error": "Sorry, we could not find a user with the provided credentials. Please try again."
                         }
-                    )
+                    ),
                 )
                 return HttpResponseRedirect(url)
         else:
+
+            try:
+                validate_password(password=password)
+            except ValidationError as e:
+                url = urljoin(
+                    referer, "?" + urlencode({"error": str(e.messages[0])})
+                )
+                return HttpResponseRedirect(url)
+
             user = User.objects.create(
                 first_name=first_name,
                 last_name=last_name,
@@ -391,7 +406,7 @@ class InstanceAdminSignInEndpoint(View):
 
         # get tokens for user
         user_login(request=request, user=user)
-        url = referer + "/god-mode"
+        url = urljoin(referer, "god-mode")
         return HttpResponseRedirect(url)
 
 
