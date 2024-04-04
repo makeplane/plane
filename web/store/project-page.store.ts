@@ -1,15 +1,15 @@
 import { isThisWeek, isToday, isYesterday } from "date-fns";
 import { set } from "lodash";
 import { makeObservable, observable, runInAction, action, computed } from "mobx";
+// types
+import { IPage, IRecentPages } from "@plane/types";
+//helpers
+import { getDate } from "@/helpers/date-time.helper";
 // services
 import { PageService } from "@/services/page.service";
 // store
 import { PageStore, IPageStore } from "@/store/page.store";
-// types
-import { IPage, IRecentPages } from "@plane/types";
 import { RootStore } from "./root.store";
-//helpers
-import { getDate } from "helpers/date-time.helper";
 
 export interface IProjectPageStore {
   loader: boolean;
@@ -70,7 +70,7 @@ export class ProjectPageStore implements IProjectPageStore {
   }
 
   get projectPageIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.projectPageMap?.[projectId]) return [];
 
     const allProjectIds = Object.keys(this.projectPageMap[projectId]);
@@ -82,7 +82,7 @@ export class ProjectPageStore implements IProjectPageStore {
   }
 
   get archivedPageIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.projectArchivedPageMap[projectId]) return [];
     const archivedPages = Object.keys(this.projectArchivedPageMap[projectId]);
     return archivedPages.sort((a, b) => {
@@ -93,7 +93,7 @@ export class ProjectPageStore implements IProjectPageStore {
   }
 
   get favoriteProjectPageIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!this.projectPageIds || !projectId) return [];
 
     const favouritePages: string[] = this.projectPageIds.filter(
@@ -103,7 +103,7 @@ export class ProjectPageStore implements IProjectPageStore {
   }
 
   get privateProjectPageIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!this.projectPageIds || !projectId) return [];
 
     const privatePages: string[] = this.projectPageIds.filter(
@@ -113,7 +113,7 @@ export class ProjectPageStore implements IProjectPageStore {
   }
 
   get publicProjectPageIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     const userId = this.rootStore.user.data?.id;
     if (!this.projectPageIds || !projectId || !userId) return [];
 
@@ -125,7 +125,7 @@ export class ProjectPageStore implements IProjectPageStore {
   }
 
   get recentProjectPages() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!this.projectPageIds || !projectId) return;
 
     const today: string[] = this.projectPageIds.filter((page) => {

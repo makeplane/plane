@@ -28,7 +28,7 @@ export class MentionStore implements IMentionStore {
    * @description returns a list of mention suggestions
    */
   get mentionSuggestions() {
-    const workspaceSlug = this.rootStore.app.router.workspaceSlug;
+    const workspaceSlug = this.rootStore.router.workspaceSlug;
     const projectMemberIds = this.rootStore.memberRoot.project.projectMemberIds;
 
     const suggestions = (projectMemberIds ?? [])?.map((memberId) => {

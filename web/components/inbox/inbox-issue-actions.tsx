@@ -52,7 +52,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     membership: { currentProjectRole },
     data: currentUser,
   } = useUser();
-  const { data: currentUser } = useUser();
 
   // states
   const [date, setDate] = useState(new Date());

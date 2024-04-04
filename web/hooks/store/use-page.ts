@@ -8,7 +8,7 @@ export const usePage = (pageId: string) => {
 
   const { projectPageMap, projectArchivedPageMap } = context.projectPages;
 
-  const { projectId, workspaceSlug } = context.app.router;
+  const { projectId, workspaceSlug } = context.router;
   if (!projectId || !workspaceSlug) {
     console.log("usePage must be used within ProjectProvider");
     return;

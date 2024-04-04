@@ -52,7 +52,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         });
         router.push("/profile");
       })
-      .catch((err) =>
+      .catch((err: any) =>
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error",

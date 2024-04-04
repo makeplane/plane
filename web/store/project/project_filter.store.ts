@@ -55,7 +55,7 @@ export class ProjectFilterStore implements IProjectFilterStore {
     this.rootStore = _rootStore;
     // initialize display filters of the current workspace
     reaction(
-      () => this.rootStore.app.router.workspaceSlug,
+      () => this.rootStore.router.workspaceSlug,
       (workspaceSlug) => {
         if (!workspaceSlug) return;
         this.initWorkspaceFilters(workspaceSlug);
@@ -67,7 +67,7 @@ export class ProjectFilterStore implements IProjectFilterStore {
    * @description get display filters of the current workspace
    */
   get currentWorkspaceDisplayFilters() {
-    const workspaceSlug = this.rootStore.app.router.workspaceSlug;
+    const workspaceSlug = this.rootStore.router.workspaceSlug;
     if (!workspaceSlug) return;
     return this.displayFilters[workspaceSlug];
   }
@@ -78,7 +78,7 @@ export class ProjectFilterStore implements IProjectFilterStore {
    */
   // TODO: Figure out a better approach for this
   get currentWorkspaceAppliedDisplayFilters() {
-    const workspaceSlug = this.rootStore.app.router.workspaceSlug;
+    const workspaceSlug = this.rootStore.router.workspaceSlug;
     if (!workspaceSlug) return;
     const displayFilters = this.displayFilters[workspaceSlug];
     return Object.keys(displayFilters).filter(
@@ -91,7 +91,7 @@ export class ProjectFilterStore implements IProjectFilterStore {
    * @description get filters of the current workspace
    */
   get currentWorkspaceFilters() {
-    const workspaceSlug = this.rootStore.app.router.workspaceSlug;
+    const workspaceSlug = this.rootStore.router.workspaceSlug;
     if (!workspaceSlug) return;
     return this.filters[workspaceSlug];
   }

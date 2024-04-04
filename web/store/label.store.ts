@@ -2,13 +2,14 @@ import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// services
-import { buildTree } from "@/helpers/array.helper";
-import { IssueLabelService } from "@/services/issue";
-// helpers
 // types
-import { RootStore } from "@/store/root.store";
 import { IIssueLabel, IIssueLabelTree } from "@plane/types";
+// helpers
+import { buildTree } from "@/helpers/array.helper";
+// services
+import { IssueLabelService } from "@/services/issue";
+// store
+import { RootStore } from "@/store/root.store";
 
 export interface ILabelStore {
   //Loaders
@@ -81,7 +82,7 @@ export class LabelStore implements ILabelStore {
    */
   get workspaceLabels() {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
-    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
+    const worksapceSlug = this.rootStore.router.workspaceSlug || "";
     if (!currentWorkspaceDetails || !this.fetchedMap[worksapceSlug]) return;
     return sortBy(
       Object.values(this.labelMap).filter((label) => label.workspace_id === currentWorkspaceDetails.id),
@@ -93,8 +94,8 @@ export class LabelStore implements ILabelStore {
    * Returns the labelMap belonging to the current project
    */
   get projectLabels() {
-    const projectId = this.rootStore.app.router.projectId;
-    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
+    const projectId = this.rootStore.router.projectId;
+    const worksapceSlug = this.rootStore.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
     return sortBy(
       Object.values(this.labelMap).filter((label) => label.project_id === projectId),
@@ -111,7 +112,7 @@ export class LabelStore implements ILabelStore {
   }
 
   getProjectLabels = computedFn((projectId: string | null) => {
-    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
+    const worksapceSlug = this.rootStore.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
     return sortBy(
       Object.values(this.labelMap).filter((label) => label.project_id === projectId),

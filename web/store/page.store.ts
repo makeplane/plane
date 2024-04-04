@@ -1,8 +1,6 @@
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
-
-import { PageService } from "@/services/page.service";
 import { IIssueLabel, IPage } from "@plane/types";
-
+import { PageService } from "@/services/page.service";
 import { RootStore } from "./root.store";
 
 export interface IPageStore {
@@ -121,7 +119,7 @@ export class PageStore implements IPageStore {
       () => this.description_html,
       (description_html) => {
         //TODO: Fix reaction to only run when the data is changed, not when the page is loaded
-        const { projectId, workspaceSlug } = this.rootStore.app.router;
+        const { projectId, workspaceSlug } = this.rootStore.router;
         if (!projectId || !workspaceSlug) return;
         this.isSubmitting = "submitting";
         this.pageService.patchPage(workspaceSlug, projectId, this.id, { description_html }).finally(() => {
@@ -136,7 +134,7 @@ export class PageStore implements IPageStore {
     const pageTitleDisposer = reaction(
       () => this.name,
       (name) => {
-        const { projectId, workspaceSlug } = this.rootStore.app.router;
+        const { projectId, workspaceSlug } = this.rootStore.router;
         if (!projectId || !workspaceSlug) return;
         this.isSubmitting = "submitting";
         this.pageService
@@ -159,7 +157,7 @@ export class PageStore implements IPageStore {
   }
 
   updateName = action("updateName", async (name: string) => {
-    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    const { projectId, workspaceSlug } = this.rootStore.router;
     if (!projectId || !workspaceSlug) return;
 
     this.oldName = this.name;
@@ -167,7 +165,7 @@ export class PageStore implements IPageStore {
   });
 
   updateDescription = action("updateDescription", (description_html: string) => {
-    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    const { projectId, workspaceSlug } = this.rootStore.router;
     if (!projectId || !workspaceSlug) return;
 
     this.description_html = description_html;
@@ -184,7 +182,7 @@ export class PageStore implements IPageStore {
   });
 
   lockPage = action("lockPage", async () => {
-    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    const { projectId, workspaceSlug } = this.rootStore.router;
     if (!projectId || !workspaceSlug) return;
 
     this.is_locked = true;
@@ -197,7 +195,7 @@ export class PageStore implements IPageStore {
   });
 
   unlockPage = action("unlockPage", async () => {
-    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    const { projectId, workspaceSlug } = this.rootStore.router;
     if (!projectId || !workspaceSlug) return;
 
     this.is_locked = false;
@@ -213,7 +211,7 @@ export class PageStore implements IPageStore {
    * Add Page to users favorites list
    */
   addToFavorites = action("addToFavorites", async () => {
-    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    const { projectId, workspaceSlug } = this.rootStore.router;
     if (!projectId || !workspaceSlug) return;
 
     this.is_favorite = true;
@@ -229,7 +227,7 @@ export class PageStore implements IPageStore {
    * Remove page from the users favorites list
    */
   removeFromFavorites = action("removeFromFavorites", async () => {
-    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    const { projectId, workspaceSlug } = this.rootStore.router;
     if (!projectId || !workspaceSlug) return;
 
     this.is_favorite = false;
@@ -246,7 +244,7 @@ export class PageStore implements IPageStore {
    * @returns
    */
   makePublic = action("makePublic", async () => {
-    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    const { projectId, workspaceSlug } = this.rootStore.router;
     if (!projectId || !workspaceSlug) return;
 
     this.access = 0;
@@ -263,7 +261,7 @@ export class PageStore implements IPageStore {
    * @returns
    */
   makePrivate = action("makePrivate", async () => {
-    const { projectId, workspaceSlug } = this.rootStore.app.router;
+    const { projectId, workspaceSlug } = this.rootStore.router;
     if (!projectId || !workspaceSlug) return;
 
     this.access = 1;

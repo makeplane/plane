@@ -1,11 +1,12 @@
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
+// types
+import { TInboxIssueFilterOptions, TInboxIssueFilters, TInboxIssueQueryParams, TInbox } from "@plane/types";
 // services
 import { InboxService } from "@/services/inbox.service";
-// types
+// store
 import { RootStore } from "@/store/root.store";
-import { TInboxIssueFilterOptions, TInboxIssueFilters, TInboxIssueQueryParams, TInbox } from "@plane/types";
 
 export interface IInboxFilter {
   // observables
@@ -49,7 +50,7 @@ export class InboxFilter implements IInboxFilter {
   }
 
   get inboxFilters() {
-    const inboxId = this.rootStore.app.router.inboxId;
+    const inboxId = this.rootStore.router.inboxId;
     if (!inboxId) return undefined;
 
     const displayFilters = this.filters[inboxId] || undefined;
@@ -103,8 +104,8 @@ export class InboxFilter implements IInboxFilter {
     try {
       runInAction(() => {
         Object.keys(filters).forEach((_key) => {
-          const _filterKey = _key as keyof TInboxIssueFilterOptions;
-          set(this.filters, [inboxId, "filters", _key], filters[_filterKey]);
+          const filterKey = _key as keyof TInboxIssueFilterOptions;
+          set(this.filters, [inboxId, "filters", _key], filters[filterKey]);
         });
       });
 
