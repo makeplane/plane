@@ -7,7 +7,7 @@ import { ProjectsHeader } from "@/components/headers";
 import { ProjectAppliedFiltersList, ProjectCardList } from "@/components/project";
 // layouts
 import { calculateTotalFilters } from "@/helpers/filter.helper";
-import { useApplication, useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
+import { useAppRouter, useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
 import { AppLayout } from "@/layouts/app-layout";
 // helpers
 // types
@@ -15,9 +15,7 @@ import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectsPage: NextPageWithLayout = observer(() => {
   // store
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { currentWorkspace } = useWorkspace();
   const { totalProjectIds, filteredProjectIds } = useProject();
   const {
@@ -61,7 +59,7 @@ const ProjectsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="h-full w-full flex flex-col">
+      <div className="flex h-full w-full flex-col">
         {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 ||
           currentWorkspaceAppliedDisplayFilters?.length !== 0) && (
           <div className="border-b border-custom-border-200 px-5 py-3">

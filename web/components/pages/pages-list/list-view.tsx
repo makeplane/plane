@@ -1,15 +1,16 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-// hooks
-import { Loader } from "@plane/ui";
-import { EmptyState } from "@/components/empty-state";
-import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
-import { useApplication } from "@/hooks/store";
-import useLocalStorage from "@/hooks/use-local-storage";
-// components
-import { PagesListItem } from "./list-item";
 // ui
+import { Loader } from "@plane/ui";
+// components
+import { EmptyState } from "@/components/empty-state";
 // constants
+import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
+// hooks
+import { useCommandPalette } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
+// local components
+import { PagesListItem } from "./list-item";
 
 type IPagesListView = {
   pageIds: string[];
@@ -18,9 +19,7 @@ type IPagesListView = {
 export const PagesListView: FC<IPagesListView> = (props) => {
   const { pageIds: projectPageIds } = props;
   // store hooks
-  const {
-    commandPalette: { toggleCreatePageModal },
-  } = useApplication();
+  const { toggleCreatePageModal } = useCommandPalette();
   // local storage
   const { storedValue: pageTab } = useLocalStorage("pageTab", "Recent");
   // router
@@ -35,7 +34,7 @@ export const PagesListView: FC<IPagesListView> = (props) => {
   return (
     <>
       {projectPageIds && workspaceSlug && projectId ? (
-        <div className="h-full space-y-4 overflow-y-auto vertical-scrollbar scrollbar-lg">
+        <div className="vertical-scrollbar scrollbar-lg h-full space-y-4 overflow-y-auto">
           {projectPageIds.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
               {projectPageIds.map((pageId: string) => (

@@ -5,7 +5,7 @@ import useSWR from "swr";
 // hooks
 import { Spinner } from "@plane/ui";
 import { InstanceNotReady } from "@/components/instance";
-import { useApplication } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 // components
 
 type Props = {
@@ -14,10 +14,8 @@ type Props = {
 
 const InstanceLayout: FC<Props> = observer(({ children }) => {
   // store
-  const {
-    instance: { fetchInstanceInfo, instance },
-  } = useApplication();
-
+  const { fetchInstanceInfo, instance } = useInstance();
+  // router
   const router = useRouter();
   const isGodMode = router.pathname.includes("god-mode");
 

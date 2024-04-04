@@ -1,17 +1,17 @@
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
-// hooks
 // components
 import { EmptyState } from "@/components/empty-state";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
-// ui
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
-// assets
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+// helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
-import { useApplication, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
+// hooks
+import { useCommandPalette, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
+// assets
 import AllFiltersImage from "public/empty-state/module/all-filters.svg";
 import NameFilterImage from "public/empty-state/module/name-filter.svg";
 
@@ -20,7 +20,7 @@ export const ModulesListView: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateModuleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { getFilteredModuleIds, loader } = useModule();
   const { currentProjectDisplayFilters: displayFilters, searchQuery, currentProjectFilters } = useModuleFilter();
@@ -104,7 +104,7 @@ export const ModulesListView: React.FC = observer(() => {
           type={EmptyStateType.PROJECT_MODULE}
           primaryButtonOnClick={() => {
             setTrackElement("Module empty state");
-            commandPaletteStore.toggleCreateModuleModal(true);
+            toggleCreateModuleModal(true);
           }}
         />
       )}

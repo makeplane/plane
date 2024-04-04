@@ -8,7 +8,7 @@ import { Transition } from "@headlessui/react";
 // ui
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
-import { useApplication } from "@/hooks/store";
+import { useAppTheme, useCommandPalette } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // assets
@@ -38,10 +38,8 @@ export interface WorkspaceHelpSectionProps {
 
 export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
   // store hooks
-  const {
-    theme: { sidebarCollapsed, toggleSidebar },
-    commandPalette: { toggleShortcutModal },
-  } = useApplication();
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { toggleShortcutModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);

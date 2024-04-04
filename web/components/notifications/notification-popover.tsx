@@ -13,7 +13,7 @@ import { NotificationsLoader } from "@/components/ui";
 import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { getNumberCount } from "@/helpers/string.helper";
-import { useApplication } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import useUserNotification from "@/hooks/use-user-notifications";
@@ -22,7 +22,7 @@ export const NotificationPopover = observer(() => {
   // states
   const [isActive, setIsActive] = React.useState(false);
   // store hooks
-  const { theme: themeStore } = useApplication();
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   // refs
   const notificationPopoverRef = React.useRef<HTMLDivElement | null>(null);
   // hooks
@@ -54,7 +54,7 @@ export const NotificationPopover = observer(() => {
     setFetchNotifications,
     markAllNotificationsAsRead,
   } = useUserNotification();
-  const isSidebarCollapsed = themeStore.sidebarCollapsed;
+  const isSidebarCollapsed = sidebarCollapsed;
   useOutsideClickDetector(notificationPopoverRef, () => {
     // if snooze modal is open, then don't close the popover
     if (selectedNotificationForSnooze === null) setIsActive(false);
@@ -97,7 +97,7 @@ export const NotificationPopover = observer(() => {
                   : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
               } ${isSidebarCollapsed ? "justify-center" : ""}`}
               onClick={() => {
-                if (window.innerWidth < 768) themeStore.toggleSidebar();
+                if (window.innerWidth < 768) toggleSidebar();
                 if (!isActive) setFetchNotifications(true);
                 setIsActive(!isActive);
               }}

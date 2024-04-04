@@ -2,18 +2,26 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
 import { TProjectFilters } from "@plane/types";
-// hooks
-// components
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
-// helpers
-// constants
 import { FiltersDropdown } from "@/components/issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
+// constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useEventTracker, useMember, useProject, useProjectFilter, useUser } from "@/hooks/store";
+// hooks
+import {
+  useAppRouter,
+  useCommandPalette,
+  useEventTracker,
+  useMember,
+  useProject,
+  useProjectFilter,
+  useUser,
+} from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ProjectsHeader = observer(() => {
@@ -22,10 +30,8 @@ export const ProjectsHeader = observer(() => {
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    router: { workspaceSlug },
-  } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
+  const { workspaceSlug } = useAppRouter();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
@@ -88,13 +94,13 @@ export const ProjectsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
-      <div className="w-full flex items-center justify-end gap-3">
+      <div className="flex w-full items-center justify-end gap-3">
         {workspaceProjectIds && workspaceProjectIds?.length > 0 && (
           <div className="flex items-center">
             {!isSearchOpen && (
               <button
                 type="button"
-                className="-mr-1 p-2 hover:bg-custom-background-80 rounded text-custom-text-400 grid place-items-center"
+                className="-mr-1 grid place-items-center rounded p-2 text-custom-text-400 hover:bg-custom-background-80"
                 onClick={() => {
                   setIsSearchOpen(true);
                   inputRef.current?.focus();
@@ -105,9 +111,9 @@ export const ProjectsHeader = observer(() => {
             )}
             <div
               className={cn(
-                "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+                "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 opacity-0 transition-[width] ease-linear",
                 {
-                  "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+                  "w-64 border-custom-border-200 px-2.5 py-1.5 opacity-100": isSearchOpen,
                 }
               )}
             >
@@ -162,7 +168,7 @@ export const ProjectsHeader = observer(() => {
             size="sm"
             onClick={() => {
               setTrackElement("Projects page");
-              commandPaletteStore.toggleCreateProjectModal(true);
+              toggleCreateProjectModal(true);
             }}
             className="items-center gap-1"
           >

@@ -1,20 +1,20 @@
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
-// hooks
 // components
 import { EmptyState } from "@/components/empty-state";
 import { ProjectCard } from "@/components/project";
 import { ProjectsLoader } from "@/components/ui";
-// assets
+// constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { useApplication, useEventTracker, useProject, useProjectFilter } from "@/hooks/store";
+// hooks
+import { useCommandPalette, useEventTracker, useProject, useProjectFilter } from "@/hooks/store";
+// assets
 import AllFiltersImage from "public/empty-state/project/all-filters.svg";
 import NameFilterImage from "public/empty-state/project/name-filter.svg";
-// constants
 
 export const ProjectCardList = observer(() => {
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds, filteredProjectIds, getProjectById } = useProject();
   const { searchQuery, currentWorkspaceDisplayFilters } = useProjectFilter();
@@ -25,7 +25,7 @@ export const ProjectCardList = observer(() => {
         type={EmptyStateType.WORKSPACE_PROJECTS}
         primaryButtonOnClick={() => {
           setTrackElement("Project empty state");
-          commandPaletteStore.toggleCreateProjectModal(true);
+          toggleCreateProjectModal(true);
         }}
       />
     );

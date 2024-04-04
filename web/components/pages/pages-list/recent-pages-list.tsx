@@ -1,22 +1,21 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-// hooks
+// ui
 import { Loader } from "@plane/ui";
+// components
 import { EmptyState } from "@/components/empty-state";
 import { PagesListView } from "@/components/pages/pages-list";
-import { EmptyStateType } from "@/constants/empty-state";
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
-import { useApplication } from "@/hooks/store";
-import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
-// components
-// ui
-// helpers
 // constants
+import { EmptyStateType } from "@/constants/empty-state";
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+// hooks
+import { useCommandPalette } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
 
 export const RecentPagesList: FC = observer(() => {
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
-
+  const { toggleCreatePageModal } = useCommandPalette();
   const { recentProjectPages } = useProjectPages();
 
   // FIXME: replace any with proper type
@@ -41,7 +40,7 @@ export const RecentPagesList: FC = observer(() => {
 
             return (
               <div key={key}>
-                <h2 className="sticky top-0 z-[1] mb-2 bg-custom-background-100 text-xl font-semibold capitalize px-3 md:p-0">
+                <h2 className="sticky top-0 z-[1] mb-2 bg-custom-background-100 px-3 text-xl font-semibold capitalize md:p-0">
                   {replaceUnderscoreIfSnakeCase(key)}
                 </h2>
                 <PagesListView pageIds={recentProjectPages[key]} />
@@ -53,7 +52,7 @@ export const RecentPagesList: FC = observer(() => {
         <>
           <EmptyState
             type={EmptyStateType.PROJECT_PAGE_RECENT}
-            primaryButtonOnClick={() => commandPaletteStore.toggleCreatePageModal(true)}
+            primaryButtonOnClick={() => toggleCreatePageModal(true)}
             size="sm"
           />
         </>

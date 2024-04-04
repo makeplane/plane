@@ -5,7 +5,7 @@ import { TCycleGroups } from "@plane/types";
 // components
 import { Loader, CycleGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
-import { useApplication, useCycle } from "@/hooks/store";
+import { useAppRouter, useCycle } from "@/hooks/store";
 // ui
 // types
 
@@ -19,9 +19,7 @@ export const FilterCycle: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   // hooks
-  const {
-    router: { projectId },
-  } = useApplication();
+  const { projectId } = useAppRouter();
   const { getCycleById, getProjectCycleIds } = useCycle();
 
   // states

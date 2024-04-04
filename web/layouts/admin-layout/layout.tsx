@@ -2,7 +2,7 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { InstanceSetupView } from "@/components/instance";
-import { useApplication } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 // layouts
 import { AdminAuthWrapper, UserAuthWrapper } from "@/layouts/auth-layout";
 // components
@@ -16,9 +16,7 @@ export interface IInstanceAdminLayout {
 export const InstanceAdminLayout: FC<IInstanceAdminLayout> = observer((props) => {
   const { children } = props;
   // store hooks
-  const {
-    instance: { instance },
-  } = useApplication();
+  const { instance } = useInstance();
 
   if (instance?.is_setup_done === false) return <InstanceSetupView />;
 

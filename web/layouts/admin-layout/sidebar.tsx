@@ -1,17 +1,15 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-// hooks
-import { InstanceAdminSidebarMenu, InstanceHelpSection, InstanceSidebarDropdown } from "@/components/instance";
-import { useApplication } from "@/hooks/store";
 // components
+import { InstanceAdminSidebarMenu, InstanceHelpSection, InstanceSidebarDropdown } from "@/components/instance";
+// hooks
+import { useAppTheme } from "@/hooks/store";
 
 export interface IInstanceAdminSidebar {}
 
 export const InstanceAdminSidebar: FC<IInstanceAdminSidebar> = observer(() => {
   // store
-  const {
-    theme: { sidebarCollapsed },
-  } = useApplication();
+  const { sidebarCollapsed } = useAppTheme();
 
   return (
     <div

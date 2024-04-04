@@ -6,7 +6,7 @@ import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { Tooltip, ControlLink } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { IssueProperties } from "../properties/all-properties";
@@ -44,9 +44,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   // hooks
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { setPeekIssue } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>

@@ -7,7 +7,7 @@ import { TIssue } from "@plane/types";
 import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useAppRouter, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
 // types
@@ -22,9 +22,7 @@ type Props = {
 export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
   const { issue, quickActions, isDragging = false } = props;
   // hooks
-  const {
-    router: { workspaceSlug, projectId },
-  } = useApplication();
+  const { workspaceSlug, projectId } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
   const { getProjectStates } = useProjectState();
   const { peekIssue, setPeekIssue } = useIssueDetail();
@@ -77,9 +75,9 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
 
         <div
           className={cn(
-            "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded border-b md:border-[0.5px] border-custom-border-200 hover:border-custom-border-400 md:px-1 px-4 py-1.5 ",
+            "group/calendar-block flex h-10 w-full items-center justify-between gap-1.5 rounded border-b border-custom-border-200 px-4 py-1.5 hover:border-custom-border-400 md:h-8 md:border-[0.5px] md:px-1 ",
             {
-              "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100": isDragging,
+              "border-custom-primary-100 bg-custom-background-90 shadow-custom-shadow-rg": isDragging,
             },
             { "bg-custom-background-100 hover:bg-custom-background-90": !isDragging },
             {
@@ -94,15 +92,15 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
                 backgroundColor: stateColor,
               }}
             />
-            <div className="flex-shrink-0 text-sm md:text-xs text-custom-text-300">
+            <div className="flex-shrink-0 text-sm text-custom-text-300 md:text-xs">
               {getProjectIdentifierById(issue?.project_id)}-{issue.sequence_id}
             </div>
             <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-              <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
+              <div className="truncate text-sm font-medium md:text-xs md:font-normal">{issue.name}</div>
             </Tooltip>
           </div>
           <div
-            className={`flex-shrink-0 md:hidden h-5 w-5 group-hover/calendar-block:block ${
+            className={`h-5 w-5 flex-shrink-0 group-hover/calendar-block:block md:hidden ${
               isMenuActive ? "!block" : ""
             }`}
             onClick={(e) => {

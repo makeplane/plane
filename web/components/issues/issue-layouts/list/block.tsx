@@ -6,7 +6,7 @@ import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
 // helper
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { IssueProperties } from "../properties/all-properties";
@@ -23,9 +23,7 @@ interface IssueBlockProps {
 export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlockProps) => {
   const { issuesMap, issueId, updateIssue, quickActions, displayProperties, canEditProperties } = props;
   // hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
 

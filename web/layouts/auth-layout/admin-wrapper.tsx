@@ -1,8 +1,7 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { InstanceAdminRestriction } from "@/components/instance";
-import { useApplication, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/store";
 // components
 
 export interface IAdminAuthWrapper {
@@ -11,9 +10,7 @@ export interface IAdminAuthWrapper {
 
 export const AdminAuthWrapper: FC<IAdminAuthWrapper> = observer(({ children }) => {
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   // FIXME:
   // const { isUserInstanceAdmin, currentUserSettings } = useUser();
   // redirect url

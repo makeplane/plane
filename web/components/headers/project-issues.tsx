@@ -12,13 +12,13 @@ import { ProjectLogo } from "@/components/project";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import {
-  useApplication,
   useEventTracker,
   useLabel,
   useProject,
   useProjectState,
   useUser,
   useMember,
+  useCommandPalette,
 } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
 // components
@@ -41,9 +41,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
@@ -117,7 +115,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         projectDetails={currentProjectDetails ?? undefined}
       />
       <div className="relative z-[15] items-center gap-x-2 gap-y-4">
-        <div className="flex items-center gap-2 p-4 bg-custom-sidebar-background-100">
+        <div className="flex items-center gap-2 bg-custom-sidebar-background-100 p-4">
           <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
             <div className="flex items-center gap-2.5">
               <Breadcrumbs onBack={() => router.back()}>
@@ -130,7 +128,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                       icon={
                         currentProjectDetails ? (
                           currentProjectDetails && (
-                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                            <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                               <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
@@ -157,7 +155,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                   tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in this project`}
                   position="bottom"
                 >
-                  <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                  <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2.5 py-0.5 text-center text-xs font-semibold text-custom-primary-100">
                     {issueCount}
                   </span>
                 </Tooltip>
@@ -176,7 +174,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </a>
             )}
           </div>
-          <div className="items-center gap-2 hidden md:flex">
+          <div className="hidden items-center gap-2 md:flex">
             <LayoutSelection
               layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
               onChange={(layout) => handleLayoutChange(layout)}

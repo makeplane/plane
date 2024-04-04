@@ -1,16 +1,17 @@
-import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 import { mutate } from "swr";
-// hooks
+// icons
+import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // ui
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // constants
 import { PROFILE_ACTION_LINKS } from "@/constants/profile";
-import { useApplication, useUser, useWorkspace } from "@/hooks/store";
+// hooks
+import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -37,9 +38,7 @@ export const ProfileLayoutSidebar = observer(() => {
   // next themes
   const { setTheme } = useTheme();
   // store hooks
-  const {
-    theme: { sidebarCollapsed, toggleSidebar },
-  } = useApplication();
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser, signOut } = useUser();
   // const { currentUserSettings } = useUser();
   const { workspaces } = useWorkspace();

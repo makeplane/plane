@@ -18,7 +18,7 @@ import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { EUserProjectRoles } from "@/constants/project";
 import { truncateText } from "@/helpers/string.helper";
 import {
-  useApplication,
+  useCommandPalette,
   useEventTracker,
   useIssues,
   useLabel,
@@ -38,9 +38,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { setTrackElement } = useEventTracker();
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -140,7 +138,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 label={currentProjectDetails?.name ?? "Project"}
                 icon={
                   currentProjectDetails && (
-                    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                    <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                       <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                     </span>
                   )
