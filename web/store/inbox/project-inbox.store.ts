@@ -34,7 +34,11 @@ export interface IProjectInboxStore {
   handleInboxIssueSorting: <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   fetchInboxIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
-  createInboxIssue: (workspaceSlug: string, projectId: string, data: any) => Promise<void>;
+  createInboxIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<TInboxIssue>
+  ) => Promise<TInboxIssue | undefined>;
   deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
 }
 
@@ -173,6 +177,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
             new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse)
           );
         });
+      return inboxIssueResponse;
     } catch {
       console.error("Error creating the inbox issue");
     }
