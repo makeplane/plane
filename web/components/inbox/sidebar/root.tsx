@@ -1,22 +1,16 @@
 import {
   FC,
-  // useCallback,
-  // useEffect,
-  // useRef,
-  useState,
+  useRef,
+  // useState,
 } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
-// import { Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import { FiltersRoot } from "@/components/inbox";
-// import { FiltersDropdown } from "@/components/issues";
 // hooks
-import { useLabel, useMember, useProject, useProjectInbox } from "@/hooks/store";
-// import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-// import { InboxIssueFilterSelection } from "../inbox-filter/filters/filter-selection";
-// import { InboxIssueOrderByDropdown } from "../filter/order-by";
-// import { InboxIssueList } from "./inbox-list";
+import { useProject, useProjectInbox } from "@/hooks/store";
+import { InboxIssueList } from "./inbox-list";
 
 type IInboxSidebarProps = {
   workspaceSlug: string;
@@ -25,59 +19,12 @@ type IInboxSidebarProps = {
 
 export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   const { workspaceSlug, projectId } = props;
-  // state
-  const [tab, setTab] = useState<string>("Open");
   // ref
-  // const containerRef = useRef<HTMLDivElement>(null);
-  // const elementRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<HTMLDivElement>(null);
   // store
-  const {
-    // totalIssues,
-    // inboxIssuesArray,
-    // inboxIssuePaginationInfo: paginationInfo,
-    // fetchInboxIssuesNextPage,
-    // applyResolvedInboxIssueFilter,
-    // displayFilters,
-    // inboxFilters,
-    // resetInboxFilters,
-    // updateDisplayFilters,
-    // updateInboxIssueStatusFilter,
-    // updateInboxIssuePriorityFilter,
-    // updateInboxIssueLabelFilter,
-    // updateInboxIssueAssigneeFilter,
-    // updateInboxIssueCreatedByFilter,
-    // updateInboxIssueCreatedAtFilter,
-    // updateInboxIssueUpdatedAtFilter,
-  } = useProjectInbox();
-  const {
-    // currentProjectDetails
-  } = useProject();
-  const {
-    // project: { projectMemberIds },
-  } = useMember();
-  const {
-    // projectLabels
-  } = useLabel();
-
-  // const fetchNextPages = useCallback(() => {
-  //   if (!workspaceSlug || !projectId) return;
-  //   console.log("loading more");
-  //   fetchInboxIssuesNextPage(workspaceSlug.toString(), projectId.toString());
-  // }, [fetchInboxIssuesNextPage, projectId, workspaceSlug]);
-
-  // page observer
-  // useIntersectionObserver({
-  //   containerRef,
-  //   elementRef,
-  //   callback: fetchNextPages,
-  //   rootMargin: "20%",
-  // });
-
-  // const handleOpenTab = () => resetInboxFilters(workspaceSlug, projectId);
-  // const handleClosedTab = () => {
-  //   resetInboxFilters(workspaceSlug, projectId);
-  //   // applyResolvedInboxIssueFilter(workspaceSlug, projectId);
-  // };
+  const { currentTab, handleCurrentTab, inboxIssuesArray, inboxIssuePaginationInfo } = useProjectInbox();
+  const { currentProjectDetails } = useProject();
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -90,33 +37,24 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (tab === "Open") {
-  //     // resetInboxFilters(workspaceSlug, projectId);
-  //   }
-  //   if (tab === "Closed") {
-  //     //   applyResolvedInboxIssueFilter(workspaceSlug, projectId);
-  //   }
-  // }, [projectId, tab, resetInboxFilters, workspaceSlug]);
-
   return (
     <div className="flex-shrink-0 w-2/5 h-full border-r border-custom-border-300">
       <Tab.Group
-        defaultIndex={currentValue(tab)}
+        defaultIndex={currentValue(currentTab)}
         onChange={(i) => {
           switch (i) {
             case 0:
-              return setTab("Open");
+              return handleCurrentTab("open");
             case 1:
-              return setTab("Closed");
+              return handleCurrentTab("closed");
 
             default:
-              return setTab("Open");
+              return handleCurrentTab("open");
           }
         }}
       >
         <Tab.List className="flex-shrink-0 w-full h-[50px] relative flex justify-between items-center gap-2  px-3 border-b border-custom-border-300">
-          {/* <div className="flex items-end h-full gap-2">
+          <div className="flex items-end h-full gap-2">
             <Tab
               className={({ selected }) =>
                 `flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 gap-2 text-sm font-medium outline-none ${
@@ -125,10 +63,9 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                     : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
                 }`
               }
-              onClick={handleOpenTab}
             >
               Open
-              {tab === "Open" && (
+              {currentTab === "open" && (
                 <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
                   total issues
                 </span>
@@ -142,17 +79,16 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                     : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
                 }`
               }
-              onClick={handleClosedTab}
             >
               Closed
             </Tab>
-          </div> */}
+          </div>
 
           <div className="flex items-center gap-2">
             <FiltersRoot />
           </div>
         </Tab.List>
-        {/* <Tab.Panels className="h-full overflow-y-auto">
+        <Tab.Panels className="h-full overflow-y-auto">
           <Tab.Panel as="div" className="w-full h-full overflow-hidden">
             <div className="overflow-y-auto w-full h-full vertical-scrollbar scrollbar-md" ref={containerRef}>
               <InboxIssueList
@@ -162,7 +98,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 inboxIssues={inboxIssuesArray}
               />
               <div className="mt-4" ref={elementRef}>
-                {paginationInfo?.next_page_results && (
+                {inboxIssuePaginationInfo?.next_page_results && (
                   <Loader className="mx-auto w-full space-y-4 pb-4">
                     <Loader.Item height="64px" width="w-100" />
                     <Loader.Item height="64px" width="w-100" />
@@ -180,7 +116,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 inboxIssues={inboxIssuesArray}
               />
               <div className="mt-4" ref={elementRef}>
-                {paginationInfo?.next_page_results && (
+                {inboxIssuePaginationInfo?.next_page_results && (
                   <Loader className="mx-auto w-full space-y-4 pb-4">
                     <Loader.Item height="64px" width="w-100" />
                     <Loader.Item height="64px" width="w-100" />
@@ -189,7 +125,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               </div>
             </div>
           </Tab.Panel>
-        </Tab.Panels> */}
+        </Tab.Panels>
       </Tab.Group>
     </div>
   );

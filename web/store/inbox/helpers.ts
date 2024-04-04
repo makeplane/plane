@@ -36,7 +36,7 @@ export class InboxIssueHelpers implements IInboxIssueHelpers {
     const sorting: TInboxIssueSortingOrderByQueryParam = {
       order_by: "-issue__created_at",
     };
-    if (inboxSorting.order_by && inboxSorting.sort_by) {
+    if (inboxSorting?.order_by && inboxSorting?.sort_by) {
       switch (inboxSorting.order_by) {
         case "issue__created_at":
           if (inboxSorting.sort_by === "desc") sorting.order_by = `-issue__created_at`;
