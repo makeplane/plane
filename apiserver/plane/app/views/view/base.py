@@ -261,7 +261,7 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             # List Paginate
             return self.paginate(
                 order_by=(
-                    "-priority_order"
+                    "priority_order"
                     if order_by_param in ["priority", "-priority"]
                     else order_by_param
                 ),
