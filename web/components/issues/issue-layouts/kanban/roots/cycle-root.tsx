@@ -39,6 +39,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       addIssuesToView={addIssuesToView}
       canEditPropertiesBasedOnProject={canEditIssueProperties}
       isCompletedCycle={isCompletedCycle}
+      viewId={cycleId?.toString()}
     />
   );
 });

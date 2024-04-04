@@ -26,6 +26,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
         if (!workspaceSlug || !projectId || !moduleId) throw new Error();
         return issues.addIssuesToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);
       }}
+      viewId={moduleId?.toString()}
     />
   );
 });

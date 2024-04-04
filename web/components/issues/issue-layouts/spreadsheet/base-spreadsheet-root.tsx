@@ -1,7 +1,6 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 // constants
 import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
@@ -27,10 +26,11 @@ interface IBaseSpreadsheetRoot {
   QuickActions: FC<IQuickActionProps>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
+  viewId?: string | undefined;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const { QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  const { QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
   // router
   const router = useRouter();
   const { projectId } = router.query;
@@ -56,14 +56,9 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   // user role validation
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  useSWR(
-    `ISSUE_SPREADSHEET_LAYOUT_${storeType}`,
-    () => fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }),
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  useEffect(() => {
+    fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
+  }, [fetchIssues, storeType, viewId]);
 
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {

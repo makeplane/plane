@@ -21,7 +21,7 @@ import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
-const CycleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
+const CycleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; cycleId: string }) => {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <CycleListLayout />;
@@ -30,7 +30,7 @@ const CycleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }
     case EIssueLayoutTypes.CALENDAR:
       return <CycleCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <BaseGanttRoot />;
+      return <BaseGanttRoot viewId={props.cycleId} />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <CycleSpreadsheetLayout />;
     default:
@@ -79,7 +79,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         <CycleAppliedFiltersRoot />
 
         <div className="h-full w-full overflow-auto">
-          <CycleIssueLayout activeLayout={activeLayout} />
+          <CycleIssueLayout activeLayout={activeLayout} cycleId={cycleId?.toString()} />
         </div>
         {/* peek overview */}
         <IssuePeekOverview />

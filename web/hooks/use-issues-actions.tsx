@@ -158,11 +158,11 @@ const useCycleIssueActions = () => {
   } = useApplication();
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions) => {
+    async (loadType: TLoader, options: IssuePaginationOptions, cycleId?: string) => {
       if (!workspaceSlug || !projectId || !cycleId) return;
       return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), loadType, options, cycleId.toString());
     },
-    [issues.fetchIssues, workspaceSlug, projectId, cycleId]
+    [issues.fetchIssues, workspaceSlug, projectId]
   );
   const fetchNextIssues = useCallback(
     async (groupId?: string, subGroupId?: string) => {
@@ -267,11 +267,11 @@ const useModuleIssueActions = () => {
   } = useApplication();
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions) => {
+    async (loadType: TLoader, options: IssuePaginationOptions, moduleId?: string) => {
       if (!workspaceSlug || !projectId || !moduleId) return;
       return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), loadType, options, moduleId.toString());
     },
-    [issues.fetchIssues, workspaceSlug, projectId, moduleId]
+    [issues.fetchIssues, workspaceSlug, projectId]
   );
   const fetchNextIssues = useCallback(
     async (groupId?: string, subGroupId?: string) => {

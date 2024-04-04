@@ -24,6 +24,7 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
       QuickActions={CycleIssueQuickActions}
       canEditPropertiesBasedOnProject={canEditIssueProperties}
       isCompletedCycle={isCompletedCycle}
+      viewId={cycleId.toString()}
     />
   );
 });

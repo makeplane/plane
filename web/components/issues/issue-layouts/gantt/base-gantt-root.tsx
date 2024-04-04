@@ -1,8 +1,7 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-import { TIssue,  } from "@plane/types";
+import { TIssue } from "@plane/types";
 //components
 import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
 import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
@@ -19,13 +18,18 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { ALL_ISSUES } from "@/store/issue/helpers/base-issues.store";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 
+interface IBaseGanttRoot {
+  viewId?: string | undefined;
+}
+
 type GanttStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW;
 
-export const BaseGanttRoot: React.FC = observer(() => {
+export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
+  const { viewId } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -39,10 +43,9 @@ export const BaseGanttRoot: React.FC = observer(() => {
   } = useUser();
   const appliedDisplayFilters = issuesFilter.issueFilters?.displayFilters;
 
-  useSWR(`ISSUE_GANTT_LAYOUT_${storeType}`, () => fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }), {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
+  useEffect(() => {
+    fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
+  }, [fetchIssues, storeType, viewId]);
 
   const issuesIds = (issues.groupedIssueIds?.[ALL_ISSUES] as string[]) ?? [];
   const nextPageResults = issues.getPaginationData(undefined, undefined)?.nextPageResults;
