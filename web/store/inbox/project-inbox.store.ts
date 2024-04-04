@@ -1,3 +1,4 @@
+import omit from "lodash/omit";
 import reverse from "lodash/reverse";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
@@ -232,13 +233,14 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
    * @param inboxIssueId
    */
   deleteInboxIssue = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
+    const currentIssue = this.inboxIssues?.[inboxIssueId];
     try {
+      if (!currentIssue) return;
+      omit(this.inboxIssues, inboxIssueId);
       await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
-      runInAction(() => {
-        delete this.inboxIssues[inboxIssueId];
-      });
     } catch {
       console.error("Error removing the inbox issue");
+      set(this.inboxIssues, [inboxIssueId], currentIssue);
     }
   };
 }

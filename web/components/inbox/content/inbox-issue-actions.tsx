@@ -95,7 +95,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const handleInboxIssueNavigation = useCallback(
     (direction: "next" | "prev") => {
       if (!inboxIssuesArray || !currentInboxIssueId) return;
-      console.log("comming here");
       const activeElement = document.activeElement as HTMLElement;
       if (activeElement && (activeElement.classList.contains("tiptap") || activeElement.id === "title-input")) return;
       const nextIssueIndex =
@@ -122,7 +121,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   useEffect(() => {
     document.addEventListener("keydown", onKeyDown);
-
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
@@ -161,14 +159,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           onSubmit={handleInboxIssueDelete}
         />
 
-        {isSnoozeDateModalOpen && (
-          <InboxIssueSnoozeModal
-            isOpen={isSnoozeDateModalOpen}
-            handleClose={() => setIsSnoozeDateModalOpen(false)}
-            value={inboxIssue?.snoozed_till}
-            onConfirm={handleInboxSIssueSnooze}
-          />
-        )}
+        <InboxIssueSnoozeModal
+          isOpen={isSnoozeDateModalOpen}
+          handleClose={() => setIsSnoozeDateModalOpen(false)}
+          value={inboxIssue?.snoozed_till}
+          onConfirm={handleInboxSIssueSnooze}
+        />
       </>
 
       <div className="relative flex h-full w-full items-center justify-between gap-2 px-4">
@@ -180,6 +176,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           )}
           <InboxIssueStatus inboxIssue={inboxIssue} showDescription />
         </div>
+
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-x-2">
             <button
