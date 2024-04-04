@@ -113,7 +113,7 @@ export class PageStore implements IPageStore {
       updated_by: observable,
       created_at: observable,
       updated_at: observable,
-      view_props: observable.ref,
+      view_props: observable,
       // helpers
       oldName: observable,
       // computed
