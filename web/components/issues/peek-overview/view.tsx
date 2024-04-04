@@ -91,23 +91,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
         />
       )}
 
-      {issue && !is_archived && (
+      {issue && isDeleteIssueModalOpen === issue.id && (
         <DeleteIssueModal
-          isOpen={isDeleteIssueModalOpen}
+          isOpen={!!isDeleteIssueModalOpen}
           handleClose={() => {
-            toggleDeleteIssueModal(false);
+            toggleDeleteIssueModal(null);
           }}
           data={issue}
-          onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId)}
-        />
-      )}
-
-      {issue && is_archived && (
-        <DeleteIssueModal
-          data={issue}
-          isOpen={isDeleteIssueModalOpen}
-          handleClose={() => toggleDeleteIssueModal(false)}
-          onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId)}
+          onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId).then(() => removeRoutePeekId())}
         />
       )}
 
@@ -186,7 +177,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           disabled={disabled || is_archived}
                         />
 
-                        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+                        <IssueActivity
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          issueId={issueId}
+                          disabled={disabled || is_archived}
+                        />
                       </div>
                     ) : (
                       <div className="vertical-scrollbar flex h-full w-full overflow-auto">
@@ -219,7 +215,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               workspaceSlug={workspaceSlug}
                             />
 
-                            <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+                            <IssueActivity
+                              workspaceSlug={workspaceSlug}
+                              projectId={projectId}
+                              issueId={issueId}
+                              disabled={disabled || is_archived}
+                            />
                           </div>
                         </div>
                         <div

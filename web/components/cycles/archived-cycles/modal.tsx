@@ -31,7 +31,7 @@ export const ArchiveCycleModal: React.FC<Props> = (props) => {
     handleClose();
   };
 
-  const handleArchiveIssue = async () => {
+  const handleArchiveCycle = async () => {
     setIsArchiving(true);
     await archiveCycle(workspaceSlug, projectId, cycleId)
       .then(() => {
@@ -41,7 +41,7 @@ export const ArchiveCycleModal: React.FC<Props> = (props) => {
           message: "Your archives can be found in project archives.",
         });
         onClose();
-        router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles?peekCycle=${cycleId}`);
+        router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
       })
       .catch(() =>
         setToast({
@@ -89,7 +89,7 @@ export const ArchiveCycleModal: React.FC<Props> = (props) => {
                     <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button size="sm" tabIndex={1} onClick={handleArchiveIssue} loading={isArchiving}>
+                    <Button size="sm" tabIndex={1} onClick={handleArchiveCycle} loading={isArchiving}>
                       {isArchiving ? "Archiving" : "Archive"}
                     </Button>
                   </div>

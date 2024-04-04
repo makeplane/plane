@@ -215,6 +215,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           onChange={(imageUrl) => onChange(imageUrl)}
                           control={control}
                           value={value ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
+                          isProfileCover
                         />
                       )}
                     />

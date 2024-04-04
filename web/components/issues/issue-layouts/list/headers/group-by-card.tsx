@@ -70,8 +70,8 @@ export const HeaderGroupByCard = observer(
             {icon ? icon : <CircleDashed className="h-3.5 w-3.5" strokeWidth={2} />}
           </div>
 
-          <div className="flex w-full flex-row items-center gap-1">
-            <div className="line-clamp-1 font-medium text-custom-text-100">{title}</div>
+          <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
+            <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
             <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
           </div>
 

@@ -3,12 +3,12 @@ import pull from "lodash/pull";
 import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
+// types
+import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 // base class
 import { IssueService, IssueArchiveService } from "@/services/issue";
-import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
-// types
 import { IIssueRootStore } from "../root.store";
 
 export interface IProjectIssues {
@@ -117,6 +117,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       });
 
       this.rootStore.issues.addIssue(response);
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
 
       return response;
     } catch (error) {
@@ -137,6 +138,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       });
 
       this.rootStore.issues.addIssue([response]);
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
 
       return response;
     } catch (error) {
@@ -164,6 +166,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       });
 
       this.rootStore.issues.removeIssue(issueId);
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
     } catch (error) {
       throw error;
     }
@@ -179,6 +182,8 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
         });
         pull(this.issues[projectId], issueId);
       });
+
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
     } catch (error) {
       throw error;
     }
@@ -216,6 +221,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       });
 
       const response = await this.issueService.bulkDeleteIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
 
       return response;
     } catch (error) {

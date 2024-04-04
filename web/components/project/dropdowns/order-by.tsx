@@ -40,7 +40,8 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
           key={option.key}
           className="flex items-center justify-between gap-2"
           onClick={() => {
-            if (isDescending) onChange(`-${option.key}` as TProjectOrderByOptions);
+            if (isDescending)
+              onChange(option.key == "sort_order" ? option.key : (`-${option.key}` as TProjectOrderByOptions));
             else onChange(option.key);
           }}
         >

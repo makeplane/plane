@@ -26,6 +26,7 @@ import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper"
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "@/hooks/store";
+import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
 import { AIService } from "@/services/ai.service";
 import { FileService } from "@/services/file.service";
@@ -121,6 +122,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // store hooks
   const {
     config: { envConfig },
+    router: { projectId: routeProjectId },
   } = useApplication();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
@@ -128,6 +130,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  const { fetchCycles } = useProjectIssueProperties();
   // form info
   const {
     formState: { errors, isDirty, isSubmitting, dirtyFields },
@@ -160,6 +163,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         parent_id: formData.parent_id,
       });
     }
+    if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug, projectId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
@@ -178,6 +182,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           id: data.id,
           description_html: formData.description_html ?? "<p></p>",
         };
+
+    // this condition helps to move the issues from draft to project issues
+    if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
+
     await onSubmit(submitData, is_draft_issue);
 
     setGptAssistantModal(false);
@@ -319,32 +327,38 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             </h3>
           </div>
           {watch("parent_id") && selectedParentIssue && (
-            <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span
-                  className="block h-1.5 w-1.5 rounded-full"
-                  style={{
-                    backgroundColor: selectedParentIssue.state__color,
-                  }}
-                />
-                <span className="flex-shrink-0 text-custom-text-200">
-                  {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
-                </span>
-                <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
-                <button
-                  type="button"
-                  className="grid place-items-center"
-                  onClick={() => {
-                    setValue("parent_id", null);
-                    handleFormChange();
-                    setSelectedParentIssue(null);
-                  }}
-                  tabIndex={getTabIndex("remove_parent")}
-                >
-                  <X className="h-3 w-3 cursor-pointer" />
-                </button>
-              </div>
-            </div>
+            <Controller
+              control={control}
+              name="parent_id"
+              render={({ field: { onChange } }) => (
+                <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="block h-1.5 w-1.5 rounded-full"
+                      style={{
+                        backgroundColor: selectedParentIssue.state__color,
+                      }}
+                    />
+                    <span className="flex-shrink-0 text-custom-text-200">
+                      {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
+                    </span>
+                    <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
+                    <button
+                      type="button"
+                      className="grid place-items-center"
+                      onClick={() => {
+                        onChange(null);
+                        handleFormChange();
+                        setSelectedParentIssue(null);
+                      }}
+                      tabIndex={getTabIndex("remove_parent")}
+                    >
+                      <X className="h-3 w-3 cursor-pointer" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            />
           )}
           <div className="space-y-3">
             <div className="mt-2 space-y-3">
@@ -447,34 +461,36 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         />
                       )}
                     </div>
-                    <Controller
-                      name="description_html"
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <RichTextEditorWithRef
-                          cancelUploadImage={fileService.cancelUpload}
-                          uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                          deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                          restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-                          ref={editorRef}
-                          debouncedUpdatesEnabled={false}
-                          value={
-                            !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                              ? watch("description_html")
-                              : value
-                          }
-                          initialValue={data?.description_html}
-                          customClassName="min-h-[7rem] border-custom-border-100"
-                          onChange={(description: any, description_html: string) => {
-                            onChange(description_html);
-                            handleFormChange();
-                          }}
-                          mentionHighlights={mentionHighlights}
-                          mentionSuggestions={mentionSuggestions}
-                          tabIndex={getTabIndex("description_html")}
-                        />
-                      )}
-                    />
+                    {data?.description_html && watch("description_html") && (
+                      <Controller
+                        name="description_html"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <RichTextEditorWithRef
+                            cancelUploadImage={fileService.cancelUpload}
+                            uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                            deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                            restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                            ref={editorRef}
+                            debouncedUpdatesEnabled={false}
+                            value={
+                              !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                                ? watch("description_html")
+                                : value
+                            }
+                            initialValue={data?.description_html}
+                            customClassName="min-h-[7rem] border-custom-border-100"
+                            onChange={(description: any, description_html: string) => {
+                              onChange(description_html);
+                              handleFormChange();
+                            }}
+                            mentionHighlights={mentionHighlights}
+                            mentionSuggestions={mentionSuggestions}
+                            tabIndex={getTabIndex("description_html")}
+                          />
+                        )}
+                      />
+                    )}
                   </Fragment>
                 )}
               </div>
@@ -527,7 +543,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           handleFormChange();
                         }}
                         buttonVariant={value?.length > 0 ? "transparent-without-text" : "border-with-text"}
-                        buttonClassName={value?.length > 0 ? "hover:bg-transparent px-0" : ""}
+                        buttonClassName={value?.length > 0 ? "hover:bg-transparent" : ""}
                         placeholder="Assignees"
                         multiple
                         tabIndex={getTabIndex("assignee_ids")}
@@ -597,6 +613,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChange(cycleId);
                             handleFormChange();
                           }}
+                          placeholder="Cycle"
                           value={value}
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("cycle_id")}
@@ -618,6 +635,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChange(moduleIds);
                             handleFormChange();
                           }}
+                          placeholder="Modules"
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("module_ids")}
                           multiple
@@ -647,53 +665,54 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     )}
                   />
                 )}
-                <CustomMenu
-                  customButton={
-                    <button
-                      type="button"
-                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
-                    >
-                      {watch("parent_id") ? (
-                        <div className="flex items-center gap-1 text-custom-text-200">
-                          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-                          <span className="whitespace-nowrap">
-                            {selectedParentIssue &&
-                              `${selectedParentIssue.project__identifier}-
-                                  ${selectedParentIssue.sequence_id}`}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1 text-custom-text-300">
-                          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-                          <span className="whitespace-nowrap">Add parent</span>
-                        </div>
-                      )}
-                    </button>
-                  }
-                  placement="bottom-start"
-                  tabIndex={getTabIndex("parent_id")}
-                >
-                  {watch("parent_id") ? (
+                {watch("parent_id") ? (
+                  <CustomMenu
+                    customButton={
+                      <button
+                        type="button"
+                        className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
+                      >
+                        <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                        <span className="whitespace-nowrap">
+                          {selectedParentIssue &&
+                            `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`}
+                        </span>
+                      </button>
+                    }
+                    placement="bottom-start"
+                    tabIndex={getTabIndex("parent_id")}
+                  >
                     <>
                       <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
                         Change parent issue
                       </CustomMenu.MenuItem>
-                      <CustomMenu.MenuItem
-                        className="!p-1"
-                        onClick={() => {
-                          setValue("parent_id", null);
-                          handleFormChange();
-                        }}
-                      >
-                        Remove parent issue
-                      </CustomMenu.MenuItem>
+                      <Controller
+                        control={control}
+                        name="parent_id"
+                        render={({ field: { onChange } }) => (
+                          <CustomMenu.MenuItem
+                            className="!p-1"
+                            onClick={() => {
+                              onChange(null);
+                              handleFormChange();
+                            }}
+                          >
+                            Remove parent issue
+                          </CustomMenu.MenuItem>
+                        )}
+                      />
                     </>
-                  ) : (
-                    <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-                      Select parent Issue
-                    </CustomMenu.MenuItem>
-                  )}
-                </CustomMenu>
+                  </CustomMenu>
+                ) : (
+                  <button
+                    type="button"
+                    className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
+                    onClick={() => setParentIssueListModalOpen(true)}
+                  >
+                    <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                    <span className="whitespace-nowrap">Add parent</span>
+                  </button>
+                )}
                 <Controller
                   control={control}
                   name="parent_id"
@@ -716,19 +735,24 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           </div>
         </div>
         <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-100 px-5 pt-5">
-          <div
-            className="flex cursor-default items-center gap-1.5"
-            onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
-            }}
-            tabIndex={getTabIndex("create_more")}
-          >
-            <div className="flex cursor-pointer items-center justify-center">
-              <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-            </div>
-            <span className="text-xs">Create more</span>
+          <div>
+            {!data?.id && (
+              <div
+                className="inline-flex cursor-default items-center gap-1.5"
+                onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
+                }}
+                tabIndex={getTabIndex("create_more")}
+              >
+                <div className="flex cursor-pointer items-center justify-center">
+                  <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
+                </div>
+                <span className="text-xs">Create more</span>
+              </div>
+            )}
           </div>
+
           <div className="flex items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={getTabIndex("discard_button")}>
               Discard
