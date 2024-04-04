@@ -10,8 +10,7 @@ import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
-import { useStore } from "@/hooks";
-import { useUser } from "@/hooks/store";
+import { useUser, useInstance } from "@/hooks/store";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
@@ -47,9 +46,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();

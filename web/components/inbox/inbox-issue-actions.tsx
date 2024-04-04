@@ -50,6 +50,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   } = useIssueDetail();
   const {
     membership: { currentProjectRole },
+    data: currentUser,
   } = useUser();
   const { data: currentUser } = useUser();
 
