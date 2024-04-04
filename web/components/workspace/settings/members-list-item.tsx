@@ -1,11 +1,11 @@
-import { useState, FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { FC, useState } from "react";
 // lucide icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
-import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
@@ -32,9 +32,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     // currentUserSettings,
     membership: { currentWorkspaceRole, leaveWorkspace },
   } = useUser();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const {
     workspace: { updateMember, removeMemberFromWorkspace, getWorkspaceMemberDetails },
   } = useMember();

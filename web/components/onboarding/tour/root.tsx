@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { X } from "lucide-react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { useState } from "react";
 // ui
 import { Button } from "@plane/ui";
 // components
@@ -9,8 +9,7 @@ import { TourSidebar } from "@/components/onboarding";
 // constants
 import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
 // hooks
-import { useStore } from "@/hooks";
-import { useApplication, useEventTracker } from "@/hooks/store";
+import { useApplication, useEventTracker, useUser } from "@/hooks/store";
 // assets
 import CyclesTour from "public/onboarding/cycles.webp";
 import IssuesTour from "public/onboarding/issues.webp";
@@ -85,9 +84,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement, captureEvent } = useEventTracker();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
 
   const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
   const currentStep = TOUR_STEPS[currentStepIndex];

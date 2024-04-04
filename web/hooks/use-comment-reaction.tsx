@@ -3,11 +3,10 @@ import useSWR from "swr";
 import { COMMENT_REACTION_LIST } from "@/constants/fetch-keys";
 // services
 import { groupReactions } from "@/helpers/emoji.helper";
+import { useUser } from "@/hooks/store";
 import { IssueReactionService } from "@/services/issue";
 // helpers
-import { useStore } from "./use-store";
 // hooks
-
 // services
 const issueReactionService = new IssueReactionService();
 
@@ -34,9 +33,7 @@ const useCommentReaction = (
       : null
   );
 
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
 
   const groupedReactions = groupReactions(commentReactions || [], "reaction");
 

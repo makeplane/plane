@@ -1,11 +1,11 @@
-import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
 import useSWR from "swr";
 // ui
-import { ChevronDown, Pencil } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronDown, Pencil } from "lucide-react";
 // icons
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
@@ -33,9 +33,7 @@ export const ProfileSidebar = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const { theme: themeStore } = useApplication();
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();

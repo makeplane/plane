@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import useSWR, { mutate } from "swr";
 // icons
 import { RefreshCw } from "lucide-react";
@@ -20,7 +20,7 @@ import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 import { IMPORTERS_LIST } from "@/constants/workspace";
 // hooks
 // import { useUser } from "@/hooks/store";
-import { useStore } from "@/hooks";
+import { useUser } from "@/hooks/store";
 import useUserAuth from "@/hooks/use-user-auth";
 // services
 import { IntegrationService } from "@/services/integrations";
@@ -38,9 +38,7 @@ const IntegrationGuide = observer(() => {
   const { workspaceSlug, provider } = router.query;
   // store hooks
 
-  const {
-    user: { data: currentUser, isLoading: currentUserLoader },
-  } = useStore();
+  const { data: currentUser, isLoading: currentUserLoader } = useUser();
   // custom hooks
   const {} = useUserAuth({ user: currentUser || null, isLoading: currentUserLoader });
 

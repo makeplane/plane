@@ -1,23 +1,23 @@
-import React, { useEffect } from "react";
-import Image from "next/image";
-import { useTheme } from "next-themes";
-import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
+import { IWorkspace } from "@plane/types";
+import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
 import {
   BarChart2,
+  Bell,
   Briefcase,
   CheckCircle,
   ChevronDown,
   ContrastIcon,
   FileText,
+  Home,
   LayersIcon,
   PenSquare,
   Search,
   Settings,
-  Bell,
-  Home,
 } from "lucide-react";
-import { IWorkspace } from "@plane/types";
-import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import React, { useEffect } from "react";
+import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
 // hooks
 import { useUser, useWorkspace } from "@/hooks/store";
 // types
@@ -93,9 +93,7 @@ let lastWorkspaceName: string = "";
 export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { workspaceName, showProject, control, setValue, watch, userFullName } = props;
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const { workspaces } = useWorkspace();
   const workspaceDetails = Object.values(workspaces ?? {})?.[0];
 

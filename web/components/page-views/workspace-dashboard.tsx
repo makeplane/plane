@@ -1,18 +1,17 @@
-import { useEffect } from "react";
 import { observer } from "mobx-react";
+import { useEffect } from "react";
 // hooks
 // components
-import { Spinner } from "@plane/ui";
 import { DashboardWidgets } from "@/components/dashboard";
 import { EmptyState } from "@/components/empty-state";
 import { IssuePeekOverview } from "@/components/issues";
 import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
+import { Spinner } from "@plane/ui";
 // ui
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { useStore } from "@/hooks";
-import { useApplication, useEventTracker, useDashboard, useProject } from "@/hooks/store";
+import { useApplication, useDashboard, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
@@ -24,9 +23,7 @@ export const WorkspaceDashboardView = observer(() => {
     commandPalette: { toggleCreateProjectModal },
     router: { workspaceSlug },
   } = useApplication();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   // const { currentUser, updateTourCompleted } = useUser();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds } = useProject();

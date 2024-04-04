@@ -11,8 +11,8 @@ import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 //hooks
-import { useStore } from "@/hooks";
 // services
+import { useUser } from "@/hooks/store";
 import { UserService } from "@/services/user.service";
 // assets
 import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
@@ -23,9 +23,7 @@ export const ProfileActivity = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
 
   const { data: userProfileActivity } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString(), {}) : null,

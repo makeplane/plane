@@ -1,7 +1,4 @@
-import { FC, useState } from "react";
-import { observer } from "mobx-react";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { IIssueLabel } from "@plane/types";
 import {
   AlertCircle,
   Archive,
@@ -14,14 +11,17 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-import { IIssueLabel } from "@plane/types";
+import { observer } from "mobx-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FC, useState } from "react";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { CreateUpdatePageModal, DeletePageModal } from "@/components/pages";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
-import { renderFormattedTime, renderFormattedDate } from "@/helpers/date-time.helper";
+import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useMember, usePage, useUser } from "@/hooks/store";
@@ -47,9 +47,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
 
   const [deletePageModal, setDeletePageModal] = useState(false);
   const { isMobile } = usePlatformOS();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const {
     membership: { currentProjectRole },
   } = useUser();

@@ -1,9 +1,9 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { Popover } from "@headlessui/react";
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
-import { Popover } from "@headlessui/react";
 // icons
 import type { TInboxDetailedStatus } from "@plane/types";
 // ui
@@ -21,8 +21,7 @@ import { EUserProjectRoles } from "@/constants/project";
 //helpers
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
-import { useStore } from "@/hooks";
-import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "@/hooks/store";
+import { useEventTracker, useInboxIssues, useIssueDetail, useUser, useWorkspace } from "@/hooks/store";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;
@@ -52,9 +51,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
 
   // states
   const [date, setDate] = useState(new Date());

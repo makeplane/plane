@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
+import React, { useState } from "react";
 // icons
 import { AlertTriangle } from "lucide-react";
 // headless ui
@@ -9,7 +9,6 @@ import { IUserLite } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 // hooks
-import { useStore } from "@/hooks";
 
 type Props = {
   data: IUserLite;
@@ -23,9 +22,7 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
 
   const handleClose = () => {
     onClose();

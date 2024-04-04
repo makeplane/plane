@@ -1,10 +1,10 @@
-import React, { useState, ReactElement } from "react";
+import { IWorkspace } from "@plane/types";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-import { IWorkspace } from "@plane/types";
+import { ReactElement, useState } from "react";
 // hooks
 import { PageHead } from "@/components/core";
 import { CreateWorkspaceForm } from "@/components/workspace";
@@ -23,9 +23,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const { updateCurrentUser } = useUser();
   // states
   const [defaultValues, setDefaultValues] = useState({

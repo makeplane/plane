@@ -1,18 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
+import { useEffect, useRef, useState } from "react";
 import { mutate } from "swr";
-import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // hooks
-import { useApplication, useUser, useWorkspace } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
-import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // constants
 import { PROFILE_ACTION_LINKS } from "@/constants/profile";
+import { useApplication, useUser, useWorkspace } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
   {
@@ -40,9 +40,7 @@ export const ProfileLayoutSidebar = observer(() => {
   const {
     theme: { sidebarCollapsed, toggleSidebar },
   } = useApplication();
-  const {
-    user: { data: currentUser, signOut },
-  } = useStore();
+  const { data: currentUser, signOut } = useUser();
   // const { currentUserSettings } = useUser();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();

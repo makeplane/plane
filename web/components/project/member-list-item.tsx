@@ -1,11 +1,11 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 // icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
-import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
 // constants
@@ -31,9 +31,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole, leaveProject },
   } = useUser();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const { fetchProjects } = useProject();
   const {
     project: { removeMemberFromProject, getProjectMemberDetails, updateMember },

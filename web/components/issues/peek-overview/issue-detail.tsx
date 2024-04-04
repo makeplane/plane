@@ -1,8 +1,8 @@
-import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
+import { FC, useEffect } from "react";
 // store hooks
 import { TIssueOperations } from "@/components/issues";
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail, useProject, useUser } from "@/hooks/store";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // components
@@ -24,9 +24,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   const { workspaceSlug, issueId, issueOperations, disabled, isSubmitting, setIsSubmitting } = props;
   // store hooks
   const { getProjectById } = useProject();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
   } = useIssueDetail();

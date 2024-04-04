@@ -1,50 +1,50 @@
-import React, { useState } from "react";
-import { observer } from "mobx-react";
-import { useRouter } from "next/router";
 import {
+  CalendarCheck2,
+  CalendarClock,
+  CircleDot,
+  CopyPlus,
+  LayoutPanelTop,
   LinkIcon,
   Signal,
   Tag,
   Trash2,
   Triangle,
-  LayoutPanelTop,
   XCircle,
-  CircleDot,
-  CopyPlus,
-  CalendarClock,
-  CalendarCheck2,
 } from "lucide-react";
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 // hooks
 // components
+import {
+  DateDropdown,
+  EstimateDropdown,
+  MemberDropdown,
+  PriorityDropdown,
+  StateDropdown,
+} from "@/components/dropdowns";
 import {
   ArchiveIcon,
   ContrastIcon,
   DiceIcon,
   DoubleCircleIcon,
   RelatedIcon,
+  TOAST_TYPE,
   Tooltip,
   UserGroupIcon,
-  TOAST_TYPE,
   setToast,
 } from "@plane/ui";
-import {
-  DateDropdown,
-  EstimateDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
 // ui
 // helpers
 import {
+  ArchiveIssueModal,
   DeleteIssueModal,
-  IssueLinkRoot,
-  IssueRelationSelect,
   IssueCycleSelect,
+  IssueLabel,
+  IssueLinkRoot,
   IssueModuleSelect,
   IssueParentSelect,
-  IssueLabel,
-  ArchiveIssueModal,
+  IssueRelationSelect,
 } from "@/components/issues";
 // helpers
 // types
@@ -54,8 +54,7 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
-import { useStore } from "@/hooks";
-import { useEstimate, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import type { TIssueOperations } from "./root";
@@ -82,9 +81,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   // store hooks
   const { getProjectById } = useProject();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
   const {
     issue: { getIssueById },

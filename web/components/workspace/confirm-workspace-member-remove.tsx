@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
-import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import { AlertTriangle } from "lucide-react";
+import { observer } from "mobx-react-lite";
+import React, { useState } from "react";
 // ui
 import { Button } from "@plane/ui";
 // hooks
-import { useStore } from "@/hooks";
+import { useUser } from "@/hooks/store";
 
 export type Props = {
   isOpen: boolean;
@@ -22,9 +22,7 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
   // states
   const [isRemoving, setIsRemoving] = useState(false);
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
 
   const handleClose = () => {
     onClose();

@@ -1,8 +1,8 @@
+import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 // editor
-import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
+import { LiteReadOnlyEditorWithRef, LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // types
 import { TIssueComment } from "@plane/types";
 // ui
@@ -10,8 +10,7 @@ import { CustomMenu } from "@plane/ui";
 // helpers
 import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
-import { useStore } from "@/hooks";
-import { useIssueDetail, useMention, useWorkspace } from "@/hooks/store";
+import { useIssueDetail, useMention, useUser, useWorkspace } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
 // local components
@@ -36,9 +35,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
   const {
     comment: { getCommentById },
   } = useIssueDetail();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const { mentionHighlights, mentionSuggestions } = useMention();
   // refs
   const editorRef = useRef<any>(null);

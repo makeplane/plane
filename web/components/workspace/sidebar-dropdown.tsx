@@ -1,13 +1,13 @@
-import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
+import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { mutate } from "swr";
 // ui
-import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 // icons
 import { IWorkspace } from "@plane/types";
 // plane ui
@@ -56,9 +56,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const {
     theme: { sidebarCollapsed, toggleSidebar },
   } = useApplication();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
   const {
     updateCurrentUser,
     // isUserInstanceAdmin,
