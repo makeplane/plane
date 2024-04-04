@@ -119,7 +119,7 @@ export default function BlockMenu(props: BlockMenuProps) {
   return (
     <div
       ref={menuRef}
-      className="z-10 max-h-60 min-w-[12rem] overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
+      className="z-10 max-h-60 min-w-[7rem] overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
     >
       {MENU_ITEMS.map((item) => (
         <button

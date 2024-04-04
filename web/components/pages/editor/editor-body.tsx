@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Control, Controller } from "react-hook-form";
-import useSWR from "swr";
 // document editor
 import {
   DocumentEditorWithRef,
@@ -31,6 +30,7 @@ type Props = {
   control: Control<TPage, any>;
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  swrPageDetails: TPage | undefined;
   handleSubmit: () => void;
   markings: IMarking[];
   pageStore: IPageStore;
@@ -50,6 +50,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     readOnlyEditorRef,
     handleSubmit,
     pageStore,
+    swrPageDetails,
     sidePeekVisible,
     updateMarkings,
   } = props;
@@ -58,7 +59,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { getPageById } = useProjectPages(projectId?.toString() ?? "");
   // derived values
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
   const pageTitle = pageStore?.name ?? "";
@@ -66,16 +66,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const isFullWidth = !!pageStore?.view_props?.full_width;
   const { description_html, isContentEditable, updateName, isSubmitting, setIsSubmitting } = pageStore;
 
-  // fetching page details
-  const { data: swrPageDetails } = useSWR(
-    pageId ? `PAGE_DETAILS_${pageId}` : null,
-    pageId ? () => getPageById(pageId.toString()) : null,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: true,
-      revalidateOnReconnect: true,
-    }
-  );
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -88,8 +78,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(description_html ?? "<p></p>");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  if (description_html === undefined) return null;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">

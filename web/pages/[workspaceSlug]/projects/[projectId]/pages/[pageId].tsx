@@ -19,6 +19,7 @@ import { usePage, useProjectPages } from "@/hooks/store";
 import { AppLayout } from "@/layouts/app-layout";
 // lib
 import { NextPageWithLayout } from "@/lib/types";
+import useSWR from "swr";
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
@@ -32,7 +33,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
-  const { createPage } = useProjectPages(projectId?.toString() ?? "");
+  const { createPage, getPageById } = useProjectPages(projectId?.toString() ?? "");
   const pageStore = usePage(pageId?.toString() ?? "");
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
@@ -44,6 +45,16 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     },
   });
 
+  // fetching page details
+  const { data: swrPageDetails } = useSWR(
+    pageId ? `PAGE_DETAILS_${pageId}` : null,
+    pageId ? () => getPageById(pageId.toString()) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+    }
+  );
   useEffect(
     () => () => {
       if (pageStore.cleanup) pageStore.cleanup();
@@ -97,6 +108,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       );
   };
 
+  console.log("projectId", projectId);
   return (
     <>
       <PageHead title={pageTitle} />
@@ -117,6 +129,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
             />
           )}
           <PageEditorBody
+            swrPageDetails={swrPageDetails}
             control={control}
             editorRef={editorRef}
             handleEditorReady={handleEditorReady}
