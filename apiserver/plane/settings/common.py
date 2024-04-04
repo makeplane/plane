@@ -3,7 +3,6 @@
 # Python imports
 import os
 import ssl
-from datetime import timedelta
 from urllib.parse import urlparse
 
 import certifi

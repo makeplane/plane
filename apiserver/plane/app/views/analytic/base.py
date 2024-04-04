@@ -13,7 +13,7 @@ from plane.app.serializers import AnalyticViewSerializer
 # Module imports
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.analytic_plot_export import analytic_export_task
-from plane.db.models import AnalyticView, Issue, Label, State, Workspace
+from plane.db.models import AnalyticView, Issue, Workspace
 from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.issue_filters import issue_filters
 
