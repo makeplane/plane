@@ -14,7 +14,7 @@ import { USER_ACTIVITY } from "@/constants/fetch-keys";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { useStore } from "@/hooks";
+import { useUser } from "@/hooks/store";
 // services
 import { UserService } from "@/services/user.service";
 
@@ -30,9 +30,7 @@ type Props = {
 export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
   const { cursor, perPage, updateResultsCount, updateTotalPages } = props;
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
 
   const { data: userProfileActivity } = useSWR(
     USER_ACTIVITY({

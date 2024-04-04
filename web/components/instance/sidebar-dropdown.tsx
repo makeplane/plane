@@ -8,8 +8,7 @@ import { Menu, Transition } from "@headlessui/react";
 // ui
 import { Avatar, Tooltip } from "@plane/ui";
 // hooks
-import { useStore } from "@/hooks";
-import { useApplication } from "@/hooks/store";
+import { useAppRouter, useAppTheme, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 // Static Data
@@ -26,13 +25,9 @@ export const InstanceSidebarDropdown = observer(() => {
   // router
   // const router = useRouter();
   // store hooks
-  const {
-    theme: { sidebarCollapsed },
-    router: { workspaceSlug },
-  } = useApplication();
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { sidebarCollapsed } = useAppTheme();
+  const { workspaceSlug } = useAppRouter();
+  const { data: currentUser } = useUser();
   // const { signOut, currentUserSettings } = useUser();
   // hooks
   // const { setTheme } = useTheme();

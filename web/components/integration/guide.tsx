@@ -19,8 +19,7 @@ import { EmptyStateType } from "@/constants/empty-state";
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 import { IMPORTERS_LIST } from "@/constants/workspace";
 // hooks
-// import { useUser } from "@/hooks/store";
-import { useStore } from "@/hooks";
+import { useUser } from "@/hooks/store";
 import useUserAuth from "@/hooks/use-user-auth";
 // services
 import { IntegrationService } from "@/services/integrations";
@@ -37,10 +36,7 @@ const IntegrationGuide = observer(() => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
   // store hooks
-
-  const {
-    user: { data: currentUser, isLoading: currentUserLoader },
-  } = useStore();
+  const { data: currentUser, isLoading: currentUserLoader } = useUser();
   // custom hooks
   const {} = useUserAuth({ user: currentUser || null, isLoading: currentUserLoader });
 

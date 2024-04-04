@@ -18,8 +18,7 @@ import { PriorityDropdown } from "@/components/dropdowns";
 // constants
 import { ISSUE_CREATED } from "@/constants/event-tracker";
 // hooks
-import { useStore } from "@/hooks";
-import { useEventTracker, useWorkspace, useInboxIssues, useMention } from "@/hooks/store";
+import { useEventTracker, useWorkspace, useInboxIssues, useMention, useInstance } from "@/hooks/store";
 // services
 import { AIService } from "@/services/ai.service";
 import { FileService } from "@/services/file.service";
@@ -60,14 +59,10 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const { mentionHighlights, mentionSuggestions } = useMention();
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
-
-  // store hooks
   const {
     issues: { createInboxIssue },
   } = useInboxIssues();
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
   const { captureIssueEvent } = useEventTracker();
 
   const {

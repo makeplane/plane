@@ -4,7 +4,7 @@ import { IWorkspaceIntegration } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 // hooks
-import { useStore } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 
 type Props = {
@@ -14,9 +14,7 @@ type Props = {
 
 export const GithubAuth: React.FC<Props> = observer(({ workspaceIntegration, provider }) => {
   // store hooks
-  const {
-    instance: { instance },
-  } = useStore();
+  const { instance } = useInstance();
   // hooks
   const { startAuth, isConnecting } = useIntegrationPopup({
     provider,

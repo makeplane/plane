@@ -12,7 +12,7 @@ import { ActivitySettingsLoader } from "@/components/ui";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { useStore } from "@/hooks";
+import { useUser } from "@/hooks/store";
 
 type Props = {
   activity: IUserActivityResponse | undefined;
@@ -21,9 +21,7 @@ type Props = {
 export const ActivityList: React.FC<Props> = observer((props) => {
   const { activity } = props;
   // store hooks
-  const {
-    user: { data: currentUser },
-  } = useStore();
+  const { data: currentUser } = useUser();
 
   // TODO: refactor this component
   return (

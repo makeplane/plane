@@ -21,7 +21,6 @@ import { EUserProjectRoles } from "@/constants/project";
 //helpers
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
-import { useStore } from "@/hooks";
 import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "@/hooks/store";
 
 type TInboxIssueActionsHeader = {
@@ -51,10 +50,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   } = useIssueDetail();
   const {
     membership: { currentProjectRole },
+    data: currentUser,
   } = useUser();
-  const {
-    user: { data: currentUser },
-  } = useStore();
 
   // states
   const [date, setDate] = useState(new Date());
