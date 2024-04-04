@@ -53,7 +53,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const canDelete = isAllowed || inboxIssue?.created_by === currentUser?.id;
   const isCompleted = inboxIssue?.status === 1;
 
-  const currentInboxIssueId = inboxIssue?.issue.id;
+  const currentInboxIssueId = inboxIssue?.issue?.id;
 
   const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
 

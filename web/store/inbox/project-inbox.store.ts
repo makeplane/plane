@@ -216,7 +216,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
         runInAction(() => {
           set(
             this.inboxIssues,
-            inboxIssueResponse?.id,
+            inboxIssueResponse?.issue?.id,
             new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse)
           );
         });
