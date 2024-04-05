@@ -1,11 +1,13 @@
 import { ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Inbox } from "lucide-react";
 // components
 import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/empty-state";
 import { ProjectInboxHeader } from "@/components/headers";
 import { InboxIssueRoot } from "@/components/inbox";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProject } from "@/hooks/store";
 // layouts
@@ -25,9 +27,11 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   // No access to inbox
   if (currentProjectDetails?.inbox_view === false)
     return (
-      <div className="relative w-full h-full flex flex-col gap-3 justify-center items-center">
-        <Inbox size={60} strokeWidth={1.5} />
-        <div className="text-custom-text-200">No access to the inbox issues. Please contact your manager.</div>
+      <div className="flex items-center justify-center h-full w-full">
+        <EmptyState
+          type={EmptyStateType.DISABLED_PROJECT_INBOX}
+          primaryButtonLink={`/${workspaceSlug}/projects/${projectId}/settings/features`}
+        />
       </div>
     );
 
