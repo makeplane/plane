@@ -16,13 +16,18 @@ type Props = {
 export const FilterStatus: FC<Props> = observer((props) => {
   const { searchQuery } = props;
   // hooks
-  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+  const { currentTab, inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // derived values
   const filterValue = inboxFilters?.status || [];
   const appliedFiltersCount = filterValue?.length ?? 0;
-  const filteredOptions = INBOX_STATUS.filter((s) => s.key.includes(searchQuery.toLowerCase()));
+  const filteredOptions = INBOX_STATUS.filter(
+    (s) =>
+      ((currentTab === "open" && [-2].includes(s.status)) ||
+        (currentTab === "closed" && [-1, 0, 1, 2].includes(s.status))) &&
+      s.key.includes(searchQuery.toLowerCase())
+  );
 
   const handleFilterValue = (value: TInboxIssueStatus): TInboxIssueStatus[] =>
     filterValue?.includes(value) ? filterValue.filter((v) => v !== value) : [...filterValue, value];
@@ -41,7 +46,9 @@ export const FilterStatus: FC<Props> = observer((props) => {
               <FilterOption
                 key={status.key}
                 isChecked={filterValue?.includes(status.status) ? true : false}
-                onClick={() => handleInboxIssueFilters("status", handleFilterValue(status.status))}
+                onClick={() =>
+                  currentTab === "closed" && handleInboxIssueFilters("status", handleFilterValue(status.status))
+                }
                 icon={<status.icon className={`h-3.5 w-3.5 ${status?.textColor(false)}`} />}
                 title={status.title}
               />

@@ -16,7 +16,7 @@ export const InboxIssueAppliedFilters: FC = observer(() => {
 
   if (getAppliedFiltersCount === 0) return <></>;
   return (
-    <div className="p-3 py-2 relative flex flex-wrap items-center gap-1">
+    <div className="p-3 py-2 relative flex flex-wrap items-center gap-1 border-b border-custom-border-300">
       {/* status */}
       <InboxIssueAppliedFiltersStatus />
       {/* priority */}

@@ -33,7 +33,11 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
     >
       <div className={`flex items-center gap-1`}>
         <inboxIssueStatusDetail.icon size={iconSize} />
-        <div className="font-medium text-xs">{inboxIssueStatusDetail.title}</div>
+        <div className="font-medium text-xs">
+          {inboxIssue?.status === 0 && inboxIssue?.snoozed_till
+            ? inboxIssueStatusDetail.description(inboxIssue?.snoozed_till)
+            : inboxIssueStatusDetail.title}
+        </div>
       </div>
       {showDescription && <div className="text-sm">{description}</div>}
     </div>

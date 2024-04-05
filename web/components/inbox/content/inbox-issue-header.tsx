@@ -57,22 +57,22 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
 
-  const handleInboxIssueDuplicate = (issueId: string) => {
-    inboxIssue?.updateInboxIssueStatus({ duplicate_to: issueId });
-  };
-
   const handleInboxIssueAccept = async () => {
-    inboxIssue?.updateInboxIssueStatus({ status: 1 });
+    inboxIssue?.updateInboxIssueStatus(1);
     setAcceptIssueModal(false);
   };
 
   const handleInboxIssueDecline = async () => {
-    inboxIssue?.updateInboxIssueStatus({ status: -1 });
+    inboxIssue?.updateInboxIssueStatus(-1);
     setDeclineIssueModal(false);
   };
 
+  const handleInboxIssueDuplicate = (issueId: string) => {
+    inboxIssue?.updateInboxIssueDuplicateTo(issueId);
+  };
+
   const handleInboxSIssueSnooze = async (date: Date) => {
-    inboxIssue?.updateInboxIssueStatus({ status: 0, snoozed_till: date });
+    inboxIssue?.updateInboxIssueSnoozeTill(date);
     setIsSnoozeDateModalOpen(false);
   };
 
@@ -174,7 +174,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
               {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
             </h3>
           )}
-          <InboxIssueStatus inboxIssue={inboxIssue} showDescription />
+          <InboxIssueStatus inboxIssue={inboxIssue} />
         </div>
 
         <div className="flex items-center gap-2">

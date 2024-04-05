@@ -98,9 +98,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             <FiltersRoot />
           </div>
         </div>
-
         <InboxIssueAppliedFilters />
-
         <div
           className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
           ref={containerRef}

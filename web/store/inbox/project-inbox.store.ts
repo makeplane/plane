@@ -1,5 +1,4 @@
 import omit from "lodash/omit";
-import reverse from "lodash/reverse";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -55,7 +54,9 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   currentTab: TInboxIssueCurrentTab = "open";
   isLoading: TLoader = undefined;
   error: { message: string; status: "init-error" | "pagination-error" } | undefined = undefined;
-  inboxFilters: Partial<TInboxIssueFilter> = {};
+  inboxFilters: Partial<TInboxIssueFilter> = {
+    status: [-2],
+  };
   inboxSorting: Partial<TInboxIssueSorting> = {
     order_by: "issue__created_at",
     sort_by: "desc",
@@ -102,7 +103,9 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   }
 
   get inboxIssuesArray() {
-    return reverse(Object.values(this.inboxIssues || {}));
+    return Object.values(this.inboxIssues || {}).filter((inbox) =>
+      (this.currentTab === "open" ? [-2] : [-1, 0, 1, 2]).includes(inbox.status)
+    );
   }
 
   getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId] || undefined);
@@ -114,6 +117,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
     set(this, ["inboxSorting", "order_by"], "issue__created_at");
     set(this, ["inboxSorting", "sort_by"], "desc");
     if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 0, 1, 2]);
+    else set(this, ["inboxFilters", "status"], [-2]);
     const { workspaceSlug, projectId } = this.store.app.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
