@@ -60,15 +60,19 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
         <div className="flex items-center gap-2 text-custom-text-400">
           {/* <span className="text-xs">Labels</span>
           <Circle className="h-1 w-1 fill-custom-text-300" /> */}
-          <Tooltip tooltipHeading="Owned by" tooltipContent={ownerDetails?.display_name}>
-            <Avatar src={ownerDetails?.avatar} name={ownerDetails?.display_name} />
-          </Tooltip>
+          <div className="cursor-default">
+            <Tooltip tooltipHeading="Owned by" tooltipContent={ownerDetails?.display_name}>
+              <Avatar src={ownerDetails?.avatar} name={ownerDetails?.display_name} />
+            </Tooltip>
+          </div>
           <Circle className="h-1 w-1 fill-custom-text-300" />
           {/* <span className="text-xs cursor-default">10m read</span>
           <Circle className="h-1 w-1 fill-custom-text-300" /> */}
-          <Tooltip tooltipContent={access === 0 ? "Public" : "Private"}>
-            {access === 0 ? <UsersRound className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
-          </Tooltip>
+          <div className="cursor-default">
+            <Tooltip tooltipContent={access === 0 ? "Public" : "Private"}>
+              {access === 0 ? <UsersRound className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+            </Tooltip>
+          </div>
         </div>
 
         {/* vertical divider */}
@@ -76,7 +80,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
 
         {/* page info */}
         <Tooltip tooltipContent={`Created on ${renderFormattedDate(created_at)}`}>
-          <span className="h-4 w-4 grid place-items-center">
+          <span className="h-4 w-4 grid place-items-center cursor-default">
             <Info className="h-4 w-4 text-custom-text-300" />
           </span>
         </Tooltip>
