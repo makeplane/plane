@@ -50,6 +50,7 @@ class InboxIssueSerializer(BaseSerializer):
         # Pass the annotated fields to the Issue instance if they exist
         if hasattr(instance, "label_ids"):
             instance.issue.label_ids = instance.label_ids
+        return super().to_representation(instance)
 
 
 class InboxIssueDetailSerializer(BaseSerializer):
