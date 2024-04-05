@@ -1,5 +1,3 @@
-version: "3.8"
-
 x-app-env: &app-env
   environment:
     - NGINX_PORT=${NGINX_PORT:-80}

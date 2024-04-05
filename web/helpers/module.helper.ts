@@ -55,7 +55,7 @@ export const shouldFilterModule = (
   Object.keys(filters).forEach((key) => {
     const filterKey = key as keyof TModuleFilters;
     if (filterKey === "status" && filters.status && filters.status.length > 0)
-      fallsInFilters = fallsInFilters && filters.status.includes(module.status.toLowerCase());
+      fallsInFilters = fallsInFilters && filters.status.includes(module.status?.toLowerCase() ?? "");
     if (filterKey === "lead" && filters.lead && filters.lead.length > 0)
       fallsInFilters = fallsInFilters && filters.lead.includes(`${module.lead_id}`);
     if (filterKey === "members" && filters.members && filters.members.length > 0) {

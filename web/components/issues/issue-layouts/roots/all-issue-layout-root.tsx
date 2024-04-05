@@ -182,6 +182,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
               updateIssue={updateIssue}
               canEditProperties={canEditProperties}
               viewId={globalViewId}
+              isWorkspaceLevel
             />
             {/* peek overview */}
             <IssuePeekOverview />

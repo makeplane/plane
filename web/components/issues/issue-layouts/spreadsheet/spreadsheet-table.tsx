@@ -22,6 +22,7 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
+  spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
 };
 
 export const SpreadsheetTable = observer((props: Props) => {
@@ -36,6 +37,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     updateIssue,
     canEditProperties,
     containerRef,
+    spreadsheetColumnsList,
   } = props;
 
   // states
@@ -83,6 +85,7 @@ export const SpreadsheetTable = observer((props: Props) => {
         displayFilters={displayFilters}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         isEstimateEnabled={isEstimateEnabled}
+        spreadsheetColumnsList={spreadsheetColumnsList}
       />
       <tbody>
         {issueIds.map((id) => (
@@ -99,6 +102,7 @@ export const SpreadsheetTable = observer((props: Props) => {
             containerRef={containerRef}
             isScrolled={isScrolled}
             issueIds={issueIds}
+            spreadsheetColumnsList={spreadsheetColumnsList}
           />
         ))}
       </tbody>

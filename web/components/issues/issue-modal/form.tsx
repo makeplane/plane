@@ -465,34 +465,36 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         />
                       )}
                     </div>
-                    <Controller
-                      name="description_html"
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <RichTextEditorWithRef
-                          cancelUploadImage={fileService.cancelUpload}
-                          uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                          deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                          restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-                          ref={editorRef}
-                          debouncedUpdatesEnabled={false}
-                          value={
-                            !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                              ? watch("description_html")
-                              : value
-                          }
-                          initialValue={data?.description_html}
-                          customClassName="min-h-[7rem] border-custom-border-100"
-                          onChange={(description: any, description_html: string) => {
-                            onChange(description_html);
-                            handleFormChange();
-                          }}
-                          mentionHighlights={mentionHighlights}
-                          mentionSuggestions={mentionSuggestions}
-                          tabIndex={getTabIndex("description_html")}
-                        />
-                      )}
-                    />
+                    {data?.description_html && watch("description_html") && (
+                      <Controller
+                        name="description_html"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <RichTextEditorWithRef
+                            cancelUploadImage={fileService.cancelUpload}
+                            uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                            deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                            restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                            ref={editorRef}
+                            debouncedUpdatesEnabled={false}
+                            value={
+                              !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                                ? watch("description_html")
+                                : value
+                            }
+                            initialValue={data?.description_html}
+                            customClassName="min-h-[7rem] border-custom-border-100"
+                            onChange={(description: any, description_html: string) => {
+                              onChange(description_html);
+                              handleFormChange();
+                            }}
+                            mentionHighlights={mentionHighlights}
+                            mentionSuggestions={mentionSuggestions}
+                            tabIndex={getTabIndex("description_html")}
+                          />
+                        )}
+                      />
+                    )}
                   </Fragment>
                 )}
               </div>
@@ -688,15 +690,21 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
                         Change parent issue
                       </CustomMenu.MenuItem>
-                      <CustomMenu.MenuItem
-                        className="!p-1"
-                        onClick={() => {
-                          setValue("parent_id", null);
-                          handleFormChange();
-                        }}
-                      >
-                        Remove parent issue
-                      </CustomMenu.MenuItem>
+                      <Controller
+                        control={control}
+                        name="parent_id"
+                        render={({ field: { onChange } }) => (
+                          <CustomMenu.MenuItem
+                            className="!p-1"
+                            onClick={() => {
+                              onChange(null);
+                              handleFormChange();
+                            }}
+                          >
+                            Remove parent issue
+                          </CustomMenu.MenuItem>
+                        )}
+                      />
                     </>
                   </CustomMenu>
                 ) : (

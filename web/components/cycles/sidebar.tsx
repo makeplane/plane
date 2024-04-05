@@ -211,7 +211,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   //   [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   // );
 
-  const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
+  const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
 
   const startDate = getDate(cycleDetails?.start_date);

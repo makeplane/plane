@@ -256,7 +256,7 @@ export class CycleStore implements ICycleStore {
       (c) =>
         c.project_id === projectId &&
         !c.archived_at &&
-        c.status.toLowerCase() === "completed" &&
+        c.status?.toLowerCase() === "completed" &&
         c.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
         shouldFilterCycle(c, filters ?? {})
     );
