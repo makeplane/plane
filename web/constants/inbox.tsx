@@ -10,7 +10,7 @@ export const INBOX_STATUS: {
   status: TInboxIssueStatus;
   icon: LucideIcon;
   title: string;
-  description: (snoozedTillDate: Date) => JSX.Element;
+  description: (snoozedTillDate: Date) => string;
   textColor: (snoozeDatePassed: boolean) => string;
   bgColor: (snoozeDatePassed: boolean) => string;
 }[] = [
@@ -19,7 +19,7 @@ export const INBOX_STATUS: {
     status: -2,
     icon: AlertTriangle,
     title: "Pending",
-    description: () => <></>,
+    description: () => `Pending`,
     textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-[#AB6400]"),
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-[#FFF7C2]"),
   },
@@ -28,7 +28,7 @@ export const INBOX_STATUS: {
     status: -1,
     icon: XCircle,
     title: "Declined",
-    description: () => <></>,
+    description: () => `Declined`,
     textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-[#CE2C31]"),
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-[#FEEBEC]"),
   },
@@ -37,12 +37,8 @@ export const INBOX_STATUS: {
     status: 0,
     icon: Clock,
     title: "Snoozed",
-    description: (snoozedTillDate: Date = new Date()) => (
-      <p className="text-xs leading-4 font-medium text-custom-text-400">
-        {findHowManyDaysLeft(snoozedTillDate)} days to go
-      </p>
-    ),
-    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "text-red-500" : "text-[#60646C"),
+    description: (snoozedTillDate: Date = new Date()) => `${findHowManyDaysLeft(snoozedTillDate)} days to go`,
+    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "text-red-500" : "text-custom-text-400"),
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "bg-red-500/10" : "bg-[#E0E1E6]"),
   },
   {
@@ -50,7 +46,7 @@ export const INBOX_STATUS: {
     status: 1,
     icon: CheckCircle2,
     title: "Accepted",
-    description: () => <></>,
+    description: () => `Accepted`,
     textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-[#3E9B4F]"),
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-[#E9F6E9]"),
   },
@@ -59,7 +55,7 @@ export const INBOX_STATUS: {
     status: 2,
     icon: Copy,
     title: "Duplicate",
-    description: () => <></>,
+    description: () => `Duplicate`,
     textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-custom-text-200"),
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-gray-500/10"),
   },

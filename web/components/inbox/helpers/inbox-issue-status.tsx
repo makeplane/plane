@@ -2,8 +2,10 @@ import React from "react";
 import { observer } from "mobx-react";
 // constants
 import { INBOX_STATUS } from "@/constants/inbox";
-import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // store
+import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
 type Props = {
   inboxIssue: IInboxIssueStore;
@@ -15,23 +17,25 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
   const { inboxIssue, iconSize = 16, showDescription = false } = props;
   // derived values
   const inboxIssueStatusDetail = INBOX_STATUS.find((s) => s.status === inboxIssue.status);
-  const isSnoozedDatePassed = inboxIssue.status === 0 && new Date(inboxIssue.snoozed_till ?? "") < new Date();
-
   if (!inboxIssueStatusDetail) return <></>;
+
+  const isSnoozedDatePassed = inboxIssue.status === 0 && new Date(inboxIssue.snoozed_till ?? "") < new Date();
 
   const description = inboxIssueStatusDetail.description(new Date(inboxIssue.snoozed_till ?? ""));
 
   return (
-    <div className="flex items-center gap-2">
-      <div
-        className={`flex items-center gap-1.5 text-xs rounded px-2 py-0.5 ${inboxIssueStatusDetail.textColor(
+    <div
+      className={cn(
+        `relative flex flex-col gap-1 p-1.5 py-0.5 rounded ${inboxIssueStatusDetail.textColor(
           isSnoozedDatePassed
-        )} ${inboxIssueStatusDetail.bgColor(isSnoozedDatePassed)}`}
-      >
+        )} ${inboxIssueStatusDetail.bgColor(isSnoozedDatePassed)}`
+      )}
+    >
+      <div className={`flex items-center gap-1`}>
         <inboxIssueStatusDetail.icon size={iconSize} />
-        <p className="leading-5 font-medium">{inboxIssueStatusDetail.title}</p>
+        <div className="font-medium text-xs">{inboxIssueStatusDetail.title}</div>
       </div>
-      {showDescription && description}
+      {showDescription && <div className="text-sm">{description}</div>}
     </div>
   );
 });

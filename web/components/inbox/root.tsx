@@ -48,19 +48,19 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
       </div>
     );
 
-  // empty inbox issues
-  if (!isLoading && !error && inboxIssuesArray?.length === 0)
-    return (
-      <div className="relative w-full h-full flex flex-col gap-4 justify-center items-center">
-        <div>No issues are available. create a new issue.</div>
-        <div>
-          <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
-          <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
-            Add Issue
-          </Button>
-        </div>
-      </div>
-    );
+  // // empty inbox issues
+  // if (!isLoading && !error && inboxIssuesArray?.length === 0)
+  //   return (
+  //     <div className="relative w-full h-full flex flex-col gap-4 justify-center items-center">
+  //       <div>No issues are available. create a new issue.</div>
+  //       <div>
+  //         <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
+  //         <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
+  //           Add Issue
+  //         </Button>
+  //       </div>
+  //     </div>
+  //   );
 
   return (
     <div className="relative w-full h-full flex overflow-hidden">
