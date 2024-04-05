@@ -19,9 +19,11 @@ import { RootStore } from "@/store/root.store";
 // store helpers
 import { InboxIssueHelpers } from "./helpers";
 
+type TLoader = "init-loading" | "filter-loading" | "pagination-loading" | undefined;
+
 export interface IProjectInboxStore {
   currentTab: TInboxIssueCurrentTab;
-  isLoading: "init-loading" | "pagination-loading" | undefined;
+  isLoading: TLoader;
   error: { message: string; status: "init-error" | "pagination-error" } | undefined;
   inboxFilters: Partial<TInboxIssueFilter>;
   inboxSorting: Partial<TInboxIssueSorting>;
@@ -34,7 +36,7 @@ export interface IProjectInboxStore {
   handleCurrentTab: (tab: TInboxIssueCurrentTab) => void;
   handleInboxIssueFilters: <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   handleInboxIssueSorting: <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => void; // if user sends me undefined, I will remove the value from the filter key
-  fetchInboxIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
+  fetchInboxIssues: (workspaceSlug: string, projectId: string, loadingType?: TLoader) => Promise<void>;
   fetchInboxPaginationIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
   createInboxIssue: (
@@ -50,7 +52,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   PER_PAGE_COUNT = 10;
   // observables
   currentTab: TInboxIssueCurrentTab = "open";
-  isLoading: "init-loading" | "pagination-loading" | undefined = "init-loading";
+  isLoading: TLoader = undefined;
   error: { message: string; status: "init-error" | "pagination-error" } | undefined = undefined;
   inboxFilters: Partial<TInboxIssueFilter> = {};
   inboxSorting: Partial<TInboxIssueSorting> = {
@@ -100,19 +102,19 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
     set(this, ["inboxSorting", "sort_by"], "desc");
     if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 0, 1, 2]);
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId);
+    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 
   handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => {
     set(this.inboxFilters, key, value);
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId);
+    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 
   handleInboxIssueSorting = <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => {
     set(this.inboxSorting, key, value);
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId);
+    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 
   /**
@@ -120,9 +122,10 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
    * @param workspaceSlug
    * @param projectId
    */
-  fetchInboxIssues = async (workspaceSlug: string, projectId: string) => {
+  fetchInboxIssues = async (workspaceSlug: string, projectId: string, loadingType: TLoader = undefined) => {
     try {
-      this.isLoading = "init-loading";
+      if (loadingType) this.isLoading = loadingType;
+      else this.isLoading = "init-loading";
       this.inboxIssuePaginationInfo = undefined;
       this.inboxIssues = {};
 

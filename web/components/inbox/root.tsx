@@ -1,10 +1,9 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Plus, Inbox } from "lucide-react";
-import { Button } from "@plane/ui";
+import { Inbox } from "lucide-react";
 // components
-import { CreateInboxIssueModal, InboxSidebar, InboxIssueContentRoot } from "@/components/inbox";
+import { InboxSidebar, InboxIssueContentRoot } from "@/components/inbox";
 import { InboxLayoutLoader } from "@/components/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
@@ -20,8 +19,6 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, inboxAccessible } = props;
   // hooks
   const { isLoading, error, fetchInboxIssues, inboxIssuesArray } = useProjectInbox();
-  // states
-  const [createIssueModal, setCreateIssueModal] = useState(false);
 
   useSWR(
     inboxAccessible && workspaceSlug && projectId ? `PROJECT_INBOX_ISSUES_${workspaceSlug}_${projectId}` : null,
@@ -47,20 +44,6 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
         <div className="text-custom-text-200">{error?.message}</div>
       </div>
     );
-
-  // // empty inbox issues
-  // if (!isLoading && !error && inboxIssuesArray?.length === 0)
-  //   return (
-  //     <div className="relative w-full h-full flex flex-col gap-4 justify-center items-center">
-  //       <div>No issues are available. create a new issue.</div>
-  //       <div>
-  //         <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
-  //         <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
-  //           Add Issue
-  //         </Button>
-  //       </div>
-  //     </div>
-  //   );
 
   return (
     <div className="relative w-full h-full flex overflow-hidden">

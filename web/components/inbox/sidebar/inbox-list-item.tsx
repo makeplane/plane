@@ -2,7 +2,6 @@ import { FC, MouseEvent, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { CalendarDays } from "lucide-react";
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // components
 import { InboxIssueStatus } from "@/components/inbox";

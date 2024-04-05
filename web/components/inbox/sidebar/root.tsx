@@ -1,9 +1,10 @@
-import { FC, useCallback, useRef } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { Plus } from "lucide-react";
 import { TInboxIssueCurrentTab } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 // components
-import { FiltersRoot, InboxIssueList } from "@/components/inbox";
+import { CreateInboxIssueModal, FiltersRoot, InboxIssueList } from "@/components/inbox";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -33,8 +34,16 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   const elementRef = useRef<HTMLDivElement>(null);
   // store
   const { currentProjectDetails } = useProject();
-  const { currentTab, handleCurrentTab, inboxIssuesArray, inboxIssuePaginationInfo, fetchInboxPaginationIssues } =
-    useProjectInbox();
+  const {
+    currentTab,
+    handleCurrentTab,
+    isLoading,
+    inboxIssuesArray,
+    inboxIssuePaginationInfo,
+    fetchInboxPaginationIssues,
+  } = useProjectInbox();
+  // states
+  const [createIssueModal, setCreateIssueModal] = useState(false);
 
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
@@ -85,12 +94,35 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
           className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
           ref={containerRef}
         >
-          <InboxIssueList
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            projectIdentifier={currentProjectDetails?.identifier}
-            inboxIssues={inboxIssuesArray}
-          />
+          {isLoading === "filter-loading" ? (
+            <>Loading...</>
+          ) : (
+            <>
+              {inboxIssuesArray.length > 0 ? (
+                <InboxIssueList
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  projectIdentifier={currentProjectDetails?.identifier}
+                  inboxIssues={inboxIssuesArray}
+                />
+              ) : (
+                <div className="w-full h-full relative flex flex-col justify-center items-center gap-4">
+                  <div>No issues are available. create a new issue.</div>
+                  <div>
+                    <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
+                    <Button
+                      variant="primary"
+                      prependIcon={<Plus />}
+                      size="sm"
+                      onClick={() => setCreateIssueModal(true)}
+                    >
+                      Add Issue
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
           <div ref={elementRef}>
             {inboxIssuePaginationInfo?.next_page_results && (
               <Loader className="mx-auto w-full space-y-4 py-4 px-2">

@@ -42,6 +42,7 @@ export const FilterStatus: FC<Props> = observer((props) => {
                 key={status.key}
                 isChecked={filterValue?.includes(status.status) ? true : false}
                 onClick={() => handleInboxIssueFilters("status", handleFilterValue(status.status))}
+                icon={<status.icon className={`h-3.5 w-3.5 ${status?.textColor(false)}`} />}
                 title={status.title}
               />
             ))
