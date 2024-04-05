@@ -12,7 +12,7 @@ import "@/styles/react-day-picker.css";
 import { SITE_TITLE } from "@/constants/seo-variables";
 import { THEMES } from "@/constants/themes";
 // mobx store provider
-import { StoreProvider } from "@/contexts/store-context";
+import { StoreProvider } from "@/lib/store-context";
 
 import { AppProvider } from "@/lib/app-provider";
 // types

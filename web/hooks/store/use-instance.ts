@@ -1,6 +1,6 @@
 import { useContext } from "react";
 // store
-import { StoreContext } from "@/contexts/store-context";
+import { StoreContext } from "@/lib/store-context";
 import { IInstanceStore } from "@/store/instance.store";
 
 export const useInstance = (): IInstanceStore => {
