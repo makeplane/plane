@@ -31,8 +31,6 @@ type IPageRenderer = {
 export const PageRenderer = (props: IPageRenderer) => {
   const { title, tabIndex, editor, editorClassNames, editorContentCustomClassNames, updatePageTitle, readonly } = props;
 
-  const [pageTitle, setPageTitle] = useState(title);
-
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
   const [coordinates, setCoordinates] = useState<{ x: number; y: number }>();
@@ -51,7 +49,6 @@ export const PageRenderer = (props: IPageRenderer) => {
   const { getFloatingProps } = useInteractions([dismiss]);
 
   const handlePageTitleChange = (title: string) => {
-    setPageTitle(title);
     updatePageTitle(title);
   };
 
@@ -143,7 +140,7 @@ export const PageRenderer = (props: IPageRenderer) => {
     <div className="frame-renderer h-full w-full flex flex-col overflow-y-auto overflow-x-hidden">
       <div className="w-full flex-shrink-0">
         {readonly ? (
-          <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{pageTitle}</h6>
+          <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{title}</h6>
         ) : (
           <TextArea
             onChange={(e) => handlePageTitleChange(e.target.value)}
@@ -162,7 +159,7 @@ export const PageRenderer = (props: IPageRenderer) => {
                   .run();
               }
             }}
-            value={pageTitle}
+            value={title}
           />
         )}
       </div>
