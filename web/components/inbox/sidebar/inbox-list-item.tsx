@@ -92,21 +92,27 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
             )}
 
             {issue.label_ids && issue.label_ids.length > 3 ? (
-              <p className="text-sm px-2 py-0.5 bg-custom-background-80 rounded">{`${issue.label_ids.length} labels`}</p>
+              <div className="relative !h-[17.5px] flex items-center gap-1 rounded border border-custom-border-300 px-1 text-xs">
+                <span className="h-2 w-2 rounded-full bg-orange-400" />
+                <span className="normal-case max-w-28 truncate">{`${issue.label_ids.length} labels`}</span>
+              </div>
             ) : (
               <>
                 {(issue.label_ids ?? []).map((labelId) => {
                   const labelDetails = projectLabels?.find((l) => l.id === labelId);
                   if (!labelDetails) return null;
                   return (
-                    <div key={labelId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+                    <div
+                      key={labelId}
+                      className="relative !h-[17.5px] flex items-center gap-1 rounded border border-custom-border-300 px-1 text-xs"
+                    >
                       <span
-                        className="h-1.5 w-1.5 rounded-full"
+                        className="h-2 w-2 rounded-full"
                         style={{
                           backgroundColor: labelDetails.color,
                         }}
                       />
-                      <span className="normal-case">{labelDetails.name}</span>
+                      <span className="normal-case max-w-28 truncate">{labelDetails.name}</span>
                     </div>
                   );
                 })}
