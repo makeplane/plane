@@ -58,27 +58,27 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
 
   const handleInboxIssueDuplicate = (issueId: string) => {
-    inboxIssue?.updateDuplicateTo(issueId);
+    inboxIssue?.updateInboxIssueStatus({ duplicate_to: issueId });
   };
 
   const handleInboxIssueAccept = async () => {
-    inboxIssue?.updateStatus(1);
+    inboxIssue?.updateInboxIssueStatus({ status: 1 });
     setAcceptIssueModal(false);
   };
 
   const handleInboxIssueDecline = async () => {
-    inboxIssue?.updateStatus(-1);
+    inboxIssue?.updateInboxIssueStatus({ status: -1 });
     setDeclineIssueModal(false);
+  };
+
+  const handleInboxSIssueSnooze = async (date: Date) => {
+    inboxIssue?.updateInboxIssueStatus({ status: 0, snoozed_till: date });
+    setIsSnoozeDateModalOpen(false);
   };
 
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
     deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId);
-  };
-
-  const handleInboxSIssueSnooze = async (date: Date) => {
-    inboxIssue?.updateSnoozeTill(date);
-    setIsSnoozeDateModalOpen(false);
   };
 
   const handleCopyIssueLink = () =>

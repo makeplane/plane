@@ -13,10 +13,8 @@ export interface IInboxIssueStore {
   duplicate_to: string | undefined;
   created_by: string | undefined;
   // actions
-  fetchInboxIssue: () => Promise<TInboxIssue>;
-  updateDuplicateTo: (issueId: string) => void;
-  updateSnoozeTill: (date: Date) => void;
-  updateStatus: (status: number) => void;
+  updateInboxIssueStatus: (inboxIssue: Partial<TInboxIssue>) => Promise<void>;
+  updateIssue: (issue: Partial<TIssue>) => Promise<void>;
 }
 
 export class InboxIssueStore implements IInboxIssueStore {
@@ -53,50 +51,34 @@ export class InboxIssueStore implements IInboxIssueStore {
       duplicate_to: observable,
       created_by: observable,
       // actions
-      fetchInboxIssue: action,
-      updateDuplicateTo: action,
-      updateSnoozeTill: action,
-      updateStatus: action,
+      updateInboxIssueStatus: action,
+      updateIssue: action,
     });
   }
 
-  fetchInboxIssue = async () => {
+  updateInboxIssueStatus = async (inboxIssue: Partial<TInboxIssue>) => {
     try {
-      this.isLoading = true;
-      const response = this.inboxIssueService.retrieve(this.workspaceSlug, this.projectId, this.id);
-      runInAction(() => {
-        this.isLoading = false;
-      });
-      return response;
-    } catch (error) {
-      this.isLoading = false;
-      throw error;
-    }
+      if (!this.issue.id) return;
+      const inboxIssueStatus = await this.inboxIssueService.update(
+        this.workspaceSlug,
+        this.projectId,
+        this.issue.id,
+        inboxIssue
+      );
+      console.log("inboxIssueStatus", inboxIssueStatus);
+    } catch {}
   };
 
-  updateDuplicateTo = async (issueId: string) => {
-    runInAction(() => {
-      this.duplicate_to = issueId;
-    });
-    await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.id, { duplicate_to: issueId });
-  };
-
-  updateSnoozeTill = async (date: Date) => {
-    const oldValue = this.snoozed_till;
+  updateIssue = async (issue: Partial<TIssue>) => {
     try {
-      runInAction(() => {
-        this.snoozed_till = date;
-      });
-      await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.id, { snoozed_till: date });
-    } catch (error) {
-      runInAction(() => {
-        this.snoozed_till = oldValue;
-      });
-      throw error;
-    }
-  };
-
-  updateStatus = (status: number) => {
-    this.status = status;
+      if (!this.issue.id) return;
+      const inboxIssueStatus = await this.inboxIssueService.updateIssue(
+        this.workspaceSlug,
+        this.projectId,
+        this.issue.id,
+        issue
+      );
+      console.log("inboxIssueStatus", inboxIssueStatus);
+    } catch {}
   };
 }

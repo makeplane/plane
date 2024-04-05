@@ -53,6 +53,21 @@ export class InboxIssueService extends APIService {
       });
   }
 
+  async updateIssue(
+    workspaceSlug: string,
+    projectId: string,
+    inboxIssueId: string,
+    data: Partial<TIssue>
+  ): Promise<TInboxIssue> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/`, {
+      issue: data,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async destroy(workspaceSlug: string, projectId: string, inboxIssueId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/`)
       .then((response) => response?.data)
