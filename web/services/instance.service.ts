@@ -1,5 +1,5 @@
 // types
-import type { IInstanceNotSetup, IInstance } from "@plane/types";
+import type { IInstance } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -21,7 +21,7 @@ export class InstanceService extends APIService {
       });
   }
 
-  async getInstanceInfo(): Promise<IInstance | IInstanceNotSetup> {
+  async getInstanceInfo(): Promise<IInstance> {
     return this.get("/api/instances/")
       .then((response) => response.data)
       .catch((error) => {

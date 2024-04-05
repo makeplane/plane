@@ -34,8 +34,6 @@ export abstract class APIService {
   }
 
   getAccessToken() {
-    console.log("api_access_token", Cookies.get("api_access_token"));
-
     return Cookies.get("access_token");
   }
 

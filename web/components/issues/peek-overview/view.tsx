@@ -39,7 +39,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const {
     setPeekIssue,
     isAnyModalOpen,

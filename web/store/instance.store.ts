@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { IInstance, IInstanceNotSetup } from "@plane/types";
+import { IInstance } from "@plane/types";
 // services
 import { InstanceService } from "@/services/instance.service";
 
@@ -16,7 +16,7 @@ type TError = {
 export interface IInstanceStore {
   // issues
   isLoading: boolean;
-  instanceNotReady: IInstanceNotSetup | undefined;
+  instanceNotReady: any | undefined;
   instance: IInstance | undefined;
   error: TError | undefined;
   // action
@@ -25,13 +25,13 @@ export interface IInstanceStore {
 
 export class InstanceStore implements IInstanceStore {
   isLoading: boolean = true;
-  instanceNotReady: IInstanceNotSetup | undefined = undefined;
+  instanceNotReady: any | undefined = undefined;
   instance: IInstance | undefined = undefined;
   error: TError | undefined = undefined;
   // services
   instanceService;
 
-  constructor(private store: RootStore) {
+  constructor() {
     makeObservable(this, {
       // observable
       isLoading: observable.ref,
@@ -54,11 +54,9 @@ export class InstanceStore implements IInstanceStore {
         this.error = undefined;
       });
 
-      await this.instanceService.requestCSRFToken();
       const instance = await this.instanceService.getInstanceInfo();
 
-      const isInstanceNotSetup = (instance: IInstance | IInstanceNotSetup): instance is IInstanceNotSetup =>
-        "is_activated" in instance && "is_setup_done" in instance;
+      const isInstanceNotSetup = (instance: IInstance) => "is_activated" in instance && "is_setup_done" in instance;
 
       if (isInstanceNotSetup(instance)) {
         runInAction(() => {
@@ -67,8 +65,8 @@ export class InstanceStore implements IInstanceStore {
             status: "success",
             message: "Instance is not created in the backend",
             data: {
-              is_activated: instance.is_activated,
-              is_setup_done: instance.is_setup_done,
+              is_activated: instance?.is_activated,
+              is_setup_done: instance?.is_setup_done,
             },
           };
         });

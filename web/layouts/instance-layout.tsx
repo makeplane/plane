@@ -4,7 +4,7 @@ import useSWR from "swr";
 // ui
 import { Spinner } from "@plane/ui";
 // components
-import { InstanceNotReady, MiniGodModeForm } from "@/components/instance";
+import { InstanceNotReady } from "@/components/instance";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -45,8 +45,8 @@ const InstanceLayout: FC<TInstanceLayout> = observer((props) => {
 
   // instance is not ready and setup is not done
   if (instance?.instance?.is_setup_done === false)
-    if (isGodModeEnabled) return <MiniGodModeForm />;
-    else return <InstanceNotReady isGodModeEnabled handleGodModeStateChange={handleGodModeStateChange} />;
+    // if (isGodModeEnabled) return <MiniGodModeForm />;
+    return <InstanceNotReady isGodModeEnabled handleGodModeStateChange={handleGodModeStateChange} />;
 
   return <>{children}</>;
 });

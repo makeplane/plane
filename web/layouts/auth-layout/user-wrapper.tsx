@@ -1,12 +1,13 @@
+import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { FC, ReactNode } from "react";
 import useSWR from "swr";
-// hooks
-import { Spinner } from "@plane/ui";
-import { useUser, useWorkspace } from "@/hooks/store";
+// import useSWRImmutable from "swr/immutable";
 // ui
-import { useUserProfile } from "hooks/store/use-user-profile";
+import { Spinner } from "@plane/ui";
+// hooks
+import { useUser, useWorkspace } from "@/hooks/store";
+// import { useUserProfile } from "@/hooks/store/use-user-profile";
 
 export interface IUserAuthWrapper {
   children: ReactNode;
@@ -15,8 +16,8 @@ export interface IUserAuthWrapper {
 export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   const { children } = props;
   // store hooks
-  const { data, fetchCurrentUser, fetchUserAccounts } = useUser();
-  const { fetchUserProfile } = useUserProfile();
+  const { fetchCurrentUser, data: currentUser, error: currentUserError } = useUser();
+  // const { fetchUserProfile } = useUserProfile();
   const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
@@ -25,19 +26,19 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     shouldRetryOnError: false,
   });
   // fetching current user instance admin status
-  useSWRImmutable("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
-    shouldRetryOnError: false,
-  });
+  // useSWRImmutable("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
+  //   shouldRetryOnError: false,
+  // });
   // fetching user settings
-  const { isLoading: userSettingsLoader } = useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
-    shouldRetryOnError: false,
-  });
+  // const { isLoading: userSettingsLoader } = useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
+  //   shouldRetryOnError: false,
+  // });
   // fetching all workspaces
   const { isLoading: workspaceLoader } = useSWR("USER_WORKSPACES_LIST", () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
 
-  if ((!currentUser && !currentUserError) || userSettingsLoader || workspaceLoader) {
+  if ((!currentUser && !currentUserError) || workspaceLoader) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">

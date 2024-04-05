@@ -1,5 +1,5 @@
-import { IMentionHighlight, IMentionSuggestion } from "@plane/lite-text-editor";
 import { computed, makeObservable } from "mobx";
+import { IMentionHighlight, IMentionSuggestion } from "@plane/lite-text-editor";
 // editor
 // types
 import { RootStore } from "@/store/root.store";

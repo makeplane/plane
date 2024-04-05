@@ -56,6 +56,7 @@ export class InboxFilter implements IInboxFilter {
     const displayFilters = this.filters[inboxId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const _filters: TInboxIssueFilters = {
       filters: {
         priority: isEmpty(displayFilters?.filters?.priority) ? [] : displayFilters?.filters?.priority,
