@@ -1,4 +1,5 @@
 import React from "react";
+import { Placement } from "@popperjs/core";
 // components
 import { TIssue, TIssueMap } from "@plane/types";
 import { CalendarIssueBlock } from "@/components/issues";
@@ -7,7 +8,7 @@ import { CalendarIssueBlock } from "@/components/issues";
 type Props = {
   issues: TIssueMap | undefined;
   issueId: string;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
   isDragging?: boolean;
 };
 

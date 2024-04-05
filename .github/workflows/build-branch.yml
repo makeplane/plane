@@ -6,7 +6,6 @@ on:
     branches:
       - master
       - preview
-      - develop
   release:
     types: [released, prereleased]
 

@@ -11,12 +11,13 @@ import { ProjectAnalyticsModal } from "@/components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // hooks
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
-import { useIssues, useLabel, useMember, useModule, useProjectState } from "@/hooks/store";
+import { useIssues, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 // types
 // constants
 
 export const ModuleMobileHeader = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
+  const { currentProjectDetails } = useProject();
   const { getModuleById } = useModule();
   const layouts = [
     { key: "list", title: "List", icon: List },
@@ -54,8 +55,10 @@ export const ModuleMobileHeader = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -132,6 +135,8 @@ export const ModuleMobileHeader = observer(() => {
               labels={projectLabels}
               memberIds={projectMemberIds ?? undefined}
               states={projectStates}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
         </div>
@@ -155,6 +160,8 @@ export const ModuleMobileHeader = observer(() => {
               displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
               ignoreGroupedFilters={["module"]}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
         </div>

@@ -144,7 +144,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   useEffect(() => {
     if (!unsplashImages || value !== null) return;
 
-    onChange(unsplashImages[0].urls.regular);
+    onChange(unsplashImages[0]?.urls.regular);
   }, [value, onChange, unsplashImages]);
 
   const handleClose = () => {

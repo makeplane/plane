@@ -46,7 +46,7 @@ type ButtonContentProps = {
   hideIcon: boolean;
   hideText: boolean;
   onChange: (moduleIds: string[]) => void;
-  placeholder: string;
+  placeholder?: string;
   showCount: boolean;
   showTooltip?: boolean;
   value: string | string[] | null;
@@ -75,13 +75,15 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
         {showCount ? (
           <div className="relative flex items-center gap-1 max-w-full">
             {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-            <div className="max-w-40 flex-grow truncate">
-              {value.length > 0
-                ? value.length === 1
-                  ? `${getModuleById(value[0])?.name || "module"}`
-                  : `${value.length} Module${value.length === 1 ? "" : "s"}`
-                : placeholder}
-            </div>
+            {(value.length > 0 || !!placeholder) && (
+              <div className="max-w-40 flex-grow truncate">
+                {value.length > 0
+                  ? value.length === 1
+                    ? `${getModuleById(value[0])?.name || "module"}`
+                    : `${value.length} Module${value.length === 1 ? "" : "s"}`
+                  : placeholder}
+              </div>
+            )}
           </div>
         ) : value.length > 0 ? (
           <div className="flex max-w-full flex-grow flex-wrap items-center gap-2 truncate py-0.5">
@@ -158,7 +160,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     multiple,
     onChange,
     onClose,
-    placeholder = "Module",
+    placeholder = "",
     placement,
     projectId,
     showCount = false,
