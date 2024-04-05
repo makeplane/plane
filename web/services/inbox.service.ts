@@ -2,7 +2,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // helpers
 // types
-import type { IInboxIssue, IInbox, IInboxQueryParams, TInboxIssueListResponse } from "@plane/types";
+import type { IInboxIssue, IInbox, IInboxQueryParams, TInboxIssueWithPagination } from "@plane/types";
 
 export class InboxService extends APIService {
   constructor() {
@@ -38,7 +38,7 @@ export class InboxService extends APIService {
     projectId: string,
     inboxId: string,
     params: Partial<IInboxQueryParams>
-  ): Promise<TInboxIssueListResponse> {
+  ): Promise<TInboxIssueWithPagination> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`, {
       params,
     })

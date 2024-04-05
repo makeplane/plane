@@ -1,3 +1,5 @@
-export * from "./main-content";
-export * from "./sidebar";
+export * from "./inbox-issue-root";
 export * from "./root";
+export * from "./inbox-issue-header";
+export * from "./issue-properties";
+export * from "./issue-root";

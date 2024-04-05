@@ -1,5 +1,5 @@
 // types
-import type { TInboxIssue, TIssue, TInboxIssueListResponse } from "@plane/types";
+import type { TInboxIssue, TIssue, TInboxIssueWithPagination } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // helpers
@@ -9,7 +9,7 @@ export class InboxIssueService extends APIService {
     super(API_BASE_URL);
   }
 
-  async list(workspaceSlug: string, projectId: string, params = {}): Promise<TInboxIssueListResponse> {
+  async list(workspaceSlug: string, projectId: string, params = {}): Promise<TInboxIssueWithPagination> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/`, {
       params,
     })

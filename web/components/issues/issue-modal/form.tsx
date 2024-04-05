@@ -327,32 +327,38 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             </h3>
           </div>
           {watch("parent_id") && selectedParentIssue && (
-            <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span
-                  className="block h-1.5 w-1.5 rounded-full"
-                  style={{
-                    backgroundColor: selectedParentIssue.state__color,
-                  }}
-                />
-                <span className="flex-shrink-0 text-custom-text-200">
-                  {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
-                </span>
-                <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
-                <button
-                  type="button"
-                  className="grid place-items-center"
-                  onClick={() => {
-                    setValue("parent_id", null);
-                    handleFormChange();
-                    setSelectedParentIssue(null);
-                  }}
-                  tabIndex={getTabIndex("remove_parent")}
-                >
-                  <X className="h-3 w-3 cursor-pointer" />
-                </button>
-              </div>
-            </div>
+            <Controller
+              control={control}
+              name="parent_id"
+              render={({ field: { onChange } }) => (
+                <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="block h-1.5 w-1.5 rounded-full"
+                      style={{
+                        backgroundColor: selectedParentIssue.state__color,
+                      }}
+                    />
+                    <span className="flex-shrink-0 text-custom-text-200">
+                      {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
+                    </span>
+                    <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
+                    <button
+                      type="button"
+                      className="grid place-items-center"
+                      onClick={() => {
+                        onChange(null);
+                        handleFormChange();
+                        setSelectedParentIssue(null);
+                      }}
+                      tabIndex={getTabIndex("remove_parent")}
+                    >
+                      <X className="h-3 w-3 cursor-pointer" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            />
           )}
           <div className="space-y-3">
             <div className="mt-2 space-y-3">
@@ -455,34 +461,36 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         />
                       )}
                     </div>
-                    <Controller
-                      name="description_html"
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <RichTextEditorWithRef
-                          cancelUploadImage={fileService.cancelUpload}
-                          uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                          deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                          restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-                          ref={editorRef}
-                          debouncedUpdatesEnabled={false}
-                          value={
-                            !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                              ? watch("description_html")
-                              : value
-                          }
-                          initialValue={data?.description_html}
-                          customClassName="min-h-[7rem] border-custom-border-100"
-                          onChange={(description: any, description_html: string) => {
-                            onChange(description_html);
-                            handleFormChange();
-                          }}
-                          mentionHighlights={mentionHighlights}
-                          mentionSuggestions={mentionSuggestions}
-                          tabIndex={getTabIndex("description_html")}
-                        />
-                      )}
-                    />
+                    {data?.description_html && watch("description_html") && (
+                      <Controller
+                        name="description_html"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <RichTextEditorWithRef
+                            cancelUploadImage={fileService.cancelUpload}
+                            uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                            deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                            restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                            ref={editorRef}
+                            debouncedUpdatesEnabled={false}
+                            value={
+                              !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                                ? watch("description_html")
+                                : value
+                            }
+                            initialValue={data?.description_html}
+                            customClassName="min-h-[7rem] border-custom-border-100"
+                            onChange={(description: any, description_html: string) => {
+                              onChange(description_html);
+                              handleFormChange();
+                            }}
+                            mentionHighlights={mentionHighlights}
+                            mentionSuggestions={mentionSuggestions}
+                            tabIndex={getTabIndex("description_html")}
+                          />
+                        )}
+                      />
+                    )}
                   </Fragment>
                 )}
               </div>
@@ -535,7 +543,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           handleFormChange();
                         }}
                         buttonVariant={value?.length > 0 ? "transparent-without-text" : "border-with-text"}
-                        buttonClassName={value?.length > 0 ? "hover:bg-transparent px-0" : ""}
+                        buttonClassName={value?.length > 0 ? "hover:bg-transparent" : ""}
                         placeholder="Assignees"
                         multiple
                         tabIndex={getTabIndex("assignee_ids")}
@@ -657,53 +665,54 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     )}
                   />
                 )}
-                <CustomMenu
-                  customButton={
-                    <button
-                      type="button"
-                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
-                    >
-                      {watch("parent_id") ? (
-                        <div className="flex items-center gap-1 text-custom-text-200">
-                          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-                          <span className="whitespace-nowrap">
-                            {selectedParentIssue &&
-                              `${selectedParentIssue.project__identifier}-
-                                  ${selectedParentIssue.sequence_id}`}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1 text-custom-text-300">
-                          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-                          <span className="whitespace-nowrap">Add parent</span>
-                        </div>
-                      )}
-                    </button>
-                  }
-                  placement="bottom-start"
-                  tabIndex={getTabIndex("parent_id")}
-                >
-                  {watch("parent_id") ? (
+                {watch("parent_id") ? (
+                  <CustomMenu
+                    customButton={
+                      <button
+                        type="button"
+                        className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
+                      >
+                        <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                        <span className="whitespace-nowrap">
+                          {selectedParentIssue &&
+                            `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`}
+                        </span>
+                      </button>
+                    }
+                    placement="bottom-start"
+                    tabIndex={getTabIndex("parent_id")}
+                  >
                     <>
                       <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
                         Change parent issue
                       </CustomMenu.MenuItem>
-                      <CustomMenu.MenuItem
-                        className="!p-1"
-                        onClick={() => {
-                          setValue("parent_id", null);
-                          handleFormChange();
-                        }}
-                      >
-                        Remove parent issue
-                      </CustomMenu.MenuItem>
+                      <Controller
+                        control={control}
+                        name="parent_id"
+                        render={({ field: { onChange } }) => (
+                          <CustomMenu.MenuItem
+                            className="!p-1"
+                            onClick={() => {
+                              onChange(null);
+                              handleFormChange();
+                            }}
+                          >
+                            Remove parent issue
+                          </CustomMenu.MenuItem>
+                        )}
+                      />
                     </>
-                  ) : (
-                    <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-                      Select parent Issue
-                    </CustomMenu.MenuItem>
-                  )}
-                </CustomMenu>
+                  </CustomMenu>
+                ) : (
+                  <button
+                    type="button"
+                    className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
+                    onClick={() => setParentIssueListModalOpen(true)}
+                  >
+                    <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                    <span className="whitespace-nowrap">Add parent</span>
+                  </button>
+                )}
                 <Controller
                   control={control}
                   name="parent_id"

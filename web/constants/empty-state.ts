@@ -90,6 +90,8 @@ export enum EmptyStateType {
   ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE = "active-cycle-priority-issue-empty-state",
   ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE = "active-cycle-assignee-empty-state",
   ACTIVE_CYCLE_LABEL_EMPTY_STATE = "active-cycle-label-empty-state",
+
+  DISABLED_PROJECT_INBOX = "disabled-project-inbox",
 }
 
 const emptyStateDetails = {
@@ -614,6 +616,18 @@ const emptyStateDetails = {
     key: EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
     title: "Add labels to issues to see the \n breakdown of work by labels.",
     path: "/empty-state/active-cycle/label",
+  },
+  [EmptyStateType.DISABLED_PROJECT_INBOX]: {
+    key: EmptyStateType.DISABLED_PROJECT_INBOX,
+    title: "Inbox is not enabled for the project.",
+    description:
+      "Inbox helps you manage incoming requests to your project and add them as issues in your workflow. Enable inbox \n from project settings to manage requests.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/inbox",
+    primaryButton: {
+      text: "Manage features",
+    },
   },
 } as const;
 

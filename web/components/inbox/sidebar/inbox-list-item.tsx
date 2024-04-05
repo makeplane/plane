@@ -1,17 +1,18 @@
-import { FC } from "react";
+import { FC, MouseEvent, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// icons
-import { CalendarDays } from "lucide-react";
-// ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
+import { useLabel } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // store
-import { IInboxIssueStore } from "@/store/inbox-issue.store";
+import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;
@@ -25,60 +26,97 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
   // router
   const router = useRouter();
   const { inboxIssueId } = router.query;
-
+  // store
+  const { projectLabels } = useLabel();
+  const { isMobile } = usePlatformOS();
   const issue = inboxIssue.issue;
 
-  // useEffect(() => {
-  //   if (issue.id === inboxIssueId) {
-  //     setTimeout(() => {
-  //       const issueItemCard = document.getElementById(`inbox-issue-list-item-${issue.id}`);
-  //       if (issueItemCard)
-  //         issueItemCard.scrollIntoView({
-  //           behavior: "smooth",
-  //           block: "center",
-  //         });
-  //     }, 200);
-  //   }
-  // }, [inboxIssueId, issue.id]);
+  useEffect(() => {
+    if (issue.id === inboxIssueId) {
+      setTimeout(() => {
+        const issueItemCard = document.getElementById(`inbox-issue-list-item-${issue.id}`);
+        if (issueItemCard)
+          issueItemCard.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+      }, 200);
+    }
+  }, [inboxIssueId, issue.id]);
 
+  const handleIssueRedirection = (event: MouseEvent, currentIssueId: string | undefined) => {
+    if (inboxIssueId === currentIssueId) event.preventDefault();
+  };
+
+  if (!issue) return <></>;
   return (
     <>
       <Link
         id={`inbox-issue-list-item-${issue.id}`}
         key={`${projectId}_${issue.id}`}
         href={`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${issue.id}`}
+        onClick={(e) => handleIssueRedirection(e, issue.id)}
       >
         <div
-          className={`relative min-h-[5rem]select-none space-y-3 border-b border-custom-border-200 px-4 py-2 hover:bg-custom-primary/5 cursor-pointer ${
-            inboxIssueId === issue.id ? "bg-custom-primary/5" : " "
-          } ${inboxIssue.status !== -2 ? "opacity-60" : ""}`}
+          className={cn(
+            `flex flex-col gap-3 relative border border-t-transparent border-l-transparent border-r-transparent border-custom-border-200 p-5 hover:bg-custom-primary/5 cursor-pointer transition-all`,
+            { "bg-custom-primary/5 border-custom-primary-100 border": inboxIssueId === issue.id }
+          )}
         >
-          <div className="flex items-center justify-between gap-x-2">
-            <div className="relative flex items-center gap-x-2 overflow-hidden">
-              <p className="flex-shrink-0 text-xs text-custom-text-200">
+          <div className="space-y-1">
+            <div className="relative flex items-center justify-between gap-2">
+              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
                 {projectIdentifier}-{issue.sequence_id}
-              </p>
-              <h5 className="truncate text-sm">{issue.name}</h5>
-            </div>
-            <div>
-              <InboxIssueStatus
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                inboxIssue={inboxIssue}
-                iconSize={14}
-              />
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
-              <PriorityIcon priority={issue.priority ?? "none"} className="h-3.5 w-3.5" />
-            </Tooltip>
-            <Tooltip tooltipHeading="Created on" tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}>
-              <div className="flex items-center gap-1 rounded border border-custom-border-200 px-2 py-[0.19rem] text-xs text-custom-text-200 shadow-sm">
-                <CalendarDays size={12} strokeWidth={1.5} />
-                <span>{renderFormattedDate(issue.created_at ?? "")}</span>
               </div>
+              {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
+            </div>
+            <h3 className="truncate w-full text-sm">{issue.name}</h3>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Tooltip
+              tooltipHeading="Created on"
+              tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
+              isMobile={isMobile}
+            >
+              <div className="text-xs text-custom-text-200">{renderFormattedDate(issue.created_at ?? "")}</div>
             </Tooltip>
+
+            <div className="border-2 rounded-full border-custom-border-400" />
+
+            {issue.priority && (
+              <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
+                <PriorityIcon priority={issue.priority} withContainer className="w-3 h-3" />
+              </Tooltip>
+            )}
+
+            {issue.label_ids && issue.label_ids.length > 3 ? (
+              <div className="relative !h-[17.5px] flex items-center gap-1 rounded border border-custom-border-300 px-1 text-xs">
+                <span className="h-2 w-2 rounded-full bg-orange-400" />
+                <span className="normal-case max-w-28 truncate">{`${issue.label_ids.length} labels`}</span>
+              </div>
+            ) : (
+              <>
+                {(issue.label_ids ?? []).map((labelId) => {
+                  const labelDetails = projectLabels?.find((l) => l.id === labelId);
+                  if (!labelDetails) return null;
+                  return (
+                    <div
+                      key={labelId}
+                      className="relative !h-[17.5px] flex items-center gap-1 rounded border border-custom-border-300 px-1 text-xs"
+                    >
+                      <span
+                        className="h-2 w-2 rounded-full"
+                        style={{
+                          backgroundColor: labelDetails.color,
+                        }}
+                      />
+                      <span className="normal-case max-w-28 truncate">{labelDetails.name}</span>
+                    </div>
+                  );
+                })}
+              </>
+            )}
           </div>
         </div>
       </Link>
