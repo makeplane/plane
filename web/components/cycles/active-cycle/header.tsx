@@ -23,14 +23,14 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
   const cycleOwnerDetails = cycle && cycle.owned_by_id ? getUserDetails(cycle.owned_by_id) : undefined;
 
   const daysLeft = findHowManyDaysLeft(cycle.end_date) ?? 0;
-  const currentCycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
+  const currentCycleStatus = cycle.status?.toLocaleLowerCase() as TCycleGroups | undefined;
 
   const cycleAssignee = (cycle.distribution?.assignees ?? []).filter((assignee) => assignee.display_name);
 
   return (
     <div className="flex items-center justify-between px-3 py-1.5 rounded border-[0.5px] border-custom-border-100 bg-custom-background-90">
       <div className="flex items-center gap-2 cursor-default">
-        <CycleGroupIcon cycleGroup={currentCycleStatus} className="h-4 w-4" />
+        <CycleGroupIcon cycleGroup={currentCycleStatus ?? "draft"} className="h-4 w-4" />
         <Tooltip tooltipContent={cycle.name} position="top-left">
           <h3 className="break-words text-lg font-medium">{truncateText(cycle.name, 70)}</h3>
         </Tooltip>

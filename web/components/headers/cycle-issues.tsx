@@ -146,7 +146,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const issueCount = cycleDetails
-    ? issueFilters?.displayFilters?.sub_issue
+    ? issueFilters?.displayFilters?.sub_issue && cycleDetails?.sub_issues
       ? cycleDetails.total_issues + cycleDetails?.sub_issues
       : cycleDetails.total_issues
     : undefined;
