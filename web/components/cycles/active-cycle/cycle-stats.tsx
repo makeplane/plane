@@ -21,8 +21,8 @@ import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
-import useLocalStorage from "@/hooks/use-local-storage";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import useLocalStorage from "@/hooks/use-local-storage";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
@@ -213,7 +213,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         className={
                           "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-sm cursor-pointer animate-pulse"
                         }
-                      ></div>
+                      />
                     )}
                   </>
                 ) : (
