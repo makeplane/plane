@@ -30,6 +30,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             .select_related("workspace")
             .select_related("lead")
             .prefetch_related("members")
+            .filter(archived_at__isnull=False)
             .prefetch_related(
                 Prefetch(
                     "link_module",
