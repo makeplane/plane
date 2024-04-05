@@ -99,7 +99,7 @@ export const UpcomingCycleListItem: React.FC<Props> = observer((props) => {
             {renderFormattedDate(cycle.start_date)} - {renderFormattedDate(cycle.end_date)}
           </div>
         )}
-        {cycle.assignee_ids?.length > 0 ? (
+        {cycle.assignee_ids && cycle.assignee_ids?.length > 0 ? (
           <AvatarGroup showTooltip={false}>
             {cycle.assignee_ids?.map((assigneeId) => {
               const member = getUserDetails(assigneeId);
