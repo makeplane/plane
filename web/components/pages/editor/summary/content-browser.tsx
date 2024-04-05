@@ -17,9 +17,9 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden">
       <h2 className="font-medium">Outline</h2>
-      <div className="h-full overflow-y-auto">
+      <div className="h-full flex flex-col items-start gap-y-2 overflow-y-auto mt-2">
         {markings.length !== 0 ? (
           markings.map((marking) =>
             marking.level === 1 ? (

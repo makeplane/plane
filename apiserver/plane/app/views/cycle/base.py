@@ -540,6 +540,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             .first()
         )
         queryset = queryset.first()
+
+        if data is None:
+            return Response(
+                {"error": "Cycle does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Assignee Distribution
         assignee_distribution = (
             Issue.objects.filter(

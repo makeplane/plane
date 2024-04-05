@@ -41,7 +41,7 @@ export const ArchiveCycleModal: React.FC<Props> = (props) => {
           message: "Your archives can be found in project archives.",
         });
         onClose();
-        router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles?peekCycle=${cycleId}`);
+        router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
       })
       .catch(() =>
         setToast({

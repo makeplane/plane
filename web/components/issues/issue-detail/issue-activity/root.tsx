@@ -14,6 +14,7 @@ type TIssueActivity = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  disabled?: boolean;
 };
 
 type TActivityTabs = "all" | "activity" | "comments";
@@ -43,7 +44,7 @@ export type TActivityOperations = {
 };
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
-  const { workspaceSlug, projectId, issueId } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { getProjectById } = useProject();
@@ -146,13 +147,16 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                 issueId={issueId}
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
+                disabled={disabled}
               />
-              <IssueCommentCreate
-                projectId={projectId}
-                workspaceSlug={workspaceSlug}
-                activityOperations={activityOperations}
-                showAccessSpecifier={project.is_deployed}
-              />
+              {!disabled && (
+                <IssueCommentCreate
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                  activityOperations={activityOperations}
+                  showAccessSpecifier={project.is_deployed}
+                />
+              )}
             </div>
           ) : activityTab === "activity" ? (
             <IssueActivityRoot issueId={issueId} />
@@ -164,13 +168,16 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                 issueId={issueId}
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
+                disabled={disabled}
               />
-              <IssueCommentCreate
-                projectId={projectId}
-                workspaceSlug={workspaceSlug}
-                activityOperations={activityOperations}
-                showAccessSpecifier={project.is_deployed}
-              />
+              {!disabled && (
+                <IssueCommentCreate
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                  activityOperations={activityOperations}
+                  showAccessSpecifier={project.is_deployed}
+                />
+              )}
             </div>
           )}
         </div>

@@ -1,43 +1,37 @@
 // document editor
 import { IMarking } from "@plane/document-editor";
-// helpers
-import { cn } from "@/helpers/common.helper";
 
 type HeadingProps = {
   marking: IMarking;
-  onClick: (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>) => void;
+  onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
 export const OutlineHeading1 = ({ marking, onClick }: HeadingProps) => (
-  <h1
+  <button
+    type="button"
     onClick={onClick}
-    className="pl-4 mt-3 cursor-pointer text-sm font-medium leading-[125%] tracking-tight hover:text-custom-primary max-md:ml-2.5"
-    role="button"
+    className="ml-4 cursor-pointer text-sm font-medium text-custom-text-400 hover:text-custom-primary-100 max-md:ml-2.5"
   >
     {marking.text}
-  </h1>
+  </button>
 );
 
 export const OutlineHeading2 = ({ marking, onClick }: HeadingProps) => (
-  <h2
+  <button
+    type="button"
     onClick={onClick}
-    className={cn(
-      "ml-6 mt-2 cursor-pointer text-xs font-medium tracking-tight text-custom-text-400 hover:text-custom-primary"
-    )}
-    role="button"
+    className="ml-6 cursor-pointer text-xs font-medium text-custom-text-400 hover:text-custom-primary-100"
   >
     {marking.text}
-  </h2>
+  </button>
 );
 
 export const OutlineHeading3 = ({ marking, onClick }: HeadingProps) => (
-  <h3
+  <button
+    type="button"
     onClick={onClick}
-    className={cn(
-      "ml-8 mt-2 cursor-pointer text-xs font-medium tracking-tight text-custom-text-400 hover:text-custom-primary"
-    )}
-    role="button"
+    className="ml-8 cursor-pointer text-xs font-medium text-custom-text-400 hover:text-custom-primary-100"
   >
     {marking.text}
-  </h3>
+  </button>
 );

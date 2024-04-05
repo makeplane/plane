@@ -173,8 +173,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const generateResponseButtonText = isSubmitting
     ? "Generating response..."
     : response === ""
-      ? "Generate response"
-      : "Generate again";
+    ? "Generate response"
+    : "Generate again";
 
   return (
     <Popover as="div" className={`relative w-min text-left`}>
@@ -245,6 +245,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
                   prompt && prompt !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
                 }`}
                 className="w-full"
+                autoFocus
               />
             )}
           />

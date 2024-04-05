@@ -6,7 +6,7 @@ import { IProjectView, IIssueFilterOptions } from "@plane/types";
 import { Button, Input, TextArea } from "@plane/ui";
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { useLabel, useMember, useProjectState } from "@/hooks/store";
+import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 // components
 // ui
 // types
@@ -27,6 +27,7 @@ const defaultValues: Partial<IProjectView> = {
 export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
   // store hooks
+  const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
   const {
@@ -184,6 +185,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     labels={projectLabels ?? undefined}
                     memberIds={projectMemberIds ?? undefined}
                     states={projectStates}
+                    cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                    moduleViewDisabled={!currentProjectDetails?.module_view}
                   />
                 </FiltersDropdown>
               )}
@@ -212,8 +215,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-              ? "Creating View..."
-              : "Create View"}
+            ? "Creating View..."
+            : "Create View"}
         </Button>
       </div>
     </form>
