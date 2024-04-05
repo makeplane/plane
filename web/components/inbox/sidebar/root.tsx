@@ -1,5 +1,6 @@
 import { FC, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import { TInboxIssueCurrentTab } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
@@ -47,6 +48,8 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     getAppliedFiltersCount,
   } = useProjectInbox();
 
+  const router = useRouter();
+
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
     fetchInboxPaginationIssues(workspaceSlug.toString(), projectId.toString());
@@ -72,7 +75,10 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                   ? `text-custom-primary-100 bg-custom-primary-100/10`
                   : `hover:text-custom-text-200`
               )}
-              onClick={() => currentTab != option?.key && handleCurrentTab(option?.key)}
+              onClick={() => {
+                if (currentTab != option?.key) handleCurrentTab(option?.key);
+                router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
+              }}
             >
               <div>{option?.label}</div>
               {option?.key === "open" && currentTab === option?.key && (
