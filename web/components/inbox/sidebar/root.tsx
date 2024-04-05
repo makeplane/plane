@@ -1,10 +1,12 @@
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
 import { TInboxIssueCurrentTab } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
-import { CreateInboxIssueModal, FiltersRoot, InboxIssueList } from "@/components/inbox";
+import { EmptyState } from "@/components/empty-state";
+import { FiltersRoot, InboxIssueList } from "@/components/inbox";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -41,9 +43,8 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     inboxIssuesArray,
     inboxIssuePaginationInfo,
     fetchInboxPaginationIssues,
+    inboxFilters,
   } = useProjectInbox();
-  // states
-  const [createIssueModal, setCreateIssueModal] = useState(false);
 
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
@@ -106,19 +107,15 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                   inboxIssues={inboxIssuesArray}
                 />
               ) : (
-                <div className="w-full h-full relative flex flex-col justify-center items-center gap-4">
-                  <div>No issues are available. create a new issue.</div>
-                  <div>
-                    <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
-                    <Button
-                      variant="primary"
-                      prependIcon={<Plus />}
-                      size="sm"
-                      onClick={() => setCreateIssueModal(true)}
-                    >
-                      Add Issue
-                    </Button>
-                  </div>
+                <div className="flex items-center justify-center h-full w-full">
+                  <EmptyState
+                    type={
+                      currentTab === "open"
+                        ? EmptyStateType.INBOX_SIDEBAR_OPEN_TAB
+                        : EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB
+                    }
+                    layout="screen-simple"
+                  />
                 </div>
               )}
             </>

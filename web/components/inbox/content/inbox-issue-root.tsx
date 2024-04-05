@@ -1,7 +1,8 @@
 import React, { FC } from "react";
-import { Inbox } from "lucide-react";
 // components
+import { EmptyState } from "@/components/empty-state";
 import { InboxContentRoot } from "@/components/inbox";
+import { EmptyStateType } from "@/constants/empty-state";
 
 type IInboxIssueContentRootProps = {
   workspaceSlug: string;
@@ -17,19 +18,8 @@ export const InboxIssueContentRoot: FC<IInboxIssueContentRootProps> = (props) =>
       {inboxIssueId ? (
         <InboxContentRoot workspaceSlug={workspaceSlug} projectId={projectId} inboxIssueId={inboxIssueId} />
       ) : (
-        <div className="grid h-full place-items-center p-4 text-custom-text-200">
-          <div className="grid h-full place-items-center">
-            <div className="my-5 flex flex-col items-center gap-4">
-              <Inbox size={60} strokeWidth={1.5} />
-              {inboxIssuesArrayLength > 0 ? (
-                <span className="text-custom-text-200">
-                  {inboxIssuesArrayLength} issues found. Select an issue from the sidebar to view its details.
-                </span>
-              ) : (
-                <span className="text-custom-text-200">No issues found</span>
-              )}
-            </div>
-          </div>
+        <div className="flex items-center justify-center h-full w-full">
+          <EmptyState type={EmptyStateType.INBOX_DETAIL_EMPTY_STATE} layout="screen-simple" />
         </div>
       )}
     </div>

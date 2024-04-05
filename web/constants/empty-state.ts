@@ -92,6 +92,11 @@ export enum EmptyStateType {
   ACTIVE_CYCLE_LABEL_EMPTY_STATE = "active-cycle-label-empty-state",
 
   DISABLED_PROJECT_INBOX = "disabled-project-inbox",
+
+  INBOX_SIDEBAR_OPEN_TAB = "inbox-sidebar-open-tab",
+  INBOX_SIDEBAR_CLOSED_TAB = "inbox-sidebar-closed-tab",
+  INBOX_SIDEBAR_FILTER_EMPTY_STATE = "inbox-sidebar-filter-empty-state",
+  INBOX_DETAIL_EMPTY_STATE = "inbox-detail-empty-state",
 }
 
 const emptyStateDetails = {
@@ -628,6 +633,29 @@ const emptyStateDetails = {
     primaryButton: {
       text: "Manage features",
     },
+  },
+  [EmptyStateType.INBOX_SIDEBAR_OPEN_TAB]: {
+    key: EmptyStateType.INBOX_SIDEBAR_OPEN_TAB,
+    title: "No open issues",
+    description: "Find open issues here. Create new issue.",
+    path: "/empty-state/inbox/inbox-issue",
+  },
+  [EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB]: {
+    key: EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB,
+    title: "No closed issues",
+    description: "All the issues whether accepted or \n declined can be found here.",
+    path: "/empty-state/inbox/inbox-issue",
+  },
+  [EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE]: {
+    key: EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE,
+    title: "No  matching issues",
+    description: "No issue matches filter applied in inbox. \n Create a new issue.",
+    path: "/empty-state/inbox/filter-issue",
+  },
+  [EmptyStateType.INBOX_DETAIL_EMPTY_STATE]: {
+    key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
+    title: "Select an issue to view its details.",
+    path: "/empty-state/inbox/issue-detail",
   },
 } as const;
 
