@@ -46,6 +46,11 @@ class InboxIssueSerializer(BaseSerializer):
             "workspace",
         ]
 
+    def to_representation(self, instance):
+        # Pass the annotated fields to the Issue instance if they exist
+        if hasattr(instance, "label_ids"):
+            instance.issue.label_ids = instance.label_ids
+
 
 class InboxIssueDetailSerializer(BaseSerializer):
     issue = IssueDetailSerializer(read_only=True)
