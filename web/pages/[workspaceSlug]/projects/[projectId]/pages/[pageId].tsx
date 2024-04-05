@@ -108,7 +108,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       );
   };
 
-  console.log("projectId", projectId);
   return (
     <>
       <PageHead title={pageTitle} />
