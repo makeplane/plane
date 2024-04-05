@@ -43,6 +43,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     inboxIssuesArray,
     inboxIssuePaginationInfo,
     fetchInboxPaginationIssues,
+    getAppliedFiltersCount,
   } = useProjectInbox();
 
   const fetchNextPages = useCallback(() => {
@@ -112,7 +113,9 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 <div className="flex items-center justify-center h-full w-full">
                   <EmptyState
                     type={
-                      currentTab === "open"
+                      getAppliedFiltersCount > 0
+                        ? EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE
+                        : currentTab === "open"
                         ? EmptyStateType.INBOX_SIDEBAR_OPEN_TAB
                         : EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB
                     }
