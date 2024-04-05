@@ -23,7 +23,7 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
   const cycleOwnerDetails = cycle && cycle.owned_by_id ? getUserDetails(cycle.owned_by_id) : undefined;
 
   const daysLeft = findHowManyDaysLeft(cycle.end_date) ?? 0;
-  const currentCycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
+  const currentCycleStatus = cycle?.status?.toLocaleLowerCase() as TCycleGroups;
 
   const cycleAssignee = (cycle.distribution?.assignees ?? []).filter((assignee) => assignee.display_name);
 
