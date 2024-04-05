@@ -435,33 +435,14 @@ class InboxIssueViewSet(BaseViewSet):
         inbox_issue = (
             InboxIssue.objects.select_related("issue")
             .prefetch_related(
-                "issue__assignees",
                 "issue__labels",
-                "issue__issue_module__module",
             )
-            .annotate(cycle_id=F("issue__issue_cycle__cycle_id"))
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
                         "issue__labels__id",
                         distinct=True,
                         filter=~Q(issue__labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "issue__assignees__id",
-                        distinct=True,
-                        filter=~Q(issue__assignees__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue__issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue__issue_module__module_id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
