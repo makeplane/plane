@@ -1,9 +1,9 @@
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
 // services
-import { InboxIssueService } from "services/inbox";
 // types
 import { TIssue, TInboxIssue, TInboxIssueStatus } from "@plane/types";
+import { InboxIssueService } from "@/services/inbox";
 
 export interface IInboxIssueStore {
   isLoading: boolean;

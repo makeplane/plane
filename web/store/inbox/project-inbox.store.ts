@@ -2,8 +2,6 @@ import omit from "lodash/omit";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// services
-import { InboxIssueService } from "services/inbox";
 // types
 import {
   TInboxIssue,
@@ -12,6 +10,8 @@ import {
   TInboxIssueSorting,
   TInboxIssuePaginationInfo,
 } from "@plane/types";
+// services
+import { InboxIssueService } from "@/services/inbox";
 // root store
 import { IInboxIssueStore, InboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { RootStore } from "@/store/root.store";

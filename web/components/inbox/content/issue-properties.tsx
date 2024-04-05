@@ -1,7 +1,5 @@
 import React from "react";
-
 import { observer } from "mobx-react-lite";
-
 import { CalendarCheck2, Signal, Tag } from "lucide-react";
 
 // hooks
@@ -45,18 +43,20 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
-              <StateDropdown
-                value={issue?.state_id ?? undefined}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
-                projectId={projectId?.toString() ?? ""}
-                disabled={!is_editable}
-                buttonVariant="transparent-with-text"
-                className="w-3/5 flex-grow group"
-                buttonContainerClassName="w-full text-left"
-                buttonClassName="text-sm"
-                dropdownArrow
-                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-              />
+              {issue?.state_id && (
+                <StateDropdown
+                  value={issue?.state_id}
+                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                  projectId={projectId?.toString() ?? ""}
+                  disabled={!is_editable}
+                  buttonVariant="transparent-with-text"
+                  className="w-3/5 flex-grow group"
+                  buttonContainerClassName="w-full text-left"
+                  buttonClassName="text-sm"
+                  dropdownArrow
+                  dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+                />
+              )}
             </div>
             {/* Assignee */}
             <div className="flex items-center gap-2 h-8">
@@ -65,17 +65,19 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                 <span>Assignees</span>
               </div>
               <MemberDropdown
-                value={issue?.assignee_ids ?? undefined}
+                value={issue?.assignee_ids ?? []}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
                 disabled={!is_editable}
                 projectId={projectId?.toString() ?? ""}
                 placeholder="Add assignees"
                 multiple
-                buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
+                buttonVariant={
+                  (issue?.assignee_ids || [])?.length > 0 ? "transparent-without-text" : "transparent-with-text"
+                }
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm justify-between ${
-                  issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"
+                  (issue?.assignee_ids || [])?.length > 0 ? "" : "text-custom-text-400"
                 }`}
                 hideIcon={issue.assignee_ids?.length === 0}
                 dropdownArrow
@@ -89,7 +91,7 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                 <span>Priority</span>
               </div>
               <PriorityDropdown
-                value={issue?.priority || undefined}
+                value={issue?.priority || "none"}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!is_editable}
                 buttonVariant="border-with-text"
@@ -110,7 +112,7 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
               </div>
               <DateDropdown
                 placeholder="Add due date"
-                value={issue.target_date}
+                value={issue.target_date || null}
                 onChange={(val) =>
                   issueOperations.update(workspaceSlug, projectId, issueId, {
                     target_date: val ? renderFormattedPayloadDate(val) : null,

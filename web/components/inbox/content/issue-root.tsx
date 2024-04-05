@@ -55,16 +55,33 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
-      fetch: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          await inboxIssue.fetchInboxIssue();
+          return;
         } catch (error) {
-          console.error("Error fetching the parent issue");
+          setToast({
+            title: "Issue fetch failed",
+            type: TOAST_TYPE.ERROR,
+            message: "Issue fetch failed",
+          });
+        }
+      },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          return;
+        } catch (error) {
+          setToast({
+            title: "Issue remove failed",
+            type: TOAST_TYPE.ERROR,
+            message: "Issue remove failed",
+          });
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
-          await inboxIssue.updateInboxIssue(data);
+          await inboxIssue.updateIssue(data);
           // captureIssueEvent({
           //   eventName: "Inbox issue updated",
           //   payload: { ...data, state: "SUCCESS", element: "Inbox" },
@@ -91,36 +108,11 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           // });
         }
       },
-      remove: async () => {
-        try {
-          await inboxIssue.deleteInboxIssue();
-          setToast({
-            title: "Issue deleted successfully",
-            type: TOAST_TYPE.SUCCESS,
-            message: "Issue deleted successfully",
-          });
-          // captureIssueEvent({
-          //   eventName: "Inbox issue deleted",
-          //   payload: { id: issueId, state: "SUCCESS", element: "Inbox" },
-          //   path: router.asPath,
-          // });
-        } catch (error) {
-          // captureIssueEvent({
-          //   eventName: "Inbox issue deleted",
-          //   payload: { id: issueId, state: "FAILED", element: "Inbox" },
-          //   path: router.asPath,
-          // });
-          setToast({
-            title: "Issue delete failed",
-            type: TOAST_TYPE.ERROR,
-            message: "Issue delete failed",
-          });
-        }
-      },
     }),
     [inboxIssue]
   );
 
+  if (!issue?.project_id || !issue?.id) return <></>;
   return (
     <>
       <div className="rounded-lg space-y-4">
