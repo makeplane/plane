@@ -1,14 +1,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
-import { TInboxIssueStatus } from "@plane/types";
+import { TInboxIssueFilterDateKeys } from "@plane/types";
 // constants
-import { INBOX_STATUS } from "@/constants/inbox";
+import { DATE_BEFORE_FILTER_OPTIONS } from "@/constants/filters";
+// helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 
 type InboxIssueAppliedFiltersDate = {
-  filterKey: string;
+  filterKey: TInboxIssueFilterDateKeys;
   label: string;
 };
 
@@ -17,13 +19,21 @@ export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = ob
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // derived values
-  const filteredValues = inboxFilters?.status || [];
-  const currentOptionDetail = (status: TInboxIssueStatus) => INBOX_STATUS.find((s) => s.status === status) || undefined;
+  const filteredValues = inboxFilters?.[filterKey] || [];
+  const currentOptionDetail = (date: string) => {
+    const currentDate = DATE_BEFORE_FILTER_OPTIONS.find((d) => d.value === date);
+    if (currentDate) return currentDate;
+    const dateSplit = date.split(";");
+    return {
+      name: `${dateSplit[1].charAt(0).toUpperCase() + dateSplit[1].slice(1)} ${renderFormattedDate(dateSplit[0])}`,
+      value: date,
+    };
+  };
 
-  const handleFilterValue = (value: TInboxIssueStatus): TInboxIssueStatus[] =>
+  const handleFilterValue = (value: string): string[] =>
     filteredValues?.includes(value) ? filteredValues.filter((v) => v !== value) : [...filteredValues, value];
 
-  const clearFilter = () => handleInboxIssueFilters("status", undefined);
+  const clearFilter = () => handleInboxIssueFilters(filterKey, undefined);
 
   if (filteredValues.length === 0) return <></>;
   return (
@@ -34,13 +44,10 @@ export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = ob
         if (!optionDetail) return <></>;
         return (
           <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
-            <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
-              <optionDetail.icon className={`w-3 h-3 ${optionDetail?.textColor(false)}`} />
-            </div>
-            <div className="text-xs truncate">{optionDetail?.title}</div>
+            <div className="text-xs truncate">{optionDetail?.name}</div>
             <div
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
-              onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}
+              onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(optionDetail?.value))}
             >
               <X className={`w-3 h-3`} />
             </div>

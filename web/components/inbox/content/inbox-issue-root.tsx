@@ -12,7 +12,7 @@ type IInboxIssueContentRootProps = {
 };
 
 export const InboxIssueContentRoot: FC<IInboxIssueContentRootProps> = (props) => {
-  const { workspaceSlug, projectId, inboxIssueId, inboxIssuesArrayLength } = props;
+  const { workspaceSlug, projectId, inboxIssueId } = props;
   return (
     <div className="w-4/6">
       {inboxIssueId ? (
