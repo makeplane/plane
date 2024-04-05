@@ -1,10 +1,13 @@
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
 import { TInboxIssueCurrentTab } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
-import { CreateInboxIssueModal, FiltersRoot, InboxIssueList } from "@/components/inbox";
+import { EmptyState } from "@/components/empty-state";
+import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/components/inbox";
+import { InboxSidebarLoader } from "@/components/ui";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -41,9 +44,8 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     inboxIssuesArray,
     inboxIssuePaginationInfo,
     fetchInboxPaginationIssues,
+    getAppliedFiltersCount,
   } = useProjectInbox();
-  // states
-  const [createIssueModal, setCreateIssueModal] = useState(false);
 
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
@@ -90,12 +92,15 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             <FiltersRoot />
           </div>
         </div>
+
+        <InboxIssueAppliedFilters />
+
         <div
           className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
           ref={containerRef}
         >
           {isLoading === "filter-loading" ? (
-            <>Loading...</>
+            <InboxSidebarLoader />
           ) : (
             <>
               {inboxIssuesArray.length > 0 ? (
@@ -106,19 +111,17 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                   inboxIssues={inboxIssuesArray}
                 />
               ) : (
-                <div className="w-full h-full relative flex flex-col justify-center items-center gap-4">
-                  <div>No issues are available. create a new issue.</div>
-                  <div>
-                    <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
-                    <Button
-                      variant="primary"
-                      prependIcon={<Plus />}
-                      size="sm"
-                      onClick={() => setCreateIssueModal(true)}
-                    >
-                      Add Issue
-                    </Button>
-                  </div>
+                <div className="flex items-center justify-center h-full w-full">
+                  <EmptyState
+                    type={
+                      getAppliedFiltersCount > 0
+                        ? EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE
+                        : currentTab === "open"
+                        ? EmptyStateType.INBOX_SIDEBAR_OPEN_TAB
+                        : EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB
+                    }
+                    layout="screen-simple"
+                  />
                 </div>
               )}
             </>
