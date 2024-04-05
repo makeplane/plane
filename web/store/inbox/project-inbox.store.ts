@@ -30,6 +30,7 @@ export interface IProjectInboxStore {
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined;
   inboxIssues: Record<string, IInboxIssueStore>;
   // computed
+  getAppliedFiltersCount: number;
   inboxIssuesArray: IInboxIssueStore[];
   getIssueInboxByIssueId: (issueId: string) => IInboxIssueStore | undefined;
   // actions
@@ -74,6 +75,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
       inboxIssuePaginationInfo: observable,
       inboxIssues: observable,
       // computed
+      getAppliedFiltersCount: computed,
       inboxIssuesArray: computed,
       // actions
       handleInboxIssueFilters: action,
@@ -88,6 +90,17 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   }
 
   // computed
+  get getAppliedFiltersCount() {
+    let count = 0;
+    this.inboxFilters != undefined &&
+      Object.keys(this.inboxFilters).forEach((key) => {
+        const filterKey = key as keyof TInboxIssueFilter;
+        if (this.inboxFilters[filterKey] && this.inboxFilters?.[filterKey])
+          count = count + (this.inboxFilters?.[filterKey]?.length ?? 0);
+      });
+    return count;
+  }
+
   get inboxIssuesArray() {
     return reverse(Object.values(this.inboxIssues || {}));
   }

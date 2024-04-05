@@ -4,7 +4,7 @@ import { TInboxIssueCurrentTab } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
-import { FiltersRoot, InboxIssueList } from "@/components/inbox";
+import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/components/inbox";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // helpers
@@ -43,7 +43,6 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     inboxIssuesArray,
     inboxIssuePaginationInfo,
     fetchInboxPaginationIssues,
-    inboxFilters,
   } = useProjectInbox();
 
   const fetchNextPages = useCallback(() => {
@@ -91,6 +90,9 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             <FiltersRoot />
           </div>
         </div>
+
+        <InboxIssueAppliedFilters />
+
         <div
           className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
           ref={containerRef}
