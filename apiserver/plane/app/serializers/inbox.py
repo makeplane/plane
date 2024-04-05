@@ -29,10 +29,6 @@ class InboxSerializer(BaseSerializer):
 
 class InboxIssueSerializer(BaseSerializer):
     issue = IssueInboxSerializer(read_only=True)
-    label_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
 
     class Meta:
         model = InboxIssue
@@ -42,7 +38,6 @@ class InboxIssueSerializer(BaseSerializer):
             "duplicate_to",
             "snoozed_till",
             "source",
-            "label_ids",
             "issue",
             "created_by",
         ]

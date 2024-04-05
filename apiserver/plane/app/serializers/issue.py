@@ -621,6 +621,11 @@ class IssueStateSerializer(DynamicBaseSerializer):
 
 
 class IssueInboxSerializer(DynamicBaseSerializer):
+    label_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=False,
+    )
+
     class Meta:
         model = Issue
         fields = [
@@ -630,6 +635,7 @@ class IssueInboxSerializer(DynamicBaseSerializer):
             "sequence_id",
             "project_id",
             "created_at",
+            "label_ids",
         ]
         read_only_fields = fields
 
