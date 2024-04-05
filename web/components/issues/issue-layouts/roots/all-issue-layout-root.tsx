@@ -172,6 +172,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
           canEditProperties={canEditProperties}
           canLoadMoreIssues={!!nextPageResults}
           loadMoreIssues={fetchNextPages}
+          isWorkspaceLevel
         />
         {/* peek overview */}
         <IssuePeekOverview />

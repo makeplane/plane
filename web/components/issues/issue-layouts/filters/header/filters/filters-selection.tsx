@@ -30,10 +30,21 @@ type Props = {
   labels?: IIssueLabel[] | undefined;
   memberIds?: string[] | undefined;
   states?: IState[] | undefined;
+  cycleViewDisabled?: boolean;
+  moduleViewDisabled?: boolean;
 };
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, memberIds, states } = props;
+  const {
+    filters,
+    handleFiltersUpdate,
+    layoutDisplayFiltersOptions,
+    labels,
+    memberIds,
+    states,
+    cycleViewDisabled = false,
+    moduleViewDisabled = false,
+  } = props;
   // hooks
   const {
     router: { moduleId, cycleId },
@@ -111,7 +122,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         )}
 
         {/* cycle */}
-        {isFilterEnabled("cycle") && !cycleId && (
+        {isFilterEnabled("cycle") && !cycleId && !cycleViewDisabled && (
           <div className="py-2">
             <FilterCycle
               appliedFilters={filters.cycle ?? null}
@@ -122,7 +133,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         )}
 
         {/* module */}
-        {isFilterEnabled("module") && !moduleId && (
+        {isFilterEnabled("module") && !moduleId && !moduleViewDisabled && (
           <div className="py-2">
             <FilterModule
               appliedFilters={filters.module ?? null}

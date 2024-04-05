@@ -23,8 +23,7 @@ import { ISSUE_UPDATED } from "@/constants/event-tracker";
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
-// hooks
-import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "@/hooks/store";
+import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState, useProject } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
@@ -48,6 +47,7 @@ export interface IIssueProperties {
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className } = props;
   // store hooks
+  const { getProjectById } = useProject();
   const { labelMap } = useLabel();
   const { captureIssueEvent } = useEventTracker();
   const storeType = useIssueStoreType();
@@ -60,6 +60,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
+  const projectDetails = getProjectById(issue.project_id);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -353,36 +354,40 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* modules */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-        <div className="h-5">
-          <ModuleDropdown
-            buttonContainerClassName="truncate max-w-40"
-            projectId={issue?.project_id}
-            value={issue?.module_ids ?? []}
-            onChange={handleModule}
-            disabled={isReadOnly}
-            multiple
-            buttonVariant="border-with-text"
-            showCount
-            showTooltip
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
+      {projectDetails?.module_view && (
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
+          <div className="h-5">
+            <ModuleDropdown
+              buttonContainerClassName="truncate max-w-40"
+              projectId={issue?.project_id}
+              value={issue?.module_ids ?? []}
+              onChange={handleModule}
+              disabled={isReadOnly}
+              multiple
+              buttonVariant="border-with-text"
+              showCount
+              showTooltip
+            />
+          </div>
+        </WithDisplayPropertiesHOC>
+      )}
 
       {/* cycles */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-        <div className="h-5">
-          <CycleDropdown
-            buttonContainerClassName="truncate max-w-40"
-            projectId={issue?.project_id}
-            value={issue?.cycle_id}
-            onChange={handleCycle}
-            disabled={isReadOnly}
-            buttonVariant="border-with-text"
-            showTooltip
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
+      {projectDetails?.cycle_view && (
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
+          <div className="h-5">
+            <CycleDropdown
+              buttonContainerClassName="truncate max-w-40"
+              projectId={issue?.project_id}
+              value={issue?.cycle_id}
+              onChange={handleCycle}
+              disabled={isReadOnly}
+              buttonVariant="border-with-text"
+              showTooltip
+            />
+          </div>
+        </WithDisplayPropertiesHOC>
+      )}
 
       {/* estimates */}
       {areEstimatesEnabledForCurrentProject && (

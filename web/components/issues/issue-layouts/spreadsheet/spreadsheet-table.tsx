@@ -29,6 +29,7 @@ type Props = {
   containerRef: MutableRefObject<HTMLTableElement | null>;
   canLoadMoreIssues: boolean;
   loadMoreIssues: () => void;
+  spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
 };
 
 export const SpreadsheetTable = observer((props: Props) => {
@@ -45,6 +46,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     canLoadMoreIssues,
     containerRef,
     loadMoreIssues,
+    spreadsheetColumnsList,
   } = props;
 
   // states
@@ -99,6 +101,7 @@ export const SpreadsheetTable = observer((props: Props) => {
         displayFilters={displayFilters}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         isEstimateEnabled={isEstimateEnabled}
+        spreadsheetColumnsList={spreadsheetColumnsList}
       />
       <tbody>
         {issueIds.map((id) => (
@@ -115,6 +118,7 @@ export const SpreadsheetTable = observer((props: Props) => {
             containerRef={containerRef}
             isScrolled={isScrolled}
             issueIds={issueIds}
+            spreadsheetColumnsList={spreadsheetColumnsList}
           />
         ))}
       </tbody>

@@ -1,22 +1,23 @@
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// icons
 import { ArchiveRestoreIcon, ExternalLink, Link, Trash2 } from "lucide-react";
-// hooks
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
-
-import { DeleteIssueModal } from "@/components/issues";
 // ui
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { DeleteIssueModal } from "@/components/issues";
+// constants
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
-import { useEventTracker, useIssues, useUser } from "@/hooks/store";
-// components
 // helpers
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useEventTracker, useIssues, useUser } from "@/hooks/store";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 
-export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
+export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const { issue, handleDelete, handleRestore, customActionButton, portalElement, readOnly = false } = props;
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -46,6 +47,24 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         message: "Issue link copied to clipboard",
       })
     );
+  const handleIssueRestore = async () => {
+    if (!handleRestore) return;
+    await handleRestore()
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Restore success",
+          message: "Your issue can be found in project issues.",
+        });
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Issue could not be restored. Please try again.",
+        });
+      });
+  };
 
   return (
     <>
@@ -65,7 +84,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         ellipsis
       >
         {isRestoringAllowed && (
-          <CustomMenu.MenuItem onClick={handleRestore}>
+          <CustomMenu.MenuItem onClick={handleIssueRestore}>
             <div className="flex items-center gap-2">
               <ArchiveRestoreIcon className="h-3 w-3" />
               Restore
@@ -100,4 +119,4 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
       </CustomMenu>
     </>
   );
-};
+});

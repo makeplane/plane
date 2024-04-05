@@ -3,10 +3,12 @@ import { observer } from "mobx-react-lite";
 import { IUser } from "@plane/types";
 // components
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+// helper
+import { cn } from "@/helpers/common.helper";
 import { renderEmoji } from "@/helpers/emoji.helper";
 import { formatTextList } from "@/helpers/issue.helper";
+// hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
-// helper
 // types
 import { ReactionSelector } from "./reaction-selector";
 
@@ -15,10 +17,11 @@ export type TIssueCommentReaction = {
   projectId: string;
   commentId: string;
   currentUser: IUser;
+  disabled?: boolean;
 };
 
 export const IssueCommentReaction: FC<TIssueCommentReaction> = observer((props) => {
-  const { workspaceSlug, projectId, commentId, currentUser } = props;
+  const { workspaceSlug, projectId, commentId, currentUser, disabled = false } = props;
 
   // hooks
   const {
@@ -88,12 +91,14 @@ export const IssueCommentReaction: FC<TIssueCommentReaction> = observer((props) 
 
   return (
     <div className="mt-4 relative flex items-center gap-1.5">
-      <ReactionSelector
-        size="md"
-        position="top"
-        value={userReactions}
-        onSelect={issueCommentReactionOperations.react}
-      />
+      {!disabled && (
+        <ReactionSelector
+          size="md"
+          position="top"
+          value={userReactions}
+          onSelect={issueCommentReactionOperations.react}
+        />
+      )}
 
       {reactionIds &&
         Object.keys(reactionIds || {}).map(
@@ -103,11 +108,15 @@ export const IssueCommentReaction: FC<TIssueCommentReaction> = observer((props) 
                 <Tooltip tooltipContent={getReactionUsers(reaction)}>
                   <button
                     type="button"
-                    onClick={() => issueCommentReactionOperations.react(reaction)}
+                    onClick={() => !disabled && issueCommentReactionOperations.react(reaction)}
                     key={reaction}
-                    className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
-                      userReactions.includes(reaction) ? "bg-custom-primary-100/10" : "bg-custom-background-80"
-                    }`}
+                    className={cn(
+                      "flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100",
+                      userReactions.includes(reaction) ? "bg-custom-primary-100/10" : "bg-custom-background-80",
+                      {
+                        "cursor-not-allowed": disabled,
+                      }
+                    )}
                   >
                     <span>{renderEmoji(reaction)}</span>
                     <span className={userReactions.includes(reaction) ? "text-custom-primary-100" : ""}>
