@@ -5,6 +5,7 @@ import { Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/components/inbox";
+import { InboxSidebarLoader } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // helpers
@@ -99,7 +100,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
           ref={containerRef}
         >
           {isLoading === "filter-loading" ? (
-            <>Loading...</>
+            <InboxSidebarLoader />
           ) : (
             <>
               {inboxIssuesArray.length > 0 ? (
