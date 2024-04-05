@@ -79,8 +79,8 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
       <div className="flex flex-grow items-center justify-end gap-3">
         {isContentEditable && (
           <div
-            className={cn("fadeIn absolute right-[120px] flex items-center gap-x-2 transition-all duration-300", {
-              fadeOut: isSubmitting === "saved",
+            className={cn("fade-in flex items-center gap-x-2 transition-all duration-300", {
+              "fade-out": isSubmitting === "saved",
             })}
           >
             {isSubmitting === "submitting" && <RefreshCw className="h-4 w-4 stroke-custom-text-300" />}

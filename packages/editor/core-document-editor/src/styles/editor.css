@@ -170,12 +170,12 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   -moz-appearance: textfield;
 }
 
-.fadeIn {
+.fade-in {
   opacity: 1;
   transition: opacity 0.3s ease-in;
 }
 
-.fadeOut {
+.fade-out {
   opacity: 0;
   transition: opacity 0.2s ease-out;
 }
