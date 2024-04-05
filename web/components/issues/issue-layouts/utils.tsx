@@ -241,13 +241,16 @@ const getCreatedByColumns = (member: IMemberRootStore) => {
   });
 };
 
-export const getDisplayPropertiesCount = (displayProperties: IIssueDisplayProperties, ignoreKey = false) => {
+export const getDisplayPropertiesCount = (
+  displayProperties: IIssueDisplayProperties,
+  ignoreFields?: (keyof IIssueDisplayProperties)[]
+) => {
   const propertyKeys = Object.keys(displayProperties) as (keyof IIssueDisplayProperties)[];
 
   let count = 0;
 
   for (const propertyKey of propertyKeys) {
-    if (ignoreKey && propertyKey === "key") continue;
+    if (ignoreFields && ignoreFields.includes(propertyKey)) continue;
     if (displayProperties[propertyKey]) count++;
   }
 
