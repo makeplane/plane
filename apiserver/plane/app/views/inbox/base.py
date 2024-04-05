@@ -182,11 +182,8 @@ class InboxIssueViewSet(BaseViewSet):
             )
             .select_related("issue")
             .prefetch_related(
-                "issue__assignees",
                 "issue__labels",
-                "issue__issue_module__module",
             )
-            .annotate(cycle_id=F("issue__issue_cycle__cycle_id"))
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
@@ -195,23 +192,7 @@ class InboxIssueViewSet(BaseViewSet):
                         filter=~Q(issue__labels__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "issue__assignees__id",
-                        distinct=True,
-                        filter=~Q(issue__assignees__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue__issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue__issue_module__module_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
+                )
             )
         ).order_by(request.GET.get("order_by", "-issue__created_at"))
         # inbox status filter
@@ -436,6 +417,7 @@ class InboxIssueViewSet(BaseViewSet):
             InboxIssue.objects.select_related("issue")
             .prefetch_related(
                 "issue__labels",
+                "issue__assignees",
             )
             .annotate(
                 label_ids=Coalesce(
@@ -443,6 +425,14 @@ class InboxIssueViewSet(BaseViewSet):
                         "issue__labels__id",
                         distinct=True,
                         filter=~Q(issue__labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__assignees__id",
+                        distinct=True,
+                        filter=~Q(issue__assignees__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
