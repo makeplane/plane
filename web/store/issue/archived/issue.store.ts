@@ -59,6 +59,10 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     this.issueFilterStore = issueFilterStore;
   }
 
+  fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
+    projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+  };
+
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
@@ -73,7 +77,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       const response = await this.issueArchiveService.getArchivedIssues(workspaceSlug, projectId, params);
 
-      this.onfetchIssues(response, options);
+      this.onfetchIssues(response, options, workspaceSlug, projectId);
       return response;
     } catch (error) {
       this.setLoader(undefined);

@@ -58,6 +58,10 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     this.issueFilterStore = issueFilterStore;
   }
 
+  fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
+    projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+  };
+
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
@@ -72,8 +76,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
-      this.onfetchIssues(response, options);
-      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+      this.onfetchIssues(response, options, workspaceSlug, projectId);
       return response;
     } catch (error) {
       this.setLoader(undefined);

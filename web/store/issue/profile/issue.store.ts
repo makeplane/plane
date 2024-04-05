@@ -86,6 +86,8 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     this.currentView = viewId;
   }
 
+  fetchParentStats = () => {};
+
   fetchIssues = async (
     workspaceSlug: string,
     userId: string,
@@ -114,7 +116,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
 
       const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
 
-      this.onfetchIssues(response, options);
+      this.onfetchIssues(response, options, workspaceSlug);
       return response;
     } catch (error) {
       this.setLoader(undefined);

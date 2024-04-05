@@ -56,6 +56,8 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
     this.issueFilterStore = issueFilterStore;
   }
 
+  fetchParentStats = async () => {};
+
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
@@ -70,7 +72,7 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
-      this.onfetchIssues(response, options);
+      this.onfetchIssues(response, options, workspaceSlug, projectId);
       return response;
     } catch (error) {
       this.setLoader(undefined);
