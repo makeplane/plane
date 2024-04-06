@@ -13,6 +13,7 @@ import { ICycle, TCycleFilters } from "@plane/types";
 export const orderCycles = (cycles: ICycle[]): ICycle[] => {
   if (cycles.length === 0) return [];
 
+  const acceptedStatuses = ["current", "upcoming", "draft"];
   const STATUS_ORDER: {
     [key: string]: number;
   } = {
@@ -21,10 +22,10 @@ export const orderCycles = (cycles: ICycle[]): ICycle[] => {
     draft: 3,
   };
 
-  let filteredCycles = cycles.filter((c) => c.status.toLowerCase() !== "completed");
+  let filteredCycles = cycles.filter((c) => acceptedStatuses.includes(c.status?.toLowerCase() ?? ""));
   filteredCycles = sortBy(filteredCycles, [
-    (c) => STATUS_ORDER[c.status.toLowerCase()],
-    (c) => (c.status.toLowerCase() === "upcoming" ? c.start_date : c.name.toLowerCase()),
+    (c) => STATUS_ORDER[c.status?.toLowerCase() ?? ""],
+    (c) => (c.status?.toLowerCase() === "upcoming" ? c.start_date : c.name.toLowerCase()),
   ]);
 
   return filteredCycles;
@@ -41,7 +42,7 @@ export const shouldFilterCycle = (cycle: ICycle, filter: TCycleFilters): boolean
   Object.keys(filter).forEach((key) => {
     const filterKey = key as keyof TCycleFilters;
     if (filterKey === "status" && filter.status && filter.status.length > 0)
-      fallsInFilters = fallsInFilters && filter.status.includes(cycle.status.toLowerCase());
+      fallsInFilters = fallsInFilters && filter.status.includes(cycle.status?.toLowerCase() ?? "");
     if (filterKey === "start_date" && filter.start_date && filter.start_date.length > 0) {
       const startDate = getDate(cycle.start_date);
       filter.start_date.forEach((dateFilter) => {
