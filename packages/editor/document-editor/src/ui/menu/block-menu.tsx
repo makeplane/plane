@@ -86,7 +86,7 @@ export default function BlockMenu(props: BlockMenuProps) {
       key: "delete",
       label: "Delete",
       onClick: (e) => {
-        editor.chain().deleteSelection().focus();
+        editor.chain().deleteSelection().focus("end", { scrollIntoView: false }).run(); // Focus the editor at the end
         popup.current?.hide();
         e.preventDefault();
         e.stopPropagation();

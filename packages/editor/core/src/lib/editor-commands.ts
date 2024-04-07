@@ -90,11 +90,13 @@ export const toggleBlockquote = (editor: Editor, range?: Range) => {
 
 export const insertTableCommand = (editor: Editor, range?: Range) => {
   if (typeof window !== "undefined") {
-    const selection: any = window?.getSelection();
-    if (selection.rangeCount !== 0) {
-      const range = selection.getRangeAt(0);
-      if (findTableAncestor(range.startContainer)) {
-        return;
+    const selection = window.getSelection();
+    if (selection) {
+      if (selection.rangeCount !== 0) {
+        const range = selection.getRangeAt(0);
+        if (findTableAncestor(range.startContainer)) {
+          return;
+        }
       }
     }
   }
