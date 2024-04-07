@@ -2,34 +2,43 @@
 import json
 
 # Django imports
-from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
+from django.http import HttpResponseRedirect
+from django.utils import timezone
 
-# Third Party imports
-from rest_framework.response import Response
+# Third party imports
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.response import Response
 
 # Module imports
-from .. import BaseAPIView
-from plane.app.serializers import IssueAttachmentSerializer
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import IssueAttachment
+from plane.app.serializers import FileAssetSerializer
+from plane.app.views.base import BaseAPIView
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import FileAsset, Workspace
+from plane.utils.presigned_url_generator import generate_download_presigned_url
 
 
 class IssueAttachmentEndpoint(BaseAPIView):
-    serializer_class = IssueAttachmentSerializer
     permission_classes = [
         ProjectEntityPermission,
     ]
-    model = IssueAttachment
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
 
     def post(self, request, slug, project_id, issue_id):
-        serializer = IssueAttachmentSerializer(data=request.data)
+        serializer = FileAssetSerializer(data=request.data)
+        workspace = Workspace.objects.get(slug=slug)
         if serializer.is_valid():
-            serializer.save(project_id=project_id, issue_id=issue_id)
+            serializer.save(
+                workspace=workspace,
+                project_id=project_id,
+                entity_identifier=issue_id,
+            )
             issue_activity.delay(
                 type="attachment.activity.created",
                 requested_data=None,
@@ -47,10 +56,19 @@ class IssueAttachmentEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, slug, project_id, issue_id, pk):
-        issue_attachment = IssueAttachment.objects.get(pk=pk)
-        issue_attachment.asset.delete(save=False)
-        issue_attachment.delete()
+    def delete(
+        self, request, slug, project_id, issue_id, workspace_id, asset_key
+    ):
+        key = f"{workspace_id}/{asset_key}"
+        asset = FileAsset.objects.get(
+            asset=key,
+            entity_identifier=issue_id,
+            entity_type="issue_attachment",
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        asset.is_deleted = True
+        asset.save()
         issue_activity.delay(
             type="attachment.activity.deleted",
             requested_data=None,
@@ -62,12 +80,32 @@ class IssueAttachmentEndpoint(BaseAPIView):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def get(self, request, slug, project_id, issue_id):
-        issue_attachments = IssueAttachment.objects.filter(
-            issue_id=issue_id, workspace__slug=slug, project_id=project_id
+    def get(
+        self,
+        request,
+        slug,
+        project_id,
+        issue_id,
+        workspace_id=None,
+        asset_key=None,
+    ):
+        if workspace_id and asset_key:
+            key = f"{workspace_id}/{asset_key}"
+            url = generate_download_presigned_url(
+                key=key,
+                host=request.get_host(),
+                scheme=request.scheme,
+            )
+            return HttpResponseRedirect(url)
+
+        # For listing
+        issue_attachments = FileAsset.objects.filter(
+            entity_type="issue_attachment",
+            entity_identifier=issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
         )
-        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
+        serializer = FileAssetSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

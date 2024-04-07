@@ -6,6 +6,7 @@ from plane.app.views import (
     PageFavoriteViewSet,
     PageLogEndpoint,
     SubPagesEndpoint,
+    PageAssetEndpoint,
 )
 
 
@@ -129,5 +130,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/sub-pages/",
         SubPagesEndpoint.as_view(),
         name="sub-page",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/attachments/",
+        PageAssetEndpoint.as_view(),
+        name="page-assets",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/attachments/<str:workspace_id>/<str:asset_key>/",
+        PageAssetEndpoint.as_view(),
+        name="page-assets",
     ),
 ]

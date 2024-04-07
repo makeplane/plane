@@ -51,19 +51,18 @@ class DynamicBaseSerializer(BaseSerializer):
         for field in allowed:
             if field not in self.fields:
                 from . import (
-                    WorkspaceLiteSerializer,
-                    ProjectLiteSerializer,
-                    UserLiteSerializer,
-                    StateLiteSerializer,
+                    CycleIssueSerializer,
+                    InboxIssueLiteSerializer,
+                    IssueLinkLiteSerializer,
+                    IssueLiteSerializer,
+                    IssueReactionLiteSerializer,
+                    IssueRelationSerializer,
                     IssueSerializer,
                     LabelSerializer,
-                    CycleIssueSerializer,
-                    IssueLiteSerializer,
-                    IssueRelationSerializer,
-                    InboxIssueLiteSerializer,
-                    IssueReactionLiteSerializer,
-                    IssueAttachmentLiteSerializer,
-                    IssueLinkLiteSerializer,
+                    ProjectLiteSerializer,
+                    StateLiteSerializer,
+                    UserLiteSerializer,
+                    WorkspaceLiteSerializer,
                 )
 
                 # Expansion mapper
@@ -86,7 +85,6 @@ class DynamicBaseSerializer(BaseSerializer):
                     "issue_relation": IssueRelationSerializer,
                     "issue_inbox": InboxIssueLiteSerializer,
                     "issue_reactions": IssueReactionLiteSerializer,
-                    "issue_attachment": IssueAttachmentLiteSerializer,
                     "issue_link": IssueLinkLiteSerializer,
                     "sub_issues": IssueLiteSerializer,
                 }
@@ -122,19 +120,18 @@ class DynamicBaseSerializer(BaseSerializer):
                 if expand in self.fields:
                     # Import all the expandable serializers
                     from . import (
-                        WorkspaceLiteSerializer,
-                        ProjectLiteSerializer,
-                        UserLiteSerializer,
-                        StateLiteSerializer,
-                        IssueSerializer,
-                        LabelSerializer,
                         CycleIssueSerializer,
-                        IssueRelationSerializer,
                         InboxIssueLiteSerializer,
+                        IssueLinkLiteSerializer,
                         IssueLiteSerializer,
                         IssueReactionLiteSerializer,
-                        IssueAttachmentLiteSerializer,
-                        IssueLinkLiteSerializer,
+                        IssueRelationSerializer,
+                        IssueSerializer,
+                        LabelSerializer,
+                        ProjectLiteSerializer,
+                        StateLiteSerializer,
+                        UserLiteSerializer,
+                        WorkspaceLiteSerializer,
                     )
 
                     # Expansion mapper
@@ -157,7 +154,6 @@ class DynamicBaseSerializer(BaseSerializer):
                         "issue_relation": IssueRelationSerializer,
                         "issue_inbox": InboxIssueLiteSerializer,
                         "issue_reactions": IssueReactionLiteSerializer,
-                        "issue_attachment": IssueAttachmentLiteSerializer,
                         "issue_link": IssueLinkLiteSerializer,
                         "sub_issues": IssueLiteSerializer,
                     }
@@ -178,4 +174,21 @@ class DynamicBaseSerializer(BaseSerializer):
                             instance, f"{expand}_id", None
                         )
 
+        return response
+
+
+class BaseFileSerializer(DynamicBaseSerializer):
+
+    class Meta:
+        abstract = True  # Make this serializer abstract
+
+    def to_representation(self, instance):
+        """
+        Object instance -> Dict of primitive datatypes.
+        """
+        response = super().to_representation(instance)
+        response["asset"] = (
+            instance.asset.name
+        )  # Ensure 'asset' field is consistently serialized
+        # Apply custom method to get download URL
         return response

@@ -60,7 +60,6 @@ from .issue import (
     IssueStateSerializer,
     IssueLinkSerializer,
     IssueLiteSerializer,
-    IssueAttachmentSerializer,
     IssueSubscriberSerializer,
     IssueReactionSerializer,
     CommentReactionSerializer,
@@ -70,7 +69,6 @@ from .issue import (
     IssuePublicSerializer,
     IssueDetailSerializer,
     IssueReactionLiteSerializer,
-    IssueAttachmentLiteSerializer,
     IssueLinkLiteSerializer,
 )
 

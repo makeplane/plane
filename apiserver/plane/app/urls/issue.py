@@ -3,15 +3,15 @@ from django.urls import path
 from plane.app.views import (
     BulkCreateIssueLabelsEndpoint,
     BulkDeleteIssuesEndpoint,
-    SubIssuesEndpoint,
-    IssueLinkViewSet,
-    IssueAttachmentEndpoint,
+    CommentAssetEndpoint,
     CommentReactionViewSet,
     ExportIssuesEndpoint,
     IssueActivityEndpoint,
     IssueArchiveViewSet,
+    IssueAttachmentEndpoint,
     IssueCommentViewSet,
     IssueDraftViewSet,
+    IssueLinkViewSet,
     IssueListEndpoint,
     IssueReactionViewSet,
     IssueRelationViewSet,
@@ -19,6 +19,7 @@ from plane.app.views import (
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
+    SubIssuesEndpoint,
 )
 
 urlpatterns = [
@@ -108,16 +109,6 @@ urlpatterns = [
             }
         ),
         name="project-issue-links",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
-        IssueAttachmentEndpoint.as_view(),
-        name="project-issue-attachments",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
-        IssueAttachmentEndpoint.as_view(),
-        name="project-issue-attachments",
     ),
     path(
         "workspaces/<str:slug>/export-issues/",
@@ -297,5 +288,26 @@ urlpatterns = [
             }
         ),
         name="project-issue-draft",
+    ),  # Comment Assets
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/attachments/",
+        CommentAssetEndpoint.as_view(),
+        name="project-comment-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/attachments/<uuid:workspace_id>/<str:asset_key>/",
+        CommentAssetEndpoint.as_view(),
+        name="project-comment-attachments",
+    ),
+    ## End Comments
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/",
+        IssueAttachmentEndpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:workspace_id>/<str:asset_key>/",
+        IssueAttachmentEndpoint.as_view(),
+        name="project-issue-attachments",
     ),
 ]

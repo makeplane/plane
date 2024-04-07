@@ -1,42 +1,53 @@
 # Python imports
 import json
 
-# Django import
-from django.utils import timezone
-from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Exists
-from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import (
+    Count,
+    Exists,
+    F,
+    Func,
+    OuterRef,
+    Prefetch,
+    Q,
+    UUIDField,
+    Value,
+)
 from django.db.models.functions import Coalesce
+
+# Django import
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
-# Module imports
-from ..base import BaseViewSet
 from plane.app.permissions import ProjectBasePermission, ProjectLitePermission
+from plane.app.serializers import (
+    InboxIssueSerializer,
+    InboxSerializer,
+    IssueCreateSerializer,
+    IssueDetailSerializer,
+    IssueSerializer,
+)
+from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
+    FileAsset,
     Inbox,
     InboxIssue,
     Issue,
-    State,
     IssueLink,
-    IssueAttachment,
-    ProjectMember,
     IssueReaction,
     IssueSubscriber,
-)
-from plane.app.serializers import (
-    IssueCreateSerializer,
-    IssueSerializer,
-    InboxSerializer,
-    InboxIssueSerializer,
-    IssueDetailSerializer,
+    ProjectMember,
+    State,
 )
 from plane.utils.issue_filters import issue_filters
-from plane.bgtasks.issue_activites_task import issue_activity
+
+# Module imports
+from ..base import BaseViewSet
 
 
 class InboxViewSet(BaseViewSet):
@@ -118,8 +129,9 @@ class InboxIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -128,6 +140,15 @@ class InboxIssueViewSet(BaseViewSet):
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -403,12 +424,6 @@ class InboxIssueViewSet(BaseViewSet):
                     queryset=IssueReaction.objects.select_related(
                         "issue", "actor"
                     ),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
                 )
             )
             .prefetch_related(

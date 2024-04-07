@@ -1,12 +1,12 @@
 # Python imports
 from datetime import timedelta
 
-# Django imports
-from django.utils import timezone
-from django.db.models import Q
-
 # Third party imports
 from celery import shared_task
+
+# Django imports
+from django.db.models import Q
+from django.utils import timezone
 
 # Module imports
 from plane.db.models import FileAsset
@@ -26,3 +26,14 @@ def delete_file_asset():
         file_asset.asset.delete(save=False)
         # Delete the file object
         file_asset.delete()
+
+
+@shared_task
+def file_asset_size():
+    asset_size = []
+    for asset in FileAsset.objects.filter(size__isnull=True):
+        asset.size = asset.asset.size
+        asset_size.append(asset)
+
+    FileAsset.objects.bulk_update(asset_size, ["size"], batch_size=50)
+    print("File asset size updated successfully")

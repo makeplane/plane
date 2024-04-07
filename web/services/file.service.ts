@@ -39,7 +39,31 @@ export class FileService extends APIService {
     this.cancelUpload = this.cancelUpload.bind(this);
   }
 
-  async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
+  async attachAssetToIssue(workspaceSlug: string, projectId: string, issueId: string, assetId: string): Promise<any> {
+    const attachUrl = `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/attachments/${assetId}`;
+    return this.get(attachUrl, {
+      responseType: "blob",
+      headers: this.getHeaders(),
+    })
+      .then(async (response) => response?.data)
+      .catch((error) => {
+        console.log(error);
+        throw error?.response?.data;
+      });
+  }
+
+  getAttachAssetToIssueFile(workspaceSlug: string, projectId: string, issueId: string) {
+    return async (assetId: string) => {
+      try {
+        const data = await this.attachAssetToIssue(workspaceSlug, projectId, issueId, assetId);
+        return data as Blob;
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }
+
+  async uploadFile(workspaceSlug: string, projectId: string, issueId: string, file: FormData): Promise<any> {
     this.cancelSource = axios.CancelToken.source();
     return this.post(`/api/workspaces/${workspaceSlug}/file-assets/`, file, {
       headers: {
@@ -48,7 +72,7 @@ export class FileService extends APIService {
       },
       cancelToken: this.cancelSource.token,
     })
-      .then((response) => response?.data)
+      .then(async (response) => response?.data.asset)
       .catch((error) => {
         if (axios.isCancel(error)) {
           console.log(error.message);
@@ -63,15 +87,15 @@ export class FileService extends APIService {
     this.cancelSource.cancel("Upload cancelled");
   }
 
-  getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
+  getUploadFileFunction(workspaceSlug: string, projectId: string, issueId: string): (file: File) => Promise<string> {
     return async (file: File) => {
       try {
         const formData = new FormData();
         formData.append("asset", file);
         formData.append("attributes", JSON.stringify({}));
 
-        const data = await this.uploadFile(workspaceSlug, formData);
-        return data.asset;
+        const data = await this.uploadFile(workspaceSlug, projectId, issueId, formData);
+        return data;
       } catch (e) {
         console.error(e);
       }

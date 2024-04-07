@@ -22,7 +22,6 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
     IssueLink,
-    IssueAttachment,
     IssueReaction,
     CommentReaction,
     IssueVote,
@@ -171,22 +170,6 @@ class IssueLinkSerializer(BaseSerializer):
             )
         return IssueLink.objects.create(**validated_data)
 
-
-class IssueAttachmentSerializer(BaseSerializer):
-    class Meta:
-        model = IssueAttachment
-        fields = "__all__"
-        read_only_fields = [
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-            "workspace",
-            "project",
-            "issue",
-        ]
-
-
 class IssueReactionSerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
 
@@ -218,7 +201,6 @@ class IssueSerializer(BaseSerializer):
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
     issue_module = IssueModuleDetailSerializer(read_only=True)
     issue_link = IssueLinkSerializer(read_only=True, many=True)
-    issue_attachment = IssueAttachmentSerializer(read_only=True, many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
     issue_reactions = IssueReactionSerializer(read_only=True, many=True)
 

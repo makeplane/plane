@@ -1,47 +1,48 @@
 # Django imports
-from django.db.models import (
-    Q,
-    OuterRef,
-    Func,
-    F,
-    Case,
-    Value,
-    CharField,
-    When,
-    Exists,
-    Max,
-)
-from django.utils.decorators import method_decorator
-from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import UUIDField
+from django.db.models import (
+    Case,
+    CharField,
+    Exists,
+    F,
+    Func,
+    Max,
+    OuterRef,
+    Q,
+    UUIDField,
+    Value,
+    When,
+)
 from django.db.models.functions import Coalesce
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
+from rest_framework import status
 
 # Third party imports
 from rest_framework.response import Response
-from rest_framework import status
+
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    WorkspaceEntityPermission,
+)
+from plane.app.serializers import (
+    IssueSerializer,
+    IssueViewFavoriteSerializer,
+    IssueViewSerializer,
+)
+from plane.db.models import (
+    FileAsset,
+    Issue,
+    IssueLink,
+    IssueView,
+    IssueViewFavorite,
+    Workspace,
+)
+from plane.utils.issue_filters import issue_filters
 
 # Module imports
 from .. import BaseViewSet
-from plane.app.serializers import (
-    IssueViewSerializer,
-    IssueSerializer,
-    IssueViewFavoriteSerializer,
-)
-from plane.app.permissions import (
-    WorkspaceEntityPermission,
-    ProjectEntityPermission,
-)
-from plane.db.models import (
-    Workspace,
-    IssueView,
-    Issue,
-    IssueViewFavorite,
-    IssueLink,
-    IssueAttachment,
-)
-from plane.utils.issue_filters import issue_filters
 
 
 class GlobalViewViewSet(BaseViewSet):
@@ -97,8 +98,9 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

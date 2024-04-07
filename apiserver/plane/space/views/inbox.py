@@ -2,32 +2,32 @@
 import json
 
 # Django import
-from django.utils import timezone
-from django.db.models import Q, OuterRef, Func, F, Prefetch
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import F, Func, OuterRef, Prefetch, Q
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseViewSet
-from plane.db.models import (
-    InboxIssue,
-    Issue,
-    State,
-    IssueLink,
-    IssueAttachment,
-    ProjectDeployBoard,
-)
 from plane.app.serializers import (
-    IssueSerializer,
     InboxIssueSerializer,
     IssueCreateSerializer,
+    IssueSerializer,
     IssueStateInboxSerializer,
 )
-from plane.utils.issue_filters import issue_filters
+from plane.app.views.base import BaseViewSet
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (
+    FileAsset,
+    InboxIssue,
+    Issue,
+    IssueLink,
+    ProjectDeployBoard,
+    State,
+)
+from plane.utils.issue_filters import issue_filters
 
 
 class InboxIssuePublicViewSet(BaseViewSet):
@@ -95,8 +95,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type="issue_attachment",
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

@@ -19,6 +19,7 @@ interface CustomEditorProps {
     description_html: string;
   };
   deleteFile: DeleteImage;
+  getAsset: any;
   cancelUploadImage?: () => any;
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
@@ -37,6 +38,7 @@ export const useEditor = ({
   uploadFile,
   deleteFile,
   cancelUploadImage,
+  getAsset,
   editorProps = {},
   value,
   rerenderOnPropsChange,
@@ -64,7 +66,8 @@ export const useEditor = ({
           },
           deleteFile,
           restoreFile,
-          cancelUploadImage
+          cancelUploadImage,
+          getAsset
         ),
         ...extensions,
       ],
@@ -84,6 +87,7 @@ export const useEditor = ({
     [rerenderOnPropsChange]
   );
 
+  console.log("yoooooooooo", editor?.getHTML());
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;
 
