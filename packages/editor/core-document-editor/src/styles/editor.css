@@ -282,6 +282,7 @@ span:focus .fake-cursor {
 ol,
 ul {
   margin-top: 3px !important;
+  margin-bottom: 0px !important;
 }
 
 ol ol,
