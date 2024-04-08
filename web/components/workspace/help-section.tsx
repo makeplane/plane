@@ -61,7 +61,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
   return (
     <>
       <div
-        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
+        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-[6px] ${
           isCollapsed ? "flex-col" : ""
         }`}
       >
