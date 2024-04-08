@@ -83,7 +83,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               <div>{option?.label}</div>
               {option?.key === "open" && currentTab === option?.key && (
                 <div className="rounded-full p-1.5 py-0.5 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold">
-                  {inboxIssuesArray.length || 0}/{inboxIssuePaginationInfo?.total_results || 0}
+                  {inboxIssuePaginationInfo?.total_results || 0}
                 </div>
               )}
               <div
