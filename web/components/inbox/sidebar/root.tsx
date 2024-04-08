@@ -99,46 +99,45 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
           </div>
         </div>
         <InboxIssueAppliedFilters />
-        <div
-          className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
-          ref={containerRef}
-        >
-          {isLoading === "filter-loading" ? (
-            <InboxSidebarLoader />
-          ) : (
-            <>
-              {inboxIssuesArray.length > 0 ? (
-                <InboxIssueList
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  projectIdentifier={currentProjectDetails?.identifier}
-                  inboxIssues={inboxIssuesArray}
+        {isLoading === "filter-loading" ? (
+          <InboxSidebarLoader />
+        ) : (
+          <div
+            className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
+            ref={containerRef}
+          >
+            {inboxIssuesArray.length > 0 ? (
+              <InboxIssueList
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                projectIdentifier={currentProjectDetails?.identifier}
+                inboxIssues={inboxIssuesArray}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full w-full">
+                <EmptyState
+                  type={
+                    getAppliedFiltersCount > 0
+                      ? EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE
+                      : currentTab === "open"
+                      ? EmptyStateType.INBOX_SIDEBAR_OPEN_TAB
+                      : EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB
+                  }
+                  layout="screen-simple"
                 />
-              ) : (
-                <div className="flex items-center justify-center h-full w-full">
-                  <EmptyState
-                    type={
-                      getAppliedFiltersCount > 0
-                        ? EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE
-                        : currentTab === "open"
-                        ? EmptyStateType.INBOX_SIDEBAR_OPEN_TAB
-                        : EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB
-                    }
-                    layout="screen-simple"
-                  />
-                </div>
-              )}
-            </>
-          )}
-          <div ref={elementRef}>
-            {inboxIssuePaginationInfo?.next_page_results && (
-              <Loader className="mx-auto w-full space-y-4 py-4 px-2">
-                <Loader.Item height="64px" width="w-100" />
-                <Loader.Item height="64px" width="w-100" />
-              </Loader>
+              </div>
             )}
+
+            <div ref={elementRef}>
+              {inboxIssuePaginationInfo?.next_page_results && (
+                <Loader className="mx-auto w-full space-y-4 py-4 px-2">
+                  <Loader.Item height="64px" width="w-100" />
+                  <Loader.Item height="64px" width="w-100" />
+                </Loader>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
