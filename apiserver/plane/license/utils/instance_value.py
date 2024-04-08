@@ -42,14 +42,7 @@ def get_configuration_value(keys):
 
 
 def get_email_configuration():
-    (
-        EMAIL_HOST,
-        EMAIL_HOST_USER,
-        EMAIL_HOST_PASSWORD,
-        EMAIL_PORT,
-        EMAIL_USE_TLS,
-        EMAIL_FROM,
-    ) = get_configuration_value(
+    return get_configuration_value(
         [
             {
                 "key": "EMAIL_HOST",
@@ -82,13 +75,4 @@ def get_email_configuration():
                 ),
             },
         ]
-    )
-
-    return (
-        EMAIL_HOST,
-        EMAIL_HOST_USER,
-        EMAIL_HOST_PASSWORD,
-        EMAIL_PORT,
-        EMAIL_USE_TLS,
-        EMAIL_FROM,
     )
