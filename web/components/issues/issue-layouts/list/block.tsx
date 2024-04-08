@@ -34,7 +34,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     issue &&
     issue.project_id &&
     issue.id &&
-    !peekIssue?.issueId &&
+    peekIssue?.issueId !== issue.id &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const issue = issuesMap[issueId];

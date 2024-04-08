@@ -54,7 +54,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
     issue &&
     issue.project_id &&
     issue.id &&
-    !peekIssue?.issueId &&
+    peekIssue?.issueId !== issue.id &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   return (

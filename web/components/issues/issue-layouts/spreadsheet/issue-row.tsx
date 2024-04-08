@@ -159,7 +159,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     issue &&
     issue.project_id &&
     issue.id &&
-    !peekIssue?.issueId &&
+    peekIssue?.issueId !== issue.id &&
     setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
 
   const { subIssues: subIssuesStore, issue } = useIssueDetail();

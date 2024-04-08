@@ -32,7 +32,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     workspaceSlug &&
     issueDetails &&
     !issueDetails.tempId &&
-    !peekIssue?.issueId &&
+    peekIssue?.issueId !== issueDetails.id &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
   const { isMobile } = usePlatformOS();
 
