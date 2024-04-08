@@ -1,8 +1,8 @@
 # Third Party imports
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 # Module import
-from plane.db.models import WorkspaceMember, ProjectMember
+from plane.db.models import ProjectMember, WorkspaceMember
 
 # Permission Mappings
 Admin = 20

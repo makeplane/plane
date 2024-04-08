@@ -1,5 +1,6 @@
 # Module imports
 from plane.db.models import User
+
 from .base import BaseSerializer
 
 
@@ -12,5 +13,6 @@ class UserLiteSerializer(BaseSerializer):
             "last_name",
             "avatar",
             "display_name",
+            "email",
         ]
         read_only_fields = fields

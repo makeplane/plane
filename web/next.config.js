@@ -4,6 +4,9 @@ require("dotenv").config({ path: ".env" });
 const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
+  reactStrictMode: false,
+  swcMinify: true,
+  output: "standalone",
   async headers() {
     return [
       {
@@ -18,8 +21,6 @@ const nextConfig = {
       },
     ];
   },
-  reactStrictMode: false,
-  swcMinify: true,
   images: {
     remotePatterns: [
       {
@@ -29,8 +30,22 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  output: "standalone",
-  transpilePackages: ["@plane/editor/extensions"],
+  async rewrites() {
+    return [
+      {
+        source: "/ingest/static/:path*",
+        destination: "https://us-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/ingest/:path*",
+        destination: "https://us.i.posthog.com/:path*",
+      },
+      {
+        source: "/god-mode/:path*",
+        destination: (process.env.GOD_MODE_URL || "") + "/:path*",
+      }
+    ]
+  }
 };
 
 if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0", 10)) {
