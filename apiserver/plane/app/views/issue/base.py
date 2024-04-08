@@ -116,7 +116,7 @@ class IssueListEndpoint(BaseAPIView):
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = queryset.filter(**filters)
         # Issue queryset
-        issue_queryset = order_issue_queryset(
+        issue_queryset, _ = order_issue_queryset(
             issue_queryset=issue_queryset,
             order_by_param=order_by_param,
         )
@@ -208,7 +208,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         # Custom ordering for priority and state
 
         # Issue queryset
-        issue_queryset = order_issue_queryset(
+        issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset,
             order_by_param=order_by_param,
         )
@@ -236,11 +236,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 else:
                     return self.paginate(
                         request=request,
-                        order_by=(
-                            "priority_order"
-                            if order_by_param in ["priority", "-priority"]
-                            else order_by_param
-                        ),
+                        order_by=order_by_param,
                         queryset=issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by,
@@ -275,11 +271,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 # Group paginate
                 return self.paginate(
                     request=request,
-                    order_by=(
-                        "priority_order"
-                        if order_by_param in ["priority", "-priority"]
-                        else order_by_param
-                    ),
+                    order_by=order_by_param,
                     queryset=issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by,
@@ -305,11 +297,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 )
         else:
             return self.paginate(
-                order_by=(
-                    "priority_order"
-                    if order_by_param in ["priority", "-priority"]
-                    else order_by_param
-                ),
+                order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
                 on_results=lambda issues: issue_on_results(

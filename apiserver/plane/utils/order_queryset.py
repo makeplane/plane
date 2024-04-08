@@ -1,9 +1,9 @@
 from django.db.models import (
     Case,
-    Value,
     CharField,
+    Min,
+    Value,
     When,
-    Max,
 )
 
 # Custom ordering for priority and state
@@ -17,7 +17,7 @@ STATE_ORDER = [
 ]
 
 
-def order_issue_queryset(issue_queryset, order_by_param="created_at"):
+def order_issue_queryset(issue_queryset, order_by_param="-created_at"):
     # Priority Ordering
     if order_by_param == "priority" or order_by_param == "-priority":
         priority_order = (
@@ -34,12 +34,14 @@ def order_issue_queryset(issue_queryset, order_by_param="created_at"):
                 output_field=CharField(),
             )
         ).order_by("priority_order")
-
+        order_by_param = (
+            "-priority_order"
+            if order_by_param.startswith("-")
+            else "priority_order"
+        )
     # State Ordering
     elif order_by_param in [
-        "state__name",
         "state__group",
-        "-state__name",
         "-state__group",
     ]:
         state_order = (
@@ -57,23 +59,31 @@ def order_issue_queryset(issue_queryset, order_by_param="created_at"):
                 output_field=CharField(),
             )
         ).order_by("state_order")
+        order_by_param = (
+            "-state_order" if order_by_param.startswith("-") else "state_order"
+        )
     # assignee and label ordering
     elif order_by_param in [
         "labels__name",
-        "-labels__name",
         "assignees__first_name",
+        "issue_module__module__name",
+        "-labels__name",
         "-assignees__first_name",
+        "-issue_module__module__name",
     ]:
         issue_queryset = issue_queryset.annotate(
-            max_values=Max(
+            min_values=Min(
                 order_by_param[1::]
                 if order_by_param.startswith("-")
                 else order_by_param
             )
         ).order_by(
-            "-max_values" if order_by_param.startswith("-") else "max_values"
+            "-min_values" if order_by_param.startswith("-") else "min_values"
+        )
+        order_by_param = (
+            "-min_values" if order_by_param.startswith("-") else "min_values"
         )
     else:
         issue_queryset = issue_queryset.order_by(order_by_param)
-
-    return issue_queryset
+        order_by_param = order_by_param
+    return issue_queryset, order_by_param

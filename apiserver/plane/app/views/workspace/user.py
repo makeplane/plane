@@ -147,7 +147,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         ).distinct()
 
         # Issue queryset
-        issue_queryset = order_issue_queryset(
+        issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset,
             order_by_param=order_by_param,
         )
@@ -175,11 +175,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 else:
                     return self.paginate(
                         request=request,
-                        order_by=(
-                            "priority_order"
-                            if order_by_param in ["priority", "-priority"]
-                            else order_by_param
-                        ),
+                        order_by=order_by_param,
                         queryset=issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by,
@@ -212,11 +208,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 # Group paginate
                 return self.paginate(
                     request=request,
-                    order_by=(
-                        "priority_order"
-                        if order_by_param in ["priority", "-priority"]
-                        else order_by_param
-                    ),
+                    order_by=order_by_param,
                     queryset=issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by,
@@ -241,11 +233,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 )
         else:
             return self.paginate(
-                order_by=(
-                    "priority_order"
-                    if order_by_param in ["priority", "-priority"]
-                    else order_by_param
-                ),
+                order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
                 on_results=lambda issues: issue_on_results(
