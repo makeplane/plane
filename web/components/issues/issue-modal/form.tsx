@@ -482,7 +482,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             initialValue={data?.description_html}
                             customClassName="min-h-[7rem] border-custom-border-100"
                             onChange={(description: any, description_html: string) => {
-                              onChange(description_html);
+                              onChange(description_html === "" ? "<p></p>" : description_html);
                               handleFormChange();
                             }}
                             mentionHighlights={mentionHighlights}
