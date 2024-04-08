@@ -78,7 +78,9 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
-    deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId);
+    deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).finally(() => {
+      router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
+    });
   };
 
   const handleCopyIssueLink = () =>

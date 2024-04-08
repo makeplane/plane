@@ -271,7 +271,14 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
     const currentIssue = this.inboxIssues?.[inboxIssueId];
     try {
       if (!currentIssue) return;
-      omit(this.inboxIssues, inboxIssueId);
+      runInAction(() => {
+        set(
+          this,
+          ["inboxIssuePaginationInfo", "total_results"],
+          (this.inboxIssuePaginationInfo?.total_results || 0) - 1
+        );
+        set(this, "inboxIssues", omit(this.inboxIssues, inboxIssueId));
+      });
       await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
     } catch {
       console.error("Error removing the inbox issue");

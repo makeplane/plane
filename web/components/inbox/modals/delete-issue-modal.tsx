@@ -30,7 +30,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
 
   const handleDelete = () => {
     setIsDeleting(true);
-    onSubmit().finally(() => setIsDeleting(false));
+    onSubmit().finally(() => handleClose());
   };
 
   return (
