@@ -32,6 +32,13 @@ export const FilterStatus: FC<Props> = observer((props) => {
   const handleFilterValue = (value: TInboxIssueStatus): TInboxIssueStatus[] =>
     filterValue?.includes(value) ? filterValue.filter((v) => v !== value) : [...filterValue, value];
 
+  const handleStatusFilterSelect = (status: TInboxIssueStatus) => {
+    if (currentTab === "closed") {
+      const selectedStatus = handleFilterValue(status);
+      if (selectedStatus.length >= 1) handleInboxIssueFilters("status", selectedStatus);
+    }
+  };
+
   return (
     <>
       <FilterHeader
@@ -46,9 +53,7 @@ export const FilterStatus: FC<Props> = observer((props) => {
               <FilterOption
                 key={status.key}
                 isChecked={filterValue?.includes(status.status) ? true : false}
-                onClick={() =>
-                  currentTab === "closed" && handleInboxIssueFilters("status", handleFilterValue(status.status))
-                }
+                onClick={() => handleStatusFilterSelect(status.status)}
                 icon={<status.icon className={`h-3.5 w-3.5 ${status?.textColor(false)}`} />}
                 title={status.title}
               />
