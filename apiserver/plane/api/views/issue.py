@@ -308,8 +308,6 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 actor_id=str(request.user.id),
                 issue_id=str(pk),
                 project_id=str(project_id),
-                external_id__isnull=False,
-                external_source__isnull=False,
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
