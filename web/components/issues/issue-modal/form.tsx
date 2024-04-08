@@ -193,6 +193,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     reset({
       ...defaultValues,
       project_id: getValues("project_id"),
+      description_html: data?.description_html ?? "<p></p>",
     });
     editorRef?.current?.clearEditor();
   };
