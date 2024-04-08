@@ -25,8 +25,10 @@ interface CustomEditorProps {
   extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
-  mentionHighlights: () => Promise<IMentionHighlight[]>;
-  mentionSuggestions: () => Promise<IMentionSuggestion[]>;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+    suggestions: () => Promise<IMentionSuggestion[]>;
+  };
   handleEditorReady?: (value: boolean) => void;
 }
 
@@ -42,8 +44,7 @@ export const useEditor = ({
   forwardedRef,
   restoreFile,
   handleEditorReady,
-  mentionHighlights,
-  mentionSuggestions,
+  mentionHandler,
 }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
@@ -53,8 +54,8 @@ export const useEditor = ({
     extensions: [
       ...CoreEditorExtensions(
         {
-          mentionSuggestions: mentionSuggestions ?? [],
-          mentionHighlights: mentionHighlights ?? [],
+          mentionSuggestions: mentionHandler.suggestions ?? [],
+          mentionHighlights: mentionHandler.highlights ?? [],
         },
         deleteFile,
         restoreFile,

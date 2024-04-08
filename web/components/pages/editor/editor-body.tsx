@@ -127,8 +127,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                   handleSubmit();
                   updateMarkings(description_html);
                 }}
-                mentionHighlights={mentionHighlights}
-                mentionSuggestions={mentionSuggestions}
+                mentionHandler={{
+                  highlights: mentionHighlights,
+                  suggestions: mentionSuggestions,
+                }}
               />
             )}
           />
@@ -139,7 +141,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             value={pageDescription}
             handleEditorReady={handleReadOnlyEditorReady}
             customClassName="p-0 pb-64 px-5 border-none"
-            mentionHighlights={mentionHighlights}
+            mentionHandler={{
+              highlights: mentionHighlights,
+            }}
           />
         )}
       </div>

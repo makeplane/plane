@@ -24,12 +24,22 @@ type IPageRenderer = {
   editor: Editor;
   editorClassNames: string;
   editorContentCustomClassNames?: string;
+  hideDragHandle?: () => void;
   readonly: boolean;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { title, tabIndex, editor, editorClassNames, editorContentCustomClassNames, updatePageTitle, readonly } = props;
+  const {
+    title,
+    tabIndex,
+    editor,
+    hideDragHandle,
+    editorClassNames,
+    editorContentCustomClassNames,
+    updatePageTitle,
+    readonly,
+  } = props;
   // states
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -132,7 +142,7 @@ export const PageRenderer = (props: IPageRenderer) => {
   );
 
   return (
-    <div className="frame-renderer h-full w-full flex flex-col gap-y-2 overflow-y-auto overflow-x-hidden">
+    <div className="frame-renderer h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
       <div className="w-full flex-shrink-0 ml-5">
         {readonly ? (
           <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{title}</h6>
@@ -145,6 +155,7 @@ export const PageRenderer = (props: IPageRenderer) => {
             }}
             placeholder="Untitled Page"
             onKeyDown={(e) => {
+              console.log("event", e);
               if (e.key === "Enter") {
                 e.preventDefault();
                 editor
@@ -159,7 +170,7 @@ export const PageRenderer = (props: IPageRenderer) => {
         )}
       </div>
       <div className="flex-grow w-full" onMouseOver={handleLinkHover}>
-        <EditorContainer editor={editor} editorClassNames={editorClassNames}>
+        <EditorContainer editor={editor} hideDragHandle={hideDragHandle} editorClassNames={editorClassNames}>
           <EditorContentWrapper
             tabIndex={tabIndex}
             editor={editor}

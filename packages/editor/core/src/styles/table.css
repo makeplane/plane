@@ -45,7 +45,7 @@
 .table-wrapper table th {
   font-weight: 500;
   text-align: left;
-  background-color: rgba(var(--color-background-80));
+  background-color: rgba(var(--color-background-90));
 }
 
 .table-wrapper table .selectedCell {

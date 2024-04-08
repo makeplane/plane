@@ -15,15 +15,17 @@ interface IDocumentReadOnlyEditor {
   tabIndex?: number;
   title: string;
   handleEditorReady?: (value: boolean) => void;
-  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+  };
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
 }
 
 const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
-  const { customClassName, value, title, forwardedRef, tabIndex, handleEditorReady, mentionHighlights } = props;
+  const { customClassName, value, title, forwardedRef, tabIndex, handleEditorReady, mentionHandler } = props;
   const editor = useReadOnlyEditor({
     value,
-    mentionHighlights,
+    mentionHandler,
     forwardedRef,
     handleEditorReady,
     extensions: [IssueWidgetPlaceholder()],

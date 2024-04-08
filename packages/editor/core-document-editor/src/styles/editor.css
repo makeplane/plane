@@ -35,8 +35,8 @@
 /* Custom image styles */
 .ProseMirror img {
   transition: filter 0.1s ease-in-out;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin-top: 8px;
+  margin-bottom: 0;
 
   &:hover {
     cursor: pointer;
@@ -44,7 +44,7 @@
   }
 
   &.ProseMirror-selectednode {
-    outline: 3px solid #5abbf7;
+    outline: 3px solid rgba(var(--color-primary-100));
     filter: brightness(90%);
   }
 }
@@ -283,6 +283,7 @@ span:focus .fake-cursor {
   ul:not([data-type="taskList"]):where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)),
 .prose ul[data-type="taskList"]:where(.prose > :first-child) {
   margin-top: 0.25rem !important;
+  margin-bottom: 1px !important;
 }
 
 .prose ol:not(:where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *))),
@@ -292,6 +293,7 @@ span:focus .fake-cursor {
   ),
 .prose ul[data-type="taskList"]:not(:where(.prose > :first-child)) {
   margin-top: calc(0.25rem + 3px) !important;
+  margin-bottom: 1px !important;
 }
 
 ol ol,

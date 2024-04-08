@@ -13,7 +13,9 @@ interface CustomReadOnlyEditorProps {
   extensions?: any;
   editorProps?: EditorProps;
   handleEditorReady?: (value: boolean) => void;
-  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+  };
 }
 
 export const useReadOnlyEditor = ({
@@ -22,7 +24,7 @@ export const useReadOnlyEditor = ({
   extensions = [],
   editorProps = {},
   handleEditorReady,
-  mentionHighlights,
+  mentionHandler,
 }: CustomReadOnlyEditorProps) => {
   const editor = useCustomEditor({
     editable: false,
@@ -38,7 +40,7 @@ export const useReadOnlyEditor = ({
     },
     extensions: [
       ...CoreReadOnlyEditorExtensions({
-        mentionHighlights: mentionHighlights,
+        mentionHighlights: mentionHandler.highlights,
       }),
       ...extensions,
     ],

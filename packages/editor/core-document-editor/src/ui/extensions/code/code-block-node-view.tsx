@@ -48,7 +48,7 @@ export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) 
         )}
       </button>
 
-      <pre className="bg-custom-background-80 text-custom-text-100 rounded-lg p-8 pl-9 pr-4">
+      <pre className="bg-custom-background-90 text-custom-text-100 rounded-lg p-8 pl-9 pr-4">
         <NodeViewContent as="code" />
       </pre>
     </NodeViewWrapper>
