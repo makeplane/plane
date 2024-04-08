@@ -7,27 +7,24 @@
   width: 15px;
   display: grid;
   place-items: center;
-  z-index: 10;
+  z-index: 5;
   cursor: grab;
   border-radius: 2px;
-  background-color: rgb(var(--color-background-90));
-}
-
-.drag-handle:hover {
-  background-color: rgba(var(--color-background-80));
-  cursor: grab;
   transition: background-color 0.2s;
-}
 
-.drag-handle:active {
-  background-color: rgba(var(--color-background-80));
-  transition: background-color 0.2s;
-  cursor: grabbing;
-}
+  &:hover {
+    background-color: rgba(var(--color-background-80));
+  }
 
-.drag-handle.hidden {
-  opacity: 0;
-  pointer-events: none;
+  &:active {
+    background-color: rgba(var(--color-background-80));
+    cursor: grabbing;
+  }
+
+  &.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -40,7 +37,6 @@
 .drag-handle-container {
   height: 15px;
   width: 15px;
-  cursor: grab;
   display: grid;
   place-items: center;
 }
@@ -54,9 +50,9 @@
 }
 
 .drag-handle-dot {
-  height: 2.75px;
-  width: 3px;
-  background-color: rgba(var(--color-text-200));
+  height: 2.5px;
+  width: 2.5px;
+  background-color: rgba(var(--color-text-300));
   border-radius: 50%;
 }
 /* end drag handle */
@@ -72,11 +68,11 @@
   content: "";
   position: absolute;
   top: 0;
-  left: 0;
+  left: -5px;
   height: 100%;
   width: 100%;
   background-color: rgba(var(--color-primary-100), 0.2);
-  transition: background-color 0.2s;
+  border-radius: 4px;
 }
 
 .ProseMirror img {

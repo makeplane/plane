@@ -212,11 +212,6 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   cursor: col-resize;
 }
 
-.ProseMirror table * p {
-  padding: 0px 1px;
-  margin: 6px 2px;
-}
-
 .ProseMirror table * .is-empty::before {
   opacity: 0;
 }

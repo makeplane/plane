@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { EditorContainer, EditorContentWrapper, cn } from "@plane/editor-document-core";
+import { EditorContainer, EditorContentWrapper } from "@plane/editor-document-core";
 import { Node } from "@tiptap/pm/model";
 import { EditorView } from "@tiptap/pm/view";
 import { Editor, ReactRenderer } from "@tiptap/react";
@@ -30,10 +30,11 @@ type IPageRenderer = {
 
 export const PageRenderer = (props: IPageRenderer) => {
   const { title, tabIndex, editor, editorClassNames, editorContentCustomClassNames, updatePageTitle, readonly } = props;
-
+  // states
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
   const [coordinates, setCoordinates] = useState<{ x: number; y: number }>();
+  const [cleanup, setCleanup] = useState(() => () => {});
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -48,17 +49,11 @@ export const PageRenderer = (props: IPageRenderer) => {
 
   const { getFloatingProps } = useInteractions([dismiss]);
 
-  const handlePageTitleChange = (title: string) => {
-    updatePageTitle(title);
-  };
-
-  const [cleanup, setCleanup] = useState(() => () => {});
+  const handlePageTitleChange = (title: string) => updatePageTitle(title);
 
   const floatingElementRef = useRef<HTMLElement | null>(null);
 
-  const closeLinkView = () => {
-    setIsOpen(false);
-  };
+  const closeLinkView = () => setIsOpen(false);
 
   const handleLinkHover = useCallback(
     (event: React.MouseEvent) => {
@@ -137,8 +132,8 @@ export const PageRenderer = (props: IPageRenderer) => {
   );
 
   return (
-    <div className="frame-renderer h-full w-full flex flex-col overflow-y-auto overflow-x-hidden">
-      <div className="w-full flex-shrink-0">
+    <div className="frame-renderer h-full w-full flex flex-col gap-y-2 overflow-y-auto overflow-x-hidden">
+      <div className="w-full flex-shrink-0 ml-5">
         {readonly ? (
           <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{title}</h6>
         ) : (
@@ -163,8 +158,8 @@ export const PageRenderer = (props: IPageRenderer) => {
           />
         )}
       </div>
-      <div className="flex-grow w-full pr-5" onMouseOver={handleLinkHover}>
-        <EditorContainer editor={editor} editorClassNames={cn(editorClassNames, "pb-64 pl-0")}>
+      <div className="flex-grow w-full" onMouseOver={handleLinkHover}>
+        <EditorContainer editor={editor} editorClassNames={editorClassNames}>
           <EditorContentWrapper
             tabIndex={tabIndex}
             editor={editor}
