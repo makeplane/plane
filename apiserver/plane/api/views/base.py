@@ -7,6 +7,7 @@ import zoneinfo
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
+from django.urls import resolve
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -165,7 +166,12 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
     @property
     def project_id(self):
-        return self.kwargs.get("project_id", None)
+        project_id = self.kwargs.get("project_id", None)
+        if project_id:
+            return project_id
+
+        if resolve(self.request.path_info).url_name == "project":
+            return self.kwargs.get("pk", None)
 
     @property
     def fields(self):

@@ -32,28 +32,18 @@ RUN apk add --no-cache --virtual .build-deps \
     apk del .build-deps
 
 
-RUN addgroup -S plane && \
-    adduser -S captain -G plane
-
-RUN chown captain.plane /code
-
-USER captain
-
 # Add in Django deps and generate Django's static files
 COPY manage.py manage.py
 COPY plane plane/
 COPY templates templates/
 COPY package.json package.json
-USER root
+
 RUN apk --no-cache add "bash~=5.2"
 COPY ./bin ./bin/
 
 RUN mkdir -p /code/plane/logs
 RUN chmod +x ./bin/takeoff ./bin/worker ./bin/beat
 RUN chmod -R 777 /code
-RUN chown -R captain:plane /code
-
-USER captain
 
 # Expose container port and run entry point script
 EXPOSE 8000

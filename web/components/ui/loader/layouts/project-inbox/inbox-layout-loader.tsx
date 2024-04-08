@@ -4,22 +4,19 @@ import { Loader } from "@plane/ui";
 import { InboxSidebarLoader } from "./inbox-sidebar-loader";
 
 export const InboxLayoutLoader = () => (
-  <div className="relative flex h-full overflow-hidden">
-    <InboxSidebarLoader />
-    <div className="w-full">
-      <Loader className="flex h-full gap-5 p-5">
-        <div className="basis-2/3 space-y-2">
+  <div className="relative w-full h-full flex overflow-hidden">
+    <div className="flex-shrink-0 w-2/6 h-full border-r border-custom-border-300">
+      <InboxSidebarLoader />
+    </div>
+    <div className="w-4/6">
+      <Loader className="flex flex-col h-full gap-5 p-5">
+        <div className="space-y-2">
           <Loader.Item height="30px" width="40%" />
           <Loader.Item height="15px" width="60%" />
           <Loader.Item height="15px" width="60%" />
           <Loader.Item height="15px" width="40%" />
         </div>
-        <div className="basis-1/3 space-y-3">
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
-        </div>
+        <Loader.Item height="150px" />
       </Loader>
     </div>
   </div>

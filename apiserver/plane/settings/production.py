@@ -25,7 +25,7 @@ LOG_DIR = os.path.join(BASE_DIR, "logs")  # noqa
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
 
-
+# Logging configuration
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

@@ -62,6 +62,7 @@ from .issue import (
     IssueFlatSerializer,
     IssueStateSerializer,
     IssueLinkSerializer,
+    IssueInboxSerializer,
     IssueLiteSerializer,
     IssueAttachmentSerializer,
     IssueSubscriberSerializer,
@@ -110,6 +111,7 @@ from .inbox import (
     InboxIssueSerializer,
     IssueStateInboxSerializer,
     InboxIssueLiteSerializer,
+    InboxIssueDetailSerializer,
 )
 
 from .analytic import AnalyticViewSerializer
