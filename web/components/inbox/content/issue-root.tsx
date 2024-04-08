@@ -10,6 +10,7 @@ import {
   IssueActivity,
   IssueReaction,
   TIssueOperations,
+  IssueUpdateStatus,
 } from "@/components/issues";
 // hooks
 import { useUser } from "@/hooks/store";
@@ -116,6 +117,9 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   return (
     <>
       <div className="rounded-lg space-y-4">
+        <div className="flex items-center justify-end w-full">
+          <IssueUpdateStatus isSubmitting={isSubmitting} />
+        </div>
         <IssueTitleInput
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
