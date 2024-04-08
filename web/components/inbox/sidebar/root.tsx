@@ -65,7 +65,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   return (
     <div className="flex-shrink-0 w-2/6 h-full border-r border-custom-border-300">
       <div className="relative w-full h-full flex flex-col overflow-hidden">
-        <div className="border-b border-custom-border-300 flex-shrink-0 w-full h-[50px] relative flex items-center gap-2 px-3 whitespace-nowrap">
+        <div className="border-b border-custom-border-300 flex-shrink-0 w-full h-[50px] relative flex items-center gap-2 pr-3 whitespace-nowrap">
           {tabNavigationOptions.map((option) => (
             <div
               key={option?.key}

@@ -197,7 +197,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             </button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             {canMarkAsAccepted && (
               <div className="flex-shrink-0">
                 <Button variant="neutral-primary" size="sm" onClick={() => setAcceptIssueModal(true)}>
