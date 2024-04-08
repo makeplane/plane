@@ -177,7 +177,7 @@ const rowsToolboxItems: ToolboxItem[] = [
     action: (args: any) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
-    label: "Delete Row",
+    label: "Delete row",
     icon: icons.deleteRow,
     action: ({ editor }: { editor: Editor }) => editor.chain().focus().deleteRow().run(),
   },
@@ -386,7 +386,7 @@ export class TableView implements NodeView {
     this.root = h(
       "div",
       {
-        className: "table-wrapper controls--disabled",
+        className: "table-wrapper horizontal-scrollbar scrollbar-md controls--disabled",
       },
       this.controls,
       this.table

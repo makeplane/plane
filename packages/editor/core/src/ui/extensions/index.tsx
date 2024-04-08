@@ -67,9 +67,7 @@ export const CoreEditorExtensions = (
   // OrderedList,
   // ListItem,
 
-  CustomQuoteExtension.configure({
-    HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
-  }),
+  CustomQuoteExtension,
   CustomHorizontalRule.configure({
     HTMLAttributes: { class: "my-4" },
   }),
