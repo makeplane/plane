@@ -22,7 +22,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   // hooks
   const { currentProjectDetails } = useProject();
 
-  if (!workspaceSlug || !projectId) return <div>PLease check your URL</div>;
+  if (!workspaceSlug || !projectId) return <></>;
 
   // No access to inbox
   if (currentProjectDetails?.inbox_view === false)

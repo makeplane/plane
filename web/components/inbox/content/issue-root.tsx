@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -12,7 +13,7 @@ import {
   TIssueOperations,
 } from "@/components/issues";
 // hooks
-import { useProjectInbox, useUser } from "@/hooks/store";
+import { useEventTracker, useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
@@ -27,11 +28,13 @@ type Props = {
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
+  const router = useRouter();
   const { workspaceSlug, projectId, inboxIssue, is_editable, isSubmitting, setIsSubmitting } = props;
   // hooks
   const { currentUser } = useUser();
   const { isLoading } = useProjectInbox();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
+  const { captureIssueEvent } = useEventTracker();
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -83,30 +86,30 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
           await inboxIssue.updateIssue(data);
-          // captureIssueEvent({
-          //   eventName: "Inbox issue updated",
-          //   payload: { ...data, state: "SUCCESS", element: "Inbox" },
-          //   updates: {
-          //     changed_property: Object.keys(data).join(","),
-          //     change_details: Object.values(data).join(","),
-          //   },
-          //   path: router.asPath,
-          // });
+          captureIssueEvent({
+            eventName: "Inbox issue updated",
+            payload: { ...data, state: "SUCCESS", element: "Inbox" },
+            updates: {
+              changed_property: Object.keys(data).join(","),
+              change_details: Object.values(data).join(","),
+            },
+            path: router.asPath,
+          });
         } catch (error) {
           setToast({
             title: "Issue update failed",
             type: TOAST_TYPE.ERROR,
             message: "Issue update failed",
           });
-          // captureIssueEvent({
-          //   eventName: "Inbox issue updated",
-          //   payload: { state: "SUCCESS", element: "Inbox" },
-          //   updates: {
-          //     changed_property: Object.keys(data).join(","),
-          //     change_details: Object.values(data).join(","),
-          //   },
-          //   path: router.asPath,
-          // });
+          captureIssueEvent({
+            eventName: "Inbox issue updated",
+            payload: { state: "SUCCESS", element: "Inbox" },
+            updates: {
+              changed_property: Object.keys(data).join(","),
+              change_details: Object.values(data).join(","),
+            },
+            path: router.asPath,
+          });
         }
       },
     }),

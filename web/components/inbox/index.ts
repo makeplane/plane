@@ -3,4 +3,4 @@ export * from "./modals";
 export * from "./sidebar";
 export * from "./inbox-filter";
 export * from "./content";
-export * from "./helpers";
+export * from "./inbox-issue-status";
