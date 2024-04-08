@@ -99,7 +99,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
           </div>
         </div>
         <InboxIssueAppliedFilters />
-        {isLoading === "filter-loading" ? (
+        {isLoading && !inboxIssuePaginationInfo?.next_page_results ? (
           <InboxSidebarLoader />
         ) : (
           <div
