@@ -1,60 +1,32 @@
 import React from "react";
-
-import { observer } from "mobx-react-lite";
-
+import { observer } from "mobx-react";
 import { CalendarCheck2, Signal, Tag } from "lucide-react";
-
-// hooks
+import { TIssue } from "@plane/types";
+import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 // components
-import { DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
 import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
 import { IssueLabel, TIssueOperations } from "@/components/issues";
-// icons
 // helper
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
-  issueId: string;
+  issue: Partial<TIssue>;
   issueOperations: TIssueOperations;
   is_editable: boolean;
 };
 
-export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, is_editable } = props;
-  // store hooks
-  const { getProjectById } = useProject();
-  const { projectStates } = useProjectState();
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
-
-  const issue = getIssueById(issueId);
-  if (!issue) return <></>;
-
-  const projectDetails = issue ? getProjectById(issue.project_id) : null;
+export const InboxIssueProperties: React.FC<Props> = observer((props) => {
+  const { workspaceSlug, projectId, issue, issueOperations, is_editable } = props;
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
-
+  if (!issue || !issue?.id) return <></>;
   return (
-    <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
-      <div className="flex items-center justify-between px-5 pb-3">
-        <div className="flex items-center gap-x-2">
-          {currentIssueState && (
-            <StateGroupIcon className="h-4 w-4" stateGroup={currentIssueState.group} color={currentIssueState.color} />
-          )}
-          <h4 className="text-lg font-medium text-custom-text-300">
-            {projectDetails?.identifier}-{issue?.sequence_id}
-          </h4>
-        </div>
-      </div>
-
-      <div className="h-full w-full overflow-y-auto px-5">
+    <div className="flex h-min w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
+      <div className="h-min w-full overflow-y-auto px-5">
         <h5 className="text-sm font-medium my-4">Properties</h5>
         <div className={`divide-y-2 divide-custom-border-200 ${!is_editable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
@@ -64,18 +36,22 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
-              <StateDropdown
-                value={issue?.state_id ?? undefined}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
-                projectId={projectId?.toString() ?? ""}
-                disabled={!is_editable}
-                buttonVariant="transparent-with-text"
-                className="w-3/5 flex-grow group"
-                buttonContainerClassName="w-full text-left"
-                buttonClassName="text-sm"
-                dropdownArrow
-                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-              />
+              {issue?.state_id && (
+                <StateDropdown
+                  value={issue?.state_id}
+                  onChange={(val) =>
+                    issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { state_id: val })
+                  }
+                  projectId={projectId?.toString() ?? ""}
+                  disabled={!is_editable}
+                  buttonVariant="transparent-with-text"
+                  className="w-3/5 flex-grow group"
+                  buttonContainerClassName="w-full text-left"
+                  buttonClassName="text-sm"
+                  dropdownArrow
+                  dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+                />
+              )}
             </div>
             {/* Assignee */}
             <div className="flex items-center gap-2 h-8">
@@ -84,17 +60,21 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <span>Assignees</span>
               </div>
               <MemberDropdown
-                value={issue?.assignee_ids ?? undefined}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
+                value={issue?.assignee_ids ?? []}
+                onChange={(val) =>
+                  issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { assignee_ids: val })
+                }
                 disabled={!is_editable}
                 projectId={projectId?.toString() ?? ""}
                 placeholder="Add assignees"
                 multiple
-                buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
+                buttonVariant={
+                  (issue?.assignee_ids || [])?.length > 0 ? "transparent-without-text" : "transparent-with-text"
+                }
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm justify-between ${
-                  issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
+                  (issue?.assignee_ids || [])?.length > 0 ? "" : "text-custom-text-400"
                 }`}
                 hideIcon={issue.assignee_ids?.length === 0}
                 dropdownArrow
@@ -108,8 +88,10 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <span>Priority</span>
               </div>
               <PriorityDropdown
-                value={issue?.priority || undefined}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
+                value={issue?.priority || "none"}
+                onChange={(val) =>
+                  issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { priority: val })
+                }
                 disabled={!is_editable}
                 buttonVariant="border-with-text"
                 className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
@@ -129,9 +111,10 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
               <DateDropdown
                 placeholder="Add due date"
-                value={issue.target_date}
+                value={issue.target_date || null}
                 onChange={(val) =>
-                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                  issue?.id &&
+                  issueOperations.update(workspaceSlug, projectId, issue?.id, {
                     target_date: val ? renderFormattedPayloadDate(val) : null,
                   })
                 }
@@ -152,16 +135,18 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <span>Labels</span>
               </div>
               <div className="w-3/5 flex-grow min-h-8 h-full pt-1">
-                <IssueLabel
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  disabled={!is_editable}
-                  isInboxIssue
-                  onLabelUpdate={(val: string[]) =>
-                    issueOperations.update(workspaceSlug, projectId, issueId, { label_ids: val })
-                  }
-                />
+                {issue?.id && (
+                  <IssueLabel
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
+                    issueId={issue?.id}
+                    disabled={!is_editable}
+                    isInboxIssue
+                    onLabelUpdate={(val: string[]) =>
+                      issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { label_ids: val })
+                    }
+                  />
+                )}
               </div>
             </div>
           </div>

@@ -29,8 +29,8 @@ class StateAPIEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
+            .filter(is_triage=False)
             .filter(project__archived_at__isnull=True)
-            .filter(~Q(name="Triage"))
             .select_related("project")
             .select_related("workspace")
             .distinct()
@@ -106,7 +106,7 @@ class StateAPIEndpoint(BaseAPIView):
 
     def delete(self, request, slug, project_id, state_id):
         state = State.objects.get(
-            ~Q(name="Triage"),
+            is_triage=False,
             pk=state_id,
             project_id=project_id,
             workspace__slug=slug,
