@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
 import { EUserProjectRoles } from "@/constants/project";
-import { useInboxIssues, useIssueDetail, useProjectInbox, useUser } from "@/hooks/store";
+import { useProjectInbox, useUser } from "@/hooks/store";
 
 type TInboxContentRoot = {
   workspaceSlug: string;
@@ -14,26 +14,20 @@ type TInboxContentRoot = {
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId } = props;
   // hooks
-  const { fetchInboxIssueById } = useProjectInbox();
-  const inboxIssue = useInboxIssues(inboxIssueId);
+  const { fetchInboxIssueById, getIssueInboxByIssueId } = useProjectInbox();
+  const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
   const {
     membership: { currentProjectRole },
   } = useUser();
 
-  const { fetchReactions, fetchActivities, fetchComments } = useIssueDetail();
-
   useSWR(
     workspaceSlug && projectId && inboxIssueId
-      ? `INBOX_ISSUE_DETAIL_${workspaceSlug}_${projectId}_inbox_${inboxIssueId}`
+      ? `PROJECT_INBOX_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${inboxIssueId}`
       : null,
-    async () => {
-      if (workspaceSlug && projectId && inboxIssueId) {
-        await fetchInboxIssueById(workspaceSlug, projectId, inboxIssueId);
-        await fetchReactions(workspaceSlug, projectId, inboxIssueId);
-        await fetchActivities(workspaceSlug, projectId, inboxIssueId);
-        await fetchComments(workspaceSlug, projectId, inboxIssueId);
-      }
-    }
+    () => {
+      workspaceSlug && projectId && inboxIssueId && fetchInboxIssueById(workspaceSlug, projectId, inboxIssueId);
+    },
+    { revalidateOnFocus: false }
   );
 
   const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;

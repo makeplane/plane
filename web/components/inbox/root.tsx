@@ -3,8 +3,11 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Inbox } from "lucide-react";
 // components
-import { InboxSidebar, InboxIssueContentRoot } from "@/components/inbox";
+import { EmptyState } from "@/components/empty-state";
+import { InboxSidebar, InboxContentRoot } from "@/components/inbox";
 import { InboxLayoutLoader } from "@/components/ui";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 
@@ -18,7 +21,7 @@ type TInboxIssueRoot = {
 export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, inboxAccessible } = props;
   // hooks
-  const { isLoading, error, fetchInboxIssues, inboxIssuesArray } = useProjectInbox();
+  const { isLoading, error, fetchInboxIssues } = useProjectInbox();
 
   useSWR(
     inboxAccessible && workspaceSlug && projectId ? `PROJECT_INBOX_ISSUES_${workspaceSlug}_${projectId}` : null,
@@ -48,12 +51,18 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   return (
     <div className="relative w-full h-full flex overflow-hidden">
       <InboxSidebar workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
-      <InboxIssueContentRoot
-        workspaceSlug={workspaceSlug.toString()}
-        projectId={projectId.toString()}
-        inboxIssueId={inboxIssueId?.toString() || undefined}
-        inboxIssuesArrayLength={(inboxIssuesArray || []).length}
-      />
+
+      {inboxIssueId ? (
+        <InboxContentRoot
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          inboxIssueId={inboxIssueId.toString()}
+        />
+      ) : (
+        <div className="w-full h-full relative flex justify-center items-center">
+          <EmptyState type={EmptyStateType.INBOX_DETAIL_EMPTY_STATE} layout="screen-simple" />
+        </div>
+      )}
     </div>
   );
 });

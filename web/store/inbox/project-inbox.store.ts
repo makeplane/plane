@@ -159,7 +159,8 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
         set(this, "inboxIssuePaginationInfo", paginationInfo);
         if (results && results.length > 0)
           results.forEach((value: TInboxIssue) => {
-            set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
+            if (this.getIssueInboxByIssueId(value?.issue?.id) === undefined)
+              set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
           });
       });
     } catch (error) {
@@ -200,7 +201,8 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
           set(this, "inboxIssuePaginationInfo", paginationInfo);
           if (results && results.length > 0)
             results.forEach((value: TInboxIssue) => {
-              set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
+              if (this.getIssueInboxByIssueId(value?.issue?.id) === undefined)
+                set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
             });
         });
       } else set(this, ["inboxIssuePaginationInfo", "next_page_results"], false);
@@ -224,10 +226,19 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   fetchInboxIssueById = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
     try {
       const inboxIssue = await this.inboxIssueService.retrieve(workspaceSlug, projectId, inboxIssueId);
-      if (inboxIssue)
+      const issueId = inboxIssue?.issue?.id || undefined;
+
+      if (inboxIssue && issueId) {
+        // fetching reactions
+        await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
+        // fetching activity
+        await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
+        // fetching comments
+        await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
         runInAction(() => {
-          set(this.inboxIssues, inboxIssue?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, inboxIssue));
+          set(this.inboxIssues, issueId, new InboxIssueStore(workspaceSlug, projectId, inboxIssue));
         });
+      }
     } catch {
       console.error("Error fetching the inbox issue with inbox issue id");
     }

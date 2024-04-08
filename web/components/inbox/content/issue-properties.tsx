@@ -1,36 +1,29 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { CalendarCheck2, Signal, Tag } from "lucide-react";
-
-// hooks
-// components
+import { TIssue } from "@plane/types";
 import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+// components
 import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
 import { IssueLabel, TIssueOperations } from "@/components/issues";
-// icons
 // helper
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { useProjectInbox } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
-  issueId: string;
+  issue: Partial<TIssue>;
   issueOperations: TIssueOperations;
   is_editable: boolean;
 };
 
 export const InboxIssueProperties: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, is_editable } = props;
-  // store hooks
-  const { getIssueInboxByIssueId } = useProjectInbox();
-
-  const issue = getIssueInboxByIssueId(issueId)?.issue;
-  if (!issue) return <></>;
+  const { workspaceSlug, projectId, issue, issueOperations, is_editable } = props;
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
+  if (!issue || !issue?.id) return <></>;
   return (
     <div className="flex h-min w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
       <div className="h-min w-full overflow-y-auto px-5">
@@ -46,7 +39,9 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
               {issue?.state_id && (
                 <StateDropdown
                   value={issue?.state_id}
-                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                  onChange={(val) =>
+                    issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { state_id: val })
+                  }
                   projectId={projectId?.toString() ?? ""}
                   disabled={!is_editable}
                   buttonVariant="transparent-with-text"
@@ -66,7 +61,9 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
               </div>
               <MemberDropdown
                 value={issue?.assignee_ids ?? []}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
+                onChange={(val) =>
+                  issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { assignee_ids: val })
+                }
                 disabled={!is_editable}
                 projectId={projectId?.toString() ?? ""}
                 placeholder="Add assignees"
@@ -92,7 +89,9 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
               </div>
               <PriorityDropdown
                 value={issue?.priority || "none"}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
+                onChange={(val) =>
+                  issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { priority: val })
+                }
                 disabled={!is_editable}
                 buttonVariant="border-with-text"
                 className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
@@ -114,7 +113,8 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                 placeholder="Add due date"
                 value={issue.target_date || null}
                 onChange={(val) =>
-                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                  issue?.id &&
+                  issueOperations.update(workspaceSlug, projectId, issue?.id, {
                     target_date: val ? renderFormattedPayloadDate(val) : null,
                   })
                 }
@@ -135,16 +135,18 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                 <span>Labels</span>
               </div>
               <div className="w-3/5 flex-grow min-h-8 h-full pt-1">
-                <IssueLabel
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  disabled={!is_editable}
-                  isInboxIssue
-                  onLabelUpdate={(val: string[]) =>
-                    issueOperations.update(workspaceSlug, projectId, issueId, { label_ids: val })
-                  }
-                />
+                {issue?.id && (
+                  <IssueLabel
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
+                    issueId={issue?.id}
+                    disabled={!is_editable}
+                    isInboxIssue
+                    onLabelUpdate={(val: string[]) =>
+                      issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { label_ids: val })
+                    }
+                  />
+                )}
               </div>
             </div>
           </div>

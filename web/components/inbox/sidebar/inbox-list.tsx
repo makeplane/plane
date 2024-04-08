@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 // components
 import { InboxIssueListItem } from "@/components/inbox";
@@ -18,13 +18,15 @@ export const InboxIssueList: FC<InboxIssueListProps> = observer((props) => {
   return (
     <>
       {inboxIssues.map((inboxIssue) => (
-        <InboxIssueListItem
-          key={inboxIssue.id}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          projectIdentifier={projectIdentifier}
-          inboxIssue={inboxIssue}
-        />
+        <Fragment key={inboxIssue.id}>
+          <InboxIssueListItem
+            key={inboxIssue.id}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            projectIdentifier={projectIdentifier}
+            inboxIssue={inboxIssue}
+          />
+        </Fragment>
       ))}
     </>
   );

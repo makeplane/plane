@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -155,7 +155,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
       <InboxIssueProperties
         workspaceSlug={workspaceSlug}
         projectId={projectId}
-        issueId={issue.id}
+        issue={issue}
         issueOperations={issueOperations}
         is_editable={is_editable}
       />
