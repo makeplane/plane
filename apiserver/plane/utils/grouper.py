@@ -98,7 +98,7 @@ def issue_on_results(issues, group_by, sub_group_by):
     return issues.values(*required_fields)
 
 
-def issue_group_values(field, slug, project_id=None, filters={}):
+def issue_group_values(field, slug, project_id=None, filters=dict):
     if field == "state_id":
         queryset = State.objects.filter(
             ~Q(name="Triage"),
