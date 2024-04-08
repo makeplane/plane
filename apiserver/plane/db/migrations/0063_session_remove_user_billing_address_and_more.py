@@ -52,6 +52,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name="user",
+            name="avatar",
+            field=models.TextField(blank=True),
+        ),
         migrations.CreateModel(
             name="Session",
             fields=[

@@ -48,7 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     display_name = models.CharField(max_length=255, default="")
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
-    avatar = models.CharField(max_length=255, blank=True)
+    avatar = models.TextField(blank=True)
     cover_image = models.URLField(blank=True, null=True, max_length=800)
 
     # tracking metrics
