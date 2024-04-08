@@ -1,8 +1,6 @@
 // ui
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { LayersIcon } from "@plane/ui";
-// types
-import { SPREADSHEET_PROPERTY_LIST } from "@/constants/spreadsheet";
 // constants
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
@@ -13,10 +11,12 @@ interface Props {
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   isEstimateEnabled: boolean;
+  spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
 }
 
 export const SpreadsheetHeader = (props: Props) => {
-  const { displayProperties, displayFilters, handleDisplayFilterUpdate, isEstimateEnabled } = props;
+  const { displayProperties, displayFilters, handleDisplayFilterUpdate, isEstimateEnabled, spreadsheetColumnsList } =
+    props;
 
   return (
     <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-custom-border-100">
@@ -36,7 +36,7 @@ export const SpreadsheetHeader = (props: Props) => {
           </span>
         </th>
 
-        {SPREADSHEET_PROPERTY_LIST.map((property) => (
+        {spreadsheetColumnsList.map((property) => (
           <SpreadsheetHeaderColumn
             key={property}
             property={property}

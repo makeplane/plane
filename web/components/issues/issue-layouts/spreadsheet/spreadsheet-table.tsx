@@ -29,6 +29,7 @@ type Props = {
   containerRef: MutableRefObject<HTMLTableElement | null>;
   canLoadMoreIssues: boolean;
   loadMoreIssues: () => void;
+  spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
 };
 
 export const SpreadsheetTable = observer((props: Props) => {
@@ -45,6 +46,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     canLoadMoreIssues,
     containerRef,
     loadMoreIssues,
+    spreadsheetColumnsList,
   } = props;
 
   // states
@@ -88,7 +90,9 @@ export const SpreadsheetTable = observer((props: Props) => {
 
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
-  const displayPropertiesCount = getDisplayPropertiesCount(displayProperties, true);
+  const ignoreFieldsForCounting: (keyof IIssueDisplayProperties)[] = ["key"];
+  if (!isEstimateEnabled) ignoreFieldsForCounting.push("estimate");
+  const displayPropertiesCount = getDisplayPropertiesCount(displayProperties, ignoreFieldsForCounting);
 
   return (
     <table className="overflow-y-auto bg-custom-background-100" onKeyDown={handleKeyBoardNavigation}>
@@ -97,6 +101,7 @@ export const SpreadsheetTable = observer((props: Props) => {
         displayFilters={displayFilters}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         isEstimateEnabled={isEstimateEnabled}
+        spreadsheetColumnsList={spreadsheetColumnsList}
       />
       <tbody>
         {issueIds.map((id) => (
@@ -113,6 +118,7 @@ export const SpreadsheetTable = observer((props: Props) => {
             containerRef={containerRef}
             isScrolled={isScrolled}
             issueIds={issueIds}
+            spreadsheetColumnsList={spreadsheetColumnsList}
           />
         ))}
       </tbody>

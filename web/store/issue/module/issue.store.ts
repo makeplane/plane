@@ -68,6 +68,13 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     this.issueFilterStore = issueFilterStore;
   }
 
+  fetchParentStats = (workspaceSlug: string, projectId?: string | undefined, id?: string | undefined) => {
+    const moduleId = id ?? this.moduleId;
+    projectId &&
+      moduleId &&
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
+  };
+
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
@@ -84,7 +91,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
 
-      this.onfetchIssues(response, options);
+      this.onfetchIssues(response, options, workspaceSlug, projectId, moduleId);
       return response;
     } catch (error) {
       this.setLoader(undefined);
@@ -135,7 +142,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       const response = await super.createIssue(workspaceSlug, projectId, data, moduleId, false);
       await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id], false);
 
-      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
+      this.fetchParentStats(workspaceSlug, projectId, moduleId);
 
       return response;
     } catch (error) {

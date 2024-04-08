@@ -66,7 +66,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
   const intersectionRef = useRef<HTMLSpanElement | null>(null);
 
-  useIntersectionObserver(scrollableContainerRef, intersectionRef, loadMoreIssues, `50% 0% 50% 0%`);
+  useIntersectionObserver(scrollableContainerRef, intersectionRef, loadMoreIssues, `0% 100% 50% 100%`);
 
   const prePopulateQuickAddData = (
     groupByKey: string | null,

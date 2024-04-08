@@ -64,6 +64,8 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     this.issueFilterStore = issueFilterStore;
   }
 
+  fetchParentStats = () => {};
+
   fetchIssues = async (workspaceSlug: string, viewId: string, loadType: TLoader, options: IssuePaginationOptions) => {
     try {
       runInAction(() => {
@@ -73,7 +75,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
       const params = this.issueFilterStore?.getFilterParams(viewId, options, undefined, undefined, undefined);
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 
-      this.onfetchIssues(response, options);
+      this.onfetchIssues(response, options, workspaceSlug);
       return response;
     } catch (error) {
       this.setLoader(undefined);

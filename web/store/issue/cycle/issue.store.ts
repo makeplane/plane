@@ -109,6 +109,11 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
 
   getActiveCycleId = computedFn((cycleId: string) => this.activeCycleIds[cycleId]);
 
+  fetchParentStats = (workspaceSlug: string, projectId?: string | undefined, id?: string | undefined) => {
+    const cycleId = id ?? this.cycleId;
+    projectId && cycleId && this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+  };
+
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
@@ -125,7 +130,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
 
-      this.onfetchIssues(response, options);
+      this.onfetchIssues(response, options, workspaceSlug, projectId, cycleId);
       return response;
     } catch (error) {
       this.setLoader(undefined);
@@ -175,7 +180,6 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     try {
       const response = await super.createIssue(workspaceSlug, projectId, data, cycleId, false);
       await this.addIssueToCycle(workspaceSlug, projectId, cycleId, [response.id], false);
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
 
       return response;
     } catch (error) {

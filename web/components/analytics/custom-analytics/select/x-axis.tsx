@@ -3,18 +3,16 @@ import { IAnalyticsParams, TXAxisValues } from "@plane/types";
 
 // ui
 import { CustomSelect } from "@plane/ui";
-// types
-import { ANALYTICS_X_AXIS_VALUES } from "@/constants/analytics";
-// constants
 
 type Props = {
   value: TXAxisValues;
   onChange: (val: string) => void;
   params: IAnalyticsParams;
+  analyticsOptions: { value: TXAxisValues; label: string }[];
 };
 
 export const SelectXAxis: React.FC<Props> = (props) => {
-  const { value, onChange, params } = props;
+  const { value, onChange, params, analyticsOptions } = props;
 
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
@@ -22,11 +20,11 @@ export const SelectXAxis: React.FC<Props> = (props) => {
   return (
     <CustomSelect
       value={value}
-      label={<span>{ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label}</span>}
+      label={<span>{analyticsOptions.find((v) => v.value === value)?.label}</span>}
       onChange={onChange}
       maxHeight="lg"
     >
-      {ANALYTICS_X_AXIS_VALUES.map((item) => {
+      {analyticsOptions.map((item) => {
         if (params.segment === item.value) return null;
         if (cycleId && item.value === "issue_cycle__cycle_id") return null;
         if (moduleId && item.value === "issue_module__module_id") return null;

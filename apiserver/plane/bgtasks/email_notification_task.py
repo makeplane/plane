@@ -1,4 +1,5 @@
 import logging
+import re
 from datetime import datetime
 
 from bs4 import BeautifulSoup
@@ -17,6 +18,12 @@ from plane.db.models import EmailNotificationLog, Issue, User
 from plane.license.utils.instance_value import get_email_configuration
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
+
+
+def remove_unwanted_characters(input_text):
+    # Keep only alphanumeric characters, spaces, and dashes.
+    processed_text = re.sub(r"[^a-zA-Z0-9 \-]", "", input_text)
+    return processed_text
 
 
 # acquire and delete redis lock
@@ -175,7 +182,16 @@ def send_email_notification(
         if acquire_lock(lock_id=lock_id):
             # get the redis instance
             ri = redis_instance()
-            base_api = ri.get(str(issue_id)).decode()
+            base_api = (
+                ri.get(str(issue_id)).decode()
+                if ri.get(str(issue_id))
+                else None
+            )
+
+            # Skip if base api is not present
+            if not base_api:
+                return
+
             data = create_payload(notification_data=notification_data)
 
             # Get email configurations
@@ -255,9 +271,7 @@ def send_email_notification(
             summary = "Updates were made to the issue by"
 
             # Send the mail
-            subject = (
-                f"{issue.project.identifier}-{issue.sequence_id} {issue.name}"
-            )
+            subject = f"{issue.project.identifier}-{issue.sequence_id} {remove_unwanted_characters(issue.name)}"
             context = {
                 "data": template_data,
                 "summary": summary,
@@ -321,8 +335,7 @@ def send_email_notification(
                 "Duplicate email received skipping"
             )
             return
-    except (Issue.DoesNotExist, User.DoesNotExist) as e:
-        log_exception(e)
+    except (Issue.DoesNotExist, User.DoesNotExist):
         release_lock(lock_id=lock_id)
         return
     except Exception as e:

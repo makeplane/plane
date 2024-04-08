@@ -57,6 +57,10 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
     this.issueFilterStore = issueFilterStore;
   }
 
+  fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
+    projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+  };
+
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
@@ -71,7 +75,7 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       const response = await this.issueDraftService.getDraftIssues(workspaceSlug, projectId, params);
 
-      this.onfetchIssues(response, options);
+      this.onfetchIssues(response, options, workspaceSlug, projectId);
       return response;
     } catch (error) {
       this.setLoader(undefined);

@@ -1,4 +1,4 @@
-import { FC, Fragment } from "react";
+import { FC, Fragment, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
@@ -21,6 +21,7 @@ import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 export type ActiveCycleStatsProps = {
@@ -33,6 +34,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
+
+  const issuesContainerRef = useRef<HTMLDivElement | null>(null);
+  const issuesLoaderRef = useRef<HTMLDivElement | null>(null);
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -57,10 +61,19 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
 
   useSWR(
     workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycle.id ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 6, cycle.id) : null
+    workspaceSlug && projectId && cycle.id
+      ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 30, cycle.id)
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const cycleIssueDetails = getActiveCycleId(cycle.id);
+
+  const loadMoreIssues = useCallback(() => {
+    fetchNextActiveCycleIssues(workspaceSlug, projectId, cycle.id);
+  }, [workspaceSlug, projectId, cycle.id, issuesLoaderRef?.current, cycleIssueDetails?.nextPageResults]);
+
+  useIntersectionObserver(issuesContainerRef, issuesLoaderRef, loadMoreIssues, `0% 0% 100% 0%`);
 
   return (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
@@ -134,7 +147,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            <div className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm">
+            <div
+              ref={issuesContainerRef}
+              className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm"
+            >
               {cycleIssueDetails && cycleIssueDetails.issueIds ? (
                 cycleIssueDetails.issueCount > 0 ? (
                   <>
@@ -191,15 +207,13 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         </Link>
                       );
                     })}
-                    {cycleIssueDetails.nextPageResults && (
+                    {(cycleIssueDetails.nextPageResults === undefined || cycleIssueDetails.nextPageResults) && (
                       <div
+                        ref={issuesLoaderRef}
                         className={
-                          "h-11 relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
+                          "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-sm cursor-pointer animate-pulse"
                         }
-                        onClick={() => fetchNextActiveCycleIssues(workspaceSlug, projectId, cycle.id)}
-                      >
-                        Load more &darr;
-                      </div>
+                      />
                     )}
                   </>
                 ) : (
