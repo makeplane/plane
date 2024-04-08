@@ -16,7 +16,7 @@ import {
 // hooks
 import { useIssueDetail, useUser } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
 // store hooks
 import { IssueActivity } from "../issue-detail/issue-activity";
 import { SubIssuesRoot } from "../sub-issues";
@@ -55,11 +55,15 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     setPeekIssue(undefined);
   };
 
-  useOutsideClickDetector(issuePeekOverviewRef, () => {
-    if (!isAnyModalOpen) {
-      removeRoutePeekId();
-    }
-  });
+  usePeekOverviewOutsideClickDetector(
+    issuePeekOverviewRef,
+    () => {
+      if (!isAnyModalOpen) {
+        removeRoutePeekId();
+      }
+    },
+    issueId
+  );
   const handleKeyDown = () => {
     const slashCommandDropdownElement = document.querySelector("#slash-command");
     const dropdownElement = document.activeElement?.tagName === "INPUT";

@@ -1,56 +1,58 @@
 # Python imports
 import json
 
-# Django imports
-from django.utils import timezone
-from django.db.models import (
-    Prefetch,
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Case,
-    Value,
-    CharField,
-    When,
-    Exists,
-    Max,
-)
-from django.core.serializers.json import DjangoJSONEncoder
-from django.utils.decorators import method_decorator
-from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import UUIDField
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import (
+    Case,
+    CharField,
+    Exists,
+    F,
+    Func,
+    Max,
+    OuterRef,
+    Prefetch,
+    Q,
+    UUIDField,
+    Value,
+    When,
+)
 from django.db.models.functions import Coalesce
+
+# Django imports
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
+from rest_framework import status
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import status
 
-# Module imports
-from .. import BaseViewSet, BaseAPIView, WebhookMixin
-from plane.app.serializers import (
-    IssuePropertySerializer,
-    IssueSerializer,
-    IssueCreateSerializer,
-    IssueDetailSerializer,
-)
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
 )
-from plane.db.models import (
-    Project,
-    Issue,
-    IssueProperty,
-    IssueLink,
-    IssueAttachment,
-    IssueSubscriber,
-    IssueReaction,
+from plane.app.serializers import (
+    IssueCreateSerializer,
+    IssueDetailSerializer,
+    IssuePropertySerializer,
+    IssueSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (
+    Issue,
+    IssueAttachment,
+    IssueLink,
+    IssueProperty,
+    IssueReaction,
+    IssueSubscriber,
+    Project,
+)
 from plane.utils.issue_filters import issue_filters
+
+# Module imports
+from .. import BaseAPIView, BaseViewSet, WebhookMixin
 
 
 class IssueListEndpoint(BaseAPIView):

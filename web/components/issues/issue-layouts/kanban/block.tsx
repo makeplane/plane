@@ -47,13 +47,14 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   const {
     router: { workspaceSlug },
   } = useApplication();
-  const { setPeekIssue } = useIssueDetail();
+  const { peekIssue, setPeekIssue } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
     issue &&
     issue.project_id &&
     issue.id &&
+    peekIssue?.issueId !== issue.id &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   return (
@@ -69,16 +70,17 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
 
       {issue?.is_draft ? (
         <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-          <span>{issue.name}</span>
+          <span className="pb-1.5">{issue.name}</span>
         </Tooltip>
       ) : (
         <ControlLink
+          id={`issue-${issue.id}`}
           href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
             issue.id
           }`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
-          className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100 pb-1.5"
           disabled={!!issue?.tempId}
         >
           <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
@@ -138,7 +140,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
         >
           <div
             className={cn(
-              "rounded border-[0.5px] w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+              "rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
               { "hover:cursor-grab": !isDragDisabled },
               { "border-custom-primary-100": snapshot.isDragging },
               { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }

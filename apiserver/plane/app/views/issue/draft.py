@@ -120,7 +120,6 @@ class IssueDraftViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
-
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
         state_order = [
