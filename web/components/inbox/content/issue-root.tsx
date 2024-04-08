@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { TIssue } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueProperties } from "@/components/inbox/content";
 import {
@@ -12,7 +12,7 @@ import {
   TIssueOperations,
 } from "@/components/issues";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
@@ -30,6 +30,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssue, is_editable, isSubmitting, setIsSubmitting } = props;
   // hooks
   const { currentUser } = useUser();
+  const { isLoading } = useProjectInbox();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
@@ -127,16 +128,22 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           value={issue.name}
         />
 
-        <IssueDescriptionInput
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issue.id}
-          value={issueDescription}
-          initialValue={issueDescription}
-          disabled={!is_editable}
-          issueOperations={issueOperations}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
-        />
+        {isLoading ? (
+          <Loader className="h-[150px] space-y-2 overflow-hidden rounded-md border border-custom-border-200 p-2 py-2">
+            <Loader.Item width="100%" height="132px" />
+          </Loader>
+        ) : (
+          <IssueDescriptionInput
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            issueId={issue.id}
+            value={issueDescription}
+            initialValue={issueDescription}
+            disabled={!is_editable}
+            issueOperations={issueOperations}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+          />
+        )}
 
         {currentUser && (
           <IssueReaction

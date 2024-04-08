@@ -18,7 +18,7 @@ import { RootStore } from "@/store/root.store";
 // store helpers
 import { InboxIssueHelpers } from "./helpers";
 
-type TLoader = "init-loading" | "filter-loading" | "pagination-loading" | undefined;
+type TLoader = "init-loading" | "filter-loading" | "pagination-loading" | "issue-loading" | undefined;
 
 export interface IProjectInboxStore {
   currentTab: TInboxIssueCurrentTab;
@@ -225,6 +225,7 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
    */
   fetchInboxIssueById = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
     try {
+      this.isLoading = "issue-loading";
       const inboxIssue = await this.inboxIssueService.retrieve(workspaceSlug, projectId, inboxIssueId);
       const issueId = inboxIssue?.issue?.id || undefined;
 
@@ -238,9 +239,11 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
         runInAction(() => {
           set(this.inboxIssues, issueId, new InboxIssueStore(workspaceSlug, projectId, inboxIssue));
         });
+        this.isLoading = undefined;
       }
     } catch {
       console.error("Error fetching the inbox issue with inbox issue id");
+      this.isLoading = undefined;
     }
   };
 
