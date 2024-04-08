@@ -90,16 +90,18 @@ export const toggleBlockquote = (editor: Editor, range?: Range) => {
 
 export const insertTableCommand = (editor: Editor, range?: Range) => {
   if (typeof window !== "undefined") {
-    const selection: any = window?.getSelection();
-    if (selection.rangeCount !== 0) {
-      const range = selection.getRangeAt(0);
-      if (findTableAncestor(range.startContainer)) {
-        return;
+    const selection = window.getSelection();
+    if (selection) {
+      if (selection.rangeCount !== 0) {
+        const range = selection.getRangeAt(0);
+        if (findTableAncestor(range.startContainer)) {
+          return;
+        }
       }
     }
   }
-  if (range) editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3 }).run();
-  else editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run();
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().insertTable({ rows: 3, cols: 3 }).run();
+  else editor.chain().focus().clearNodes().insertTable({ rows: 3, cols: 3 }).run();
 };
 
 export const unsetLinkEditor = (editor: Editor) => {
