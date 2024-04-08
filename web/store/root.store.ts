@@ -21,7 +21,7 @@ import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { RouterStore, IRouterStore } from "./router.store";
 import { IStateStore, StateStore } from "./state.store";
 import { ThemeStore, IThemeStore } from "./theme.store";
-import { IUserStore, UserStore } from "./user/user.store";
+import { IUserStore, UserStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 
 enableStaticRendering(typeof window === "undefined");
@@ -72,7 +72,7 @@ export class RootStore {
     this.commandPalette = new CommandPaletteStore();
     this.theme = new ThemeStore(this);
     this.eventTracker = new EventTrackerStore(this);
-    this.instance = new InstanceStore(this);
+    this.instance = new InstanceStore();
     this.user = new UserStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.theme = new ThemeStore(this);
@@ -99,7 +99,7 @@ export class RootStore {
     this.commandPalette = new CommandPaletteStore();
     this.theme = new ThemeStore(this);
     this.eventTracker = new EventTrackerStore(this);
-    this.instance = new InstanceStore(this);
+    this.instance = new InstanceStore();
     this.user = new UserStore(this);
     this.projectPages = new ProjectPageStore(this);
   }
