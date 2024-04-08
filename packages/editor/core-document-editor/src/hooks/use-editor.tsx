@@ -80,7 +80,7 @@ export const useEditor = ({
   // for syncing swr data on tab refocus etc
   useEffect(() => {
     if (editor && !editor.isDestroyed) editor?.commands.setContent(updatedValue);
-  }, [updatedValue]);
+  }, [editor, updatedValue]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
 

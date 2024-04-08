@@ -9,9 +9,7 @@ import { IMentionHighlight } from "src/types/mention-suggestion";
 
 interface CustomReadOnlyEditorProps {
   value: string;
-  updatedValue: string;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
-  onStart?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
   handleEditorReady?: (value: boolean) => void;
@@ -20,8 +18,6 @@ interface CustomReadOnlyEditorProps {
 
 export const useReadOnlyEditor = ({
   value,
-  updatedValue,
-  onStart,
   forwardedRef,
   extensions = [],
   editorProps = {},
@@ -53,8 +49,8 @@ export const useReadOnlyEditor = ({
 
   // for syncing swr data on tab refocus etc
   useEffect(() => {
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(updatedValue);
-  }, [updatedValue]);
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(value);
+  }, [editor, value]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
 

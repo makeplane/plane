@@ -11,7 +11,6 @@ import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget
 
 interface IDocumentReadOnlyEditor {
   value: string;
-  updatedValue?: string;
   customClassName: string;
   tabIndex?: number;
   title: string;
@@ -21,19 +20,9 @@ interface IDocumentReadOnlyEditor {
 }
 
 const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
-  const {
-    customClassName,
-    value,
-    updatedValue = "",
-    title,
-    forwardedRef,
-    tabIndex,
-    handleEditorReady,
-    mentionHighlights,
-  } = props;
+  const { customClassName, value, title, forwardedRef, tabIndex, handleEditorReady, mentionHighlights } = props;
   const editor = useReadOnlyEditor({
     value,
-    updatedValue,
     mentionHighlights,
     forwardedRef,
     handleEditorReady,

@@ -137,9 +137,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             ref={readOnlyEditorRef}
             title={pageTitle}
             value={pageDescription}
-            updatedValue={swrPageDetails?.description_html ?? "<p></p>"}
             handleEditorReady={handleReadOnlyEditorReady}
-            customClassName="tracking-tight w-full px-0 !border-none"
+            customClassName="p-0 pb-64 pl-5 border-none"
             mentionHighlights={mentionHighlights}
           />
         )}
