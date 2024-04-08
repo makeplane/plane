@@ -1,3 +1,4 @@
+import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
@@ -9,14 +10,13 @@ import {
   TInboxIssueFilter,
   TInboxIssueSorting,
   TInboxIssuePaginationInfo,
+  TInboxIssueSortingOrderByQueryParam,
 } from "@plane/types";
 // services
 import { InboxIssueService } from "@/services/inbox";
 // root store
 import { IInboxIssueStore, InboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { RootStore } from "@/store/root.store";
-// store helpers
-import { InboxIssueHelpers } from "./helpers";
 
 type TLoader = "init-loading" | "filter-loading" | "pagination-loading" | "issue-loading" | undefined;
 
@@ -31,7 +31,14 @@ export interface IProjectInboxStore {
   // computed
   getAppliedFiltersCount: number;
   inboxIssuesArray: IInboxIssueStore[];
+  // helper actions
   getIssueInboxByIssueId: (issueId: string) => IInboxIssueStore | undefined;
+  inboxIssueQueryParams: (
+    inboxFilters: Partial<TInboxIssueFilter>,
+    inboxSorting: Partial<TInboxIssueSorting>,
+    pagePerCount: number,
+    paginationCursor: string
+  ) => Partial<Record<keyof TInboxIssueFilter, string>>;
   // actions
   handleCurrentTab: (tab: TInboxIssueCurrentTab) => void;
   handleInboxIssueFilters: <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => void; // if user sends me undefined, I will remove the value from the filter key
@@ -47,7 +54,7 @@ export interface IProjectInboxStore {
   deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
 }
 
-export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInboxStore {
+export class ProjectInboxStore implements IProjectInboxStore {
   // constants
   PER_PAGE_COUNT = 10;
   // observables
@@ -67,7 +74,6 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   inboxIssueService;
 
   constructor(private store: RootStore) {
-    super();
     makeObservable(this, {
       currentTab: observable.ref,
       isLoading: observable.ref,
@@ -109,6 +115,51 @@ export class ProjectInboxStore extends InboxIssueHelpers implements IProjectInbo
   }
 
   getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId] || undefined);
+
+  inboxIssueQueryParams = (
+    inboxFilters: Partial<TInboxIssueFilter>,
+    inboxSorting: Partial<TInboxIssueSorting>,
+    pagePerCount: number,
+    paginationCursor: string
+  ) => {
+    const filters: Partial<Record<keyof TInboxIssueFilter, string>> = {};
+    !isEmpty(inboxFilters) &&
+      Object.keys(inboxFilters).forEach((key) => {
+        const filterKey = key as keyof TInboxIssueFilter;
+        if (inboxFilters[filterKey] && inboxFilters[filterKey]?.length)
+          filters[filterKey] = inboxFilters[filterKey]?.join(",");
+      });
+
+    const sorting: TInboxIssueSortingOrderByQueryParam = {
+      order_by: "-issue__created_at",
+    };
+    if (inboxSorting?.order_by && inboxSorting?.sort_by) {
+      switch (inboxSorting.order_by) {
+        case "issue__created_at":
+          if (inboxSorting.sort_by === "desc") sorting.order_by = `-issue__created_at`;
+          else sorting.order_by = "issue__created_at";
+          break;
+        case "issue__updated_at":
+          if (inboxSorting.sort_by === "desc") sorting.order_by = `-issue__updated_at`;
+          else sorting.order_by = "issue__updated_at";
+          break;
+        case "issue__sequence_id":
+          if (inboxSorting.sort_by === "desc") sorting.order_by = `-issue__sequence_id`;
+          else sorting.order_by = "issue__sequence_id";
+          break;
+        default:
+          sorting.order_by = "-issue__created_at";
+          break;
+      }
+    }
+
+    return {
+      ...filters,
+      ...sorting,
+      per_page: pagePerCount,
+      cursor: paginationCursor,
+    };
+  };
 
   // actions
   handleCurrentTab = (tab: TInboxIssueCurrentTab) => {
