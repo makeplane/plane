@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { observer } from "mobx-react";
+import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
+import { observer } from "mobx-react-lite";
 import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -10,7 +10,6 @@ import {
   IssueActivity,
   IssueReaction,
   TIssueOperations,
-  IssueUpdateStatus,
 } from "@/components/issues";
 // hooks
 import { useUser } from "@/hooks/store";
@@ -23,12 +22,12 @@ type Props = {
   projectId: string;
   inboxIssue: IInboxIssueStore;
   is_editable: boolean;
+  isSubmitting: "submitting" | "submitted" | "saved";
+  setIsSubmitting: Dispatch<SetStateAction<"submitting" | "submitted" | "saved">>;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssue, is_editable } = props;
-  // states
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  const { workspaceSlug, projectId, inboxIssue, is_editable, isSubmitting, setIsSubmitting } = props;
   // hooks
   const { currentUser } = useUser();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
@@ -117,9 +116,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   return (
     <>
       <div className="rounded-lg space-y-4">
-        <div className="flex items-center justify-end w-full">
-          <IssueUpdateStatus isSubmitting={isSubmitting} />
-        </div>
         <IssueTitleInput
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}

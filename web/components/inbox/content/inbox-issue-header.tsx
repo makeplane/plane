@@ -12,6 +12,7 @@ import {
   InboxIssueStatus,
   SelectDuplicateInboxIssueModal,
 } from "@/components/inbox";
+import { IssueUpdateStatus } from "@/components/issues";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
@@ -25,10 +26,11 @@ type TInboxIssueActionsHeader = {
   workspaceSlug: string;
   projectId: string;
   inboxIssue: IInboxIssueStore | undefined;
+  isSubmitting: "submitting" | "submitted" | "saved";
 };
 
 export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssue } = props;
+  const { workspaceSlug, projectId, inboxIssue, isSubmitting } = props;
   // states
   const [isSnoozeDateModalOpen, setIsSnoozeDateModalOpen] = useState(false);
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
@@ -172,11 +174,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       <div className="relative flex h-full w-full items-center justify-between gap-2 px-4">
         <div className="flex items-center gap-4">
           {issue?.project_id && issue.sequence_id && (
-            <h3 className="text-base font-medium text-custom-text-300">
+            <h3 className="text-base font-medium text-custom-text-300 flex-shrink-0">
               {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
             </h3>
           )}
           <InboxIssueStatus inboxIssue={inboxIssue} />
+          <div className="flex items-center justify-end w-full">
+            <IssueUpdateStatus isSubmitting={isSubmitting} />
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
