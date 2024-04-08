@@ -299,7 +299,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                     )
 
                     # Update the issue state only if it is in triage state
-                    if issue.state.group == "triage":
+                    if issue.state.is_triage:
                         # Move to default state
                         state = State.objects.filter(
                             workspace__slug=slug,

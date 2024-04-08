@@ -26,15 +26,12 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     ProjectMember,
-    IssueReaction,
-    IssueSubscriber,
 )
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueSerializer,
     InboxSerializer,
     InboxIssueSerializer,
-    IssueDetailSerializer,
     InboxIssueDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
@@ -388,7 +385,7 @@ class InboxIssueViewSet(BaseViewSet):
                     )
 
                     # Update the issue state only if it is in triage state
-                    if issue.state.group == "triage":
+                    if issue.state.is_triage:
                         # Move to default state
                         state = State.objects.filter(
                             workspace__slug=slug,
