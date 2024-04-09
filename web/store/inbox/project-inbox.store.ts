@@ -167,6 +167,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
     set(this, "inboxFilters", undefined);
     set(this, ["inboxSorting", "order_by"], "issue__created_at");
     set(this, ["inboxSorting", "sort_by"], "desc");
+    set(this, ["inboxIssues"], {});
+    set(this, ["inboxIssuePaginationInfo"], undefined);
     if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 0, 1, 2]);
     else set(this, ["inboxFilters", "status"], [-2]);
     const { workspaceSlug, projectId } = this.store.app.router;
@@ -193,9 +195,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   fetchInboxIssues = async (workspaceSlug: string, projectId: string, loadingType: TLoader = undefined) => {
     try {
       if (loadingType) this.isLoading = loadingType;
-      else this.isLoading = "init-loading";
-      this.inboxIssuePaginationInfo = undefined;
-      this.inboxIssues = {};
+      else if (Object.keys(this.inboxIssues).length === 0) this.isLoading = "init-loading";
 
       const queryParams = this.inboxIssueQueryParams(
         this.inboxFilters,
