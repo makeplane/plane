@@ -684,17 +684,38 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     issueIds: string[],
     fetchAddedIssues = true
   ) {
+    let previousIssue: TIssue | undefined = undefined;
     try {
+      // If it is just 1 issue and the issue already exists try to update store before hand
+      if (issueIds.length === 1 && this.rootIssueStore.issues.getIssueById(issueIds[0])) {
+        const issueId = issueIds[0];
+        previousIssue = clone(this.rootIssueStore.issues.getIssueById(issueId));
+
+        // Update issueIds from current store
+        runInAction(() => {
+          // If cycle Id is the current cycle Id, then, add issue to list of issueIds
+          if (this.cycleId === cycleId) this.addIssueToList(issueId);
+          // If cycle Id is not the current cycle Id, then, remove issue to list of issueIds
+          else if (this.cycleId) this.removeIssueFromList(issueId);
+        });
+
+        // For Each issue update cycle Id by calling current store's update Issue, without making an API call
+        this.updateIssue(workspaceSlug, projectId, issueId, { cycle_id: cycleId }, false);
+      }
+
       // Perform an APi call to add issue to cycle
       await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
         issues: issueIds,
       });
 
-      // if true, fetch the issue data for all the issueIds
-      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
-
       // if cycle Id is the current Cycle Id then call fetch parent stats
       if (this.cycleId === cycleId) this.fetchParentStats(workspaceSlug, projectId);
+
+      // after making the backend call, if store was previously updated, stop here and return back
+      if (previousIssue) return;
+
+      // if true, fetch the issue data for all the issueIds
+      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
 
       // Update issueIds from current store
       runInAction(() => {
@@ -709,6 +730,19 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         this.updateIssue(workspaceSlug, projectId, issueId, { cycle_id: cycleId }, false);
       });
     } catch (error) {
+      // If errored out and we had previously updated the store, revert it back
+      if (previousIssue) {
+        // Update issueIds from current store
+        runInAction(() => {
+          // If cycle Id is the current cycle Id, then, remove issue to list of issueIds
+          if (this.cycleId === cycleId) this.removeIssueFromList(previousIssue!.id);
+          // If cycle Id is not the current cycle Id, then, add issue to list of issueIds
+          else if (this.cycleId) this.addIssueToList(previousIssue!.id);
+        });
+
+        // For Each issue update cycle Id to previous value by calling current store's update Issue, without making an API call
+        this.updateIssue(workspaceSlug, projectId, previousIssue.id, { cycle_id: previousIssue.cycle_id }, false);
+      }
       throw error;
     }
   }
@@ -833,7 +867,18 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @returns
    */
   async addModulesToIssue(workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) {
+    const issueModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
     try {
+      // perform store update before api call
+      runInAction(() => {
+        // If current Module Id is included in the modules list, then add Issue to List
+        if (moduleIds.includes(this.moduleId ?? "")) this.addIssueToList(issueId);
+
+        // For current Issue, update module Ids by calling current store's update Issue, without making an API call
+        const updatedIssueModuleIds = uniq(concat([...issueModuleIds], moduleIds));
+        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: updatedIssueModuleIds }, false);
+      });
+
       // Call API to update the issue to add modules
       const issueToModule = await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
         modules: moduleIds,
@@ -842,20 +887,16 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // If current module Id is in the list of module Ids, fetch parent stats
       if (moduleIds.includes(this.moduleId ?? "")) this.fetchParentStats(workspaceSlug, projectId);
 
-      runInAction(() => {
-        moduleIds.forEach((moduleId) => {
-          // If module ID is qual to current Module Id the add Issue to List
-          this.moduleId === moduleId && this.addIssueToList(issueId);
-        });
-
-        // For current Issue, update module Ids by calling current store's update Issue, without making an API call
-        const issueModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
-        const updatedIssueModuleIds = uniq(concat(issueModuleIds, moduleIds));
-        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: updatedIssueModuleIds }, false);
-      });
-
       return issueToModule;
     } catch (error) {
+      // If API call fail, then revert back the store
+      runInAction(() => {
+        // If current Module Id is included in the modules list, then remove Issue from List
+        if (moduleIds.includes(this.moduleId ?? "")) this.removeIssueFromList(issueId);
+
+        // For current Issue, update module Ids by calling current store's update Issue, without making an API call
+        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: issueModuleIds }, false);
+      });
       throw error;
     }
   }
@@ -869,21 +910,21 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @returns
    */
   async removeModulesFromIssue(workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) {
+    const issueModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
     try {
       // Update Store
       runInAction(() => {
         // get current Module Ids of the issue
-        let issueModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
-
+        let currentModuleIds = [...issueModuleIds];
         // for each module Id, remove it from issueModuleIds
         moduleIds.forEach((moduleId) => {
           // If module Id is equal to current module Id, them remove Issue from List
           this.moduleId === moduleId && this.removeIssueFromList(issueId);
-          issueModuleIds = pull(issueModuleIds, moduleId);
+          currentModuleIds = pull(currentModuleIds, moduleId);
         });
 
         // update the moduleIds of the issue by calling the current update method
-        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: issueModuleIds }, false);
+        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: currentModuleIds }, false);
       });
 
       // call API
@@ -899,6 +940,14 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
       return response;
     } catch (error) {
+      // if API errored out, then revert the store change
+      runInAction(() => {
+        // If module Id is equal to current module Id, them remove Issue from List
+        if (moduleIds.includes(this.moduleId ?? "")) this.addIssueToList(issueId);
+
+        // update the moduleIds of the issue by calling the current update method
+        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: issueModuleIds }, false);
+      });
       throw error;
     }
   }
