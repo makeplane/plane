@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 // editor
-import { EditorRefApi } from "@plane/document-editor";
-import { EditorMenuItemNames } from "@plane/editor-document-core";
+import { EditorMenuItemNames, EditorRefApi } from "@plane/document-editor";
 // ui
 import { Tooltip } from "@plane/ui";
 // constants

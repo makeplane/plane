@@ -66,10 +66,11 @@ export const CoreEditorExtensions = (
   // BulletList,
   // OrderedList,
   // ListItem,
-
   CustomQuoteExtension,
   CustomHorizontalRule.configure({
-    HTMLAttributes: { class: "my-4" },
+    HTMLAttributes: {
+      class: "my-4",
+    },
   }),
   CustomKeymap,
   ListKeymap,
@@ -105,7 +106,7 @@ export const CoreEditorExtensions = (
   }),
   CustomCodeBlockExtension.configure({
     HTMLAttributes: {
-      class: "bg-custom-background-90 text-custom-text-100 rounded-lg p-8 pl-9 pr-4",
+      class: "",
     },
   }),
   CustomCodeMarkPlugin,

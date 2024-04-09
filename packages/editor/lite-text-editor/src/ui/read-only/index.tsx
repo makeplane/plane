@@ -6,7 +6,7 @@ import {
   getEditorClassNames,
   IMentionHighlight,
   useReadOnlyEditor,
-} from "@plane/editor-document-core";
+} from "@plane/editor-core";
 
 export interface ILiteTextReadOnlyEditor {
   initialValue: string;

@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { EditorContainer, EditorContentWrapper } from "@plane/editor-document-core";
+import { EditorContainer, EditorContentWrapper } from "@plane/editor-core";
 import { Node } from "@tiptap/pm/model";
 import { EditorView } from "@tiptap/pm/view";
 import { Editor, ReactRenderer } from "@tiptap/react";

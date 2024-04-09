@@ -10,7 +10,7 @@ import {
   UploadImage,
   useEditor,
   EditorRefApi,
-} from "@plane/editor-document-core";
+} from "@plane/editor-core";
 import * as React from "react";
 import { RichTextEditorExtensions } from "src/ui/extensions";
 import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";

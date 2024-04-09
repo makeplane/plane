@@ -1,9 +1,13 @@
+import { ReactRenderer } from "@tiptap/react";
+import { Editor } from "@tiptap/core";
+import tippy from "tippy.js";
+
 import { v4 as uuidv4 } from "uuid";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { MentionList } from "src/ui/mentions/mention-list";
 
-export const getSuggestionItems =
-  (suggestions: IMentionSuggestion[]) =>
-  ({ query }: { query: string }) => {
+export const getSuggestionItems = (suggestions: IMentionSuggestion[]) => {
+  return ({ query }: { query: string }) => {
     const mappedSuggestions: IMentionSuggestion[] = suggestions.map((suggestion): IMentionSuggestion => {
       const transactionId = uuidv4();
       return {
@@ -15,6 +19,7 @@ export const getSuggestionItems =
       .filter((suggestion) => suggestion.title.toLowerCase().startsWith(query.toLowerCase()))
       .slice(0, 5);
   };
+};
 
 // export const Suggestion = (suggestions: IMentionSuggestion[]) => ({
 //   items: getSuggestionItems(suggestions),

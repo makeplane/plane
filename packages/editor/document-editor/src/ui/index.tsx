@@ -6,7 +6,7 @@ import {
   getEditorClassNames,
   useEditor,
   EditorRefApi,
-} from "@plane/editor-document-core";
+} from "@plane/editor-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { IMentionHighlight, IMentionSuggestion } from "@plane/editor-core";

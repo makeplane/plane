@@ -12,8 +12,8 @@ export const MentionNodeView = (props) => {
   const [highlightsState, setHighlightsState] = useState<IMentionHighlight[]>();
 
   useEffect(() => {
+    if (!props.extension.options.mentionHighlights) return;
     const hightlights = async () => {
-      if (!props.extension.options.mentionHighlights) return;
       const userId = await props.extension.options.mentionHighlights();
       setHighlightsState(userId);
     };

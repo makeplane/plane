@@ -16,7 +16,7 @@ import {
   Underline,
 } from "lucide-react";
 // editor
-import { EditorMenuItemNames } from "@plane/editor-document-core";
+import { EditorMenuItemNames } from "@plane/document-editor";
 
 type TEditorTypes = "lite" | "document";
 

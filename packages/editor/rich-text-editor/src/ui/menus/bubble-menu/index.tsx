@@ -12,7 +12,7 @@ import {
   LucideIconType,
   StrikeThroughItem,
   UnderLineItem,
-} from "@plane/editor-document-core";
+} from "@plane/editor-core";
 
 export interface BubbleMenuItem {
   name: string;

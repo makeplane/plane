@@ -31,7 +31,7 @@ import {
   toggleHeadingOne,
   toggleHeadingTwo,
   toggleHeadingThree,
-} from "@plane/editor-document-core";
+} from "@plane/editor-core";
 
 interface CommandItemProps {
   key: string;

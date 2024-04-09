@@ -46,7 +46,7 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreIma
               const removedImages: ImageNode[] = [];
 
               // iterate through all the nodes in the old state
-              oldState.doc.descendants((oldNode) => {
+              oldState.doc.descendants((oldNode, oldPos) => {
                 // if the node is not an image, then return as no point in checking
                 if (oldNode.type.name !== IMAGE_NODE_TYPE) return;
 

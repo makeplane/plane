@@ -189,7 +189,7 @@ function createToolbox({
   tippyOptions,
   onSelectColor,
   onClickItem,
-  colors = {},
+  colors,
 }: {
   triggerButton: Element | null;
   items: ToolboxItem[];
@@ -202,38 +202,44 @@ function createToolbox({
   const toolbox = tippy(triggerButton, {
     content: h(
       "div",
-      { className: "table-toolbox" },
-      items.map((item, index) => {
+      {
+        className:
+          "rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg min-w-[12rem] whitespace-nowrap",
+      },
+      items.map((item) => {
         if (item.label === "Pick color") {
           return h("div", { className: "flex flex-col" }, [
-            h("div", { className: "divider" }),
-            h("div", { className: "color-picker-label" }, item.label),
+            h("hr", { className: "my-2 border-custom-border-200" }),
+            h("div", { className: "text-custom-text-200 text-sm" }, item.label),
             h(
               "div",
-              { className: "color-picker grid" },
+              { className: "grid grid-cols-6 gap-x-1 gap-y-2.5 mt-2" },
               Object.entries(colors).map(([colorName, colorValue]) =>
                 h("div", {
-                  className: "color-picker-item flex items-center justify-center",
-                  style: `background-color: ${colorValue.backgroundColor}; 
-          color: ${colorValue.textColor || "inherit"};`,
+                  className: "grid place-items-center size-6 rounded cursor-pointer",
+                  style: `background-color: ${colorValue.backgroundColor};color: ${colorValue.textColor || "inherit"};`,
                   innerHTML:
                     colorValue.icon ?? `<span class="text-md" style:"color: ${colorValue.backgroundColor}>A</span>`,
                   onClick: () => onSelectColor(colorValue),
                 })
               )
             ),
-            h("div", { className: "divider" }),
+            h("hr", { className: "my-2 border-custom-border-200" }),
           ]);
         } else {
           return h(
             "div",
             {
-              className: "toolbox-item",
+              className:
+                "flex items-center gap-2 px-1 py-1.5 bg-custom-background-100 hover:bg-custom-background-80 text-sm text-custom-text-200 rounded cursor-pointer",
               itemType: "div",
               onClick: () => onClickItem(item),
             },
             [
-              h("div", { className: "icon-container", innerHTML: item.icon }),
+              h("span", {
+                className: "h-3 w-3 flex-shrink-0",
+                innerHTML: item.icon,
+              }),
               h("div", { className: "label" }, item.label),
             ]
           );
@@ -380,7 +386,7 @@ export class TableView implements NodeView {
     this.root = h(
       "div",
       {
-        className: "table-wrapper controls--disabled",
+        className: "table-wrapper horizontal-scrollbar scrollbar-md controls--disabled",
       },
       this.controls,
       this.table

@@ -1,22 +1,22 @@
 import { Editor, Range } from "@tiptap/core";
 import { startImageUpload } from "src/ui/plugins/upload-image";
 import { findTableAncestor } from "src/lib/utils";
-import { UploadImage } from "src/types/upload-image";
 import { Selection } from "@tiptap/pm/state";
+import { UploadImage } from "src/types/upload-image";
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().setNode("heading", { level: 1 }).run();
-  else editor.chain().focus().clearNodes().toggleHeading({ level: 1 }).run();
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
+  else editor.chain().focus().toggleHeading({ level: 1 }).run();
 };
 
 export const toggleHeadingTwo = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().setNode("heading", { level: 2 }).run();
-  else editor.chain().focus().clearNodes().toggleHeading({ level: 2 }).run();
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
+  else editor.chain().focus().toggleHeading({ level: 2 }).run();
 };
 
 export const toggleHeadingThree = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().setNode("heading", { level: 3 }).run();
-  else editor.chain().focus().clearNodes().toggleHeading({ level: 3 }).run();
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
+  else editor.chain().focus().toggleHeading({ level: 3 }).run();
 };
 
 export const toggleBold = (editor: Editor, range?: Range) => {
@@ -38,10 +38,10 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
   // Check if code block is active then toggle code block
   if (editor.isActive("codeBlock")) {
     if (range) {
-      editor.chain().focus().deleteRange(range).clearNodes().toggleCodeBlock().run();
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
       return;
     }
-    editor.chain().focus().clearNodes().toggleCodeBlock().run();
+    editor.chain().focus().toggleCodeBlock().run();
     return;
   }
 
@@ -50,32 +50,32 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
 
   if (isSelectionEmpty) {
     if (range) {
-      editor.chain().focus().deleteRange(range).clearNodes().toggleCodeBlock().run();
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
       return;
     }
-    editor.chain().focus().clearNodes().toggleCodeBlock().run();
+    editor.chain().focus().toggleCodeBlock().run();
   } else {
     if (range) {
-      editor.chain().focus().deleteRange(range).clearNodes().toggleCode().run();
+      editor.chain().focus().deleteRange(range).toggleCode().run();
       return;
     }
-    editor.chain().focus().clearNodes().toggleCode().run();
+    editor.chain().focus().toggleCode().run();
   }
 };
 
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().toggleOrderedList().run();
-  else editor.chain().focus().clearNodes().toggleOrderedList().run();
+  if (range) editor.chain().focus().deleteRange(range).toggleOrderedList().run();
+  else editor.chain().focus().toggleOrderedList().run();
 };
 
 export const toggleBulletList = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().toggleBulletList().run();
-  else editor.chain().focus().clearNodes().toggleBulletList().run();
+  if (range) editor.chain().focus().deleteRange(range).toggleBulletList().run();
+  else editor.chain().focus().toggleBulletList().run();
 };
 
 export const toggleTaskList = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().toggleTaskList().run();
-  else editor.chain().focus().clearNodes().toggleTaskList().run();
+  if (range) editor.chain().focus().deleteRange(range).toggleTaskList().run();
+  else editor.chain().focus().toggleTaskList().run();
 };
 
 export const toggleStrike = (editor: Editor, range?: Range) => {
@@ -84,8 +84,8 @@ export const toggleStrike = (editor: Editor, range?: Range) => {
 };
 
 export const toggleBlockquote = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().toggleBlockquote().run();
-  else editor.chain().focus().clearNodes().toggleBlockquote().run();
+  if (range) editor.chain().focus().deleteRange(range).toggleBlockquote().run();
+  else editor.chain().focus().toggleBlockquote().run();
 };
 
 export const insertTableCommand = (editor: Editor, range?: Range) => {
@@ -115,7 +115,6 @@ export const setLinkEditor = (editor: Editor, url: string) => {
 export const insertImageCommand = (
   editor: Editor,
   uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
   savedSelection?: Selection | null,
   range?: Range
 ) => {
@@ -127,7 +126,7 @@ export const insertImageCommand = (
     if (input.files?.length) {
       const file = input.files[0];
       const pos = savedSelection?.anchor ?? editor.view.state.selection.from;
-      startImageUpload(file, editor.view, pos, uploadFile, setIsSubmitting);
+      startImageUpload(file, editor.view, pos, uploadFile);
     }
   };
   input.click();

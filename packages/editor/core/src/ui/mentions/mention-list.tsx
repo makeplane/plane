@@ -147,7 +147,7 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
           </div>
         ))
       ) : (
-        <div className="flex justify-center items-center h-full">No results</div>
+        <div className="text-center text-custom-text-400">No results</div>
       )}
     </div>
   );

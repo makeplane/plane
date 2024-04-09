@@ -10,7 +10,7 @@ import {
   useEditor,
   IMentionHighlight,
   EditorRefApi,
-} from "@plane/editor-document-core";
+} from "@plane/editor-core";
 import { LiteTextEditorExtensions } from "src/ui/extensions";
 
 export interface ILiteTextEditor {

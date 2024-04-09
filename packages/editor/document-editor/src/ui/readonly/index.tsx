@@ -1,10 +1,5 @@
 import { forwardRef, MutableRefObject } from "react";
-import {
-  EditorReadOnlyRefApi,
-  getEditorClassNames,
-  IMentionHighlight,
-  useReadOnlyEditor,
-} from "@plane/editor-document-core";
+import { EditorReadOnlyRefApi, getEditorClassNames, IMentionHighlight, useReadOnlyEditor } from "@plane/editor-core";
 // components
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";

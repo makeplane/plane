@@ -1,4 +1,4 @@
-import { UploadImage } from "@plane/editor-document-core";
+import { UploadImage } from "@plane/editor-core";
 import { DragAndDrop, SlashCommandDocumentEditor } from "@plane/editor-extensions";
 import Placeholder from "@tiptap/extension-placeholder";
 

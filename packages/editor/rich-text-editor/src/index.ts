@@ -4,5 +4,5 @@ export { RichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "src/ui/re
 export type { IRichTextEditor } from "src/ui";
 
 export type { IRichTextReadOnlyEditor } from "src/ui/read-only";
-export type { IMentionSuggestion, IMentionHighlight } from "@plane/editor-document-core";
-export type { EditorRefApi, EditorReadOnlyRefApi } from "@plane/editor-document-core";
+export type { IMentionSuggestion, IMentionHighlight } from "@plane/editor-core";
+export type { EditorRefApi, EditorReadOnlyRefApi } from "@plane/editor-core";

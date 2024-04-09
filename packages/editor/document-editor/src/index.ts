@@ -4,6 +4,6 @@ export { DocumentReadOnlyEditor, DocumentReadOnlyEditorWithRef } from "src/ui/re
 // hooks
 export { useEditorMarkings } from "src/hooks/use-editor-markings";
 
-export type { EditorRefApi, EditorReadOnlyRefApi } from "@plane/editor-document-core";
+export type { EditorRefApi, EditorReadOnlyRefApi, EditorMenuItem, EditorMenuItemNames } from "@plane/editor-core";
 
 export type { IMarking } from "src/types/editor-types";

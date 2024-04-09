@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Globe2, Lock, LucideIcon } from "lucide-react";
 // editor
-import { EditorMenuItemNames } from "@plane/editor-document-core";
+import { EditorMenuItemNames } from "@plane/document-editor";
 import { EditorRefApi } from "@plane/lite-text-editor";
 // ui
 import { Button, Tooltip } from "@plane/ui";
