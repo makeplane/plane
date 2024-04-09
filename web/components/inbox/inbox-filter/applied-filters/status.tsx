@@ -17,8 +17,6 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
   const handleFilterValue = (value: TInboxIssueStatus): TInboxIssueStatus[] =>
     filteredValues?.includes(value) ? filteredValues.filter((v) => v !== value) : [...filteredValues, value];
 
-  const clearFilter = () => handleInboxIssueFilters("status", undefined);
-
   if (filteredValues.length === 0) return <></>;
   return (
     <div className="relative flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1">
@@ -43,15 +41,6 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
           </div>
         );
       })}
-
-      {currentTab === "closed" && filteredValues.length > 1 && (
-        <div
-          className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
-          onClick={clearFilter}
-        >
-          <X className={`w-3 h-3`} />
-        </div>
-      )}
     </div>
   );
 });
