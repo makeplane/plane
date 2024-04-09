@@ -52,9 +52,11 @@ export const FilterDate: FC<Props> = observer((props) => {
 
   const handleCustomDate = () => {
     if (isCustomDateSelected()) {
-      const updateAppliedFilters = filterValue?.filter((f) => isDate(f.split(";")[0])) || [];
-      handleInboxIssueFilters(filterKey, handleCustomFilterValue(updateAppliedFilters));
-    } else setIsDateFilterModalOpen(true);
+      const updateAppliedFilters = filterValue?.filter((f) => !isDate(f.split(";")[0])) || [];
+      handleInboxIssueFilters(filterKey, updateAppliedFilters);
+    } else {
+      setIsDateFilterModalOpen(true);
+    }
   };
 
   return (
