@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 // components
+import { EditorRefApi } from "@plane/lite-text-editor";
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks
 import useToast from "@/hooks/use-toast";
@@ -22,7 +23,7 @@ type Props = {
 export const AddComment: React.FC<Props> = observer(() => {
   // const { disabled = false } = props;
   // refs
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useRouter();
   const { workspace_slug, project_slug } = router.query;

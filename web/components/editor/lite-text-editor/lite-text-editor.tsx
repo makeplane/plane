@@ -51,6 +51,10 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     props.initialValue === "<p></p>" ||
     isEmptyHtmlString(props.initialValue ?? "");
 
+  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
+    return !!ref && typeof ref === "object" && "current" in ref;
+  }
+
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
@@ -70,13 +74,17 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       />
       <IssueCommentToolbar
         accessSpecifier={accessSpecifier}
-        executeCommand={(key) => ref?.current?.executeMenuItemCommand(key)}
+        executeCommand={(key) => {
+          if (isMutableRefObject<EditorRefApi>(ref)) {
+            ref.current?.executeMenuItemCommand(key);
+          }
+        }}
         handleAccessChange={handleAccessChange}
         handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
-        isActive={(key) => ref?.current?.isMenuItemActive(key)}
         isCommentEmpty={isEmpty}
         isSubmitting={isSubmitting}
         showAccessSpecifier={showAccessSpecifier}
+        editorRef={isMutableRefObject<EditorRefApi>(ref) ? ref : null}
         showSubmitButton={showSubmitButton}
       />
     </div>

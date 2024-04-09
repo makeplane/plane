@@ -4,6 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // components
+import { EditorRefApi } from "@plane/lite-text-editor";
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
@@ -30,8 +31,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   // states
   const [isEditing, setIsEditing] = useState(false);
   // refs
-  const editorRef = useRef<any>(null);
-  const showEditorRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
+  const showEditorRef = useRef<EditorRefApi>(null);
   // form info
   const {
     control,
