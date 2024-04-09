@@ -32,7 +32,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
-  const { workspaces } = useWorkspace();
+  const { workspaces, loader } = useWorkspace();
   const { isMobile } = usePlatformOS();
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
@@ -84,7 +84,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   };
 
   // if list of workspaces are not there then we have to render the spinner
-  if (allWorkspaces === undefined) {
+  if (allWorkspaces === undefined || loader) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
