@@ -142,6 +142,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
   // derived values
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
+  const isCompletedCycle = cycleDetails?.status?.toLocaleLowerCase() === "completed";
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
@@ -269,7 +270,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               />
             </FiltersDropdown>
 
-            {canUserCreateIssue && (
+            {canUserCreateIssue && !isCompletedCycle && (
               <>
                 <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
                   Analytics
