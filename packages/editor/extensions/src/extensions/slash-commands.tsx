@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect, FC } from "react";
+import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect } from "react";
 import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
@@ -84,11 +84,7 @@ const Command = Extension.create<SlashCommandOptions>({
 });
 
 const getSuggestionItems =
-  (
-    uploadFile: UploadImage,
-    setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-    additionalOptions?: Array<ISlashCommandItem>
-  ) =>
+  (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
   ({ query }: { query: string }) => {
     let slashCommands: ISlashCommandItem[] = [
       {
@@ -199,7 +195,7 @@ const getSuggestionItems =
         searchTerms: ["img", "photo", "picture", "media"],
         icon: <ImageIcon className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          insertImageCommand(editor, uploadFile, setIsSubmitting, null, range);
+          insertImageCommand(editor, uploadFile, null, range);
         },
       },
       {
@@ -250,9 +246,7 @@ export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
   }
 };
 
-type Props = { items: CommandItemProps[]; command: (props: CommandItemProps) => void; editor: Editor; range: Range };
-
-const CommandList: FC<Props> = ({ items, command }) => {
+const CommandList = ({ items, command }: { items: CommandItemProps[]; command: any; editor: any; range: any }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = useCallback(
@@ -333,10 +327,10 @@ const CommandList: FC<Props> = ({ items, command }) => {
 interface CommandListInstance {
   onKeyDown: (props: { event: KeyboardEvent }) => boolean;
 }
+
 const renderItems = () => {
   let component: ReactRenderer<CommandListInstance, typeof CommandList> | null = null;
   let popup: any | null = null;
-
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component = new ReactRenderer(CommandList, {
@@ -382,14 +376,10 @@ const renderItems = () => {
   };
 };
 
-export const SlashCommand = (
-  uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-  additionalOptions?: Array<ISlashCommandItem>
-) =>
+export const SlashCommand = (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(uploadFile, setIsSubmitting, additionalOptions),
+      items: getSuggestionItems(uploadFile, additionalOptions),
       render: renderItems,
     },
   });
