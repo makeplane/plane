@@ -59,9 +59,9 @@ const myIssuesParamsToKey = (params: any) => {
   let labelsKey = labels ? labels.split(",") : [];
   const startDateKey = start_date ?? "";
   const targetDateKey = target_date ?? "";
-  const type = params.type ? params.type.toUpperCase() : "NULL";
-  const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
-  const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+  const type = params?.type ? params.type.toUpperCase() : "NULL";
+  const groupBy = params?.group_by ? params.group_by.toUpperCase() : "NULL";
+  const orderBy = params?.order_by ? params.order_by.toUpperCase() : "NULL";
 
   // sorting each keys in ascending order
   assigneesKey = assigneesKey.sort().join("_");
