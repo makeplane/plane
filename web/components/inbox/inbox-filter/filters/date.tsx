@@ -8,7 +8,7 @@ import { TInboxIssueFilterDateKeys } from "@plane/types";
 import { DateFilterModal } from "@/components/core";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
-import { DATE_BEFORE_FILTER_OPTIONS } from "@/constants/filters";
+import { PAST_DURATION_FILTER_OPTIONS } from "@/helpers/inbox.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 
@@ -33,7 +33,7 @@ export const FilterDate: FC<Props> = observer((props) => {
   // derived values
   const filterValue: string[] = inboxFilters?.[filterKey] || [];
   const appliedFiltersCount = filterValue?.length ?? 0;
-  const filteredOptions = DATE_BEFORE_FILTER_OPTIONS.filter((d) =>
+  const filteredOptions = PAST_DURATION_FILTER_OPTIONS.filter((d) =>
     d.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
