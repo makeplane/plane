@@ -270,21 +270,23 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               />
             </FiltersDropdown>
 
-            {canUserCreateIssue && !isCompletedCycle && (
+            {canUserCreateIssue && (
               <>
                 <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
                   Analytics
                 </Button>
-                <Button
-                  onClick={() => {
-                    setTrackElement("Cycle issues page");
-                    toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
-                  }}
-                  size="sm"
-                  prependIcon={<Plus />}
-                >
-                  Add Issue
-                </Button>
+                {!isCompletedCycle && (
+                  <Button
+                    onClick={() => {
+                      setTrackElement("Cycle issues page");
+                      toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
+                    }}
+                    size="sm"
+                    prependIcon={<Plus />}
+                  >
+                    Add Issue
+                  </Button>
+                )}
               </>
             )}
             <button
