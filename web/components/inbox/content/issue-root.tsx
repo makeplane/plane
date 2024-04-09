@@ -25,11 +25,13 @@ type Props = {
   is_editable: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: Dispatch<SetStateAction<"submitting" | "submitted" | "saved">>;
+  swrIssueDescription: string | undefined;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxIssue, is_editable, isSubmitting, setIsSubmitting } = props;
+  const { workspaceSlug, projectId, inboxIssue, is_editable, isSubmitting, setIsSubmitting, swrIssueDescription } =
+    props;
   // hooks
   const { currentUser } = useUser();
   const { isLoading } = useProjectInbox();
@@ -140,7 +142,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={issue.project_id}
             issueId={issue.id}
-            value={issueDescription}
+            swrIssueDescription={swrIssueDescription}
             initialValue={issueDescription}
             disabled={!is_editable}
             issueOperations={issueOperations}

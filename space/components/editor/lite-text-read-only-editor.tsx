@@ -17,7 +17,7 @@ export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Lit
         }}
         {...props}
         // overriding the customClassName to add relative class passed
-        customClassName={cn(props.customClassName, "relative")}
+        customClassName={cn(props.customClassName, "relative p-2")}
       />
     );
   }

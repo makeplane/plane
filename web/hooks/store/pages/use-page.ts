@@ -10,5 +10,5 @@ export const usePage = (pageId: string | undefined): IPageStore => {
 
   if (!pageId) return {} as IPageStore;
 
-  return context.projectPage.data?.[pageId] ?? {};
+  return context.projectPages.data?.[pageId] ?? {};
 };

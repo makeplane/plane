@@ -45,7 +45,7 @@ export interface IProjectInboxStore {
   handleInboxIssueSorting: <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   fetchInboxIssues: (workspaceSlug: string, projectId: string, loadingType?: TLoader) => Promise<void>;
   fetchInboxPaginationIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
-  fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
+  fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<TInboxIssue>;
   createInboxIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -274,13 +274,18 @@ export class ProjectInboxStore implements IProjectInboxStore {
    * @param projectId
    * @param inboxIssueId
    */
-  fetchInboxIssueById = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
+  fetchInboxIssueById = async (
+    workspaceSlug: string,
+    projectId: string,
+    inboxIssueId: string
+  ): Promise<TInboxIssue> => {
     try {
       this.isLoading = "issue-loading";
       const inboxIssue = await this.inboxIssueService.retrieve(workspaceSlug, projectId, inboxIssueId);
       const issueId = inboxIssue?.issue?.id || undefined;
 
       if (inboxIssue && issueId) {
+        // TODO: remove redundant calls
         // fetching reactions
         await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
         // fetching activity
@@ -292,9 +297,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
         });
         this.isLoading = undefined;
       }
-    } catch {
+      return inboxIssue;
+    } catch (error) {
       console.error("Error fetching the inbox issue with inbox issue id");
       this.isLoading = undefined;
+      throw error;
     }
   };
 

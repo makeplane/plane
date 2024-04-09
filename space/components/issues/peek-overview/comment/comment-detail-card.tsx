@@ -133,11 +133,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <LiteTextReadOnlyEditor
-              ref={showEditorRef}
-              initialValue={comment.comment_html}
-              customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-            />
+            <LiteTextReadOnlyEditor ref={showEditorRef} initialValue={comment.comment_html} />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
           </div>
         </div>

@@ -76,8 +76,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   useEffect(() => {
     updateMarkings(description_html ?? "<p></p>");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [description_html, updateMarkings]);
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -125,7 +124,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                   setShowAlert(true);
                   onChange(description_html);
                   handleSubmit();
-                  updateMarkings(description_html);
                 }}
                 mentionHandler={{
                   highlights: mentionHighlights,

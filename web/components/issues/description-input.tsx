@@ -19,7 +19,7 @@ export type IssueDescriptionInputProps = {
   disabled?: boolean;
   issueOperations: TIssueOperations;
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
-  swrIssueDetails: TIssue | null | undefined;
+  swrIssueDescription: string | null | undefined;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => {
@@ -28,7 +28,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
     projectId,
     issueId,
     disabled,
-    swrIssueDetails,
+    swrIssueDescription,
     initialValue,
     issueOperations,
     setIsSubmitting,
@@ -92,7 +92,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
               <RichTextEditor
                 id={issueId}
                 initialValue={localIssueDescription.description_html ?? "<p></p>"}
-                value={swrIssueDetails?.description_html ?? null}
+                value={swrIssueDescription ?? null}
                 workspaceSlug={workspaceSlug}
                 workspaceId={workspaceId}
                 projectId={projectId}

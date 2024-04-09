@@ -10,5 +10,5 @@ export const useProjectPages = (projectId: string | undefined): IProjectPageStor
 
   if (!projectId) throw new Error("projectId must be passed as a property");
 
-  return context.projectPage;
+  return context.projectPages;
 };

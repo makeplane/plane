@@ -22,13 +22,13 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
 
-  useSWR(
+  const { data: swrIssueDetails } = useSWR(
     workspaceSlug && projectId && inboxIssueId
       ? `PROJECT_INBOX_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${inboxIssueId}`
       : null,
-    () => {
-      workspaceSlug && projectId && inboxIssueId && fetchInboxIssueById(workspaceSlug, projectId, inboxIssueId);
-    },
+    workspaceSlug && projectId && inboxIssueId
+      ? () => fetchInboxIssueById(workspaceSlug, projectId, inboxIssueId)
+      : null,
     { revalidateOnFocus: false }
   );
 
@@ -54,6 +54,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             is_editable={is_editable}
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
+            swrIssueDescription={swrIssueDetails?.issue.description_html}
           />
         </div>
       </div>

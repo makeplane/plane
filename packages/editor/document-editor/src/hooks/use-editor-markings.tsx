@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { IMarking } from "src/types/editor-types";
 
 export const useEditorMarkings = () => {
   const [markings, setMarkings] = useState<IMarking[]>([]);
 
-  const updateMarkings = (html: string) => {
+  const updateMarkings = useCallback((html: string) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
     const headings = doc.querySelectorAll("h1, h2, h3");
@@ -24,7 +24,7 @@ export const useEditorMarkings = () => {
     });
 
     setMarkings(tempMarkings);
-  };
+  }, []);
 
   return {
     updateMarkings,
