@@ -1,4 +1,11 @@
-import type { TIssue, IIssueFilterOptions, ILinkDetails } from "@plane/types";
+import type {
+  TIssue,
+  IIssueFilterOptions,
+  ILinkDetails,
+  TAssigneesDistribution,
+  TCompletionChartDistribution,
+  TLabelsDistribution,
+} from "@plane/types";
 
 export type TModuleStatus =
   | "backlog"
@@ -68,8 +75,4 @@ export type ModuleLink = {
 
 export type SelectModuleType =
   | (IModule & { actionType: "edit" | "delete" | "create-issue" })
-  | undefined;
-
-export type SelectIssue =
-  | (TIssue & { actionType: "edit" | "delete" | "create" })
   | undefined;

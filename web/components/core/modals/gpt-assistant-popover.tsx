@@ -7,7 +7,7 @@ import { usePopper } from "react-popper";
 import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-read-only-editor";
+import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
 // icons
 // components
 // hooks

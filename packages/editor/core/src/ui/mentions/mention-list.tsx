@@ -1,7 +1,9 @@
 import { Editor } from "@tiptap/react";
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import { cn } from "src/lib/utils";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { v4 as uuidv4 } from "uuid";
+import { Avatar } from "@plane/ui";
 
 interface MentionListProps {
   command: (item: {
@@ -124,31 +126,24 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
   return (
     <div
       ref={commandListContainer}
-      className="mentions absolute max-h-40 w-48 space-y-0.5 overflow-y-auto rounded-md bg-custom-background-100 p-1 text-sm text-custom-text-300 shadow-custom-shadow-sm"
+      className="mentions absolute max-h-48 min-w-[12rem] rounded-md bg-custom-background-100 border-[0.5px] border-custom-border-300 px-2 py-2.5 text-xs shadow-custom-shadow-rg overflow-y-scroll"
     >
       {isLoading ? (
-        <div className="flex justify-center items-center h-full text-gray-500">Loading...</div>
+        <div className="text-center text-custom-text-400">Loading...</div>
       ) : items.length ? (
         items.map((item, index) => (
           <div
             key={item.id}
-            className={`flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-custom-background-80 ${
-              index === selectedIndex ? "bg-custom-background-80" : ""
-            }`}
+            className={cn(
+              "flex cursor-pointer items-center gap-2 rounded px-1 py-1.5 hover:bg-custom-background-80 text-custom-text-200",
+              {
+                "bg-custom-background-80": index === selectedIndex,
+              }
+            )}
             onClick={() => selectItem(index)}
           >
-            <div className="grid h-4 w-4 flex-shrink-0 place-items-center overflow-hidden">
-              {item.avatar && item.avatar.trim() !== "" ? (
-                <img src={item.avatar} className="h-full w-full rounded-sm object-cover" alt={item.title} />
-              ) : (
-                <div className="grid h-full w-full place-items-center rounded-sm bg-gray-700 text-xs capitalize text-white">
-                  {item.title[0]}
-                </div>
-              )}
-            </div>
-            <div className="flex-grow space-y-1 truncate">
-              <p className="truncate text-sm font-medium">{item.title}</p>
-            </div>
+            <Avatar name={item?.title} src={item?.avatar} />
+            <span className="flex-grow truncate">{item.title}</span>
           </div>
         ))
       ) : (

@@ -3,20 +3,20 @@ import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/lite-text-editor";
 import { TIssueComment } from "@plane/types";
-// hooks
-import { CustomMenu } from "@plane/ui";
-import { isEmptyHtmlString } from "@/helpers/string.helper";
-import { useIssueDetail, useUser, useWorkspace } from "@/hooks/store";
-import { LiteTextEditor } from "components/editor/lite-text-editor";
-import { LiteTextReadOnlyEditor } from "components/editor/lite-text-read-only-editor";
-// components
 // ui
-// services
-// types
+import { CustomMenu } from "@plane/ui";
+// components
+import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
+// constants
+import { EIssueCommentAccessSpecifier } from "@/constants/issue";
+// helpers
+import { isEmptyHtmlString } from "@/helpers/string.helper";
+// hooks
+import { useIssueDetail, useUser, useWorkspace } from "@/hooks/store";
+// components
 import { IssueCommentReaction } from "../../reactions/issue-comment";
 import { TActivityOperations } from "../root";
 import { IssueCommentBlock } from "./comment-block";
-// helpers
 
 type TIssueCommentCard = {
   projectId: string;
@@ -99,7 +99,9 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
                 <>
                   {comment.access === "INTERNAL" ? (
                     <CustomMenu.MenuItem
-                      onClick={() => activityOperations.updateComment(comment.id, { access: "EXTERNAL" })}
+                      onClick={() =>
+                        activityOperations.updateComment(comment.id, { access: EIssueCommentAccessSpecifier.EXTERNAL })
+                      }
                       className="flex items-center gap-1"
                     >
                       <Globe2 className="h-3 w-3" />
@@ -107,7 +109,9 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
                     </CustomMenu.MenuItem>
                   ) : (
                     <CustomMenu.MenuItem
-                      onClick={() => activityOperations.updateComment(comment.id, { access: "INTERNAL" })}
+                      onClick={() =>
+                        activityOperations.updateComment(comment.id, { access: EIssueCommentAccessSpecifier.INTERNAL })
+                      }
                       className="flex items-center gap-1"
                     >
                       <Lock className="h-3 w-3" />
@@ -133,9 +137,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
         <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
           <div
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey && !isEmpty) {
-                handleSubmit(onEnter)(e);
-              }
+              if (e.key === "Enter" && !e.shiftKey && !isEmpty) handleSubmit(onEnter)(e);
             }}
           >
             <LiteTextEditor
@@ -145,8 +147,8 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
               ref={editorRef}
               initialValue={watch("comment_html") ?? ""}
               value={null}
-              customClassName="min-h-[50px] p-3 shadow-sm border border-custom-border-200"
-              onChange={(comment_json: any, comment_html: string) => setValue("comment_html", comment_html)}
+              onChange={(comment_json, comment_html) => setValue("comment_html", comment_html)}
+              showSubmitButton={false}
             />
           </div>
           <div className="flex gap-1 self-end">
@@ -174,7 +176,11 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
         <div className={`relative ${isEditing ? "hidden" : ""}`}>
           {showAccessSpecifier && (
             <div className="absolute right-2.5 top-2.5 z-[1] text-custom-text-300">
-              {comment.access === "INTERNAL" ? <Lock className="h-3 w-3" /> : <Globe2 className="h-3 w-3" />}
+              {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
+                <Lock className="h-3 w-3" />
+              ) : (
+                <Globe2 className="h-3 w-3" />
+              )}
             </div>
           )}
           <LiteTextReadOnlyEditor

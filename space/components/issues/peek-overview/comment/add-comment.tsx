@@ -2,17 +2,14 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
+// components
+import { LiteTextEditor } from "@/components/editor/lite-text-editor";
+// hooks
+import useToast from "@/hooks/use-toast";
 // lib
 import { useMobxStore } from "@/lib/mobx/store-provider";
-// hooks
-import { RootStore } from "@/store/root";
-import useToast from "hooks/use-toast";
-// ui
 // types
-import { Comment } from "types/issue";
-import { LiteTextEditor } from "@/components/editor/lite-text-editor";
-// components
-// service
+import { Comment } from "@/types/issue";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",
@@ -24,7 +21,18 @@ type Props = {
 
 export const AddComment: React.FC<Props> = observer(() => {
   // const { disabled = false } = props;
-
+  // refs
+  const editorRef = useRef<any>(null);
+  // router
+  const router = useRouter();
+  const { workspace_slug, project_slug } = router.query;
+  // store hooks
+  const { project } = useMobxStore();
+  const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
+  // derived values
+  const workspaceId = project.workspace?.id;
+  const issueId = issueDetailStore.peekId;
+  // form info
   const {
     handleSubmit,
     control,
@@ -32,37 +40,25 @@ export const AddComment: React.FC<Props> = observer(() => {
     formState: { isSubmitting },
     reset,
   } = useForm<Comment>({ defaultValues });
-
-  const router = useRouter();
-  const { project }: RootStore = useMobxStore();
-  const workspaceId = project.workspace?.id;
-
-  const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
-
-  const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
-
-  const issueId = issueDetailStore.peekId;
-
-  const editorRef = useRef<any>(null);
-
+  // toast alert
   const { setToastAlert } = useToast();
 
   const onSubmit = async (formData: Comment) => {
     if (!workspace_slug || !project_slug || !issueId || isSubmitting || !formData.comment_html) return;
 
     await issueDetailStore
-      .addIssueComment(workspace_slug, project_slug, issueId, formData)
+      .addIssueComment(workspace_slug.toString(), project_slug.toString(), issueId, formData)
       .then(() => {
         reset(defaultValues);
         editorRef.current?.clearEditor();
       })
-      .catch(() => {
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Comment could not be posted. Please try again.",
-        });
-      });
+        })
+      );
   };
 
   return (
@@ -73,11 +69,7 @@ export const AddComment: React.FC<Props> = observer(() => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <LiteTextEditor
-              onEnterKeyPress={(e) => {
-                userStore.requiredLogin(() => {
-                  handleSubmit(onSubmit)(e);
-                });
-              }}
+              onEnterKeyPress={(e) => userStore.requiredLogin(() => handleSubmit(onSubmit)(e))}
               workspaceId={workspaceId as string}
               workspaceSlug={workspace_slug as string}
               ref={editorRef}
@@ -86,11 +78,8 @@ export const AddComment: React.FC<Props> = observer(() => {
                   ? watch("comment_html")
                   : value
               }
-              customClassName="p-2 border border-custom-border-200"
-              editorContentCustomClassNames="min-h-[35px]"
-              onChange={(comment_json: unknown, comment_html: string) => {
-                onChange(comment_html);
-              }}
+              onChange={(comment_json, comment_html) => onChange(comment_html)}
+              isSubmitting={isSubmitting}
             />
           )}
         />

@@ -18,7 +18,7 @@ import {
   MemberDropdown,
   StateDropdown,
 } from "@/components/dropdowns";
-import { RichTextEditor } from "@/components/editor/rich-text-editor";
+import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
@@ -472,7 +472,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           projectId={projectId}
                           // rerenderOnPropsChange={localIssueDescription}
                           // dragDropEnabled={false}
-                          customClassName="min-h-[7rem] border border-custom-border-200"
                           onChange={(_description: object, description_html: string) => {
                             onChange(description_html);
                             handleFormChange();

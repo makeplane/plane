@@ -6,7 +6,7 @@ import { IUserActivityResponse } from "@plane/types";
 // components
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 // editor
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-read-only-editor";
+import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
 // ui
 import { ActivitySettingsLoader } from "@/components/ui";
 // helpers

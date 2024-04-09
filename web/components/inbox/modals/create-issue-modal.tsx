@@ -10,7 +10,7 @@ import { TIssue } from "@plane/types";
 import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover } from "@/components/core";
 import { PriorityDropdown } from "@/components/dropdowns";
-import { RichTextEditor } from "@/components/editor/rich-text-editor";
+import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
 import { ISSUE_CREATED } from "@/constants/event-tracker";
 import { useApplication, useEventTracker, useWorkspace, useInboxIssues } from "@/hooks/store";
 // services
@@ -277,7 +277,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                                 projectId={projectId}
                                 // rerenderOnPropsChange={localIssueDescription}
                                 dragDropEnabled={false}
-                                customClassName="min-h-[150px] border border-custom-border-200"
                                 onChange={(_description: object, description_html: string) => {
                                   onChange(description_html);
                                 }}

@@ -3,25 +3,47 @@ import React from "react";
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // components
 import { IssueCommentToolbar } from "@/components/editor";
+// constants
+import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
-import { useMention } from "@/hooks/use-mention";
+import { useMention } from "@/hooks/store";
 // services
-import fileService from "@/services/file.service";
+import { FileService } from "@/services/file.service";
 
 interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
-  isSubmitting?: boolean;
+  projectId: string;
+  accessSpecifier?: EIssueCommentAccessSpecifier;
+  handleAccessChange?: (accessKey: EIssueCommentAccessSpecifier) => void;
+  showAccessSpecifier?: boolean;
   showSubmitButton?: boolean;
+  isSubmitting?: boolean;
 }
 
+const fileService = new FileService();
+
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
-  const { customClassName, workspaceSlug, workspaceId, isSubmitting = false, showSubmitButton = true, ...rest } = props;
+  const {
+    customClassName,
+    workspaceSlug,
+    workspaceId,
+    projectId,
+    accessSpecifier,
+    handleAccessChange,
+    showAccessSpecifier = false,
+    showSubmitButton = true,
+    isSubmitting = false,
+    ...rest
+  } = props;
   // use-mention
-  const { mentionHighlights } = useMention();
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: projectId as string,
+  });
 
   const isEmpty =
     props.initialValue === "" ||
@@ -41,18 +63,20 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         }}
         mentionHandler={{
           highlights: mentionHighlights,
-          // suggestions disabled for now
+          suggestions: mentionSuggestions,
         }}
         {...rest}
-        // overriding the customClassName to add relative class passed
         customClassName={cn(customClassName, "relative")}
       />
       <IssueCommentToolbar
+        accessSpecifier={accessSpecifier}
         executeCommand={(key) => ref?.current?.executeMenuItemCommand(key)}
+        handleAccessChange={handleAccessChange}
         handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
         isActive={(key) => ref?.current?.isMenuItemActive(key)}
         isCommentEmpty={isEmpty}
         isSubmitting={isSubmitting}
+        showAccessSpecifier={showAccessSpecifier}
         showSubmitButton={showSubmitButton}
       />
     </div>

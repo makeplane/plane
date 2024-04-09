@@ -4,11 +4,7 @@ import {
   TIssueActivityIssueDetail,
   TIssueActivityUserDetail,
 } from "./base";
-
-enum EIssueCommentAccessSpecifier {
-  EXTERNAL = "EXTERNAL",
-  INTERNAL = "INTERNAL",
-}
+import { EIssueCommentAccessSpecifier } from "../../enums";
 
 export type TIssueComment = {
   id: string;

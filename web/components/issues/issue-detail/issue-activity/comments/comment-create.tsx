@@ -1,16 +1,16 @@
 import { FC, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Globe2, Lock, LucideIcon } from "lucide-react";
 // types
 import { TIssueComment } from "@plane/types";
-// ui
-// import { Button } from "@plane/ui";
+// components
+import { LiteTextEditor } from "@/components/editor/lite-text-editor/lite-text-editor";
+// constants
+import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // editor
-import { LiteTextEditor } from "components/editor/lite-text-editor";
 import { TActivityOperations } from "../root";
 
 type TIssueCommentCreate = {
@@ -19,25 +19,6 @@ type TIssueCommentCreate = {
   activityOperations: TActivityOperations;
   showAccessSpecifier?: boolean;
 };
-
-type TCommentAccessType = {
-  icon: LucideIcon;
-  key: string;
-  label: "Private" | "Public";
-};
-
-// const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
-//   {
-//     icon: Lock,
-//     key: "INTERNAL",
-//     label: "Private",
-//   },
-//   {
-//     icon: Globe2,
-//     key: "EXTERNAL",
-//     label: "Public",
-//   },
-// ];
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const { workspaceSlug, projectId, activityOperations, showAccessSpecifier = false } = props;
@@ -92,9 +73,12 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 onEnterKeyPress={(e) => handleSubmit(onSubmit)(e)}
                 ref={editorRef}
                 initialValue={value ?? "<p></p>"}
-                customClassName="p-2 border border-custom-border-200"
                 editorContentCustomClassNames="min-h-[35px]"
                 onChange={(comment_json, comment_html) => onChange(comment_html)}
+                accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
+                handleAccessChange={onAccessChange}
+                showAccessSpecifier={showAccessSpecifier}
+                isSubmitting={isSubmitting}
               />
             )}
           />

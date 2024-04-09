@@ -8,8 +8,8 @@ import { Loader } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // components
-import { RichTextEditor } from "components/editor/rich-text-editor";
-import { RichTextReadOnlyEditor } from "components/editor/rich-text-read-only-editor";
+import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
+import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
 import { TIssueOperations } from "components/issues/issue-detail";
 
 export type IssueDescriptionInputProps = {
@@ -98,7 +98,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
                 workspaceId={workspaceId}
                 projectId={projectId}
                 dragDropEnabled
-                customClassName="min-h-[150px] shadow-sm border border-custom-border-200"
                 onChange={(_description: object, description_html: string) => {
                   setIsSubmitting("submitting");
                   onChange(description_html);

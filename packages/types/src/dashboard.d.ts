@@ -1,16 +1,8 @@
+import { EDurationFilters } from "./enums";
 import { IIssueActivity, TIssuePriorities } from "./issues";
 import { TIssue } from "./issues/issue";
 import { TIssueRelationTypes } from "./issues/issue_relation";
 import { TStateGroups } from "./state";
-
-enum EDurationFilters {
-  NONE = "none",
-  TODAY = "today",
-  THIS_WEEK = "this_week",
-  THIS_MONTH = "this_month",
-  THIS_YEAR = "this_year",
-  CUSTOM = "custom",
-}
 
 export type TWidgetKeys =
   | "overview_stats"

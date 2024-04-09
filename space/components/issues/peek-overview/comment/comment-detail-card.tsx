@@ -1,25 +1,19 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// icons
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // components
-
+import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
-// hooks
-import { useMention } from "@/hooks/use-mention";
 // mobx store
 import { useMobxStore } from "@/lib/mobx/store-provider";
-// services
-import fileService from "@/services/file.service";
+// store
 import { RootStore } from "@/store/root";
 // types
-import { Comment } from "types/issue";
-import { LiteTextEditor } from "@/components/editor/lite-text-editor";
-import { LiteTextReadOnlyEditor } from "@/components/editor/lite-text-read-only-editor";
+import { Comment } from "@/types/issue";
 
 type Props = {
   workspaceSlug: string;
@@ -35,15 +29,10 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
   // states
   const [isEditing, setIsEditing] = useState(false);
-
-  const { mentionHighlights } = useMention({
-    workspaceSlug: workspaceSlug as string,
-    projectId: project.project?.id as string,
-  });
-
-  const editorRef = React.useRef<any>(null);
-
-  const showEditorRef = React.useRef<any>(null);
+  // refs
+  const editorRef = useRef<any>(null);
+  const showEditorRef = useRef<any>(null);
+  // form info
   const {
     control,
     formState: { isSubmitting },
@@ -118,10 +107,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     ref={editorRef}
                     initialValue={value}
                     value={null}
-                    customClassName="min-h-[50px] p-3 shadow-sm border border-custom-border-200"
-                    onChange={(comment_json: unknown, comment_html: string) => {
-                      onChange(comment_html);
-                    }}
+                    onChange={(comment_json, comment_html) => onChange(comment_html)}
+                    isSubmitting={isSubmitting}
+                    showSubmitButton={false}
                   />
                 )}
               />
