@@ -288,9 +288,9 @@ export class ProjectInboxStore implements IProjectInboxStore {
         // fetching reactions
         await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
         // fetching activity
-        await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
+        await this.store.issue.issueDetail.fetchActivities(workspaceSlug, projectId, issueId);
         // fetching comments
-        await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
+        await this.store.issue.issueDetail.fetchComments(workspaceSlug, projectId, issueId);
         runInAction(() => {
           set(this.inboxIssues, issueId, new InboxIssueStore(workspaceSlug, projectId, inboxIssue));
         });
