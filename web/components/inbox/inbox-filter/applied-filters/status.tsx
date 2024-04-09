@@ -30,7 +30,7 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
               <optionDetail.icon className={`w-3 h-3 ${optionDetail?.textColor(false)}`} />
             </div>
             <div className="text-xs truncate">{optionDetail?.title}</div>
-            {currentTab === "closed" && handleFilterValue(optionDetail?.status).length >= 1 && (
+            {handleFilterValue(optionDetail?.status).length >= 1 && (
               <div
                 className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
                 onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}

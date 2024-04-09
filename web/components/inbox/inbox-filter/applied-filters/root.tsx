@@ -28,9 +28,9 @@ export const InboxIssueAppliedFilters: FC = observer(() => {
       {/* label */}
       <InboxIssueAppliedFiltersLabel />
       {/* created_at */}
-      <InboxIssueAppliedFiltersDate filterKey="created_at" label="Created At" />
+      <InboxIssueAppliedFiltersDate filterKey="created_at" label="Created date" />
       {/* updated_at */}
-      <InboxIssueAppliedFiltersDate filterKey="updated_at" label="Updated At" />
+      <InboxIssueAppliedFiltersDate filterKey="updated_at" label="Updated date" />
     </div>
   );
 });
