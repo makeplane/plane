@@ -9,7 +9,7 @@ import { useProjectInbox } from "@/hooks/store";
 
 export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
   // hooks
-  const { currentTab, inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // derived values
   const filteredValues = inboxFilters?.status || [];
   const currentOptionDetail = (status: TInboxIssueStatus) => INBOX_STATUS.find((s) => s.status === status) || undefined;
