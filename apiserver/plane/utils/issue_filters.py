@@ -512,5 +512,4 @@ def issue_filters(query_params, method, prefix=""):
         if key in query_params:
             func = value
             func(query_params, filter, method, prefix)
-    print("filter", filter)
     return filter
