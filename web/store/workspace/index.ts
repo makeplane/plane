@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import { WorkspaceService } from "@/services/workspace.service";
 import { IWorkspace } from "@plane/types";
+import { WorkspaceService } from "@/services/workspace.service";
 import { RootStore } from "../root.store";
 // types
 // services
@@ -10,6 +10,7 @@ import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
 import { IWebhookStore, WebhookStore } from "./webhook.store";
 
 export interface IWorkspaceRootStore {
+  loader: boolean;
   // observables
   workspaces: Record<string, IWorkspace>;
   // computed
@@ -30,6 +31,7 @@ export interface IWorkspaceRootStore {
 }
 
 export class WorkspaceRootStore implements IWorkspaceRootStore {
+  loader: boolean = false;
   // observables
   workspaces: Record<string, IWorkspace> = {};
   // services
@@ -43,6 +45,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
+      loader: observable.ref,
       // observables
       workspaces: observable,
       // computed
@@ -106,12 +109,14 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * fetch user workspaces from API
    */
   fetchWorkspaces = async () => {
+    this.loader = true;
     const workspaceResponse = await this.workspaceService.userWorkspaces();
     runInAction(() => {
       workspaceResponse.forEach((workspace) => {
         set(this.workspaces, [workspace.id], workspace);
       });
     });
+    this.loader = false;
     return workspaceResponse;
   };
 
