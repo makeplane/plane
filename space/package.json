@@ -44,6 +44,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/js-cookie": "^3.0.3",
     "@types/node": "18.14.1",
     "@types/nprogress": "^0.2.0",
