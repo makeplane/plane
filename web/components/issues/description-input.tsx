@@ -1,16 +1,15 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import { Controller, useForm } from "react-hook-form";
-
 // types
 import { TIssue } from "@plane/types";
+// ui
 import { Loader } from "@plane/ui";
+// components
+import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
+import { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
 import { useWorkspace } from "@/hooks/store";
-// components
-import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
-import { TIssueOperations } from "components/issues/issue-detail";
 
 export type IssueDescriptionInputProps = {
   workspaceSlug: string;

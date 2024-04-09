@@ -72,7 +72,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                               ? (activityItem.new_value?.toString() as string)
                               : (activityItem.old_value?.toString() as string)
                           }
-                          customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+                          customClassName="text-xs bg-custom-background-100"
                         />
                       </div>
                     </div>

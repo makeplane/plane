@@ -1,7 +1,8 @@
-// types
-import { IIssue } from "types/issue";
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-read-only-editor";
+// components
+import { RichTextReadOnlyEditor } from "@/components/editor";
 import { IssueReactions } from "@/components/issues/peek-overview";
+// types
+import { IIssue } from "@/types/issue";
 
 type Props = {
   issueDetails: IIssue;
@@ -22,7 +23,6 @@ export const PeekOverviewIssueDetails: React.FC<Props> = ({ issueDetails }) => (
             ? "<p></p>"
             : issueDetails.description_html
         }
-        customClassName="p-3 min-h-[50px] shadow-sm"
       />
     )}
     <IssueReactions />

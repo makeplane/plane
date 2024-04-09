@@ -1,10 +1,12 @@
 import React from "react";
+// editor
 import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "@plane/rich-text-editor";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
 import { useMention } from "@/hooks/use-mention";
 
-import { cn } from "@/helpers/common.helper";
-
-interface RichTextReadOnlyEditorWrapperProps extends Omit<IRichTextReadOnlyEditor, "mentionHighlights"> {}
+interface RichTextReadOnlyEditorWrapperProps extends Omit<IRichTextReadOnlyEditor, "mentionHandler"> {}
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
   ({ ...props }, ref) => {
@@ -13,10 +15,10 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
     return (
       <RichTextReadOnlyEditorWithRef
         ref={ref}
-        mentionHighlights={mentionHighlights}
+        mentionHandler={{ highlights: mentionHighlights }}
         {...props}
         // overriding the customClassName to add relative class passed
-        customClassName={cn(props.customClassName, "relative")}
+        customClassName={cn(props.customClassName, "relative border border-custom-border-200 p-3")}
       />
     );
   }

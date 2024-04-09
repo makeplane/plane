@@ -8,7 +8,7 @@ import {
   PeekOverviewIssueProperties,
 } from "@/components/issues/peek-overview";
 // types
-import { IIssue } from "types/issue";
+import { IIssue } from "@/types/issue";
 
 type Props = {
   handleClose: () => void;
@@ -17,7 +17,7 @@ type Props = {
 };
 
 export const FullScreenPeekView: React.FC<Props> = observer((props) => {
-  const { handleClose, issueDetails, workspace_slug } = props;
+  const { handleClose, issueDetails } = props;
 
   return (
     <div className="grid h-full w-full grid-cols-10 divide-x divide-custom-border-200 overflow-hidden">
