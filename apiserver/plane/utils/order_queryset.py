@@ -20,16 +20,11 @@ STATE_ORDER = [
 def order_issue_queryset(issue_queryset, order_by_param="-created_at"):
     # Priority Ordering
     if order_by_param == "priority" or order_by_param == "-priority":
-        priority_order = (
-            PRIORITY_ORDER
-            if order_by_param == "priority"
-            else PRIORITY_ORDER[::-1]
-        )
         issue_queryset = issue_queryset.annotate(
             priority_order=Case(
                 *[
                     When(priority=p, then=Value(i))
-                    for i, p in enumerate(priority_order)
+                    for i, p in enumerate(PRIORITY_ORDER)
                 ],
                 output_field=CharField(),
             )
