@@ -169,19 +169,19 @@ export class ProjectInboxStore implements IProjectInboxStore {
     set(this, ["inboxSorting", "sort_by"], "desc");
     if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 0, 1, 2]);
     else set(this, ["inboxFilters", "status"], [-2]);
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 
   handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => {
     set(this.inboxFilters, key, value);
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 
   handleInboxIssueSorting = <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => {
     set(this.inboxSorting, key, value);
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 

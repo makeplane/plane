@@ -65,8 +65,8 @@ export class InstanceStore implements IInstanceStore {
             status: "success",
             message: "Instance is not created in the backend",
             data: {
-              is_activated: instance?.is_activated,
-              is_setup_done: instance?.is_setup_done,
+              is_activated: instance?.instance?.is_activated,
+              is_setup_done: instance?.instance?.is_setup_done,
             },
           };
         });
