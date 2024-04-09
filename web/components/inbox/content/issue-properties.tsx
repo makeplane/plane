@@ -1,13 +1,16 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2, Signal, Tag } from "lucide-react";
-import { TIssue } from "@plane/types";
-import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+import { useRouter } from "next/router";
+import { CalendarCheck2, CopyPlus, Signal, Tag } from "lucide-react";
+import { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
+import { ControlLink, DoubleCircleIcon, Tooltip, UserGroupIcon } from "@plane/ui";
 // components
 import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
 import { IssueLabel, TIssueOperations } from "@/components/issues";
 // helper
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+// hooks
+import { useProject } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -15,14 +18,18 @@ type Props = {
   issue: Partial<TIssue>;
   issueOperations: TIssueOperations;
   is_editable: boolean;
+  duplicateIssueDetails: TInboxDuplicateIssueDetails | undefined;
 };
 
 export const InboxIssueProperties: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issue, issueOperations, is_editable } = props;
+  const { workspaceSlug, projectId, issue, issueOperations, is_editable, duplicateIssueDetails } = props;
+
+  const router = useRouter();
+  // store hooks
+  const { currentProjectDetails } = useProject();
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
-
   if (!issue || !issue?.id) return <></>;
   return (
     <div className="flex h-min w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
@@ -149,6 +156,29 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                 )}
               </div>
             </div>
+
+            {/* duplicate to*/}
+            {duplicateIssueDetails && (
+              <div className="flex min-h-8 gap-2">
+                <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
+                  <CopyPlus className="h-4 w-4 flex-shrink-0" />
+                  <span>Duplicate of</span>
+                </div>
+
+                <ControlLink
+                  href={`/${workspaceSlug}/projects/${projectId}/issues/${duplicateIssueDetails?.id}`}
+                  onClick={() => {
+                    router.push(`/${workspaceSlug}/projects/${projectId}/issues/${duplicateIssueDetails?.id}`);
+                  }}
+                >
+                  <Tooltip tooltipContent={`${duplicateIssueDetails?.name}`}>
+                    <span className="flex items-center gap-1 cursor-pointer text-xs rounded px-1.5 py-1 pb-0.5 bg-custom-background-80 text-custom-text-200">
+                      {`${currentProjectDetails?.identifier}-${duplicateIssueDetails?.sequence_id}`}
+                    </span>
+                  </Tooltip>
+                </ControlLink>
+              </div>
+            )}
           </div>
         </div>
       </div>
