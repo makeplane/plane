@@ -52,9 +52,9 @@ def string_date_filter(
                 filter[f"{date_filter}__gte"] = now - timedelta(weeks=duration)
         else:
             if offset == "fromnow":
-                filter[f"{date_filter}__lte"] = now + timedelta(days=duration)
+                filter[f"{date_filter}__lte"] = now + timedelta(weeks=duration)
             else:
-                filter[f"{date_filter}__lte"] = now - timedelta(days=duration)
+                filter[f"{date_filter}__lte"] = now - timedelta(weeks=duration)
 
 
 def date_filter(filter, date_term, queries):
@@ -512,4 +512,5 @@ def issue_filters(query_params, method, prefix=""):
         if key in query_params:
             func = value
             func(query_params, filter, method, prefix)
+    print("filter", filter)
     return filter
