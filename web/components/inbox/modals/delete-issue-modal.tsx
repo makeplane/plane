@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
@@ -11,7 +11,7 @@ import { useProject } from "@/hooks/store";
 // types
 
 type Props = {
-  data: TIssue;
+  data: Partial<TIssue>;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => Promise<void>;
@@ -30,7 +30,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
 
   const handleDelete = () => {
     setIsDeleting(true);
-    onSubmit().finally(() => setIsDeleting(false));
+    onSubmit().finally(() => handleClose());
   };
 
   return (
@@ -73,7 +73,8 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
+                        {(data && data?.project_id && getProjectById(data?.project_id)?.identifier) || ""}-
+                        {data?.sequence_id}
                       </span>
                       {""}? The issue will only be deleted from the inbox and this action cannot be undone.
                     </p>

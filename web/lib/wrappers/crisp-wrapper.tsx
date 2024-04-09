@@ -18,7 +18,7 @@ const CrispWrapper: FC<ICrispWrapper> = (props) => {
   const { children, user } = props;
 
   useEffect(() => {
-    if (typeof window && user?.email) {
+    if (typeof window && user?.email && process.env.NEXT_PUBLIC_CRISP_ID) {
       window.$crisp = [];
       window.CRISP_WEBSITE_ID = process.env.NEXT_PUBLIC_CRISP_ID;
       (function () {

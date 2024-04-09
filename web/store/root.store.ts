@@ -7,7 +7,7 @@ import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { EstimateStore, IEstimateStore } from "./estimate.store";
 import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
-import { IInboxRootStore, InboxRootStore } from "./inbox/root.store";
+import { IProjectInboxStore, ProjectInboxStore } from "./inbox/project-inbox.store";
 import { InstanceStore, IInstanceStore } from "./instance.store";
 import { IIssueRootStore, IssueRootStore } from "./issue/root.store";
 import { ILabelStore, LabelStore } from "./label.store";
@@ -37,7 +37,6 @@ export class RootStore {
   projectView: IProjectViewStore;
   globalView: IGlobalViewStore;
   issue: IIssueRootStore;
-  inbox: IInboxRootStore;
   state: IStateStore;
   label: ILabelStore;
   estimate: IEstimateStore;
@@ -50,6 +49,7 @@ export class RootStore {
   eventTracker: IEventTrackerStore;
   instance: IInstanceStore;
   user: IUserStore;
+  projectInbox: IProjectInboxStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -63,7 +63,6 @@ export class RootStore {
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this);
-    this.inbox = new InboxRootStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
@@ -74,6 +73,8 @@ export class RootStore {
     this.eventTracker = new EventTrackerStore(this);
     this.instance = new InstanceStore();
     this.user = new UserStore(this);
+    // inbox
+    this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.theme = new ThemeStore(this);
   }
@@ -89,7 +90,6 @@ export class RootStore {
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this);
-    this.inbox = new InboxRootStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
@@ -101,6 +101,7 @@ export class RootStore {
     this.eventTracker = new EventTrackerStore(this);
     this.instance = new InstanceStore();
     this.user = new UserStore(this);
+    this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
   }
 }

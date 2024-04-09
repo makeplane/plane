@@ -18,6 +18,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   const { getProjectStates } = useProjectState();
   const {
     issue: { getIssueById },
+    peekIssue,
     setPeekIssue,
   } = useIssueDetail();
   // derived values
@@ -29,11 +30,13 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     workspaceSlug &&
     issueDetails &&
     !issueDetails.tempId &&
+    peekIssue?.issueId !== issueDetails.id &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
   const { isMobile } = usePlatformOS();
 
   return (
     <div
+      id={`issue-${issueId}`}
       className="relative flex h-full w-full cursor-pointer items-center rounded"
       style={{
         backgroundColor: stateDetails?.color,

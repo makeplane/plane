@@ -47,7 +47,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     hideIcon = false,
     onChange,
     onClose,
-    placeholder = "Estimate",
+    placeholder = "",
     placement,
     projectId,
     showTooltip = false,
@@ -194,7 +194,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
               variant={buttonVariant}
             >
               {!hideIcon && <Triangle className="h-3 w-3 flex-shrink-0" />}
-              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+              {(selectedEstimate || placeholder) && BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
                 <span className="flex-grow truncate">{selectedEstimate !== null ? selectedEstimate : placeholder}</span>
               )}
               {dropdownArrow && (
