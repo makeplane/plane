@@ -37,12 +37,11 @@ export const FilterDate: FC<Props> = observer((props) => {
     d.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleFilterValue = (value: string): string[] =>
-    filterValue?.includes(value) ? pull(filterValue, value) : uniq(concat(filterValue, value));
+  const handleFilterValue = (value: string): string[] => (filterValue?.includes(value) ? [] : uniq(concat(value)));
 
   const handleCustomFilterValue = (value: string[]): string[] => {
     const finalOptions: string[] = [...filterValue];
-    value.forEach((v) => (finalOptions?.includes(v) ? pull(finalOptions, v) : finalOptions.push(v)));
+    value.forEach((v) => (finalOptions?.includes(v) ? [] : finalOptions.push(v)));
     return uniq(finalOptions);
   };
 
@@ -57,6 +56,7 @@ export const FilterDate: FC<Props> = observer((props) => {
       handleInboxIssueFilters(filterKey, handleCustomFilterValue(updateAppliedFilters));
     } else setIsDateFilterModalOpen(true);
   };
+
   return (
     <>
       {isDateFilterModalOpen && (
@@ -82,10 +82,15 @@ export const FilterDate: FC<Props> = observer((props) => {
                   isChecked={filterValue?.includes(option.value) ? true : false}
                   onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(option.value))}
                   title={option.name}
-                  multiple
+                  multiple={false}
                 />
               ))}
-              <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title="Custom" multiple />
+              <FilterOption
+                isChecked={isCustomDateSelected()}
+                onClick={handleCustomDate}
+                title="Custom"
+                multiple={false}
+              />
             </>
           ) : (
             <p className="text-xs italic text-custom-text-400">No matches found</p>
