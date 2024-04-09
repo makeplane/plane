@@ -1,6 +1,9 @@
 import React from "react";
+// editor
 import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef } from "@plane/lite-text-editor";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useMention } from "@/hooks/store";
 
 interface LiteTextReadOnlyEditorWrapperProps extends Omit<ILiteTextReadOnlyEditor, "mentionHandler"> {}
@@ -16,8 +19,8 @@ export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Lit
           highlights: mentionHighlights,
         }}
         {...props}
-        // overriding the customClassName to add relative class passed
-        customClassName={cn(props.customClassName, "relative p-2")}
+        // overriding the containerClassName to add relative class passed
+        containerClassName={cn(props.containerClassName, "relative p-2")}
       />
     );
   }

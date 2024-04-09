@@ -28,7 +28,7 @@ const fileService = new FileService();
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
   const {
-    customClassName,
+    containerClassName,
     workspaceSlug,
     workspaceId,
     projectId,
@@ -70,7 +70,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           suggestions: mentionSuggestions,
         }}
         {...rest}
-        customClassName={cn(customClassName, "relative")}
+        containerClassName={cn(containerClassName, "relative")}
       />
       <IssueCommentToolbar
         accessSpecifier={accessSpecifier}

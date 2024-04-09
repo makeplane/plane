@@ -25,13 +25,9 @@ export type IRichTextEditor = {
     upload: UploadImage;
     restore: RestoreImage;
   };
-  // rerenderOnPropsChange?: {
-  //   id: string;
-  //   description_html: string;
-  // };
   id?: string;
-  customClassName?: string;
-  editorContentCustomClassNames?: string;
+  containerClassName?: string;
+  editorClassName?: string;
   onChange?: (json: object, html: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   debouncedUpdatesEnabled?: boolean;
@@ -46,11 +42,11 @@ const RichTextEditor = (props: IRichTextEditor) => {
   const {
     onChange,
     dragDropEnabled,
-    editorContentCustomClassNames,
     initialValue,
     value,
     fileHandler,
-    customClassName,
+    containerClassName,
+    editorClassName = "",
     forwardedRef,
     // rerenderOnPropsChange,
     id = "",
@@ -68,6 +64,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
 
   const editor = useEditor({
     id,
+    editorClassName,
     restoreFile: fileHandler.restore,
     uploadFile: fileHandler.upload,
     deleteFile: fileHandler.delete,
@@ -81,23 +78,23 @@ const RichTextEditor = (props: IRichTextEditor) => {
     mentionHandler,
   });
 
-  const editorClassNames = getEditorClassNames({
+  const editorContainerClassName = getEditorClassNames({
     noBorder: true,
     borderOnFocus: false,
-    customClassName,
+    containerClassName,
   });
 
   if (!editor) return null;
 
   return (
-    <EditorContainer hideDragHandle={hideDragHandleOnMouseLeave} editor={editor} editorClassNames={editorClassNames}>
+    <EditorContainer
+      hideDragHandle={hideDragHandleOnMouseLeave}
+      editor={editor}
+      editorContainerClassName={editorContainerClassName}
+    >
       {editor && <EditorBubbleMenu editor={editor} />}
       <div className="flex flex-col">
-        <EditorContentWrapper
-          tabIndex={tabIndex}
-          editor={editor}
-          editorContentCustomClassNames={editorContentCustomClassNames}
-        />
+        <EditorContentWrapper tabIndex={tabIndex} editor={editor} />
       </div>
     </EditorContainer>
   );

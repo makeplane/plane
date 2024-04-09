@@ -97,7 +97,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                           initialValue={
                             activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
                           }
-                          customClassName="text-xs bg-custom-background-100"
+                          containerClassName="text-xs bg-custom-background-100"
                         />
                       </div>
                     </div>

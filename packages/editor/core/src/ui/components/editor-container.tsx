@@ -4,13 +4,13 @@ import { cn } from "src/lib/utils";
 
 interface EditorContainerProps {
   editor: Editor | null;
-  editorClassNames: string;
+  editorContainerClassName: string;
   children: ReactNode;
   hideDragHandle?: () => void;
 }
 
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
-  const { editor, editorClassNames, hideDragHandle, children } = props;
+  const { editor, editorContainerClassName, hideDragHandle, children } = props;
 
   const handleContainerClick = () => {
     if (!editor) return;
@@ -51,15 +51,13 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
     <div
       id="editor-container"
       onClick={handleContainerClick}
-      onMouseLeave={() => {
-        hideDragHandle?.();
-      }}
+      onMouseLeave={hideDragHandle}
       className={cn(
-        `cursor-text`,
+        "cursor-text",
         {
           "active-editor": editor?.isFocused && editor?.isEditable,
         },
-        editorClassNames
+        editorContainerClassName
       )}
     >
       {children}

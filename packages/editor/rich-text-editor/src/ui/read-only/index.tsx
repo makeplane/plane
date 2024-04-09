@@ -11,8 +11,8 @@ import * as React from "react";
 
 export interface IRichTextReadOnlyEditor {
   initialValue: string;
-  editorContentCustomClassNames?: string;
-  customClassName?: string;
+  containerClassName?: string;
+  editorClassName?: string;
   tabIndex?: number;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   mentionHandler: {
@@ -21,24 +21,25 @@ export interface IRichTextReadOnlyEditor {
 }
 
 const RichTextReadOnlyEditor = (props: IRichTextReadOnlyEditor) => {
-  const { editorContentCustomClassNames, customClassName, initialValue, forwardedRef, mentionHandler } = props;
+  const { containerClassName, editorClassName = "", initialValue, forwardedRef, mentionHandler } = props;
 
   const editor = useReadOnlyEditor({
     initialValue,
+    editorClassName,
     forwardedRef,
     mentionHandler,
   });
 
-  const editorClassNames = getEditorClassNames({
-    customClassName,
+  const editorContainerClassName = getEditorClassNames({
+    containerClassName,
   });
 
   if (!editor) return null;
 
   return (
-    <EditorContainer editor={editor} editorClassNames={editorClassNames}>
+    <EditorContainer editor={editor} editorContainerClassName={editorContainerClassName}>
       <div className="flex flex-col">
-        <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
+        <EditorContentWrapper editor={editor} />
       </div>
     </EditorContainer>
   );

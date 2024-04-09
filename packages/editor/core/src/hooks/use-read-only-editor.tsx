@@ -9,6 +9,7 @@ import { IMentionHighlight } from "src/types/mention-suggestion";
 
 interface CustomReadOnlyEditorProps {
   initialValue: string;
+  editorClassName: string;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
   extensions?: any;
   editorProps?: EditorProps;
@@ -20,6 +21,7 @@ interface CustomReadOnlyEditorProps {
 
 export const useReadOnlyEditor = ({
   initialValue,
+  editorClassName,
   forwardedRef,
   extensions = [],
   editorProps = {},
@@ -30,7 +32,7 @@ export const useReadOnlyEditor = ({
     editable: false,
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
     editorProps: {
-      ...CoreReadOnlyEditorProps,
+      ...CoreReadOnlyEditorProps(editorClassName),
       ...editorProps,
     },
     onCreate: async () => {

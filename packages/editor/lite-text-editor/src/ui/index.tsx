@@ -22,8 +22,8 @@ export interface ILiteTextEditor {
     upload: UploadImage;
     restore: RestoreImage;
   };
-  customClassName?: string;
-  editorContentCustomClassNames?: string;
+  containerClassName?: string;
+  editorClassName?: string;
   onChange?: (json: object, html: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   onEnterKeyPress?: (e?: any) => void;
@@ -37,11 +37,11 @@ export interface ILiteTextEditor {
 const LiteTextEditor = (props: ILiteTextEditor) => {
   const {
     onChange,
-    editorContentCustomClassNames,
     initialValue,
     fileHandler,
     value,
-    customClassName,
+    containerClassName,
+    editorClassName = "",
     forwardedRef,
     onEnterKeyPress,
     tabIndex,
@@ -52,6 +52,7 @@ const LiteTextEditor = (props: ILiteTextEditor) => {
     onChange,
     initialValue,
     value,
+    editorClassName,
     restoreFile: fileHandler.restore,
     uploadFile: fileHandler.upload,
     deleteFile: fileHandler.delete,
@@ -61,22 +62,18 @@ const LiteTextEditor = (props: ILiteTextEditor) => {
     mentionHandler,
   });
 
-  const editorClassNames = getEditorClassNames({
+  const editorContainerClassName = getEditorClassNames({
     noBorder: true,
     borderOnFocus: false,
-    customClassName,
+    containerClassName,
   });
 
   if (!editor) return null;
 
   return (
-    <EditorContainer editor={editor} editorClassNames={editorClassNames}>
+    <EditorContainer editor={editor} editorContainerClassName={editorContainerClassName}>
       <div className="flex flex-col">
-        <EditorContentWrapper
-          tabIndex={tabIndex}
-          editor={editor}
-          editorContentCustomClassNames={editorContentCustomClassNames}
-        />
+        <EditorContentWrapper tabIndex={tabIndex} editor={editor} />
       </div>
     </EditorContainer>
   );

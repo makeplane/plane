@@ -4,17 +4,17 @@ import { twMerge } from "tailwind-merge";
 interface EditorClassNames {
   noBorder?: boolean;
   borderOnFocus?: boolean;
-  customClassName?: string;
+  containerClassName?: string;
 }
 
-export const getEditorClassNames = ({ noBorder, borderOnFocus, customClassName }: EditorClassNames) =>
+export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassName }: EditorClassNames) =>
   cn(
     "w-full max-w-full sm:rounded-lg focus:outline-none focus:border-0",
     {
       "border border-custom-border-200": !noBorder,
       "focus:border border-custom-border-300": borderOnFocus,
     },
-    customClassName
+    containerClassName
   );
 
 export function cn(...inputs: ClassValue[]) {

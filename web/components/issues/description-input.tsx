@@ -106,7 +106,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
             ) : (
               <RichTextReadOnlyEditor
                 initialValue={localIssueDescription.description_html ?? ""}
-                customClassName="!p-0 !pt-2 text-custom-text-200"
+                containerClassName="!p-0 !pt-2 text-custom-text-200"
               />
             )
           }

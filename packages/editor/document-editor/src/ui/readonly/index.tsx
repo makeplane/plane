@@ -6,7 +6,8 @@ import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget
 
 interface IDocumentReadOnlyEditor {
   initialValue: string;
-  customClassName: string;
+  containerClassName: string;
+  editorClassName?: string;
   tabIndex?: number;
   title: string;
   handleEditorReady?: (value: boolean) => void;
@@ -17,9 +18,19 @@ interface IDocumentReadOnlyEditor {
 }
 
 const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
-  const { customClassName, initialValue, title, forwardedRef, tabIndex, handleEditorReady, mentionHandler } = props;
+  const {
+    containerClassName,
+    editorClassName = "",
+    initialValue,
+    title,
+    forwardedRef,
+    tabIndex,
+    handleEditorReady,
+    mentionHandler,
+  } = props;
   const editor = useReadOnlyEditor({
     initialValue,
+    editorClassName,
     mentionHandler,
     forwardedRef,
     handleEditorReady,
@@ -30,8 +41,8 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     return null;
   }
 
-  const editorClassNames = getEditorClassNames({
-    customClassName,
+  const editorContainerClassName = getEditorClassNames({
+    containerClassName,
   });
 
   return (
@@ -40,7 +51,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
       updatePageTitle={() => Promise.resolve()}
       readonly
       editor={editor}
-      editorClassNames={editorClassNames}
+      editorContainerClassName={editorContainerClassName}
       title={title}
     />
   );

@@ -118,7 +118,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 value={swrPageDetails?.description_html ?? "<p></p>"}
                 ref={editorRef}
                 updatePageTitle={updateName}
-                customClassName="p-0 pb-64 px-5"
+                containerClassName="p-0 pb-64"
+                editorClassName="px-10"
                 onChange={(_description_json, description_html) => {
                   setIsSubmitting("submitting");
                   setShowAlert(true);
@@ -138,7 +139,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             title={pageTitle}
             initialValue={pageDescription}
             handleEditorReady={handleReadOnlyEditorReady}
-            customClassName="p-0 pb-64 px-5 border-none"
+            containerClassName="p-0 pb-64 border-none"
+            editorClassName="px-10"
             mentionHandler={{
               highlights: mentionHighlights,
             }}

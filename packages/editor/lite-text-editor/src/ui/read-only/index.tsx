@@ -10,9 +10,9 @@ import {
 
 export interface ILiteTextReadOnlyEditor {
   initialValue: string;
-  editorContentCustomClassNames?: string;
   borderOnFocus?: boolean;
-  customClassName?: string;
+  containerClassName?: string;
+  editorClassName?: string;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
@@ -21,8 +21,8 @@ export interface ILiteTextReadOnlyEditor {
 }
 
 const LiteTextReadOnlyEditor = ({
-  editorContentCustomClassNames,
-  customClassName,
+  containerClassName,
+  editorClassName = "",
   initialValue,
   forwardedRef,
   mentionHandler,
@@ -30,24 +30,21 @@ const LiteTextReadOnlyEditor = ({
 }: ILiteTextReadOnlyEditor) => {
   const editor = useReadOnlyEditor({
     initialValue,
+    editorClassName,
     forwardedRef,
     mentionHandler,
   });
 
-  const editorClassNames = getEditorClassNames({
-    customClassName,
+  const editorContainerClassName = getEditorClassNames({
+    containerClassName,
   });
 
   if (!editor) return null;
 
   return (
-    <EditorContainer editor={editor} editorClassNames={editorClassNames}>
+    <EditorContainer editor={editor} editorContainerClassName={editorContainerClassName}>
       <div className="flex flex-col">
-        <EditorContentWrapper
-          tabIndex={tabIndex}
-          editor={editor}
-          editorContentCustomClassNames={editorContentCustomClassNames}
-        />
+        <EditorContentWrapper tabIndex={tabIndex} editor={editor} />
       </div>
     </EditorContainer>
   );

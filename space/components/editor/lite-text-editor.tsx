@@ -19,7 +19,14 @@ interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler"
 }
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
-  const { customClassName, workspaceSlug, workspaceId, isSubmitting = false, showSubmitButton = true, ...rest } = props;
+  const {
+    containerClassName,
+    workspaceSlug,
+    workspaceId,
+    isSubmitting = false,
+    showSubmitButton = true,
+    ...rest
+  } = props;
   // use-mention
   const { mentionHighlights } = useMention();
 
@@ -47,8 +54,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           // suggestions disabled for now
         }}
         {...rest}
-        // overriding the customClassName to add relative class passed
-        customClassName={cn(customClassName, "relative")}
+        // overriding the containerClassName to add relative class passed
+        containerClassName={cn(containerClassName, "relative")}
       />
       <IssueCommentToolbar
         executeCommand={(key) => {

@@ -6,10 +6,11 @@ import {
   getEditorClassNames,
   useEditor,
   EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
 } from "@plane/editor-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 import { PageRenderer } from "src/ui/components/page-renderer";
-import { IMentionHighlight, IMentionSuggestion } from "@plane/editor-core";
 
 interface IDocumentEditor {
   title: string;
@@ -22,8 +23,8 @@ interface IDocumentEditor {
     restore: RestoreImage;
   };
   handleEditorReady?: (value: boolean) => void;
-  customClassName?: string;
-  editorContentCustomClassNames?: string;
+  containerClassName?: string;
+  editorClassName?: string;
   onChange: (json: object, html: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: {
@@ -38,11 +39,11 @@ const DocumentEditor = (props: IDocumentEditor) => {
   const {
     title,
     onChange,
-    editorContentCustomClassNames,
     initialValue,
     value,
     fileHandler,
-    customClassName,
+    containerClassName,
+    editorClassName = "",
     mentionHandler,
     handleEditorReady,
     forwardedRef,
@@ -62,6 +63,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     onChange(json, html) {
       onChange(json, html);
     },
+    editorClassName,
     restoreFile: fileHandler.restore,
     uploadFile: fileHandler.upload,
     deleteFile: fileHandler.delete,
@@ -74,10 +76,10 @@ const DocumentEditor = (props: IDocumentEditor) => {
     extensions: DocumentEditorExtensions(fileHandler.upload, setHideDragHandleFunction),
   });
 
-  const editorClassNames = getEditorClassNames({
+  const editorContainerClassNames = getEditorClassNames({
     noBorder: true,
     borderOnFocus: false,
-    customClassName,
+    containerClassName,
   });
 
   if (!editor) return null;
@@ -87,8 +89,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
       tabIndex={tabIndex}
       readonly={false}
       editor={editor}
-      editorContentCustomClassNames={editorContentCustomClassNames}
-      editorClassNames={editorClassNames}
+      editorContainerClassName={editorContainerClassNames}
       hideDragHandle={hideDragHandleOnMouseLeave}
       title={title}
       updatePageTitle={updatePageTitle}

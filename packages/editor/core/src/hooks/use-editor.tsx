@@ -21,6 +21,7 @@ interface CustomEditorProps {
   deleteFile: DeleteImage;
   cancelUploadImage?: () => any;
   initialValue: string;
+  editorClassName: string;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
   value: string | null | undefined;
@@ -42,6 +43,7 @@ export const useEditor = ({
   cancelUploadImage,
   editorProps = {},
   initialValue,
+  editorClassName,
   value,
   extensions = [],
   onChange,
@@ -52,7 +54,7 @@ export const useEditor = ({
 }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
-      ...CoreEditorProps(uploadFile),
+      ...CoreEditorProps(uploadFile, editorClassName),
       ...editorProps,
     },
     extensions: [

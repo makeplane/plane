@@ -18,7 +18,7 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
         mentionHandler={{ highlights: mentionHighlights }}
         {...props}
         // overriding the customClassName to add relative class passed
-        customClassName={cn(props.customClassName, "relative border border-custom-border-200 p-3")}
+        containerClassName={cn(props.containerClassName, "relative border border-custom-border-200 p-3")}
       />
     );
   }

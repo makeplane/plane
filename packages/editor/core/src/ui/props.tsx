@@ -1,12 +1,15 @@
 import { EditorProps } from "@tiptap/pm/view";
-import { findTableAncestor } from "src/lib/utils";
+import { cn, findTableAncestor } from "src/lib/utils";
 import { UploadImage } from "src/types/upload-image";
 import { startImageUpload } from "src/ui/plugins/upload-image";
 
-export function CoreEditorProps(uploadFile: UploadImage): EditorProps {
+export function CoreEditorProps(uploadFile: UploadImage, editorClassName: string): EditorProps {
   return {
     attributes: {
-      class: `prose prose-brand max-w-full prose-headings:font-display font-default focus:outline-none`,
+      class: cn(
+        "prose prose-brand max-w-full prose-headings:font-display font-default focus:outline-none",
+        editorClassName
+      ),
     },
     handleDOMEvents: {
       keydown: (_view, event) => {

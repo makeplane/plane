@@ -17,7 +17,7 @@ interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler"
 const fileService = new FileService();
 
 export const RichTextEditor = React.forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { customClassName, workspaceSlug, workspaceId, projectId, ...rest } = props;
+  const { containerClassName, workspaceSlug, workspaceId, projectId, ...rest } = props;
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug as string,
@@ -38,7 +38,7 @@ export const RichTextEditor = React.forwardRef<EditorRefApi, RichTextEditorWrapp
         suggestions: mentionSuggestions,
       }}
       {...rest}
-      customClassName={cn(customClassName, "relative min-h-[150px] border border-custom-border-200 p-3")}
+      containerClassName={cn(containerClassName, "relative min-h-[150px] border border-custom-border-200 p-3")}
     />
   );
 });

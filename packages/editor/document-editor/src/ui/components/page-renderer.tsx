@@ -22,24 +22,14 @@ type IPageRenderer = {
   title: string;
   updatePageTitle: (title: string) => void;
   editor: Editor;
-  editorClassNames: string;
-  editorContentCustomClassNames?: string;
+  editorContainerClassName: string;
   hideDragHandle?: () => void;
   readonly: boolean;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const {
-    title,
-    tabIndex,
-    editor,
-    hideDragHandle,
-    editorClassNames,
-    editorContentCustomClassNames,
-    updatePageTitle,
-    readonly,
-  } = props;
+  const { title, tabIndex, editor, hideDragHandle, editorContainerClassName, updatePageTitle, readonly } = props;
   // states
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -169,13 +159,13 @@ export const PageRenderer = (props: IPageRenderer) => {
           />
         )}
       </div>
-      <div className="flex-grow w-full" onMouseOver={handleLinkHover}>
-        <EditorContainer editor={editor} hideDragHandle={hideDragHandle} editorClassNames={editorClassNames}>
-          <EditorContentWrapper
-            tabIndex={tabIndex}
-            editor={editor}
-            editorContentCustomClassNames={editorContentCustomClassNames}
-          />
+      <div className="flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
+        <EditorContainer
+          editor={editor}
+          hideDragHandle={hideDragHandle}
+          editorContainerClassName={editorContainerClassName}
+        >
+          <EditorContentWrapper tabIndex={tabIndex} editor={editor} />
           {editor && editor.isEditable && <BlockMenu editor={editor} />}
         </EditorContainer>
       </div>
