@@ -18,7 +18,7 @@ export type TInboxIssueFilter = {
 } & {
   status: TInboxIssueStatus[] | undefined;
   priority: TIssuePriorities[] | undefined;
-  label: string[] | undefined;
+  labels: string[] | undefined;
 };
 
 // sorting filters
@@ -50,7 +50,7 @@ export type TInboxIssueSortingOrderByQueryParam = {
 };
 
 export type TInboxIssuesQueryParams = {
-  [key in TInboxIssueFilter]: string;
+  [key in keyof TInboxIssueFilter]: string;
 } & TInboxIssueSortingOrderByQueryParam & {
     per_page: number;
     cursor: string;
