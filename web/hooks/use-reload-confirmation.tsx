@@ -21,7 +21,6 @@ const useReloadConfirmations = (isActive = true) => {
       const leave = confirm("Are you sure you want to leave? Changes you made may not be saved.");
       if (!leave) {
         router.events.emit("routeChangeError");
-        throw `Route change to "${url}" was aborted (this error can be safely ignored).`;
       }
     },
     [isActive, showAlert, router.events]
