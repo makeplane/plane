@@ -6,8 +6,8 @@ import { usePopper } from "react-popper";
 // ui
 import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
-import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-read-only-editor";
 // icons
 // components
 // hooks
@@ -202,23 +202,15 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
             {prompt && (
               <div className="text-sm">
                 Content:
-                <RichReadOnlyEditorWithRef
-                  value={prompt}
-                  customClassName="-m-3"
-                  noBorder
-                  borderOnFocus={false}
-                  ref={editorRef}
-                />
+                <RichTextReadOnlyEditor initialValue={prompt} customClassName="-m-3" ref={editorRef} />
               </div>
             )}
             {response !== "" && (
               <div className="page-block-section max-h-[8rem] text-sm">
                 Response:
-                <RichReadOnlyEditorWithRef
-                  value={`<p>${response}</p>`}
+                <RichTextReadOnlyEditor
+                  initialValue={`<p>${response}</p>`}
                   customClassName={response ? "-mx-3 -my-3" : ""}
-                  noBorder
-                  borderOnFocus={false}
                   ref={responseRef}
                 />
               </div>

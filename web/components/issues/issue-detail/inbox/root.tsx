@@ -112,7 +112,9 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
       : null,
     async () => {
       if (workspaceSlug && projectId && inboxId && issueId) {
-        await issueOperations.fetch(workspaceSlug, projectId, issueId);
+        const a = await issueOperations.fetch(workspaceSlug, projectId, issueId);
+        // __AUTO_GENERATED_PRINT_VAR_START__
+        console.log("InboxIssueDetailRoot#(anon)#if a: %s", a); // __AUTO_GENERATED_PRINT_VAR_END__
         await fetchActivities(workspaceSlug, projectId, issueId);
         await fetchComments(workspaceSlug, projectId, issueId);
       }
@@ -130,6 +132,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
     <div className="flex h-full overflow-hidden">
       <div className="h-full w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5 vertical-scrollbar scrollbar-md">
         <InboxIssueMainContent
+          swrIssueDetails={null}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           inboxId={inboxId}

@@ -13,8 +13,8 @@ import { IMentionHighlight, IMentionSuggestion } from "@plane/editor-core";
 
 interface IDocumentEditor {
   title: string;
-  value: string;
-  updatedValue?: string;
+  initialValue: string;
+  value?: string;
   fileHandler: {
     cancel: () => void;
     delete: DeleteImage;
@@ -27,8 +27,8 @@ interface IDocumentEditor {
   onChange: (json: object, html: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   // TODO: merge mention props into one
-  mentionHighlights: () => Promise<IMentionHighlight[]>;
   mentionSuggestions: () => Promise<IMentionSuggestion[]>;
+  mentionHighlights: () => Promise<IMentionHighlight[]>;
   updatePageTitle: (title: string) => void;
   tabIndex?: number;
 }
@@ -38,8 +38,8 @@ const DocumentEditor = (props: IDocumentEditor) => {
     title,
     onChange,
     editorContentCustomClassNames,
-    value,
-    updatedValue = "",
+    initialValue,
+    value = "",
     fileHandler,
     customClassName,
     mentionHighlights,
@@ -55,12 +55,12 @@ const DocumentEditor = (props: IDocumentEditor) => {
       onChange(json, html);
     },
     restoreFile: fileHandler.restore,
-    value,
-    updatedValue,
     uploadFile: fileHandler.upload,
-    handleEditorReady,
     deleteFile: fileHandler.delete,
     cancelUploadImage: fileHandler.cancel,
+    initialValue,
+    value,
+    handleEditorReady,
     forwardedRef,
     mentionHighlights,
     mentionSuggestions,

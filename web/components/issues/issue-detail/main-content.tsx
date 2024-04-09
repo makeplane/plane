@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
+// types
+import { TIssue } from "@plane/types";
 // hooks
 import { StateGroupIcon } from "@plane/ui";
 import { IssueAttachmentRoot, IssueUpdateStatus } from "@/components/issues";
@@ -12,8 +14,6 @@ import { IssueTitleInput } from "../title-input";
 import { IssueActivity } from "./issue-activity";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
-// ui
-// types
 import { TIssueOperations } from "./root";
 
 type Props = {
@@ -22,10 +22,11 @@ type Props = {
   issueId: string;
   issueOperations: TIssueOperations;
   is_editable: boolean;
+  swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, is_editable } = props;
+  const { workspaceSlug, projectId, swrIssueDetails, issueId, issueOperations, is_editable } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
@@ -95,10 +96,10 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         />
 
         <IssueDescriptionInput
+          swrIssueDetails={swrIssueDetails}
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           issueId={issue.id}
-          value={issueDescription}
           initialValue={issueDescription}
           disabled={!is_editable}
           issueOperations={issueOperations}

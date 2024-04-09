@@ -10,8 +10,7 @@ import { PageRenderer } from "src/ui/components/page-renderer";
 import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
 
 interface IDocumentReadOnlyEditor {
-  value: string;
-  updatedValue?: string;
+  initialValue: string;
   customClassName: string;
   tabIndex?: number;
   title: string;
@@ -21,19 +20,10 @@ interface IDocumentReadOnlyEditor {
 }
 
 const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
-  const {
-    customClassName,
-    value,
-    updatedValue = "",
-    title,
-    forwardedRef,
-    tabIndex,
-    handleEditorReady,
-    mentionHighlights,
-  } = props;
+  const { customClassName, initialValue, title, forwardedRef, tabIndex, handleEditorReady, mentionHighlights } = props;
+
   const editor = useReadOnlyEditor({
-    value,
-    updatedValue,
+    initialValue,
     mentionHighlights,
     forwardedRef,
     handleEditorReady,

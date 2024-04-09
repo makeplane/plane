@@ -54,8 +54,6 @@ export const CreateUpdatePageModal: FC<TCreateUpdatePageModal> = (props) => {
   const handleFormSubmit = async () => {
     if (!workspaceSlug || !projectId) return;
 
-    console.log("pageFormData", pageFormData);
-
     if (pageFormData.id && pageFormData.id != undefined) {
       try {
         if (pageFormData.name === storePageData?.name && pageFormData.access === storePageData?.access) {

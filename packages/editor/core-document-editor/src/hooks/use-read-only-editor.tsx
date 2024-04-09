@@ -8,8 +8,7 @@ import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
 import { IMentionHighlight } from "src/types/mention-suggestion";
 
 interface CustomReadOnlyEditorProps {
-  value: string;
-  updatedValue: string;
+  initialValue: string;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
   onStart?: (json: object, html: string) => void;
   extensions?: any;
@@ -19,9 +18,7 @@ interface CustomReadOnlyEditorProps {
 }
 
 export const useReadOnlyEditor = ({
-  value,
-  updatedValue,
-  onStart,
+  initialValue,
   forwardedRef,
   extensions = [],
   editorProps = {},
@@ -30,15 +27,13 @@ export const useReadOnlyEditor = ({
 }: CustomReadOnlyEditorProps) => {
   const editor = useCustomEditor({
     editable: false,
-    content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+    content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
     editorProps: {
       ...CoreReadOnlyEditorProps,
       ...editorProps,
     },
-
-    onCreate: async ({ editor }) => {
+    onCreate: async () => {
       handleEditorReady?.(true);
-      // onStart?.(getTrimmedHTML(editor.getHTML()));
     },
     extensions: [
       ...CoreReadOnlyEditorExtensions({
@@ -53,8 +48,8 @@ export const useReadOnlyEditor = ({
 
   // for syncing swr data on tab refocus etc
   useEffect(() => {
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(updatedValue);
-  }, [updatedValue]);
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue);
+  }, [editor, initialValue]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
 

@@ -15,12 +15,13 @@ import { EditorRefApi } from "src/types/editor-ref-api";
 import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
 
 interface CustomEditorProps {
+  id?: string;
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
   deleteFile: DeleteImage;
   cancelUploadImage?: () => any;
-  value: string;
-  updatedValue: string;
+  initialValue: string;
+  value: string | null;
   onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
@@ -32,11 +33,12 @@ interface CustomEditorProps {
 
 export const useEditor = ({
   uploadFile,
+  id = "",
   deleteFile,
   cancelUploadImage,
   editorProps = {},
+  initialValue,
   value,
-  updatedValue,
   extensions = [],
   onChange,
   forwardedRef,
@@ -62,7 +64,7 @@ export const useEditor = ({
       ),
       ...extensions,
     ],
-    content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+    content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
     onCreate: async () => {
       handleEditorReady?.(true);
     },
@@ -77,10 +79,15 @@ export const useEditor = ({
     },
   });
 
-  // for syncing swr data on tab refocus etc
+  // for syncing swr data on tab refocus etc, can remove it once this is merged
+  // https://github.com/ueberdosis/tiptap/pull/4453
   useEffect(() => {
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(updatedValue);
-  }, [updatedValue]);
+    // value is null when intentionally passed where syncing is not yet
+    // supported and value is undefined when the data from swr is not populated
+    if (value === null || value === undefined) return;
+    console.log("i ran");
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(value);
+  }, [editor, value, id]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
 

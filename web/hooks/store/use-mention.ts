@@ -4,13 +4,16 @@ import { UserService } from "services/user.service";
 import useSWR from "swr";
 import { IProjectMember, IUser } from "@plane/types";
 
-export const useMention = ({ workspaceSlug, projectId }: { workspaceSlug: string; projectId: string }) => {
+export const useMention = ({ workspaceSlug, projectId }: { workspaceSlug?: string; projectId?: string }) => {
   const userService = new UserService();
   const projectMemberService = new ProjectMemberService();
 
   const { data: projectMembers, isLoading: projectMembersLoading } = useSWR(
     ["projectMembers", workspaceSlug, projectId],
     async () => {
+      if (!workspaceSlug || !projectId) {
+        return [];
+      }
       const members = await projectMemberService.fetchProjectMembers(workspaceSlug, projectId);
       const detailedMembers = await Promise.all(
         members.map(async (member) => projectMemberService.getProjectMember(workspaceSlug, projectId, member.id))

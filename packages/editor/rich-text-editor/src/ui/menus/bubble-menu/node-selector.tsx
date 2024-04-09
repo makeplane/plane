@@ -8,7 +8,7 @@ import {
   QuoteItem,
   CodeItem,
   TodoListItem,
-} from "@plane/editor-core";
+} from "@plane/editor-document-core";
 import { Editor } from "@tiptap/react";
 import { Check, ChevronDown, TextIcon } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";

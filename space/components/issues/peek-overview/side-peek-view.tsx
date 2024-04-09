@@ -12,12 +12,11 @@ import { IIssue } from "types/issue";
 
 type Props = {
   handleClose: () => void;
-  workspace_slug: string;
   issueDetails: IIssue | undefined;
 };
 
 export const SidePeekView: React.FC<Props> = observer((props) => {
-  const { handleClose, issueDetails, workspace_slug } = props;
+  const { handleClose, issueDetails } = props;
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -28,7 +27,7 @@ export const SidePeekView: React.FC<Props> = observer((props) => {
         <div className="h-full w-full overflow-y-auto px-6">
           {/* issue title and description */}
           <div className="w-full">
-            <PeekOverviewIssueDetails workspace_slug={workspace_slug} issueDetails={issueDetails} />
+            <PeekOverviewIssueDetails issueDetails={issueDetails} />
           </div>
           {/* issue properties */}
           <div className="mt-6 w-full">

@@ -115,8 +115,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                   upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
                 }}
                 handleEditorReady={handleEditorReady}
-                value={pageDescription}
-                updatedValue={swrPageDetails?.description_html ?? "<p></p>"}
+                initialValue={pageDescription}
+                value={swrPageDetails?.description_html ?? "<p></p>"}
                 ref={editorRef}
                 updatePageTitle={updateName}
                 customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
@@ -136,8 +136,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           <DocumentReadOnlyEditorWithRef
             ref={readOnlyEditorRef}
             title={pageTitle}
-            value={pageDescription}
-            updatedValue={swrPageDetails?.description_html ?? "<p></p>"}
+            initialValue={pageDescription}
             handleEditorReady={handleReadOnlyEditorReady}
             customClassName="tracking-tight w-full px-0 !border-none"
             mentionHighlights={mentionHighlights}

@@ -29,7 +29,7 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
-    "@plane/editor-core": "*",
+    "@plane/editor-document-core": "*",
     "@plane/editor-extensions": "*",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-placeholder": "^2.1.13",
