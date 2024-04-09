@@ -34,12 +34,12 @@ def cache_response(timeout=60 * 60, path=None, user=True):
             key = generate_cache_key(custom_path, auth_header)
             cached_result = cache.get(key)
 
-            if cached_result is not None and not settings.DEBUG:
+            if cached_result is not None:
                 return Response(
                     cached_result["data"], status=cached_result["status"]
                 )
             response = view_func(instance, request, *args, **kwargs)
-            if response.status_code == 200:
+            if response.status_code == 200 and not settings.DEBUG:
                 cache.set(
                     key,
                     {"data": response.data, "status": response.status_code},
