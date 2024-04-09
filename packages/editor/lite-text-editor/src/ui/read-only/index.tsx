@@ -2,49 +2,39 @@ import * as React from "react";
 import {
   EditorContainer,
   EditorContentWrapper,
+  EditorReadOnlyRefApi,
   getEditorClassNames,
   IMentionHighlight,
   useReadOnlyEditor,
-} from "@plane/editor-core";
+} from "@plane/editor-document-core";
 
-interface ICoreReadOnlyEditor {
-  value: string;
+export interface ILiteTextReadOnlyEditor {
+  initialValue: string;
   editorContentCustomClassNames?: string;
-  noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
-  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+  };
   tabIndex?: number;
 }
 
-interface EditorCoreProps extends ICoreReadOnlyEditor {
-  forwardedRef?: React.Ref<EditorHandle>;
-}
-
-interface EditorHandle {
-  clearEditor: () => void;
-  setEditorValue: (content: string) => void;
-}
-
-const LiteReadOnlyEditor = ({
+const LiteTextReadOnlyEditor = ({
   editorContentCustomClassNames,
-  noBorder,
-  borderOnFocus,
   customClassName,
-  value,
+  initialValue,
   forwardedRef,
-  mentionHighlights,
+  mentionHandler,
   tabIndex,
-}: EditorCoreProps) => {
+}: ILiteTextReadOnlyEditor) => {
   const editor = useReadOnlyEditor({
-    value,
+    initialValue,
     forwardedRef,
-    mentionHighlights,
+    mentionHandler,
   });
 
   const editorClassNames = getEditorClassNames({
-    noBorder,
-    borderOnFocus,
     customClassName,
   });
 
@@ -63,10 +53,10 @@ const LiteReadOnlyEditor = ({
   );
 };
 
-const LiteReadOnlyEditorWithRef = React.forwardRef<EditorHandle, ICoreReadOnlyEditor>((props, ref) => (
-  <LiteReadOnlyEditor {...props} forwardedRef={ref} />
+const LiteTextReadOnlyEditorWithRef = React.forwardRef<EditorReadOnlyRefApi, ILiteTextReadOnlyEditor>((props, ref) => (
+  <LiteTextReadOnlyEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorReadOnlyRefApi | null>} />
 ));
 
-LiteReadOnlyEditorWithRef.displayName = "LiteReadOnlyEditorWithRef";
+LiteTextReadOnlyEditorWithRef.displayName = "LiteReadOnlyEditorWithRef";
 
-export { LiteReadOnlyEditor, LiteReadOnlyEditorWithRef };
+export { LiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef };

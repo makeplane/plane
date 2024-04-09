@@ -3,16 +3,14 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 // lib
-import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
-import { Button } from "@plane/ui";
 import { useMobxStore } from "@/lib/mobx/store-provider";
 // hooks
-import fileService from "@/services/file.service";
 import { RootStore } from "@/store/root";
 import useToast from "hooks/use-toast";
 // ui
 // types
 import { Comment } from "types/issue";
+import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // components
 // service
 
@@ -24,8 +22,8 @@ type Props = {
   disabled?: boolean;
 };
 
-export const AddComment: React.FC<Props> = observer((props) => {
-  const { disabled = false } = props;
+export const AddComment: React.FC<Props> = observer(() => {
+  // const { disabled = false } = props;
 
   const {
     handleSubmit,
@@ -74,43 +72,25 @@ export const AddComment: React.FC<Props> = observer((props) => {
           name="comment_html"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <LiteTextEditorWithRef
+            <LiteTextEditor
               onEnterKeyPress={(e) => {
                 userStore.requiredLogin(() => {
                   handleSubmit(onSubmit)(e);
                 });
               }}
-              cancelUploadImage={fileService.cancelUpload}
-              uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
-              deleteFile={fileService.getDeleteImageFunction(workspaceId as string)}
-              restoreFile={fileService.getRestoreImageFunction(workspaceId as string)}
+              workspaceId={workspaceId as string}
+              workspaceSlug={workspace_slug as string}
               ref={editorRef}
-              value={
+              initialValue={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                   ? watch("comment_html")
                   : value
               }
-              customClassName="p-2"
+              customClassName="p-2 border border-custom-border-200"
               editorContentCustomClassNames="min-h-[35px]"
-              debouncedUpdatesEnabled={false}
               onChange={(comment_json: unknown, comment_html: string) => {
                 onChange(comment_html);
               }}
-              submitButton={
-                <Button
-                  disabled={isSubmitting || disabled}
-                  variant="primary"
-                  type="submit"
-                  className="!px-2.5 !py-1.5 !text-xs"
-                  onClick={(e) => {
-                    userStore.requiredLogin(() => {
-                      handleSubmit(onSubmit)(e);
-                    });
-                  }}
-                >
-                  {isSubmitting ? "Adding..." : "Comment"}
-                </Button>
-              }
             />
           )}
         />

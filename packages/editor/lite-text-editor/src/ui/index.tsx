@@ -9,102 +9,66 @@ import {
   getEditorClassNames,
   useEditor,
   IMentionHighlight,
-} from "@plane/editor-core";
-import { FixedMenu } from "src/ui/menus/fixed-menu";
+  EditorRefApi,
+} from "@plane/editor-document-core";
 import { LiteTextEditorExtensions } from "src/ui/extensions";
 
-interface ILiteTextEditor {
-  value: string;
-  uploadFile: UploadImage;
-  deleteFile: DeleteImage;
-  restoreFile: RestoreImage;
-
-  noBorder?: boolean;
-  borderOnFocus?: boolean;
+export interface ILiteTextEditor {
+  initialValue: string;
+  value?: string | null;
+  fileHandler: {
+    cancel: () => void;
+    delete: DeleteImage;
+    upload: UploadImage;
+    restore: RestoreImage;
+  };
   customClassName?: string;
   editorContentCustomClassNames?: string;
-  onChange?: (json: any, html: string) => void;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
-  setShouldShowAlert?: (showAlert: boolean) => void;
-  forwardedRef?: any;
-  debouncedUpdatesEnabled?: boolean;
-  commentAccessSpecifier?: {
-    accessValue: string;
-    onAccessChange: (accessKey: string) => void;
-    showAccessSpecifier: boolean;
-    commentAccess: {
-      icon: any;
-      key: string;
-      label: "Private" | "Public";
-    }[];
-  };
+  onChange?: (json: object, html: string) => void;
+  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   onEnterKeyPress?: (e?: any) => void;
-  cancelUploadImage?: () => any;
-  mentionHighlights?: () => Promise<IMentionHighlight[]>;
-  mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
-  submitButton?: React.ReactNode;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+    suggestions?: () => Promise<IMentionSuggestion[]>;
+  };
   tabIndex?: number;
 }
 
-interface LiteTextEditorProps extends ILiteTextEditor {
-  forwardedRef?: React.Ref<EditorHandle>;
-}
-
-interface EditorHandle {
-  clearEditor: () => void;
-  setEditorValue: (content: string) => void;
-}
-
-const LiteTextEditor = (props: LiteTextEditorProps) => {
+const LiteTextEditor = (props: ILiteTextEditor) => {
   const {
     onChange,
-    cancelUploadImage,
-    debouncedUpdatesEnabled,
-    setIsSubmitting,
-    setShouldShowAlert,
     editorContentCustomClassNames,
+    initialValue,
+    fileHandler,
     value,
-    uploadFile,
-    deleteFile,
-    restoreFile,
-    noBorder,
-    borderOnFocus,
     customClassName,
     forwardedRef,
-    commentAccessSpecifier,
     onEnterKeyPress,
-    mentionHighlights,
-    mentionSuggestions,
-    submitButton,
     tabIndex,
+    mentionHandler,
   } = props;
 
-  const editorVal = useEditor({
+  const editor = useEditor({
     onChange,
-    cancelUploadImage,
-    debouncedUpdatesEnabled,
-    setIsSubmitting,
-    setShouldShowAlert,
+    initialValue,
     value,
-    uploadFile,
-    deleteFile,
-    restoreFile,
+    restoreFile: fileHandler.restore,
+    uploadFile: fileHandler.upload,
+    deleteFile: fileHandler.delete,
+    cancelUploadImage: fileHandler.cancel,
     forwardedRef,
     extensions: LiteTextEditorExtensions(onEnterKeyPress),
-    mentionHighlights,
-    mentionSuggestions,
+    mentionHandler,
   });
 
   const editorClassNames = getEditorClassNames({
-    noBorder,
-    borderOnFocus,
+    noBorder: true,
+    borderOnFocus: false,
     customClassName,
   });
 
-  if (!editorVal) return null;
-
-  const { editor } = editorVal;
   if (!editor) return null;
+
   return (
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
       <div className="flex flex-col">
@@ -113,22 +77,13 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
           editor={editor}
           editorContentCustomClassNames={editorContentCustomClassNames}
         />
-        <div className="mt-4 w-full">
-          <FixedMenu
-            editor={editor}
-            uploadFile={uploadFile}
-            setIsSubmitting={setIsSubmitting}
-            commentAccessSpecifier={commentAccessSpecifier}
-            submitButton={submitButton}
-          />
-        </div>
       </div>
     </EditorContainer>
   );
 };
 
-const LiteTextEditorWithRef = React.forwardRef<EditorHandle, ILiteTextEditor>((props, ref) => (
-  <LiteTextEditor {...props} forwardedRef={ref} />
+const LiteTextEditorWithRef = React.forwardRef<EditorRefApi, ILiteTextEditor>((props, ref) => (
+  <LiteTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
 ));
 
 LiteTextEditorWithRef.displayName = "LiteTextEditorWithRef";

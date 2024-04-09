@@ -48,7 +48,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
     dragDropEnabled,
     editorContentCustomClassNames,
     initialValue,
-    value = "",
+    value,
     fileHandler,
     customClassName,
     forwardedRef,

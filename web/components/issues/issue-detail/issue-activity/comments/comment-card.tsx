@@ -1,23 +1,22 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
-import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/lite-text-editor";
 import { TIssueComment } from "@plane/types";
 // hooks
 import { CustomMenu } from "@plane/ui";
 import { isEmptyHtmlString } from "@/helpers/string.helper";
-import { useIssueDetail, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { useIssueDetail, useUser, useWorkspace } from "@/hooks/store";
+import { LiteTextEditor } from "components/editor/lite-text-editor";
+import { LiteTextReadOnlyEditor } from "components/editor/lite-text-read-only-editor";
 // components
 // ui
 // services
-import { FileService } from "@/services/file.service";
 // types
 import { IssueCommentReaction } from "../../reactions/issue-comment";
 import { TActivityOperations } from "../root";
 import { IssueCommentBlock } from "./comment-block";
 // helpers
-
-const fileService = new FileService();
 
 type TIssueCommentCard = {
   projectId: string;
@@ -44,13 +43,9 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
     comment: { getCommentById },
   } = useIssueDetail();
   const { currentUser } = useUser();
-  const { mentionHighlights, mentionSuggestions } = useMention({
-    workspaceSlug: workspaceSlug as string,
-    projectId: projectId as string,
-  });
   // refs
-  const editorRef = useRef<any>(null);
-  const showEditorRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
+  const showEditorRef = useRef<EditorReadOnlyRefApi>(null);
   // state
   const [isEditing, setIsEditing] = useState(false);
 
@@ -74,8 +69,8 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
 
     activityOperations.updateComment(comment.id, formData);
 
-    editorRef.current?.setEditorValue(formData.comment_html);
-    showEditorRef.current?.setEditorValue(formData.comment_html);
+    editorRef.current?.setEditorValue(formData?.comment_html ?? "<p></p>");
+    showEditorRef.current?.setEditorValue(formData?.comment_html ?? "<p></p>");
   };
 
   useEffect(() => {
@@ -143,18 +138,15 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
               }
             }}
           >
-            <LiteTextEditorWithRef
-              cancelUploadImage={fileService.cancelUpload}
-              uploadFile={fileService.getUploadFileFunction(comment?.workspace_detail?.slug as string)}
-              deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-              restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+            <LiteTextEditor
+              workspaceId={workspaceId}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
               ref={editorRef}
-              value={watch("comment_html") ?? ""}
-              debouncedUpdatesEnabled={false}
-              customClassName="min-h-[50px] p-3 shadow-sm"
+              initialValue={watch("comment_html") ?? ""}
+              value={null}
+              customClassName="min-h-[50px] p-3 shadow-sm border border-custom-border-200"
               onChange={(comment_json: any, comment_html: string) => setValue("comment_html", comment_html)}
-              mentionSuggestions={mentionSuggestions}
-              mentionHighlights={mentionHighlights}
             />
           </div>
           <div className="flex gap-1 self-end">
@@ -185,11 +177,10 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
               {comment.access === "INTERNAL" ? <Lock className="h-3 w-3" /> : <Globe2 className="h-3 w-3" />}
             </div>
           )}
-          <LiteReadOnlyEditorWithRef
+          <LiteTextReadOnlyEditor
             ref={showEditorRef}
-            value={comment.comment_html ?? ""}
+            initialValue={comment.comment_html ?? ""}
             customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-            mentionHighlights={mentionHighlights}
           />
 
           <IssueCommentReaction

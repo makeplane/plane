@@ -1,21 +1,17 @@
 import { FC, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Globe2, Lock, LucideIcon } from "lucide-react";
-// editor
-import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // types
 import { TIssueComment } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
+// import { Button } from "@plane/ui";
 // helpers
 import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
-import { useMention, useWorkspace } from "@/hooks/store";
-// services
-import { FileService } from "@/services/file.service";
+import { useWorkspace } from "@/hooks/store";
+// editor
+import { LiteTextEditor } from "components/editor/lite-text-editor";
 import { TActivityOperations } from "../root";
-
-const fileService = new FileService();
 
 type TIssueCommentCreate = {
   projectId: string;
@@ -30,18 +26,18 @@ type TCommentAccessType = {
   label: "Private" | "Public";
 };
 
-const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
-  {
-    icon: Lock,
-    key: "INTERNAL",
-    label: "Private",
-  },
-  {
-    icon: Globe2,
-    key: "EXTERNAL",
-    label: "Public",
-  },
-];
+// const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
+//   {
+//     icon: Lock,
+//     key: "INTERNAL",
+//     label: "Private",
+//   },
+//   {
+//     icon: Globe2,
+//     key: "EXTERNAL",
+//     label: "Public",
+//   },
+// ];
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const { workspaceSlug, projectId, activityOperations, showAccessSpecifier = false } = props;
@@ -51,11 +47,6 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const workspaceStore = useWorkspace();
   // derived values
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
-  // use-mention
-  const { mentionHighlights, mentionSuggestions } = useMention({
-    workspaceSlug: workspaceSlug as string,
-    projectId: projectId as string,
-  });
   // form info
   const {
     handleSubmit,
@@ -94,42 +85,16 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             name="comment_html"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <LiteTextEditorWithRef
+              <LiteTextEditor
+                workspaceId={workspaceId}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
                 onEnterKeyPress={(e) => handleSubmit(onSubmit)(e)}
-                cancelUploadImage={fileService.cancelUpload}
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                 ref={editorRef}
-                value={value ?? "<p></p>"}
-                customClassName="p-2"
+                initialValue={value ?? "<p></p>"}
+                customClassName="p-2 border border-custom-border-200"
                 editorContentCustomClassNames="min-h-[35px]"
-                debouncedUpdatesEnabled={false}
                 onChange={(comment_json, comment_html) => onChange(comment_html)}
-                mentionSuggestions={mentionSuggestions}
-                mentionHighlights={mentionHighlights}
-                commentAccessSpecifier={
-                  showAccessSpecifier
-                    ? {
-                        accessValue: accessValue ?? "INTERNAL",
-                        onAccessChange,
-                        showAccessSpecifier,
-                        commentAccess: COMMENT_ACCESS_SPECIFIERS,
-                      }
-                    : undefined
-                }
-                submitButton={
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="!px-2.5 !py-1.5 !text-xs"
-                    onClick={(e) => handleSubmit(onSubmit)(e)}
-                    disabled={isEmpty}
-                    loading={isSubmitting}
-                  >
-                    Comment
-                  </Button>
-                }
               />
             )}
           />

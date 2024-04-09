@@ -21,14 +21,16 @@ interface CustomEditorProps {
   deleteFile: DeleteImage;
   cancelUploadImage?: () => any;
   initialValue: string;
-  value: string | null;
+  // undefined when prop is not passed, null if intentionally passed to stop
+  // swr syncing
+  value: string | null | undefined;
   onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
-    suggestions: () => Promise<IMentionSuggestion[]>;
+    suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   handleEditorReady?: (value: boolean) => void;
 }
@@ -56,7 +58,7 @@ export const useEditor = ({
     extensions: [
       ...CoreEditorExtensions(
         {
-          mentionSuggestions: mentionHandler.suggestions ?? [],
+          mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
           mentionHighlights: mentionHandler.highlights ?? [],
         },
         deleteFile,

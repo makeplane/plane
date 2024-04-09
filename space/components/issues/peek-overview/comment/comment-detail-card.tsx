@@ -5,7 +5,6 @@ import { Controller, useForm } from "react-hook-form";
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // components
-import { LiteReadOnlyEditorWithRef, LiteTextEditorWithRef } from "@plane/lite-text-editor";
 
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
@@ -19,6 +18,8 @@ import fileService from "@/services/file.service";
 import { RootStore } from "@/store/root";
 // types
 import { Comment } from "types/issue";
+import { LiteTextEditor } from "@/components/editor/lite-text-editor";
+import { LiteTextReadOnlyEditor } from "@/components/editor/lite-text-read-only-editor";
 
 type Props = {
   workspaceSlug: string;
@@ -110,17 +111,14 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 control={control}
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
-                  <LiteTextEditorWithRef
+                  <LiteTextEditor
+                    workspaceId={workspaceId as string}
+                    workspaceSlug={workspaceSlug}
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
-                    cancelUploadImage={fileService.cancelUpload}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-                    deleteFile={fileService.getDeleteImageFunction(workspaceId as string)}
-                    restoreFile={fileService.getRestoreImageFunction(workspaceId as string)}
                     ref={editorRef}
-                    value={value}
-                    debouncedUpdatesEnabled={false}
-                    mentionHighlights={mentionHighlights}
-                    customClassName="min-h-[50px] p-3 shadow-sm"
+                    initialValue={value}
+                    value={null}
+                    customClassName="min-h-[50px] p-3 shadow-sm border border-custom-border-200"
                     onChange={(comment_json: unknown, comment_html: string) => {
                       onChange(comment_html);
                     }}
@@ -146,11 +144,10 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <LiteReadOnlyEditorWithRef
+            <LiteTextReadOnlyEditor
               ref={showEditorRef}
-              value={comment.comment_html}
+              initialValue={comment.comment_html}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              mentionHighlights={mentionHighlights}
             />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
           </div>

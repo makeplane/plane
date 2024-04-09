@@ -40,7 +40,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     onChange,
     editorContentCustomClassNames,
     initialValue,
-    value = "",
+    value,
     fileHandler,
     customClassName,
     mentionHandler,
