@@ -82,7 +82,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
       if (!currentUserId) throw new Error("user id not available");
 
       runInAction(() => {
-        set(this.subscriptionMap, [issueId, currentUserId], { subscribed: true });
+        set(this.subscriptionMap, [issueId, currentUserId], true);
       });
 
       await this.notificationService.subscribeToIssueNotifications(workspaceSlug, projectId, issueId);
@@ -98,7 +98,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
       if (!currentUserId) throw new Error("user id not available");
 
       runInAction(() => {
-        set(this.subscriptionMap, [issueId, currentUserId], { subscribed: false });
+        set(this.subscriptionMap, [issueId, currentUserId], false);
       });
 
       await this.notificationService.unsubscribeFromIssueNotifications(workspaceSlug, projectId, issueId);
