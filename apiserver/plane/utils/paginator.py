@@ -751,6 +751,7 @@ class BasePaginator:
                 "prev_page_results": cursor_result.prev.has_results,
                 "count": cursor_result.__len__(),
                 "total_pages": cursor_result.max_hits,
+                "total_results": cursor_result.hits,
                 "extra_stats": extra_stats,
                 "results": results,
             }

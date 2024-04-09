@@ -56,7 +56,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const { getProjectById } = useProject();
+  const { getProjectById, currentProjectDetails } = useProject();
   const { fetchProjectPages, fetchArchivedProjectPages, loader, archivedPageLoader, projectPageIds, archivedPageIds } =
     useProjectPages();
   // hooks
@@ -74,6 +74,19 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     workspaceSlug && projectId ? `ALL_ARCHIVED_PAGES_LIST_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString()) : null
   );
+
+  if (!workspaceSlug || !projectId) return <></>;
+
+  // No access to
+  if (currentProjectDetails?.page_view === false)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <EmptyState
+          type={EmptyStateType.DISABLED_PROJECT_PAGE}
+          primaryButtonLink={`/${workspaceSlug}/projects/${projectId}/settings/features`}
+        />
+      </div>
+    );
 
   const currentTabValue = (tab: string | null) => {
     switch (tab) {

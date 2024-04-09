@@ -66,11 +66,11 @@ class BaseSerializer(serializers.ModelSerializer):
                 if expand in self.fields:
                     # Import all the expandable serializers
                     from . import (
-                        WorkspaceLiteSerializer,
-                        ProjectLiteSerializer,
-                        UserLiteSerializer,
-                        StateLiteSerializer,
                         IssueSerializer,
+                        ProjectLiteSerializer,
+                        StateLiteSerializer,
+                        UserLiteSerializer,
+                        WorkspaceLiteSerializer,
                     )
 
                     # Expansion mapper

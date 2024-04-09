@@ -82,7 +82,7 @@ export const CycleEmptyState: React.FC = observer(() => {
   };
 
   const isEmptyFilters = issueFilterCount > 0;
-  const isCompletedAndEmpty = isCompletedCycleSnapshotAvailable || cycleDetails?.status.toLowerCase() === "completed";
+  const isCompletedAndEmpty = isCompletedCycleSnapshotAvailable || cycleDetails?.status?.toLowerCase() === "completed";
 
   const emptyStateType = isCompletedAndEmpty
     ? EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES

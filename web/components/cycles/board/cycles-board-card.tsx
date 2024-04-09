@@ -46,7 +46,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
 
   if (!cycleDetails) return null;
 
-  const cycleStatus = cycleDetails.status.toLocaleLowerCase();
+  const cycleStatus = cycleDetails.status?.toLocaleLowerCase();
   // const isCompleted = cycleStatus === "completed";
   const endDate = getDate(cycleDetails.end_date);
   const startDate = getDate(cycleDetails.start_date);
@@ -189,7 +189,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount}</span>
               </div>
-              {cycleDetails.assignee_ids.length > 0 && (
+              {cycleDetails.assignee_ids && cycleDetails.assignee_ids.length > 0 && (
                 <Tooltip tooltipContent={`${cycleDetails.assignee_ids.length} Members`} isMobile={isMobile}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>

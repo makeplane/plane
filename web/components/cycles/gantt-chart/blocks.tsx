@@ -25,7 +25,7 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
   // derived values
   const cycleDetails = getCycleById(cycleId);
   const { isMobile } = usePlatformOS();
-  const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
+  const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
 
   return (
     <div
@@ -35,12 +35,12 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-              ? "#f7ae59"
-              : cycleStatus === "completed"
-                ? "#3f76ff"
-                : cycleStatus === "draft"
-                  ? "rgb(var(--color-text-200))"
-                  : "",
+            ? "#f7ae59"
+            : cycleStatus === "completed"
+            ? "#3f76ff"
+            : cycleStatus === "draft"
+            ? "rgb(var(--color-text-200))"
+            : "",
       }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`)}
     >
@@ -74,7 +74,7 @@ export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   // derived values
   const cycleDetails = getCycleById(cycleId);
 
-  const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
+  const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
 
   return (
     <Link
@@ -87,12 +87,12 @@ export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-              ? "#f7ae59"
-              : cycleStatus === "completed"
-                ? "#3f76ff"
-                : cycleStatus === "draft"
-                  ? "rgb(var(--color-text-200))"
-                  : ""
+            ? "#f7ae59"
+            : cycleStatus === "completed"
+            ? "#3f76ff"
+            : cycleStatus === "draft"
+            ? "rgb(var(--color-text-200))"
+            : ""
         }`}
       />
       <h6 className="flex-grow truncate text-sm font-medium">{cycleDetails?.name}</h6>

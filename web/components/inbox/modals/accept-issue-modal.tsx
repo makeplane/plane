@@ -5,11 +5,11 @@ import type { TIssue } from "@plane/types";
 // icons
 // ui
 import { Button } from "@plane/ui";
-// types
+// hooks
 import { useProject } from "@/hooks/store";
 
 type Props = {
-  data: TIssue;
+  data: Partial<TIssue>;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => Promise<void>;
@@ -70,7 +70,8 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSub
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to accept issue{" "}
                       <span className="break-all font-medium text-custom-text-100">
-                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
+                        {(data && data?.project_id && getProjectById(data?.project_id)?.identifier) || ""}-
+                        {data?.sequence_id}
                       </span>
                       {""}? Once accepted, this issue will be added to the project issues list.
                     </p>

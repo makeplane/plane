@@ -30,17 +30,13 @@ ADD requirements ./requirements
 # Install the local development settings
 RUN pip install -r requirements/local.txt --compile --no-cache-dir
 
-RUN addgroup -S plane && \
-    adduser -S captain -G plane
 
 COPY . .
 
 RUN mkdir -p /code/plane/logs
-RUN chown -R captain.plane /code
 RUN chmod -R +x /code/bin
 RUN chmod -R 777 /code
 
-USER captain
 
 # Expose container port and run entry point script
 EXPOSE 8000

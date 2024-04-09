@@ -189,7 +189,7 @@ function createToolbox({
   tippyOptions,
   onSelectColor,
   onClickItem,
-  colors,
+  colors = {},
 }: {
   triggerButton: Element | null;
   items: ToolboxItem[];

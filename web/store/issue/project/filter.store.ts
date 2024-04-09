@@ -77,9 +77,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     console.log("displayFilters", displayFilters);
     if (isEmpty(displayFilters)) return undefined;
 
-    const _filters: IIssueFilters = this.computedIssueFilters(displayFilters);
-    console.log("_filters", _filters);
-    return _filters;
+    return this.computedIssueFilters(displayFilters);
   }
 
   get appliedFilters() {
