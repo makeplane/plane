@@ -1,14 +1,14 @@
 import { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { History, LucideIcon, MessageCircle, ListRestart } from "lucide-react";
-import { TIssueComment } from "@plane/types";
-// hooks
-import { TOAST_TYPE, setToast } from "@plane/ui";
-import { useIssueDetail, useProject } from "@/hooks/store";
-// ui
-// components
-import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "./";
 // types
+import { TIssueComment } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "@/components/issues";
+// hooks
+import { useIssueDetail, useProject } from "@/hooks/store";
 
 type TIssueActivity = {
   workspaceSlug: string;

@@ -96,7 +96,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         )}
       </div>
       <div
-        className={cn("h-full w-full pt-5 px-5 md:pr-0", {
+        className={cn("h-full w-full pt-5", {
           "md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]": !isFullWidth,
           "w-[80%]": isFullWidth,
         })}
@@ -119,7 +119,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 value={swrPageDetails?.description_html ?? "<p></p>"}
                 ref={editorRef}
                 updatePageTitle={updateName}
-                customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
+                customClassName="p-0 pb-64 px-5"
                 onChange={(_description_json, description_html) => {
                   setIsSubmitting("submitting");
                   setShowAlert(true);
@@ -127,8 +127,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                   handleSubmit();
                   updateMarkings(description_html);
                 }}
-                mentionHighlights={mentionHighlights}
-                mentionSuggestions={mentionSuggestions}
+                mentionHandler={{
+                  highlights: mentionHighlights,
+                  suggestions: mentionSuggestions,
+                }}
               />
             )}
           />
@@ -138,8 +140,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             title={pageTitle}
             initialValue={pageDescription}
             handleEditorReady={handleReadOnlyEditorReady}
-            customClassName="tracking-tight w-full px-0 !border-none"
-            mentionHighlights={mentionHighlights}
+            customClassName="p-0 pb-64 px-5 border-none"
+            mentionHandler={{
+              highlights: mentionHighlights,
+            }}
           />
         )}
       </div>

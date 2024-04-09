@@ -10,11 +10,12 @@ import { IMentionHighlight } from "src/types/mention-suggestion";
 interface CustomReadOnlyEditorProps {
   initialValue: string;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
-  onStart?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
   handleEditorReady?: (value: boolean) => void;
-  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+  };
 }
 
 export const useReadOnlyEditor = ({
@@ -23,7 +24,7 @@ export const useReadOnlyEditor = ({
   extensions = [],
   editorProps = {},
   handleEditorReady,
-  mentionHighlights,
+  mentionHandler,
 }: CustomReadOnlyEditorProps) => {
   const editor = useCustomEditor({
     editable: false,
@@ -37,7 +38,7 @@ export const useReadOnlyEditor = ({
     },
     extensions: [
       ...CoreReadOnlyEditorExtensions({
-        mentionHighlights: mentionHighlights,
+        mentionHighlights: mentionHandler.highlights,
       }),
       ...extensions,
     ],
@@ -48,6 +49,7 @@ export const useReadOnlyEditor = ({
 
   // for syncing swr data on tab refocus etc
   useEffect(() => {
+    if (initialValue === null || initialValue === undefined) return;
     if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue);
   }, [editor, initialValue]);
 

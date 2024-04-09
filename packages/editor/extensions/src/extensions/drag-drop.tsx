@@ -8,7 +8,10 @@ import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
 export interface DragHandleOptions {
   dragHandleWidth: number;
   setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
-  scrollTreshold: { up: number; down: number };
+  scrollThreshold: {
+    up: number;
+    down: number;
+  };
 }
 
 function createDragHandleElement(): HTMLElement {
@@ -193,9 +196,9 @@ function DragHandle(options: DragHandleOptions) {
         hideDragHandle();
         const a = document.querySelector(".frame-renderer");
         if (!a) return;
-        if (e.clientY < options.scrollTreshold.up) {
+        if (e.clientY < options.scrollThreshold.up) {
           a.scrollBy({ top: -70, behavior: "smooth" });
-        } else if (window.innerHeight - e.clientY < options.scrollTreshold.down) {
+        } else if (window.innerHeight - e.clientY < options.scrollThreshold.down) {
           a.scrollBy({ top: 70, behavior: "smooth" });
         }
       });
@@ -311,7 +314,7 @@ export const DragAndDrop = (setHideDragHandle?: (hideDragHandlerFromDragDrop: ()
       return [
         DragHandle({
           dragHandleWidth: 24,
-          scrollTreshold: { up: 300, down: 100 },
+          scrollThreshold: { up: 300, down: 100 },
           setHideDragHandle,
         }),
       ];

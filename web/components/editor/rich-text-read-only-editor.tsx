@@ -3,7 +3,7 @@ import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWi
 import { cn } from "@/helpers/common.helper";
 import { useMention } from "@/hooks/store";
 
-interface RichTextReadOnlyEditorWrapperProps extends Omit<IRichTextReadOnlyEditor, "mentionHighlights"> {}
+interface RichTextReadOnlyEditorWrapperProps extends Omit<IRichTextReadOnlyEditor, "mentionHandler"> {}
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
   ({ ...props }, ref) => {
@@ -12,7 +12,9 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
     return (
       <RichTextReadOnlyEditorWithRef
         ref={ref}
-        mentionHighlights={mentionHighlights}
+        mentionHandler={{
+          highlights: mentionHighlights,
+        }}
         {...props}
         // overriding the customClassName to add relative class passed
         customClassName={cn(props.customClassName, "relative")}

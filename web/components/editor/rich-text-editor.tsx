@@ -6,8 +6,7 @@ import { useMention } from "hooks/store";
 
 import { FileService } from "services/file.service";
 
-interface RichTextEditorWrapperProps
-  extends Omit<IRichTextEditor, "fileHandler" | "mentionSuggestions" | "mentionHighlights"> {
+interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
   projectId: string;
@@ -31,8 +30,10 @@ export const RichTextEditor = React.forwardRef<EditorRefApi, RichTextEditorWrapp
           restore: fileService.getRestoreImageFunction(workspaceId),
           cancel: fileService.cancelUpload,
         }}
-        mentionSuggestions={mentionSuggestions}
-        mentionHighlights={mentionHighlights}
+        mentionHandler={{
+          highlights: mentionHighlights,
+          suggestions: mentionSuggestions,
+        }}
         {...props}
         // overriding the customClassName to add relative class passed
         customClassName={cn(props.customClassName, "relative")}

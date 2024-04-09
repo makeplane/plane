@@ -246,7 +246,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
               <>{responseActionButton}</>
             ) : (
               <>
-                <div className="flex items-center justify-center gap-2 text-sm text-custom-primary">
+                <div className="flex items-start justify-center gap-2 text-sm text-custom-primary">
                   <AlertCircle className="h-4 w-4" />
                   <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
                 </div>

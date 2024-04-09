@@ -13,18 +13,20 @@ export interface IRichTextReadOnlyEditor {
   initialValue: string;
   editorContentCustomClassNames?: string;
   customClassName?: string;
-  mentionHighlights?: () => Promise<IMentionHighlight[]>;
   tabIndex?: number;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+  };
 }
 
 const RichTextReadOnlyEditor = (props: IRichTextReadOnlyEditor) => {
-  const { editorContentCustomClassNames, customClassName, initialValue, forwardedRef, mentionHighlights } = props;
+  const { editorContentCustomClassNames, customClassName, initialValue, forwardedRef, mentionHandler } = props;
 
   const editor = useReadOnlyEditor({
     initialValue,
     forwardedRef,
-    mentionHighlights,
+    mentionHandler,
   });
 
   const editorClassNames = getEditorClassNames({

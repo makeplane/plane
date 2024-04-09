@@ -1,6 +1,5 @@
 .table-wrapper {
   overflow-x: auto;
-  padding: 2px 8px;
   width: fit-content;
   max-width: 100%;
 }
@@ -8,9 +7,8 @@
 .table-wrapper table {
   border-collapse: collapse;
   table-layout: fixed;
-  margin: 0;
-  margin-bottom: 1rem;
-  border: 1px solid rgba(var(--color-border-300));
+  margin: 0.5rem 0 1rem 0;
+  border: 1px solid rgba(var(--color-border-200));
   width: 100%;
 }
 
@@ -21,7 +19,7 @@
 .table-wrapper table td,
 .table-wrapper table th {
   min-width: 1em;
-  border: 1px solid rgba(var(--color-border-300));
+  border: 1px solid rgba(var(--color-border-200));
   padding: 10px 15px;
   vertical-align: top;
   box-sizing: border-box;
@@ -45,55 +43,13 @@
 }
 
 .table-wrapper table th {
-  font-weight: bold;
+  font-weight: 500;
   text-align: left;
-  background-color: #d9e4ff;
-  color: #171717;
+  background-color: rgba(var(--color-background-90));
 }
 
-.table-wrapper table th * {
-  font-weight: 600;
-}
-
-.table-wrapper table .selectedCell:after {
-  z-index: 2;
-  position: absolute;
-  content: "";
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background-color: rgba(var(--color-primary-300), 0.1);
-  pointer-events: none;
-}
-
-.color-picker {
-  display: grid;
-  padding: 8px 8px;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 5px;
-}
-
-.color-picker-label {
-  font-size: 0.85rem;
-  color: #6b7280;
-  padding: 8px 8px;
-  padding-bottom: 0px;
-}
-
-.color-picker-item {
-  margin: 2px 0px;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-}
-
-.divider {
-  background-color: #e5e7eb;
-  height: 1px;
-  margin: 3px 0;
+.table-wrapper table .selectedCell {
+  border-color: rgba(var(--color-primary-100));
 }
 
 /* table dropdown */
@@ -101,10 +57,10 @@
   position: absolute;
   right: -2px;
   top: 0;
-  bottom: -2px;
-  width: 4px;
+  width: 2px;
+  height: 100%;
   z-index: 5;
-  background-color: #d9e4ff;
+  background-color: rgba(var(--color-primary-100));
   pointer-events: none;
 }
 
@@ -146,25 +102,11 @@
   width: 15px;
 }
 
-.table-wrapper .table-controls .rows-control-div {
-  background-color: #d9e4ff;
-  border: 1px solid rgba(var(--color-border-200));
-  border-radius: 2px;
-  background-size: 1.25rem;
-  background-repeat: no-repeat;
-  background-position: center;
-  transition:
-    transform ease-out 100ms,
-    background-color ease-out 100ms;
-  outline: none;
-  box-shadow: #000 0px 2px 4px;
-  cursor: pointer;
-}
-
+.table-wrapper .table-controls .rows-control-div,
 .table-wrapper .table-controls .columns-control-div {
-  background-color: #d9e4ff;
-  border: 1px solid rgba(var(--color-border-200));
-  border-radius: 2px;
+  background-color: rgba(var(--color-background-80));
+  border: 0.5px solid rgba(var(--color-border-200));
+  border-radius: 4px;
   background-size: 1.25rem;
   background-repeat: no-repeat;
   background-position: center;
@@ -172,58 +114,8 @@
     transform ease-out 100ms,
     background-color ease-out 100ms;
   outline: none;
-  box-shadow: #000 0px 2px 4px;
+  box-shadow: rgba(var(--color-shadow-2xs));
   cursor: pointer;
-}
-.table-wrapper .table-controls .table-toolbox {
-  border: 1px solid rgba(var(--color-border-300));
-  background-color: rgba(var(--color-background-100));
-  border-radius: 5px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 0.25rem;
-  display: flex;
-  flex-direction: column;
-  width: max-content;
-  gap: 0.25rem;
-}
-
-.table-wrapper .table-controls .table-toolbox .toolbox-item {
-  background-color: rgba(var(--color-background-100));
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: none;
-  padding: 0.3rem 0.5rem 0.1rem 0.1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.table-wrapper .table-controls .table-toolbox .toolbox-item:hover {
-  background-color: rgba(var(--color-background-80), 0.6);
-}
-
-.table-wrapper .table-controls .table-toolbox .toolbox-item .icon-container {
-  padding: 4px 0px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
-}
-
-.table-wrapper .table-controls .table-toolbox .toolbox-item .icon-container svg {
-  width: 1rem;
-  height: 1rem;
-}
-
-.table-toolbox {
-  background-color: rgba(var(--color-background-100));
-}
-
-.table-wrapper .table-controls .table-toolbox .toolbox-item .label {
-  font-size: 0.85rem;
-  color: rgba(var(--color-text-300));
 }
 
 .resize-cursor .table-wrapper .table-controls .rows-control,

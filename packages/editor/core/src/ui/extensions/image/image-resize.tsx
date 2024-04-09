@@ -66,7 +66,7 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
           updateMediaSize();
         }}
         scalable
-        renderDirections={["w", "e"]}
+        renderDirections={["se"]}
         onScale={({ target, transform }) => {
           target.style.transform = transform;
         }}

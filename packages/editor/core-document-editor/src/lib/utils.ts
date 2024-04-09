@@ -9,9 +9,11 @@ interface EditorClassNames {
 
 export const getEditorClassNames = ({ noBorder, borderOnFocus, customClassName }: EditorClassNames) =>
   cn(
-    "w-full max-w-full sm:rounded-lg mt-2 p-3 focus:outline-none rounded-md",
-    noBorder ? "" : "border border-custom-border-200",
-    borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0",
+    "w-full max-w-full sm:rounded-lg focus:outline-none focus:border-0",
+    {
+      "border border-custom-border-200": !noBorder,
+      "focus:border border-custom-border-300": borderOnFocus,
+    },
     customClassName
   );
 

@@ -35,8 +35,10 @@ export type IRichTextEditor = {
   onChange?: (json: object, html: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   debouncedUpdatesEnabled?: boolean;
-  mentionHighlights: () => Promise<IMentionHighlight[]>;
-  mentionSuggestions: () => Promise<IMentionSuggestion[]>;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+    suggestions: () => Promise<IMentionSuggestion[]>;
+  };
   tabIndex?: number;
 };
 
@@ -50,11 +52,10 @@ const RichTextEditor = (props: IRichTextEditor) => {
     fileHandler,
     customClassName,
     forwardedRef,
-    mentionHighlights,
     // rerenderOnPropsChange,
     id = "",
-    mentionSuggestions,
     tabIndex,
+    mentionHandler,
   } = props;
 
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
@@ -77,8 +78,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
     forwardedRef,
     // rerenderOnPropsChange,
     extensions: RichTextEditorExtensions(fileHandler.upload, dragDropEnabled, setHideDragHandleFunction),
-    mentionSuggestions,
-    mentionHighlights,
+    mentionHandler,
   });
 
   const editorClassNames = getEditorClassNames({

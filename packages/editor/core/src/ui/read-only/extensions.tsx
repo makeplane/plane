@@ -47,9 +47,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     dropcursor: false,
     gapcursor: false,
   }),
-  CustomQuoteExtension.configure({
-    HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
-  }),
+  CustomQuoteExtension,
   CustomHorizontalRule.configure({
     HTMLAttributes: { class: "my-4" },
   }),
@@ -85,7 +83,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   CustomCodeBlockExtension.configure({
     HTMLAttributes: {
-      class: "bg-custom-background-80 text-custom-text-100 rounded-lg p-8 pl-9 pr-4",
+      class: "bg-custom-background-90 text-custom-text-100 rounded-lg p-8 pl-9 pr-4",
     },
   }),
   CustomCodeInlineExtension,

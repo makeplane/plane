@@ -4,9 +4,12 @@ import { IssueWidgetPlaceholder } from "src/ui/extensions/widgets/issue-embed-wi
 import { SlashCommandDocumentEditor, DragAndDrop } from "@plane/editor-extensions";
 import { UploadImage } from "@plane/editor-document-core";
 
-export const DocumentEditorExtensions = (uploadFile: UploadImage) => [
+export const DocumentEditorExtensions = (
+  uploadFile: UploadImage,
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void
+) => [
   SlashCommandDocumentEditor(uploadFile),
-  DragAndDrop(),
+  DragAndDrop(setHideDragHandle),
   Placeholder.configure({
     placeholder: ({ editor, node }) => {
       if (node.type.name === "heading") {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   UploadImage,
   DeleteImage,
@@ -26,9 +26,10 @@ interface IDocumentEditor {
   editorContentCustomClassNames?: string;
   onChange: (json: object, html: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
-  // TODO: merge mention props into one
-  mentionSuggestions: () => Promise<IMentionSuggestion[]>;
-  mentionHighlights: () => Promise<IMentionHighlight[]>;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+    suggestions: () => Promise<IMentionSuggestion[]>;
+  };
   updatePageTitle: (title: string) => void;
   tabIndex?: number;
 }
@@ -42,14 +43,21 @@ const DocumentEditor = (props: IDocumentEditor) => {
     value = "",
     fileHandler,
     customClassName,
-    mentionHighlights,
-    mentionSuggestions,
+    mentionHandler,
     handleEditorReady,
     forwardedRef,
     updatePageTitle,
     tabIndex,
   } = props;
+  // states
+  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
 
+  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
+  // loads such that we can invoke it from react when the cursor leaves the container
+  const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
+    setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
+  };
+  // use editor
   const editor = useEditor({
     onChange(json, html) {
       onChange(json, html);
@@ -62,20 +70,17 @@ const DocumentEditor = (props: IDocumentEditor) => {
     value,
     handleEditorReady,
     forwardedRef,
-    mentionHighlights,
-    mentionSuggestions,
-    extensions: DocumentEditorExtensions(fileHandler.upload),
+    mentionHandler,
+    extensions: DocumentEditorExtensions(fileHandler.upload, setHideDragHandleFunction),
   });
-
-  if (!editor) {
-    return null;
-  }
 
   const editorClassNames = getEditorClassNames({
     noBorder: true,
     borderOnFocus: false,
     customClassName,
   });
+
+  if (!editor) return null;
 
   return (
     <PageRenderer
@@ -84,6 +89,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
       editor={editor}
       editorContentCustomClassNames={editorContentCustomClassNames}
       editorClassNames={editorClassNames}
+      hideDragHandle={hideDragHandleOnMouseLeave}
       title={title}
       updatePageTitle={updatePageTitle}
     />
