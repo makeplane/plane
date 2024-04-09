@@ -55,12 +55,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     fetchInboxPaginationIssues(workspaceSlug.toString(), projectId.toString());
   }, [workspaceSlug, projectId, fetchInboxPaginationIssues]);
   // page observer
-  useIntersectionObserver({
-    containerRef,
-    elementRef,
-    callback: fetchNextPages,
-    rootMargin: "20%",
-  });
+  useIntersectionObserver(containerRef, elementRef, fetchNextPages, "20%");
 
   return (
     <div className="flex-shrink-0 w-2/6 h-full border-r border-custom-border-300">
