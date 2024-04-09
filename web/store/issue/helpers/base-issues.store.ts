@@ -1405,7 +1405,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         break;
     }
 
-    return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order]) : dataValues) : dataValues[0];
+    return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order])[0] : dataValues) : dataValues[0];
   }
 
   issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
@@ -1498,17 +1498,20 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // Array
       case "labels__name":
         return getIssueIds(
-          orderBy(
-            array, //preferring sorting based on empty values to always keep the empty values below
-            (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "asc")
-          )
+          orderBy(array, [
+            getSortOrderToFilterEmptyValues.bind(null, "label_ids"), //preferring sorting based on empty values to always keep the empty values below
+            (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "asc"),
+          ])
         );
       case "-labels__name":
         return getIssueIds(
           orderBy(
-            array, //preferring sorting based on empty values to always keep the empty values below
-            (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "desc"),
-            "desc"
+            array,
+            [
+              getSortOrderToFilterEmptyValues.bind(null, "label_ids"), //preferring sorting based on empty values to always keep the empty values below
+              (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "asc"),
+            ],
+            ["asc", "desc"]
           )
         );
 
@@ -1525,7 +1528,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
             array,
             [
               getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("module_ids", issue?.["module_ids"], "desc"),
+              (issue) => this.populateIssueDataForSorting("module_ids", issue?.["module_ids"], "asc"),
             ],
             ["asc", "desc"]
           )
@@ -1544,7 +1547,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
             array,
             [
               getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("cycle_id", issue?.["cycle_id"], "desc"),
+              (issue) => this.populateIssueDataForSorting("cycle_id", issue?.["cycle_id"], "asc"),
             ],
             ["asc", "desc"]
           )
@@ -1563,7 +1566,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
             array,
             [
               getSortOrderToFilterEmptyValues.bind(null, "assignee_ids"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("assignee_ids", issue?.["assignee_ids"], "desc"),
+              (issue) => this.populateIssueDataForSorting("assignee_ids", issue?.["assignee_ids"], "asc"),
             ],
             ["asc", "desc"]
           )
