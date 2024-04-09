@@ -24,8 +24,8 @@ export const FilterStatus: FC<Props> = observer((props) => {
   const appliedFiltersCount = filterValue?.length ?? 0;
   const filteredOptions = INBOX_STATUS.filter(
     (s) =>
-      ((currentTab === "open" && [-2].includes(s.status)) ||
-        (currentTab === "closed" && [-1, 0, 1, 2].includes(s.status))) &&
+      ((currentTab === "open" && [-2, 0].includes(s.status)) ||
+        (currentTab === "closed" && [-1, 1, 2].includes(s.status))) &&
       s.key.includes(searchQuery.toLowerCase())
   );
 
@@ -33,10 +33,8 @@ export const FilterStatus: FC<Props> = observer((props) => {
     filterValue?.includes(value) ? filterValue.filter((v) => v !== value) : [...filterValue, value];
 
   const handleStatusFilterSelect = (status: TInboxIssueStatus) => {
-    if (currentTab === "closed") {
-      const selectedStatus = handleFilterValue(status);
-      if (selectedStatus.length >= 1) handleInboxIssueFilters("status", selectedStatus);
-    }
+    const selectedStatus = handleFilterValue(status);
+    if (selectedStatus.length >= 1) handleInboxIssueFilters("status", selectedStatus);
   };
 
   return (

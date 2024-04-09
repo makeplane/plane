@@ -112,7 +112,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   get inboxIssuesArray() {
     return Object.values(this.inboxIssues || {}).filter((inbox) =>
-      (this.currentTab === "open" ? [-2] : [-1, 0, 1, 2]).includes(inbox.status)
+      (this.currentTab === "open" ? [-2, 0] : [-1, 1, 2]).includes(inbox.status)
     );
   }
 
@@ -179,7 +179,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     set(this, ["inboxSorting", "sort_by"], "desc");
     set(this, ["inboxIssues"], {});
     set(this, ["inboxIssuePaginationInfo"], undefined);
-    if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 0, 1, 2]);
+    if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 1, 2]);
     else set(this, ["inboxFilters", "status"], [-2]);
     const { workspaceSlug, projectId } = this.store.app.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
