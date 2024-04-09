@@ -69,6 +69,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
       const labelResponse = await labelOperations.createLabel(workspaceSlug, projectId, formData);
       const currentLabels = [...(values || []), labelResponse.id];
       await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
+      handleIsCreateToggle();
       reset(defaultValues);
     } catch (error) {
       setToast({
