@@ -28,7 +28,7 @@ const ProjectViewsPage: NextPageWithLayout = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
 
   // No access to
-  if (currentProjectDetails?.page_view === false)
+  if (currentProjectDetails?.issue_views_view === false)
     return (
       <div className="flex items-center justify-center h-full w-full">
         <EmptyState
