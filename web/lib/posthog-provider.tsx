@@ -5,6 +5,9 @@ import { PostHogProvider as PHProvider } from "posthog-js/react";
 import { IUser } from "@plane/types";
 // constants
 import { GROUP_WORKSPACE } from "@/constants/event-tracker";
+// helpers
+import { getUserRole } from "@/helpers/user.helper";
+// types
 
 export interface IPosthogWrapper {
   children: ReactNode;
@@ -17,16 +20,31 @@ export interface IPosthogWrapper {
 }
 
 const PostHogProvider: FC<IPosthogWrapper> = (props) => {
-  const { children, user, currentWorkspaceId, posthogAPIKey, posthogHost } = props;
+  const { children, user, workspaceRole, currentWorkspaceId, projectRole, posthogAPIKey, posthogHost } = props;
   // states
   const [lastWorkspaceId, setLastWorkspaceId] = useState(currentWorkspaceId);
   // router
   const router = useRouter();
 
   useEffect(() => {
-    if (posthogAPIKey && posthogHost) {
+    if (user) {
+      // Identify sends an event, so you want may want to limit how often you call it
+      posthog?.identify(user.email, {
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        use_case: user.use_case,
+        workspace_role: workspaceRole ? getUserRole(workspaceRole) : undefined,
+        project_role: projectRole ? getUserRole(projectRole) : undefined,
+      });
+    }
+  }, [user, workspaceRole, projectRole]);
+
+  useEffect(() => {
+    if (posthogAPIKey && (process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost)) {
       posthog.init(posthogAPIKey, {
-        api_host: posthogHost || "https://app.posthog.com",
+        api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost || "https://app.posthog.com",
         debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1", // Debug mode based on the environment variable
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually

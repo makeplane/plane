@@ -29,6 +29,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, swrIssueDetails, issueId, issueOperations, is_editable } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  const [issueDescription, setIssueDescription] = useState<string | undefined>(undefined);
   // hooks
   const { currentUser } = useUser();
   const { projectStates } = useProjectState();
@@ -53,12 +54,16 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
 
-  const issueDescription =
-    issue.description_html !== undefined || issue.description_html !== null
-      ? issue.description_html != ""
-        ? issue.description_html
-        : "<p></p>"
-      : undefined;
+  useEffect(() => {
+    setIssueDescription(
+      issue.description_html !== undefined || issue.description_html !== null
+        ? issue.description_html != ""
+          ? issue.description_html
+          : "<p></p>"
+        : undefined
+    );
+    return () => setIssueDescription(undefined);
+  }, [issue.description_html]);
 
   return (
     <>
@@ -95,16 +100,18 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           value={issue.name}
         />
 
-        <IssueDescriptionInput
-          swrIssueDetails={swrIssueDetails}
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issue.id}
-          initialValue={issueDescription}
-          disabled={!is_editable}
-          issueOperations={issueOperations}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
-        />
+        {issue?.description_html === issueDescription && (
+          <IssueDescriptionInput
+            swrIssueDetails={swrIssueDetails}
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            issueId={issue.id}
+            initialValue={issueDescription}
+            disabled={!is_editable}
+            issueOperations={issueOperations}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+          />
+        )}
 
         {currentUser && (
           <IssueReaction

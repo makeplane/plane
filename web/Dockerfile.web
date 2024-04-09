@@ -32,7 +32,7 @@ RUN yarn install --network-timeout 500000
 # Build the project
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
-USER root
+
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_DEPLOY_URL=$NEXT_PUBLIC_DEPLOY_URL
 
@@ -46,30 +46,22 @@ RUN yarn turbo run build --filter=web
 FROM node:18-alpine AS runner
 WORKDIR /app
 
-# Don't run production as root
-RUN addgroup --system --gid 1001 plane
-RUN adduser --system --uid 1001 captain
-USER captain
-
 COPY --from=installer /app/web/next.config.js .
 COPY --from=installer /app/web/package.json .
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=captain:plane /app/web/.next/standalone ./
-COPY --from=installer --chown=captain:plane /app/web/.next ./web/.next
-COPY --from=installer --chown=captain:plane /app/web/public ./web/public
+COPY --from=installer /app/web/.next/standalone ./
+COPY --from=installer /app/web/.next ./web/.next
+COPY --from=installer /app/web/public ./web/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ARG NEXT_PUBLIC_DEPLOY_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_DEPLOY_URL=$NEXT_PUBLIC_DEPLOY_URL
 
-USER root
 COPY start.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/start.sh
-
-USER captain
 
 ENV NEXT_TELEMETRY_DISABLED 1
 

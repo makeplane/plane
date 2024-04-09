@@ -1,27 +1,29 @@
 # Django imports
-from django.utils import timezone
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Q, F, Func, Subquery, Prefetch
+from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
+from plane.api.serializers import ProjectSerializer
+from plane.app.permissions import ProjectBasePermission
+
 # Module imports
 from plane.db.models import (
-    Workspace,
-    Project,
-    ProjectMember,
-    ProjectDeployBoard,
-    State,
     Cycle,
-    Module,
-    IssueProperty,
     Inbox,
+    IssueProperty,
+    Module,
+    Project,
+    ProjectDeployBoard,
+    ProjectMember,
+    State,
+    Workspace,
 )
-from plane.app.permissions import ProjectBasePermission
-from plane.api.serializers import ProjectSerializer
+
 from .base import BaseAPIView, WebhookMixin
 
 
@@ -103,8 +105,8 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
             .distinct()
         )
 
-    def get(self, request, slug, project_id=None):
-        if project_id is None:
+    def get(self, request, slug, pk=None):
+        if pk is None:
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
                 project_id=OuterRef("pk"),
@@ -135,7 +137,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     expand=self.expand,
                 ).data,
             )
-        project = self.get_queryset().get(workspace__slug=slug, pk=project_id)
+        project = self.get_queryset().get(workspace__slug=slug, pk=pk)
         serializer = ProjectSerializer(
             project,
             fields=self.fields,
@@ -259,10 +261,10 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 status=status.HTTP_410_GONE,
             )
 
-    def patch(self, request, slug, project_id=None):
+    def patch(self, request, slug, pk):
         try:
             workspace = Workspace.objects.get(slug=slug)
-            project = Project.objects.get(pk=project_id)
+            project = Project.objects.get(pk=pk)
 
             if project.archived_at:
                 return Response(
@@ -289,10 +291,11 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     # Create the triage state in Backlog group
                     State.objects.get_or_create(
                         name="Triage",
-                        group="backlog",
+                        group="triage",
                         description="Default state for managing all Inbox Issues",
-                        project_id=project_id,
+                        project_id=pk,
                         color="#ff7700",
+                        is_triage=True,
                     )
 
                 project = (
@@ -322,8 +325,8 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 status=status.HTTP_410_GONE,
             )
 
-    def delete(self, request, slug, project_id):
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+    def delete(self, request, slug, pk):
+        project = Project.objects.get(pk=pk, workspace__slug=slug)
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

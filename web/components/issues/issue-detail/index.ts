@@ -1,4 +1,3 @@
-export * from "./inbox";
 export * from "./issue-activity";
 export * from "./label";
 export * from "./links";

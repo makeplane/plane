@@ -154,10 +154,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const [isMenuActive, setIsMenuActive] = useState(false);
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
-  const handleIssuePeekOverview = (issue: TIssue) => {
-    if (workspaceSlug && issue && issue.project_id && issue.id)
-      setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
-  };
+  const handleIssuePeekOverview = (issue: TIssue) =>
+    workspaceSlug &&
+    issue &&
+    issue.project_id &&
+    issue.id &&
+    peekIssue?.issueId !== issue.id &&
+    setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
 
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
@@ -240,6 +243,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           </div>
         </WithDisplayPropertiesHOC>
         <ControlLink
+          id={`issue-${issueId}`}
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}

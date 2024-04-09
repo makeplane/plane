@@ -34,7 +34,7 @@ export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) 
       <button
         type="button"
         className={cn(
-          "group absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 rounded-md bg-custom-background-100 hover:bg-custom-background-90 active:bg-custom-background-90 border border-custom-border-200 transition duration-150 ease-in-out",
+          "group absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 rounded-md bg-custom-background-80 border border-custom-border-200 transition duration-150 ease-in-out",
           {
             "bg-green-500/10 hover:bg-green-500/10 active:bg-green-500/10": copied,
           }
