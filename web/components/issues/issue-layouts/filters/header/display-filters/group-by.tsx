@@ -8,7 +8,7 @@ import { ISSUE_GROUP_BY_OPTIONS } from "@/constants/issue";
 // constants
 
 type Props = {
-  displayFilters: IIssueDisplayFilterOptions;
+  displayFilters: IIssueDisplayFilterOptions | undefined;
   groupByOptions: TIssueGroupByOptions[];
   handleUpdate: (val: TIssueGroupByOptions) => void;
   ignoreGroupedFilters: Partial<TIssueGroupByOptions>[];
@@ -19,8 +19,8 @@ export const FilterGroupBy: React.FC<Props> = observer((props) => {
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const selectedGroupBy = displayFilters.group_by ?? null;
-  const selectedSubGroupBy = displayFilters.sub_group_by ?? null;
+  const selectedGroupBy = displayFilters?.group_by ?? null;
+  const selectedSubGroupBy = displayFilters?.sub_group_by ?? null;
 
   return (
     <>
@@ -32,7 +32,11 @@ export const FilterGroupBy: React.FC<Props> = observer((props) => {
       {previewEnabled && (
         <div>
           {ISSUE_GROUP_BY_OPTIONS.filter((option) => groupByOptions.includes(option.key)).map((groupBy) => {
-            if (displayFilters.layout === "kanban" && selectedSubGroupBy !== null && groupBy.key === selectedSubGroupBy)
+            if (
+              displayFilters?.layout === "kanban" &&
+              selectedSubGroupBy !== null &&
+              groupBy.key === selectedSubGroupBy
+            )
               return null;
             if (ignoreGroupedFilters.includes(groupBy?.key)) return null;
 
