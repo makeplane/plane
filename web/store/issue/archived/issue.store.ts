@@ -59,10 +59,23 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     this.issueFilterStore = issueFilterStore;
   }
 
+  /**
+   * Fetches the project details
+   * @param workspaceSlug
+   * @param projectId
+   */
   fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
     projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
   };
 
+  /**
+   * This method is called to fetch the first issues of pagination
+   * @param workspaceSlug
+   * @param projectId
+   * @param loadType
+   * @param options
+   * @returns
+   */
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
@@ -70,43 +83,73 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     options: IssuePaginationOptions
   ) => {
     try {
+      // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
       });
       this.clear();
+
+      // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      // call the fetch issues API with the params
       const response = await this.issueArchiveService.getArchivedIssues(workspaceSlug, projectId, params);
 
+      // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options, workspaceSlug, projectId);
       return response;
     } catch (error) {
+      // set loader to undefined if errored out
       this.setLoader(undefined);
       throw error;
     }
   };
 
+  /**
+   * This method is called subsequent pages of pagination
+   * if groupId/subgroupId is provided, only that specific group's next page is fetched
+   * else all the groups' next page is fetched
+   * @param workspaceSlug
+   * @param projectId
+   * @param groupId
+   * @param subGroupId
+   * @returns
+   */
   fetchNextIssues = async (workspaceSlug: string, projectId: string, groupId?: string, subGroupId?: string) => {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
+    // if there are no pagination options and the next page results do not exist the return
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
+      // set Loader
       this.setLoader("pagination", groupId, subGroupId);
 
+      // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
         cursorObject?.nextCursor,
         groupId,
         subGroupId
       );
+      // call the fetch issues API with the params for next page in issues
       const response = await this.issueArchiveService.getArchivedIssues(workspaceSlug, projectId, params);
 
+      // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
+      // set Loader as undefined if errored out
       this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };
 
+  /**
+   * This Method exists to fetch the first page of the issues with the existing stored pagination
+   * This is useful for refetching when filters, groupBy, orderBy etc changes
+   * @param workspaceSlug
+   * @param projectId
+   * @param loadType
+   * @returns
+   */
   fetchIssuesWithExistingPagination = async (
     workspaceSlug: string,
     projectId: string,
@@ -116,10 +159,19 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions);
   };
 
+  /**
+   * Restored the current issue from the archived issue
+   * @param workspaceSlug
+   * @param projectId
+   * @param issueId
+   * @returns
+   */
   restoreIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
+      // call API to restore the issue
       const response = await this.issueArchiveService.restoreIssue(workspaceSlug, projectId, issueId);
 
+      // update the store and remove from the archived issues list once restored
       runInAction(() => {
         this.rootIssueStore.issues.updateIssue(issueId, {
           archived_at: null,

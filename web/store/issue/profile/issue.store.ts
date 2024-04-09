@@ -88,6 +88,15 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
 
   fetchParentStats = () => {};
 
+  /**
+   * This method is called to fetch the first issues of pagination
+   * @param workspaceSlug
+   * @param userId
+   * @param loadType
+   * @param options
+   * @param view
+   * @returns
+   */
   fetchIssues = async (
     workspaceSlug: string,
     userId: string,
@@ -96,13 +105,16 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     view: "assigned" | "created" | "subscribed"
   ) => {
     try {
+      // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
       });
       this.clear();
 
+      // set ViewId
       this.setViewId(view);
 
+      // get params from pagination options
       let params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       params = {
         ...params,
@@ -110,26 +122,43 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
         created_by: undefined,
         subscriber: undefined,
       };
+      // modify params based on view
       if (this.currentView === "assigned") params = { ...params, assignees: userId };
       else if (this.currentView === "created") params = { ...params, created_by: userId };
       else if (this.currentView === "subscribed") params = { ...params, subscriber: userId };
 
+      // call the fetch issues API with the params
       const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
 
+      // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options, workspaceSlug);
       return response;
     } catch (error) {
+      // set loader to undefined if errored out
       this.setLoader(undefined);
       throw error;
     }
   };
 
+  /**
+   * This method is called subsequent pages of pagination
+   * if groupId/subgroupId is provided, only that specific group's next page is fetched
+   * else all the groups' next page is fetched
+   * @param workspaceSlug
+   * @param userId
+   * @param groupId
+   * @param subGroupId
+   * @returns
+   */
   fetchNextIssues = async (workspaceSlug: string, userId: string, groupId?: string, subGroupId?: string) => {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
+    // if there are no pagination options and the next page results do not exist the return
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
+      // set Loader
       this.setLoader("pagination", groupId, subGroupId);
 
+      // get params from stored pagination options
       let params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
         cursorObject?.nextCursor,
@@ -146,16 +175,27 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       else if (this.currentView === "created") params = { ...params, created_by: userId };
       else if (this.currentView === "subscribed") params = { ...params, subscriber: userId };
 
+      // call the fetch issues API with the params for next page in issues
       const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
 
+      // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
+      // set Loader as undefined if errored out
       this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };
 
+  /**
+   * This Method exists to fetch the first page of the issues with the existing stored pagination
+   * This is useful for refetching when filters, groupBy, orderBy etc changes
+   * @param workspaceSlug
+   * @param userId
+   * @param loadType
+   * @returns
+   */
   fetchIssuesWithExistingPagination = async (workspaceSlug: string, userId: string, loadType: TLoader) => {
     if (!this.paginationOptions || !this.currentView) return;
     return await this.fetchIssues(workspaceSlug, userId, loadType, this.paginationOptions, this.currentView);

@@ -51,7 +51,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     }
   };
   const {
-    issues: { getActiveCycleId, fetchActiveCycleIssues, fetchNextActiveCycleIssues },
+    issues: { getActiveCycleById, fetchActiveCycleIssues, fetchNextActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
   const {
     issue: { getIssueById },
@@ -67,7 +67,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const cycleIssueDetails = getActiveCycleId(cycle.id);
+  const cycleIssueDetails = getActiveCycleById(cycle.id);
 
   const loadMoreIssues = useCallback(() => {
     fetchNextActiveCycleIssues(workspaceSlug, projectId, cycle.id);

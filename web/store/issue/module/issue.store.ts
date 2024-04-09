@@ -68,6 +68,12 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     this.issueFilterStore = issueFilterStore;
   }
 
+  /**
+   * Fetches the module details
+   * @param workspaceSlug
+   * @param projectId
+   * @param id is the module Id
+   */
   fetchParentStats = (workspaceSlug: string, projectId?: string | undefined, id?: string | undefined) => {
     const moduleId = id ?? this.moduleId;
     projectId &&
@@ -75,6 +81,15 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
   };
 
+  /**
+   * This method is called to fetch the first issues of pagination
+   * @param workspaceSlug
+   * @param projectId
+   * @param loadType
+   * @param options
+   * @param moduleId
+   * @returns
+   */
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
@@ -83,22 +98,38 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     moduleId: string
   ) => {
     try {
+      // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
       });
       this.clear();
 
+      // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      // call the fetch issues API with the params
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
 
+      // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options, workspaceSlug, projectId, moduleId);
       return response;
     } catch (error) {
+      // set loader to undefined once errored out
       this.setLoader(undefined);
       throw error;
     }
   };
 
+  /**
+   * This method is called subsequent pages of pagination
+   * if groupId/subgroupId is provided, only that specific group's next page is fetched
+   * else all the groups' next page is fetched
+   * @param workspaceSlug
+   * @param projectId
+   * @param moduleId
+   * @param groupId
+   * @param subGroupId
+   * @returns
+   */
   fetchNextIssues = async (
     workspaceSlug: string,
     projectId: string,
@@ -107,26 +138,41 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     subGroupId?: string
   ) => {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
+    // if there are no pagination options and the next page results do not exist the return
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
+      // set Loader
       this.setLoader("pagination", groupId, subGroupId);
 
+      // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
         cursorObject?.nextCursor,
         groupId,
         subGroupId
       );
+      // call the fetch issues API with the params for next page in issues
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
 
+      // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
+      // set Loader as undefined if errored out
       this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };
 
+  /**
+   * This Method exists to fetch the first page of the issues with the existing stored pagination
+   * This is useful for refetching when filters, groupBy, orderBy etc changes
+   * @param workspaceSlug
+   * @param projectId
+   * @param loadType
+   * @param moduleId
+   * @returns
+   */
   fetchIssuesWithExistingPagination = async (
     workspaceSlug: string,
     projectId: string,
@@ -137,12 +183,18 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, moduleId);
   };
 
+  /**
+   * Override inherited create issue, to also add issue to module
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @param moduleId
+   * @returns
+   */
   override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, moduleId: string) => {
     try {
       const response = await super.createIssue(workspaceSlug, projectId, data, moduleId, false);
       await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id], false);
-
-      this.fetchParentStats(workspaceSlug, projectId, moduleId);
 
       return response;
     } catch (error) {
@@ -150,15 +202,26 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     }
   };
 
+  /**
+   * This Method overrides the base quickAdd issue
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @param moduleId
+   * @returns
+   */
   quickAddIssue = async (workspaceSlug: string, projectId: string, data: TIssue, moduleId: string) => {
     try {
+      // add temporary issue to store list
       this.addIssue(data);
 
+      // call overridden create issue
       const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
       return response;
     } catch (error) {
       throw error;
     } finally {
+      // remove temp Issue from store list
       runInAction(() => {
         this.removeIssueFromList(data.id);
         this.rootIssueStore.issues.removeIssue(data.id);

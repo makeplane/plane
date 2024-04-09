@@ -7,7 +7,7 @@ import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } fr
 import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
 import { GanttQuickAddIssueForm, IssueGanttBlock } from "@/components/issues";
 //constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { getIssueBlocksStructure } from "@/helpers/issue.helper";
 //hooks
@@ -15,7 +15,6 @@ import { useIssues, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 
-import { ALL_ISSUES } from "@/store/issue/helpers/base-issues.store";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 interface IBaseGanttRoot {

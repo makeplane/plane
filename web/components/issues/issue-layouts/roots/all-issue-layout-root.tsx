@@ -10,6 +10,7 @@ import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-ac
 import { SpreadsheetLayoutLoader } from "@/components/ui";
 // constants
 import {
+  ALL_ISSUES,
   EIssueFilterType,
   EIssueLayoutTypes,
   EIssuesStoreType,
@@ -22,7 +23,6 @@ import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // store
-import { ALL_ISSUES } from "@/store/issue/helpers/base-issues.store";
 import { IssuePeekOverview } from "../../peek-overview";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 

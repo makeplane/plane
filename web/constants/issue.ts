@@ -11,6 +11,9 @@ import {
   TIssueTypeFilters,
 } from "@plane/types";
 
+
+export const ALL_ISSUES = "All Issues";
+
 export enum EIssuesStoreType {
   GLOBAL = "GLOBAL",
   PROFILE = "PROFILE",

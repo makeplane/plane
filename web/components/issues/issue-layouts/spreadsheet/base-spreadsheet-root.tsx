@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 // constants
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { ALL_ISSUES, EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useIssues, useUser } from "@/hooks/store";
@@ -11,7 +11,6 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // views
 // stores
-import { ALL_ISSUES } from "@/store/issue/helpers/base-issues.store";
 // components
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { IQuickActionProps } from "../list/list-view-types";
