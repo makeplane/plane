@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 // components
 import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
 import { Loader } from "@plane/ui";
@@ -24,7 +24,10 @@ export type IssueDescriptionInputProps = {
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => {
   const { workspaceSlug, projectId, issueId, value, initialValue, disabled, issueOperations, setIsSubmitting } = props;
+  // ref
+  const editorRef = useRef(null);
   // states
+  const [localIssueId, setLocalIssueId] = useState(issueId);
   const [descriptionHTML, setDescriptionHTML] = useState(value);
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention();
@@ -35,8 +38,13 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
 
   useEffect(() => {
-    setDescriptionHTML(value);
-  }, [value]);
+    if (issueId !== localIssueId) {
+      setDescriptionHTML(undefined);
+      setLocalIssueId(issueId);
+    } else {
+      setDescriptionHTML(value);
+    }
+  }, [issueId, localIssueId, value]);
 
   useEffect(() => {
     if (debouncedValue && debouncedValue !== value) {
@@ -69,6 +77,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
 
   return (
     <RichTextEditor
+      forwardedRef={editorRef}
       cancelUploadImage={fileService.cancelUpload}
       uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
       deleteFile={fileService.getDeleteImageFunction(workspaceId)}
