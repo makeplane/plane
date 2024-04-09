@@ -23,6 +23,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // use-mention
   const { mentionHighlights } = useMention();
 
+  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
+    return !!ref && typeof ref === "object" && "current" in ref;
+  }
   const isEmpty =
     props.initialValue === "" ||
     props.initialValue?.trim() === "" ||
@@ -48,12 +51,16 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         customClassName={cn(customClassName, "relative")}
       />
       <IssueCommentToolbar
-        executeCommand={(key) => ref?.current?.executeMenuItemCommand(key)}
-        handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
-        isActive={(key) => ref?.current?.isMenuItemActive(key)}
-        isCommentEmpty={isEmpty}
+        executeCommand={(key) => {
+          if (isMutableRefObject<EditorRefApi>(ref)) {
+            ref.current?.executeMenuItemCommand(key);
+          }
+        }}
         isSubmitting={isSubmitting}
         showSubmitButton={showSubmitButton}
+        handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
+        isCommentEmpty={isEmpty}
+        editorRef={isMutableRefObject<EditorRefApi>(ref) ? ref : null}
       />
     </div>
   );

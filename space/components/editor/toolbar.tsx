@@ -1,5 +1,7 @@
+import React, { useEffect, useState, useCallback } from "react";
 // editor
 import { EditorMenuItemNames } from "@plane/editor-document-core";
+import { EditorRefApi } from "@plane/lite-text-editor";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // constants
@@ -10,16 +12,43 @@ import { cn } from "@/helpers/common.helper";
 type Props = {
   executeCommand: (commandName: EditorMenuItemNames) => void;
   handleSubmit: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  isActive: (commandName: EditorMenuItemNames) => boolean;
   isCommentEmpty: boolean;
   isSubmitting: boolean;
   showSubmitButton: boolean;
+  editorRef: React.MutableRefObject<EditorRefApi | null> | null;
 };
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
 
 export const IssueCommentToolbar: React.FC<Props> = (props) => {
-  const { executeCommand, handleSubmit, isActive, isCommentEmpty, isSubmitting, showSubmitButton } = props;
+  const { executeCommand, handleSubmit, isCommentEmpty, editorRef, isSubmitting, showSubmitButton } = props;
+
+  // State to manage active states of toolbar items
+  const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log("IssueCommentToolbar activeStates: %s", activeStates); // __AUTO_GENERATED_PRINT_VAR_END__
+
+  // Function to update active states
+  const updateActiveStates = useCallback(() => {
+    if (editorRef?.current) {
+      const newActiveStates: Record<string, boolean> = {};
+      Object.values(toolbarItems)
+        .flat()
+        .forEach((item) => {
+          // Assert that editorRef.current is not null
+          newActiveStates[item.key] = (editorRef.current as EditorRefApi).isMenuItemActive(item.key);
+        });
+      setActiveStates(newActiveStates);
+    }
+  }, [editorRef]);
+
+  // useEffect to call updateActiveStates when isActive prop changes
+  useEffect(() => {
+    if (!editorRef?.current) return;
+    const unsubscribe = editorRef.current.onStateChange(updateActiveStates);
+    updateActiveStates();
+    return () => unsubscribe();
+  }, [editorRef, updateActiveStates]);
 
   return (
     <div className="flex h-9 w-full items-stretch gap-1.5 bg-custom-background-90 overflow-x-scroll">
@@ -49,13 +78,13 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
                     className={cn(
                       "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-400 hover:bg-custom-background-80",
                       {
-                        "bg-custom-background-80 text-custom-text-100": isActive(item.key),
+                        "bg-custom-background-80 text-custom-text-100": activeStates[item.key],
                       }
                     )}
                   >
                     <item.icon
                       className={cn("h-3.5 w-3.5", {
-                        "text-custom-text-100": isActive(item.key),
+                        "text-custom-text-100": activeStates[item.key],
                       })}
                       strokeWidth={2.5}
                     />
