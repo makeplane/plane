@@ -12,6 +12,8 @@ import {
   TInboxIssuePaginationInfo,
   TInboxIssueSortingOrderByQueryParam,
 } from "@plane/types";
+// helpers
+import { EPastDurationFilters, getCustomDates } from "@/helpers/inbox.helper";
 // services
 import { InboxIssueService } from "@/services/inbox";
 // root store
@@ -126,8 +128,16 @@ export class ProjectInboxStore implements IProjectInboxStore {
     !isEmpty(inboxFilters) &&
       Object.keys(inboxFilters).forEach((key) => {
         const filterKey = key as keyof TInboxIssueFilter;
-        if (inboxFilters[filterKey] && inboxFilters[filterKey]?.length)
-          filters[filterKey] = inboxFilters[filterKey]?.join(",");
+        if (inboxFilters[filterKey] && inboxFilters[filterKey]?.length) {
+          if (["created_at", "updated_at"].includes(filterKey) && (inboxFilters[filterKey] || [])?.length > 0) {
+            const appliedDateFilters: string[] = [];
+            inboxFilters[filterKey]?.forEach((value) => {
+              const dateValue = value as EPastDurationFilters;
+              appliedDateFilters.push(getCustomDates(dateValue));
+            });
+            filters[filterKey] = appliedDateFilters?.join(",");
+          } else filters[filterKey] = inboxFilters[filterKey]?.join(",");
+        }
       });
 
     const sorting: TInboxIssueSortingOrderByQueryParam = {

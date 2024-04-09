@@ -39,18 +39,18 @@ export const PAST_DURATION_FILTER_OPTIONS: {
 }[] = [
   {
     name: "Today",
-    value: getCustomDates(EPastDurationFilters.TODAY),
+    value: EPastDurationFilters.TODAY,
   },
   {
     name: "Yesterday",
-    value: getCustomDates(EPastDurationFilters.YESTERDAY),
+    value: EPastDurationFilters.YESTERDAY,
   },
   {
     name: "Last 7 days",
-    value: getCustomDates(EPastDurationFilters.LAST_7_DAYS),
+    value: EPastDurationFilters.LAST_7_DAYS,
   },
   {
     name: "Last 30 days",
-    value: getCustomDates(EPastDurationFilters.LAST_30_DAYS),
+    value: EPastDurationFilters.LAST_30_DAYS,
   },
 ];
