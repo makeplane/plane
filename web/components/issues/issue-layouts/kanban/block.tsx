@@ -90,7 +90,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
       )}
 
       <IssueProperties
-        className="flex flex-wrap items-center gap-2 whitespace-nowrap"
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300"
         issue={issue}
         displayProperties={displayProperties}
         activeLayout="Kanban"
