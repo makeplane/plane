@@ -2,7 +2,7 @@ import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
 // services
 // types
-import { TIssue, TInboxIssue, TInboxIssueStatus } from "@plane/types";
+import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
 import { InboxIssueService } from "@/services/inbox";
 
 export interface IInboxIssueStore {
@@ -13,6 +13,7 @@ export interface IInboxIssueStore {
   snoozed_till: Date | undefined;
   duplicate_to: string | undefined;
   created_by: string | undefined;
+  duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined;
   // actions
   updateInboxIssueStatus: (status: TInboxIssueStatus) => Promise<void>; // accept, decline
   updateInboxIssueDuplicateTo: (issueId: string) => Promise<void>; // connecting the inbox issue to the project existing issue
@@ -29,6 +30,7 @@ export class InboxIssueStore implements IInboxIssueStore {
   snoozed_till: Date | undefined;
   duplicate_to: string | undefined;
   created_by: string | undefined;
+  duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined = undefined;
   workspaceSlug: string;
   projectId: string;
   // services
@@ -41,6 +43,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     this.snoozed_till = data?.snoozed_till ? new Date(data.snoozed_till) : undefined;
     this.duplicate_to = data?.duplicate_to || undefined;
     this.created_by = data?.created_by || undefined;
+    this.duplicate_issue_detail = data?.duplicate_issue_detail || undefined;
     this.workspaceSlug = workspaceSlug;
     this.projectId = projectId;
     // services
@@ -52,6 +55,7 @@ export class InboxIssueStore implements IInboxIssueStore {
       issue: observable,
       snoozed_till: observable,
       duplicate_to: observable,
+      duplicate_issue_detail: observable,
       created_by: observable,
       // actions
       updateInboxIssueStatus: action,
