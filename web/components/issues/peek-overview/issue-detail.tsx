@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // store hooks
 import { TIssueOperations } from "@/components/issues";
@@ -30,6 +30,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   } = useIssueDetail();
   // hooks
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
+  // state
+  const [issueDescription, setIssueDescription] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -47,12 +49,16 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
 
   const projectDetails = getProjectById(issue?.project_id);
 
-  const issueDescription =
-    issue.description_html !== undefined || issue.description_html !== null
-      ? issue.description_html != ""
-        ? issue.description_html
-        : "<p></p>"
-      : undefined;
+  useEffect(() => {
+    setIssueDescription(
+      issue.description_html !== undefined || issue.description_html !== null
+        ? issue.description_html != ""
+          ? issue.description_html
+          : "<p></p>"
+        : undefined
+    );
+    return () => setIssueDescription(undefined);
+  }, [issue.description_html]);
 
   return (
     <div className="space-y-2">
@@ -70,16 +76,18 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         value={issue.name}
       />
 
-      <IssueDescriptionInput
-        workspaceSlug={workspaceSlug}
-        projectId={issue.project_id}
-        issueId={issue.id}
-        value={issueDescription}
-        initialValue={issueDescription}
-        disabled={disabled}
-        issueOperations={issueOperations}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
-      />
+      {issue?.description_html === issueDescription && (
+        <IssueDescriptionInput
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issue.id}
+          value={issueDescription}
+          initialValue={issueDescription}
+          disabled={disabled}
+          issueOperations={issueOperations}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+        />
+      )}
 
       {currentUser && (
         <IssueReaction
