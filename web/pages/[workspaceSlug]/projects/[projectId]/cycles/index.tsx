@@ -35,7 +35,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { currentProjectCycleIds, loader } = useCycle();
-  const { getProjectById } = useProject();
+  const { getProjectById, currentProjectDetails } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
@@ -60,7 +60,18 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
     updateFilters(projectId.toString(), { [key]: newValues });
   };
 
-  if (!workspaceSlug || !projectId) return null;
+  if (!workspaceSlug || !projectId) return <></>;
+
+  // No access to cycle
+  if (currentProjectDetails?.cycle_view === false)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <EmptyState
+          type={EmptyStateType.DISABLED_PROJECT_CYCLE}
+          primaryButtonLink={`/${workspaceSlug}/projects/${projectId}/settings/features`}
+        />
+      </div>
+    );
 
   if (loader)
     return (
