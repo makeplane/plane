@@ -1,5 +1,6 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
 import { TIssue } from "@plane/types";
@@ -22,7 +23,7 @@ export type IssueDescriptionInputProps = {
   swrIssueDescription: string | null | undefined;
 };
 
-export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => {
+export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
   const {
     workspaceSlug,
     projectId,
@@ -78,7 +79,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
     debounce(async () => {
       handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
     }, 1500),
-    [handleSubmit]
+    [handleSubmit, issueId]
   );
 
   return (
@@ -118,4 +119,4 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
       )}
     </>
   );
-};
+});

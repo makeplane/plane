@@ -51,13 +51,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const issue = inboxIssue.issue;
   if (!issue) return <></>;
 
-  const issueDescription =
-    issue.description_html !== undefined || issue.description_html !== null
-      ? issue.description_html != ""
-        ? issue.description_html
-        : "<p></p>"
-      : undefined;
-
   const issueOperations: TIssueOperations = useMemo(
     () => ({
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -118,6 +111,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   );
 
   if (!issue?.project_id || !issue?.id) return <></>;
+
   return (
     <>
       <div className="rounded-lg space-y-4">
@@ -137,7 +131,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           projectId={issue.project_id}
           issueId={issue.id}
           swrIssueDescription={swrIssueDescription}
-          initialValue={issueDescription}
+          initialValue={issue.description_html ?? "<p></p>"}
           disabled={!isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
