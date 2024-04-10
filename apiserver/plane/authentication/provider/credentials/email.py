@@ -25,7 +25,8 @@ class EmailProvider(CredentialAdapter):
             # Check if the user already exists
             if User.objects.filter(email=self.key).exists():
                 raise AuthenticationException(
-                    "User with this email already exists"
+                    error_message="User with this email already exists",
+                    error_code="USER_ALREADY_EXIST",
                 )
 
             super().set_user_data(
@@ -48,13 +49,15 @@ class EmailProvider(CredentialAdapter):
             # Existing user
             if not user:
                 raise AuthenticationException(
-                    "Sorry, we could not find a user with the provided credentials. Please try again."
+                    error_message="Sorry, we could not find a user with the provided credentials. Please try again.",
+                    error_code="USER_DOES_NOT_EXIST",
                 )
 
             # Check user password
             if not user.check_password(self.code):
                 raise AuthenticationException(
-                    "Sorry, we could not find a user with the provided credentials. Please try again."
+                    error_message="Sorry, we could not find a user with the provided credentials. Please try again.",
+                    error_code="USER_DOES_NOT_EXIST",
                 )
 
             super().set_user_data(

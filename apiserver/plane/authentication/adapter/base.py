@@ -17,7 +17,13 @@ from plane.license.utils.instance_value import get_configuration_value
 
 
 class AuthenticationException(Exception):
-    pass
+
+    error_code = None
+    error_message = None
+
+    def __init__(self, error_code, error_message):
+        self.error_code = error_code
+        self.error_message = error_message
 
 
 class Adapter:
@@ -52,7 +58,7 @@ class Adapter:
         user = User.objects.filter(email=email).first()
 
         if not user:
-            ENABLE_SIGNUP = get_configuration_value(
+            (ENABLE_SIGNUP,) = get_configuration_value(
                 [
                     {
                         "key": "ENABLE_SIGNUP",
@@ -80,7 +86,10 @@ class Adapter:
                 try:
                     validate_password(password=self.code)
                 except ValidationError as e:
-                    raise AuthenticationException(str(e.messages[0]))
+                    raise AuthenticationException(
+                        error_message=str(e.messages[0]),
+                        error_code="INVALID_PASSWORD",
+                    )
 
                 user.set_password(self.code)
                 user.is_password_autoset = False

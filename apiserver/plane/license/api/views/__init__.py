@@ -5,4 +5,5 @@ from .instance import (
     InstanceAdminSignInEndpoint,
     SignUpScreenVisitedEndpoint,
     EmailCredentialCheckEndpoint,
+    InstanceAdminSignUpEndpoint,
 )

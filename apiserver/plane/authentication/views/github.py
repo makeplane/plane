@@ -28,7 +28,13 @@ class GitHubOauthInitiateEndpoint(View):
         if instance is None or not instance.is_setup_done:
             url = urljoin(
                 referer,
-                "?" + urlencode({"error": "Instance is not configured"}),
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "INSTANCE_NOT_CONFIGURED",
+                        "error_message": "Instance is not configured",
+                    }
+                ),
             )
             return HttpResponseRedirect(url)
 
@@ -39,7 +45,16 @@ class GitHubOauthInitiateEndpoint(View):
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
         except ImproperlyConfigured as e:
-            url = urljoin(referer, "?" + urlencode({"error": str(e)}))
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "IMPROPERLY_CONFIGURED",
+                        "error_message": str(e),
+                    }
+                ),
+            )
             return HttpResponseRedirect(url)
 
 
@@ -52,7 +67,14 @@ class GitHubCallbackEndpoint(View):
 
         if state != request.session.get("state", ""):
             url = urljoin(
-                referer, "?" + urlencode({"error": "State does not match"})
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "OAUTH_PROVIDER_ERROR",
+                        "error_message": "State does not match",
+                    }
+                ),
             )
             return HttpResponseRedirect(url)
 
@@ -62,7 +84,8 @@ class GitHubCallbackEndpoint(View):
                 "?"
                 + urlencode(
                     {
-                        "error": "Something went wrong while fetching data from OAuth provider. Please try again after sometime."
+                        "error_code": "OAUTH_PROVIDER_ERROR",
+                        "error_message": "Something went wrong while fetching data from OAuth provider. Please try again after sometime.",
                     }
                 ),
             )
@@ -84,5 +107,14 @@ class GitHubCallbackEndpoint(View):
             url = urljoin(referer, path)
             return HttpResponseRedirect(url)
         except ImproperlyConfigured as e:
-            url = urljoin(referer, "?" + urlencode({"error": str(e)}))
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "IMPROPERLY_CONFIGURED",
+                        "error_message": str(e),
+                    }
+                ),
+            )
             return HttpResponseRedirect(url)

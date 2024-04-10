@@ -4,6 +4,7 @@ from plane.license.api.views import (
     EmailCredentialCheckEndpoint,
     InstanceAdminEndpoint,
     InstanceAdminSignInEndpoint,
+    InstanceAdminSignUpEndpoint,
     InstanceConfigurationEndpoint,
     InstanceEndpoint,
     SignUpScreenVisitedEndpoint,
@@ -33,6 +34,11 @@ urlpatterns = [
     path(
         "admins/sign-in/",
         InstanceAdminSignInEndpoint.as_view(),
+        name="instance-admin-sign-in",
+    ),
+    path(
+        "admins/sign-up/",
+        InstanceAdminSignUpEndpoint.as_view(),
         name="instance-admin-sign-in",
     ),
     path(

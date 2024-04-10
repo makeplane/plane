@@ -30,6 +30,7 @@ from plane.app.serializers import (
     UserSerializer,
 )
 from plane.authentication.utils.login import user_login
+from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
@@ -39,7 +40,7 @@ from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
 
 
-class EmailCheckEndpoint(APIView):
+class EmailCheckSignUpEndpoint(APIView):
 
     permission_classes = [
         AllowAny,
@@ -50,7 +51,10 @@ class EmailCheckEndpoint(APIView):
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             return Response(
-                {"error": "Instance is not configured"},
+                {
+                    "error_code": "INSTANCE_NOT_CONFIGURED",
+                    "error_message": "Instance is not configured",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -60,17 +64,52 @@ class EmailCheckEndpoint(APIView):
         if existing_user:
             return Response(
                 {
-                    "existing_user": True,
+                    "error_code": "USER_ALREADY_EXIST",
+                    "error_message": "User already exists with the email.",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(
+            {"status": True},
+            status=status.HTTP_200_OK,
+        )
+
+
+class EmailCheckSignInEndpoint(APIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request):
+        # Check instance configuration
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {
+                    "error_code": "INSTANCE_NOT_CONFIGURED",
+                    "error_message": "Instance is not configured",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        email = request.data.get("email", False)
+        existing_user = User.objects.filter(email=email).first()
+
+        if existing_user:
+            return Response(
+                {
+                    "status": True,
                     "is_password_autoset": existing_user.is_password_autoset,
                 },
                 status=status.HTTP_200_OK,
             )
         return Response(
             {
-                "existing_user": False,
-                "is_password_autoset": False,
+                "error_code": "USER_DOES_NOT_EXIST",
+                "error_message": "User could not be found with the given email.",
             },
-            status=status.HTTP_200_OK,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
@@ -119,7 +158,10 @@ class ForgotPasswordEndpoint(APIView):
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             return Response(
-                {"error": "Instance is not configured"},
+                {
+                    "error_code": "INSTANCE_NOT_CONFIGURED",
+                    "error_message": "Instance is not configured",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -144,7 +186,10 @@ class ForgotPasswordEndpoint(APIView):
 
         if not (EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
             return Response(
-                {"error": "SMTP is not configured. Please contact your admin"},
+                {
+                    "error_code": "SMTP_NOT_CONFIGURED",
+                    "error_message": "SMTP is not configured. Please contact your admin",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -152,7 +197,10 @@ class ForgotPasswordEndpoint(APIView):
             validate_email(email)
         except ValidationError:
             return Response(
-                {"error": "Please enter a valid email"},
+                {
+                    "error_code": "INVALID_EMAIL",
+                    "error_message": "Please enter a valid email",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -171,7 +219,10 @@ class ForgotPasswordEndpoint(APIView):
                 status=status.HTTP_200_OK,
             )
         return Response(
-            {"error": "Please check the email"},
+            {
+                "error_code": "INVALID_EMAIL",
+                "error_message": "Please check the email",
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -188,7 +239,14 @@ class ResetPasswordEndpoint(View):
             # check if the token is valid for the user
             if not PasswordResetTokenGenerator().check_token(user, token):
                 url = urljoin(
-                    referer, "?" + urlencode({"error": "Token is invalid"})
+                    referer,
+                    "?"
+                    + urlencode(
+                        {
+                            "error_code": "INVALID_TOKEN",
+                            "error_message": "Token is invalid",
+                        }
+                    ),
                 )
                 return HttpResponseRedirect(url)
 
@@ -199,7 +257,14 @@ class ResetPasswordEndpoint(View):
                 validate_password(password=new_password)
             except ValidationError as e:
                 url = urljoin(
-                    referer, "?" + urlencode({"error": str(e.messages[0])})
+                    referer,
+                    "?"
+                    + urlencode(
+                        {
+                            "error_code": "INVALID_PASSWORD",
+                            "error_message": str(e.messages[0]),
+                        }
+                    ),
                 )
                 return HttpResponseRedirect(url)
 
@@ -210,12 +275,19 @@ class ResetPasswordEndpoint(View):
             # Generate access token for the user
             user_login(request=request, user=user)
             process_workspace_project_invitations(user=user)
-            url = urljoin(referer, "?" + urlencode({"success": "true"}))
+
+            url = urljoin(referer, get_redirection_path(user=user))
             return HttpResponseRedirect(url)
         except DjangoUnicodeDecodeError:
             url = urljoin(
                 referer,
-                "?" + urlencode({"error": "The password token is not valid"}),
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "INVALID_TOKEN",
+                        "error_message": "The password token is not valid",
+                    }
+                ),
             )
             return HttpResponseRedirect(url)
 
@@ -235,7 +307,10 @@ class ChangePasswordEndpoint(APIView):
                 validate_password(password=serializer.data.get("new_password"))
             except ValidationError as e:
                 return Response(
-                    {"error": str(e.messages[0])},
+                    {
+                        "error_code": "INVALID_PASSWORD",
+                        "error_message": str(e.messages[0]),
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -247,7 +322,13 @@ class ChangePasswordEndpoint(APIView):
                 {"message": "Password updated successfully"},
                 status=status.HTTP_200_OK,
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "error_code": "INVALID_PASSWORD",
+                "error_message": "Invalid passwords provided",
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class SetUserPasswordEndpoint(APIView):
@@ -275,7 +356,10 @@ class SetUserPasswordEndpoint(APIView):
             validate_password(password=password)
         except ValidationError as e:
             return Response(
-                {"error": str(e.messages[0])},
+                {
+                    "error_code": "INVALID_PASSWORD",
+                    "error_message": str(e.messages[0]),
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

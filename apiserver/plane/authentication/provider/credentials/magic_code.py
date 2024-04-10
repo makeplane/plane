@@ -112,8 +112,12 @@ class MagicCodeProvider(CredentialAdapter):
                 )
                 return
             else:
-                raise AuthenticationException("The token is not valid.")
+                raise AuthenticationException(
+                    error_message="The token is not valid.",
+                    error_code="INVALID_TOKEN",
+                )
         else:
             raise AuthenticationException(
-                "The token has expired. Please regenerate the token and try again."
+                error_message="The token has expired. Please regenerate the token and try again.",
+                error_code="EXPIRED_TOKEN",
             )
