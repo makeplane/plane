@@ -35,6 +35,9 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!inboxIssue) return <></>;
+
+  const isIssueAcceptedOrDeclined = [-1, 1].includes(inboxIssue.status);
+
   return (
     <>
       <div className="w-full h-full overflow-hidden relative flex flex-col">
@@ -51,7 +54,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             inboxIssue={inboxIssue}
-            is_editable={is_editable}
+            is_editable={is_editable && !isIssueAcceptedOrDeclined}
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
           />

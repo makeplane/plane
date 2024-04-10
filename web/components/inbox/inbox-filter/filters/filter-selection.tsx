@@ -75,11 +75,11 @@ export const InboxIssueFilterSelection: FC = observer(() => {
         </div>
         {/* Created at */}
         <div className="py-2">
-          <FilterDate filterKey="created_at" label="Created at" searchQuery={filtersSearchQuery} />
+          <FilterDate filterKey="created_at" label="Created date" searchQuery={filtersSearchQuery} />
         </div>
         {/* Updated at */}
         <div className="py-2">
-          <FilterDate filterKey="updated_at" label="Updated at" searchQuery={filtersSearchQuery} />
+          <FilterDate filterKey="updated_at" label="Last updated date" searchQuery={filtersSearchQuery} />
         </div>
       </div>
     </div>
