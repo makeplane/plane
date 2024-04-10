@@ -178,7 +178,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
               {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
             </h3>
           )}
-          <InboxIssueStatus inboxIssue={inboxIssue} />
+          <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />
           <div className="flex items-center justify-end w-full">
             <IssueUpdateStatus isSubmitting={isSubmitting} />
           </div>

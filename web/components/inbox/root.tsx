@@ -28,7 +28,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
     () => {
       inboxAccessible && workspaceSlug && projectId && fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
     },
-    { revalidateOnFocus: false }
+    { revalidateOnFocus: false, revalidateIfStale: false }
   );
 
   // loader
