@@ -17,12 +17,12 @@ type Props = {
   projectId: string;
   issue: Partial<TIssue>;
   issueOperations: TIssueOperations;
-  is_editable: boolean;
+  isEditable: boolean;
   duplicateIssueDetails: TInboxDuplicateIssueDetails | undefined;
 };
 
 export const InboxIssueProperties: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issue, issueOperations, is_editable, duplicateIssueDetails } = props;
+  const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails } = props;
 
   const router = useRouter();
   // store hooks
@@ -35,7 +35,7 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
     <div className="flex h-min w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
       <div className="h-min w-full overflow-y-auto px-5">
         <h5 className="text-sm font-medium my-4">Properties</h5>
-        <div className={`divide-y-2 divide-custom-border-200 ${!is_editable ? "opacity-60" : ""}`}>
+        <div className={`divide-y-2 divide-custom-border-200 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* State */}
             <div className="flex items-center gap-2 h-8">
@@ -50,7 +50,7 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                     issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { state_id: val })
                   }
                   projectId={projectId?.toString() ?? ""}
-                  disabled={!is_editable}
+                  disabled={!isEditable}
                   buttonVariant="transparent-with-text"
                   className="w-3/5 flex-grow group"
                   buttonContainerClassName="w-full text-left"
@@ -71,7 +71,7 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                 onChange={(val) =>
                   issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { assignee_ids: val })
                 }
-                disabled={!is_editable}
+                disabled={!isEditable}
                 projectId={projectId?.toString() ?? ""}
                 placeholder="Add assignees"
                 multiple
@@ -99,7 +99,7 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                 onChange={(val) =>
                   issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { priority: val })
                 }
-                disabled={!is_editable}
+                disabled={!isEditable}
                 buttonVariant="border-with-text"
                 className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
                 buttonContainerClassName="w-full text-left"
@@ -108,7 +108,7 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
             </div>
           </div>
         </div>
-        <div className={`divide-y-2 divide-custom-border-200 mt-3 ${!is_editable ? "opacity-60" : ""}`}>
+        <div className={`divide-y-2 divide-custom-border-200 mt-3 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Due Date */}
             <div className="flex items-center gap-2 h-8">
@@ -126,7 +126,7 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                   })
                 }
                 minDate={minDate ?? undefined}
-                disabled={!is_editable}
+                disabled={!isEditable}
                 buttonVariant="transparent-with-text"
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
@@ -147,7 +147,7 @@ export const InboxIssueProperties: React.FC<Props> = observer((props) => {
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     issueId={issue?.id}
-                    disabled={!is_editable}
+                    disabled={!isEditable}
                     isInboxIssue
                     onLabelUpdate={(val: string[]) =>
                       issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { label_ids: val })
