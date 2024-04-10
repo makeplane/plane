@@ -30,6 +30,7 @@ import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 import { KanbanStoreType } from "./base-kanban-root";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
+import { DropLocation } from "./utils";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
@@ -56,7 +57,7 @@ export interface IGroupByKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  isDragStarted?: boolean;
+  handleOnDrop: (source: DropLocation, destination: DropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
   subGroupIssueHeaderCount?: (listId: string) => number;
 }
@@ -82,7 +83,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     addIssuesToView,
     canEditProperties,
     scrollableContainerRef,
-    isDragStarted,
+    handleOnDrop,
     showEmptyGroup = true,
     subGroupIssueHeaderCount,
   } = props;
@@ -188,7 +189,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   disableIssueCreation={disableIssueCreation}
                   canEditProperties={canEditProperties}
                   scrollableContainerRef={scrollableContainerRef}
-                  isDragStarted={isDragStarted}
+                  handleOnDrop={handleOnDrop}
                 />
               )}
             </div>
@@ -223,7 +224,7 @@ export interface IKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  isDragStarted?: boolean;
+  handleOnDrop: (source: DropLocation, destination: DropLocation) => Promise<void>;
   subGroupIssueHeaderCount?: (listId: string) => number;
 }
 
@@ -247,7 +248,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     addIssuesToView,
     canEditProperties,
     scrollableContainerRef,
-    isDragStarted,
+    handleOnDrop,
     showEmptyGroup,
     subGroupIssueHeaderCount,
   } = props;
@@ -275,7 +276,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       addIssuesToView={addIssuesToView}
       canEditProperties={canEditProperties}
       scrollableContainerRef={scrollableContainerRef}
-      isDragStarted={isDragStarted}
+      handleOnDrop={handleOnDrop}
       showEmptyGroup={showEmptyGroup}
       subGroupIssueHeaderCount={subGroupIssueHeaderCount}
     />

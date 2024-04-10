@@ -1,6 +1,10 @@
-import { MutableRefObject } from "react";
-import { Droppable } from "@hello-pangea/dnd";
-// hooks
+import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import {
+  dropTargetForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element';
+//types
 import {
   TGroupedIssues,
   TIssue,
@@ -9,9 +13,10 @@ import {
   TSubGroupedIssues,
   TUnGroupedIssues,
 } from "@plane/types";
+// hooks
 import { useProjectState } from "@/hooks/store";
 //components
-//types
+import { DropLocation, processPragmaticDropPayload } from "./utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {
@@ -38,7 +43,7 @@ interface IKanbanGroup {
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle?: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  isDragStarted?: boolean;
+  handleOnDrop: (source: DropLocation, destination: DropLocation) => Promise<void>;
 }
 
 export const KanbanGroup = (props: IKanbanGroup) => {
@@ -60,10 +65,40 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     quickAddCallback,
     viewId,
     scrollableContainerRef,
-    isDragStarted,
+    handleOnDrop,
   } = props;
   // hooks
   const projectState = useProjectState();
+
+  const [isDragging, setIsDragging] = useState(false);
+
+  const columnRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const element = columnRef.current;
+
+    if(!element) return;
+
+    return combine(dropTargetForElements({
+      element,
+      getData: () => ({groupId, subGroupId: sub_group_id, columnId: `${groupId}__${sub_group_id}`, type: "COLUMN"}),
+      onDragEnter: () => {setIsDragging(true)},
+      onDragLeave: () => {setIsDragging(false)},
+      onDragStart: () => {setIsDragging(true)},
+        onDrop: (payload) => {
+          setIsDragging(false);
+          const { source, destination} = processPragmaticDropPayload(payload) ?? {};
+
+          if(!source || !destination) return;
+
+          handleOnDrop(source, destination)
+        },
+    }
+    ),
+    autoScrollForElements({
+      element
+    }))
+  }, [columnRef?.current, groupId, sub_group_id, setIsDragging])
 
   const prePopulateQuickAddData = (
     groupByKey: string | null,
@@ -118,13 +153,10 @@ export const KanbanGroup = (props: IKanbanGroup) => {
   };
 
   return (
-    <div className={`relative w-full h-full transition-all`}>
-      <Droppable droppableId={`${groupId}__${sub_group_id}`}>
-        {(provided: any, snapshot: any) => (
           <div
-            className={`relative h-full transition-all ${snapshot.isDraggingOver ? `bg-custom-background-80` : ``}`}
-            {...provided.droppableProps}
-            ref={provided.innerRef}
+            id={`${groupId}__${sub_group_id}`}
+            className={`relative h-full transition-all ${isDragging ? "bg-custom-background-80": ""} ${sub_group_by ? "": "vertical-scrollbar scrollbar-md"}`}
+            ref={columnRef}
           >
             <KanbanIssueBlocksList
               sub_group_id={sub_group_id}
@@ -138,10 +170,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               quickActions={quickActions}
               canEditProperties={canEditProperties}
               scrollableContainerRef={scrollableContainerRef}
-              isDragStarted={isDragStarted}
             />
-
-            {provided.placeholder}
 
             {enableQuickIssueCreate && !disableIssueCreation && (
               <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
@@ -158,8 +187,6 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               </div>
             )}
           </div>
-        )}
-      </Droppable>
-    </div>
   );
 };
+

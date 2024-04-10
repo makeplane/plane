@@ -1,12 +1,16 @@
-import { MutableRefObject, memo } from "react";
-import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
+import { MutableRefObject, memo, useEffect, useRef, useState } from "react";
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import {
+  draggable,
+  dropTargetForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { observer } from "mobx-react-lite";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks
 import { Tooltip, ControlLink } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { useApplication, useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { IssueProperties } from "../properties/all-properties";
@@ -22,12 +26,10 @@ interface IssueBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   draggableId: string;
-  index: number;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  isDragStarted?: boolean;
   issueIds: string[]; //DO NOT REMOVE< needed to force render for virtualization
 }
 
@@ -108,51 +110,73 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
     issuesMap,
     displayProperties,
     isDragDisabled,
-    draggableId,
-    index,
     updateIssue,
     quickActions,
     canEditProperties,
     scrollableContainerRef,
-    isDragStarted,
     issueIds,
   } = props;
 
+  const cardRef = useRef<HTMLDivElement | null>(null);
   const issue = issuesMap[issueId];
+
+  const {setIsDragging: setIsKanbanDragging} =useKanbanView();
+
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    const element = cardRef.current;
+
+    if(!element) return;
+
+    return combine(draggable({
+      element,
+      getInitialData: () => ({id: issue.id, type: "ISSUE"}),
+      onDragStart: () => {setIsKanbanDragging(true);
+        setIsDragging(true)},
+        onDrop: () => {setIsKanbanDragging(false); setIsDragging(false)},
+    }
+    ),
+    dropTargetForElements(
+      {
+      element,
+      canDrop: (payload) => payload.source.data.id !== issue.id,
+      getData: () => ({id: issue.id, type: "ISSUE"}),
+      onDragEnter: () =>{
+        setIsDraggingOver(true)
+      },
+      onDragLeave: () => {
+        setIsDraggingOver(false)
+      },
+      onDrop: () => {
+        setIsDraggingOver(false)
+      },
+  })
+    )
+  }, [cardRef?.current, issue.id, setIsDragging, setIsDraggingOver])
 
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
 
   return (
-    <Draggable
-      key={draggableId}
-      draggableId={draggableId}
-      index={index}
-      isDragDisabled={!canEditIssueProperties || isDragDisabled}
-    >
-      {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-        <div
-          className="group/kanban-block relative p-1.5 hover:cursor-default"
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
-        >
+    <div className="group/kanban-block p-1.5">
+          <div className={cn("block h-[2px] w-full",{"bg-custom-primary-100": !isDragging && isDraggingOver})}/>
           <div
             className={cn(
               "rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
               { "hover:cursor-grab": !isDragDisabled },
-              { "border-custom-primary-100": snapshot.isDragging },
-              { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }
+              { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id },
+              {"bg-custom-background-80 z-[100] opacity-75": isDragging}
             )}
+            ref={cardRef}
           >
             <RenderIfVisible
               classNames="space-y-2 px-3 py-2"
               root={scrollableContainerRef}
               defaultHeight="100px"
               horizontalOffset={50}
-              alwaysRender={snapshot.isDragging}
-              pauseHeightUpdateWhileRendering={isDragStarted}
               changingReference={issueIds}
             >
               <KanbanIssueDetailsBlock
@@ -164,9 +188,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
               />
             </RenderIfVisible>
           </div>
-        </div>
-      )}
-    </Draggable>
+          </div>
   );
 });
 

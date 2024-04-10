@@ -18,6 +18,7 @@ import { KanbanStoreType } from "./base-kanban-root";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
+import { DropLocation } from "./utils";
 // types
 // constants
 
@@ -107,7 +108,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  isDragStarted?: boolean;
+  handleOnDrop: (source: DropLocation, destination: DropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   storeType: KanbanStoreType;
   enableQuickIssueCreate: boolean;
@@ -142,7 +143,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     quickAddCallback,
     viewId,
     scrollableContainerRef,
-    isDragStarted,
+    handleOnDrop,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
@@ -213,7 +214,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     quickAddCallback={quickAddCallback}
                     viewId={viewId}
                     scrollableContainerRef={scrollableContainerRef}
-                    isDragStarted={isDragStarted}
+                    handleOnDrop={handleOnDrop}
                     subGroupIssueHeaderCount={(groupByListId: string) =>
                       getSubGroupHeaderIssuesCount(issueIds as TSubGroupedIssues, groupByListId)
                     }
@@ -238,7 +239,7 @@ export interface IKanBanSwimLanes {
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   showEmptyGroup: boolean;
-  isDragStarted?: boolean;
+  handleOnDrop: (source: DropLocation, destination: DropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
@@ -267,7 +268,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     kanbanFilters,
     handleKanbanFilters,
     showEmptyGroup,
-    isDragStarted,
+    handleOnDrop,
     disableIssueCreation,
     enableQuickIssueCreate,
     canEditProperties,
@@ -337,7 +338,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           kanbanFilters={kanbanFilters}
           handleKanbanFilters={handleKanbanFilters}
           showEmptyGroup={showEmptyGroup}
-          isDragStarted={isDragStarted}
+          handleOnDrop={handleOnDrop}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
           addIssuesToView={addIssuesToView}

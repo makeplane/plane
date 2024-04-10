@@ -8,12 +8,14 @@ export interface IIssueKanBanViewStore {
     groupByHeaderMinMax: string[];
     subgroupByIssuesVisibility: string[];
   };
+  isDragging: boolean,
   // computed
   getCanUserDragDrop: (group_by: string | null, sub_group_by: string | null) => boolean;
   canUserDragDropVertically: boolean;
   canUserDragDropHorizontally: boolean;
   // actions
   handleKanBanToggle: (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => void;
+  setIsDragging: (isDragging: boolean) => void;
 }
 
 export class IssueKanBanViewStore implements IIssueKanBanViewStore {
@@ -21,21 +23,28 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
     groupByHeaderMinMax: string[];
     subgroupByIssuesVisibility: string[];
   } = { groupByHeaderMinMax: [], subgroupByIssuesVisibility: [] };
+  isDragging = false;
   // root store
   rootStore;
 
   constructor(_rootStore: IssueRootStore) {
     makeObservable(this, {
       kanBanToggle: observable,
+      isDragging: observable.ref,
       // computed
       canUserDragDropVertically: computed,
       canUserDragDropHorizontally: computed,
 
       // actions
       handleKanBanToggle: action,
+      setIsDragging: action.bound,
     });
 
     this.rootStore = _rootStore;
+  }
+
+  setIsDragging = (isDragging: boolean) => {
+    this.isDragging = isDragging;
   }
 
   getCanUserDragDrop = computedFn((group_by: string | null, sub_group_by: string | null) => {

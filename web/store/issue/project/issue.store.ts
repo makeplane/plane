@@ -18,6 +18,7 @@ export interface IProjectIssues {
   viewFlags: ViewFlags;
   // computed
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
+  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
@@ -98,6 +99,30 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", _issues);
 
     return issues;
+  }
+
+  getIssueIds = (groupId?: string, subGroupId?: string) => {
+    const groupedIssueIds = this.groupedIssueIds;
+
+    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    if (!displayFilters) return undefined;
+
+    const subGroupBy = displayFilters?.sub_group_by;
+    const groupBy = displayFilters?.group_by;
+
+    if(!groupBy && !subGroupBy) {
+      return groupedIssueIds as string[]
+    }
+
+    if(groupBy && subGroupBy && groupId && subGroupId) {
+      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[]
+    }
+
+    if(groupBy && groupId) {
+      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[]
+    }
+
+    return undefined;
   }
 
   fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader") => {
