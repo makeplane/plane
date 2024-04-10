@@ -9,33 +9,25 @@ interface BlockMenuProps {
 
 export default function BlockMenu(props: BlockMenuProps) {
   const { editor } = props;
-  const { view } = editor;
   const menuRef = useRef<HTMLDivElement>(null);
   const popup = useRef<Instance | null>(null);
 
-  const handleClickDragHandle = useCallback(
-    (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (target.matches(".drag-handle-dots") || target.matches(".drag-handle-dot")) {
-        event.preventDefault();
+  const handleClickDragHandle = useCallback((event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (target.matches(".drag-handle-dots") || target.matches(".drag-handle-dot")) {
+      event.preventDefault();
 
-        popup.current?.setProps({
-          getReferenceClientRect: () => target.getBoundingClientRect(),
-        });
+      popup.current?.setProps({
+        getReferenceClientRect: () => target.getBoundingClientRect(),
+      });
 
-        popup.current?.show();
-        return;
-      }
-
-      popup.current?.hide();
+      popup.current?.show();
       return;
-    },
-    [view]
-  );
+    }
 
-  const handleKeyDown = () => {
     popup.current?.hide();
-  };
+    return;
+  }, []);
 
   useEffect(() => {
     if (menuRef.current) {
@@ -43,7 +35,7 @@ export default function BlockMenu(props: BlockMenuProps) {
       menuRef.current.style.visibility = "visible";
 
       // @ts-expect-error - tippy types are incorrect
-      popup.current = tippy(view.dom, {
+      popup.current = tippy(document.body, {
         getReferenceClientRect: null,
         content: menuRef.current,
         appendTo: () => document.querySelector(".frame-renderer"),
@@ -67,12 +59,21 @@ export default function BlockMenu(props: BlockMenuProps) {
   }, []);
 
   useEffect(() => {
+    const handleKeyDown = () => {
+      popup.current?.hide();
+    };
+
+    const handleScroll = () => {
+      popup.current?.hide();
+    };
     document.addEventListener("click", handleClickDragHandle);
     document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("scroll", handleScroll, true); // Using capture phase
 
     return () => {
       document.removeEventListener("click", handleClickDragHandle);
-      document.addEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("scroll", handleScroll, true);
     };
   }, [handleClickDragHandle]);
 
