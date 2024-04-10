@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useRef } from "react";
+import { FC, useState, useEffect } from "react";
 // components
 import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
 import { Loader } from "@plane/ui";
@@ -24,8 +24,6 @@ export type IssueDescriptionInputProps = {
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => {
   const { workspaceSlug, projectId, issueId, value, initialValue, disabled, issueOperations, setIsSubmitting } = props;
-  // ref
-  const editorRef = useRef(null);
   // states
   const [localIssueId, setLocalIssueId] = useState(issueId);
   const [descriptionHTML, setDescriptionHTML] = useState(value);
@@ -78,7 +76,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
 
   return (
     <RichTextEditor
-      forwardedRef={editorRef}
       cancelUploadImage={fileService.cancelUpload}
       uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
       deleteFile={fileService.getDeleteImageFunction(workspaceId)}
