@@ -143,7 +143,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden text-custom-text-200">
+    <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
@@ -232,8 +232,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
-                ? "cursor-pointer"
-                : "cursor-pointer hover:bg-custom-background-80"
+              ? "cursor-pointer"
+              : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
           onClick={handleOnClick}
         >

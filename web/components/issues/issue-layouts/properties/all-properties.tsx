@@ -254,12 +254,17 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
 
+  const handleEventPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
   return (
     <div className={className}>
       {/* basic properties */}
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-        <div className="h-5">
+        <div className="h-5" onClick={handleEventPropagation}>
           <StateDropdown
             buttonContainerClassName="truncate max-w-40"
             value={issue.state_id}
@@ -274,7 +279,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* priority */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
-        <div className="h-5">
+        <div className="h-5" onClick={handleEventPropagation}>
           <PriorityDropdown
             value={issue?.priority || null}
             onChange={handlePriority}
@@ -288,19 +293,21 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* label */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
-        <IssuePropertyLabels
-          projectId={issue?.project_id || null}
-          value={issue?.label_ids || null}
-          defaultOptions={defaultLabelOptions}
-          onChange={handleLabel}
-          disabled={isReadOnly}
-          hideDropdownArrow
-        />
+        <div className="h-5" onClick={handleEventPropagation}>
+          <IssuePropertyLabels
+            projectId={issue?.project_id || null}
+            value={issue?.label_ids || null}
+            defaultOptions={defaultLabelOptions}
+            onChange={handleLabel}
+            disabled={isReadOnly}
+            hideDropdownArrow
+          />
+        </div>
       </WithDisplayPropertiesHOC>
 
       {/* start date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
-        <div className="h-5">
+        <div className="h-5" onClick={handleEventPropagation}>
           <DateDropdown
             value={issue.start_date ?? null}
             onChange={handleStartDate}
@@ -316,7 +323,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* target/due date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
-        <div className="h-5">
+        <div className="h-5" onClick={handleEventPropagation}>
           <DateDropdown
             value={issue?.target_date ?? null}
             onChange={handleTargetDate}
@@ -334,7 +341,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
-        <div className="h-5">
+        <div className="h-5" onClick={handleEventPropagation}>
           <MemberDropdown
             projectId={issue?.project_id}
             value={issue?.assignee_ids}
@@ -353,7 +360,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* modules */}
       {projectDetails?.module_view && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-          <div className="h-5">
+          <div className="h-5" onClick={handleEventPropagation}>
             <ModuleDropdown
               buttonContainerClassName="truncate max-w-40"
               projectId={issue?.project_id}
@@ -372,7 +379,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* cycles */}
       {projectDetails?.cycle_view && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5">
+          <div className="h-5" onClick={handleEventPropagation}>
             <CycleDropdown
               buttonContainerClassName="truncate max-w-40"
               projectId={issue?.project_id}
@@ -389,7 +396,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* estimates */}
       {areEstimatesEnabledForCurrentProject && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
-          <div className="h-5">
+          <div className="h-5" onClick={handleEventPropagation}>
             <EstimateDropdown
               value={issue.estimate_point}
               onChange={handleEstimate}
@@ -411,7 +418,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       >
         <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`} isMobile={isMobile}>
           <div
-            onClick={issue.sub_issues_count ? redirectToIssueDetail : () => {}}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              if (issue.sub_issues_count) redirectToIssueDetail();
+            }}
             className={cn(
               "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
               {
@@ -432,7 +443,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`} isMobile={isMobile}>
-          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
+          <div
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            onClick={handleEventPropagation}
+          >
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.attachment_count}</div>
           </div>
@@ -446,7 +460,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`} isMobile={isMobile}>
-          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
+          <div
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            onClick={handleEventPropagation}
+          >
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.link_count}</div>
           </div>

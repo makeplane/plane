@@ -55,6 +55,9 @@ class InboxIssueSerializer(BaseSerializer):
 
 class InboxIssueDetailSerializer(BaseSerializer):
     issue = IssueDetailSerializer(read_only=True)
+    duplicate_issue_detail = IssueInboxSerializer(
+        read_only=True, source="duplicate_to"
+    )
 
     class Meta:
         model = InboxIssue
@@ -63,6 +66,7 @@ class InboxIssueDetailSerializer(BaseSerializer):
             "status",
             "duplicate_to",
             "snoozed_till",
+            "duplicate_issue_detail",
             "source",
             "issue",
         ]

@@ -9,15 +9,13 @@ import { useProjectInbox } from "@/hooks/store";
 
 export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
   // hooks
-  const { currentTab, inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // derived values
   const filteredValues = inboxFilters?.status || [];
   const currentOptionDetail = (status: TInboxIssueStatus) => INBOX_STATUS.find((s) => s.status === status) || undefined;
 
   const handleFilterValue = (value: TInboxIssueStatus): TInboxIssueStatus[] =>
     filteredValues?.includes(value) ? filteredValues.filter((v) => v !== value) : [...filteredValues, value];
-
-  const clearFilter = () => handleInboxIssueFilters("status", undefined);
 
   if (filteredValues.length === 0) return <></>;
   return (
@@ -32,7 +30,7 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
               <optionDetail.icon className={`w-3 h-3 ${optionDetail?.textColor(false)}`} />
             </div>
             <div className="text-xs truncate">{optionDetail?.title}</div>
-            {currentTab === "closed" && handleFilterValue(optionDetail?.status).length >= 1 && (
+            {handleFilterValue(optionDetail?.status).length >= 1 && (
               <div
                 className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
                 onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}
@@ -43,15 +41,6 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
           </div>
         );
       })}
-
-      {currentTab === "closed" && filteredValues.length > 1 && (
-        <div
-          className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
-          onClick={clearFilter}
-        >
-          <X className={`w-3 h-3`} />
-        </div>
-      )}
     </div>
   );
 });
