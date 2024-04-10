@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // components
@@ -9,7 +9,7 @@ import { InboxIssueRoot } from "@/components/inbox";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject, useProjectInbox } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // types
@@ -18,9 +18,10 @@ import { NextPageWithLayout } from "@/lib/types";
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
   /// router
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxIssueId } = router.query;
+  const { workspaceSlug, projectId, currentTab: navigationTab, inboxIssueId } = router.query;
   // hooks
   const { currentProjectDetails } = useProject();
+  const { currentTab, handleCurrentTab } = useProjectInbox();
 
   if (!workspaceSlug || !projectId) return <></>;
 
@@ -37,6 +38,10 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
 
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : "Plane - Inbox";
+
+  useEffect(() => {
+    if (navigationTab && currentTab != navigationTab) handleCurrentTab(navigationTab === "open" ? "open" : "closed");
+  }, [currentTab, navigationTab, handleCurrentTab]);
 
   return (
     <div className="flex h-full flex-col">

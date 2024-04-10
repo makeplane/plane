@@ -9,7 +9,7 @@ import { InboxIssueStatus } from "@/components/inbox";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel, useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // store
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
@@ -27,6 +27,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
   const router = useRouter();
   const { inboxIssueId } = router.query;
   // store
+  const { currentTab } = useProjectInbox();
   const { projectLabels } = useLabel();
   const { isMobile } = usePlatformOS();
   const issue = inboxIssue.issue;
@@ -54,7 +55,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
       <Link
         id={`inbox-issue-list-item-${issue.id}`}
         key={`${projectId}_${issue.id}`}
-        href={`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${issue.id}`}
+        href={`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${issue.id}`}
         onClick={(e) => handleIssueRedirection(e, issue.id)}
       >
         <div

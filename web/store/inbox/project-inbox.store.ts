@@ -29,7 +29,7 @@ export interface IProjectInboxStore {
   inboxFilters: Partial<TInboxIssueFilter>;
   inboxSorting: Partial<TInboxIssueSorting>;
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined;
-  inboxIssues: Record<string, IInboxIssueStore>;
+  inboxIssues: Record<string, Record<string, IInboxIssueStore>>; // project_id -> issue_id -> IInboxIssueStore
   // computed
   getAppliedFiltersCount: number;
   inboxIssuesArray: IInboxIssueStore[];
@@ -71,7 +71,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     sort_by: "desc",
   };
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined = undefined;
-  inboxIssues: Record<string, IInboxIssueStore> = {};
+  inboxIssues: Record<string, Record<string, IInboxIssueStore>> = {};
   // services
   inboxIssueService;
 
@@ -111,12 +111,18 @@ export class ProjectInboxStore implements IProjectInboxStore {
   }
 
   get inboxIssuesArray() {
-    return Object.values(this.inboxIssues || {}).filter((inbox) =>
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug || !projectId) return [];
+    return Object.values(this.inboxIssues?.[projectId] || {}).filter((inbox) =>
       (this.currentTab === "open" ? [-2, 0] : [-1, 1, 2]).includes(inbox.status)
     );
   }
 
-  getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId] || undefined);
+  getIssueInboxByIssueId = computedFn((issueId: string) => {
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug || !projectId) return undefined;
+    return this.inboxIssues?.[projectId]?.[issueId] || undefined;
+  });
 
   inboxIssueQueryParams = (
     inboxFilters: Partial<TInboxIssueFilter>,
@@ -225,7 +231,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
         if (results && results.length > 0)
           results.forEach((value: TInboxIssue) => {
             if (this.getIssueInboxByIssueId(value?.issue?.id) === undefined)
-              set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
+              set(
+                this.inboxIssues,
+                [projectId, value?.issue?.id],
+                new InboxIssueStore(workspaceSlug, projectId, value, this.store)
+              );
           });
       });
     } catch (error) {
@@ -267,7 +277,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
           if (results && results.length > 0)
             results.forEach((value: TInboxIssue) => {
               if (this.getIssueInboxByIssueId(value?.issue?.id) === undefined)
-                set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
+                set(
+                  this.inboxIssues,
+                  [projectId, value?.issue?.id],
+                  new InboxIssueStore(workspaceSlug, projectId, value, this.store)
+                );
             });
         });
       } else set(this, ["inboxIssuePaginationInfo", "next_page_results"], false);
@@ -302,7 +316,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
         // fetching comments
         await this.store.issue.issueDetail.fetchComments(workspaceSlug, projectId, issueId);
         runInAction(() => {
-          set(this.inboxIssues, issueId, new InboxIssueStore(workspaceSlug, projectId, inboxIssue));
+          set(
+            this.inboxIssues,
+            [projectId, issueId],
+            new InboxIssueStore(workspaceSlug, projectId, inboxIssue, this.store)
+          );
         });
         this.isLoading = undefined;
       }
@@ -325,8 +343,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
         runInAction(() => {
           set(
             this.inboxIssues,
-            inboxIssueResponse?.issue?.id,
-            new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse)
+            [projectId, inboxIssueResponse?.issue?.id],
+            new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse, this.store)
           );
           set(
             this,
@@ -356,12 +374,12 @@ export class ProjectInboxStore implements IProjectInboxStore {
           ["inboxIssuePaginationInfo", "total_results"],
           (this.inboxIssuePaginationInfo?.total_results || 0) - 1
         );
-        set(this, "inboxIssues", omit(this.inboxIssues, inboxIssueId));
+        set(this.inboxIssues, [projectId], omit(this.inboxIssues, inboxIssueId));
       });
       await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
     } catch {
       console.error("Error removing the inbox issue");
-      set(this.inboxIssues, [inboxIssueId], currentIssue);
+      set(this.inboxIssues, [projectId, inboxIssueId], currentIssue);
     }
   };
 }
