@@ -341,6 +341,11 @@ class InstanceAdminSignUpEndpoint(View):
                 "?"
                 + urlencode(
                     {
+                        "email": email,
+                        "first_name": first_name,
+                        "last_name": last_name,
+                        "company_name": company_name,
+                        "is_telemetry_enabled": is_telemetry_enabled,
                         "error_code": "REQUIRED_EMAIL_PASSWORD_FIRST_NAME",
                         "error_message": "Email, name and password are required",
                     }
@@ -358,6 +363,11 @@ class InstanceAdminSignUpEndpoint(View):
                 "?"
                 + urlencode(
                     {
+                        "email": email,
+                        "first_name": first_name,
+                        "last_name": last_name,
+                        "company_name": company_name,
+                        "is_telemetry_enabled": is_telemetry_enabled,
                         "error_code": "INVALID_EMAIL",
                         "error_message": "Please provide a valid email address.",
                     }
@@ -373,6 +383,11 @@ class InstanceAdminSignUpEndpoint(View):
                 "?"
                 + urlencode(
                     {
+                        "email": email,
+                        "first_name": first_name,
+                        "last_name": last_name,
+                        "company_name": company_name,
+                        "is_telemetry_enabled": is_telemetry_enabled,
                         "error_code": "USER_ALREADY_EXISTS",
                         "error_message": "User already exists.",
                     }
@@ -388,6 +403,11 @@ class InstanceAdminSignUpEndpoint(View):
                     "?"
                     + urlencode(
                         {
+                            "email": email,
+                            "first_name": first_name,
+                            "last_name": last_name,
+                            "company_name": company_name,
+                            "is_telemetry_enabled": is_telemetry_enabled,
                             "error_code": "INVALID_PASSWORD",
                             "error_message": "Invalid password provided.",
                         }
@@ -425,7 +445,7 @@ class InstanceAdminSignUpEndpoint(View):
 
             # get tokens for user
             user_login(request=request, user=user)
-            url = urljoin(referer, "god-mode")
+            url = urljoin(referer, "/")
             return HttpResponseRedirect(url)
 
 
@@ -463,6 +483,7 @@ class InstanceAdminSignInEndpoint(View):
                 "?"
                 + urlencode(
                     {
+                        "email": email,
                         "error_code": "REQUIRED_EMAIL_PASSWORD",
                         "error_message": "Email and password are required",
                     }
@@ -480,6 +501,7 @@ class InstanceAdminSignInEndpoint(View):
                 "?"
                 + urlencode(
                     {
+                        "email": email,
                         "error_code": "INVALID_EMAIL",
                         "error_message": "Please provide a valid email address.",
                     }
@@ -497,6 +519,7 @@ class InstanceAdminSignInEndpoint(View):
                 "?"
                 + urlencode(
                     {
+                        "email": email,
                         "error_code": "USER_DOES_NOT_EXIST",
                         "error_message": "User does not exist",
                     }
@@ -511,6 +534,7 @@ class InstanceAdminSignInEndpoint(View):
                 "?"
                 + urlencode(
                     {
+                        "email": email,
                         "error_code": "AUTHENTICATION_FAILED",
                         "error_message": "Sorry, we could not find an admin user with the provided credentials. Please try again.",
                     }
@@ -525,6 +549,7 @@ class InstanceAdminSignInEndpoint(View):
                 "?"
                 + urlencode(
                     {
+                        "email": email,
                         "error_code": "AUTHENTICATION_FAILED",
                         "error_message": "Sorry, we could not find an admin user with the provided credentials. Please try again.",
                     }
@@ -542,7 +567,7 @@ class InstanceAdminSignInEndpoint(View):
 
         # get tokens for user
         user_login(request=request, user=user)
-        url = urljoin(referer, "god-mode")
+        url = urljoin(referer, "/")
         return HttpResponseRedirect(url)
 
 
