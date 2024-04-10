@@ -278,8 +278,15 @@ function DragHandle(options: DragHandleOptions) {
           if (!droppedNode) return;
 
           const resolvedPos = view.state.doc.resolve(dropPos.pos);
+          let isDroppedInsideList = false;
 
-          const isDroppedInsideList = resolvedPos.parent.type.name === "listItem";
+          // Traverse up the document tree to find if we're inside a list item
+          for (let i = resolvedPos.depth; i > 0; i--) {
+            if (resolvedPos.node(i).type.name === "listItem") {
+              isDroppedInsideList = true;
+              break;
+            }
+          }
 
           // If the selected node is a list item and is not dropped inside a list, we need to wrap it inside <ol> tag otherwise ol list items will be transformed into ul list item when dropped
           if (
