@@ -42,10 +42,11 @@ export default function BlockMenu(props: BlockMenuProps) {
       menuRef.current.remove();
       menuRef.current.style.visibility = "visible";
 
+      // @ts-expect-error - tippy types are incorrect
       popup.current = tippy(view.dom, {
         getReferenceClientRect: null,
         content: menuRef.current,
-        appendTo: "parent",
+        appendTo: () => document.querySelector(".frame-renderer"),
         trigger: "manual",
         interactive: true,
         arrow: false,
@@ -80,6 +81,7 @@ export default function BlockMenu(props: BlockMenuProps) {
     key: string;
     label: string;
     onClick: (e: React.MouseEvent) => void;
+    isDisabled?: boolean;
   }[] = [
     {
       icon: Trash2,
@@ -96,6 +98,7 @@ export default function BlockMenu(props: BlockMenuProps) {
       icon: Copy,
       key: "duplicate",
       label: "Duplicate",
+      isDisabled: editor.state.selection.content().content.firstChild?.type.name === "image",
       onClick: (e) => {
         const { view } = editor;
         const { state } = view;
@@ -141,17 +144,25 @@ export default function BlockMenu(props: BlockMenuProps) {
       ref={menuRef}
       className="z-10 max-h-60 min-w-[7rem] overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
     >
-      {MENU_ITEMS.map((item) => (
-        <button
-          key={item.key}
-          type="button"
-          className="flex w-full items-center gap-2 truncate rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80"
-          onClick={item.onClick}
-        >
-          <item.icon className="h-3 w-3" />
-          {item.label}
-        </button>
-      ))}
+      {MENU_ITEMS.map((item) => {
+        // Skip rendering the button if it should be disabled
+        if (item.isDisabled && item.key === "duplicate") {
+          return null;
+        }
+
+        return (
+          <button
+            key={item.key}
+            type="button"
+            className="flex w-full items-center gap-2 truncate rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80"
+            onClick={item.onClick}
+            disabled={item.isDisabled}
+          >
+            <item.icon className="h-3 w-3" />
+            {item.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
