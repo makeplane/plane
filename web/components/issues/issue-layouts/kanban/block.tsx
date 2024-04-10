@@ -44,16 +44,6 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   // hooks
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
-  // const { workspaceSlug } = useAppRouter();
-  // const { peekIssue, setPeekIssue } = useIssueDetail();
-
-  // const handleIssuePeekOverview = (issue: TIssue) =>
-  //   workspaceSlug &&
-  //   issue &&
-  //   issue.project_id &&
-  //   issue.id &&
-  //   peekIssue?.issueId !== issue.id &&
-  //   setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const handleEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
