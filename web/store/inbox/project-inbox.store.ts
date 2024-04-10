@@ -138,6 +138,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   // helpers
   inboxIssueSorting = (issues: IInboxIssueStore[]) => {
+    console.log("issues", issues);
     let inboxIssues: IInboxIssueStore[] = [];
     if (this.inboxSorting?.order_by && this.inboxSorting?.sort_by) {
       switch (this.inboxSorting.order_by) {
