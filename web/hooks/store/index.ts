@@ -21,7 +21,8 @@ export * from "./use-workspace";
 export * from "./use-issues";
 export * from "./use-kanban-view";
 export * from "./use-issue-detail";
-export * from "./use-inbox";
+// project inbox
+export * from "./use-project-inbox";
 export * from "./use-inbox-issues";
 export * from "./use-user-profile";
 export * from "./use-user";

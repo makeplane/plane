@@ -90,6 +90,17 @@ export enum EmptyStateType {
   ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE = "active-cycle-priority-issue-empty-state",
   ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE = "active-cycle-assignee-empty-state",
   ACTIVE_CYCLE_LABEL_EMPTY_STATE = "active-cycle-label-empty-state",
+
+  DISABLED_PROJECT_INBOX = "disabled-project-inbox",
+  DISABLED_PROJECT_CYCLE = "disabled-project-cycle",
+  DISABLED_PROJECT_MODULE = "disabled-project-module",
+  DISABLED_PROJECT_VIEW = "disabled-project-view",
+  DISABLED_PROJECT_PAGE = "disabled-project-page",
+
+  INBOX_SIDEBAR_OPEN_TAB = "inbox-sidebar-open-tab",
+  INBOX_SIDEBAR_CLOSED_TAB = "inbox-sidebar-closed-tab",
+  INBOX_SIDEBAR_FILTER_EMPTY_STATE = "inbox-sidebar-filter-empty-state",
+  INBOX_DETAIL_EMPTY_STATE = "inbox-detail-empty-state",
 }
 
 const emptyStateDetails = {
@@ -614,6 +625,89 @@ const emptyStateDetails = {
     key: EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
     title: "Add labels to issues to see the \n breakdown of work by labels.",
     path: "/empty-state/active-cycle/label",
+  },
+  [EmptyStateType.DISABLED_PROJECT_INBOX]: {
+    key: EmptyStateType.DISABLED_PROJECT_INBOX,
+    title: "Inbox is not enabled for the project.",
+    description:
+      "Inbox helps you manage incoming requests to your project and add them as issues in your workflow. Enable inbox \n from project settings to manage requests.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/inbox",
+    primaryButton: {
+      text: "Manage features",
+    },
+  },
+  [EmptyStateType.DISABLED_PROJECT_CYCLE]: {
+    key: EmptyStateType.DISABLED_PROJECT_CYCLE,
+    title: "Cycles is not enabled for this project.",
+    description:
+      "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/cycles",
+    primaryButton: {
+      text: "Manage features",
+    },
+  },
+  [EmptyStateType.DISABLED_PROJECT_MODULE]: {
+    key: EmptyStateType.DISABLED_PROJECT_MODULE,
+    title: "Modules are not enabled for the project.",
+    description:
+      "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. Enable modules from project settings.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/modules",
+    primaryButton: {
+      text: "Manage features",
+    },
+  },
+  [EmptyStateType.DISABLED_PROJECT_PAGE]: {
+    key: EmptyStateType.DISABLED_PROJECT_PAGE,
+    title: "Pages are not enabled for the project.",
+    description:
+      "Pages are thought spotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. Enable the pages feature to start creating them in your project.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/pages",
+    primaryButton: {
+      text: "Manage features",
+    },
+  },
+  [EmptyStateType.DISABLED_PROJECT_VIEW]: {
+    key: EmptyStateType.DISABLED_PROJECT_VIEW,
+    title: "Views is not enabled for this project.",
+    description:
+      "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best. Enable views in the project settings to start using them.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/views",
+    primaryButton: {
+      text: "Manage features",
+    },
+  },
+  [EmptyStateType.INBOX_SIDEBAR_OPEN_TAB]: {
+    key: EmptyStateType.INBOX_SIDEBAR_OPEN_TAB,
+    title: "No open issues",
+    description: "Find open issues here. Create new issue.",
+    path: "/empty-state/inbox/inbox-issue",
+  },
+  [EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB]: {
+    key: EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB,
+    title: "No closed issues",
+    description: "All the issues whether accepted or \n declined can be found here.",
+    path: "/empty-state/inbox/inbox-issue",
+  },
+  [EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE]: {
+    key: EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE,
+    title: "No  matching issues",
+    description: "No issue matches filter applied in inbox. \n Create a new issue.",
+    path: "/empty-state/inbox/filter-issue",
+  },
+  [EmptyStateType.INBOX_DETAIL_EMPTY_STATE]: {
+    key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
+    title: "Select an issue to view its details.",
+    path: "/empty-state/inbox/issue-detail",
   },
 } as const;
 

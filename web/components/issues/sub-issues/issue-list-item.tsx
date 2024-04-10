@@ -42,6 +42,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   } = props;
 
   const {
+    peekIssue,
     setPeekIssue,
     issue: { getIssueById },
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
@@ -64,6 +65,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     issue &&
     issue.project_id &&
     issue.id &&
+    peekIssue?.issueId !== issue.id &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   if (!issue) return <></>;
@@ -117,6 +119,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
             </div>
 
             <ControlLink
+              id={`issue-${issue.id}`}
               href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
               target="_blank"
               onClick={() => handleIssuePeekOverview(issue)}

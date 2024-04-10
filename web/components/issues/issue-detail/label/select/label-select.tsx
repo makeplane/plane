@@ -4,22 +4,20 @@ import { usePopper } from "react-popper";
 import { Check, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
-import { useIssueDetail, useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store";
 // components
 
 export interface IIssueLabelSelect {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  values: string[];
   onSelect: (_labelIds: string[]) => void;
 }
 
 export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, onSelect } = props;
+  const { workspaceSlug, projectId, issueId, values, onSelect } = props;
   // store hooks
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
   const { fetchProjectLabels, getProjectLabels } = useLabel();
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -27,7 +25,6 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [query, setQuery] = useState("");
 
-  const issue = getIssueById(issueId);
   const projectLabels = getProjectLabels(projectId);
 
   const fetchLabels = () => {
@@ -67,7 +64,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
     ],
   });
 
-  const issueLabels = issue?.label_ids ?? [];
+  const issueLabels = values ?? [];
 
   const label = (
     <div
@@ -87,7 +84,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
     }
   };
 
-  if (!issue) return <></>;
+  if (!issueId || !values) return <></>;
 
   return (
     <>

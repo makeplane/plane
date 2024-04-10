@@ -11,7 +11,7 @@ import { WorkspaceService } from "@/services/workspace.service";
 // types
 import { RootStore } from "@/store/root.store";
 import { IRouterStore } from "@/store/router.store";
-import { IUserStore } from "@/store/user/user.store";
+import { IUserStore } from "@/store/user";
 import { IMemberRootStore } from ".";
 
 export interface IWorkspaceMembership {

@@ -11,7 +11,7 @@ import { ProjectMemberService } from "@/services/project";
 // store
 import { RootStore } from "@/store/root.store";
 import { IRouterStore } from "@/store/router.store";
-import { IUserStore } from "@/store/user/user.store";
+import { IUserStore } from "@/store/user";
 import { IMemberRootStore } from ".";
 
 interface IProjectMemberDetails {
