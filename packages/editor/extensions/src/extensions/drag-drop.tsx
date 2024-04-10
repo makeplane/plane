@@ -241,7 +241,8 @@ function DragHandle(options: DragHandleOptions) {
           rect.top += paddingTop;
           // Li markers
           if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
-            rect.left -= options.dragHandleWidth;
+            rect.top += 4;
+            rect.left -= 10;
           }
           rect.width = options.dragHandleWidth;
 
