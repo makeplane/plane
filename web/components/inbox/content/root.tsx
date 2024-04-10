@@ -36,7 +36,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
 
   if (!inboxIssue) return <></>;
 
-  const isIssueAcceptedOrDeclined = [-1, 1].includes(inboxIssue.status);
+  const isIssueDisabled = [-1, 1, 2].includes(inboxIssue.status);
 
   return (
     <>
@@ -54,7 +54,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             inboxIssue={inboxIssue}
-            is_editable={is_editable && !isIssueAcceptedOrDeclined}
+            is_editable={is_editable && !isIssueDisabled}
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
           />
