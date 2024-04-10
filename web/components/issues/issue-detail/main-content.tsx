@@ -23,12 +23,12 @@ type Props = {
   projectId: string;
   issueId: string;
   issueOperations: TIssueOperations;
-  is_editable: boolean;
+  isEditable: boolean;
   swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, swrIssueDetails, issueId, issueOperations, is_editable } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, swrIssueDetails } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
@@ -82,7 +82,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           isSubmitting={isSubmitting}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           issueOperations={issueOperations}
-          disabled={!is_editable}
+          disabled={!isEditable}
           value={issue.name}
         />
 
@@ -93,7 +93,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           projectId={issue.project_id}
           issueId={issue.id}
           initialValue={issue.description_html}
-          disabled={!is_editable}
+          disabled={!isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
         />
@@ -114,7 +114,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             projectId={projectId}
             parentIssueId={issueId}
             currentUser={currentUser}
-            disabled={!is_editable}
+            disabled={!isEditable}
           />
         )}
       </div>
@@ -123,10 +123,10 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         issueId={issueId}
-        disabled={!is_editable}
+        disabled={!isEditable}
       />
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!is_editable} />
+      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!isEditable} />
     </>
   );
 });

@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueProperties } from "@/components/inbox/content";
 import {
@@ -13,7 +13,7 @@ import {
   TIssueOperations,
 } from "@/components/issues";
 // hooks
-import { useEventTracker, useProjectInbox, useUser } from "@/hooks/store";
+import { useEventTracker, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
@@ -22,7 +22,7 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   inboxIssue: IInboxIssueStore;
-  is_editable: boolean;
+  isEditable: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: Dispatch<SetStateAction<"submitting" | "submitted" | "saved">>;
   swrIssueDescription: string | undefined;
@@ -30,11 +30,10 @@ type Props = {
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxIssue, is_editable, isSubmitting, setIsSubmitting, swrIssueDescription } =
+  const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting, swrIssueDescription } =
     props;
   // hooks
   const { currentUser } = useUser();
-  const { isLoading } = useProjectInbox();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   const { captureIssueEvent } = useEventTracker();
 
@@ -129,26 +128,20 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           isSubmitting={isSubmitting}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           issueOperations={issueOperations}
-          disabled={!is_editable}
+          disabled={!isEditable}
           value={issue.name}
         />
 
-        {isLoading ? (
-          <Loader className="h-[150px] space-y-2 overflow-hidden rounded-md border border-custom-border-200 p-2 py-2">
-            <Loader.Item width="100%" height="132px" />
-          </Loader>
-        ) : (
-          <IssueDescriptionInput
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            issueId={issue.id}
-            swrIssueDescription={swrIssueDescription}
-            initialValue={issueDescription}
-            disabled={!is_editable}
-            issueOperations={issueOperations}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
-          />
-        )}
+        <IssueDescriptionInput
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issue.id}
+          swrIssueDescription={swrIssueDescription}
+          initialValue={issueDescription}
+          disabled={!isEditable}
+          issueOperations={issueOperations}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+        />
 
         {currentUser && (
           <IssueReaction
@@ -165,7 +158,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         projectId={projectId}
         issue={issue}
         issueOperations={issueOperations}
-        is_editable={is_editable}
+        isEditable={isEditable}
         duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
       />
 
