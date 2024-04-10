@@ -32,7 +32,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
     { revalidateOnFocus: false }
   );
 
-  const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!inboxIssue) return <></>;
 
@@ -54,7 +54,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             inboxIssue={inboxIssue}
-            is_editable={is_editable && !isIssueDisabled}
+            isEditable={isEditable && !isIssueDisabled}
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
           />
