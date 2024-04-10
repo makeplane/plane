@@ -12,6 +12,8 @@ import {
   TInboxIssuePaginationInfo,
   TInboxIssueSortingOrderByQueryParam,
 } from "@plane/types";
+// helpers
+import { EPastDurationFilters, getCustomDates } from "@/helpers/inbox.helper";
 // services
 import { InboxIssueService } from "@/services/inbox";
 // root store
@@ -27,7 +29,7 @@ export interface IProjectInboxStore {
   inboxFilters: Partial<TInboxIssueFilter>;
   inboxSorting: Partial<TInboxIssueSorting>;
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined;
-  inboxIssues: Record<string, IInboxIssueStore>;
+  inboxIssues: Record<string, IInboxIssueStore>; // issue_id -> IInboxIssueStore
   // computed
   getAppliedFiltersCount: number;
   inboxIssuesArray: IInboxIssueStore[];
@@ -110,7 +112,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   get inboxIssuesArray() {
     return Object.values(this.inboxIssues || {}).filter((inbox) =>
-      (this.currentTab === "open" ? [-2] : [-1, 0, 1, 2]).includes(inbox.status)
+      (this.currentTab === "open" ? [-2, 0] : [-1, 1, 2]).includes(inbox.status)
     );
   }
 
@@ -126,8 +128,16 @@ export class ProjectInboxStore implements IProjectInboxStore {
     !isEmpty(inboxFilters) &&
       Object.keys(inboxFilters).forEach((key) => {
         const filterKey = key as keyof TInboxIssueFilter;
-        if (inboxFilters[filterKey] && inboxFilters[filterKey]?.length)
-          filters[filterKey] = inboxFilters[filterKey]?.join(",");
+        if (inboxFilters[filterKey] && inboxFilters[filterKey]?.length) {
+          if (["created_at", "updated_at"].includes(filterKey) && (inboxFilters[filterKey] || [])?.length > 0) {
+            const appliedDateFilters: string[] = [];
+            inboxFilters[filterKey]?.forEach((value) => {
+              const dateValue = value as EPastDurationFilters;
+              appliedDateFilters.push(getCustomDates(dateValue));
+            });
+            filters[filterKey] = appliedDateFilters?.join(",");
+          } else filters[filterKey] = inboxFilters[filterKey]?.join(",");
+        }
       });
 
     const sorting: TInboxIssueSortingOrderByQueryParam = {
@@ -167,7 +177,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     set(this, "inboxFilters", undefined);
     set(this, ["inboxSorting", "order_by"], "issue__created_at");
     set(this, ["inboxSorting", "sort_by"], "desc");
-    if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 0, 1, 2]);
+    if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 1, 2]);
     else set(this, ["inboxFilters", "status"], [-2]);
     const { workspaceSlug, projectId } = this.store.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
@@ -193,9 +203,9 @@ export class ProjectInboxStore implements IProjectInboxStore {
   fetchInboxIssues = async (workspaceSlug: string, projectId: string, loadingType: TLoader = undefined) => {
     try {
       if (loadingType) this.isLoading = loadingType;
-      else this.isLoading = "init-loading";
-      this.inboxIssuePaginationInfo = undefined;
-      this.inboxIssues = {};
+      else if (Object.keys(this.inboxIssues).length === 0) this.isLoading = "init-loading";
+      set(this, ["inboxIssues"], {});
+      set(this, ["inboxIssuePaginationInfo"], undefined);
 
       const queryParams = this.inboxIssueQueryParams(
         this.inboxFilters,
@@ -211,7 +221,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
         if (results && results.length > 0)
           results.forEach((value: TInboxIssue) => {
             if (this.getIssueInboxByIssueId(value?.issue?.id) === undefined)
-              set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
+              set(
+                this.inboxIssues,
+                [value?.issue?.id],
+                new InboxIssueStore(workspaceSlug, projectId, value, this.store)
+              );
           });
       });
     } catch (error) {
@@ -253,7 +267,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
           if (results && results.length > 0)
             results.forEach((value: TInboxIssue) => {
               if (this.getIssueInboxByIssueId(value?.issue?.id) === undefined)
-                set(this.inboxIssues, value?.issue?.id, new InboxIssueStore(workspaceSlug, projectId, value));
+                set(
+                  this.inboxIssues,
+                  [value?.issue?.id],
+                  new InboxIssueStore(workspaceSlug, projectId, value, this.store)
+                );
             });
         });
       } else set(this, ["inboxIssuePaginationInfo", "next_page_results"], false);
@@ -284,11 +302,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
         // fetching reactions
         await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
         // fetching activity
-        await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
+        await this.store.issue.issueDetail.fetchActivities(workspaceSlug, projectId, issueId);
         // fetching comments
-        await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
+        await this.store.issue.issueDetail.fetchComments(workspaceSlug, projectId, issueId);
         runInAction(() => {
-          set(this.inboxIssues, issueId, new InboxIssueStore(workspaceSlug, projectId, inboxIssue));
+          set(this.inboxIssues, [issueId], new InboxIssueStore(workspaceSlug, projectId, inboxIssue, this.store));
         });
         this.isLoading = undefined;
       }
@@ -311,8 +329,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
         runInAction(() => {
           set(
             this.inboxIssues,
-            inboxIssueResponse?.issue?.id,
-            new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse)
+            [inboxIssueResponse?.issue?.id],
+            new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse, this.store)
           );
           set(
             this,

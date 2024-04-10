@@ -1,9 +1,10 @@
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
+import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
 // services
-// types
-import { TIssue, TInboxIssue, TInboxIssueStatus } from "@plane/types";
 import { InboxIssueService } from "@/services/inbox";
+// root store
+import { RootStore } from "@/store/root.store";
 
 export interface IInboxIssueStore {
   isLoading: boolean;
@@ -13,6 +14,7 @@ export interface IInboxIssueStore {
   snoozed_till: Date | undefined;
   duplicate_to: string | undefined;
   created_by: string | undefined;
+  duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined;
   // actions
   updateInboxIssueStatus: (status: TInboxIssueStatus) => Promise<void>; // accept, decline
   updateInboxIssueDuplicateTo: (issueId: string) => Promise<void>; // connecting the inbox issue to the project existing issue
@@ -29,18 +31,20 @@ export class InboxIssueStore implements IInboxIssueStore {
   snoozed_till: Date | undefined;
   duplicate_to: string | undefined;
   created_by: string | undefined;
+  duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined = undefined;
   workspaceSlug: string;
   projectId: string;
   // services
   inboxIssueService;
 
-  constructor(workspaceSlug: string, projectId: string, data: TInboxIssue) {
+  constructor(workspaceSlug: string, projectId: string, data: TInboxIssue, private store: RootStore) {
     this.id = data.id;
     this.status = data.status;
     this.issue = data?.issue;
     this.snoozed_till = data?.snoozed_till ? new Date(data.snoozed_till) : undefined;
     this.duplicate_to = data?.duplicate_to || undefined;
     this.created_by = data?.created_by || undefined;
+    this.duplicate_issue_detail = data?.duplicate_issue_detail || undefined;
     this.workspaceSlug = workspaceSlug;
     this.projectId = projectId;
     // services
@@ -52,6 +56,7 @@ export class InboxIssueStore implements IInboxIssueStore {
       issue: observable,
       snoozed_till: observable,
       duplicate_to: observable,
+      duplicate_issue_detail: observable,
       created_by: observable,
       // actions
       updateInboxIssueStatus: action,
@@ -86,9 +91,13 @@ export class InboxIssueStore implements IInboxIssueStore {
       if (!this.issue.id) return;
       set(this, "status", inboxStatus);
       set(this, "duplicate_to", issueId);
-      await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const issueResponse = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: inboxStatus,
         duplicate_to: issueId,
+      });
+      runInAction(() => {
+        this.duplicate_to = issueResponse.duplicate_to;
+        this.duplicate_issue_detail = issueResponse.duplicate_issue_detail;
       });
     } catch {
       runInAction(() => {
@@ -129,6 +138,8 @@ export class InboxIssueStore implements IInboxIssueStore {
         set(inboxIssue, issueKey, issue[issueKey]);
       });
       await this.inboxIssueService.updateIssue(this.workspaceSlug, this.projectId, this.issue.id, issue);
+      // fetching activity
+      await this.store.issue.issueDetail.fetchActivities(this.workspaceSlug, this.projectId, this.issue.id);
     } catch {
       Object.keys(issue).forEach((key) => {
         const issueKey = key as keyof TIssue;

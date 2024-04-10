@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { MinusCircle } from "lucide-react";
 import { TIssue } from "@plane/types";
@@ -19,7 +20,7 @@ export type TIssueParentDetail = {
   issueOperations: TIssueOperations;
 };
 
-export const IssueParentDetail: FC<TIssueParentDetail> = (props) => {
+export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issue, issueOperations } = props;
   // hooks
   const { issueMap } = useIssues();
@@ -68,4 +69,4 @@ export const IssueParentDetail: FC<TIssueParentDetail> = (props) => {
       </div>
     </>
   );
-};
+});

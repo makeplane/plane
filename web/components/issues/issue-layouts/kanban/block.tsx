@@ -3,7 +3,7 @@ import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pan
 import { observer } from "mobx-react-lite";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks
-import { Tooltip, ControlLink } from "@plane/ui";
+import { ControlLink, Tooltip } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { cn } from "@/helpers/common.helper";
 import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
@@ -44,20 +44,16 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   // hooks
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
-  const { workspaceSlug } = useAppRouter();
-  const { peekIssue, setPeekIssue } = useIssueDetail();
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    peekIssue?.issueId !== issue.id &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+
+  const handleEventPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
 
   return (
     <>
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
-        <div className="relative">
+        <div className="relative" onClick={handleEventPropagation}>
           <div className="line-clamp-1 text-xs text-custom-text-300">
             {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
@@ -70,24 +66,13 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <span className="pb-1.5">{issue.name}</span>
         </Tooltip>
       ) : (
-        <ControlLink
-          id={`issue-${issue.id}`}
-          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
-            issue.id
-          }`}
-          target="_blank"
-          onClick={() => handleIssuePeekOverview(issue)}
-          className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100 pb-1.5"
-          disabled={!!issue?.tempId}
-        >
-          <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-            <span>{issue.name}</span>
-          </Tooltip>
-        </ControlLink>
+        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+          <span className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100 pb-1.5">{issue.name}</span>
+        </Tooltip>
       )}
 
       <IssueProperties
-        className="flex flex-wrap items-center gap-2 whitespace-nowrap"
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300"
         issue={issue}
         displayProperties={displayProperties}
         activeLayout="Kanban"
@@ -115,6 +100,17 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
     issueIds,
   } = props;
 
+  const { workspaceSlug } = useAppRouter();
+  const { peekIssue, setPeekIssue } = useIssueDetail();
+
+  const handleIssuePeekOverview = (issue: TIssue) =>
+    workspaceSlug &&
+    issue &&
+    issue.project_id &&
+    issue.id &&
+    peekIssue?.issueId !== issue.id &&
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+
   const issue = issuesMap[issueId];
 
   if (!issue) return null;
@@ -135,32 +131,42 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
           {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
-          <div
-            className={cn(
-              "rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
-              { "hover:cursor-grab": !isDragDisabled },
-              { "border-custom-primary-100": snapshot.isDragging },
-              { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }
-            )}
+          <ControlLink
+            id={`issue-${issue.id}`}
+            href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
+              issue.id
+            }`}
+            target="_blank"
+            onClick={() => handleIssuePeekOverview(issue)}
+            disabled={!!issue?.tempId}
           >
-            <RenderIfVisible
-              classNames="space-y-2 px-3 py-2"
-              root={scrollableContainerRef}
-              defaultHeight="100px"
-              horizontalOffset={50}
-              alwaysRender={snapshot.isDragging}
-              pauseHeightUpdateWhileRendering={isDragStarted}
-              changingReference={issueIds}
+            <div
+              className={cn(
+                "rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+                { "hover:cursor-pointer": !isDragDisabled },
+                { "border-custom-primary-100": snapshot.isDragging },
+                { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }
+              )}
             >
-              <KanbanIssueDetailsBlock
-                issue={issue}
-                displayProperties={displayProperties}
-                updateIssue={updateIssue}
-                quickActions={quickActions}
-                isReadOnly={!canEditIssueProperties}
-              />
-            </RenderIfVisible>
-          </div>
+              <RenderIfVisible
+                classNames="space-y-2 px-3 py-2"
+                root={scrollableContainerRef}
+                defaultHeight="100px"
+                horizontalOffset={50}
+                alwaysRender={snapshot.isDragging}
+                pauseHeightUpdateWhileRendering={isDragStarted}
+                changingReference={issueIds}
+              >
+                <KanbanIssueDetailsBlock
+                  issue={issue}
+                  displayProperties={displayProperties}
+                  updateIssue={updateIssue}
+                  quickActions={quickActions}
+                  isReadOnly={!canEditIssueProperties}
+                />
+              </RenderIfVisible>
+            </div>
+          </ControlLink>
         </div>
       )}
     </Draggable>
