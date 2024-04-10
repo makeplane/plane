@@ -164,6 +164,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         issue={issue}
         issueOperations={issueOperations}
         is_editable={is_editable}
+        duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
       />
 
       <div className="pb-12">
