@@ -234,7 +234,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
               set(
                 this.inboxIssues,
                 [projectId, value?.issue?.id],
-                new InboxIssueStore(workspaceSlug, projectId, value)
+                new InboxIssueStore(workspaceSlug, projectId, value, this.store)
               );
           });
       });
@@ -280,7 +280,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
                 set(
                   this.inboxIssues,
                   [projectId, value?.issue?.id],
-                  new InboxIssueStore(workspaceSlug, projectId, value)
+                  new InboxIssueStore(workspaceSlug, projectId, value, this.store)
                 );
             });
         });
@@ -316,7 +316,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
         // fetching comments
         await this.store.issue.issueDetail.fetchComments(workspaceSlug, projectId, issueId);
         runInAction(() => {
-          set(this.inboxIssues, [projectId, issueId], new InboxIssueStore(workspaceSlug, projectId, inboxIssue));
+          set(
+            this.inboxIssues,
+            [projectId, issueId],
+            new InboxIssueStore(workspaceSlug, projectId, inboxIssue, this.store)
+          );
         });
         this.isLoading = undefined;
       }
@@ -340,7 +344,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
           set(
             this.inboxIssues,
             [projectId, inboxIssueResponse?.issue?.id],
-            new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse)
+            new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse, this.store)
           );
           set(
             this,
