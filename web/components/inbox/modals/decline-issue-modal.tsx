@@ -9,7 +9,7 @@ import { Button } from "@plane/ui";
 import { useProject } from "@/hooks/store";
 
 type Props = {
-  data: TIssue;
+  data: Partial<TIssue>;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => Promise<void>;
@@ -70,7 +70,8 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSu
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to decline issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
+                        {(data && data?.project_id && getProjectById(data?.project_id)?.identifier) || ""}-
+                        {data?.sequence_id}
                       </span>
                       {""}? This action cannot be undone.
                     </p>

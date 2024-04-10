@@ -66,7 +66,6 @@ export class IssueStore implements IIssueStore {
       };
 
       let issue: TIssue;
-      let issuePayload: TIssue;
 
       if (issueType === "ARCHIVED")
         issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId, query);
@@ -76,7 +75,7 @@ export class IssueStore implements IIssueStore {
 
       if (!issue) throw new Error("Issue not found");
 
-      issuePayload = {
+      const issuePayload: TIssue = {
         id: issue?.id,
         sequence_id: issue?.sequence_id,
         name: issue?.name,
@@ -110,8 +109,10 @@ export class IssueStore implements IIssueStore {
 
       // store handlers from issue detail
       // parent
-      if (issue && issue?.parent && issue?.parent?.id)
-        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue.parent]);
+      if (issue && issue?.parent && issue?.parent?.id) {
+        const parentIssue = await this.issueService.retrieve(workspaceSlug, projectId, issue?.parent?.id);
+        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([parentIssue]);
+      }
       // assignees
       // labels
       // state
@@ -184,7 +185,7 @@ export class IssueStore implements IIssueStore {
   };
 
   addModulesToIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-    const _module = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.addModulesToIssue(
+    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.addModulesToIssue(
       workspaceSlug,
       projectId,
       issueId,
@@ -192,28 +193,28 @@ export class IssueStore implements IIssueStore {
     );
     if (moduleIds && moduleIds.length > 0)
       await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-    return _module;
+    return currentModule;
   };
 
   removeModulesFromIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-    const _module = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeModulesFromIssue(
+    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeModulesFromIssue(
       workspaceSlug,
       projectId,
       issueId,
       moduleIds
     );
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-    return _module;
+    return currentModule;
   };
 
   removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
-    const _module = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeIssueFromModule(
+    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeIssueFromModule(
       workspaceSlug,
       projectId,
       moduleId,
       issueId
     );
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-    return _module;
+    return currentModule;
   };
 }

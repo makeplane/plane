@@ -152,6 +152,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
                 className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
                 onClick={(e) => {
                   e.stopPropagation();
+                  e.preventDefault();
                   onChange(null);
                 }}
               />

@@ -41,6 +41,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
     issue &&
     issue.project_id &&
     issue.id &&
+    peekIssue?.issueId !== issue.id &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
@@ -64,6 +65,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
 
   return (
     <ControlLink
+      id={`issue-${issue.id}`}
       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
       target="_blank"
       onClick={() => handleIssuePeekOverview(issue)}

@@ -152,6 +152,8 @@ export const getNumberCount = (number: number): string => {
 export const objToQueryParams = (obj: any) => {
   const params = new URLSearchParams();
 
+  if (!obj) return params.toString();
+
   for (const [key, value] of Object.entries(obj)) {
     if (value !== undefined && value !== null) params.append(key, value as string);
   }

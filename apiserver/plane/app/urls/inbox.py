@@ -30,7 +30,7 @@ urlpatterns = [
         name="inbox",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:inbox_id>/inbox-issues/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/",
         InboxIssueViewSet.as_view(
             {
                 "get": "list",
@@ -40,7 +40,7 @@ urlpatterns = [
         name="inbox-issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:inbox_id>/inbox-issues/<uuid:issue_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:issue_id>/",
         InboxIssueViewSet.as_view(
             {
                 "get": "retrieve",

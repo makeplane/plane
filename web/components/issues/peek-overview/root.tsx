@@ -372,7 +372,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const currentProjectRole = currentWorkspaceAllProjectsRole?.[peekIssue?.projectId];
   // Check if issue is editable, based on user role
-  const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const isLoading = !issue || loader ? true : false;
 
   return (
@@ -382,7 +382,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       issueId={peekIssue.issueId}
       isLoading={isLoading}
       is_archived={is_archived}
-      disabled={!is_editable}
+      disabled={!isEditable}
       issueOperations={issueOperations}
     />
   );

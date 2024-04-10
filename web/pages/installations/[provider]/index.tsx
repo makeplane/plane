@@ -55,7 +55,7 @@ const AppPostInstallation: NextPageWithLayout = () => {
             window.close();
           })
           .catch((err) => {
-            throw err.response;
+            throw err?.response;
           });
       }
     }
