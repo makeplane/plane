@@ -73,7 +73,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 onEnterKeyPress={(e) => handleSubmit(onSubmit)(e)}
                 ref={editorRef}
                 initialValue={value ?? "<p></p>"}
-                editorContentCustomClassNames="min-h-[35px]"
+                containerClassName="min-h-[35px]"
                 onChange={(comment_json, comment_html) => onChange(comment_html)}
                 accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
                 handleAccessChange={onAccessChange}
