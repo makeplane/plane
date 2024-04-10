@@ -22,14 +22,14 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   inboxIssue: IInboxIssueStore;
-  is_editable: boolean;
+  isEditable: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: Dispatch<SetStateAction<"submitting" | "submitted" | "saved">>;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxIssue, is_editable, isSubmitting, setIsSubmitting } = props;
+  const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
   // hooks
   const { currentUser } = useUser();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
@@ -126,7 +126,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           isSubmitting={isSubmitting}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           issueOperations={issueOperations}
-          disabled={!is_editable}
+          disabled={!isEditable}
           value={issue.name}
         />
 
@@ -136,7 +136,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           issueId={issue.id}
           value={issueDescription}
           initialValue={issueDescription}
-          disabled={!is_editable}
+          disabled={!isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
         />
@@ -156,7 +156,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         projectId={projectId}
         issue={issue}
         issueOperations={issueOperations}
-        is_editable={is_editable}
+        isEditable={isEditable}
         duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
       />
 

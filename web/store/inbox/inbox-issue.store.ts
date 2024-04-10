@@ -1,9 +1,10 @@
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
-// services
-// types
 import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
+// services
 import { InboxIssueService } from "@/services/inbox";
+// root store
+import { RootStore } from "@/store/root.store";
 
 export interface IInboxIssueStore {
   isLoading: boolean;
@@ -36,7 +37,7 @@ export class InboxIssueStore implements IInboxIssueStore {
   // services
   inboxIssueService;
 
-  constructor(workspaceSlug: string, projectId: string, data: TInboxIssue) {
+  constructor(workspaceSlug: string, projectId: string, data: TInboxIssue, private store: RootStore) {
     this.id = data.id;
     this.status = data.status;
     this.issue = data?.issue;
@@ -90,9 +91,13 @@ export class InboxIssueStore implements IInboxIssueStore {
       if (!this.issue.id) return;
       set(this, "status", inboxStatus);
       set(this, "duplicate_to", issueId);
-      await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const issueResponse = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: inboxStatus,
         duplicate_to: issueId,
+      });
+      runInAction(() => {
+        this.duplicate_to = issueResponse.duplicate_to;
+        this.duplicate_issue_detail = issueResponse.duplicate_issue_detail;
       });
     } catch {
       runInAction(() => {
@@ -133,6 +138,8 @@ export class InboxIssueStore implements IInboxIssueStore {
         set(inboxIssue, issueKey, issue[issueKey]);
       });
       await this.inboxIssueService.updateIssue(this.workspaceSlug, this.projectId, this.issue.id, issue);
+      // fetching activity
+      await this.store.issue.issueDetail.fetchActivities(this.workspaceSlug, this.projectId, this.issue.id);
     } catch {
       Object.keys(issue).forEach((key) => {
         const issueKey = key as keyof TIssue;
