@@ -31,7 +31,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssue, is_editable, isSubmitting, setIsSubmitting } = props;
   // hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { isLoading } = useProjectInbox();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   const { captureIssueEvent } = useEventTracker();

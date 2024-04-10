@@ -48,7 +48,7 @@ def migrate_user_profile(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("db", "0062_cycle_archived_at_module_archived_at_and_more"),
+        ("db", "0063_state_is_triage_alter_state_group"),
     ]
 
     operations = [
