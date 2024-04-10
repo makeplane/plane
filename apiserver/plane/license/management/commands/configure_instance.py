@@ -89,6 +89,12 @@ class Command(BaseCommand):
                 "is_encrypted": False,
             },
             {
+                "key": "EMAIL_USE_SSL",
+                "value": os.environ.get("EMAIL_USE_SSL", "0"),
+                "category": "SMTP",
+                "is_encrypted": False,
+            },
+            {
                 "key": "OPENAI_API_KEY",
                 "value": os.environ.get("OPENAI_API_KEY"),
                 "category": "OPENAI",

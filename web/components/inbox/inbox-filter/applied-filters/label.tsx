@@ -13,13 +13,13 @@ export const InboxIssueAppliedFiltersLabel: FC = observer(() => {
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getLabelById } = useLabel();
   // derived values
-  const filteredValues = inboxFilters?.label || [];
+  const filteredValues = inboxFilters?.labels || [];
   const currentOptionDetail = (labelId: string) => getLabelById(labelId) || undefined;
 
   const handleFilterValue = (value: string): string[] =>
     filteredValues?.includes(value) ? filteredValues.filter((v) => v !== value) : [...filteredValues, value];
 
-  const clearFilter = () => handleInboxIssueFilters("label", undefined);
+  const clearFilter = () => handleInboxIssueFilters("labels", undefined);
 
   if (filteredValues.length === 0) return <></>;
   return (
@@ -36,7 +36,7 @@ export const InboxIssueAppliedFiltersLabel: FC = observer(() => {
             <div className="text-xs truncate">{optionDetail?.name}</div>
             <div
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
-              onClick={() => handleInboxIssueFilters("label", handleFilterValue(value))}
+              onClick={() => handleInboxIssueFilters("labels", handleFilterValue(value))}
             >
               <X className={`w-3 h-3`} />
             </div>

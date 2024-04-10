@@ -2,10 +2,10 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { TInboxIssueFilterDateKeys } from "@plane/types";
-// constants
-import { DATE_BEFORE_FILTER_OPTIONS } from "@/constants/filters";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
+// constants
+import { PAST_DURATION_FILTER_OPTIONS } from "@/helpers/inbox.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 
@@ -21,7 +21,7 @@ export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = ob
   // derived values
   const filteredValues = inboxFilters?.[filterKey] || [];
   const currentOptionDetail = (date: string) => {
-    const currentDate = DATE_BEFORE_FILTER_OPTIONS.find((d) => d.value === date);
+    const currentDate = PAST_DURATION_FILTER_OPTIONS.find((d) => d.value === date);
     if (currentDate) return currentDate;
     const dateSplit = date.split(";");
     return {

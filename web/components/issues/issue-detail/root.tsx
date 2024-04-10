@@ -340,7 +340,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   // issue details
   const issue = getIssueById(issueId);
   // checking if issue is editable, based on user role
-  const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -362,7 +362,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}
-              is_editable={!is_archived && is_editable}
+              isEditable={!is_archived && isEditable}
             />
           </div>
           <div
@@ -375,7 +375,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               issueId={issueId}
               issueOperations={issueOperations}
               is_archived={is_archived}
-              is_editable={!is_archived && is_editable}
+              isEditable={!is_archived && isEditable}
             />
           </div>
         </div>

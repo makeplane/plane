@@ -79,7 +79,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     await createInboxIssue(workspaceSlug.toString(), projectId.toString(), formData)
       .then((res) => {
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/?inboxIssueId=${res?.issue?.id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
           handleClose();
         } else {
           reset(defaultValues);
