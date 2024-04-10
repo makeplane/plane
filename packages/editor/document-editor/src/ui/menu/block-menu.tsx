@@ -103,34 +103,14 @@ export default function BlockMenu(props: BlockMenuProps) {
         const { view } = editor;
         const { state } = view;
         const { selection } = state;
-        const { $from, $to } = selection;
-        const nodeType = $from.node($from.depth).type.name;
 
-        // Check if the selection is within a list item
-        if (nodeType === "listItem") {
-          // Find the parent list node
-          const listItemType = $from.node($from.depth).type;
-
-          // Duplicate the entire list item
-          const listItem = $from.node($from.depth);
-          const duplicatedListItem = listItemType.createAndFill(listItem.attrs, listItem.content, listItem.marks);
-
-          if (!duplicatedListItem) {
-            return;
-          }
-          // Insert the duplicated list item into the list
-          const transaction = state.tr.insert($to.pos, duplicatedListItem);
-          editor.view.dispatch(transaction);
-        } else {
-          // Handle non-list items as before
-          editor
-            .chain()
-            .insertContentAt(selection.to, selection.content().content.firstChild!.toJSON(), {
-              updateSelection: true,
-            })
-            .focus(selection.to + 1, { scrollIntoView: false })
-            .run();
-        }
+        editor
+          .chain()
+          .insertContentAt(selection.to, selection.content().content.firstChild!.toJSON(), {
+            updateSelection: true,
+          })
+          .focus(selection.to + 1, { scrollIntoView: false })
+          .run();
 
         popup.current?.hide();
         e.preventDefault();

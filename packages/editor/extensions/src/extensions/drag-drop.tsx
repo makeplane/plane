@@ -149,8 +149,6 @@ function DragHandle(options: DragHandleOptions) {
   function handleClick(event: MouseEvent, view: EditorView) {
     view.focus();
 
-    view.dom.classList.remove("dragging");
-
     const node = nodeDOMAtCoords({
       x: event.clientX + 50 + options.dragHandleWidth,
       y: event.clientY,
@@ -158,11 +156,18 @@ function DragHandle(options: DragHandleOptions) {
 
     if (!(node instanceof Element)) return;
 
-    const nodePos = nodePosAtDOM(node, view, options);
+    let nodePos = nodePosAtDOM(node, view, options);
 
     if (nodePos === null || nodePos === undefined) return;
 
-    view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
+    // Adjust the nodePos to point to the start of the node, ensuring NodeSelection can be applied
+    nodePos = calcNodePos(nodePos, view);
+
+    // Use NodeSelection to select the node at the calculated position
+    const nodeSelection = NodeSelection.create(view.state.doc, nodePos);
+
+    // Dispatch the transaction to update the selection
+    view.dispatch(view.state.tr.setSelection(nodeSelection));
   }
 
   let dragHandleElement: HTMLElement | null = null;
