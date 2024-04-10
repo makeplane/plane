@@ -38,12 +38,6 @@ export const FilterDate: FC<Props> = observer((props) => {
 
   const handleFilterValue = (value: string): string[] => (filterValue?.includes(value) ? [] : uniq(concat(value)));
 
-  const handleCustomFilterValue = (value: string[]): string[] => {
-    const finalOptions: string[] = [...filterValue];
-    value.forEach((v) => (finalOptions?.includes(v) ? [] : finalOptions.push(v)));
-    return uniq(finalOptions);
-  };
-
   const isCustomDateSelected = () => {
     const isValidDateSelected = filterValue?.filter((f) => isDate(f.split(";")[0])) || [];
     return isValidDateSelected.length > 0 ? true : false;
@@ -64,7 +58,7 @@ export const FilterDate: FC<Props> = observer((props) => {
         <DateFilterModal
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
-          onSelect={(val) => handleInboxIssueFilters(filterKey, handleCustomFilterValue(val))}
+          onSelect={(val) => handleInboxIssueFilters(filterKey, val)}
           title="Created date"
         />
       )}

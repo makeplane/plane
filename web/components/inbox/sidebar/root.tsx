@@ -75,7 +75,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               )}
               onClick={() => {
                 if (currentTab != option?.key) handleCurrentTab(option?.key);
-                router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
+                router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${option?.key}`);
               }}
             >
               <div>{option?.label}</div>
