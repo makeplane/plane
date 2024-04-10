@@ -1,4 +1,4 @@
-import { FC, MouseEvent, useEffect } from "react";
+import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -31,19 +31,6 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
   const { projectLabels } = useLabel();
   const { isMobile } = usePlatformOS();
   const issue = inboxIssue.issue;
-
-  useEffect(() => {
-    if (issue.id === inboxIssueId) {
-      setTimeout(() => {
-        const issueItemCard = document.getElementById(`inbox-issue-list-item-${issue.id}`);
-        if (issueItemCard)
-          issueItemCard.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-      }, 200);
-    }
-  }, [inboxIssueId, issue.id]);
 
   const handleIssueRedirection = (event: MouseEvent, currentIssueId: string | undefined) => {
     if (inboxIssueId === currentIssueId) event.preventDefault();

@@ -1,6 +1,8 @@
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
 import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
+// helpers
+import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 // services
 import { InboxIssueService } from "@/services/inbox";
 // root store
@@ -26,7 +28,7 @@ export class InboxIssueStore implements IInboxIssueStore {
   // observables
   isLoading: boolean = false;
   id: string;
-  status: TInboxIssueStatus = -2;
+  status: TInboxIssueStatus = EInboxIssueStatus.PENDING;
   issue: Partial<TIssue> = {};
   snoozed_till: Date | undefined;
   duplicate_to: string | undefined;
@@ -82,7 +84,8 @@ export class InboxIssueStore implements IInboxIssueStore {
   };
 
   updateInboxIssueDuplicateTo = async (issueId: string) => {
-    const inboxStatus = 2;
+    const inboxStatus = EInboxIssueStatus.DUPLICATE;
+
     const previousData: Partial<TInboxIssue> = {
       status: this.status,
       duplicate_to: this.duplicate_to,
@@ -108,7 +111,8 @@ export class InboxIssueStore implements IInboxIssueStore {
   };
 
   updateInboxIssueSnoozeTill = async (date: Date) => {
-    const inboxStatus = 0;
+    const inboxStatus = EInboxIssueStatus.SNOOZED;
+
     const previousData: Partial<TInboxIssue> = {
       status: this.status,
       snoozed_till: this.snoozed_till,

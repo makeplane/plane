@@ -1,6 +1,19 @@
 import { subDays } from "date-fns";
 import { renderFormattedPayloadDate } from "./date-time.helper";
 
+export enum EInboxIssueCurrentTab {
+  OPEN = "open",
+  CLOSED = "closed",
+}
+
+export enum EInboxIssueStatus {
+  PENDING = -2,
+  DECLINED = -1,
+  SNOOZED = 0,
+  ACCEPTED = 1,
+  DUPLICATE = 2,
+}
+
 export enum EPastDurationFilters {
   TODAY = "today",
   YESTERDAY = "yesterday",
