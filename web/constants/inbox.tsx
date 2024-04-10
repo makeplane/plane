@@ -4,6 +4,7 @@ import { AlertTriangle, CheckCircle2, Clock, Copy, LucideIcon, XCircle } from "l
 import { TInboxIssueSortingOrderByKeys, TInboxIssueSortingSortByKeys, TInboxIssueStatus } from "@plane/types";
 // helpers
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
+import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 
 export const INBOX_STATUS: {
   key: string;
@@ -16,7 +17,7 @@ export const INBOX_STATUS: {
 }[] = [
   {
     key: "pending",
-    status: -2,
+    status: EInboxIssueStatus.PENDING,
     icon: AlertTriangle,
     title: "Pending",
     description: () => `Pending`,
@@ -25,7 +26,7 @@ export const INBOX_STATUS: {
   },
   {
     key: "declined",
-    status: -1,
+    status: EInboxIssueStatus.DECLINED,
     icon: XCircle,
     title: "Declined",
     description: () => `Declined`,
@@ -34,7 +35,7 @@ export const INBOX_STATUS: {
   },
   {
     key: "snoozed",
-    status: 0,
+    status: EInboxIssueStatus.SNOOZED,
     icon: Clock,
     title: "Snoozed",
     description: (snoozedTillDate: Date = new Date()) => `${findHowManyDaysLeft(snoozedTillDate)} days to go`,
@@ -43,7 +44,7 @@ export const INBOX_STATUS: {
   },
   {
     key: "accepted",
-    status: 1,
+    status: EInboxIssueStatus.ACCEPTED,
     icon: CheckCircle2,
     title: "Accepted",
     description: () => `Accepted`,
@@ -52,7 +53,7 @@ export const INBOX_STATUS: {
   },
   {
     key: "duplicate",
-    status: 2,
+    status: EInboxIssueStatus.DUPLICATE,
     icon: Copy,
     title: "Duplicate",
     description: () => `Duplicate`,
