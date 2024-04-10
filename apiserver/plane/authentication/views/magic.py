@@ -37,7 +37,12 @@ class MagicGenerateEndpoint(APIView):
         # Check if instance is configured
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
-            return Response({"error": "Instance is not configured"})
+            return Response(
+                {
+                    "error_code": "INSTANCE_NOT_CONFIGURED",
+                    "error_message": "Instance is not configured",
+                }
+            )
 
         origin = request.META.get("HTTP_ORIGIN", "/")
         email = request.data.get("email", False)
@@ -52,16 +57,25 @@ class MagicGenerateEndpoint(APIView):
             return Response({"key", str(key)}, status=status.HTTP_200_OK)
         except ImproperlyConfigured as e:
             return Response(
-                {"error": str(e)}, status=status.HTTP_400_BAD_REQUEST
+                {
+                    "error_code": "IMPROPERLY_CONFIGURED",
+                    "error_message": str(e),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except AuthenticationException as e:
             return Response(
-                {"error": str(e)}, status=status.HTTP_400_BAD_REQUEST
+                {
+                    "error_code": str(e.error_code),
+                    "error_message": str(e.error_message),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except ValidationError:
             return Response(
                 {
-                    "error": "Valid email is required for generating a magic code"
+                    "error_code": "INVALID_EMAIL",
+                    "error_message": "Valid email is required for generating a magic code",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -73,18 +87,24 @@ class MagicSignInEndpoint(View):
         referer = request.META.get("HTTP_REFERER", "/")
         # set the referer as session to redirect after login
         request.session["referer"] = referer
-        user_token = request.POST.get("token", "").strip()
-        key = request.POST.get("key", "").strip().lower()
+        code = request.POST.get("code", "").strip()
+        email = request.POST.get("email", "").strip().lower()
 
-        if key == "" or user_token == "":
+        if code == "" or email == "":
             url = urljoin(
                 referer,
-                "?" + urlencode({"error": "User token and key are required"}),
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "EMAIL_CODE_REQUIRED",
+                        "error_message": "Email and code are required",
+                    }
+                ),
             )
             return HttpResponseRedirect(url)
         try:
             provider = MagicCodeProvider(
-                request=request, key=key, code=user_token
+                request=request, key=f"magic_{email}", code=code
             )
             user = provider.authenticate()
             # Login the user and record his device info
@@ -98,5 +118,14 @@ class MagicSignInEndpoint(View):
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
-            url = urljoin(referer, "?" + urlencode({"error": str(e)}))
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": str(e.error_code),
+                        "error_message": str(e.error_message),
+                    }
+                ),
+            )
             return HttpResponseRedirect(url)

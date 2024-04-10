@@ -2,7 +2,8 @@ from django.urls import path
 
 from .views import (
     CSRFTokenEndpoint,
-    EmailCheckEndpoint,
+    EmailCheckSignInEndpoint,
+    EmailCheckSignUpEndpoint,
     GitHubCallbackEndpoint,
     GitHubOauthInitiateEndpoint,
     GoogleCallbackEndpoint,
@@ -73,8 +74,13 @@ urlpatterns = [
     ),
     # Email Check
     path(
-        "email-check/",
-        EmailCheckEndpoint.as_view(),
-        name="email-check",
+        "sign-up/email-check/",
+        EmailCheckSignUpEndpoint.as_view(),
+        name="email-check-sign-up",
+    ),
+    path(
+        "sign-in/email-check/",
+        EmailCheckSignInEndpoint.as_view(),
+        name="email-check-sign-in",
     ),
 ]

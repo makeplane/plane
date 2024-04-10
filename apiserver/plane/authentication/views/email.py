@@ -28,7 +28,13 @@ class SignInAuthEndpoint(View):
         if instance is None or not instance.is_setup_done:
             url = urljoin(
                 referer,
-                "?" + urlencode({"error": "Instance is not configured"}),
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "INSTANCE_NOT_CONFIGURED",
+                        "error_message": "Instance is not configured",
+                    },
+                ),
             )
             return HttpResponseRedirect(url)
 
@@ -41,7 +47,12 @@ class SignInAuthEndpoint(View):
             url = urljoin(
                 referer,
                 "?"
-                + urlencode({"error": "Both email and password are required"}),
+                + urlencode(
+                    {
+                        "error_code": "REQUIRED_EMAIL_PASSWORD",
+                        "error_message": "Both email and password are required",
+                    }
+                ),
             )
             return HttpResponseRedirect(url)
 
@@ -54,7 +65,10 @@ class SignInAuthEndpoint(View):
                 referer,
                 "?"
                 + urlencode(
-                    {"error": "Please provide a valid email address."}
+                    {
+                        "error_code": "INVALID_EMAIL",
+                        "error_message": "Please provide a valid email address.",
+                    }
                 ),
             )
             return HttpResponseRedirect(url)
@@ -73,7 +87,16 @@ class SignInAuthEndpoint(View):
             url = urljoin(referer, path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
-            url = urljoin(referer, "?" + urlencode({"error": str(e)}))
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": str(e.error_code),
+                        "error_message": str(e.error_message),
+                    }
+                ),
+            )
             return HttpResponseRedirect(url)
 
 
@@ -87,7 +110,13 @@ class SignUpAuthEndpoint(View):
         if instance is None or not instance.is_setup_done:
             url = urljoin(
                 referer,
-                "?" + urlencode({"error": "Instance is not configured"}),
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "INSTANCE_NOT_CONFIGURED",
+                        "error_message": "Instance is not configured",
+                    },
+                ),
             )
             return HttpResponseRedirect(url)
 
@@ -98,7 +127,12 @@ class SignUpAuthEndpoint(View):
             url = urljoin(
                 referer,
                 "?"
-                + urlencode({"error": "Both email and password are required"}),
+                + urlencode(
+                    {
+                        "error_code": "REQUIRED_EMAIL_PASSWORD",
+                        "error_message": "Both email and password are required",
+                    }
+                ),
             )
             return HttpResponseRedirect(url)
         # Validate the email
@@ -110,7 +144,10 @@ class SignUpAuthEndpoint(View):
                 referer,
                 "?"
                 + urlencode(
-                    {"error": "Please provide a valid email address."}
+                    {
+                        "error_code": "INVALID_EMAIL",
+                        "error_message": "Please provide a valid email address.",
+                    }
                 ),
             )
             return HttpResponseRedirect(url)
@@ -129,5 +166,14 @@ class SignUpAuthEndpoint(View):
             url = urljoin(referer, path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
-            url = urljoin(referer, "?" + urlencode({"error": str(e)}))
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": str(e.error_code),
+                        "error_message": str(e.error_message),
+                    }
+                ),
+            )
             return HttpResponseRedirect(url)

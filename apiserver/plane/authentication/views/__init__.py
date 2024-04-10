@@ -5,7 +5,8 @@ from .common import (
     ResetPasswordEndpoint,
     SetUserPasswordEndpoint,
     SignOutAuthEndpoint,
-    EmailCheckEndpoint,
+    EmailCheckSignInEndpoint,
+    EmailCheckSignUpEndpoint,
 )
 from .email import (
     SignInAuthEndpoint,

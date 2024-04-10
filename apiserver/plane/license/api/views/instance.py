@@ -301,7 +301,13 @@ class InstanceAdminSignInEndpoint(View):
         if instance is None:
             url = urljoin(
                 referer,
-                "?" + urlencode({"error": "Instance is not configured"}),
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "INSTANCE_NOT_CONFIGURED",
+                        "error_message": "Instance is not configured",
+                    }
+                ),
             )
             return HttpResponseRedirect(url)
 
@@ -312,7 +318,8 @@ class InstanceAdminSignInEndpoint(View):
                 "?"
                 + urlencode(
                     {
-                        "error": "Admin for the instance has been already registered"
+                        "error_code": "ADMIN_ALREADY_EXIST",
+                        "error_message": "Admin for the instance has been already registered",
                     }
                 ),
             )
@@ -331,7 +338,10 @@ class InstanceAdminSignInEndpoint(View):
                 referer,
                 "?"
                 + urlencode(
-                    {"error": "Email, name and password are required"}
+                    {
+                        "error_code": "REQUIRED_EMAIL_PASSWORD",
+                        "error_message": "Email, name and password are required",
+                    }
                 ),
             )
             return HttpResponseRedirect(url)
@@ -345,7 +355,10 @@ class InstanceAdminSignInEndpoint(View):
                 referer,
                 "?"
                 + urlencode(
-                    {"error": "Please provide a valid email address."}
+                    {
+                        "error_code": "INVALID_EMAIL",
+                        "error_message": "Please provide a valid email address.",
+                    }
                 ),
             )
             return HttpResponseRedirect(url)
@@ -361,7 +374,8 @@ class InstanceAdminSignInEndpoint(View):
                     "?"
                     + urlencode(
                         {
-                            "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                            "error_code": "AUTHENTICATION_FAILED",
+                            "error_message": "Sorry, we could not find a user with the provided credentials. Please try again.",
                         }
                     ),
                 )
@@ -372,7 +386,14 @@ class InstanceAdminSignInEndpoint(View):
                 validate_password(password=password)
             except ValidationError as e:
                 url = urljoin(
-                    referer, "?" + urlencode({"error": str(e.messages[0])})
+                    referer,
+                    "?"
+                    + urlencode(
+                        {
+                            "error_code": "INVALID_PASSWORD",
+                            "error_message": str(e.messages[0]),
+                        }
+                    ),
                 )
                 return HttpResponseRedirect(url)
 
