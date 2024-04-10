@@ -44,6 +44,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
     } else {
       setDescriptionHTML(value);
     }
+    return () => setDescriptionHTML(undefined);
   }, [issueId, localIssueId, value]);
 
   useEffect(() => {
