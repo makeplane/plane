@@ -4,7 +4,6 @@ from urllib.parse import urlencode, urljoin
 
 # Django imports
 from django.contrib.auth import logout
-from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -23,6 +22,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from zxcvbn import zxcvbn
 
 ## Module imports
 from plane.app.serializers import (
@@ -251,23 +251,23 @@ class ResetPasswordEndpoint(View):
                 return HttpResponseRedirect(url)
 
             new_password = request.POST.get("new_password")
-            # set_password also hashes the password that the user will get
 
-            try:
-                validate_password(password=new_password)
-            except ValidationError as e:
+            # Check the password complexity
+            results = zxcvbn(new_password)
+            if results["score"] < 3:
                 url = urljoin(
                     referer,
                     "?"
                     + urlencode(
                         {
                             "error_code": "INVALID_PASSWORD",
-                            "error_message": str(e.messages[0]),
+                            "error_message": "The password is not a valid password",
                         }
                     ),
                 )
                 return HttpResponseRedirect(url)
 
+            # set_password also hashes the password that the user will get
             user.set_password(new_password)
             user.is_password_autoset = False
             user.save()
@@ -303,13 +303,13 @@ class ChangePasswordEndpoint(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            try:
-                validate_password(password=serializer.data.get("new_password"))
-            except ValidationError as e:
+            # check the password score
+            results = zxcvbn(serializer.data.get("new_password"))
+            if results["score"] < 3:
                 return Response(
                     {
                         "error_code": "INVALID_PASSWORD",
-                        "error_message": str(e.messages[0]),
+                        "error_message": "Invalid password.",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -352,13 +352,12 @@ class SetUserPasswordEndpoint(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        try:
-            validate_password(password=password)
-        except ValidationError as e:
+        results = zxcvbn(password)
+        if results["score"] < 3:
             return Response(
                 {
                     "error_code": "INVALID_PASSWORD",
-                    "error_message": str(e.messages[0]),
+                    "error_message": "Invalid password.",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

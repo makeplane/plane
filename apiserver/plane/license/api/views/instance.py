@@ -12,7 +12,6 @@ from urllib.parse import urlencode, urljoin
 
 # Django imports
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.mail import (
     BadHeaderError,
@@ -28,6 +27,7 @@ from django.views import View
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from zxcvbn import zxcvbn
 
 # Module imports
 from plane.app.views import BaseAPIView
@@ -381,16 +381,15 @@ class InstanceAdminSignUpEndpoint(View):
             return HttpResponseRedirect(url)
         else:
 
-            try:
-                validate_password(password=password)
-            except ValidationError as e:
+            results = zxcvbn(password)
+            if results["score"] < 3:
                 url = urljoin(
                     referer,
                     "?"
                     + urlencode(
                         {
                             "error_code": "INVALID_PASSWORD",
-                            "error_message": str(e.messages[0]),
+                            "error_message": "Invalid password provided.",
                         }
                     ),
                 )

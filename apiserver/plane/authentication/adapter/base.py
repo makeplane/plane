@@ -3,11 +3,13 @@ import os
 import uuid
 
 # Django imports
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.core.exceptions import ImproperlyConfigured
 from django.utils import timezone
 
 # Third party imports
+from zxcvbn import zxcvbn
+
+# Module imports
 from plane.db.models import (
     Profile,
     User,
@@ -83,11 +85,10 @@ class Adapter:
                 user.is_email_verified = True
             else:
                 # Validate password
-                try:
-                    validate_password(password=self.code)
-                except ValidationError as e:
+                results = zxcvbn(self.code)
+                if results["score"] < 3:
                     raise AuthenticationException(
-                        error_message=str(e.messages[0]),
+                        error_message="The password is not a valid password",
                         error_code="INVALID_PASSWORD",
                     )
 
