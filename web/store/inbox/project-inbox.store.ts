@@ -360,7 +360,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
           ["inboxIssuePaginationInfo", "total_results"],
           (this.inboxIssuePaginationInfo?.total_results || 0) - 1
         );
-        set(this.inboxIssues, [projectId], omit(this.inboxIssues, inboxIssueId));
+        set(this, "inboxIssues", omit(this.inboxIssues, inboxIssueId));
       });
       await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
     } catch {
