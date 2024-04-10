@@ -58,7 +58,7 @@ class Adapter:
         user = User.objects.filter(email=email).first()
 
         if not user:
-            ENABLE_SIGNUP = get_configuration_value(
+            (ENABLE_SIGNUP,) = get_configuration_value(
                 [
                     {
                         "key": "ENABLE_SIGNUP",

@@ -288,7 +288,7 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class InstanceAdminSignInEndpoint(View):
+class InstanceAdminSignUpEndpoint(View):
     permission_classes = [
         AllowAny,
     ]
@@ -296,6 +296,7 @@ class InstanceAdminSignInEndpoint(View):
     @invalidate_cache(path="/api/instances/", user=False)
     def post(self, request):
         referer = request.META.get("HTTP_REFERER", "/")
+
         # Check instance first
         instance = Instance.objects.first()
         if instance is None:
@@ -311,7 +312,7 @@ class InstanceAdminSignInEndpoint(View):
             )
             return HttpResponseRedirect(url)
 
-        # check if the instance is already activated
+        # check if the instance has already an admin registered
         if InstanceAdmin.objects.first():
             url = urljoin(
                 referer,
@@ -319,11 +320,12 @@ class InstanceAdminSignInEndpoint(View):
                 + urlencode(
                     {
                         "error_code": "ADMIN_ALREADY_EXIST",
-                        "error_message": "Admin for the instance has been already registered",
+                        "error_message": "Admin for the instance has been already registered.",
                     }
                 ),
             )
             return HttpResponseRedirect(url)
+
         # Get the email and password from all the user
         email = request.POST.get("email", False)
         password = request.POST.get("password", False)
@@ -339,7 +341,7 @@ class InstanceAdminSignInEndpoint(View):
                 "?"
                 + urlencode(
                     {
-                        "error_code": "REQUIRED_EMAIL_PASSWORD",
+                        "error_code": "REQUIRED_EMAIL_PASSWORD_FIRST_NAME",
                         "error_message": "Email, name and password are required",
                     }
                 ),
@@ -362,24 +364,21 @@ class InstanceAdminSignInEndpoint(View):
                 ),
             )
             return HttpResponseRedirect(url)
-        # Check if already a user exists or not
-        user = User.objects.filter(email=email).first()
 
+        # Check if already a user exists or not
         # Existing user
-        if user:
-            # Check user password
-            if not user.check_password(password):
-                url = urljoin(
-                    referer,
-                    "?"
-                    + urlencode(
-                        {
-                            "error_code": "AUTHENTICATION_FAILED",
-                            "error_message": "Sorry, we could not find a user with the provided credentials. Please try again.",
-                        }
-                    ),
-                )
-                return HttpResponseRedirect(url)
+        if User.objects.filter(email=email).exists():
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "USER_ALREADY_EXISTS",
+                        "error_message": "User already exists.",
+                    }
+                ),
+            )
+            return HttpResponseRedirect(url)
         else:
 
             try:
@@ -406,6 +405,133 @@ class InstanceAdminSignInEndpoint(View):
                 is_password_autoset=False,
             )
             _ = Profile.objects.create(user=user, company_name=company_name)
+            # settings last active for the user
+            user.is_active = True
+            user.last_active = timezone.now()
+            user.last_login_time = timezone.now()
+            user.last_login_ip = request.META.get("REMOTE_ADDR")
+            user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+            user.token_updated_at = timezone.now()
+            user.save()
+
+            # Register the user as an instance admin
+            _ = InstanceAdmin.objects.create(
+                user=user,
+                instance=instance,
+            )
+            # Make the setup flag True
+            instance.is_setup_done = True
+            instance.is_telemetry_enabled = is_telemetry_enabled
+            instance.save()
+
+            # get tokens for user
+            user_login(request=request, user=user)
+            url = urljoin(referer, "god-mode")
+            return HttpResponseRedirect(url)
+
+
+class InstanceAdminSignInEndpoint(View):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    @invalidate_cache(path="/api/instances/", user=False)
+    def post(self, request):
+        referer = request.META.get("HTTP_REFERER", "/")
+        # Check instance first
+        instance = Instance.objects.first()
+        if instance is None:
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "INSTANCE_NOT_CONFIGURED",
+                        "error_message": "Instance is not configured",
+                    }
+                ),
+            )
+            return HttpResponseRedirect(url)
+
+        # Get email and password
+        email = request.POST.get("email", False)
+        password = request.POST.get("password", False)
+
+        # return error if the email and password is not present
+        if not email or not password:
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "REQUIRED_EMAIL_PASSWORD",
+                        "error_message": "Email and password are required",
+                    }
+                ),
+            )
+            return HttpResponseRedirect(url)
+
+        # Validate the email
+        email = email.strip().lower()
+        try:
+            validate_email(email)
+        except ValidationError:
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "INVALID_EMAIL",
+                        "error_message": "Please provide a valid email address.",
+                    }
+                ),
+            )
+            return HttpResponseRedirect(url)
+
+        # Fetch the user
+        user = User.objects.filter(email=email).first()
+
+        # Error out if the user is not present
+        if not user:
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "USER_DOES_NOT_EXIST",
+                        "error_message": "User does not exist",
+                    }
+                ),
+            )
+            return HttpResponseRedirect(url)
+
+        # Check password of the user
+        if not user.check_password(password):
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "AUTHENTICATION_FAILED",
+                        "error_message": "Sorry, we could not find an admin user with the provided credentials. Please try again.",
+                    }
+                ),
+            )
+            return HttpResponseRedirect(url)
+
+        # Check if the user is an instance admin
+        if not InstanceAdmin.objects.filter(instance=instance, user=user):
+            url = urljoin(
+                referer,
+                "?"
+                + urlencode(
+                    {
+                        "error_code": "AUTHENTICATION_FAILED",
+                        "error_message": "Sorry, we could not find an admin user with the provided credentials. Please try again.",
+                    }
+                ),
+            )
+            return HttpResponseRedirect(url)
         # settings last active for the user
         user.is_active = True
         user.last_active = timezone.now()
@@ -414,16 +540,6 @@ class InstanceAdminSignInEndpoint(View):
         user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
         user.token_updated_at = timezone.now()
         user.save()
-
-        # Register the user as an instance admin
-        _ = InstanceAdmin.objects.create(
-            user=user,
-            instance=instance,
-        )
-        # Make the setup flag True
-        instance.is_setup_done = True
-        instance.is_telemetry_enabled = is_telemetry_enabled
-        instance.save()
 
         # get tokens for user
         user_login(request=request, user=user)
