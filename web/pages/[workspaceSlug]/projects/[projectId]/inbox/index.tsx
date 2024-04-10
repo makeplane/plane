@@ -8,6 +8,8 @@ import { ProjectInboxHeader } from "@/components/headers";
 import { InboxIssueRoot } from "@/components/inbox";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+// helpers
+import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
 // layouts
@@ -40,7 +42,8 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : "Plane - Inbox";
 
   useEffect(() => {
-    if (navigationTab && currentTab != navigationTab) handleCurrentTab(navigationTab === "open" ? "open" : "closed");
+    if (navigationTab && currentTab != navigationTab)
+      handleCurrentTab(navigationTab === "open" ? EInboxIssueCurrentTab.OPEN : EInboxIssueCurrentTab.CLOSED);
   }, [currentTab, navigationTab, handleCurrentTab]);
 
   return (

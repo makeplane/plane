@@ -11,6 +11,7 @@ import { InboxSidebarLoader } from "@/components/ui";
 import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
@@ -22,11 +23,11 @@ type IInboxSidebarProps = {
 
 const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
   {
-    key: "open",
+    key: EInboxIssueCurrentTab.OPEN,
     label: "Open",
   },
   {
-    key: "closed",
+    key: EInboxIssueCurrentTab.CLOSED,
     label: "Closed",
   },
 ];
@@ -99,7 +100,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
 
         <InboxIssueAppliedFilters />
 
-        {isLoading === "filter-loading" && !inboxIssuePaginationInfo?.next_page_results ? (
+        {isLoading != undefined && isLoading === "filter-loading" && !inboxIssuePaginationInfo?.next_page_results ? (
           <InboxSidebarLoader />
         ) : (
           <div
@@ -119,7 +120,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                   type={
                     getAppliedFiltersCount > 0
                       ? EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE
-                      : currentTab === "open"
+                      : currentTab === EInboxIssueCurrentTab.OPEN
                       ? EmptyStateType.INBOX_SIDEBAR_OPEN_TAB
                       : EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB
                   }

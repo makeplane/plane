@@ -69,7 +69,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
     watch("comment_html") === "" ||
     watch("comment_html")?.trim() === "" ||
     watch("comment_html") === "<p></p>" ||
-    isEmptyHtmlString(watch("comment_html") ?? "");
+    (isEmptyHtmlString(watch("comment_html") ?? "") && !watch("comment_html")?.includes("mention-component"));
 
   return (
     <div

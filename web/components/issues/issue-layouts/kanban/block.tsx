@@ -63,16 +63,16 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
 
       {issue?.is_draft ? (
         <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-          <span className="pb-1.5">{issue.name}</span>
+          <span>{issue.name}</span>
         </Tooltip>
       ) : (
         <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-          <span className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100 pb-1.5">{issue.name}</span>
+          <span className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100">{issue.name}</span>
         </Tooltip>
       )}
 
       <IssueProperties
-        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300"
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
         issue={issue}
         displayProperties={displayProperties}
         activeLayout="Kanban"

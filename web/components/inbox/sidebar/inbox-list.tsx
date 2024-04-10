@@ -20,7 +20,6 @@ export const InboxIssueList: FC<InboxIssueListProps> = observer((props) => {
       {inboxIssues.map((inboxIssue) => (
         <Fragment key={inboxIssue.id}>
           <InboxIssueListItem
-            key={inboxIssue.id}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             projectIdentifier={projectIdentifier}
