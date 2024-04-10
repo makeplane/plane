@@ -91,9 +91,13 @@ export class InboxIssueStore implements IInboxIssueStore {
       if (!this.issue.id) return;
       set(this, "status", inboxStatus);
       set(this, "duplicate_to", issueId);
-      await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const issueResponse = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: inboxStatus,
         duplicate_to: issueId,
+      });
+      runInAction(() => {
+        this.duplicate_to = issueResponse.duplicate_to;
+        this.duplicate_issue_detail = issueResponse.duplicate_issue_detail;
       });
     } catch {
       runInAction(() => {
