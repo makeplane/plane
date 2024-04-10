@@ -25,6 +25,7 @@ export type IssueDescriptionInputProps = {
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => {
   const { workspaceSlug, projectId, issueId, value, initialValue, disabled, issueOperations, setIsSubmitting } = props;
   // states
+  const [localIssueId, setLocalIssueId] = useState(issueId);
   const [descriptionHTML, setDescriptionHTML] = useState(value);
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention();
@@ -35,8 +36,14 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
 
   useEffect(() => {
-    setDescriptionHTML(value);
-  }, [value]);
+    if (issueId !== localIssueId) {
+      setDescriptionHTML(undefined);
+      setLocalIssueId(issueId);
+    } else {
+      setDescriptionHTML(value);
+    }
+    return () => setDescriptionHTML(undefined);
+  }, [issueId, localIssueId, value]);
 
   useEffect(() => {
     if (debouncedValue && debouncedValue !== value) {
