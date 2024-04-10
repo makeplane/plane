@@ -25,8 +25,6 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const { currentProjectDetails } = useProject();
   const { currentTab, handleCurrentTab } = useProjectInbox();
 
-  if (!workspaceSlug || !projectId) return <></>;
-
   // No access to inbox
   if (currentProjectDetails?.inbox_view === false)
     return (
@@ -45,6 +43,8 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
     if (navigationTab && currentTab != navigationTab)
       handleCurrentTab(navigationTab === "open" ? EInboxIssueCurrentTab.OPEN : EInboxIssueCurrentTab.CLOSED);
   }, [currentTab, navigationTab, handleCurrentTab]);
+
+  if (!workspaceSlug || !projectId) return <></>;
 
   return (
     <div className="flex h-full flex-col">
