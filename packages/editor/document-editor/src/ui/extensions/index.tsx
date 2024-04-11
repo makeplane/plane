@@ -6,17 +6,17 @@ import { UploadImage } from "@plane/editor-core";
 
 export const DocumentEditorExtensions = (
   uploadFile: UploadImage,
-  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void
 ) => [
-  SlashCommand(uploadFile, setIsSubmitting),
+  SlashCommand(uploadFile),
   DragAndDrop(setHideDragHandle),
   Placeholder.configure({
-    placeholder: ({ node }) => {
+    placeholder: ({ editor, node }) => {
       if (node.type.name === "heading") {
         return `Heading ${node.attrs.level}`;
       }
-      if (node.type.name === "image" || node.type.name === "table") {
+
+      if (editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image")) {
         return "";
       }
 

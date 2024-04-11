@@ -66,12 +66,9 @@ export enum EmptyStateType {
   PROJECT_ARCHIVED_NO_MODULES = "project-archived-no-modules",
   PROJECT_VIEW = "project-view",
   PROJECT_PAGE = "project-page",
-  PROJECT_PAGE_ALL = "project-page-all",
-  PROJECT_PAGE_FAVORITES = "project-page-favorites",
   PROJECT_PAGE_PRIVATE = "project-page-private",
-  PROJECT_PAGE_SHARED = "project-page-shared",
+  PROJECT_PAGE_PUBLIC = "project-page-public",
   PROJECT_PAGE_ARCHIVED = "project-page-archived",
-  PROJECT_PAGE_RECENT = "project-page-recent",
 
   COMMAND_K_SEARCH_EMPTY_STATE = "command-k-search-empty-state",
   ISSUE_RELATION_SEARCH_EMPTY_STATE = "issue-relation-search-empty-state",
@@ -498,48 +495,23 @@ const emptyStateDetails = {
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
   },
-  [EmptyStateType.PROJECT_PAGE_ALL]: {
-    key: EmptyStateType.PROJECT_PAGE_ALL,
-    title: "Write a note, a doc, or a full knowledge base",
-    description:
-      "Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely!",
-    path: "/empty-state/pages/all",
-  },
-  [EmptyStateType.PROJECT_PAGE_FAVORITES]: {
-    key: EmptyStateType.PROJECT_PAGE_FAVORITES,
-    title: "No favorite pages yet",
-    description: "Favorites for quick access? mark them and find them right here.",
-    path: "/empty-state/pages/favorites",
-  },
   [EmptyStateType.PROJECT_PAGE_PRIVATE]: {
     key: EmptyStateType.PROJECT_PAGE_PRIVATE,
     title: "No private pages yet",
     description: "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
     path: "/empty-state/pages/private",
   },
-  [EmptyStateType.PROJECT_PAGE_SHARED]: {
-    key: EmptyStateType.PROJECT_PAGE_SHARED,
-    title: "No shared pages yet",
+  [EmptyStateType.PROJECT_PAGE_PUBLIC]: {
+    key: EmptyStateType.PROJECT_PAGE_PUBLIC,
+    title: "No public pages yet",
     description: "See pages shared with everyone in your project right here.",
-    path: "/empty-state/pages/shared",
+    path: "/empty-state/pages/public",
   },
   [EmptyStateType.PROJECT_PAGE_ARCHIVED]: {
     key: EmptyStateType.PROJECT_PAGE_ARCHIVED,
     title: "No archived pages yet",
     description: "Archive pages not on your radar. Access them here when needed.",
     path: "/empty-state/pages/archived",
-  },
-  [EmptyStateType.PROJECT_PAGE_RECENT]: {
-    key: EmptyStateType.PROJECT_PAGE_RECENT,
-    title: "Write a note, a doc, or a full knowledge base",
-    description:
-      "Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely! Pages will be sorted and grouped by last updated",
-    path: "/empty-state/pages/recent",
-    primaryButton: {
-      text: "Create new page",
-    },
-    accessType: "project",
-    access: EUserProjectRoles.MEMBER,
   },
 
   [EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE]: {

@@ -115,11 +115,6 @@ export const LinkEditView = ({
   const removeLink = () => {
     editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
     linkRemoved.current = true;
-    viewProps.onActionCompleteHandler({
-      title: "Link successfully removed",
-      message: "The link was removed from the text.",
-      type: "success",
-    });
     viewProps.closeLinkView();
   };
 

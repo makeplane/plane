@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { History, MessageSquare } from "lucide-react";
-import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 import { IUserActivityResponse } from "@plane/types";
-// editor
 // hooks
 // components
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
+// editor
+import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
 // ui
 import { ActivitySettingsLoader } from "@/components/ui";
 // helpers
@@ -28,7 +28,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
     <>
       {activity ? (
         <ul role="list">
-          {activity.results.map((activityItem: any) => {
+          {activity.results.map((activityItem) => {
             if (activityItem.field === "comment")
               return (
                 <div key={activityItem.id} className="mt-2">
@@ -66,11 +66,13 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                         </p>
                       </div>
                       <div className="issue-comments-section p-0">
-                        <RichReadOnlyEditor
-                          value={activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value}
-                          customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-                          noBorder
-                          borderOnFocus={false}
+                        <RichTextReadOnlyEditor
+                          initialValue={
+                            activityItem?.new_value !== ""
+                              ? (activityItem.new_value?.toString() as string)
+                              : (activityItem.old_value?.toString() as string)
+                          }
+                          containerClassName="text-xs bg-custom-background-100"
                         />
                       </div>
                     </div>
@@ -80,7 +82,9 @@ export const ActivityList: React.FC<Props> = observer((props) => {
 
             const message =
               activityItem.verb === "created" &&
-              !["cycles", "modules", "attachment", "link", "estimate"].includes(activityItem.field) &&
+              !["cycles", "modules", "attachment", "link", "estimate"].includes(
+                activityItem.field?.toString() as string
+              ) &&
               !activityItem.field ? (
                 <span>
                   created <IssueLink activity={activityItem} />
@@ -130,7 +134,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                               <span className="text-gray font-medium">{activityItem.actor_detail.first_name} Bot</span>
                             ) : (
                               <Link
-                                href={`/${activityItem.workspace_detail.slug}/profile/${activityItem.actor_detail.id}`}
+                                href={`/${activityItem.workspace_detail?.slug}/profile/${activityItem.actor_detail.id}`}
                               >
                                 <span className="text-gray font-medium">
                                   {currentUser?.id === activityItem.actor_detail.id
