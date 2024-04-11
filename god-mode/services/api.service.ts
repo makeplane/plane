@@ -1,89 +1,57 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import axios, { AxiosInstance } from "axios";
 
 export abstract class APIService {
   protected baseURL: string;
-  protected headers: any = {};
+  axiosInstance: AxiosInstance;
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
-  }
-
-  setRefreshToken(token: string) {
-    Cookies.set("refreshToken", token, { expires: 30 });
-  }
-
-  getRefreshToken() {
-    return Cookies.get("refreshToken");
-  }
-
-  purgeRefreshToken() {
-    Cookies.remove("refreshToken", { path: "/" });
-  }
-
-  setAccessToken(token: string) {
-    Cookies.set("accessToken", token, { expires: 30 });
-  }
-
-  getAccessToken() {
-    return Cookies.get("accessToken");
-  }
-
-  purgeAccessToken() {
-    Cookies.remove("accessToken", { path: "/" });
-  }
-
-  getHeaders() {
-    return {
-      Authorization: `Bearer ${this.getAccessToken()}`,
-    };
+    this.axiosInstance = axios.create({
+      baseURL,
+      withCredentials: true,
+    });
   }
 
   get(url: string, config = {}): Promise<any> {
-    return axios({
+    return this.axiosInstance({
       method: "get",
-      url: this.baseURL + url,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
+      url,
       ...config,
     });
   }
 
   post(url: string, data = {}, config = {}): Promise<any> {
-    return axios({
+    return this.axiosInstance({
       method: "post",
-      url: this.baseURL + url,
+      url,
       data,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
     });
   }
 
   put(url: string, data = {}, config = {}): Promise<any> {
-    return axios({
+    return this.axiosInstance({
       method: "put",
-      url: this.baseURL + url,
+      url,
       data,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
     });
   }
 
   patch(url: string, data = {}, config = {}): Promise<any> {
-    return axios({
+    return this.axiosInstance({
       method: "patch",
-      url: this.baseURL + url,
+      url,
       data,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
     });
   }
 
   delete(url: string, data?: any, config = {}): Promise<any> {
-    return axios({
+    return this.axiosInstance({
       method: "delete",
-      url: this.baseURL + url,
+      url,
       data: data,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
     });
   }

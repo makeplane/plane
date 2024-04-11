@@ -29,16 +29,10 @@ const AppWrapper: FC<IAppWrapper> = observer(({ children }) => {
    * Sidebar collapsed fetching from local storage
    */
   useEffect(() => {
-    const localValue =
-      localStorage && localStorage.getItem("god_mode_sidebar_collapsed");
-    const localBoolValue = localValue
-      ? localValue === "true"
-        ? true
-        : false
-      : false;
+    const localValue = localStorage && localStorage.getItem("god_mode_sidebar_collapsed");
+    const localBoolValue = localValue ? (localValue === "true" ? true : false) : false;
 
-    if (localValue && sidebarCollapsed === undefined)
-      toggleSidebar(localBoolValue);
+    if (localValue && sidebarCollapsed === undefined) toggleSidebar(localBoolValue);
   }, [sidebarCollapsed, currentUser, toggleSidebar]);
 
   return (

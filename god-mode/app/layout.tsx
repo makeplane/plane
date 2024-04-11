@@ -1,10 +1,11 @@
 // lib
-import { ThemeProvider } from "lib/theme-provider";
-import AppWrapper from "lib/wrappers/app-wrapper";
-import { UserAuthWrapper } from "lib/wrappers/user-auth-wrapper";
+// import { ThemeProvider } from "lib/theme-provider";
+// import AppWrapper from "lib/wrappers/app-wrapper";
+// import { UserAuthWrapper } from "lib/wrappers/user-auth-wrapper";
 // components
-import { InstanceSidebar } from "./sidebar";
-import { InstanceHeader } from "./header";
+// import { InstanceSidebar } from "./sidebar";
+// import { InstanceHeader } from "./header";
+import { DefaultLayout } from "@/layouts";
 // styles
 import "./globals.css";
 
@@ -20,7 +21,8 @@ interface RootLayoutProps {
 export const RootLayout = async ({ children }: RootLayoutProps) => (
   <html lang="en">
     <body className={`antialiased`}>
-      <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+      <DefaultLayout>{children}</DefaultLayout>
+      {/* <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
         <AppWrapper>
           <UserAuthWrapper>
             <div className="relative flex h-screen w-full overflow-hidden">
@@ -34,7 +36,7 @@ export const RootLayout = async ({ children }: RootLayoutProps) => (
             </div>
           </UserAuthWrapper>
         </AppWrapper>
-      </ThemeProvider>
+      </ThemeProvider> */}
     </body>
   </html>
 );
