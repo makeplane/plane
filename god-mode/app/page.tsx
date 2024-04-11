@@ -9,7 +9,7 @@ import { observer } from "mobx-react-lite";
 // components
 // import { InstanceGeneralForm } from "components/general";
 // import { PageHead } from "components/core";
-import { InstanceSignUpForm } from "@/components/user-authentication-forms";
+import { InstanceSignInForm, InstanceSignUpForm } from "@/components/user-authentication-forms";
 
 const GeneralSettingsPage = observer(() => {
   // store
@@ -47,7 +47,8 @@ const GeneralSettingsPage = observer(() => {
           </Loader>
         )}
       </div> */}
-      <InstanceSignUpForm />
+      <InstanceSignInForm />
+      {/* <InstanceSignUpForm /> */}
     </>
   );
 });

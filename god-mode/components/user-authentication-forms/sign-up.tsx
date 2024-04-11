@@ -2,6 +2,9 @@ import { FC, FormEvent, useEffect, useState } from "react";
 // services
 import { AuthService } from "@/services/auth.service";
 import { API_BASE_URL } from "@/helpers/common.helper";
+// ui
+import { Button, Checkbox, Input } from "@plane/ui";
+import { PasswordStrengthMeter } from "components/common";
 
 type TInstanceFormData = {
   first_name: string;
@@ -47,7 +50,7 @@ export const InstanceSignUpForm: FC = (props) => {
       <div className="w-full md:w-4/6 lg:w-3/6 xl:w-2/6 space-y-10">
         <div className="text-center space-y-1">
           <h3 className="text-3xl font-bold">Setup your Plane Instance</h3>
-          <p className="font-medium text-gray-600">Post setup you will be able to manage this Plane instance.</p>
+          <p className="font-medium text-custom-text-400">Post setup you will be able to manage this Plane instance.</p>
         </div>
         <form
           className="space-y-4"
@@ -58,14 +61,15 @@ export const InstanceSignUpForm: FC = (props) => {
           <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
           <div className="flex items-center gap-4">
             <div className="w-full space-y-1">
-              <label className="text-sm text-gray-500 font-medium" htmlFor="first_name">
+              <label className="text-sm text-custom-text-300 font-medium" htmlFor="first_name">
                 First name <span className="text-red-500">*</span>
               </label>
-              <input
-                className="h-[40px] w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-1 focus:ring-gray-300 transition-all"
+              <Input
+                className="w-full"
                 id="first_name"
                 name="first_name"
                 type="text"
+                inputSize="md"
                 placeholder="Wilber"
                 value={instanceFormData.first_name}
                 onChange={(e) => handleFormChange("first_name", e.target.value)}
@@ -74,14 +78,15 @@ export const InstanceSignUpForm: FC = (props) => {
               />
             </div>
             <div className="w-full space-y-1">
-              <label className="text-sm text-gray-500 font-medium" htmlFor="last_name">
-                last name
+              <label className="text-sm text-custom-text-300 font-medium" htmlFor="last_name">
+                Last name
               </label>
-              <input
-                className="h-[40px] w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-1 focus:ring-gray-300 transition-all"
+              <Input
+                className="w-full"
                 id="last_name"
                 name="last_name"
                 type="text"
+                inputSize="md"
                 placeholder="Wright"
                 value={instanceFormData.last_name}
                 onChange={(e) => handleFormChange("last_name", e.target.value)}
@@ -89,14 +94,15 @@ export const InstanceSignUpForm: FC = (props) => {
             </div>
           </div>
           <div className="w-full space-y-1">
-            <label className="text-sm text-gray-500 font-medium" htmlFor="email">
+            <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
               Email <span className="text-red-500">*</span>
             </label>
-            <input
-              className="h-[40px] w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-1 focus:ring-gray-300 transition-all"
+            <Input
+              className="w-full"
               id="email"
               name="email"
               type="email"
+              inputSize="md"
               placeholder="name@company.com"
               value={instanceFormData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
@@ -104,61 +110,56 @@ export const InstanceSignUpForm: FC = (props) => {
             />
           </div>
           <div className="w-full space-y-1">
-            <label className="text-sm text-gray-500 font-medium" htmlFor="company_name">
+            <label className="text-sm text-custom-text-300 font-medium" htmlFor="company_name">
               Company name
             </label>
-            <input
-              className="h-[40px] w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-1 focus:ring-gray-300 transition-all"
+            <Input
+              className="w-full"
               id="company_name"
               name="company_name"
               type="text"
+              inputSize="md"
               placeholder="Company name"
               value={instanceFormData.company_name}
               onChange={(e) => handleFormChange("company_name", e.target.value)}
             />
           </div>
           <div className="w-full space-y-1">
-            <label className="text-sm text-gray-500 font-medium" htmlFor="password">
+            <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
               Set a password <span className="text-red-500">*</span>
             </label>
-            <input
-              className="h-[40px] w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-1 focus:ring-gray-300 transition-all"
+            <Input
+              className="w-full"
               id="password"
               name="password"
               type="text"
+              inputSize="md"
               placeholder="New password..."
               value={instanceFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               required
             />
+            <PasswordStrengthMeter password={instanceFormData.password} />
           </div>
-          <div className="relative flex items-center gap-1">
-            <div className="relative flex items-center gap-1">
-              <input
-                className="h-[40px] transition-all"
-                id="is_telemetry_enabled"
-                name="is_telemetry_enabled"
-                type="checkbox"
-                placeholder="Wright"
-                value={instanceFormData.is_telemetry_enabled ? "True" : "False"}
-                onChange={() => handleFormChange("is_telemetry_enabled", !instanceFormData.is_telemetry_enabled)}
-                checked={instanceFormData.is_telemetry_enabled}
-              />
-              <label className="text-sm text-gray-500 font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
-                Allow Plane to anonymously collect usage events.
-              </label>
-            </div>
+          <div className="relative flex items-center pt-2 gap-2">
+            <Checkbox
+              id="is_telemetry_enabled"
+              name="is_telemetry_enabled"
+              value={instanceFormData.is_telemetry_enabled ? "True" : "False"}
+              onChange={() => handleFormChange("is_telemetry_enabled", !instanceFormData.is_telemetry_enabled)}
+              checked={instanceFormData.is_telemetry_enabled}
+            />
+            <label className="text-sm text-custom-text-300 font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
+              Allow Plane to anonymously collect usage events.
+            </label>
             <a href="#" className="text-sm font-medium text-blue-500 hover:text-blue-600">
               See More
             </a>
           </div>
-          <div>
-            <button
-              type="submit"
-              className="rounded font-medium px-3 py-2 bg-blue-500 hover:bg-blue-600 transition-all flex w-full justify-center text-white shadow-sm focus:outline-none"
-            >
+          <div className="py-2">
+            <Button type="submit" size="lg" className="w-full">
               Continue
-            </button>
+            </Button>
           </div>
         </form>
       </div>

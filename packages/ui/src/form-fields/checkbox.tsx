@@ -9,7 +9,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) 
   const { id, name, checked, intermediate = false, disabled, className = "", ...rest } = props;
 
   return (
-    <div className={`relative w-full flex gap-2 ${className}`}>
+    <div className={`relative flex gap-2 ${className}`}>
       <input
         id={id}
         ref={ref}
