@@ -34,7 +34,7 @@ export function tableControls() {
             top: event.clientY,
           });
 
-          if (!pos) return;
+          if (!pos || pos.pos < 0 || pos.pos > view.state.doc.content.size) return;
 
           const table = findParentNode((node) => node.type.name === "table")(
             TextSelection.create(view.state.doc, pos.pos)

@@ -28,7 +28,7 @@ def extract_components(value, tag):
             mentions.append(mention)
 
         return mentions
-    except Exception as e:
+    except Exception:
         return []
 
 

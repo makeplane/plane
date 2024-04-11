@@ -3,7 +3,7 @@ import json
 
 # Django import
 from django.utils import timezone
-from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Exists
+from django.db.models import Q, Count, OuterRef, Func, F, Prefetch
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -22,7 +22,6 @@ from plane.db.models import (
     InboxIssue,
     Issue,
     State,
-    Workspace,
     IssueLink,
     IssueAttachment,
     ProjectMember,
