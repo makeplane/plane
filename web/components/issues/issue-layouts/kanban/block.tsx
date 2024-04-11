@@ -61,9 +61,11 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <span>{issue.name}</span>
         </Tooltip>
       ) : (
-        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-          <span className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100">{issue.name}</span>
-        </Tooltip>
+        <div className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100 pb-1.5">
+          <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+            <span>{issue.name}</span>
+          </Tooltip>
+        </div>
       )}
 
       <IssueProperties
