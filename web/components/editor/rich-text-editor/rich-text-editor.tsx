@@ -23,17 +23,12 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   // store hooks
   const { currentUser } = useUser();
   const {
-    memberMap,
     getUserDetails,
-    project: { projectMemberMap, getProjectMemberIds },
+    project: { getProjectMemberIds },
   } = useMember();
   // derived values
   const projectMemberIds = getProjectMemberIds(projectId);
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-  console.log("memberMap", memberMap);
-  console.log("projectMemberMap", projectMemberMap);
-  console.log("projectMemberIds", projectMemberIds);
-  console.log("projectMemberDetails", projectMemberDetails);
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug as string,
