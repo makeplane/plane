@@ -1,8 +1,8 @@
 # Django imports
 from django.db import IntegrityError
-from rest_framework import status
 
 # Third party imports
+from rest_framework import status
 from rest_framework.response import Response
 
 from plane.api.serializers import StateSerializer

@@ -53,11 +53,16 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   return (
     <>
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
-        <div className="relative" onClick={handleEventPropagation}>
+        <div className="relative">
           <div className="line-clamp-1 text-xs text-custom-text-300">
             {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
-          <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">{quickActions(issue)}</div>
+          <div
+            className="absolute -top-1 right-0 hidden group-hover/kanban-block:block"
+            onClick={handleEventPropagation}
+          >
+            {quickActions(issue)}
+          </div>
         </div>
       </WithDisplayPropertiesHOC>
 
@@ -66,9 +71,11 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <span>{issue.name}</span>
         </Tooltip>
       ) : (
-        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-          <span className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100">{issue.name}</span>
-        </Tooltip>
+        <div className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100 mb-1.5">
+          <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+            <span>{issue.name}</span>
+          </Tooltip>
+        </div>
       )}
 
       <IssueProperties
