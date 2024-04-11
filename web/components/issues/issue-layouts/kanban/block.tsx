@@ -45,6 +45,11 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
 
+  const handleEventPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
   return (
     <>
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
@@ -52,7 +57,12 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <div className="line-clamp-1 text-xs text-custom-text-300">
             {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
-          <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">{quickActions(issue)}</div>
+          <div
+            className="absolute -top-1 right-0 hidden group-hover/kanban-block:block"
+            onClick={handleEventPropagation}
+          >
+            {quickActions(issue)}
+          </div>
         </div>
       </WithDisplayPropertiesHOC>
 
