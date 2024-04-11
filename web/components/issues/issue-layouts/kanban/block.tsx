@@ -45,15 +45,10 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
 
-  const handleEventPropagation = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-  };
-
   return (
     <>
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
-        <div className="relative" onClick={handleEventPropagation}>
+        <div className="relative">
           <div className="line-clamp-1 text-xs text-custom-text-300">
             {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
