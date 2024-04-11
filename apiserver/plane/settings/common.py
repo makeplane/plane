@@ -288,10 +288,13 @@ else:
     CELERY_BROKER_URL = REDIS_URL
 
 CELERY_IMPORTS = (
+    # scheduled tasks
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
+    # management tasks
+    "plane.bgtasks.dummy_data_task",
 )
 
 # Sentry Settings
