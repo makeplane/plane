@@ -123,13 +123,13 @@ export class ProjectInboxStore implements IProjectInboxStore {
   }
 
   get inboxIssuesArray() {
+    let appliedFilters =
+      this.currentTab === EInboxIssueCurrentTab.OPEN
+        ? [EInboxIssueStatus.PENDING, EInboxIssueStatus.SNOOZED]
+        : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE];
+    appliedFilters = appliedFilters.filter((filter) => this.inboxFilters?.status?.includes(filter));
     return this.inboxIssueSorting(
-      Object.values(this.inboxIssues || {}).filter((inbox) =>
-        (this.currentTab === EInboxIssueCurrentTab.OPEN
-          ? [EInboxIssueStatus.PENDING, EInboxIssueStatus.SNOOZED]
-          : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE]
-        ).includes(inbox.status)
-      )
+      Object.values(this.inboxIssues || {}).filter((inbox) => appliedFilters.includes(inbox.status))
     );
   }
 
