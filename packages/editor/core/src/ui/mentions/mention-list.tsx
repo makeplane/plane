@@ -23,43 +23,52 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
   const { query, mentionSuggestions } = props;
   const [items, setItems] = useState<IMentionSuggestion[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(false); // New loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      setIsLoading(true); // Start loading
-      const suggestions = await mentionSuggestions();
-      const mappedSuggestions: IMentionSuggestion[] = suggestions.map((suggestion): IMentionSuggestion => {
-        const transactionId = uuidv4();
-        return {
-          ...suggestion,
-          id: transactionId,
-        };
-      });
+      setIsLoading(true);
+      try {
+        const suggestions = await mentionSuggestions();
+        const mappedSuggestions: IMentionSuggestion[] = suggestions.map((suggestion): IMentionSuggestion => {
+          const transactionId = uuidv4();
+          return {
+            ...suggestion,
+            id: transactionId,
+          };
+        });
 
-      const filteredSuggestions = mappedSuggestions.filter((suggestion) =>
-        suggestion.title.toLowerCase().startsWith(query.toLowerCase())
-      );
+        const filteredSuggestions = mappedSuggestions.filter((suggestion) =>
+          suggestion.title.toLowerCase().startsWith(query.toLowerCase())
+        );
 
-      setItems(filteredSuggestions);
-      setIsLoading(false); // End loading
+        setItems(filteredSuggestions);
+      } catch (error) {
+        console.error("Failed to fetch suggestions:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchSuggestions();
   }, [query, mentionSuggestions]);
 
   const selectItem = (index: number) => {
-    const item = items[index];
+    try {
+      const item = items[index];
 
-    if (item) {
-      props.command({
-        id: item.id,
-        label: item.title,
-        entity_identifier: item.entity_identifier,
-        entity_name: item.entity_name,
-        target: "users",
-        redirect_uri: item.redirect_uri,
-      });
+      if (item) {
+        props.command({
+          id: item.id,
+          label: item.title,
+          entity_identifier: item.entity_identifier,
+          entity_name: item.entity_name,
+          target: "users",
+          redirect_uri: item.redirect_uri,
+        });
+      }
+    } catch (error) {
+      console.error("Error selecting item:", error);
     }
   };
 
