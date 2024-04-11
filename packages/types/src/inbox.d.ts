@@ -2,9 +2,22 @@ import { TPaginationInfo } from "./common";
 import { TIssuePriorities } from "./issues";
 import { TIssue } from "./issues/base";
 
-export type TInboxIssueCurrentTab = "open" | "closed";
+enum EInboxIssueCurrentTab {
+  OPEN = "open",
+  CLOSED = "closed",
+}
 
-export type TInboxIssueStatus = -2 | -1 | 0 | 1 | 2;
+enum EInboxIssueStatus {
+  PENDING = -2,
+  DECLINED = -1,
+  SNOOZED = 0,
+  ACCEPTED = 1,
+  DUPLICATE = 2,
+}
+
+export type TInboxIssueCurrentTab = EInboxIssueCurrentTab;
+
+export type TInboxIssueStatus = EInboxIssueStatus;
 
 // filters
 export type TInboxIssueFilterMemberKeys = "assignee" | "created_by";

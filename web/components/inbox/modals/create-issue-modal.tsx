@@ -53,7 +53,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug.toString() as string)?.id.toString() as string;
 
   // store hooks
-  const { createInboxIssue, handleCurrentTab } = useProjectInbox();
+  const { createInboxIssue } = useProjectInbox();
   const {
     config: { envConfig },
   } = useApplication();
@@ -81,7 +81,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
       .then((res) => {
         if (!createMore) {
           router.push(`/${workspaceSlug}/projects/${projectId}/inbox/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
-          handleCurrentTab("open");
           handleClose();
         } else {
           reset(defaultValues);

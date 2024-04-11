@@ -16,6 +16,7 @@ import { IssueUpdateStatus } from "@/components/issues";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
+import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser, useProjectInbox, useProject } from "@/hooks/store";
@@ -60,27 +61,27 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
 
   const handleInboxIssueAccept = async () => {
-    inboxIssue?.updateInboxIssueStatus(1);
+    await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.ACCEPTED);
     setAcceptIssueModal(false);
   };
 
   const handleInboxIssueDecline = async () => {
-    inboxIssue?.updateInboxIssueStatus(-1);
+    await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.DECLINED);
     setDeclineIssueModal(false);
   };
 
-  const handleInboxIssueDuplicate = (issueId: string) => {
-    inboxIssue?.updateInboxIssueDuplicateTo(issueId);
+  const handleInboxIssueDuplicate = async (issueId: string) => {
+    await inboxIssue?.updateInboxIssueDuplicateTo(issueId);
   };
 
   const handleInboxSIssueSnooze = async (date: Date) => {
-    inboxIssue?.updateInboxIssueSnoozeTill(date);
+    await inboxIssue?.updateInboxIssueSnoozeTill(date);
     setIsSnoozeDateModalOpen(false);
   };
 
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
-    deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).finally(() => {
+    await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).finally(() => {
       router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
     });
   };
