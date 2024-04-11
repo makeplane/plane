@@ -34,7 +34,6 @@ export const MentionNodeView = (props) => {
             ? highlightsState.includes(props.node.attrs.entity_identifier)
             : false,
           "cursor-pointer": !props.extension.options.readonly,
-          // "hover:bg-custom-primary-300" : !props.extension.options.readonly && !highlights.includes(props.node.attrs.id)
         })}
         onClick={handleClick}
       >

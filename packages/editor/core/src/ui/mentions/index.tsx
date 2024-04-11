@@ -22,7 +22,7 @@ export const Mentions = ({
     readonly: readonly,
     mentionHighlights: mentionHighlights,
     suggestion: {
-      // @ts-ignore
+      // @ts-expect-error - Tiptap types are incorrect
       render: () => {
         if (!mentionSuggestions) return;
         let component: ReactRenderer | null = null;
@@ -72,7 +72,7 @@ export const Mentions = ({
             const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
 
             if (navigationKeys.includes(props.event.key)) {
-              // @ts-ignore
+              // @ts-expect-error - Tippy types are incorrect
               component?.ref?.onKeyDown(props);
               event?.stopPropagation();
               return true;
