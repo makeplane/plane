@@ -2,7 +2,6 @@
 from itertools import groupby
 
 # Django imports
-from django.db.models import Q
 
 # Third party imports
 from rest_framework.response import Response
