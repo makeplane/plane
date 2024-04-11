@@ -1,20 +1,30 @@
 import { useRef, useEffect } from "react";
 // types
 import { IUser, IUserLite } from "@plane/types";
+import { useMember } from "./use-member";
 
 type Props = {
   workspaceSlug?: string;
+  projectId?: string;
   members?: IUserLite[] | undefined;
   user?: IUser | undefined;
 };
 
-export const useMention = ({ workspaceSlug, members, user }: Props) => {
+export const useMention = ({ workspaceSlug, projectId, members, user }: Props) => {
   const projectMembersRef = useRef<IUserLite[] | undefined>();
   const userRef = useRef<IUser | undefined>();
 
+  const {
+    project: { fetchProjectMembers },
+  } = useMember();
+
   useEffect(() => {
     if (members) projectMembersRef.current = members;
-  }, [members]);
+    else {
+      if (!workspaceSlug || !projectId) return;
+      fetchProjectMembers(workspaceSlug.toString(), projectId.toString());
+    }
+  }, [fetchProjectMembers, members, projectId, workspaceSlug]);
 
   useEffect(() => {
     if (userRef) userRef.current = user;

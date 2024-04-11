@@ -52,7 +52,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
-    workspaceSlug: workspaceSlug as string,
+    workspaceSlug,
+    projectId,
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });

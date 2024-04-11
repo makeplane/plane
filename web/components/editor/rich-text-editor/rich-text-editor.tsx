@@ -31,7 +31,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
-    workspaceSlug: workspaceSlug as string,
+    workspaceSlug,
+    projectId,
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });

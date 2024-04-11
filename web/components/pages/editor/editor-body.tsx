@@ -75,6 +75,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
+    projectId: projectId?.toString() ?? "",
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
