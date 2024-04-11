@@ -54,7 +54,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const canMarkAsAccepted = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsDeclined = isAllowed && inboxIssue?.status === -2;
   const canDelete = isAllowed || inboxIssue?.created_by === currentUser?.id;
-  const isCompleted = inboxIssue?.status === 1;
+  const isCompleted = inboxIssue?.status ? [-1, 1].includes(inboxIssue.status) : undefined;
 
   const currentInboxIssueId = inboxIssue?.issue?.id;
 
