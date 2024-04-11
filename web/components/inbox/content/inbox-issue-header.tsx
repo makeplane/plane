@@ -39,7 +39,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const [declineIssueModal, setDeclineIssueModal] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // store
-  const { deleteInboxIssue, inboxIssuesArray } = useProjectInbox();
+  const { currentTab, deleteInboxIssue, inboxIssuesArray } = useProjectInbox();
   const {
     currentUser,
     membership: { currentProjectRole },
@@ -60,23 +60,43 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
 
+  const redirectIssue = () => {
+    let nextOrPreviousIssueId: string | undefined = undefined;
+    const currentIssueIndex = inboxIssuesArray.findIndex((i) => i.issue.id === currentInboxIssueId);
+
+    if (inboxIssuesArray[currentIssueIndex + 1])
+      nextOrPreviousIssueId = inboxIssuesArray[currentIssueIndex + 1].issue.id;
+    else if (inboxIssuesArray[currentIssueIndex - 1])
+      nextOrPreviousIssueId = inboxIssuesArray[currentIssueIndex - 1].issue.id;
+    else nextOrPreviousIssueId = undefined;
+
+    if (nextOrPreviousIssueId)
+      router.push(
+        `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&issueId=${nextOrPreviousIssueId}`
+      );
+    else router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}`);
+  };
+
   const handleInboxIssueAccept = async () => {
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.ACCEPTED);
     setAcceptIssueModal(false);
+    redirectIssue();
   };
 
   const handleInboxIssueDecline = async () => {
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.DECLINED);
     setDeclineIssueModal(false);
-  };
-
-  const handleInboxIssueDuplicate = async (issueId: string) => {
-    await inboxIssue?.updateInboxIssueDuplicateTo(issueId);
+    redirectIssue();
   };
 
   const handleInboxSIssueSnooze = async (date: Date) => {
     await inboxIssue?.updateInboxIssueSnoozeTill(date);
     setIsSnoozeDateModalOpen(false);
+    redirectIssue();
+  };
+
+  const handleInboxIssueDuplicate = async (issueId: string) => {
+    await inboxIssue?.updateInboxIssueDuplicateTo(issueId);
   };
 
   const handleInboxIssueDelete = async () => {
