@@ -495,108 +495,84 @@ def create_dummy_data(
     user_id = user.id
 
     # create workspace members
-    print("creating workspace members")
     create_workspace_members(workspace=workspace, members=members)
-    print("Done creating workspace members")
 
     # Create a project
-    print("Creating project")
     project = create_project(workspace=workspace, user_id=user_id)
-    print("Done creating projects")
 
     # create project members
-    print("Creating project members")
     create_project_members(
         workspace=workspace, project=project, members=members
     )
-    print("Done creating project members")
 
     # Create states
-    print("Creating states")
-    states = create_states(
-        workspace=workspace, project=project, user_id=user_id
-    )
-    print("Done creating states")
+    create_states(workspace=workspace, project=project, user_id=user_id)
 
     # Create labels
-    print("Creating labels")
-    labels = create_labels(
-        workspace=workspace, project=project, user_id=user_id
-    )
-    print("Done creating labels")
+    create_labels(workspace=workspace, project=project, user_id=user_id)
 
     # create cycles
-    print("Creating cycles")
-    cycles = create_cycles(
+    create_cycles(
         workspace=workspace,
         project=project,
         user_id=user_id,
         cycle_count=cycle_count,
     )
-    print("Done creating cycles")
 
     # create modules
-    print("Creating modules")
-    modules = create_modules(
+    create_modules(
         workspace=workspace,
         project=project,
         user_id=user_id,
         module_count=module_count,
     )
-    print("Done creating modules")
 
-    print("Creating issues")
+    # create issues
     create_issues(
         workspace=workspace,
         project=project,
         user_id=user_id,
         issue_count=issue_count,
     )
-    print("Done creating issues")
 
-    print("Creating parent and sub issues")
+    # create issue parent
     create_issue_parent(
         workspace=workspace,
         project=project,
         user_id=user_id,
         issue_count=issue_count,
     )
-    print("Done creating parent and sub issues")
 
-    print("Creating issue assignees")
+    # create issue assignees
     create_issue_assignees(
         workspace=workspace,
         project=project,
         user_id=user_id,
         issue_count=issue_count,
     )
-    print("Done creating issue assignees")
 
-    print("Creating issue labels")
+    # create issue labels
     create_issue_labels(
         workspace=workspace,
         project=project,
         user_id=user_id,
         issue_count=issue_count,
     )
-    print("Done creating issue labels")
 
-    print("Creating cycle issues")
+    # create cycle issues
     create_cycle_issues(
         workspace=workspace,
         project=project,
         user_id=user_id,
         issue_count=issue_count,
     )
-    print("Done creating cycle issues")
 
-    print("Creating module issues")
+    # create module issues
     create_module_issues(
         workspace=workspace,
         project=project,
         user_id=user_id,
         issue_count=issue_count,
     )
-    print("Done creating module issues")
 
     return
