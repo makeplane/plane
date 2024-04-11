@@ -271,7 +271,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                                 workspaceSlug={workspaceSlug.toString()}
                                 workspaceId={workspaceId}
                                 projectId={projectId.toString()}
-                                // rerenderOnPropsChange={localIssueDescription}
                                 dragDropEnabled={false}
                                 onChange={(_description: object, description_html: string) => {
                                   onChange(description_html);

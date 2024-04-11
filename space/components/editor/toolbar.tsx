@@ -21,11 +21,8 @@ const toolbarItems = TOOLBAR_ITEMS.lite;
 
 export const IssueCommentToolbar: React.FC<Props> = (props) => {
   const { executeCommand, handleSubmit, isCommentEmpty, editorRef, isSubmitting, showSubmitButton } = props;
-
-  // State to manage active states of toolbar items
+  // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("IssueCommentToolbar activeStates: %s", activeStates); // __AUTO_GENERATED_PRINT_VAR_END__
 
   // Function to update active states
   const updateActiveStates = useCallback(() => {

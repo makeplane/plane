@@ -38,9 +38,7 @@ export const PageForm: React.FC<Props> = (props) => {
   return (
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-4">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {formData?.id ? "Update" : "Create"} Page
-        </h3>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">Create Page</h3>
 
         <div className="space-y-2">
           <div>
@@ -98,13 +96,7 @@ export const PageForm: React.FC<Props> = (props) => {
             Cancel
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={5}>
-            {formData?.id
-              ? isSubmitting
-                ? "Updating..."
-                : "Update page"
-              : isSubmitting
-              ? "Creating..."
-              : "Create Page"}
+            {isSubmitting ? "Creating" : "Create Page"}
           </Button>
         </div>
       </div>

@@ -460,30 +460,26 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         />
                       )}
                     </div>
-                    {data?.description_html && watch("description_html") && (
-                      <Controller
-                        name="description_html"
-                        control={control}
-                        render={({ field: { value, onChange } }) => (
-                          <RichTextEditor
-                            initialValue={value}
-                            // for tab on refocus to work properly
-                            value={data.description_html}
-                            workspaceSlug={workspaceSlug?.toString() as string}
-                            workspaceId={workspaceId}
-                            projectId={projectId}
-                            // rerenderOnPropsChange={localIssueDescription}
-                            // dragDropEnabled={false}
-                            onChange={(_description: object, description_html: string) => {
-                              onChange(description_html);
-                              handleFormChange();
-                            }}
-                            ref={editorRef}
-                            tabIndex={getTabIndex("description_html")}
-                          />
-                        )}
-                      />
-                    )}
+                    <Controller
+                      name="description_html"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <RichTextEditor
+                          initialValue={value}
+                          value={data.description_html}
+                          workspaceSlug={workspaceSlug?.toString() as string}
+                          workspaceId={workspaceId}
+                          projectId={projectId}
+                          // dragDropEnabled={false}
+                          onChange={(_description: object, description_html: string) => {
+                            onChange(description_html);
+                            handleFormChange();
+                          }}
+                          ref={editorRef}
+                          tabIndex={getTabIndex("description_html")}
+                        />
+                      )}
+                    />
                   </Fragment>
                 )}
               </div>

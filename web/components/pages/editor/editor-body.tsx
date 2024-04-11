@@ -11,13 +11,13 @@ import {
   IMarking,
 } from "@plane/document-editor";
 // types
-import { TPage } from "@plane/types";
+import { IUserLite, TPage } from "@plane/types";
 // components
 import { PageContentBrowser, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useMention, useWorkspace } from "@/hooks/store";
+import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
@@ -58,18 +58,25 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
+  const { currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
+  const {
+    getUserDetails,
+    project: { getProjectMemberIds },
+  } = useMember();
   // derived values
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html ?? "<p></p>";
   const isFullWidth = !!pageStore?.view_props?.full_width;
   const { description_html, isContentEditable, updateTitle, isSubmitting, setIsSubmitting } = pageStore;
-
-  // store hooks
+  const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
+  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
+  // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
-    projectId: projectId?.toString() ?? "",
+    members: projectMemberDetails,
+    user: currentUser ?? undefined,
   });
 
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");

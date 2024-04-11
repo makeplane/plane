@@ -1,6 +1,8 @@
 import React from "react";
 // editor
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/lite-text-editor";
+// types
+import { IUserLite } from "@plane/types";
 // components
 import { IssueCommentToolbar } from "@/components/editor";
 // constants
@@ -9,7 +11,7 @@ import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
-import { useMention } from "@/hooks/store";
+import { useMember, useMention, useUser } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -39,10 +41,20 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     isSubmitting = false,
     ...rest
   } = props;
+  // store hooks
+  const { currentUser } = useUser();
+  const {
+    getUserDetails,
+    project: { getProjectMemberIds },
+  } = useMember();
+  // derived values
+  const projectMemberIds = getProjectMemberIds(projectId);
+  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug as string,
-    projectId: projectId as string,
+    members: projectMemberDetails,
+    user: currentUser ?? undefined,
   });
 
   const isEmpty =

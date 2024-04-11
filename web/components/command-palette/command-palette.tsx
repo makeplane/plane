@@ -12,7 +12,7 @@ import { BulkDeleteIssuesModal } from "@/components/core";
 import { CycleCreateUpdateModal } from "@/components/cycles";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 import { CreateUpdateModuleModal } from "@/components/modules";
-import { CreateUpdatePageModal } from "@/components/pages";
+import { CreatePageModal } from "@/components/pages";
 import { CreateProjectModal } from "@/components/project";
 import { CreateUpdateProjectViewModal } from "@/components/views";
 // helpers
@@ -294,7 +294,7 @@ export const CommandPalette: FC = observer(() => {
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
           />
-          <CreateUpdatePageModal
+          <CreatePageModal
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
             isModalOpen={isCreatePageModalOpen}

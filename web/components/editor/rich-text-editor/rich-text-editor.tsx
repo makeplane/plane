@@ -1,10 +1,12 @@
-import React from "react";
+import React, { forwardRef } from "react";
 // editor
 import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/rich-text-editor";
+// types
+import { IUserLite } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useMention } from "@/hooks/store";
+import { useMember, useMention, useUser } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -16,12 +18,27 @@ interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler"
 
 const fileService = new FileService();
 
-export const RichTextEditor = React.forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
+export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
   const { containerClassName, workspaceSlug, workspaceId, projectId, ...rest } = props;
+  // store hooks
+  const { currentUser } = useUser();
+  const {
+    memberMap,
+    getUserDetails,
+    project: { projectMemberMap, getProjectMemberIds },
+  } = useMember();
+  // derived values
+  const projectMemberIds = getProjectMemberIds(projectId);
+  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
+  console.log("memberMap", memberMap);
+  console.log("projectMemberMap", projectMemberMap);
+  console.log("projectMemberIds", projectMemberIds);
+  console.log("projectMemberDetails", projectMemberDetails);
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug as string,
-    projectId: projectId as string,
+    members: projectMemberDetails,
+    user: currentUser ?? undefined,
   });
 
   return (

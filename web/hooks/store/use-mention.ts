@@ -1,67 +1,46 @@
 import { useRef, useEffect } from "react";
-import { ProjectMemberService } from "services/project";
-import { UserService } from "services/user.service";
-import useSWR from "swr";
-import { IProjectMember, IUser } from "@plane/types";
+// types
+import { IUser, IUserLite } from "@plane/types";
 
-export const useMention = ({ workspaceSlug, projectId }: { workspaceSlug?: string; projectId?: string }) => {
-  const userService = new UserService();
-  const projectMemberService = new ProjectMemberService();
+type Props = {
+  workspaceSlug?: string;
+  members?: IUserLite[] | undefined;
+  user?: IUser | undefined;
+};
 
-  const { data: projectMembers, isLoading: projectMembersLoading } = useSWR(
-    ["projectMembers", workspaceSlug, projectId],
-    async () => {
-      if (!workspaceSlug || !projectId) {
-        return [];
-      }
-      const members = await projectMemberService.fetchProjectMembers(workspaceSlug, projectId);
-      const detailedMembers = await Promise.all(
-        members.map(async (member) => projectMemberService.getProjectMember(workspaceSlug, projectId, member.id))
-      );
-      return detailedMembers;
-    }
-  );
-  const { data: user, isLoading: userDataLoading } = useSWR("currentUser", async () => userService.currentUser());
-
-  const projectMembersRef = useRef<IProjectMember[] | undefined>();
+export const useMention = ({ workspaceSlug, members, user }: Props) => {
+  const projectMembersRef = useRef<IUserLite[] | undefined>();
   const userRef = useRef<IUser | undefined>();
 
   useEffect(() => {
-    if (projectMembers) {
-      projectMembersRef.current = projectMembers;
-    }
-  }, [projectMembers]);
+    if (members) projectMembersRef.current = members;
+  }, [members]);
 
   useEffect(() => {
-    if (userRef) {
-      userRef.current = user;
-    }
+    if (userRef) userRef.current = user;
   }, [user]);
 
-  const waitForUserDate = async () =>
+  const waitForUserData = async () =>
     new Promise<IUser>((resolve) => {
       const checkData = () => {
-        if (userRef.current) {
-          resolve(userRef.current);
-        } else {
-          setTimeout(checkData, 100);
-        }
+        if (userRef.current) resolve(userRef.current);
+        else setTimeout(checkData, 100);
       };
       checkData();
     });
 
   const mentionHighlights = async () => {
-    if (!userDataLoading && userRef.current) {
+    if (user && userRef.current) {
       return [userRef.current.id];
     } else {
-      const user = await waitForUserDate();
-      return [user.id];
+      const userData = await waitForUserData();
+      return [userData.id];
     }
   };
 
   // Polling function to wait for projectMembersRef.current to be populated
   const waitForData = async () =>
-    new Promise<IProjectMember[]>((resolve) => {
+    new Promise<IUserLite[]>((resolve) => {
       const checkData = () => {
         if (projectMembersRef.current && projectMembersRef.current.length > 0) {
           resolve(projectMembersRef.current);
@@ -73,30 +52,30 @@ export const useMention = ({ workspaceSlug, projectId }: { workspaceSlug?: strin
     });
 
   const mentionSuggestions = async () => {
-    if (!projectMembersLoading && projectMembersRef.current && projectMembersRef.current.length > 0) {
+    if (members && projectMembersRef.current && projectMembersRef.current.length > 0) {
       // If data is already available, return it immediately
       return projectMembersRef.current.map((memberDetails) => ({
         entity_name: "user_mention",
-        entity_identifier: `${memberDetails?.member?.id}`,
-        id: `${memberDetails?.member?.id}`,
+        entity_identifier: `${memberDetails?.id}`,
+        id: `${memberDetails?.id}`,
         type: "User",
-        title: `${memberDetails?.member?.display_name}`,
-        subtitle: memberDetails?.member?.email ?? "",
-        avatar: `${memberDetails?.member?.avatar}`,
-        redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.member?.id}`,
+        title: `${memberDetails?.display_name}`,
+        subtitle: memberDetails?.email ?? "",
+        avatar: `${memberDetails?.avatar}`,
+        redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.id}`,
       }));
     } else {
       // Wait for data to be available
-      const members = await waitForData();
-      return members.map((memberDetails) => ({
+      const membersList = await waitForData();
+      return membersList.map((memberDetails) => ({
         entity_name: "user_mention",
-        entity_identifier: `${memberDetails?.member?.id}`,
-        id: `${memberDetails?.member?.id}`,
+        entity_identifier: `${memberDetails?.id}`,
+        id: `${memberDetails?.id}`,
         type: "User",
-        title: `${memberDetails?.member?.display_name}`,
-        subtitle: memberDetails?.member?.email ?? "",
-        avatar: `${memberDetails?.member?.avatar}`,
-        redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.member?.id}`,
+        title: `${memberDetails?.display_name}`,
+        subtitle: memberDetails?.email ?? "",
+        avatar: `${memberDetails?.avatar}`,
+        redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.id}`,
       }));
     }
   };

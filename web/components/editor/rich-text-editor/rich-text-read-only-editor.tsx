@@ -1,6 +1,9 @@
 import React from "react";
+// editor
 import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "@plane/rich-text-editor";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useMention } from "@/hooks/store";
 
 interface RichTextReadOnlyEditorWrapperProps extends Omit<IRichTextReadOnlyEditor, "mentionHandler"> {}

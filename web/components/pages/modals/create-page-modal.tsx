@@ -1,38 +1,37 @@
-import { FC, Fragment, useEffect, useState } from "react";
+import { FC, Fragment, useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
+// types
 import { TPage } from "@plane/types";
 // components
-import { PAGE_CREATED, PAGE_UPDATED } from "@/constants/event-tracker";
-import { EPageAccess } from "@/constants/page";
-import { useProjectPages, usePage, useEventTracker } from "@/hooks/store";
-import { PageForm } from "./";
-// hooks
-// types
+import { PageForm } from "@/components/pages";
 // constants
+import { PAGE_CREATED } from "@/constants/event-tracker";
+import { EPageAccess } from "@/constants/page";
+// hooks
+import { useProjectPages, useEventTracker } from "@/hooks/store";
 
-type TCreateUpdatePageModal = {
+type Props = {
   workspaceSlug: string;
   projectId: string;
   isModalOpen: boolean;
   handleModalClose: () => void;
-  data?: Partial<TPage> | undefined;
   redirectionEnabled?: boolean;
 };
 
-export const CreateUpdatePageModal: FC<TCreateUpdatePageModal> = (props) => {
-  const { workspaceSlug, projectId, isModalOpen, handleModalClose, data: pageData, redirectionEnabled = false } = props;
-  const router = useRouter();
-  // hooks
-  const { createPage } = useProjectPages(projectId);
-  const { update, asJSON: storePageData } = usePage(pageData?.id || undefined);
-  const { capturePageEvent } = useEventTracker();
+export const CreatePageModal: FC<Props> = (props) => {
+  const { workspaceSlug, projectId, isModalOpen, handleModalClose, redirectionEnabled = false } = props;
   // states
   const [pageFormData, setPageFormData] = useState<Partial<TPage>>({
     id: undefined,
     name: "",
     access: EPageAccess.PUBLIC,
   });
+  // router
+  const router = useRouter();
+  // store hooks
+  const { createPage } = useProjectPages(projectId);
+  const { capturePageEvent } = useEventTracker();
   const handlePageFormData = <T extends keyof TPage>(key: T, value: TPage[T]) =>
     setPageFormData((prev) => ({ ...prev, [key]: value }));
 
@@ -41,66 +40,29 @@ export const CreateUpdatePageModal: FC<TCreateUpdatePageModal> = (props) => {
     handleModalClose();
   };
 
-  useEffect(() => {
-    if (pageData) {
-      setPageFormData({
-        id: pageData.id || undefined,
-        name: pageData.name || undefined,
-        access: pageData.access || undefined,
-      });
-    }
-  }, [pageData]);
-
   const handleFormSubmit = async () => {
     if (!workspaceSlug || !projectId) return;
 
-    if (pageFormData.id && pageFormData.id != undefined) {
-      try {
-        if (pageFormData.name === storePageData?.name && pageFormData.access === storePageData?.access) {
-          handleStateClear();
-          return;
-        }
-        const pageData = await update(pageFormData);
-        if (pageData) {
-          capturePageEvent({
-            eventName: PAGE_UPDATED,
-            payload: {
-              ...pageData,
-              state: "SUCCESS",
-            },
-          });
-          handleStateClear();
-        }
-      } catch {
-        capturePageEvent({
-          eventName: PAGE_UPDATED,
-          payload: {
-            state: "FAILED",
-          },
-        });
-      }
-    } else {
-      try {
-        const pageData = await createPage(pageFormData);
-        if (pageData) {
-          capturePageEvent({
-            eventName: PAGE_CREATED,
-            payload: {
-              ...pageData,
-              state: "SUCCESS",
-            },
-          });
-          handleStateClear();
-          if (redirectionEnabled) router.push(`/${workspaceSlug}/projects/${projectId}/pages/${pageData.id}`);
-        }
-      } catch {
+    try {
+      const pageData = await createPage(pageFormData);
+      if (pageData) {
         capturePageEvent({
           eventName: PAGE_CREATED,
           payload: {
-            state: "FAILED",
+            ...pageData,
+            state: "SUCCESS",
           },
         });
+        handleStateClear();
+        if (redirectionEnabled) router.push(`/${workspaceSlug}/projects/${projectId}/pages/${pageData.id}`);
       }
+    } catch {
+      capturePageEvent({
+        eventName: PAGE_CREATED,
+        payload: {
+          state: "FAILED",
+        },
+      });
     }
   };
 
