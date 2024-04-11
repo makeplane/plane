@@ -15,21 +15,16 @@ import {
   useInteractions,
 } from "@floating-ui/react";
 import BlockMenu from "../menu//block-menu";
-// ui
-import { TextArea } from "@plane/ui";
 
 type IPageRenderer = {
-  title: string;
-  updatePageTitle: (title: string) => void;
   editor: Editor;
   editorContainerClassName: string;
   hideDragHandle?: () => void;
-  readonly: boolean;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { title, tabIndex, editor, hideDragHandle, editorContainerClassName, updatePageTitle, readonly } = props;
+  const { tabIndex, editor, hideDragHandle, editorContainerClassName } = props;
   // states
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -48,8 +43,6 @@ export const PageRenderer = (props: IPageRenderer) => {
   });
 
   const { getFloatingProps } = useInteractions([dismiss]);
-
-  const handlePageTitleChange = (title: string) => updatePageTitle(title);
 
   const floatingElementRef = useRef<HTMLElement | null>(null);
 
@@ -132,34 +125,8 @@ export const PageRenderer = (props: IPageRenderer) => {
   );
 
   return (
-    <div className="frame-renderer h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-      <div className="w-full flex-shrink-0 ml-5">
-        {readonly ? (
-          <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{title}</h6>
-        ) : (
-          <TextArea
-            onChange={(e) => handlePageTitleChange(e.target.value)}
-            className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none rounded-none"
-            style={{
-              lineHeight: "1.2",
-            }}
-            placeholder="Untitled Page"
-            onKeyDown={(e) => {
-              console.log("event", e);
-              if (e.key === "Enter") {
-                e.preventDefault();
-                editor
-                  .chain()
-                  .insertContentAt(0, [{ type: "paragraph" }])
-                  .focus()
-                  .run();
-              }
-            }}
-            value={title}
-          />
-        )}
-      </div>
-      <div className="flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
+    <>
+      <div className="frame-renderer flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
         <EditorContainer
           editor={editor}
           hideDragHandle={hideDragHandle}
@@ -178,6 +145,6 @@ export const PageRenderer = (props: IPageRenderer) => {
           <LinkView {...linkViewProps} style={floatingStyles} {...getFloatingProps()} />
         </div>
       )}
-    </div>
+    </>
   );
 };

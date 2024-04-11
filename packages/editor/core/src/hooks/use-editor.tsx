@@ -154,6 +154,14 @@ export const useEditor = ({
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
       },
+      setFocusAtPosition: (position: number) => {
+        if (!editorRef.current) return;
+        editorRef.current
+          .chain()
+          .insertContentAt(position, [{ type: "paragraph" }])
+          .focus()
+          .run();
+      },
     }),
     [editorRef, savedSelection, uploadFile]
   );

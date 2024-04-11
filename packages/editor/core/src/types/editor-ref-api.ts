@@ -13,4 +13,5 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   executeMenuItemCommand: (itemName: EditorMenuItemNames) => void;
   isMenuItemActive: (itemName: EditorMenuItemNames) => boolean;
   onStateChange: (callback: () => void) => () => void;
+  setFocusAtPosition: (position: number) => void;
 }

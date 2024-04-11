@@ -13,7 +13,6 @@ import { DocumentEditorExtensions } from "src/ui/extensions";
 import { PageRenderer } from "src/ui/components/page-renderer";
 
 interface IDocumentEditor {
-  title: string;
   initialValue: string;
   value?: string;
   fileHandler: {
@@ -31,13 +30,11 @@ interface IDocumentEditor {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions: () => Promise<IMentionSuggestion[]>;
   };
-  updatePageTitle: (title: string) => void;
   tabIndex?: number;
 }
 
 const DocumentEditor = (props: IDocumentEditor) => {
   const {
-    title,
     onChange,
     initialValue,
     value,
@@ -47,7 +44,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
     mentionHandler,
     handleEditorReady,
     forwardedRef,
-    updatePageTitle,
     tabIndex,
   } = props;
   // states
@@ -87,12 +83,9 @@ const DocumentEditor = (props: IDocumentEditor) => {
   return (
     <PageRenderer
       tabIndex={tabIndex}
-      readonly={false}
       editor={editor}
       editorContainerClassName={editorContainerClassNames}
       hideDragHandle={hideDragHandleOnMouseLeave}
-      title={title}
-      updatePageTitle={updatePageTitle}
     />
   );
 };

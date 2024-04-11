@@ -13,7 +13,7 @@ import {
 // types
 import { TPage } from "@plane/types";
 // components
-import { PageContentBrowser } from "@/components/pages";
+import { PageContentBrowser, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -64,7 +64,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html ?? "<p></p>";
   const isFullWidth = !!pageStore?.view_props?.full_width;
-  const { description_html, isContentEditable, updateName, isSubmitting, setIsSubmitting } = pageStore;
+  const { description_html, isContentEditable, updateTitle, isSubmitting, setIsSubmitting } = pageStore;
 
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention({
@@ -100,52 +100,59 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           "w-[80%]": isFullWidth,
         })}
       >
-        {isContentEditable ? (
-          <Controller
-            name="description_html"
-            control={control}
-            render={({ field: { onChange } }) => (
-              <DocumentEditorWithRef
-                title={pageTitle}
-                fileHandler={{
-                  cancel: fileService.cancelUpload,
-                  delete: fileService.getDeleteImageFunction(workspaceId),
-                  restore: fileService.getRestoreImageFunction(workspaceId),
-                  upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
-                }}
-                handleEditorReady={handleEditorReady}
-                initialValue={pageDescription}
-                value={swrPageDetails?.description_html ?? "<p></p>"}
-                ref={editorRef}
-                updatePageTitle={updateName}
-                containerClassName="p-0 pb-64"
-                editorClassName="px-10"
-                onChange={(_description_json, description_html) => {
-                  setIsSubmitting("submitting");
-                  setShowAlert(true);
-                  onChange(description_html);
-                  handleSubmit();
-                }}
-                mentionHandler={{
-                  highlights: mentionHighlights,
-                  suggestions: mentionSuggestions,
-                }}
-              />
-            )}
-          />
-        ) : (
-          <DocumentReadOnlyEditorWithRef
-            ref={readOnlyEditorRef}
-            title={pageTitle}
-            initialValue={pageDescription}
-            handleEditorReady={handleReadOnlyEditorReady}
-            containerClassName="p-0 pb-64 border-none"
-            editorClassName="px-10"
-            mentionHandler={{
-              highlights: mentionHighlights,
-            }}
-          />
-        )}
+        <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
+          <div className="w-full flex-shrink-0 ml-5">
+            <PageEditorTitle
+              editorRef={editorRef}
+              title={pageTitle}
+              updateTitle={updateTitle}
+              readOnly={!isContentEditable}
+            />
+          </div>
+          {isContentEditable ? (
+            <Controller
+              name="description_html"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <DocumentEditorWithRef
+                  fileHandler={{
+                    cancel: fileService.cancelUpload,
+                    delete: fileService.getDeleteImageFunction(workspaceId),
+                    restore: fileService.getRestoreImageFunction(workspaceId),
+                    upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
+                  }}
+                  handleEditorReady={handleEditorReady}
+                  initialValue={pageDescription}
+                  value={swrPageDetails?.description_html ?? "<p></p>"}
+                  ref={editorRef}
+                  containerClassName="p-0 pb-64"
+                  editorClassName="px-10"
+                  onChange={(_description_json, description_html) => {
+                    setIsSubmitting("submitting");
+                    setShowAlert(true);
+                    onChange(description_html);
+                    handleSubmit();
+                  }}
+                  mentionHandler={{
+                    highlights: mentionHighlights,
+                    suggestions: mentionSuggestions,
+                  }}
+                />
+              )}
+            />
+          ) : (
+            <DocumentReadOnlyEditorWithRef
+              ref={readOnlyEditorRef}
+              initialValue={pageDescription}
+              handleEditorReady={handleReadOnlyEditorReady}
+              containerClassName="p-0 pb-64 border-none"
+              editorClassName="px-10"
+              mentionHandler={{
+                highlights: mentionHighlights,
+              }}
+            />
+          )}
+        </div>
       </div>
       <div
         className={cn("hidden lg:block h-full flex-shrink-0", {

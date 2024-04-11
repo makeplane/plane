@@ -26,7 +26,7 @@ export interface IPageStore extends TPage {
   isContentEditable: boolean;
   // helpers
   oldName: string;
-  updateName: (name: string) => void;
+  updateTitle: (name: string) => void;
   updateDescription: (description: string) => void;
   setIsSubmitting: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   cleanup: () => void;
@@ -126,7 +126,7 @@ export class PageStore implements IPageStore {
       canCurrentUserDeletePage: computed,
       isContentEditable: computed,
       // helper actions
-      updateName: action,
+      updateTitle: action,
       updateDescription: action.bound,
       setIsSubmitting: action,
       cleanup: action,
@@ -278,7 +278,7 @@ export class PageStore implements IPageStore {
     );
   }
 
-  updateName = action("updateName", (name: string) => {
+  updateTitle = action("updateTitle", (name: string) => {
     this.oldName = this.name ?? "";
     this.name = name;
   });

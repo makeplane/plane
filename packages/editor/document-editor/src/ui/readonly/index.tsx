@@ -9,7 +9,6 @@ interface IDocumentReadOnlyEditor {
   containerClassName: string;
   editorClassName?: string;
   tabIndex?: number;
-  title: string;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
@@ -22,7 +21,6 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     containerClassName,
     editorClassName = "",
     initialValue,
-    title,
     forwardedRef,
     tabIndex,
     handleEditorReady,
@@ -45,16 +43,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     containerClassName,
   });
 
-  return (
-    <PageRenderer
-      tabIndex={tabIndex}
-      updatePageTitle={() => Promise.resolve()}
-      readonly
-      editor={editor}
-      editorContainerClassName={editorContainerClassName}
-      title={title}
-    />
-  );
+  return <PageRenderer tabIndex={tabIndex} editor={editor} editorContainerClassName={editorContainerClassName} />;
 };
 
 const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditor>((props, ref) => (
