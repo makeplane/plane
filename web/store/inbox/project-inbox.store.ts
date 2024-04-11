@@ -1,7 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
 import orderBy from "lodash/orderBy";
-import reverse from "lodash/reverse";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -138,21 +137,21 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   // helpers
   inboxIssueSorting = (issues: IInboxIssueStore[]) => {
-    console.log("issues", issues);
-    let inboxIssues: IInboxIssueStore[] = [];
+    let inboxIssues: IInboxIssueStore[] = issues;
+    inboxIssues = orderBy(inboxIssues, "issue.sequence_id", "desc");
     if (this.inboxSorting?.order_by && this.inboxSorting?.sort_by) {
       switch (this.inboxSorting.order_by) {
         case "issue__created_at":
-          if (this.inboxSorting.sort_by === "desc") inboxIssues = orderBy(issues, ["issue", "created_at"]);
-          else inboxIssues = reverse(orderBy(issues, ["issue", "created_at"]));
+          if (this.inboxSorting.sort_by === "desc") inboxIssues = orderBy(inboxIssues, "issue.created_at", "desc");
+          else inboxIssues = orderBy(inboxIssues, "issue.created_at", "asc");
         case "issue__updated_at":
-          if (this.inboxSorting.sort_by === "desc") inboxIssues = orderBy(issues, ["issue", "updated_at"]);
-          else inboxIssues = reverse(orderBy(issues, ["issue", "updated_at"]));
+          if (this.inboxSorting.sort_by === "desc") inboxIssues = orderBy(inboxIssues, "issue.updated_at", "desc");
+          else inboxIssues = orderBy(inboxIssues, "issue.updated_at", "asc");
         case "issue__sequence_id":
-          if (this.inboxSorting.sort_by === "desc") inboxIssues = orderBy(issues, ["issue", "sequence_id"]);
-          else inboxIssues = reverse(orderBy(issues, ["issue", "sequence_id"]));
+          if (this.inboxSorting.sort_by === "desc") inboxIssues = orderBy(inboxIssues, "issue.sequence_id", "desc");
+          else inboxIssues = orderBy(inboxIssues, "issue.sequence_id", "asc");
         default:
-          inboxIssues = orderBy(issues, ["issue", "created_at"]);
+          inboxIssues = inboxIssues;
       }
     }
     return inboxIssues;

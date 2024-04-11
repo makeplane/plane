@@ -95,7 +95,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
     else {
       const expiryDate = getExpiryDate(data.expired_at ?? "");
 
-      if (expiryDate) payload.expired_at = renderFormattedPayloadDate(expiryDate);
+      if (expiryDate) payload.expired_at = renderFormattedPayloadDate(new Date(expiryDate));
     }
 
     await onSubmit(payload).then(() => {
@@ -170,8 +170,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                           {value === "custom"
                             ? "Custom date"
                             : selectedOption
-                              ? selectedOption.label
-                              : "Set expiration date"}
+                            ? selectedOption.label
+                            : "Set expiration date"}
                         </div>
                       }
                       value={value}
@@ -207,8 +207,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     ? `Expires ${renderFormattedDate(customDate)}`
                     : null
                   : watch("expired_at")
-                    ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
-                    : null}
+                  ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
+                  : null}
               </span>
             )}
           </div>
