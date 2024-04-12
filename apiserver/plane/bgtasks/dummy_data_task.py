@@ -1,6 +1,6 @@
 # Python imports
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Django imports
 from django.db.models import Max
@@ -12,7 +12,6 @@ from faker import Faker
 # Module imports
 from plane.db.models import (
     Workspace,
-    WorkspaceMember,
     User,
     Project,
     ProjectMember,
@@ -27,24 +26,11 @@ from plane.db.models import (
     IssueActivity,
     CycleIssue,
     ModuleIssue,
+    Page,
+    PageLabel,
+    Inbox,
+    InboxIssue,
 )
-
-
-def create_workspace_members(workspace, members):
-    members = User.objects.filter(email__in=members)
-
-    _ = WorkspaceMember.objects.bulk_create(
-        [
-            WorkspaceMember(
-                workspace=workspace,
-                member=member,
-                role=20,
-            )
-            for member in members
-        ],
-        ignore_conflicts=True,
-    )
-    return
 
 
 def create_project(workspace, user_id):
@@ -57,6 +43,7 @@ def create_project(workspace, user_id):
             : random.randint(2, 12 if len(name) - 1 >= 12 else len(name) - 1)
         ].upper(),
         created_by_id=user_id,
+        inbox_view=True,
     )
 
     # Add current member as project member
@@ -244,12 +231,67 @@ def create_modules(workspace, project, user_id, module_count):
     return Module.objects.bulk_create(modules, ignore_conflicts=True)
 
 
+def create_pages(workspace, project, user_id, pages_count):
+    fake = Faker()
+    Faker.seed(0)
+
+    pages = []
+    for _ in range(0, pages_count):
+        text = fake.text(max_nb_chars=60000)
+        pages.append(
+            Page(
+                name=fake.name(),
+                project=project,
+                workspace=workspace,
+                owned_by_id=user_id,
+                access=random.randint(0, 1),
+                color=fake.hex_color(),
+                description_html=f"<p>{text}</p>",
+                archived_at=None,
+                is_locked=False,
+            )
+        )
+
+    return Page.objects.bulk_create(pages, ignore_conflicts=True)
+
+
+def create_page_labels(workspace, project, user_id, pages_count):
+    # labels
+    labels = Label.objects.filter(project=project).values_list("id", flat=True)
+    pages = random.sample(
+        list(
+            Page.objects.filter(project=project).values_list("id", flat=True)
+        ),
+        int(pages_count / 2),
+    )
+
+    # Bulk page labels
+    bulk_page_labels = []
+    for page in pages:
+        for label in random.sample(
+            list(labels), random.randint(0, len(labels) - 1)
+        ):
+            bulk_page_labels.append(
+                PageLabel(
+                    page_id=page,
+                    label_id=label,
+                    project=project,
+                    workspace=workspace,
+                )
+            )
+
+    # Page labels
+    PageLabel.objects.bulk_create(
+        bulk_page_labels, batch_size=1000, ignore_conflicts=True
+    )
+
+
 def create_issues(workspace, project, user_id, issue_count):
     fake = Faker()
     Faker.seed(0)
 
-    states = State.objects.values_list("id", flat=True)
-    creators = ProjectMember.objects.values_list("member_id", flat=True)
+    states = State.objects.filter(workspace=workspace, project=project).exclude(group="Triage").values_list("id", flat=True)
+    creators = ProjectMember.objects.filter(workspace=workspace, project=project).values_list("member_id", flat=True)
 
     issues = []
 
@@ -283,15 +325,15 @@ def create_issues(workspace, project, user_id, issue_count):
             )
         )
 
-        sentence = fake.sentence()
+        text = fake.text(max_nb_chars=60000)
         issues.append(
             Issue(
                 state_id=states[random.randint(0, len(states) - 1)],
                 project=project,
                 workspace=workspace,
-                name=sentence[:254],
-                description_html=f"<p>{sentence}</p>",
-                description_stripped=sentence,
+                name=text[:254],
+                description_html=f"<p>{text}</p>",
+                description_stripped=text,
                 sequence_id=last_id,
                 sort_order=largest_sort_order,
                 start_date=start_date,
@@ -339,7 +381,35 @@ def create_issues(workspace, project, user_id, issue_count):
         ],
         batch_size=100,
     )
-    return
+    return issues
+
+
+def create_inbox_issues(workspace, project, user_id, inbox_issue_count):
+    issues = create_issues(workspace, project, user_id, inbox_issue_count)
+    inbox, create = Inbox.objects.get_or_create(
+        name="Inbox",
+        project=project,
+        is_default=True,
+    )
+    InboxIssue.objects.bulk_create(
+        [
+            InboxIssue(
+                issue=issue,
+                inbox=inbox,
+                status=(status := [-2, -1, 0, 1, 2][random.randint(0, 4)]),
+                snoozed_till=(
+                    datetime.now() + timedelta(days=random.randint(1, 30))
+                    if status == 0
+                    else None
+                ),
+                source="in-app",
+                workspace=workspace,
+                project=project,
+            )
+            for issue in issues
+        ],
+        batch_size=100,
+    )
 
 
 def create_issue_parent(workspace, project, user_id, issue_count):
@@ -396,7 +466,7 @@ def create_issue_assignees(workspace, project, user_id, issue_count):
 
 
 def create_issue_labels(workspace, project, user_id, issue_count):
-    # assignees
+    # labels
     labels = Label.objects.filter(project=project).values_list("id", flat=True)
     issues = random.sample(
         list(
@@ -420,7 +490,7 @@ def create_issue_labels(workspace, project, user_id, issue_count):
                 )
             )
 
-    # Issue assignees
+    # Issue labels
     IssueLabel.objects.bulk_create(
         bulk_issue_labels, batch_size=1000, ignore_conflicts=True
     )
@@ -487,15 +557,19 @@ def create_module_issues(workspace, project, user_id, issue_count):
 
 @shared_task
 def create_dummy_data(
-    slug, email, members, issue_count, cycle_count, module_count
+    slug,
+    email,
+    members,
+    issue_count,
+    cycle_count,
+    module_count,
+    pages_count,
+    inbox_issue_count,
 ):
     workspace = Workspace.objects.get(slug=slug)
 
     user = User.objects.get(email=email)
     user_id = user.id
-
-    # create workspace members
-    create_workspace_members(workspace=workspace, members=members)
 
     # Create a project
     project = create_project(workspace=workspace, user_id=user_id)
@@ -527,12 +601,36 @@ def create_dummy_data(
         module_count=module_count,
     )
 
+    # create pages
+    create_pages(
+        workspace=workspace,
+        project=project,
+        user_id=user_id,
+        pages_count=pages_count,
+    )
+
+    # create page labels
+    create_page_labels(
+        workspace=workspace,
+        project=project,
+        user_id=user_id,
+        pages_count=pages_count,
+    )
+
     # create issues
     create_issues(
         workspace=workspace,
         project=project,
         user_id=user_id,
         issue_count=issue_count,
+    )
+
+    # create inbox issues
+    create_inbox_issues(
+        workspace=workspace,
+        project=project,
+        user_id=user_id,
+        inbox_issue_count=inbox_issue_count,
     )
 
     # create issue parent
