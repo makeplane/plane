@@ -567,7 +567,7 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                             str(group)
                         ).get(str(sub_group), 0),
                     }
-                    for sub_group in total_sub_group_dict.get(str(group))
+                    for sub_group in total_sub_group_dict.get(str(group), [])
                 },
                 "total_results": total_group_dict.get(str(group), 0),
             }
