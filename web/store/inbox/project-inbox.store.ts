@@ -56,7 +56,7 @@ export interface IProjectInboxStore {
   handleInboxIssueSorting: <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   fetchInboxIssues: (workspaceSlug: string, projectId: string, loadingType?: TLoader) => Promise<void>;
   fetchInboxPaginationIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
-  fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
+  fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<TInboxIssue>;
   createInboxIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -216,8 +216,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
     set(this, "inboxFilters", undefined);
     set(this, ["inboxSorting", "order_by"], "issue__created_at");
     set(this, ["inboxSorting", "sort_by"], "desc");
-    set(this, ["inboxIssues"], {});
-    set(this, ["inboxIssuePaginationInfo"], undefined);
     if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 1, 2]);
     else set(this, ["inboxFilters", "status"], [-2]);
     const { workspaceSlug, projectId } = this.store.app.router;
@@ -226,16 +224,12 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => {
     set(this.inboxFilters, key, value);
-    set(this, ["inboxIssues"], {});
-    set(this, ["inboxIssuePaginationInfo"], undefined);
     const { workspaceSlug, projectId } = this.store.app.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 
   handleInboxIssueSorting = <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => {
     set(this.inboxSorting, key, value);
-    set(this, ["inboxIssues"], {});
-    set(this, ["inboxIssuePaginationInfo"], undefined);
     const { workspaceSlug, projectId } = this.store.app.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
@@ -342,7 +336,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
    * @param projectId
    * @param inboxIssueId
    */
-  fetchInboxIssueById = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
+  fetchInboxIssueById = async (
+    workspaceSlug: string,
+    projectId: string,
+    inboxIssueId: string
+  ): Promise<TInboxIssue> => {
     try {
       this.isLoading = "issue-loading";
       const inboxIssue = await this.inboxIssueService.retrieve(workspaceSlug, projectId, inboxIssueId);
@@ -360,9 +358,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
         await this.store.issue.issueDetail.fetchComments(workspaceSlug, projectId, issueId);
         this.isLoading = undefined;
       }
-    } catch {
+      return inboxIssue;
+    } catch (error) {
       console.error("Error fetching the inbox issue with inbox issue id");
       this.isLoading = undefined;
+      throw error;
     }
   };
 

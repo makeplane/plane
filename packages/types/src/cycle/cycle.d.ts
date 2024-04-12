@@ -97,10 +97,6 @@ export type SelectCycleType =
   | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
   | undefined;
 
-export type SelectIssue =
-  | (TIssue & { actionType: "edit" | "delete" | "create" })
-  | null;
-
 export type CycleDateCheckData = {
   start_date: string;
   end_date: string;

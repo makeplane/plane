@@ -3,16 +3,15 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { History, MessageSquare } from "lucide-react";
-import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // hooks
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
+import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
 import { ActivitySettingsLoader } from "@/components/ui";
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { useUser } from "@/hooks/store";
 // services
 import { UserService } from "@/services/user.service";
-// editor
 // components
 // ui
 // helpers
@@ -94,11 +93,11 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                         </p>
                       </div>
                       <div className="issue-comments-section p-0">
-                        <RichReadOnlyEditor
-                          value={activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value}
-                          customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-                          noBorder
-                          borderOnFocus={false}
+                        <RichTextReadOnlyEditor
+                          initialValue={
+                            activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
+                          }
+                          containerClassName="text-xs bg-custom-background-100"
                         />
                       </div>
                     </div>

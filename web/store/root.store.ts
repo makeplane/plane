@@ -11,11 +11,10 @@ import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 import { ILabelStore, LabelStore } from "./label.store";
 import { IMemberRootStore, MemberRootStore } from "./member";
-import { IMentionStore, MentionStore } from "./mention.store";
 import { IModuleStore, ModulesStore } from "./module.store";
 import { IModuleFilterStore, ModuleFilterStore } from "./module_filter.store";
+import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store";
 import { IProjectRootStore, ProjectRootStore } from "./project";
-import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { IStateStore, StateStore } from "./state.store";
 import { IUserRootStore, UserRootStore } from "./user";
@@ -40,7 +39,6 @@ export class RootStore {
   state: IStateStore;
   label: ILabelStore;
   estimate: IEstimateStore;
-  mention: IMentionStore;
   dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
   projectInbox: IProjectInboxStore;
@@ -63,7 +61,6 @@ export class RootStore {
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
-    this.mention = new MentionStore(this);
     this.dashboard = new DashboardStore(this);
     // inbox
     this.projectInbox = new ProjectInboxStore(this);
@@ -85,7 +82,6 @@ export class RootStore {
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
-    this.mention = new MentionStore(this);
     this.dashboard = new DashboardStore(this);
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);

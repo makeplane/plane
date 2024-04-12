@@ -39,7 +39,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
 
-  const { isLoading } = useSWR(
+  const { isLoading, data: swrArchivedIssueDetails } = useSWR(
     workspaceSlug && projectId && archivedIssueId
       ? `ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`
       : null,
@@ -123,6 +123,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
             )}
             {workspaceSlug && projectId && archivedIssueId && (
               <IssueDetailRoot
+                swrIssueDetails={swrArchivedIssueDetails}
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 issueId={archivedIssueId.toString()}

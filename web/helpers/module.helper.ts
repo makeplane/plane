@@ -1,9 +1,8 @@
 import sortBy from "lodash/sortBy";
-// helpers
-import { satisfiesDateFilter } from "@/helpers/filter.helper";
-import { getDate } from "@/helpers/date-time.helper";
-// types
 import { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
+// helpers
+import { getDate } from "@/helpers/date-time.helper";
+import { satisfiesDateFilter } from "@/helpers/filter.helper";
 
 /**
  * @description orders modules based on their status

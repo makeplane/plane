@@ -24,7 +24,7 @@ export const IssueUpdateStatus: React.FC<Props> = observer((props) => {
       )}
       <div
         className={`flex items-center gap-x-2 transition-all duration-300 ${
-          isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+          isSubmitting === "saved" ? "fade-out" : "fade-in"
         }`}
       >
         {isSubmitting !== "submitted" && isSubmitting !== "saved" && (

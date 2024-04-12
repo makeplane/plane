@@ -6907,6 +6907,11 @@ prosemirror-changeset@^2.2.0:
   dependencies:
     prosemirror-transform "^1.0.0"
 
+prosemirror-codemark@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/prosemirror-codemark/-/prosemirror-codemark-0.4.2.tgz#b4d0a57c0f1f6c6667e2a1ae7cfb6ba031dfb2e5"
+  integrity sha512-4n+PnGQToa/vTjn0OiivUvE8/moLtguUAfry8UA4Q8p47MhqT2Qpf2zBLustX5Upi4mSp3z1ZYBqLLovZC6abA==
+
 prosemirror-collab@^1.3.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/prosemirror-collab/-/prosemirror-collab-1.3.1.tgz#0e8c91e76e009b53457eb3b3051fb68dad029a33"
