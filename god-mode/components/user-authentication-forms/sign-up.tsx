@@ -5,6 +5,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // ui
 import { Button, Checkbox, Input } from "@plane/ui";
 import { PasswordStrengthMeter } from "components/common";
+import { Eye, EyeOff } from "lucide-react";
 
 type TInstanceFormData = {
   first_name: string;
@@ -31,7 +32,9 @@ export const InstanceSignUpForm: FC = (props) => {
   const {} = props;
   // state
   const [csrfToken, setCsrfToken] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [instanceFormData, setInstanceFormData] = useState<TInstanceFormData>(defaultInstanceFromData);
+
   const handleFormChange = (key: keyof TInstanceFormData, value: string | boolean) =>
     setInstanceFormData((prev) => ({ ...prev, [key]: value }));
 
@@ -74,7 +77,6 @@ export const InstanceSignUpForm: FC = (props) => {
                 value={instanceFormData.first_name}
                 onChange={(e) => handleFormChange("first_name", e.target.value)}
                 required
-                autoFocus
               />
             </div>
             <div className="w-full space-y-1">
@@ -128,17 +130,34 @@ export const InstanceSignUpForm: FC = (props) => {
             <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
               Set a password <span className="text-red-500">*</span>
             </label>
-            <Input
-              className="w-full"
-              id="password"
-              name="password"
-              type="text"
-              inputSize="md"
-              placeholder="New password..."
-              value={instanceFormData.password}
-              onChange={(e) => handleFormChange("password", e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Input
+                className="w-full"
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                inputSize="md"
+                placeholder="New password..."
+                value={instanceFormData.password}
+                onChange={(e) => handleFormChange("password", e.target.value)}
+                required
+              />
+              {showPassword ? (
+                <button
+                  className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                  onClick={() => setShowPassword(false)}
+                >
+                  <EyeOff className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                  onClick={() => setShowPassword(true)}
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
+              )}
+            </div>
             <PasswordStrengthMeter password={instanceFormData.password} />
           </div>
           <div className="relative flex items-center pt-2 gap-2">

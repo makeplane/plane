@@ -4,6 +4,7 @@ import { AuthService } from "@/services/auth.service";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // ui
 import { Button, Input } from "@plane/ui";
+import { Eye, EyeOff } from "lucide-react";
 
 type TInstanceFormData = {
   email: string;
@@ -22,6 +23,7 @@ export const InstanceSignInForm: FC = (props) => {
   const {} = props;
   // state
   const [csrfToken, setCsrfToken] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [instanceFormData, setInstanceFormData] = useState<TInstanceFormData>(defaultInstanceFromData);
   const handleFormChange = (key: keyof TInstanceFormData, value: string | boolean) =>
     setInstanceFormData((prev) => ({ ...prev, [key]: value }));
@@ -70,17 +72,34 @@ export const InstanceSignInForm: FC = (props) => {
             <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
               Password <span className="text-red-500">*</span>
             </label>
-            <Input
-              className="w-full"
-              id="password"
-              name="password"
-              type="text"
-              inputSize="md"
-              placeholder="Enter your password"
-              value={instanceFormData.password}
-              onChange={(e) => handleFormChange("password", e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Input
+                className="w-full"
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                inputSize="md"
+                placeholder="Enter your password"
+                value={instanceFormData.password}
+                onChange={(e) => handleFormChange("password", e.target.value)}
+                required
+              />
+              {showPassword ? (
+                <button
+                  className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                  onClick={() => setShowPassword(false)}
+                >
+                  <EyeOff className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                  onClick={() => setShowPassword(true)}
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
+              )}
+            </div>
           </div>
           <div className="py-2">
             <Button type="submit" size="lg" className="w-full">
