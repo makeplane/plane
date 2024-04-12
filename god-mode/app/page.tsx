@@ -47,8 +47,8 @@ const GeneralSettingsPage = observer(() => {
           </Loader>
         )}
       </div> */}
-      <InstanceSignInForm />
-      {/* <InstanceSignUpForm /> */}
+      {/* <InstanceSignInForm /> */}
+      <InstanceSignUpForm />
     </>
   );
 });

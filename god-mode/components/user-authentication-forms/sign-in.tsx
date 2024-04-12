@@ -1,10 +1,15 @@
 import { FC, FormEvent, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 // services
 import { AuthService } from "@/services/auth.service";
-import { API_BASE_URL } from "@/helpers/common.helper";
 // ui
 import { Button, Input } from "@plane/ui";
+// components
+import { Banner } from "components/common";
+// icons
 import { Eye, EyeOff } from "lucide-react";
+// helpers
+import { API_BASE_URL, cn } from "@/helpers/common.helper";
 
 type TInstanceFormData = {
   email: string;
@@ -16,21 +21,65 @@ const defaultInstanceFromData: TInstanceFormData = {
   password: "",
 };
 
+type InstanceFormErrors = {
+  general?: string;
+  email: string;
+  password: string;
+};
+
+const defaultInstanceFormErrors: InstanceFormErrors = {
+  general: "",
+  email: "",
+  password: "",
+};
+
 // service initialization
 const authService = new AuthService();
 
 export const InstanceSignInForm: FC = (props) => {
   const {} = props;
+  // search params
+  const searchParams = useSearchParams();
   // state
   const [csrfToken, setCsrfToken] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [submitDisabled, setSubmitDisabled] = useState(true);
   const [instanceFormData, setInstanceFormData] = useState<TInstanceFormData>(defaultInstanceFromData);
+  const [instanceFormErrors, setInstanceFormErrors] = useState<InstanceFormErrors>(defaultInstanceFormErrors);
+
   const handleFormChange = (key: keyof TInstanceFormData, value: string | boolean) =>
     setInstanceFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
     authService.requestCSRFToken().then((data) => setCsrfToken(data.csrf_token));
   }, []);
+
+  useEffect(() => {
+    if (instanceFormData.email && instanceFormData.password) {
+      setSubmitDisabled(false);
+    } else {
+      setSubmitDisabled(true);
+    }
+  }, [instanceFormData]);
+
+  useEffect(() => {
+    const errorCode = searchParams.get("error_code");
+    const errorMessage = searchParams.get("error_message");
+
+    if (errorCode) {
+      if (errorMessage) {
+        if (errorCode === "INVALID_EMAIL") {
+          setInstanceFormErrors((prev) => ({ ...prev, email: errorMessage }));
+        } else if (errorCode === "INVALID_PASSWORD") {
+          setInstanceFormErrors((prev) => ({ ...prev, password: errorMessage }));
+        } else {
+          setInstanceFormErrors((prev) => ({ ...prev, general: errorMessage }));
+        }
+      } else {
+        setInstanceFormErrors((prev) => ({ ...prev, general: "Something went wrong. Please try again." }));
+      }
+    }
+  }, [searchParams]);
 
   const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     console.log(event);
@@ -45,6 +94,7 @@ export const InstanceSignInForm: FC = (props) => {
           <h3 className="text-3xl font-bold">Manage your Plane instance</h3>
           <p className="font-medium text-custom-text-400">Configure instance-wide settings to secure your instance</p>
         </div>
+        {!!instanceFormErrors.general && <Banner type="error" message={instanceFormErrors.general} />}
         <form
           className="space-y-4"
           method="POST"
@@ -65,8 +115,9 @@ export const InstanceSignInForm: FC = (props) => {
               placeholder="name@company.com"
               value={instanceFormData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
-              required
+              hasError={!!instanceFormErrors.email}
             />
+            <p className="px-1 text-xs text-red-500">{instanceFormErrors.email}</p>
           </div>
           <div className="w-full space-y-1">
             <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
@@ -74,7 +125,7 @@ export const InstanceSignInForm: FC = (props) => {
             </label>
             <div className="relative">
               <Input
-                className="w-full"
+                className={cn("w-full pr-10")}
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -82,7 +133,7 @@ export const InstanceSignInForm: FC = (props) => {
                 placeholder="Enter your password"
                 value={instanceFormData.password}
                 onChange={(e) => handleFormChange("password", e.target.value)}
-                required
+                hasError={!!instanceFormErrors.password}
               />
               {showPassword ? (
                 <button
@@ -100,9 +151,10 @@ export const InstanceSignInForm: FC = (props) => {
                 </button>
               )}
             </div>
+            <p className="px-1 text-xs text-red-500">{instanceFormErrors.password}</p>
           </div>
           <div className="py-2">
-            <Button type="submit" size="lg" className="w-full">
+            <Button type="submit" size="lg" className="w-full" disabled={submitDisabled}>
               Sign in
             </Button>
           </div>
