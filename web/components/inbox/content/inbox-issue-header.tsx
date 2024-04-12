@@ -5,9 +5,9 @@ import { ChevronDown, ChevronUp, Clock, ExternalLink, FileStack, Link, Trash2 } 
 import { Button, ControlLink, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
-  AcceptIssueModal,
   DeclineIssueModal,
   DeleteInboxIssueModal,
+  InboxIssueCreateEditModalRoot,
   InboxIssueSnoozeModal,
   InboxIssueStatus,
   SelectDuplicateInboxIssueModal,
@@ -163,27 +163,34 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           onSubmit={handleInboxIssueDuplicate}
         />
 
-        <AcceptIssueModal
+        {issue && issue?.description_html && (
+          <InboxIssueCreateEditModalRoot
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            modalState={acceptIssueModal}
+            handleModalClose={() => setAcceptIssueModal(false)}
+            issue={issue}
+            onSubmit={handleInboxIssueAccept}
+          />
+        )}
+        {/* <AcceptIssueModal
           data={inboxIssue?.issue}
           isOpen={acceptIssueModal}
           onClose={() => setAcceptIssueModal(false)}
           onSubmit={handleInboxIssueAccept}
-        />
-
+        /> */}
         <DeclineIssueModal
           data={inboxIssue?.issue || {}}
           isOpen={declineIssueModal}
           onClose={() => setDeclineIssueModal(false)}
           onSubmit={handleInboxIssueDecline}
         />
-
         <DeleteInboxIssueModal
           data={inboxIssue?.issue}
           isOpen={deleteIssueModal}
           onClose={() => setDeleteIssueModal(false)}
           onSubmit={handleInboxIssueDelete}
         />
-
         <InboxIssueSnoozeModal
           isOpen={isSnoozeDateModalOpen}
           handleClose={() => setIsSnoozeDateModalOpen(false)}

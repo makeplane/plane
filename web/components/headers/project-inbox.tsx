@@ -6,7 +6,7 @@ import { Plus, RefreshCcw } from "lucide-react";
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
-import { CreateInboxIssueModal } from "@/components/inbox";
+import { InboxIssueCreateEditModalRoot } from "@/components/inbox";
 import { ProjectLogo } from "@/components/project";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
@@ -16,7 +16,7 @@ export const ProjectInboxHeader: FC = observer(() => {
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { currentProjectDetails } = useProject();
   const { isLoading } = useProjectInbox();
@@ -60,9 +60,16 @@ export const ProjectInboxHeader: FC = observer(() => {
         </div>
       </div>
 
-      {currentProjectDetails?.inbox_view && (
+      {currentProjectDetails?.inbox_view && workspaceSlug && projectId && (
         <div className="flex items-center gap-2">
-          <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
+          <InboxIssueCreateEditModalRoot
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            modalState={createIssueModal}
+            handleModalClose={() => setCreateIssueModal(false)}
+            issue={undefined}
+          />
+
           <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
             Add Issue
           </Button>
