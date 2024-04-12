@@ -1,6 +1,7 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 import { IssueRootStore } from "./root.store";
+import { TIssueGroupByOptions } from "@plane/types";
 // types
 
 export interface IIssueKanBanViewStore {
@@ -8,9 +9,12 @@ export interface IIssueKanBanViewStore {
     groupByHeaderMinMax: string[];
     subgroupByIssuesVisibility: string[];
   };
-  isDragging: boolean,
+  isDragging: boolean;
   // computed
-  getCanUserDragDrop: (group_by: string | null, sub_group_by: string | null) => boolean;
+  getCanUserDragDrop: (
+    group_by: TIssueGroupByOptions | undefined,
+    sub_group_by: TIssueGroupByOptions | undefined
+  ) => boolean;
   canUserDragDropVertically: boolean;
   canUserDragDropHorizontally: boolean;
   // actions
@@ -45,15 +49,17 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
 
   setIsDragging = (isDragging: boolean) => {
     this.isDragging = isDragging;
-  }
+  };
 
-  getCanUserDragDrop = computedFn((group_by: string | null, sub_group_by: string | null) => {
-    if (group_by && ["state", "priority"].includes(group_by)) {
-      if (!sub_group_by) return true;
-      if (sub_group_by && ["state", "priority"].includes(sub_group_by)) return true;
+  getCanUserDragDrop = computedFn(
+    (group_by: TIssueGroupByOptions | undefined, sub_group_by: TIssueGroupByOptions | undefined) => {
+      if (group_by && ["state", "priority"].includes(group_by)) {
+        if (!sub_group_by) return true;
+        if (sub_group_by && ["state", "priority"].includes(sub_group_by)) return true;
+      }
+      return false;
     }
-    return false;
-  });
+  );
 
   get canUserDragDropVertically() {
     return false;

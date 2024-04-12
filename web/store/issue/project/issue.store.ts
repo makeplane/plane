@@ -105,25 +105,25 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     const groupedIssueIds = this.groupedIssueIds;
 
     const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
-    if (!displayFilters) return undefined;
+    if (!displayFilters || !groupedIssueIds) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;
     const groupBy = displayFilters?.group_by;
 
-    if(!groupBy && !subGroupBy) {
-      return groupedIssueIds as string[]
+    if (!groupBy && !subGroupBy) {
+      return groupedIssueIds as string[];
     }
 
-    if(groupBy && subGroupBy && groupId && subGroupId) {
-      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[]
+    if (groupBy && subGroupBy && groupId && subGroupId) {
+      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[];
     }
 
-    if(groupBy && groupId) {
-      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[]
+    if (groupBy && groupId) {
+      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[];
     }
 
     return undefined;
-  }
+  };
 
   fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader") => {
     try {

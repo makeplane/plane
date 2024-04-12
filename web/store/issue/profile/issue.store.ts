@@ -23,6 +23,7 @@ export interface IProfileIssues {
   viewFlags: ViewFlags;
   // actions
   setViewId: (viewId: "assigned" | "created" | "subscribed") => void;
+  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   fetchIssues: (
     workspaceSlug: string,
     projectId: string | undefined,
@@ -117,6 +118,30 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
 
     return issues;
   }
+
+  getIssueIds = (groupId?: string, subGroupId?: string) => {
+    const groupedIssueIds = this.groupedIssueIds;
+
+    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    if (!displayFilters || !groupedIssueIds) return undefined;
+
+    const subGroupBy = displayFilters?.sub_group_by;
+    const groupBy = displayFilters?.group_by;
+
+    if (!groupBy && !subGroupBy) {
+      return groupedIssueIds as string[];
+    }
+
+    if (groupBy && subGroupBy && groupId && subGroupId) {
+      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[];
+    }
+
+    if (groupBy && groupId) {
+      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[];
+    }
+
+    return undefined;
+  };
 
   get viewFlags() {
     if (this.currentView === "subscribed")

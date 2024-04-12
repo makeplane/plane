@@ -10,6 +10,7 @@ import {
   TSubGroupedIssues,
   TUnGroupedIssues,
   TIssueKanbanFilters,
+  TIssueGroupByOptions,
 } from "@plane/types";
 // constants
 // hooks
@@ -30,14 +31,14 @@ import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 import { KanbanStoreType } from "./base-kanban-root";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
-import { DropLocation } from "./utils";
+import { KanbanDropLocation } from "./utils";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
-  sub_group_by: string | null;
-  group_by: string | null;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
   sub_group_id: string;
   isDragDisabled: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -57,7 +58,7 @@ export interface IGroupByKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  handleOnDrop: (source: DropLocation, destination: DropLocation) => Promise<void>;
+  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
   subGroupIssueHeaderCount?: (listId: string) => number;
 }
@@ -203,8 +204,8 @@ export interface IKanBan {
   issuesMap: IIssueMap;
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
-  sub_group_by: string | null;
-  group_by: string | null;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
   sub_group_id?: string;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
@@ -224,7 +225,7 @@ export interface IKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  handleOnDrop: (source: DropLocation, destination: DropLocation) => Promise<void>;
+  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
   subGroupIssueHeaderCount?: (listId: string) => number;
 }
 

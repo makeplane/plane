@@ -10,6 +10,7 @@ import {
   TSubGroupedIssues,
   TUnGroupedIssues,
   TIssueKanbanFilters,
+  TIssueGroupByOptions,
 } from "@plane/types";
 // components
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
@@ -18,14 +19,14 @@ import { KanbanStoreType } from "./base-kanban-root";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
-import { DropLocation } from "./utils";
+import { KanbanDropLocation } from "./utils";
 // types
 // constants
 
 interface ISubGroupSwimlaneHeader {
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
-  sub_group_by: string | null;
-  group_by: string | null;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
   list: IGroupByColumn[];
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
@@ -108,7 +109,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  handleOnDrop: (source: DropLocation, destination: DropLocation) => Promise<void>;
+  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   storeType: KanbanStoreType;
   enableQuickIssueCreate: boolean;
@@ -232,14 +233,14 @@ export interface IKanBanSwimLanes {
   issuesMap: IIssueMap;
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
-  sub_group_by: string | null;
-  group_by: string | null;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   showEmptyGroup: boolean;
-  handleOnDrop: (source: DropLocation, destination: DropLocation) => Promise<void>;
+  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;

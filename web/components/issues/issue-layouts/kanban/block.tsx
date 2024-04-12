@@ -1,13 +1,10 @@
 import { MutableRefObject, memo, useEffect, useRef, useState } from "react";
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
-import {
-  draggable,
-  dropTargetForElements,
-} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react-lite";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks
-import { ControlLink, Tooltip } from "@plane/ui";
+import { ControlLink, DropIndicator, Tooltip } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { cn } from "@/helpers/common.helper";
 import { useApplication, useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
@@ -115,64 +112,76 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
 
   const issue = issuesMap[issueId];
 
-  const {setIsDragging: setIsKanbanDragging} =useKanbanView();
+  const { setIsDragging: setIsKanbanDragging } = useKanbanView();
 
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingOverBlock, setIsDraggingOverBlock] = useState(false);
+  const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
 
+  // Make Issue block both as as Draggable and,
+  // as a DropTarget for other issues being dragged to get the location of drop
   useEffect(() => {
     const element = cardRef.current;
 
-    if(!element) return;
+    if (!element) return;
 
-    return combine(draggable({
-      element,
-      getInitialData: () => ({id: issue.id, type: "ISSUE"}),
-      onDragStart: () => {setIsKanbanDragging(true);
-        setIsDragging(true)},
-        onDrop: () => {setIsKanbanDragging(false); setIsDragging(false)},
-    }
-    ),
-    dropTargetForElements(
-      {
-      element,
-      canDrop: (payload) => payload.source.data.id !== issue.id,
-      getData: () => ({id: issue.id, type: "ISSUE"}),
-      onDragEnter: () =>{
-        setIsDraggingOver(true)
-      },
-      onDragLeave: () => {
-        setIsDraggingOver(false)
-      },
-      onDrop: () => {
-        setIsDraggingOver(false)
-      },
-  })
-    )
-  }, [cardRef?.current, issue.id, setIsDragging, setIsDraggingOver])
+    return combine(
+      draggable({
+        element,
+        canDrag: () => !isDragDisabled,
+        getInitialData: () => ({ id: issue?.id, type: "ISSUE" }),
+        onDragStart: () => {
+          setIsCurrentBlockDragging(true);
+          setIsKanbanDragging(true);
+        },
+        onDrop: () => {
+          setIsKanbanDragging(false);
+          setIsCurrentBlockDragging(false);
+        },
+      }),
+      dropTargetForElements({
+        element,
+        canDrop: (payload) => payload.source?.data?.id !== issue?.id,
+        getData: () => ({ id: issue?.id, type: "ISSUE" }),
+        onDragEnter: () => {
+          setIsDraggingOverBlock(true);
+        },
+        onDragLeave: () => {
+          setIsDraggingOverBlock(false);
+        },
+        onDrop: () => {
+          setIsDraggingOverBlock(false);
+        },
+      })
+    );
+  }, [cardRef?.current, issue?.id, setIsCurrentBlockDragging, setIsDraggingOverBlock]);
 
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
 
   return (
-    <div className="group/kanban-block p-1.5">
-          <div className={cn("block h-[2px] w-full",{"bg-custom-primary-100": !isDragging && isDraggingOver})}/>
-          <ControlLink
-            id={`issue-${issue.id}`}
-            href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
-              issue.id
-            }`}
-            target="_blank"
-            onClick={() => handleIssuePeekOverview(issue)}
-            disabled={!!issue?.tempId}
-          >
+    <>
+      <DropIndicator isVisible={!isCurrentBlockDragging && isDraggingOverBlock} />
+      <div
+        // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
+        className={cn("group/kanban-block relative p-1.5", { "z-[1]": isCurrentBlockDragging })}
+        onDragStart={() => !isDragDisabled && setIsCurrentBlockDragging(true)}
+      >
+        <ControlLink
+          id={`issue-${issue.id}`}
+          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
+            issue.id
+          }`}
+          target="_blank"
+          onClick={() => handleIssuePeekOverview(issue)}
+          disabled={!!issue?.tempId}
+        >
           <div
             className={cn(
               "rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
               { "hover:cursor-grab": !isDragDisabled },
               { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id },
-              {"bg-custom-background-80 z-[100] opacity-75": isDragging}
+              { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
             )}
             ref={cardRef}
           >
@@ -192,8 +201,9 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
               />
             </RenderIfVisible>
           </div>
-          </ControlLink>
-          </div>
+        </ControlLink>
+      </div>
+    </>
   );
 });
 
