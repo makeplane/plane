@@ -2,8 +2,11 @@ import { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 import { EditorRefApi } from "@plane/rich-text-editor";
 import { TIssue } from "@plane/types";
+import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
+// hooks
+import { useProjectInbox } from "@/hooks/store";
 
 type TInboxIssueDescription = {
   workspaceSlug: string;
@@ -17,9 +20,17 @@ type TInboxIssueDescription = {
 // TODO: have to implement GPT Assistance
 export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props) => {
   const { workspaceSlug, projectId, workspaceId, data, handleData, editorRef } = props;
+  // hooks
+  const { isLoading } = useProjectInbox();
 
+  if (isLoading === "issue-loading")
+    return (
+      <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
+        <Loader.Item width="100%" height="140px" />
+      </Loader>
+    );
   return (
-    <div className="relative border border-red-500">
+    <div className="relative">
       <RichTextEditor
         initialValue={!data?.description_html || data?.description_html === "" ? "<p></p>" : data?.description_html}
         ref={editorRef}

@@ -67,7 +67,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
       state_id: formData.state_id || "",
       label_ids: formData.label_ids || [],
       assignee_ids: formData.assignee_ids || [],
-      target_date: formData.target_date || "",
+      target_date: formData.target_date || null,
     };
     setFormSubmitting(true);
 

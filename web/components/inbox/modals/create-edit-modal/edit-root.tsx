@@ -15,29 +15,30 @@ import { ISSUE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
-import { useEventTracker, useProjectInbox, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useInboxIssues, useWorkspace } from "@/hooks/store";
 
 type TInboxIssueEditRoot = {
   workspaceSlug: string;
   projectId: string;
+  issueId: string;
   issue: Partial<TIssue>;
   handleModalClose: () => void;
   onSubmit?: () => void;
 };
 
 export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
-  const { workspaceSlug, projectId, issue, handleModalClose, onSubmit } = props;
+  const { workspaceSlug, projectId, issueId, issue, handleModalClose, onSubmit } = props;
   const router = useRouter();
   // refs
   const descriptionEditorRef = useRef<EditorRefApi>(null);
   // hooks
   const { captureIssueEvent } = useEventTracker();
-  const { createInboxIssue } = useProjectInbox();
+  const { updateProjectIssue } = useInboxIssues(issueId);
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   // states
   const [formSubmitting, setFormSubmitting] = useState(false);
-  const [formData, setFormData] = useState<Partial<TIssue> | undefined>();
+  const [formData, setFormData] = useState<Partial<TIssue> | undefined>(undefined);
   const handleFormData = useCallback(
     <T extends keyof Partial<TIssue>>(issueKey: T, issueValue: Partial<TIssue>[T]) => {
       setFormData({
@@ -71,13 +72,18 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
       state_id: formData?.state_id || "",
       label_ids: formData?.label_ids || [],
       assignee_ids: formData?.assignee_ids || [],
-      target_date: formData?.target_date || "",
+      start_date: formData?.start_date || undefined,
+      target_date: formData?.target_date || undefined,
+      cycle_id: formData?.cycle_id || "",
+      module_ids: formData?.module_ids || [],
+      estimate_point: formData?.estimate_point || undefined,
+      parent_id: formData?.parent_id || "",
     };
     setFormSubmitting(true);
 
-    await createInboxIssue(workspaceSlug, projectId, payload)
+    onSubmit && (await onSubmit());
+    await updateProjectIssue(payload)
       .then(async () => {
-        onSubmit && (await onSubmit());
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
           payload: {
@@ -127,13 +133,13 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
         handleData={handleFormData}
         editorRef={descriptionEditorRef}
       />
-      <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
+      <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} isVisible />
       <div className="relative flex justify-end items-center gap-3">
         <Button variant="neutral-primary" size="sm" type="button" onClick={handleModalClose}>
-          Discard
+          Cancel
         </Button>
         <Button variant="primary" size="sm" type="button" loading={formSubmitting} onClick={handleFormSubmit}>
-          {formSubmitting ? "Updating Issue..." : "Update Issue"}
+          {formSubmitting ? "Adding..." : "Add to project"}
         </Button>
       </div>
     </div>
