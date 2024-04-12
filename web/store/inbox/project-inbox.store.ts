@@ -42,7 +42,7 @@ export interface IProjectInboxStore {
   getAppliedFiltersCount: number;
   inboxIssuesArray: IInboxIssueStore[];
   // helper actions
-  getIssueInboxByIssueId: (issueId: string) => IInboxIssueStore | undefined;
+  getIssueInboxByIssueId: (issueId: string) => IInboxIssueStore;
   inboxIssueSorting: (issues: IInboxIssueStore[]) => IInboxIssueStore[];
   inboxIssueQueryParams: (
     inboxFilters: Partial<TInboxIssueFilter>,
@@ -133,7 +133,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     );
   }
 
-  getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId] || undefined);
+  getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId]);
 
   // helpers
   inboxIssueSorting = (issues: IInboxIssueStore[]) => {
