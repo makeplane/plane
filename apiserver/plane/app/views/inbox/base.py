@@ -430,6 +430,42 @@ class InboxIssueViewSet(BaseViewSet):
                             issue.state = state
                             issue.save()
 
+                inbox_issue = (
+                    InboxIssue.objects.select_related("issue")
+                    .prefetch_related(
+                        "issue__labels",
+                        "issue__assignees",
+                    )
+                    .annotate(
+                        label_ids=Coalesce(
+                            ArrayAgg(
+                                "issue__labels__id",
+                                distinct=True,
+                                filter=~Q(issue__labels__id__isnull=True),
+                            ),
+                            Value(
+                                [],
+                                output_field=ArrayField(UUIDField()),
+                            ),
+                        ),
+                        assignee_ids=Coalesce(
+                            ArrayAgg(
+                                "issue__assignees__id",
+                                distinct=True,
+                                filter=~Q(issue__assignees__id__isnull=True),
+                            ),
+                            Value(
+                                [],
+                                output_field=ArrayField(UUIDField()),
+                            ),
+                        ),
+                    )
+                    .get(
+                        inbox_id=inbox_id.id,
+                        issue_id=serializer.data["id"],
+                        project_id=project_id,
+                    )
+                )
                 serializer = InboxIssueDetailSerializer(inbox_issue).data
                 return Response(serializer, status=status.HTTP_200_OK)
             return Response(
