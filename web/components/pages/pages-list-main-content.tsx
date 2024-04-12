@@ -22,10 +22,10 @@ type Props = {
 export const PagesListMainContent: React.FC<Props> = observer((props) => {
   const { children, pageType, projectId } = props;
   // store hooks
-  const { loader, currentProjectFilteredPageIds, currentProjectPageIds, filters } = useProjectPages(projectId);
+  const { loader, getCurrentProjectFilteredPageIds, getCurrentProjectPageIds, filters } = useProjectPages(projectId);
   // derived values
-  const pageIds = currentProjectPageIds(pageType);
-  const filteredPageIds = currentProjectFilteredPageIds(pageType);
+  const pageIds = getCurrentProjectPageIds(pageType);
+  const filteredPageIds = getCurrentProjectFilteredPageIds(pageType);
 
   if (loader === "init-loader") return <PageLoader />;
   // if no pages exist in the active page type

@@ -23,13 +23,13 @@ export interface IProjectPageStore {
   error: TError | undefined;
   filters: TPageFilters;
   // helper actions
-  currentProjectPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
-  currentProjectFilteredPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
+  getCurrentProjectPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
+  getCurrentProjectFilteredPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
   pageById: (pageId: string) => IPageStore | undefined;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   // actions
-  getAllPages: () => Promise<TPage[] | undefined>;
+  getAllPages: (pageType: TPageNavigationTabs) => Promise<TPage[] | undefined>;
   getPageById: (pageId: string) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
@@ -72,7 +72,7 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description get the current project page ids based on the pageType
    * @param {TPageNavigationTabs} pageType
    */
-  currentProjectPageIds = computedFn((pageType: TPageNavigationTabs) => {
+  getCurrentProjectPageIds = computedFn((pageType: TPageNavigationTabs) => {
     const { projectId } = this.store.app.router;
     if (!projectId) return undefined;
     // helps to filter pages based on the pageType
@@ -88,7 +88,7 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description get the current project filtered page ids based on the pageType
    * @param {TPageNavigationTabs} pageType
    */
-  currentProjectFilteredPageIds = computedFn((pageType: TPageNavigationTabs) => {
+  getCurrentProjectFilteredPageIds = computedFn((pageType: TPageNavigationTabs) => {
     const { projectId } = this.store.app.router;
     if (!projectId) return undefined;
 
@@ -130,12 +130,12 @@ export class ProjectPageStore implements IProjectPageStore {
   /**
    * @description fetch all the pages
    */
-  getAllPages = async () => {
+  getAllPages = async (pageType: TPageNavigationTabs) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !projectId) return undefined;
 
-      const currentPageIds = this.currentProjectPageIds;
+      const currentPageIds = this.getCurrentProjectPageIds(pageType);
       runInAction(() => {
         this.loader = currentPageIds && currentPageIds.length > 0 ? `mutation-loader` : `init-loader`;
         this.error = undefined;
