@@ -117,7 +117,11 @@ export const IssuePeekOverview: React.FC = observer(() => {
                   <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
                 )}
                 {issueDetailStore.peekMode === "full" && (
-                  <FullScreenPeekView handleClose={handleClose} issueDetails={issueDetails} />
+                  <FullScreenPeekView
+                    workspace_slug={workspace_slug}
+                    handleClose={handleClose}
+                    issueDetails={issueDetails}
+                  />
                 )}
               </div>
             </Dialog.Panel>

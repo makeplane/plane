@@ -3,9 +3,8 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { EditorRefApi } from "@plane/rich-text-editor";
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
-// editor
 // hooks
 import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover } from "@/components/core";
@@ -19,17 +18,17 @@ import {
   MemberDropdown,
   StateDropdown,
 } from "@/components/dropdowns";
+import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "@/hooks/store";
+import { useApplication, useEstimate, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
 import { AIService } from "@/services/ai.service";
-import { FileService } from "@/services/file.service";
 // components
 // ui
 // helpers
@@ -65,7 +64,6 @@ export interface IssueFormProps {
 
 // services
 const aiService = new AIService();
-const fileService = new FileService();
 
 const TAB_INDICES = [
   "name",
@@ -112,7 +110,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
 
   // refs
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -126,7 +124,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = useApplication();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
-  const { mentionHighlights, mentionSuggestions } = useMention();
+
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -462,36 +460,26 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         />
                       )}
                     </div>
-                    {data?.description_html && watch("description_html") && (
-                      <Controller
-                        name="description_html"
-                        control={control}
-                        render={({ field: { value, onChange } }) => (
-                          <RichTextEditorWithRef
-                            cancelUploadImage={fileService.cancelUpload}
-                            uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                            deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                            restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-                            ref={editorRef}
-                            debouncedUpdatesEnabled={false}
-                            value={
-                              !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                                ? watch("description_html")
-                                : value
-                            }
-                            initialValue={data?.description_html}
-                            customClassName="min-h-[7rem] border-custom-border-100"
-                            onChange={(description: any, description_html: string) => {
-                              onChange(description_html === "" ? "<p></p>" : description_html);
-                              handleFormChange();
-                            }}
-                            mentionHighlights={mentionHighlights}
-                            mentionSuggestions={mentionSuggestions}
-                            tabIndex={getTabIndex("description_html")}
-                          />
-                        )}
-                      />
-                    )}
+                    <Controller
+                      name="description_html"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <RichTextEditor
+                          initialValue={value}
+                          value={data.description_html}
+                          workspaceSlug={workspaceSlug?.toString() as string}
+                          workspaceId={workspaceId}
+                          projectId={projectId}
+                          // dragDropEnabled={false}
+                          onChange={(_description: object, description_html: string) => {
+                            onChange(description_html);
+                            handleFormChange();
+                          }}
+                          ref={editorRef}
+                          tabIndex={getTabIndex("description_html")}
+                        />
+                      )}
+                    />
                   </Fragment>
                 )}
               </div>

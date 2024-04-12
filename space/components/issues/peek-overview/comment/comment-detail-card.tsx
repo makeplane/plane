@@ -1,23 +1,21 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
-// mobx store
 // components
-import { LiteReadOnlyEditorWithRef, LiteTextEditorWithRef } from "@plane/lite-text-editor";
-
+import { EditorRefApi } from "@plane/lite-text-editor";
+import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
+// mobx store
 import { useMobxStore } from "@/lib/mobx/store-provider";
-// types
-// services
-import fileService from "@/services/file.service";
+// store
 import { RootStore } from "@/store/root";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
+// types
+import { Comment } from "@/types/issue";
 
-import { Comment } from "types/issue";
 type Props = {
   workspaceSlug: string;
   comment: Comment;
@@ -32,12 +30,10 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
   // states
   const [isEditing, setIsEditing] = useState(false);
-
-  const mentionsConfig = useEditorSuggestions();
-
-  const editorRef = React.useRef<any>(null);
-
-  const showEditorRef = React.useRef<any>(null);
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
+  const showEditorRef = useRef<EditorRefApi>(null);
+  // form info
   const {
     control,
     formState: { isSubmitting },
@@ -105,19 +101,16 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 control={control}
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
-                  <LiteTextEditorWithRef
+                  <LiteTextEditor
+                    workspaceId={workspaceId as string}
+                    workspaceSlug={workspaceSlug}
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
-                    cancelUploadImage={fileService.cancelUpload}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-                    deleteFile={fileService.getDeleteImageFunction(workspaceId as string)}
-                    restoreFile={fileService.getRestoreImageFunction(workspaceId as string)}
                     ref={editorRef}
-                    value={value}
-                    debouncedUpdatesEnabled={false}
-                    customClassName="min-h-[50px] p-3 shadow-sm"
-                    onChange={(comment_json: unknown, comment_html: string) => {
-                      onChange(comment_html);
-                    }}
+                    initialValue={value}
+                    value={null}
+                    onChange={(comment_json, comment_html) => onChange(comment_html)}
+                    isSubmitting={isSubmitting}
+                    showSubmitButton={false}
                   />
                 )}
               />
@@ -140,12 +133,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <LiteReadOnlyEditorWithRef
-              ref={showEditorRef}
-              value={comment.comment_html}
-              customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              mentionHighlights={mentionsConfig.mentionHighlights}
-            />
+            <LiteTextReadOnlyEditor ref={showEditorRef} initialValue={comment.comment_html} />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
           </div>
         </div>

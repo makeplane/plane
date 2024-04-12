@@ -4,23 +4,21 @@ import Placeholder from "@tiptap/extension-placeholder";
 
 export const RichTextEditorExtensions = (
   uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
   dragDropEnabled?: boolean,
   setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void
 ) => [
-  SlashCommand(uploadFile, setIsSubmitting),
+  SlashCommand(uploadFile),
   dragDropEnabled === true && DragAndDrop(setHideDragHandle),
   Placeholder.configure({
-    placeholder: ({ node }) => {
+    placeholder: ({ editor, node }) => {
       if (node.type.name === "heading") {
         return `Heading ${node.attrs.level}`;
       }
-      if (node.type.name === "image" || node.type.name === "table") {
+
+      if (editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image")) {
         return "";
       }
-      if (node.type.name === "codeBlock") {
-        return "Type in your code here...";
-      }
+
       return "Press '/' for commands...";
     },
     includeChildren: true,

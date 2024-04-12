@@ -25,11 +25,13 @@ type Props = {
   isEditable: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: Dispatch<SetStateAction<"submitting" | "submitted" | "saved">>;
+  swrIssueDescription: string | undefined;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
+  const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting, swrIssueDescription } =
+    props;
   // hooks
   const { currentUser } = useUser();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
@@ -48,13 +50,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   const issue = inboxIssue.issue;
   if (!issue) return <></>;
-
-  const issueDescription =
-    issue.description_html !== undefined || issue.description_html !== null
-      ? issue.description_html != ""
-        ? issue.description_html
-        : "<p></p>"
-      : undefined;
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -116,6 +111,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   );
 
   if (!issue?.project_id || !issue?.id) return <></>;
+
   return (
     <>
       <div className="rounded-lg space-y-4">
@@ -134,8 +130,8 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           issueId={issue.id}
-          value={issueDescription}
-          initialValue={issueDescription}
+          swrIssueDescription={swrIssueDescription}
+          initialValue={issue.description_html ?? "<p></p>"}
           disabled={!isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
