@@ -1,12 +1,9 @@
-import { FC, useEffect } from "react";
-import { observer } from "mobx-react";
+import { FC } from "react";
 import Link from "next/link";
 // types
 import { TPageNavigationTabs } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// hooks
-import { useProjectPages } from "@/hooks/store";
 
 type TPageTabNavigation = {
   workspaceSlug: string;
@@ -30,18 +27,12 @@ const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
   },
 ];
 
-export const PageTabNavigation: FC<TPageTabNavigation> = observer((props) => {
+export const PageTabNavigation: FC<TPageTabNavigation> = (props) => {
   const { workspaceSlug, projectId, pageType } = props;
-  // store hooks
-  const { pageType: storePageType, updatePageType } = useProjectPages(projectId);
 
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabKey: TPageNavigationTabs) => {
     if (tabKey === pageType) e.preventDefault();
   };
-
-  useEffect(() => {
-    if (storePageType !== pageType) updatePageType(pageType);
-  }, [storePageType, pageType, updatePageType]);
 
   return (
     <div className="relative flex items-center">
@@ -67,4 +58,4 @@ export const PageTabNavigation: FC<TPageTabNavigation> = observer((props) => {
       ))}
     </div>
   );
-});
+};
