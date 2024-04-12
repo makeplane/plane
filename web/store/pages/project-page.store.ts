@@ -2,11 +2,13 @@ import set from "lodash/set";
 import unset from "lodash/unset";
 import { makeObservable, observable, runInAction, action, computed } from "mobx";
 import { computedFn } from "mobx-utils";
+// types
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // services
 import { PageService } from "@/services/page.service";
+// store
 import { IPageStore, PageStore } from "@/store/pages/page.store";
 import { RootStore } from "../root.store";
 
@@ -22,13 +24,15 @@ export interface IProjectPageStore {
   error: TError | undefined;
   filters: TPageFilters;
   // computed
-  pageIds: string[] | undefined;
-  filteredPageIds: string[] | undefined;
+  currentProjectPageIds: string[] | undefined;
+  currentProjectFilteredPageIds: string[] | undefined;
   // helper actions
   pageById: (pageId: string) => IPageStore | undefined;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   // actions
+  updatePageType: (pageType: TPageNavigationTabs) => void;
+  // page actions
   getAllPages: (pageType: TPageNavigationTabs) => Promise<TPage[] | undefined>;
   getPageById: (pageId: string) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
@@ -58,12 +62,14 @@ export class ProjectPageStore implements IProjectPageStore {
       error: observable,
       filters: observable,
       // computed
-      pageIds: computed,
-      filteredPageIds: computed,
+      currentProjectPageIds: computed,
+      currentProjectFilteredPageIds: computed,
       // helper actions
       updateFilters: action,
       clearAllFilters: action,
       // actions
+      updatePageType: action,
+      // page actions
       getAllPages: action,
       getPageById: action,
       createPage: action,
@@ -73,19 +79,25 @@ export class ProjectPageStore implements IProjectPageStore {
     this.service = new PageService();
   }
 
-  get pageIds() {
+  /**
+   * @description get the current project page ids based on the pageType
+   */
+  get currentProjectPageIds() {
     const { projectId } = this.store.app.router;
     if (!projectId) return undefined;
-
     // helps to filter pages based on the pageType
-    const pagesByType = filterPagesByPageType(this.pageType, Object.values(this?.data || {}));
+    let pagesByType = filterPagesByPageType(this.pageType, Object.values(this?.data || {}));
+    pagesByType = pagesByType.filter((p) => p.project === projectId);
 
     const pages = (pagesByType.map((page) => page.id) as string[]) || undefined;
 
     return pages ?? undefined;
   }
 
-  get filteredPageIds() {
+  /**
+   * @description get the current project filtered page ids based on the pageType
+   */
+  get currentProjectFilteredPageIds() {
     const { projectId } = this.store.app.router;
     if (!projectId) return undefined;
 
@@ -93,6 +105,7 @@ export class ProjectPageStore implements IProjectPageStore {
     const pagesByType = filterPagesByPageType(this.pageType, Object.values(this?.data || {}));
     let filteredPages = pagesByType.filter(
       (p) =>
+        p.project === projectId &&
         p.name?.toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
         shouldFilterPage(p, this.filters.filters)
     );
@@ -103,12 +116,11 @@ export class ProjectPageStore implements IProjectPageStore {
     return pages ?? undefined;
   }
 
-  pageById = computedFn((pageId: string) => {
-    const { projectId } = this.store.app.router;
-    if (!projectId) return undefined;
-
-    return this.data?.[pageId] || undefined;
-  });
+  /**
+   * @description get the page store by id
+   * @param {string} pageId
+   */
+  pageById = computedFn((pageId: string) => this.data?.[pageId] || undefined);
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
     runInAction(() => {
@@ -125,17 +137,23 @@ export class ProjectPageStore implements IProjectPageStore {
     });
 
   /**
-   * @description fetch all the pages based on the navigation tab
-   * @param {TPageNavigationTabs} pageType
+   * @description update the page type
    */
-  getAllPages = async (pageType: TPageNavigationTabs) => {
+  updatePageType = (pageType: TPageNavigationTabs) =>
+    runInAction(() => {
+      this.pageType = pageType;
+    });
+
+  /**
+   * @description fetch all the pages
+   */
+  getAllPages = async () => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !projectId) return undefined;
 
-      const currentPageIds = this.pageIds;
+      const currentPageIds = this.currentProjectPageIds;
       runInAction(() => {
-        this.pageType = pageType;
         this.loader = currentPageIds && currentPageIds.length > 0 ? `mutation-loader` : `init-loader`;
         this.error = undefined;
       });

@@ -22,17 +22,17 @@ type Props = {
 export const PagesListMainContent: React.FC<Props> = observer((props) => {
   const { children, pageType, projectId } = props;
   // store hooks
-  const { loader, filteredPageIds, pageIds, filters } = useProjectPages(projectId);
+  const { loader, currentProjectFilteredPageIds, currentProjectPageIds, filters } = useProjectPages(projectId);
 
   if (loader === "init-loader") return <PageLoader />;
   // if no pages exist in the active page type
-  if (pageIds?.length === 0) {
+  if (currentProjectPageIds?.length === 0) {
     if (pageType === "public") return <EmptyState type={EmptyStateType.PROJECT_PAGE_PUBLIC} />;
     if (pageType === "private") return <EmptyState type={EmptyStateType.PROJECT_PAGE_PRIVATE} />;
     if (pageType === "archived") return <EmptyState type={EmptyStateType.PROJECT_PAGE_ARCHIVED} />;
   }
   // if no pages match the filter criteria
-  if (filteredPageIds?.length === 0)
+  if (currentProjectFilteredPageIds?.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
