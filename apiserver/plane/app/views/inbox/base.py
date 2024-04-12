@@ -3,7 +3,7 @@ import json
 
 # Django import
 from django.utils import timezone
-from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Exists
+from django.db.models import Q, Count, OuterRef, Func, F, Prefetch
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -22,7 +22,6 @@ from plane.db.models import (
     InboxIssue,
     Issue,
     State,
-    Workspace,
     IssueLink,
     IssueAttachment,
     ProjectMember,
@@ -168,9 +167,8 @@ class InboxIssueViewSet(BaseViewSet):
         ).distinct()
 
     def list(self, request, slug, project_id):
-        workspace = Workspace.objects.filter(slug=slug).first()
         inbox_id = Inbox.objects.filter(
-            workspace_id=workspace.id, project_id=project_id
+            workspace__slug=slug, project_id=project_id
         ).first()
         filters = issue_filters(request.GET, "GET", "issue__")
         inbox_issue = (
@@ -264,9 +262,8 @@ class InboxIssueViewSet(BaseViewSet):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-        workspace = Workspace.objects.filter(slug=slug).first()
         inbox_id = Inbox.objects.filter(
-            workspace_id=workspace.id, project_id=project_id
+            workspace__slug=slug, project_id=project_id
         ).first()
         # create an inbox issue
         inbox_issue = InboxIssue.objects.create(
@@ -279,9 +276,8 @@ class InboxIssueViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, issue_id):
-        workspace = Workspace.objects.filter(slug=slug).first()
         inbox_id = Inbox.objects.filter(
-            workspace_id=workspace.id, project_id=project_id
+            workspace__slug=slug, project_id=project_id
         ).first()
         inbox_issue = InboxIssue.objects.get(
             issue_id=issue_id,
@@ -307,9 +303,12 @@ class InboxIssueViewSet(BaseViewSet):
 
         # Get issue data
         issue_data = request.data.pop("issue", False)
-
         if bool(issue_data):
-            issue = self.get_queryset().filter(pk=inbox_issue.issue_id).first()
+            issue = Issue.objects.get(
+                pk=inbox_issue.issue_id,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
             # Only allow guests and viewers to edit name and description
             if project_member.role <= 10:
                 # viewers and guests since only viewers and guests
@@ -406,9 +405,8 @@ class InboxIssueViewSet(BaseViewSet):
             return Response(serializer, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, issue_id):
-        workspace = Workspace.objects.filter(slug=slug).first()
         inbox_id = Inbox.objects.filter(
-            workspace_id=workspace.id, project_id=project_id
+            workspace__slug=slug, project_id=project_id
         ).first()
         inbox_issue = (
             InboxIssue.objects.select_related("issue")
@@ -445,9 +443,8 @@ class InboxIssueViewSet(BaseViewSet):
         )
 
     def destroy(self, request, slug, project_id, issue_id):
-        workspace = Workspace.objects.filter(slug=slug).first()
         inbox_id = Inbox.objects.filter(
-            workspace_id=workspace.id, project_id=project_id
+            workspace__slug=slug, project_id=project_id
         ).first()
         inbox_issue = InboxIssue.objects.get(
             issue_id=issue_id,

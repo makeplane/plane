@@ -24,7 +24,7 @@ export const FilterLabels: FC<Props> = observer((props) => {
 
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
 
-  const filterValue = inboxFilters?.label || [];
+  const filterValue = inboxFilters?.labels || [];
 
   const appliedFiltersCount = filterValue?.length ?? 0;
 
@@ -56,7 +56,7 @@ export const FilterLabels: FC<Props> = observer((props) => {
                   <FilterOption
                     key={label?.id}
                     isChecked={filterValue?.includes(label?.id) ? true : false}
-                    onClick={() => handleInboxIssueFilters("label", handleFilterValue(label.id))}
+                    onClick={() => handleInboxIssueFilters("labels", handleFilterValue(label.id))}
                     icon={<LabelIcons color={label.color} />}
                     title={label.name}
                   />

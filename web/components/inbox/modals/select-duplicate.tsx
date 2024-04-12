@@ -7,7 +7,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // types
 import { ISearchIssueResponse } from "@plane/types";
 // ui
-import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
@@ -30,7 +30,6 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const { isOpen, onClose, onSubmit, value } = props;
 
   const [query, setQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState<string>("");
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -58,18 +57,11 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
   const filteredIssues = issues.filter((issue) => issue.id !== issueId);
 
-  useEffect(() => {
-    if (!value) {
-      setSelectedItem("");
-      return;
-    } else setSelectedItem(value);
-  }, [value]);
-
   const handleClose = () => {
     onClose();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (selectedItem: string) => {
     if (!selectedItem || selectedItem.length === 0)
       return setToast({
         title: "Error",
@@ -154,12 +146,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
-                  <Combobox
-                    value={selectedItem}
-                    onChange={(value) => {
-                      setSelectedItem(value);
-                    }}
-                  >
+                  <Combobox value={value} onChange={handleSubmit}>
                     <div className="relative m-1">
                       <Search
                         className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
@@ -189,17 +176,6 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                       )}
                     </Combobox.Options>
                   </Combobox>
-
-                  {filteredIssues.length > 0 && (
-                    <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                        Cancel
-                      </Button>
-                      <Button variant="primary" size="sm" onClick={handleSubmit}>
-                        Mark as original
-                      </Button>
-                    </div>
-                  )}
                 </Dialog.Panel>
               </Transition.Child>
             </div>

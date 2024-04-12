@@ -15,7 +15,7 @@ import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
 import { ROLE } from "@/constants/workspace";
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
-import { useEventTracker, useUser } from "@/hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
 import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
 import { NextPageWithLayout } from "@/lib/types";
@@ -43,6 +43,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { captureEvent, joinWorkspaceMetricGroup } = useEventTracker();
   const { currentUser, currentUserSettings } = useUser();
+  const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
   // next-themes
@@ -96,7 +97,9 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
           .updateUser({ last_workspace_id: redirectWorkspace?.id })
           .then(() => {
             setIsJoiningWorkspaces(false);
-            router.push(`/${redirectWorkspace?.slug}`);
+            fetchWorkspaces().then(() => {
+              router.push(`/${redirectWorkspace?.slug}`);
+            });
           })
           .catch(() => {
             setToast({

@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // components
@@ -8,8 +8,10 @@ import { ProjectInboxHeader } from "@/components/headers";
 import { InboxIssueRoot } from "@/components/inbox";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+// helpers
+import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject, useProjectInbox } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // types
@@ -18,11 +20,10 @@ import { NextPageWithLayout } from "@/lib/types";
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
   /// router
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxIssueId } = router.query;
+  const { workspaceSlug, projectId, currentTab: navigationTab, inboxIssueId } = router.query;
   // hooks
   const { currentProjectDetails } = useProject();
-
-  if (!workspaceSlug || !projectId) return <></>;
+  const { currentTab, handleCurrentTab } = useProjectInbox();
 
   // No access to inbox
   if (currentProjectDetails?.inbox_view === false)
@@ -37,6 +38,13 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
 
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : "Plane - Inbox";
+
+  useEffect(() => {
+    if (navigationTab && currentTab != navigationTab)
+      handleCurrentTab(navigationTab === "open" ? EInboxIssueCurrentTab.OPEN : EInboxIssueCurrentTab.CLOSED);
+  }, [currentTab, navigationTab, handleCurrentTab]);
+
+  if (!workspaceSlug || !projectId) return <></>;
 
   return (
     <div className="flex h-full flex-col">

@@ -25,10 +25,13 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
 
   useSWR(
     inboxAccessible && workspaceSlug && projectId ? `PROJECT_INBOX_ISSUES_${workspaceSlug}_${projectId}` : null,
-    () => {
-      inboxAccessible && workspaceSlug && projectId && fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
+    async () => {
+      inboxAccessible &&
+        workspaceSlug &&
+        projectId &&
+        (await fetchInboxIssues(workspaceSlug.toString(), projectId.toString()));
     },
-    { revalidateOnFocus: false }
+    { revalidateOnFocus: false, revalidateIfStale: false }
   );
 
   // loader

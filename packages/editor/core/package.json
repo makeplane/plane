@@ -28,6 +28,7 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
+    "@plane/ui": "*",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-blockquote": "^2.1.13",
     "@tiptap/extension-code-block-lowlight": "^2.1.13",
@@ -39,6 +40,7 @@
     "@tiptap/extension-task-list": "^2.1.13",
     "@tiptap/extension-text-style": "^2.1.13",
     "@tiptap/extension-underline": "^2.1.13",
+    "prosemirror-codemark": "^0.4.2",
     "@tiptap/pm": "^2.1.13",
     "@tiptap/react": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",

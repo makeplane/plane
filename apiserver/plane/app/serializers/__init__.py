@@ -93,6 +93,7 @@ from .page import (
     PageSerializer,
     PageLogSerializer,
     SubPageSerializer,
+    PageDetailSerializer,
     PageFavoriteSerializer,
 )
 

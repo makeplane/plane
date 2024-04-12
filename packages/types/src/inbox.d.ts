@@ -2,9 +2,22 @@ import { TPaginationInfo } from "./common";
 import { TIssuePriorities } from "./issues";
 import { TIssue } from "./issues/base";
 
-export type TInboxIssueCurrentTab = "open" | "closed";
+enum EInboxIssueCurrentTab {
+  OPEN = "open",
+  CLOSED = "closed",
+}
 
-export type TInboxIssueStatus = -2 | -1 | 0 | 1 | 2;
+enum EInboxIssueStatus {
+  PENDING = -2,
+  DECLINED = -1,
+  SNOOZED = 0,
+  ACCEPTED = 1,
+  DUPLICATE = 2,
+}
+
+export type TInboxIssueCurrentTab = EInboxIssueCurrentTab;
+
+export type TInboxIssueStatus = EInboxIssueStatus;
 
 // filters
 export type TInboxIssueFilterMemberKeys = "assignee" | "created_by";
@@ -18,7 +31,7 @@ export type TInboxIssueFilter = {
 } & {
   status: TInboxIssueStatus[] | undefined;
   priority: TIssuePriorities[] | undefined;
-  label: string[] | undefined;
+  labels: string[] | undefined;
 };
 
 // sorting filters
@@ -50,21 +63,29 @@ export type TInboxIssueSortingOrderByQueryParam = {
 };
 
 export type TInboxIssuesQueryParams = {
-  [key in TInboxIssueFilter]: string;
+  [key in keyof TInboxIssueFilter]: string;
 } & TInboxIssueSortingOrderByQueryParam & {
     per_page: number;
     cursor: string;
   };
 
 // inbox issue types
+
+export type TInboxDuplicateIssueDetails = {
+  id: string;
+  sequence_id: string;
+  name: string;
+};
+
 export type TInboxIssue = {
   id: string;
   status: TInboxIssueStatus;
-  snoozed_till: Date | null;
-  duplicate_to: string | null;
+  snoozed_till: Date | undefined;
+  duplicate_to: string | undefined;
   source: string;
   issue: TIssue;
   created_by: string;
+  duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined;
 };
 
 export type TInboxIssuePaginationInfo = TPaginationInfo & {
