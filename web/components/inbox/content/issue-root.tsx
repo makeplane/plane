@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { InboxIssueProperties } from "@/components/inbox/content";
+import { InboxIssueContentProperties } from "@/components/inbox/content";
 import {
   IssueDescriptionInput,
   IssueTitleInput,
@@ -154,7 +154,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         )}
       </div>
 
-      <InboxIssueProperties
+      <InboxIssueContentProperties
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         issue={issue}

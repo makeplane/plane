@@ -1,7 +1,17 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { CheckCircle, ChevronDown, ChevronUp, Clock, ExternalLink, FileStack, Link, Trash2 } from "lucide-react";
+import {
+  CircleCheck,
+  CircleX,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  ExternalLink,
+  FileStack,
+  Link,
+  Trash2,
+} from "lucide-react";
 import { Button, ControlLink, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
@@ -236,7 +246,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 <Button
                   variant="neutral-primary"
                   size="sm"
-                  prependIcon={<CheckCircle className="w-3 h-3" />}
+                  prependIcon={<CircleCheck className="w-3 h-3" />}
                   className="text-green-500 border-0.5 border-green-500 bg-green-500/20 focus:bg-green-500/20 focus:text-green-500 hover:bg-green-500/40 bg-opacity-20"
                   onClick={() => setAcceptIssueModal(true)}
                 >
@@ -250,7 +260,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 <Button
                   variant="neutral-primary"
                   size="sm"
-                  prependIcon={<CheckCircle className="w-3 h-3" />}
+                  prependIcon={<CircleX className="w-3 h-3" />}
                   className="text-red-500 border-0.5 border-red-500 bg-red-500/20 focus:bg-red-500/20 focus:text-red-500 hover:bg-red-500/40 bg-opacity-20"
                   onClick={() => setDeclineIssueModal(true)}
                 >
