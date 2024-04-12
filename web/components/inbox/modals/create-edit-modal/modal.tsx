@@ -16,8 +16,6 @@ type TInboxIssueCreateEditModalRoot = {
 export const InboxIssueCreateEditModalRoot: FC<TInboxIssueCreateEditModalRoot> = (props) => {
   const { workspaceSlug, projectId, modalState, handleModalClose, issue, onSubmit } = props;
 
-  console.log("issue", issue);
-
   return (
     <div>
       <Transition.Root show={modalState} as={Fragment}>
