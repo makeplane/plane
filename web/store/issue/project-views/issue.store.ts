@@ -118,7 +118,7 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
   getIssueIds = (groupId?: string, subGroupId?: string) => {
     const groupedIssueIds = this.groupedIssueIds;
 
-    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    const displayFilters = this.rootIssueStore?.projectViewIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters || !groupedIssueIds) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;

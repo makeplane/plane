@@ -150,7 +150,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
   getIssueIds = (groupId?: string, subGroupId?: string) => {
     const groupedIssueIds = this.groupedIssueIds;
 
-    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    const displayFilters = this.rootIssueStore?.moduleIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters || !groupedIssueIds) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;

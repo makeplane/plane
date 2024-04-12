@@ -101,7 +101,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
   getIssueIds = (groupId?: string, subGroupId?: string) => {
     const groupedIssueIds = this.groupedIssueIds;
 
-    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    const displayFilters = this.rootIssueStore?.draftIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters || !groupedIssueIds) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;
@@ -166,8 +166,6 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     try {
-      await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
-
       this.rootStore.issues.updateIssue(issueId, data);
 
       if (data.hasOwnProperty("is_draft") && data?.is_draft === false) {
@@ -178,6 +176,8 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
           });
         });
       }
+
+      await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
