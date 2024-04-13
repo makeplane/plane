@@ -75,8 +75,7 @@ export const generateBarColor = (
   if (params[type] === "labels__id")
     color = analytics?.extras.label_details.find((l) => l.labels__id === value)?.labels__color ?? undefined;
 
-  if (params[type] === "state__group" && value)
-    color = STATE_GROUPS[value.toLowerCase() as TStateGroups]?.color ?? undefined;
+  if (params[type] === "state__group") color = STATE_GROUPS[value.toLowerCase() as TStateGroups]?.color ?? undefined;
 
   if (params[type] === "priority") {
     const priority = value.toLowerCase();
