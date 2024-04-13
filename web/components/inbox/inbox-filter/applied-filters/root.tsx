@@ -7,6 +7,7 @@ import {
   InboxIssueAppliedFiltersMember,
   InboxIssueAppliedFiltersLabel,
   InboxIssueAppliedFiltersDate,
+  InboxIssueAppliedFiltersState,
 } from "@/components/inbox";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
@@ -19,6 +20,8 @@ export const InboxIssueAppliedFilters: FC = observer(() => {
     <div className="p-3 py-2 relative flex flex-wrap items-center gap-1 border-b border-custom-border-300">
       {/* status */}
       <InboxIssueAppliedFiltersStatus />
+      {/* state */}
+      <InboxIssueAppliedFiltersState />
       {/* priority */}
       <InboxIssueAppliedFiltersPriority />
       {/* assignees */}
