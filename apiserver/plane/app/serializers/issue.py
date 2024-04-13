@@ -128,7 +128,6 @@ class IssueCreateSerializer(BaseSerializer):
         return data
 
     def create(self, validated_data):
-        print("inside the serializer")
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
 

@@ -178,16 +178,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           onSubmit={handleInboxIssueDuplicate}
         />
 
-        {issue && issue?.description_html && (
-          <InboxIssueCreateEditModalRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            modalState={acceptIssueModal}
-            handleModalClose={() => setAcceptIssueModal(false)}
-            issue={issue}
-            onSubmit={handleInboxIssueAccept}
-          />
-        )}
+        <InboxIssueCreateEditModalRoot
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          modalState={acceptIssueModal}
+          handleModalClose={() => setAcceptIssueModal(false)}
+          issue={inboxIssue?.issue}
+          onSubmit={handleInboxIssueAccept}
+        />
 
         <DeclineIssueModal
           data={inboxIssue?.issue || {}}
