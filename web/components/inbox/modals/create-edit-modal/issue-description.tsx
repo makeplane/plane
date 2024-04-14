@@ -21,9 +21,9 @@ type TInboxIssueDescription = {
 export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props) => {
   const { workspaceSlug, projectId, workspaceId, data, handleData, editorRef } = props;
   // hooks
-  const { isLoading } = useProjectInbox();
+  const { loader } = useProjectInbox();
 
-  if (isLoading === "issue-loading")
+  if (loader === "issue-loading")
     return (
       <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
         <Loader.Item width="100%" height="140px" />

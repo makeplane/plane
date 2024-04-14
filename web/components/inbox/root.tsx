@@ -21,7 +21,7 @@ type TInboxIssueRoot = {
 export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, inboxAccessible } = props;
   // hooks
-  const { isLoading, error, fetchInboxIssues } = useProjectInbox();
+  const { loader, error, fetchInboxIssues } = useProjectInbox();
 
   useSWR(
     inboxAccessible && workspaceSlug && projectId ? `PROJECT_INBOX_ISSUES_${workspaceSlug}_${projectId}` : null,
@@ -35,7 +35,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   );
 
   // loader
-  if (isLoading === "init-loading")
+  if (loader === "init-loading")
     return (
       <div className="relative flex w-full h-full flex-col">
         <InboxLayoutLoader />

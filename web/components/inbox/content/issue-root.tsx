@@ -36,7 +36,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const { currentUser } = useUser();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   const { captureIssueEvent } = useEventTracker();
-  const { isLoading } = useProjectInbox();
+  const { loader } = useProjectInbox();
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -127,7 +127,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           value={issue.name}
         />
 
-        {isLoading === "issue-loading" ? (
+        {loader === "issue-loading" ? (
           <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
             <Loader.Item width="100%" height="140px" />
           </Loader>
