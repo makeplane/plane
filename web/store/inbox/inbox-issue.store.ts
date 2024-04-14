@@ -1,3 +1,4 @@
+import clone from "lodash/clone";
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
 import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
@@ -24,6 +25,7 @@ export interface IInboxIssueStore {
   updateInboxIssueSnoozeTill: (date: Date) => Promise<void>; // snooze the issue
   updateIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
   updateProjectIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
+  fetchIssueActivity: () => Promise<void>; // fetching the issue activity
 }
 
 export class InboxIssueStore implements IInboxIssueStore {
@@ -70,6 +72,7 @@ export class InboxIssueStore implements IInboxIssueStore {
       updateInboxIssueSnoozeTill: action,
       updateIssue: action,
       updateProjectIssue: action,
+      fetchIssueActivity: action,
     });
   }
 
@@ -141,40 +144,49 @@ export class InboxIssueStore implements IInboxIssueStore {
   };
 
   updateIssue = async (issue: Partial<TIssue>) => {
-    const inboxIssue = this.issue;
+    const inboxIssue = clone(this.issue);
     try {
       if (!this.issue.id) return;
       Object.keys(issue).forEach((key) => {
         const issueKey = key as keyof TIssue;
-        set(inboxIssue, issueKey, issue[issueKey]);
+        set(this.issue, issueKey, issue[issueKey]);
       });
       await this.inboxIssueService.updateIssue(this.workspaceSlug, this.projectId, this.issue.id, issue);
       // fetching activity
-      await this.store.issue.issueDetail.fetchActivities(this.workspaceSlug, this.projectId, this.issue.id);
+      this.fetchIssueActivity();
     } catch {
       Object.keys(issue).forEach((key) => {
         const issueKey = key as keyof TIssue;
-        set(inboxIssue, issueKey, inboxIssue[issueKey]);
+        set(this.issue, issueKey, inboxIssue[issueKey]);
       });
     }
   };
 
   updateProjectIssue = async (issue: Partial<TIssue>) => {
-    const inboxIssue = this.issue;
+    const inboxIssue = clone(this.issue);
     try {
       if (!this.issue.id) return;
       Object.keys(issue).forEach((key) => {
         const issueKey = key as keyof TIssue;
-        set(inboxIssue, issueKey, issue[issueKey]);
+        set(this.issue, issueKey, issue[issueKey]);
       });
       await this.issueService.patchIssue(this.workspaceSlug, this.projectId, this.issue.id, issue);
       // fetching activity
-      await this.store.issue.issueDetail.fetchActivities(this.workspaceSlug, this.projectId, this.issue.id);
+      this.fetchIssueActivity();
     } catch {
       Object.keys(issue).forEach((key) => {
         const issueKey = key as keyof TIssue;
-        set(inboxIssue, issueKey, inboxIssue[issueKey]);
+        set(this.issue, issueKey, inboxIssue[issueKey]);
       });
+    }
+  };
+
+  fetchIssueActivity = async () => {
+    try {
+      if (!this.issue.id) return;
+      await this.store.issue.issueDetail.fetchActivities(this.workspaceSlug, this.projectId, this.issue.id);
+    } catch {
+      console.error("Failed to fetch issue activity");
     }
   };
 }
