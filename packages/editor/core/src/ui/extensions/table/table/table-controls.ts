@@ -20,7 +20,7 @@ export function tableControls() {
         mousemove: (view, event) => {
           const pluginState = key.getState(view.state);
 
-          if (!(event.target as HTMLElement).closest(".tableWrapper") && pluginState.values.hoveredTable) {
+          if (!(event.target as HTMLElement).closest(".table-wrapper") && pluginState.values.hoveredTable) {
             return view.dispatch(
               view.state.tr.setMeta(key, {
                 setHoveredTable: null,
@@ -34,7 +34,7 @@ export function tableControls() {
             top: event.clientY,
           });
 
-          if (!pos) return;
+          if (!pos || pos.pos < 0 || pos.pos > view.state.doc.content.size) return;
 
           const table = findParentNode((node) => node.type.name === "table")(
             TextSelection.create(view.state.doc, pos.pos)

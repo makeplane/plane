@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ArchiveRestoreIcon, Check, LinkIcon, Lock, Pencil, Star, Trash2 } from "lucide-react";
-import { cn } from "@plane/editor-core";
 import type { IProject } from "@plane/types";
 // ui
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
@@ -11,6 +10,7 @@ import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseT
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal, ProjectLogo } from "@/components/project";
 // helpers
 import { EUserProjectRoles } from "@/constants/project";
+import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks

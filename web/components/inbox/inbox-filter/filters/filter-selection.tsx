@@ -8,9 +8,10 @@ import {
   FilterMember,
   FilterDate,
   FilterLabels,
+  FilterState,
 } from "@/components/inbox/inbox-filter/filters";
 // hooks
-import { useMember, useLabel } from "@/hooks/store";
+import { useMember, useLabel, useProjectState } from "@/hooks/store";
 
 export const InboxIssueFilterSelection: FC = observer(() => {
   // hooks
@@ -18,6 +19,7 @@ export const InboxIssueFilterSelection: FC = observer(() => {
     project: { projectMemberIds },
   } = useMember();
   const { projectLabels } = useLabel();
+  const { projectStates } = useProjectState();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -46,6 +48,10 @@ export const InboxIssueFilterSelection: FC = observer(() => {
         {/* status */}
         <div className="py-2">
           <FilterStatus searchQuery={filtersSearchQuery} />
+        </div>
+        {/* state */}
+        <div className="py-2">
+          <FilterState states={projectStates} searchQuery={filtersSearchQuery} />
         </div>
         {/* Priority */}
         <div className="py-2">

@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Sparkle } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { EditorRefApi } from "@plane/rich-text-editor";
 // types
 import { TIssue } from "@plane/types";
 // ui
@@ -12,13 +12,15 @@ import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { GptAssistantPopover } from "@/components/core";
 import { PriorityDropdown } from "@/components/dropdowns";
-// constants
+import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
 import { ISSUE_CREATED } from "@/constants/event-tracker";
-// hooks
-import { useApplication, useEventTracker, useWorkspace, useMention, useProjectInbox } from "@/hooks/store";
+import { useApplication, useEventTracker, useWorkspace, useProjectInbox } from "@/hooks/store";
 // services
 import { AIService } from "@/services/ai.service";
-import { FileService } from "@/services/file.service";
+// components
+// ui
+// types
+// constants
 
 type Props = {
   isOpen: boolean;
@@ -33,7 +35,6 @@ const defaultValues: Partial<TIssue> = {
 
 // services
 const aiService = new AIService();
-const fileService = new FileService();
 
 export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
@@ -46,11 +47,11 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // refs
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // hooks
-  const { mentionHighlights, mentionSuggestions } = useMention();
   const workspaceStore = useWorkspace();
-  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug.toString() as string)?.id.toString() as string;
+
   // store hooks
   const { createInboxIssue } = useProjectInbox();
   const {
@@ -264,20 +265,16 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                             name="description_html"
                             control={control}
                             render={({ field: { value, onChange } }) => (
-                              <RichTextEditorWithRef
-                                cancelUploadImage={fileService.cancelUpload}
-                                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                              <RichTextEditor
+                                initialValue={!value || value === "" ? "<p></p>" : value}
                                 ref={editorRef}
-                                debouncedUpdatesEnabled={false}
-                                value={!value || value === "" ? "<p></p>" : value}
-                                customClassName="min-h-[150px]"
-                                onChange={(description, description_html: string) => {
+                                workspaceSlug={workspaceSlug.toString()}
+                                workspaceId={workspaceId}
+                                projectId={projectId.toString()}
+                                dragDropEnabled={false}
+                                onChange={(_description: object, description_html: string) => {
                                   onChange(description_html);
                                 }}
-                                mentionSuggestions={mentionSuggestions}
-                                mentionHighlights={mentionHighlights}
                               />
                             )}
                           />

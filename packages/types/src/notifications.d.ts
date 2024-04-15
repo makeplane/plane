@@ -36,7 +36,7 @@ export interface IUserNotification {
 }
 
 export interface Data {
-  issue: IIssueLite;
+  issue: INotificationIssueLite;
   issue_activity: {
     actor: string;
     field: string;
@@ -48,7 +48,7 @@ export interface Data {
   };
 }
 
-export interface IIssueLite {
+export interface INotificationIssueLite {
   id: string;
   name: string;
   identifier: string;

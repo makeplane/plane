@@ -1,13 +1,23 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { ChevronDown, ChevronUp, Clock, ExternalLink, FileStack, Link, Trash2 } from "lucide-react";
+import {
+  CircleCheck,
+  CircleX,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  ExternalLink,
+  FileStack,
+  Link,
+  Trash2,
+} from "lucide-react";
 import { Button, ControlLink, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
-  AcceptIssueModal,
   DeclineIssueModal,
   DeleteInboxIssueModal,
+  InboxIssueCreateEditModalRoot,
   InboxIssueSnoozeModal,
   InboxIssueStatus,
   SelectDuplicateInboxIssueModal,
@@ -39,7 +49,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const [declineIssueModal, setDeclineIssueModal] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // store
-  const { deleteInboxIssue, inboxIssuesArray } = useProjectInbox();
+  const { currentTab, deleteInboxIssue, inboxIssuesArray } = useProjectInbox();
   const {
     currentUser,
     membership: { currentProjectRole },
@@ -60,23 +70,48 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
 
+  const redirectIssue = (): string | undefined => {
+    let nextOrPreviousIssueId: string | undefined = undefined;
+    const currentIssueIndex = inboxIssuesArray.findIndex((i) => i.issue.id === currentInboxIssueId);
+    if (inboxIssuesArray[currentIssueIndex + 1])
+      nextOrPreviousIssueId = inboxIssuesArray[currentIssueIndex + 1].issue.id;
+    else if (inboxIssuesArray[currentIssueIndex - 1])
+      nextOrPreviousIssueId = inboxIssuesArray[currentIssueIndex - 1].issue.id;
+    else nextOrPreviousIssueId = undefined;
+    return nextOrPreviousIssueId;
+  };
+
+  const handleRedirection = (nextOrPreviousIssueId: string | undefined) => {
+    if (nextOrPreviousIssueId)
+      router.push(
+        `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${nextOrPreviousIssueId}`
+      );
+    else router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}`);
+  };
+
   const handleInboxIssueAccept = async () => {
+    const nextOrPreviousIssueId = redirectIssue();
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.ACCEPTED);
     setAcceptIssueModal(false);
+    handleRedirection(nextOrPreviousIssueId);
   };
 
   const handleInboxIssueDecline = async () => {
+    const nextOrPreviousIssueId = redirectIssue();
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.DECLINED);
     setDeclineIssueModal(false);
+    handleRedirection(nextOrPreviousIssueId);
+  };
+
+  const handleInboxSIssueSnooze = async (date: Date) => {
+    const nextOrPreviousIssueId = redirectIssue();
+    await inboxIssue?.updateInboxIssueSnoozeTill(date);
+    setIsSnoozeDateModalOpen(false);
+    handleRedirection(nextOrPreviousIssueId);
   };
 
   const handleInboxIssueDuplicate = async (issueId: string) => {
     await inboxIssue?.updateInboxIssueDuplicateTo(issueId);
-  };
-
-  const handleInboxSIssueSnooze = async (date: Date) => {
-    await inboxIssue?.updateInboxIssueSnoozeTill(date);
-    setIsSnoozeDateModalOpen(false);
   };
 
   const handleInboxIssueDelete = async () => {
@@ -143,10 +178,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           onSubmit={handleInboxIssueDuplicate}
         />
 
-        <AcceptIssueModal
-          data={inboxIssue?.issue}
-          isOpen={acceptIssueModal}
-          onClose={() => setAcceptIssueModal(false)}
+        <InboxIssueCreateEditModalRoot
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          modalState={acceptIssueModal}
+          handleModalClose={() => setAcceptIssueModal(false)}
+          issue={inboxIssue?.issue}
           onSubmit={handleInboxIssueAccept}
         />
 
@@ -156,14 +193,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           onClose={() => setDeclineIssueModal(false)}
           onSubmit={handleInboxIssueDecline}
         />
-
         <DeleteInboxIssueModal
           data={inboxIssue?.issue}
           isOpen={deleteIssueModal}
           onClose={() => setDeleteIssueModal(false)}
           onSubmit={handleInboxIssueDelete}
         />
-
         <InboxIssueSnoozeModal
           isOpen={isSnoozeDateModalOpen}
           handleClose={() => setIsSnoozeDateModalOpen(false)}
@@ -206,7 +241,13 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           <div className="flex flex-wrap items-center gap-2">
             {canMarkAsAccepted && (
               <div className="flex-shrink-0">
-                <Button variant="neutral-primary" size="sm" onClick={() => setAcceptIssueModal(true)}>
+                <Button
+                  variant="neutral-primary"
+                  size="sm"
+                  prependIcon={<CircleCheck className="w-3 h-3" />}
+                  className="text-green-500 border-0.5 border-green-500 bg-green-500/20 focus:bg-green-500/20 focus:text-green-500 hover:bg-green-500/40 bg-opacity-20"
+                  onClick={() => setAcceptIssueModal(true)}
+                >
                   Accept
                 </Button>
               </div>
@@ -214,7 +255,13 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
             {canMarkAsDeclined && (
               <div className="flex-shrink-0">
-                <Button variant="neutral-primary" size="sm" onClick={() => setDeclineIssueModal(true)}>
+                <Button
+                  variant="neutral-primary"
+                  size="sm"
+                  prependIcon={<CircleX className="w-3 h-3" />}
+                  className="text-red-500 border-0.5 border-red-500 bg-red-500/20 focus:bg-red-500/20 focus:text-red-500 hover:bg-red-500/40 bg-opacity-20"
+                  onClick={() => setDeclineIssueModal(true)}
+                >
                   Decline
                 </Button>
               </div>
