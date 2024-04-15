@@ -31,6 +31,7 @@ interface IDocumentEditor {
     suggestions: () => Promise<IMentionSuggestion[]>;
   };
   tabIndex?: number;
+  placeholder?: string | ((isFocused: boolean) => string);
 }
 
 const DocumentEditor = (props: IDocumentEditor) => {
@@ -45,6 +46,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     handleEditorReady,
     forwardedRef,
     tabIndex,
+    placeholder,
   } = props;
   // states
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
@@ -69,7 +71,11 @@ const DocumentEditor = (props: IDocumentEditor) => {
     handleEditorReady,
     forwardedRef,
     mentionHandler,
-    extensions: DocumentEditorExtensions(fileHandler.upload, setHideDragHandleFunction),
+    extensions: DocumentEditorExtensions({
+      uploadFile: fileHandler.upload,
+      setHideDragHandle: setHideDragHandleFunction,
+    }),
+    placeholder,
   });
 
   const editorContainerClassNames = getEditorClassNames({
