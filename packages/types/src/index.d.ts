@@ -27,3 +27,4 @@ export * from "./api_token";
 export * from "./instance";
 export * from "./app";
 export * from "./common";
+export * from "./pragmatic";
