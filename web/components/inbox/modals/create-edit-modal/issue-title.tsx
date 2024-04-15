@@ -21,6 +21,8 @@ export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
         onChange={(e) => handleData("name", e.target.value)}
         placeholder="Title"
         className="w-full resize-none text-xl"
+        maxLength={255}
+        required
       />
     </div>
   );

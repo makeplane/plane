@@ -429,9 +429,13 @@ class InboxIssueViewSet(BaseViewSet):
                         if state is not None:
                             issue.state = state
                             issue.save()
-
                 inbox_issue = (
-                    InboxIssue.objects.select_related("issue")
+                    InboxIssue.objects.filter(
+                        inbox_id=inbox_id.id,
+                        issue_id=serializer.data["id"],
+                        project_id=project_id,
+                    )
+                    .select_related("issue")
                     .prefetch_related(
                         "issue__labels",
                         "issue__assignees",
@@ -459,12 +463,7 @@ class InboxIssueViewSet(BaseViewSet):
                                 output_field=ArrayField(UUIDField()),
                             ),
                         ),
-                    )
-                    .get(
-                        inbox_id=inbox_id.id,
-                        issue_id=serializer.data["id"],
-                        project_id=project_id,
-                    )
+                    ).first()
                 )
                 serializer = InboxIssueDetailSerializer(inbox_issue).data
                 return Response(serializer, status=status.HTTP_200_OK)
