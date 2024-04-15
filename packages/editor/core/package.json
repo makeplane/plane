@@ -36,6 +36,7 @@
     "@tiptap/extension-image": "^2.1.13",
     "@tiptap/extension-list-item": "^2.1.13",
     "@tiptap/extension-mention": "^2.1.13",
+    "@tiptap/extension-placeholder": "^2.3.0",
     "@tiptap/extension-task-item": "^2.1.13",
     "@tiptap/extension-task-list": "^2.1.13",
     "@tiptap/extension-text-style": "^2.1.13",

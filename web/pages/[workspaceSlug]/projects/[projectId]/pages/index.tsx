@@ -36,7 +36,11 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
       projectId={projectId.toString()}
       pageType={currentPageType()}
     >
-      <PagesListRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+      <PagesListRoot
+        pageType={currentPageType()}
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={projectId.toString()}
+      />
     </PagesListView>
   );
 });

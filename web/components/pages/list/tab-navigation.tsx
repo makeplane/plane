@@ -42,21 +42,18 @@ export const PageTabNavigation: FC<TPageTabNavigation> = (props) => {
           href={`/${workspaceSlug}/projects/${projectId}/pages?type=${tab.key}`}
           onClick={(e) => handleTabClick(e, tab.key)}
         >
-          <div>
-            <div
-              className={cn(`p-3 py-4 text-sm font-medium transition-all`, {
-                "text-custom-primary-100": tab.key === pageType,
-              })}
-            >
-              {tab.label}
-            </div>
-            <div
-              className={cn(`rounded-t border-t-2 transition-all`, {
-                "border-custom-primary-100": tab.key === pageType,
-                "border-transparent": tab.key !== pageType,
-              })}
-            />
-          </div>
+          <span
+            className={cn(`block p-3 py-4 text-sm font-medium transition-all`, {
+              "text-custom-primary-100": tab.key === pageType,
+            })}
+          >
+            {tab.label}
+          </span>
+          <div
+            className={cn(`rounded-t border-t-2 transition-all border-transparent`, {
+              "border-custom-primary-100": tab.key === pageType,
+            })}
+          />
         </Link>
       ))}
     </div>

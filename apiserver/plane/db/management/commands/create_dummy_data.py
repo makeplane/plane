@@ -35,17 +35,6 @@ class Command(BaseCommand):
 
             members = input("Enter Member emails (comma separated): ")
             members = members.split(",") if members != "" else []
-
-            issue_count = int(
-                input("Number of issues to be created: ")
-            )
-            cycle_count = int(
-                input("Number of cycles to be created: ")
-            )
-            module_count = int(
-                input("Number of modules to be created: ")
-            )
-
             # Create workspace
             workspace = Workspace.objects.create(
                 slug=workspace_slug,
@@ -56,17 +45,44 @@ class Command(BaseCommand):
             WorkspaceMember.objects.create(
                 workspace=workspace, role=20, member=user
             )
+            user_ids = User.objects.filter(email__in=members)
 
-            from plane.bgtasks.dummy_data_task import create_dummy_data
-
-            create_dummy_data.delay(
-                slug=workspace_slug,
-                email=creator,
-                members=members,
-                issue_count=issue_count,
-                cycle_count=cycle_count,
-                module_count=module_count,
+            _ = WorkspaceMember.objects.bulk_create(
+                [
+                    WorkspaceMember(
+                        workspace=workspace,
+                        member=user_id,
+                        role=20,
+                    )
+                    for user_id in user_ids
+                ],
+                ignore_conflicts=True,
             )
+
+            project_count = int(input("Number of projects to be created: "))
+
+            for i in range(project_count):
+                print(f"Please provide the following details for project {i+1}:")
+                issue_count = int(input("Number of issues to be created: "))
+                cycle_count = int(input("Number of cycles to be created: "))
+                module_count = int(input("Number of modules to be created: "))
+                pages_count = int(input("Number of pages to be created: "))
+                inbox_issue_count = int(
+                    input("Number of inbox issues to be created: ")
+                )
+
+                from plane.bgtasks.dummy_data_task import create_dummy_data
+
+                create_dummy_data.delay(
+                    slug=workspace_slug,
+                    email=creator,
+                    members=members,
+                    issue_count=issue_count,
+                    cycle_count=cycle_count,
+                    module_count=module_count,
+                    pages_count=pages_count,
+                    inbox_issue_count=inbox_issue_count,
+                )
 
             self.stdout.write(
                 self.style.SUCCESS("Data is pushed to the queue")

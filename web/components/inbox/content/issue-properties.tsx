@@ -21,7 +21,7 @@ type Props = {
   duplicateIssueDetails: TInboxDuplicateIssueDetails | undefined;
 };
 
-export const InboxIssueProperties: React.FC<Props> = observer((props) => {
+export const InboxIssueContentProperties: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails } = props;
 
   const router = useRouter();

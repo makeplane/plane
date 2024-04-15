@@ -1,29 +1,131 @@
-import { DraggableLocation } from "@hello-pangea/dnd";
-import { TGroupedIssues, IIssueMap, TSubGroupedIssues, TUnGroupedIssues, TIssue } from "@plane/types";
+import pull from "lodash/pull";
+import { IPragmaticDropPayload, TIssue, TIssueGroupByOptions } from "@plane/types";
+import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/issue-helper.store";
 
-const handleSortOrder = (destinationIssues: string[], destinationIndex: number, issueMap: IIssueMap) => {
+export type KanbanDropLocation = {
+  columnId: string;
+  groupId: string;
+  subGroupId?: string;
+  id: string | undefined;
+};
+
+/**
+ * get Kanban Source data from Pragmatic Payload
+ * @param payload
+ * @returns
+ */
+export const getSourceFromDropPayload = (payload: IPragmaticDropPayload): KanbanDropLocation | undefined => {
+  const { location, source: sourceIssue } = payload;
+
+  const sourceIssueData = sourceIssue.data;
+  let sourceColumData;
+
+  const sourceDropTargets = location?.initial?.dropTargets ?? [];
+  for (const dropTarget of sourceDropTargets) {
+    const dropTargetData = dropTarget?.data;
+
+    if (!dropTargetData) continue;
+
+    if (dropTargetData.type === "COLUMN") {
+      sourceColumData = dropTargetData;
+    }
+  }
+
+  if (sourceIssueData?.id === undefined || !sourceColumData?.groupId) return;
+
+  return {
+    groupId: sourceColumData.groupId as string,
+    subGroupId: sourceColumData.subGroupId as string,
+    columnId: sourceColumData.columnId as string,
+    id: sourceIssueData.id as string,
+  };
+};
+
+/**
+ * get Destination Source data from Pragmatic Payload
+ * @param payload
+ * @returns
+ */
+export const getDestinationFromDropPayload = (payload: IPragmaticDropPayload): KanbanDropLocation | undefined => {
+  const { location } = payload;
+
+  let destinationIssueData, destinationColumnData;
+
+  const destDropTargets = location?.current?.dropTargets ?? [];
+
+  for (const dropTarget of destDropTargets) {
+    const dropTargetData = dropTarget?.data;
+
+    if (!dropTargetData) continue;
+
+    if (dropTargetData.type === "COLUMN" || dropTargetData.type === "DELETE") {
+      destinationColumnData = dropTargetData;
+    }
+
+    if (dropTargetData.type === "ISSUE") {
+      destinationIssueData = dropTargetData;
+    }
+  }
+
+  if (!destinationColumnData?.groupId) return;
+
+  return {
+    groupId: destinationColumnData.groupId as string,
+    subGroupId: destinationColumnData.subGroupId as string,
+    columnId: destinationColumnData.columnId as string,
+    id: destinationIssueData?.id as string | undefined,
+  };
+};
+
+/**
+ * Returns Sort order of the issue block at the position of drop
+ * @param destinationIssues
+ * @param destinationIssueId
+ * @param getIssueById
+ * @returns
+ */
+const handleSortOrder = (
+  destinationIssues: string[],
+  destinationIssueId: string | undefined,
+  getIssueById: (issueId: string) => TIssue | undefined
+) => {
   const sortOrderDefaultValue = 65535;
   let currentIssueState = {};
 
+  const destinationIndex = destinationIssueId
+    ? destinationIssues.indexOf(destinationIssueId)
+    : destinationIssues.length;
+
   if (destinationIssues && destinationIssues.length > 0) {
     if (destinationIndex === 0) {
-      const destinationIssueId = destinationIssues[destinationIndex];
+      const destinationIssueId = destinationIssues[0];
+      const destinationIssue = getIssueById(destinationIssueId);
+      if (!destinationIssue) return currentIssueState;
+
       currentIssueState = {
         ...currentIssueState,
-        sort_order: issueMap[destinationIssueId].sort_order - sortOrderDefaultValue,
+        sort_order: destinationIssue.sort_order - sortOrderDefaultValue,
       };
     } else if (destinationIndex === destinationIssues.length) {
-      const destinationIssueId = destinationIssues[destinationIndex - 1];
+      const destinationIssueId = destinationIssues[destinationIssues.length - 1];
+      const destinationIssue = getIssueById(destinationIssueId);
+      if (!destinationIssue) return currentIssueState;
+
       currentIssueState = {
         ...currentIssueState,
-        sort_order: issueMap[destinationIssueId].sort_order + sortOrderDefaultValue,
+        sort_order: destinationIssue.sort_order + sortOrderDefaultValue,
       };
     } else {
       const destinationTopIssueId = destinationIssues[destinationIndex - 1];
       const destinationBottomIssueId = destinationIssues[destinationIndex];
+
+      const destinationTopIssue = getIssueById(destinationTopIssueId);
+      const destinationBottomIssue = getIssueById(destinationBottomIssueId);
+      if (!destinationTopIssue || !destinationBottomIssue) return currentIssueState;
+
       currentIssueState = {
         ...currentIssueState,
-        sort_order: (issueMap[destinationTopIssueId].sort_order + issueMap[destinationBottomIssueId].sort_order) / 2,
+        sort_order: (destinationTopIssue.sort_order + destinationBottomIssue.sort_order) / 2,
       };
     }
   } else {
@@ -37,116 +139,71 @@ const handleSortOrder = (destinationIssues: string[], destinationIndex: number, 
 };
 
 export const handleDragDrop = async (
-  source: DraggableLocation | null | undefined,
-  destination: DraggableLocation | null | undefined,
-  workspaceSlug: string | undefined,
-  projectId: string | undefined, // projectId for all views or user id in profile issues
-  subGroupBy: string | null,
-  groupBy: string | null,
-  issueMap: IIssueMap,
-  issueWithIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined,
+  source: KanbanDropLocation,
+  destination: KanbanDropLocation,
+  getIssueById: (issueId: string) => TIssue | undefined,
+  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined,
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined,
-  removeIssue: (projectId: string, issueId: string) => Promise<void> | undefined
+  groupBy: TIssueGroupByOptions | undefined,
+  subGroupBy: TIssueGroupByOptions | undefined
 ) => {
-  if (!issueMap || !issueWithIds || !source || !destination || !workspaceSlug || !projectId) return;
+  if (!source.id || !groupBy || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
 
-  let updatedIssue: any = {};
+  let updatedIssue: Partial<TIssue> = {};
+  const sourceIssues = getIssueIds(source.groupId, source.subGroupId);
+  const destinationIssues = getIssueIds(destination.groupId, destination.subGroupId);
 
-  const sourceDroppableId = source?.droppableId;
-  const destinationDroppableId = destination?.droppableId;
+  const sourceIssue = getIssueById(source.id);
 
-  const sourceColumnId = (sourceDroppableId && sourceDroppableId.split("__")) || null;
-  const destinationColumnId = (destinationDroppableId && destinationDroppableId.split("__")) || null;
+  if (!sourceIssues || !destinationIssues || !sourceIssue) return;
 
-  if (!sourceColumnId || !destinationColumnId || !sourceDroppableId || !destinationDroppableId) return;
+  updatedIssue = {
+    id: sourceIssue.id,
+    project_id: sourceIssue.project_id,
+  };
 
-  const sourceGroupByColumnId = sourceColumnId[0] || null;
-  const destinationGroupByColumnId = destinationColumnId[0] || null;
+  // for both horizontal and vertical dnd
+  updatedIssue = {
+    ...updatedIssue,
+    ...handleSortOrder(destinationIssues, destination.id, getIssueById),
+  };
 
-  const sourceSubGroupByColumnId = sourceColumnId[1] || null;
-  const destinationSubGroupByColumnId = destinationColumnId[1] || null;
+  if (source.groupId && destination.groupId && source.groupId !== destination.groupId) {
+    const groupKey = ISSUE_FILTER_DEFAULT_DATA[groupBy];
+    let groupValue = sourceIssue[groupKey];
 
-  if (
-    !workspaceSlug ||
-    !projectId ||
-    !groupBy ||
-    !sourceGroupByColumnId ||
-    !destinationGroupByColumnId ||
-    !sourceSubGroupByColumnId ||
-    !destinationSubGroupByColumnId
-  )
-    return;
-
-  if (destinationGroupByColumnId === "issue-trash-box") {
-    const sourceIssues: string[] = subGroupBy
-      ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
-      : (issueWithIds as TGroupedIssues)[sourceGroupByColumnId];
-
-    const [removed] = sourceIssues.splice(source.index, 1);
-
-    if (removed) {
-      return await removeIssue(projectId, removed);
-    }
-  } else {
-    //spreading the array to stop changing the original reference
-    //since we are removing an id from array further down
-    const sourceIssues = [
-      ...(subGroupBy
-        ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
-        : (issueWithIds as TGroupedIssues)[sourceGroupByColumnId]),
-    ];
-    const destinationIssues = subGroupBy
-      ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][destinationGroupByColumnId]
-      : (issueWithIds as TGroupedIssues)[destinationGroupByColumnId];
-
-    const [removed] = sourceIssues.splice(source.index, 1);
-    const removedIssueDetail = issueMap[removed];
-
-    updatedIssue = {
-      id: removedIssueDetail?.id,
-      project_id: removedIssueDetail?.project_id,
-    };
-
-    // for both horizontal and vertical dnd
-    updatedIssue = {
-      ...updatedIssue,
-      ...handleSortOrder(
-        sourceDroppableId === destinationDroppableId ? sourceIssues : destinationIssues,
-        destination.index,
-        issueMap
-      ),
-    };
-
-    if (subGroupBy && sourceSubGroupByColumnId && destinationSubGroupByColumnId) {
-      if (sourceSubGroupByColumnId === destinationSubGroupByColumnId) {
-        if (sourceGroupByColumnId != destinationGroupByColumnId) {
-          if (groupBy === "state") updatedIssue = { ...updatedIssue, state_id: destinationGroupByColumnId };
-          if (groupBy === "priority") updatedIssue = { ...updatedIssue, priority: destinationGroupByColumnId };
-        }
-      } else {
-        if (subGroupBy === "state")
-          updatedIssue = {
-            ...updatedIssue,
-            state_id: destinationSubGroupByColumnId,
-            priority: destinationGroupByColumnId,
-          };
-        if (subGroupBy === "priority")
-          updatedIssue = {
-            ...updatedIssue,
-            state_id: destinationGroupByColumnId,
-            priority: destinationSubGroupByColumnId,
-          };
-      }
+    if (Array.isArray(groupValue)) {
+      pull(groupValue, source.groupId);
+      groupValue.push(destination.groupId);
     } else {
-      // for horizontal dnd
-      if (sourceColumnId != destinationColumnId) {
-        if (groupBy === "state") updatedIssue = { ...updatedIssue, state_id: destinationGroupByColumnId };
-        if (groupBy === "priority") updatedIssue = { ...updatedIssue, priority: destinationGroupByColumnId };
-      }
+      groupValue = destination.groupId;
     }
 
-    if (updatedIssue && updatedIssue?.id) {
-      return updateIssue && (await updateIssue(updatedIssue.project_id, updatedIssue.id, updatedIssue));
+    updatedIssue = { ...updatedIssue, [groupKey]: groupValue };
+  }
+
+  if (subGroupBy && source.subGroupId && destination.subGroupId && source.subGroupId !== destination.subGroupId) {
+    const subGroupKey = ISSUE_FILTER_DEFAULT_DATA[subGroupBy];
+    let subGroupValue = sourceIssue[subGroupKey];
+
+    if (Array.isArray(subGroupValue)) {
+      pull(subGroupValue, source.subGroupId);
+      subGroupValue.push(destination.subGroupId);
+    } else {
+      subGroupValue = destination.subGroupId;
     }
+
+    updatedIssue = { ...updatedIssue, [subGroupKey]: subGroupValue };
+  }
+
+  if (updatedIssue) {
+    return (
+      updateIssue &&
+      (await updateIssue(sourceIssue.project_id, sourceIssue.id, {
+        ...updatedIssue,
+        id: sourceIssue.id,
+        project_id: sourceIssue.project_id,
+      }))
+    );
   }
 };
