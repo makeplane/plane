@@ -49,6 +49,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     handleEditorReady,
     forwardedRef,
     tabIndex,
+    embedConfig,
   } = props;
   // states
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});

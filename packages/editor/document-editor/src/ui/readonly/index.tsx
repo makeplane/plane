@@ -2,7 +2,8 @@ import { forwardRef, MutableRefObject } from "react";
 import { EditorReadOnlyRefApi, getEditorClassNames, IMentionHighlight, useReadOnlyEditor } from "@plane/editor-core";
 // components
 import { PageRenderer } from "src/ui/components/page-renderer";
-import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
+import { IssueWidgetExtension } from "../extensions/widgets/issue-embed-widget";
+import { IEmbedConfig } from "../extensions/widgets/issue-embed-widget/types";
 
 interface IDocumentReadOnlyEditor {
   initialValue: string;

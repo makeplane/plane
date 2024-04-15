@@ -25,13 +25,11 @@ export const IssueWidgetCard = (props) => {
   };
 
   return (
-    <NodeViewWrapper className="issue-embed-component m-2">
+    <NodeViewWrapper className="issue-embed-component my-2">
       {loading == 0 ? (
         <div
           onClick={completeIssueEmbedAction}
-          className={`${
-            props.selected ? "border-custom-primary-200 border-[2px]" : ""
-          } w-full cursor-pointer space-y-2 rounded-md border-[0.5px] border-custom-border-200 p-3 shadow-custom-shadow-2xs`}
+          className="w-full cursor-pointer space-y-2 rounded-md border-[0.5px] border-custom-border-200 p-3 shadow-custom-shadow-2xs"
         >
           <h5 className="text-xs text-custom-text-300">
             {issueDetails?.project_detail?.identifier}-{issueDetails?.sequence_id}

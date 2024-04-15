@@ -12,12 +12,15 @@ import {
 } from "@plane/document-editor";
 // types
 import { IUserLite, TPage } from "@plane/types";
+// ui
+import { Spinner } from "@plane/ui";
 // components
 import { PageContentBrowser, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { useIssueEmbeds } from "@/hooks/use-issue-embeds";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
@@ -79,12 +82,21 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+  // issue-embed
+  const { issues, fetchIssue, issueWidgetClickAction, issuesLoading } = useIssueEmbeds();
 
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
     updateMarkings(description_html ?? "<p></p>");
   }, [description_html, updateMarkings]);
+
+  if (!issues && issuesLoading)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -145,6 +157,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                     highlights: mentionHighlights,
                     suggestions: mentionSuggestions,
                   }}
+                  embedConfig={{
+                    issueEmbedConfig: {
+                      issues,
+                      fetchIssue,
+                      clickAction: issueWidgetClickAction,
+                    },
+                  }}
                 />
               )}
             />
@@ -157,6 +176,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               editorClassName="px-10"
               mentionHandler={{
                 highlights: mentionHighlights,
+              }}
+              embedConfig={{
+                issueEmbedConfig: {
+                  issues,
+                  fetchIssue,
+                  clickAction: issueWidgetClickAction,
+                },
               }}
             />
           )}
