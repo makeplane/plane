@@ -11,7 +11,6 @@ import {
 } from "@plane/editor-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 import { PageRenderer } from "src/ui/components/page-renderer";
-
 import { IEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
 
 interface IDocumentEditor {
