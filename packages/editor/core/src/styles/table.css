@@ -31,17 +31,6 @@
   }
 }
 
-.table-wrapper table td > *,
-.table-wrapper table th > * {
-  margin: 0 !important;
-  padding: 0.25rem 0 !important;
-}
-
-.table-wrapper table td.has-focus,
-.table-wrapper table th.has-focus {
-  box-shadow: rgba(var(--color-primary-300), 0.1) 0px 0px 0px 2px inset !important;
-}
-
 .table-wrapper table th {
   font-weight: 500;
   text-align: left;
@@ -49,7 +38,7 @@
 }
 
 .table-wrapper table .selectedCell {
-  border-color: rgba(var(--color-primary-100));
+  outline: 0.5px solid rgba(var(--color-primary-100));
 }
 
 /* table dropdown */

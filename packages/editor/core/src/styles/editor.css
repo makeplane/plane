@@ -49,15 +49,12 @@
   }
 }
 
-/* Custom list item styles */
-
 /* Custom gap cursor styles  */
 .ProseMirror-gapcursor::after {
   border-top: 1px solid rgb(var(--color-text-100)) !important;
 }
 
-/* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
-
+/* to-do list */
 ul[data-type="taskList"] li {
   font-size: 1rem;
   line-height: 1.5;
@@ -143,6 +140,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   text-decoration: line-through;
   text-decoration-thickness: 2px;
 }
+/* end to-do list */
 
 /* Overwrite tippy-box original max-width */
 
@@ -238,7 +236,7 @@ div[data-type="horizontalRule"] {
   margin-bottom: 0;
 
   & > div {
-    border-bottom: 1px solid rgb(var(--color-text-100));
+    border-bottom: 1px solid rgb(var(--color-border-200));
   }
 }
 
@@ -277,7 +275,7 @@ span:focus .fake-cursor {
   z-index: 1;
 }
 
-/* number, bulleted and to-do lists */
+/* numbered, bulleted and to-do lists spacing */
 .prose ol:where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)),
 .prose
   ul:not([data-type="taskList"]):where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)),
@@ -306,7 +304,7 @@ ul:not([data-type="taskList"]) ol {
 ul[data-type="taskList"] ul[data-type="taskList"] {
   margin-top: 0.6rem;
 }
-/* end number, bulleted and to-do lists */
+/* end numbered, bulleted and to-do lists spacing */
 
 /* tailwind typography */
 .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
