@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.app.views import BaseViewSet, BaseAPIView
+from plane.app.views import BaseViewSet
 from plane.db.models import (
     SlackProjectSync,
     WorkspaceIntegration,
@@ -16,7 +16,6 @@ from plane.db.models import (
 from plane.app.serializers import SlackProjectSyncSerializer
 from plane.app.permissions import (
     ProjectBasePermission,
-    ProjectEntityPermission,
 )
 from plane.utils.integrations.slack import slack_oauth
 

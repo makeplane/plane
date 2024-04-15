@@ -331,7 +331,7 @@ def create_issues(workspace, project, user_id, issue_count):
                 actor_id=user_id,
                 project=project,
                 workspace=workspace,
-                comment=f"created the issue",
+                comment="created the issue",
                 verb="created",
                 created_by_id=user_id,
             )
@@ -513,21 +513,17 @@ def create_fake_data(
 
     # Create states
     print("Creating states")
-    states = create_states(
-        workspace=workspace, project=project, user_id=user_id
-    )
+    _ = create_states(workspace=workspace, project=project, user_id=user_id)
     print("Done creating states")
 
     # Create labels
     print("Creating labels")
-    labels = create_labels(
-        workspace=workspace, project=project, user_id=user_id
-    )
+    _ = create_labels(workspace=workspace, project=project, user_id=user_id)
     print("Done creating labels")
 
     # create cycles
     print("Creating cycles")
-    cycles = create_cycles(
+    _ = create_cycles(
         workspace=workspace,
         project=project,
         user_id=user_id,
@@ -537,7 +533,7 @@ def create_fake_data(
 
     # create modules
     print("Creating modules")
-    modules = create_modules(
+    _ = create_modules(
         workspace=workspace,
         project=project,
         user_id=user_id,

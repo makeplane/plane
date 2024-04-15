@@ -30,7 +30,6 @@ from rest_framework.response import Response
 # Module imports
 
 from plane.app.permissions import (
-    WorkspaceUserPermission,
     ProjectEntityPermission,
     ProjectLitePermission,
 )
@@ -39,7 +38,6 @@ from plane.app.serializers import (
     CycleSerializer,
     CycleUserPropertiesSerializer,
     CycleWriteSerializer,
-    ActiveCycleSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
