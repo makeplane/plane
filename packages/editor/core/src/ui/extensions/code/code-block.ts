@@ -1,7 +1,7 @@
 import { mergeAttributes, Node, textblockTypeInputRule } from "@tiptap/core";
 import { Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
-import { DOMParser } from "@tiptap/pm/model";
-import { EditorView } from "@tiptap/pm/view";
+// import { DOMParser } from "@tiptap/pm/model";
+// import { EditorView } from "@tiptap/pm/view";
 
 export interface CodeBlockOptions {
   /**
@@ -230,131 +230,43 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
       }),
     ];
   },
-  // addProseMirrorPlugins() {
-  //   return [
-  //     new Plugin({
-  //       key: new PluginKey("codeBlockVSCodeHandler"),
-  //       props: {
-  //         handlePaste: (view, event) => {
-  //           if (!event.clipboardData) {
-  //             return false;
-  //           }
-  //
-  //           // Don’t create a new code block within code blocks
-  //           if (this.editor.isActive(this.type.name) || this.editor.isActive("code")) {
-  //             return false;
-  //           }
-  //
-  //           const text = event.clipboardData.getData("text/plain");
-  //           const vscode = event.clipboardData.getData("vscode-editor-data");
-  //           const vscodeData = vscode ? JSON.parse(vscode) : undefined;
-  //           const language = vscodeData?.mode;
-  //
-  //           if (!text || !language) {
-  //             console.log("hittttttttttttt");
-  //             return false;
-  //           }
-  //
-  //           const { tr } = view.state;
-  //           const { from, to } = tr.selection;
-  //
-  //           // Replace the selection with a new code block
-  //           const codeBlock = this.type.create({ language });
-  //           tr.replaceRangeWith(from, to, codeBlock);
-  //
-  //           // Calculate the position for inserting the text
-  //           // It should be right inside the newly created code block
-  //           const insertPos = from; // Adjusted to insert text inside the code block
-  //
-  //           // Insert the text into the code block
-  //           tr.insertText(text.replace(/\r\n?/g, "\n"), insertPos);
-  //
-  //           // Set the selection to the end of the inserted text
-  //           const endPos = insertPos + text.length;
-  //           tr.setSelection(TextSelection.create(tr.doc, endPos));
-  //
-  //           // Apply the transaction
-  //           view.dispatch(tr);
-  //
-  //           return true;
-  //         },
-  //       },
-  //     }),
-  //   ];
-  // },
-  // addProseMirrorPlugins() {
-  //   return [
-  //     new Plugin({
-  //       key: new PluginKey("codeBlockVSCodeHandler"),
-  //       props: {
-  //         handlePaste: (view, event) => {
-  //           if (!event.clipboardData) {
-  //             return false;
-  //           }
-  //
-  //           const text = event.clipboardData.getData("text/plain");
-  //           const vscode = event.clipboardData.getData("vscode-editor-data");
-  //           const vscodeData = vscode ? JSON.parse(vscode) : undefined;
-  //           const language = vscodeData?.mode;
-  //
-  //           // Check if the paste is from VS Code with specific metadata
-  //           if (vscodeData && language) {
-  //             // Handle paste from VS Code
-  //             const { tr } = view.state;
-  //             const { from, to } = tr.selection;
-  //
-  //             // Replace the selection with a new code block
-  //             const codeBlock = this.type.create({ language });
-  //             tr.replaceRangeWith(from, to, codeBlock);
-  //
-  //             // Insert the text into the code block
-  //             tr.insertText(text.replace(/\r\n?/g, "\n"), from);
-  //
-  //             // Set the selection to the end of the inserted text
-  //             const endPos = from + text.length;
-  //             tr.setSelection(TextSelection.create(tr.doc, endPos));
-  //
-  //             // Apply the transaction
-  //             view.dispatch(tr);
-  //             return true;
-  //           } else {
-  //             // Handle paste from other sources
-  //             // Prevent default paste handling to insert text with preserved formatting
-  //             // event.preventDefault();
-  //
-  //             // Insert text directly, preserving formatting
-  //             const { tr } = view.state;
-  //             const insertPos = tr.selection.from;
-  //             tr.insertText(text.replace(/\r\n?/g, "\n"), insertPos);
-  //             view.dispatch(tr);
-  //             return true;
-  //           }
-  //         },
-  //       },
-  //     }),
-  //   ];
-  // },
   addProseMirrorPlugins() {
     return [
       new Plugin({
         key: new PluginKey("codeBlockVSCodeHandler"),
         props: {
           handlePaste: (view, event) => {
-            console.log("ye chala");
             if (!event.clipboardData) {
               return false;
             }
 
-            if (this.editor.isActive(this.type.name) || this.editor.isActive("code")) {
+            if (this.editor.isActive(this.type.name)) {
               return false;
             }
+
+            if (this.editor.isActive("code")) {
+              // Check if it's an inline code block
+              event.preventDefault();
+              const text = event.clipboardData.getData("text/plain");
+
+              const { tr } = view.state;
+              const { $from, $to } = tr.selection;
+
+              // Extend the current selection to replace it with the pasted text
+              // wrapped in an inline code mark
+              const codeMark = view.state.schema.marks.code.create();
+              tr.replaceWith($from.pos, $to.pos, view.state.schema.text(text, [codeMark]));
+              view.dispatch(tr);
+              return true;
+            }
+
+            event.preventDefault();
             const text = event.clipboardData.getData("text/plain");
             const vscode = event.clipboardData.getData("vscode-editor-data");
             const vscodeData = vscode ? JSON.parse(vscode) : undefined;
             const language = vscodeData?.mode;
 
             if (vscodeData && language) {
-              console.log("Handling paste from VS Code");
               const { tr } = view.state;
               const { $from } = tr.selection;
 
@@ -365,62 +277,56 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
 
               if (isCurrentLineEmpty) {
                 // If the current line is empty, use the current position
-                insertPos = $from.pos;
+                insertPos = $from.pos - 1;
               } else {
                 // If the current line is not empty, insert below the current block node
-                // Find the end of the block node and add 1 to move to the next line
                 insertPos = $from.end($from.depth) + 1;
               }
 
               // Create a new code block node with the pasted content
-              const codeBlock = this.type.create({ language });
               const textNode = view.state.schema.text(text.replace(/\r\n?/g, "\n"));
+              const codeBlock = this.type.create({ language }, textNode);
+              console.log(insertPos, tr.doc.content.size);
+              if (insertPos <= tr.doc.content.size) {
+                tr.insert(insertPos, codeBlock);
+                view.dispatch(tr);
+                return true;
+              }
 
-              // Begin a transaction to insert the new content
-              tr.insert(insertPos, codeBlock); // Insert the code block at the calculated position
-              tr.insert(insertPos + 1, textNode); // Insert the text inside the code block
-
-              // Optionally, set the selection to the end of the inserted text
-              const endPos = insertPos + textNode.nodeSize;
-              tr.setSelection(TextSelection.create(tr.doc, endPos));
-
-              // Dispatch the transaction
-              view.dispatch(tr);
-              return true;
+              return false;
             } else {
-              if (!isCurrentLineEmpty(view)) {
-                console.log("yw");
-                return false;
-              }
-
-              // event.preventDefault();
+              // // complicated paste logic, to be handled later
+              // const containsNewline = text.includes("\n");
+              // const isCurrentLineEmptyNode = isCurrentLineEmpty(view);
+              // if (!containsNewline) {
+              //   console.log("run contians n");
+              //   return false;
+              // }
               //
-              // // Split the text by line breaks and wrap each line in a <p> tag
-              // const lines = text.split(/\r?\n/);
-              // const html = lines.map((line) => `<p>${line}</p>`).join("");
+              // // Wrap the text in a div
+              // const html = `<div>${text.replace(/\r?\n/g, "<br>")}</div>`;
+              // let insertPos = view.state.selection.from;
               //
-              // // Use the insertContent command to insert the HTML
-              // this.editor.commands.insertContent(html);
+              // // Parse the HTML string to a ProseMirror document fragment
+              // const div = document.createElement("div");
+              // div.innerHTML = html;
+              // const domNode = div.firstChild;
+              // if (!domNode) {
+              //   return false;
+              // }
+              // const fragment = DOMParser.fromSchema(view.state.schema).parse(domNode);
+              //
+              // if (isCurrentLineEmptyNode) {
+              //   // If the current line is empty, use the current position
+              //   insertPos = view.state.selection.from - 1;
+              // }
+              //
+              // // Insert the fragment into the document
+              // const transaction = view.state.tr.insert(insertPos, fragment);
+              // view.dispatch(transaction);
+              //
               // return true;
-              event.preventDefault();
-
-              // Wrap the text in a div
-              const html = `<div>${text.replace(/\r?\n/g, "<br>")}</div>`;
-
-              // Parse the HTML string to a ProseMirror document fragment
-              const div = document.createElement("div");
-              div.innerHTML = html;
-              const domNode = div.firstChild;
-              if (!domNode) {
-                return false;
-              }
-              const fragment = DOMParser.fromSchema(view.state.schema).parse(domNode);
-
-              // Insert the fragment into the document
-              const transaction = view.state.tr.insert(view.state.selection.from - 1, fragment);
-              view.dispatch(transaction);
-
-              return true;
+              return false;
             }
           },
         },
@@ -429,12 +335,11 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
   },
 });
 
-function isCurrentLineEmpty(view: EditorView) {
-  const { $from } = view.state.selection;
-  const blockNode = $from.node($from.depth); // Get the block node at the current selection depth
-
-  // Check if the block node is empty or only contains whitespace
-  const isEmpty = !blockNode.textContent.trim();
-
-  return isEmpty;
-}
+// function isCurrentLineEmpty(view: EditorView) {
+//   const { $from } = view.state.selection;
+//   const blockNode = $from.node($from.depth); // Get the block node at the current selection depth
+//
+//   const isEmpty = !blockNode.textContent.trim();
+//
+//   return isEmpty;
+// }

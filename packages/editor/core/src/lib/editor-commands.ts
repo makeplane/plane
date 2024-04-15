@@ -1,5 +1,6 @@
 import { Editor, Range } from "@tiptap/core";
 import { startImageUpload } from "src/ui/plugins/upload-image";
+import { DOMParser } from "@tiptap/pm/model";
 import { findTableAncestor } from "src/lib/utils";
 import { Selection } from "@tiptap/pm/state";
 import { UploadImage } from "src/types/upload-image";
@@ -34,14 +35,51 @@ export const toggleUnderline = (editor: Editor, range?: Range) => {
   else editor.chain().focus().toggleUnderline().run();
 };
 
+const replaceCodeBlockWithContent = (editor: Editor) => {
+  const { schema, tr } = editor.state;
+  const { codeBlock } = schema.nodes;
+  let replaced = false;
+
+  // Function to replace code block with parsed content
+  const replaceCodeBlock = (from: number, to: number, textContent: string) => {
+    // Parse the content to replace newline characters with <br> tags
+    const parsedContent = `<div>${textContent.replace(/\r?\n/g, "<br>")}</div>`;
+    const div = document.createElement("div");
+    div.innerHTML = parsedContent;
+    const domNode = div.firstChild;
+
+    if (!domNode) {
+      console.error("Failed to create DOM node from parsed content.");
+      return;
+    }
+
+    // Convert the DOM node to a ProseMirror node
+    const fragment = DOMParser.fromSchema(editor.state.schema).parse(domNode);
+    // Replace the code block with the parsed content
+    editor.view.dispatch(tr.replaceRangeWith(from, to, fragment));
+    replaced = true;
+  };
+
+  // Check if the selection is within a code block
+  editor.state.doc.nodesBetween(editor.state.selection.from, editor.state.selection.to, (node, pos) => {
+    if (node.type === codeBlock) {
+      const startPos = pos;
+      const endPos = pos + node.nodeSize;
+      const textContent = node.textContent;
+      replaceCodeBlock(startPos, endPos, textContent);
+      return false; // Stop iterating further
+    }
+  });
+
+  if (!replaced) {
+    console.log("No code block to replace. Implement your logic here.");
+  }
+};
+
 export const toggleCodeBlock = (editor: Editor, range?: Range) => {
   // Check if code block is active then toggle code block
   if (editor.isActive("codeBlock")) {
-    if (range) {
-      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
-      return;
-    }
-    editor.chain().focus().toggleCodeBlock().run();
+    replaceCodeBlockWithContent(editor);
     return;
   }
 
