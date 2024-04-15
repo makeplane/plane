@@ -11,9 +11,8 @@ import { LayersIcon } from "@plane/ui";
 
 export const DocumentEditorExtensions = (
   uploadFile: UploadImage,
-  issueEmbedConfig?: IIssueEmbedConfig,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void,
+  issueEmbedConfig?: IIssueEmbedConfig
 ) => {
   const additionalOptions: ISlashCommandItem[] = [
     {
@@ -36,7 +35,7 @@ export const DocumentEditorExtensions = (
   ];
 
   return [
-    SlashCommand(uploadFile, setIsSubmitting, additionalOptions),
+    SlashCommand(uploadFile, additionalOptions),
     DragAndDrop(setHideDragHandle),
     Placeholder.configure({
       placeholder: ({ node }) => {

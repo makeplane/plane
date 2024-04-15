@@ -27,7 +27,7 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
   const { getProjectById } = useProject();
   const { theme: themeStore } = useApplication();
   // fetching issue details
-  const { isLoading } = useSWR(
+  const { isLoading, data: swrIssueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? `ISSUE_DETAIL_${workspaceSlug}_${projectId}_${issueId}` : null,
     workspaceSlug && projectId && issueId
       ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString())
@@ -77,6 +77,7 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
         projectId &&
         issueId && (
           <IssueDetailRoot
+            swrIssueDetails={swrIssueDetails}
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
             issueId={issueId.toString()}
