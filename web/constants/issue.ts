@@ -38,6 +38,11 @@ export enum EIssueFilterType {
   KANBAN_FILTERS = "kanban_filters",
 }
 
+export enum EIssueCommentAccessSpecifier {
+  EXTERNAL = "EXTERNAL",
+  INTERNAL = "INTERNAL",
+}
+
 export const ISSUE_PRIORITIES: {
   key: TIssuePriorities;
   title: string;

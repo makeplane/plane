@@ -48,10 +48,11 @@ export type TIssueDetailRoot = {
   projectId: string;
   issueId: string;
   is_archived?: boolean;
+  swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, is_archived = false } = props;
+  const { workspaceSlug, projectId, issueId, swrIssueDetails, is_archived = false } = props;
   // router
   const router = useRouter();
   // hooks
@@ -359,6 +360,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           <div className="max-w-2/3 h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
+              swrIssueDetails={swrIssueDetails}
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}

@@ -42,7 +42,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   const {
     currentTab,
     handleCurrentTab,
-    isLoading,
+    loader,
     inboxIssuesArray,
     inboxIssuePaginationInfo,
     fetchInboxPaginationIssues,
@@ -100,7 +100,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
 
         <InboxIssueAppliedFilters />
 
-        {isLoading != undefined && isLoading === "filter-loading" && !inboxIssuePaginationInfo?.next_page_results ? (
+        {loader != undefined && loader === "filter-loading" && !inboxIssuePaginationInfo?.next_page_results ? (
           <InboxSidebarLoader />
         ) : (
           <div

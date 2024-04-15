@@ -12,11 +12,10 @@ import { InstanceStore, IInstanceStore } from "./instance.store";
 import { IIssueRootStore, IssueRootStore } from "./issue/root.store";
 import { ILabelStore, LabelStore } from "./label.store";
 import { IMemberRootStore, MemberRootStore } from "./member";
-import { IMentionStore, MentionStore } from "./mention.store";
 import { IModuleStore, ModulesStore } from "./module.store";
 import { IModuleFilterStore, ModuleFilterStore } from "./module_filter.store";
+import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store";
 import { IProjectRootStore, ProjectRootStore } from "./project";
-import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { RouterStore, IRouterStore } from "./router.store";
 import { IStateStore, StateStore } from "./state.store";
@@ -40,7 +39,6 @@ export class RootStore {
   state: IStateStore;
   label: ILabelStore;
   estimate: IEstimateStore;
-  mention: IMentionStore;
   dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
   router: IRouterStore;
@@ -66,7 +64,6 @@ export class RootStore {
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
-    this.mention = new MentionStore(this);
     this.dashboard = new DashboardStore(this);
     this.commandPalette = new CommandPaletteStore();
     this.theme = new ThemeStore(this);
@@ -93,7 +90,6 @@ export class RootStore {
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
-    this.mention = new MentionStore(this);
     this.dashboard = new DashboardStore(this);
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();

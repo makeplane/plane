@@ -20,10 +20,11 @@ type Props = {
   label?: JSX.Element;
   disabled?: boolean;
   tabIndex?: number;
+  createLabelEnabled?: boolean;
 };
 
 export const IssueLabelSelect: React.FC<Props> = observer((props) => {
-  const { setIsOpen, value, onChange, projectId, label, disabled = false, tabIndex } = props;
+  const { setIsOpen, value, onChange, projectId, label, disabled = false, tabIndex, createLabelEnabled = true } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -221,14 +222,16 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
               ) : (
                 <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
               )}
-              <button
-                type="button"
-                className="flex items-center gap-2 w-full select-none rounded px-1 py-2 hover:bg-custom-background-80"
-                onClick={() => setIsOpen(true)}
-              >
-                <Plus className="h-3 w-3" aria-hidden="true" />
-                <span className="whitespace-nowrap">Create new label</span>
-              </button>
+              {createLabelEnabled && (
+                <button
+                  type="button"
+                  className="flex items-center gap-2 w-full select-none rounded px-1 py-2 hover:bg-custom-background-80"
+                  onClick={() => setIsOpen(true)}
+                >
+                  <Plus className="h-3 w-3" aria-hidden="true" />
+                  <span className="whitespace-nowrap">Create new label</span>
+                </button>
+              )}
             </div>
           </div>
         </Combobox.Options>

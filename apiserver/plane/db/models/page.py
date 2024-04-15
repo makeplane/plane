@@ -11,6 +11,10 @@ from plane.utils.html_processor import strip_tags
 from .project import ProjectBaseModel
 
 
+def get_view_props():
+    return {"full_width": False}
+
+
 class Page(ProjectBaseModel):
     name = models.CharField(max_length=255)
     description = models.JSONField(default=dict, blank=True)
@@ -37,6 +41,7 @@ class Page(ProjectBaseModel):
     )
     archived_at = models.DateField(null=True)
     is_locked = models.BooleanField(default=False)
+    view_props = models.JSONField(default=get_view_props)
 
     class Meta:
         verbose_name = "Page"
@@ -83,7 +88,7 @@ class PageLog(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.page.name} {self.type}"
+        return f"{self.page.name} {self.entity_name}"
 
 
 class PageBlock(ProjectBaseModel):
