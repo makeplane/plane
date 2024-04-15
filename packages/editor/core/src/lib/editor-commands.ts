@@ -1,6 +1,6 @@
 import { Editor, Range } from "@tiptap/core";
 import { startImageUpload } from "src/ui/plugins/upload-image";
-import { DOMParser } from "@tiptap/pm/model";
+import { DOMParser, Node } from "@tiptap/pm/model";
 import { findTableAncestor } from "src/lib/utils";
 import { Selection } from "@tiptap/pm/state";
 import { UploadImage } from "src/types/upload-image";
@@ -36,68 +36,76 @@ export const toggleUnderline = (editor: Editor, range?: Range) => {
 };
 
 const replaceCodeBlockWithContent = (editor: Editor) => {
-  const { schema, tr } = editor.state;
-  const { codeBlock } = schema.nodes;
-  let replaced = false;
+  try {
+    const { schema, tr } = editor.state;
+    const { codeBlock } = schema.nodes;
+    let replaced = false;
 
-  // Function to replace code block with parsed content
-  const replaceCodeBlock = (from: number, to: number, textContent: string) => {
-    // Parse the content to replace newline characters with <br> tags
-    const parsedContent = `<div>${textContent.replace(/\r?\n/g, "<br>")}</div>`;
-    const div = document.createElement("div");
-    div.innerHTML = parsedContent;
-    const domNode = div.firstChild;
+    const replaceCodeBlock = (from: number, to: number, textContent: string) => {
+      // Validate range
+      const docSize = editor.state.doc.content.size;
+      if (from < 0 || to > docSize || from > to) {
+        console.error("Invalid range for replacement.");
+        return;
+      }
 
-    if (!domNode) {
-      console.error("Failed to create DOM node from parsed content.");
-      return;
+      const lines = textContent.split(/\r?\n/);
+      const parsedContent = lines.map((line) => `<p>${line.replace(/ /g, "&nbsp;")}</p>`).join("");
+      const div = document.createElement("div");
+      div.innerHTML = parsedContent;
+      const domFragment = document.createDocumentFragment();
+      while (div.firstChild) {
+        domFragment.appendChild(div.firstChild);
+      }
+
+      const fragment = DOMParser.fromSchema(editor.state.schema).parse(domFragment);
+      if (!fragment || fragment.firstChild === null) {
+        console.error("Failed to parse content into a ProseMirror node.");
+        return;
+      }
+
+      editor.view.dispatch(tr.replaceRangeWith(from, to, fragment));
+      replaced = true;
+    };
+
+    editor.state.doc.nodesBetween(editor.state.selection.from, editor.state.selection.to, (node, pos) => {
+      if (node.type === codeBlock) {
+        const startPos = pos;
+        const endPos = pos + node.nodeSize;
+        const textContent = node.textContent;
+        replaceCodeBlock(startPos, endPos, textContent);
+        return false;
+      }
+    });
+
+    if (!replaced) {
+      console.log("No code block to replace.");
     }
-
-    // Convert the DOM node to a ProseMirror node
-    const fragment = DOMParser.fromSchema(editor.state.schema).parse(domNode);
-    // Replace the code block with the parsed content
-    editor.view.dispatch(tr.replaceRangeWith(from, to, fragment));
-    replaced = true;
-  };
-
-  // Check if the selection is within a code block
-  editor.state.doc.nodesBetween(editor.state.selection.from, editor.state.selection.to, (node, pos) => {
-    if (node.type === codeBlock) {
-      const startPos = pos;
-      const endPos = pos + node.nodeSize;
-      const textContent = node.textContent;
-      replaceCodeBlock(startPos, endPos, textContent);
-      return false; // Stop iterating further
-    }
-  });
-
-  if (!replaced) {
-    console.log("No code block to replace. Implement your logic here.");
+  } catch (error) {
+    console.error("An error occurred while replacing code block content:", error);
   }
 };
 
 export const toggleCodeBlock = (editor: Editor, range?: Range) => {
-  // Check if code block is active then toggle code block
-  if (editor.isActive("codeBlock")) {
-    replaceCodeBlockWithContent(editor);
-    return;
-  }
-
-  // Check if user hasn't selected any text
-  const isSelectionEmpty = editor.state.selection.empty;
-
-  if (isSelectionEmpty) {
-    if (range) {
-      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+  try {
+    if (editor.isActive("codeBlock")) {
+      replaceCodeBlockWithContent(editor);
       return;
     }
-    editor.chain().focus().toggleCodeBlock().run();
-  } else {
-    if (range) {
-      editor.chain().focus().deleteRange(range).toggleCode().run();
-      return;
+
+    const { from, to } = range || editor.state.selection;
+    const text = editor.state.doc.textBetween(from, to, "\n");
+    const isMultiline = text.includes("\n");
+
+    if (editor.state.selection.empty) {
+      editor.chain().focus().toggleCodeBlock().run();
+    } else if (isMultiline) {
+      editor.chain().focus().deleteRange({ from, to }).insertContentAt(from, `\`\`\`\n${text}\n\`\`\``).run();
+    } else {
+      editor.chain().focus().toggleCode().run();
     }
-    editor.chain().focus().toggleCode().run();
+  } catch (error) {
+    console.error("An error occurred while toggling code block:", error);
   }
 };
 

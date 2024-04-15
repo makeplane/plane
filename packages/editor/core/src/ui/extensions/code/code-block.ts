@@ -1,5 +1,5 @@
 import { mergeAttributes, Node, textblockTypeInputRule } from "@tiptap/core";
-import { Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
 // import { DOMParser } from "@tiptap/pm/model";
 // import { EditorView } from "@tiptap/pm/view";
 
@@ -249,8 +249,24 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
               event.preventDefault();
               const text = event.clipboardData.getData("text/plain");
 
+              if (!text) {
+                console.error("Pasted text is empty.");
+                return false;
+              }
+
               const { tr } = view.state;
               const { $from, $to } = tr.selection;
+
+              if ($from.pos > $to.pos) {
+                console.error("Invalid selection range.");
+                return false;
+              }
+
+              const docSize = tr.doc.content.size;
+              if ($from.pos < 0 || $to.pos > docSize) {
+                console.error("Selection range is out of document bounds.");
+                return false;
+              }
 
               // Extend the current selection to replace it with the pasted text
               // wrapped in an inline code mark
@@ -281,6 +297,12 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
               } else {
                 // If the current line is not empty, insert below the current block node
                 insertPos = $from.end($from.depth) + 1;
+              }
+
+              // Ensure insertPos is within document bounds
+              if (insertPos < 0 || insertPos > tr.doc.content.size) {
+                console.error("Invalid insert position.");
+                return false;
               }
 
               // Create a new code block node with the pasted content
