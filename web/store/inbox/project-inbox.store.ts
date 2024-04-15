@@ -31,7 +31,7 @@ type TLoader =
 
 export interface IProjectInboxStore {
   currentTab: TInboxIssueCurrentTab;
-  isLoading: TLoader;
+  loader: TLoader;
   error: { message: string; status: "init-error" | "pagination-error" } | undefined;
   currentInboxProjectId: string;
   inboxFilters: Partial<TInboxIssueFilter>;
@@ -42,7 +42,7 @@ export interface IProjectInboxStore {
   getAppliedFiltersCount: number;
   inboxIssuesArray: IInboxIssueStore[];
   // helper actions
-  getIssueInboxByIssueId: (issueId: string) => IInboxIssueStore | undefined;
+  getIssueInboxByIssueId: (issueId: string) => IInboxIssueStore;
   inboxIssueSorting: (issues: IInboxIssueStore[]) => IInboxIssueStore[];
   inboxIssueQueryParams: (
     inboxFilters: Partial<TInboxIssueFilter>,
@@ -70,7 +70,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   PER_PAGE_COUNT = 10;
   // observables
   currentTab: TInboxIssueCurrentTab = EInboxIssueCurrentTab.OPEN;
-  isLoading: TLoader = "init-loading";
+  loader: TLoader = "init-loading";
   error: { message: string; status: "init-error" | "pagination-error" } | undefined = undefined;
   currentInboxProjectId: string = "";
   inboxFilters: Partial<TInboxIssueFilter> = {
@@ -88,7 +88,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   constructor(private store: RootStore) {
     makeObservable(this, {
       currentTab: observable.ref,
-      isLoading: observable.ref,
+      loader: observable.ref,
       error: observable,
       currentInboxProjectId: observable.ref,
       inboxFilters: observable,
@@ -123,17 +123,17 @@ export class ProjectInboxStore implements IProjectInboxStore {
   }
 
   get inboxIssuesArray() {
+    let appliedFilters =
+      this.currentTab === EInboxIssueCurrentTab.OPEN
+        ? [EInboxIssueStatus.PENDING, EInboxIssueStatus.SNOOZED]
+        : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE];
+    appliedFilters = appliedFilters.filter((filter) => this.inboxFilters?.status?.includes(filter));
     return this.inboxIssueSorting(
-      Object.values(this.inboxIssues || {}).filter((inbox) =>
-        (this.currentTab === EInboxIssueCurrentTab.OPEN
-          ? [EInboxIssueStatus.PENDING, EInboxIssueStatus.SNOOZED]
-          : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE]
-        ).includes(inbox.status)
-      )
+      Object.values(this.inboxIssues || {}).filter((inbox) => appliedFilters.includes(inbox.status))
     );
   }
 
-  getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId] || undefined);
+  getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId]);
 
   // helpers
   inboxIssueSorting = (issues: IInboxIssueStore[]) => {
@@ -252,9 +252,9 @@ export class ProjectInboxStore implements IProjectInboxStore {
         set(this, ["inboxIssues"], {});
         set(this, ["inboxIssuePaginationInfo"], undefined);
       }
-      if (Object.keys(this.inboxIssues).length === 0) this.isLoading = "init-loading";
-      else this.isLoading = "mutation-loading";
-      if (loadingType) this.isLoading = loadingType;
+      if (Object.keys(this.inboxIssues).length === 0) this.loader = "init-loading";
+      else this.loader = "mutation-loading";
+      if (loadingType) this.loader = loadingType;
 
       const queryParams = this.inboxIssueQueryParams(
         this.inboxFilters,
@@ -265,7 +265,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, queryParams);
 
       runInAction(() => {
-        this.isLoading = undefined;
+        this.loader = undefined;
         set(this, "inboxIssuePaginationInfo", paginationInfo);
         if (results && results.length > 0)
           results.forEach((value: TInboxIssue) => {
@@ -279,7 +279,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       });
     } catch (error) {
       console.error("Error fetching the inbox issues", error);
-      this.isLoading = undefined;
+      this.loader = undefined;
       this.error = {
         message: "Error fetching the inbox issues please try again later.",
         status: "init-error",
@@ -301,7 +301,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
           (this.inboxIssuePaginationInfo?.total_results &&
             this.inboxIssuesArray.length < this.inboxIssuePaginationInfo?.total_results))
       ) {
-        this.isLoading = "pagination-loading";
+        this.loader = "pagination-loading";
 
         const queryParams = this.inboxIssueQueryParams(
           this.inboxFilters,
@@ -312,7 +312,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, queryParams);
 
         runInAction(() => {
-          this.isLoading = undefined;
+          this.loader = undefined;
           set(this, "inboxIssuePaginationInfo", paginationInfo);
           if (results && results.length > 0)
             results.forEach((value: TInboxIssue) => {
@@ -327,7 +327,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       } else set(this, ["inboxIssuePaginationInfo", "next_page_results"], false);
     } catch (error) {
       console.error("Error fetching the inbox issues", error);
-      this.isLoading = undefined;
+      this.loader = undefined;
       this.error = {
         message: "Error fetching the paginated inbox issues please try again later.",
         status: "pagination-error",
@@ -348,7 +348,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     inboxIssueId: string
   ): Promise<TInboxIssue> => {
     try {
-      this.isLoading = "issue-loading";
+      this.loader = "issue-loading";
       const inboxIssue = await this.inboxIssueService.retrieve(workspaceSlug, projectId, inboxIssueId);
       const issueId = inboxIssue?.issue?.id || undefined;
 
@@ -362,12 +362,12 @@ export class ProjectInboxStore implements IProjectInboxStore {
         await this.store.issue.issueDetail.fetchActivities(workspaceSlug, projectId, issueId);
         // fetching comments
         await this.store.issue.issueDetail.fetchComments(workspaceSlug, projectId, issueId);
-        this.isLoading = undefined;
+        this.loader = undefined;
       }
       return inboxIssue;
     } catch (error) {
       console.error("Error fetching the inbox issue with inbox issue id");
-      this.isLoading = undefined;
+      this.loader = undefined;
       throw error;
     }
   };
