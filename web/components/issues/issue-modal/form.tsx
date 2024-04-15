@@ -477,6 +477,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           }}
                           ref={editorRef}
                           tabIndex={getTabIndex("description_html")}
+                          placeholder={(isFocused) => {
+                            if (isFocused) return "Press '/' for commands...";
+                            else return "Click to add description";
+                          }}
                         />
                       )}
                     />

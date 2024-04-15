@@ -38,8 +38,10 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
         workspaceId={workspaceId}
         projectId={projectId}
         dragDropEnabled={false}
-        onChange={(_description: object, description_html: string) => {
-          handleData("description_html", description_html);
+        onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
+        placeholder={(isFocused) => {
+          if (isFocused) return "Press '/' for commands...";
+          else return "Click to add description";
         }}
       />
     </div>

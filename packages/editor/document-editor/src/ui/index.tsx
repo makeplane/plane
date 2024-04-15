@@ -34,6 +34,7 @@ interface IDocumentEditor {
   tabIndex?: number;
   // embed configuration
   embedConfig?: IEmbedConfig;
+  placeholder?: string | ((isFocused: boolean) => string);
 }
 
 const DocumentEditor = (props: IDocumentEditor) => {
@@ -49,6 +50,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     forwardedRef,
     tabIndex,
     embedConfig,
+    placeholder,
   } = props;
   // states
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
@@ -74,6 +76,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     forwardedRef,
     mentionHandler,
     extensions: DocumentEditorExtensions(fileHandler.upload, setHideDragHandleFunction, embedConfig?.issueEmbedConfig),
+    placeholder,
   });
 
   const editorContainerClassNames = getEditorClassNames({

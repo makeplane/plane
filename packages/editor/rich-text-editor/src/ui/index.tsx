@@ -35,6 +35,7 @@ export type IRichTextEditor = {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions: () => Promise<IMentionSuggestion[]>;
   };
+  placeholder?: string | ((isFocused: boolean) => string);
   tabIndex?: number;
 };
 
@@ -50,6 +51,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
     forwardedRef,
     // rerenderOnPropsChange,
     id = "",
+    placeholder,
     tabIndex,
     mentionHandler,
   } = props;
@@ -74,8 +76,13 @@ const RichTextEditor = (props: IRichTextEditor) => {
     value,
     forwardedRef,
     // rerenderOnPropsChange,
-    extensions: RichTextEditorExtensions(fileHandler.upload, dragDropEnabled, setHideDragHandleFunction),
+    extensions: RichTextEditorExtensions({
+      uploadFile: fileHandler.upload,
+      dragDropEnabled,
+      setHideDragHandle: setHideDragHandleFunction,
+    }),
     mentionHandler,
+    placeholder,
   });
 
   const editorContainerClassName = getEditorClassNames({
