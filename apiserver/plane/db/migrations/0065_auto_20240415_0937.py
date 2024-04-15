@@ -48,7 +48,7 @@ def migrate_user_profile(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("db", "0063_state_is_triage_alter_state_group"),
+        ("db", "0064_auto_20240409_1134"),
     ]
 
     operations = [
