@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, FormEvent, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { EditorRefApi } from "@plane/rich-text-editor";
@@ -59,7 +59,8 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     [formData]
   );
 
-  const handleFormSubmit = async () => {
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const payload: Partial<TIssue> = {
       name: formData.name || "",
       description_html: formData.description_html || "<p></p>",
@@ -117,7 +118,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
 
   if (!workspaceSlug || !projectId || !workspaceId) return <></>;
   return (
-    <div className="relative space-y-4">
+    <form className="relative space-y-4" onSubmit={handleFormSubmit}>
       <InboxIssueTitle data={formData} handleData={handleFormData} />
       <InboxIssueDescription
         workspaceSlug={workspaceSlug}
@@ -137,11 +138,11 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           <Button variant="neutral-primary" size="sm" type="button" onClick={handleModalClose}>
             Discard
           </Button>
-          <Button variant="primary" size="sm" type="button" loading={formSubmitting} onClick={handleFormSubmit}>
+          <Button variant="primary" size="sm" type="submit" loading={formSubmitting}>
             {formSubmitting ? "Adding Issue..." : "Add Issue"}
           </Button>
         </div>
       </div>
-    </div>
+    </form>
   );
 });
