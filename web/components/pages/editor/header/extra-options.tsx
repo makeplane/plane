@@ -19,13 +19,14 @@ import { IPageStore } from "@/store/pages/page.store";
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
+  isSyncing: boolean;
   pageStore: IPageStore;
   projectId: string;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, pageStore, projectId, readOnlyEditorRef } = props;
+  const { editorRef, handleDuplicatePage, isSyncing, pageStore, projectId, readOnlyEditorRef } = props;
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // store hooks
@@ -50,6 +51,12 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
         >
           {isSubmitting === "submitting" && <RefreshCw className="h-4 w-4 stroke-custom-text-300" />}
           <span className="text-sm text-custom-text-300">{isSubmitting === "submitting" ? "Saving..." : "Saved"}</span>
+        </div>
+      )}
+      {isSyncing && (
+        <div className="flex items-center gap-x-2">
+          <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
+          <span className="text-sm text-custom-text-300">Syncing...</span>
         </div>
       )}
       {is_locked && (

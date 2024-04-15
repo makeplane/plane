@@ -154,9 +154,7 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                 data,
                 status=status.HTTP_200_OK,
             )
-        queryset = (
-            self.get_queryset().filter(archived_at__isnull=True)
-        )
+        queryset = self.get_queryset().filter(archived_at__isnull=True)
         cycle_view = request.GET.get("cycle_view", "all")
 
         # Current Cycle
@@ -495,17 +493,22 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    def post(self, request, slug, project_id, pk):
+    def post(self, request, slug, project_id, cycle_id):
         cycle = Cycle.objects.get(
-            pk=pk, project_id=project_id, workspace__slug=slug
+            pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
+        if cycle.end_date >= timezone.now().date():
+            return Response(
+                {"error": "Only completed cycles can be archived"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         cycle.archived_at = timezone.now()
         cycle.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def delete(self, request, slug, project_id, pk):
+    def delete(self, request, slug, project_id, cycle_id):
         cycle = Cycle.objects.get(
-            pk=pk, project_id=project_id, workspace__slug=slug
+            pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
         cycle.archived_at = None
         cycle.save()

@@ -121,4 +121,9 @@ urlpatterns = [
         ModuleArchiveUnarchiveEndpoint.as_view(),
         name="module-archive-unarchive",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-modules/<uuid:pk>/",
+        ModuleArchiveUnarchiveEndpoint.as_view(),
+        name="module-archive-unarchive",
+    ),
 ]

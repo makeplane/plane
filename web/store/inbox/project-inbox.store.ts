@@ -355,6 +355,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       if (inboxIssue && issueId) {
         runInAction(() => {
           set(this.inboxIssues, [issueId], new InboxIssueStore(workspaceSlug, projectId, inboxIssue, this.store));
+          set(this, "loader", undefined);
         });
         // fetching reactions
         await this.store.issue.issueDetail.fetchReactions(workspaceSlug, projectId, issueId);
@@ -364,7 +365,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
         await this.store.issue.issueDetail.fetchComments(workspaceSlug, projectId, issueId);
         // fetching attachments
         await this.store.issue.issueDetail.fetchAttachments(workspaceSlug, projectId, issueId);
-        this.loader = undefined;
       }
       return inboxIssue;
     } catch (error) {

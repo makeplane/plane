@@ -69,7 +69,7 @@ export const CoreEditorExtensions = (
   CustomQuoteExtension,
   CustomHorizontalRule.configure({
     HTMLAttributes: {
-      class: "my-4",
+      class: "my-4 border-custom-border-400",
     },
   }),
   CustomKeymap,

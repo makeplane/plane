@@ -170,6 +170,12 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
     @invalidate_cache(path="/api/workspaces/", user=False)
     @invalidate_cache(path="/api/users/me/workspaces/")
+    @invalidate_cache(
+        path="/api/workspaces/:slug/members/",
+        user=False,
+        multiple=True,
+        url_params=True,
+    )
     def post(self, request, slug, pk):
         workspace_invite = WorkspaceMemberInvite.objects.get(
             pk=pk, workspace__slug=slug

@@ -1,5 +1,7 @@
-import { FC, useCallback, useRef, useState } from "react";
-import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
@@ -9,7 +11,7 @@ import { DeleteIssueModal } from "@/components/issues";
 import { ISSUE_DELETED } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
-import { useEventTracker, useIssues, useUser } from "@/hooks/store";
+import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUser } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // ui
 // types
@@ -17,7 +19,7 @@ import { IQuickActionProps } from "../list/list-view-types";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { handleDragDrop } from "./utils";
+import { KanbanDropLocation, handleDragDrop, getSourceFromDropPayload } from "./utils";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT
@@ -35,12 +37,6 @@ export interface IBaseKanBanLayout {
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
 }
-
-type KanbanDragState = {
-  draggedIssueId?: string | null;
-  source?: DraggableLocation | null;
-  destination?: DraggableLocation | null;
-};
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
   const {
@@ -61,16 +57,24 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   } = useUser();
   const { captureIssueEvent } = useEventTracker();
   const { issueMap, issuesFilter, issues } = useIssues(storeType);
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
   const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
     useIssuesActions(storeType);
+
+  const deleteAreaRef = useRef<HTMLDivElement | null>(null);
+  const [isDragOverDelete, setIsDragOverDelete] = useState(false);
+
+  const { isDragging } = useKanbanView();
 
   const issueIds = issues?.groupedIssueIds || [];
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
 
-  const sub_group_by: string | null = displayFilters?.sub_group_by || null;
-  const group_by: string | null = displayFilters?.group_by || null;
+  const sub_group_by = displayFilters?.sub_group_by;
+  const group_by = displayFilters?.group_by;
 
   const userDisplayFilters = displayFilters || null;
 
@@ -81,8 +85,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
 
   // states
-  const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
-  const [dragState, setDragState] = useState<KanbanDragState>({});
+  const [draggedIssueId, setDraggedIssueId] = useState<string | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -97,57 +100,72 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
 
-  const onDragStart = (dragStart: DragStart) => {
-    setDragState({
-      draggedIssueId: dragStart.draggableId.split("__")[0],
-    });
-    setIsDragStarted(true);
-  };
+  // Enable Auto Scroll for Main Kanban
+  useEffect(() => {
+    const element = scrollableContainerRef.current;
 
-  const onDragEnd = async (result: DropResult) => {
-    setIsDragStarted(false);
+    if (!element) return;
 
-    if (!result) return;
+    return combine(
+      autoScrollForElements({
+        element,
+      })
+    );
+  }, [scrollableContainerRef?.current]);
 
+  // Make the Issue Delete Box a Drop Target
+  useEffect(() => {
+    const element = deleteAreaRef.current;
+
+    if (!element) return;
+
+    return combine(
+      dropTargetForElements({
+        element,
+        getData: () => ({ columnId: "issue-trash-box", groupId: "issue-trash-box", type: "DELETE" }),
+        onDragEnter: () => {
+          setIsDragOverDelete(true);
+        },
+        onDragLeave: () => {
+          setIsDragOverDelete(false);
+        },
+        onDrop: (payload) => {
+          setIsDragOverDelete(false);
+          const source = getSourceFromDropPayload(payload);
+
+          if (!source) return;
+
+          setDraggedIssueId(source.id);
+          setDeleteIssueModal(true);
+        },
+      })
+    );
+  }, [deleteAreaRef?.current, setIsDragOverDelete, setDraggedIssueId, setDeleteIssueModal]);
+
+  const handleOnDrop = async (source: KanbanDropLocation, destination: KanbanDropLocation) => {
     if (
-      result.destination &&
-      result.source &&
-      result.source.droppableId &&
-      result.destination.droppableId &&
-      result.destination.droppableId === result.source.droppableId &&
-      result.destination.index === result.source.index
+      source.columnId &&
+      destination.columnId &&
+      destination.columnId === source.columnId &&
+      destination.id === source.id
     )
       return;
 
-    if (handleDragDrop) {
-      if (result.destination?.droppableId && result.destination?.droppableId.split("__")[0] === "issue-trash-box") {
-        setDragState({
-          ...dragState,
-          source: result.source,
-          destination: result.destination,
-        });
-        setDeleteIssueModal(true);
-      } else {
-        await handleDragDrop(
-          result.source,
-          result.destination,
-          workspaceSlug?.toString(),
-          projectId?.toString(),
-          sub_group_by,
-          group_by,
-          issueMap,
-          issueIds,
-          updateIssue,
-          removeIssue
-        ).catch((err) => {
-          setToast({
-            title: "Error",
-            type: TOAST_TYPE.ERROR,
-            message: err?.detail ?? "Failed to perform this action",
-          });
-        });
-      }
-    }
+    await handleDragDrop(
+      source,
+      destination,
+      getIssueById,
+      issues.getIssueIds,
+      updateIssue,
+      group_by,
+      sub_group_by
+    ).catch((err) => {
+      setToast({
+        title: "Error",
+        type: TOAST_TYPE.ERROR,
+        message: err?.detail ?? "Failed to perform this action",
+      });
+    });
   };
 
   const renderQuickActions = useCallback(
@@ -168,26 +186,16 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   );
 
   const handleDeleteIssue = async () => {
-    if (!handleDragDrop || !dragState.draggedIssueId) return;
-    await handleDragDrop(
-      dragState.source,
-      dragState.destination,
-      workspaceSlug?.toString(),
-      projectId?.toString(),
-      sub_group_by,
-      group_by,
-      issueMap,
-      issueIds,
-      updateIssue,
-      removeIssue
-    ).finally(() => {
-      const draggedIssue = issueMap[dragState.draggedIssueId!];
-      removeIssue(draggedIssue.project_id, draggedIssue.id);
+    const draggedIssue = getIssueById(draggedIssueId ?? "");
+
+    if (!draggedIssueId || !draggedIssue) return;
+
+    await removeIssue(draggedIssue.project_id, draggedIssueId).finally(() => {
       setDeleteIssueModal(false);
-      setDragState({});
+      setDraggedIssueId(undefined);
       captureIssueEvent({
         eventName: ISSUE_DELETED,
-        payload: { id: dragState.draggedIssueId!, state: "FAILED", element: "Kanban layout drag & drop" },
+        payload: { id: draggedIssueId, state: "FAILED", element: "Kanban layout drag & drop" },
         path: router.asPath,
       });
     });
@@ -209,7 +217,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   return (
     <>
       <DeleteIssueModal
-        dataId={dragState.draggedIssueId}
+        dataId={draggedIssueId}
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDeleteIssue}
@@ -222,58 +230,51 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       )}
 
       <div
-        className="vertical-scrollbar horizontal-scrollbar scrollbar-lg relative flex h-full w-full overflow-auto bg-custom-background-90"
+        className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
         ref={scrollableContainerRef}
       >
-        <div className="relative h-max w-max min-w-full bg-custom-background-90 px-2">
-          <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-            {/* drag and delete component */}
+        <div className="relative h-full w-max min-w-full bg-custom-background-90 px-2">
+          {/* drag and delete component */}
+          <div
+            className={`fixed left-1/2 -translate-x-1/2 ${
+              isDragging ? "z-40" : ""
+            } top-3 mx-3 flex w-72 items-center justify-center`}
+            ref={deleteAreaRef}
+          >
             <div
-              className={`fixed left-1/2 -translate-x-1/2 ${
-                isDragStarted ? "z-40" : ""
-              } top-3 mx-3 flex w-72 items-center justify-center`}
+              className={`${
+                isDragging ? `opacity-100` : `opacity-0`
+              } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+                isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
+              } transition duration-300`}
             >
-              <Droppable droppableId="issue-trash-box" isDropDisabled={!isDragStarted}>
-                {(provided, snapshot) => (
-                  <div
-                    className={`${
-                      isDragStarted ? `opacity-100` : `opacity-0`
-                    } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
-                      snapshot.isDraggingOver ? "bg-red-500 opacity-70 blur-2xl" : ""
-                    } transition duration-300`}
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    Drop here to delete the issue.
-                  </div>
-                )}
-              </Droppable>
+              Drop here to delete the issue.
             </div>
+          </div>
 
-            <div className="h-max w-max">
-              <KanBanView
-                issuesMap={issueMap}
-                issueIds={issueIds}
-                displayProperties={displayProperties}
-                sub_group_by={sub_group_by}
-                group_by={group_by}
-                updateIssue={updateIssue}
-                quickActions={renderQuickActions}
-                handleKanbanFilters={handleKanbanFilters}
-                kanbanFilters={kanbanFilters}
-                enableQuickIssueCreate={enableQuickAdd}
-                showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
-                quickAddCallback={issues?.quickAddIssue}
-                viewId={viewId}
-                disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-                canEditProperties={canEditProperties}
-                storeType={storeType}
-                addIssuesToView={addIssuesToView}
-                scrollableContainerRef={scrollableContainerRef}
-                isDragStarted={isDragStarted}
-              />
-            </div>
-          </DragDropContext>
+          <div className="h-full w-max">
+            <KanBanView
+              issuesMap={issueMap}
+              issueIds={issueIds}
+              displayProperties={displayProperties}
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              updateIssue={updateIssue}
+              quickActions={renderQuickActions}
+              handleKanbanFilters={handleKanbanFilters}
+              kanbanFilters={kanbanFilters}
+              enableQuickIssueCreate={enableQuickAdd}
+              showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
+              quickAddCallback={issues?.quickAddIssue}
+              viewId={viewId}
+              disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+              canEditProperties={canEditProperties}
+              storeType={storeType}
+              addIssuesToView={addIssuesToView}
+              scrollableContainerRef={scrollableContainerRef}
+              handleOnDrop={handleOnDrop}
+            />
+          </div>
         </div>
       </div>
     </>
