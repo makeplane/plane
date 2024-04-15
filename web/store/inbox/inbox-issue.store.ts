@@ -97,23 +97,24 @@ export class InboxIssueStore implements IInboxIssueStore {
     const previousData: Partial<TInboxIssue> = {
       status: this.status,
       duplicate_to: this.duplicate_to,
+      duplicate_issue_detail: this.duplicate_issue_detail,
     };
-
     try {
       if (!this.issue.id) return;
-      const issueResponse = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: inboxStatus,
         duplicate_to: issueId,
       });
       runInAction(() => {
-        this.status = issueResponse.status;
-        this.duplicate_to = issueResponse.duplicate_to;
-        this.duplicate_issue_detail = issueResponse.duplicate_issue_detail;
+        set(this, "status", inboxIssue?.status);
+        set(this, "duplicate_to", inboxIssue?.duplicate_to);
+        set(this, "duplicate_issue_detail", inboxIssue?.duplicate_issue_detail);
       });
     } catch {
       runInAction(() => {
         set(this, "status", previousData.status);
         set(this, "duplicate_to", previousData.duplicate_to);
+        set(this, "duplicate_issue_detail", previousData.duplicate_issue_detail);
       });
     }
   };
@@ -124,16 +125,15 @@ export class InboxIssueStore implements IInboxIssueStore {
       status: this.status,
       snoozed_till: this.snoozed_till,
     };
-
     try {
       if (!this.issue.id) return;
-      const issueResponse = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: inboxStatus,
         snoozed_till: new Date(date),
       });
       runInAction(() => {
-        this.status = issueResponse?.status;
-        this.snoozed_till = issueResponse?.snoozed_till ? new Date(issueResponse.snoozed_till) : undefined;
+        set(this, "status", inboxIssue?.status);
+        set(this, "snoozed_till", inboxIssue?.snoozed_till);
       });
     } catch {
       runInAction(() => {

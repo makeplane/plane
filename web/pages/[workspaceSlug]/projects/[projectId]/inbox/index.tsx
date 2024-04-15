@@ -25,6 +25,11 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const { currentProjectDetails } = useProject();
   const { currentTab, handleCurrentTab } = useProjectInbox();
 
+  useEffect(() => {
+    if (navigationTab && currentTab != navigationTab)
+      handleCurrentTab(navigationTab === "open" ? EInboxIssueCurrentTab.OPEN : EInboxIssueCurrentTab.CLOSED);
+  }, [currentTab, navigationTab, handleCurrentTab]);
+
   // No access to inbox
   if (currentProjectDetails?.inbox_view === false)
     return (
@@ -38,11 +43,6 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
 
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : "Plane - Inbox";
-
-  useEffect(() => {
-    if (navigationTab && currentTab != navigationTab)
-      handleCurrentTab(navigationTab === "open" ? EInboxIssueCurrentTab.OPEN : EInboxIssueCurrentTab.CLOSED);
-  }, [currentTab, navigationTab, handleCurrentTab]);
 
   if (!workspaceSlug || !projectId) return <></>;
 
