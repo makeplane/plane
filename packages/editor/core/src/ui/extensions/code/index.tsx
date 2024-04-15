@@ -1,4 +1,4 @@
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+// import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 
 import { common, createLowlight } from "lowlight";
 import ts from "highlight.js/lib/languages/typescript";
@@ -9,6 +9,7 @@ lowlight.register("ts", ts);
 import { Selection } from "@tiptap/pm/state";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { CodeBlockComponent } from "./code-block-node-view";
+import { CodeBlockLowlight } from "./code-block-lowlight";
 
 export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
   addNodeView() {
