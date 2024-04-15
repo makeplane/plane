@@ -1,19 +1,24 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
+// types
+import { TPageNavigationTabs } from "@plane/types";
 // hooks
 import { useProjectPages } from "@/hooks/store";
 // components
 import { PageListBlock } from "./";
 
 type TPagesListRoot = {
-  workspaceSlug: string;
+  pageType: TPageNavigationTabs;
   projectId: string;
+  workspaceSlug: string;
 };
 
 export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
-  const { workspaceSlug, projectId } = props;
-  // hooks
-  const { filteredPageIds } = useProjectPages(projectId);
+  const { pageType, projectId, workspaceSlug } = props;
+  // store hooks
+  const { getCurrentProjectFilteredPageIds } = useProjectPages(projectId);
+  // derived values
+  const filteredPageIds = getCurrentProjectFilteredPageIds(pageType);
 
   if (!filteredPageIds) return <></>;
   return (

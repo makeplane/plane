@@ -649,6 +649,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           projectId={projectId}
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("estimate_point")}
+                          placeholder="Estimate"
                         />
                       </div>
                     )}

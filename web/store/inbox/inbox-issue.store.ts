@@ -1,3 +1,4 @@
+import clone from "lodash/clone";
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
 import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
@@ -5,6 +6,7 @@ import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } f
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 // services
 import { InboxIssueService } from "@/services/inbox";
+import { IssueService } from "@/services/issue";
 // root store
 import { RootStore } from "@/store/root.store";
 
@@ -22,6 +24,8 @@ export interface IInboxIssueStore {
   updateInboxIssueDuplicateTo: (issueId: string) => Promise<void>; // connecting the inbox issue to the project existing issue
   updateInboxIssueSnoozeTill: (date: Date) => Promise<void>; // snooze the issue
   updateIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
+  updateProjectIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
+  fetchIssueActivity: () => Promise<void>; // fetching the issue activity
 }
 
 export class InboxIssueStore implements IInboxIssueStore {
@@ -38,6 +42,7 @@ export class InboxIssueStore implements IInboxIssueStore {
   projectId: string;
   // services
   inboxIssueService;
+  issueService;
 
   constructor(workspaceSlug: string, projectId: string, data: TInboxIssue, private store: RootStore) {
     this.id = data.id;
@@ -51,6 +56,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     this.projectId = projectId;
     // services
     this.inboxIssueService = new InboxIssueService();
+    this.issueService = new IssueService();
     // observable variables should be defined after the initialization of the values
     makeObservable(this, {
       id: observable,
@@ -65,6 +71,8 @@ export class InboxIssueStore implements IInboxIssueStore {
       updateInboxIssueDuplicateTo: action,
       updateInboxIssueSnoozeTill: action,
       updateIssue: action,
+      updateProjectIssue: action,
+      fetchIssueActivity: action,
     });
   }
 
@@ -72,12 +80,13 @@ export class InboxIssueStore implements IInboxIssueStore {
     const previousData: Partial<TInboxIssue> = {
       status: this.status,
     };
+
     try {
       if (!this.issue.id) return;
-      set(this, "status", status);
-      await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: status,
       });
+      runInAction(() => set(this, "status", inboxIssue?.status));
     } catch {
       runInAction(() => set(this, "status", previousData.status));
     }
@@ -85,20 +94,19 @@ export class InboxIssueStore implements IInboxIssueStore {
 
   updateInboxIssueDuplicateTo = async (issueId: string) => {
     const inboxStatus = EInboxIssueStatus.DUPLICATE;
-
     const previousData: Partial<TInboxIssue> = {
       status: this.status,
       duplicate_to: this.duplicate_to,
     };
+
     try {
       if (!this.issue.id) return;
-      set(this, "status", inboxStatus);
-      set(this, "duplicate_to", issueId);
       const issueResponse = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: inboxStatus,
         duplicate_to: issueId,
       });
       runInAction(() => {
+        this.status = issueResponse.status;
         this.duplicate_to = issueResponse.duplicate_to;
         this.duplicate_issue_detail = issueResponse.duplicate_issue_detail;
       });
@@ -112,18 +120,20 @@ export class InboxIssueStore implements IInboxIssueStore {
 
   updateInboxIssueSnoozeTill = async (date: Date) => {
     const inboxStatus = EInboxIssueStatus.SNOOZED;
-
     const previousData: Partial<TInboxIssue> = {
       status: this.status,
       snoozed_till: this.snoozed_till,
     };
+
     try {
       if (!this.issue.id) return;
-      set(this, "status", inboxStatus);
-      set(this, "snoozed_till", date);
-      await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const issueResponse = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: inboxStatus,
         snoozed_till: new Date(date),
+      });
+      runInAction(() => {
+        this.status = issueResponse?.status;
+        this.snoozed_till = issueResponse?.snoozed_till ? new Date(issueResponse.snoozed_till) : undefined;
       });
     } catch {
       runInAction(() => {
@@ -134,21 +144,49 @@ export class InboxIssueStore implements IInboxIssueStore {
   };
 
   updateIssue = async (issue: Partial<TIssue>) => {
-    const inboxIssue = this.issue;
+    const inboxIssue = clone(this.issue);
     try {
       if (!this.issue.id) return;
       Object.keys(issue).forEach((key) => {
         const issueKey = key as keyof TIssue;
-        set(inboxIssue, issueKey, issue[issueKey]);
+        set(this.issue, issueKey, issue[issueKey]);
       });
       await this.inboxIssueService.updateIssue(this.workspaceSlug, this.projectId, this.issue.id, issue);
       // fetching activity
-      await this.store.issue.issueDetail.fetchActivities(this.workspaceSlug, this.projectId, this.issue.id);
+      this.fetchIssueActivity();
     } catch {
       Object.keys(issue).forEach((key) => {
         const issueKey = key as keyof TIssue;
-        set(inboxIssue, issueKey, inboxIssue[issueKey]);
+        set(this.issue, issueKey, inboxIssue[issueKey]);
       });
+    }
+  };
+
+  updateProjectIssue = async (issue: Partial<TIssue>) => {
+    const inboxIssue = clone(this.issue);
+    try {
+      if (!this.issue.id) return;
+      Object.keys(issue).forEach((key) => {
+        const issueKey = key as keyof TIssue;
+        set(this.issue, issueKey, issue[issueKey]);
+      });
+      await this.issueService.patchIssue(this.workspaceSlug, this.projectId, this.issue.id, issue);
+      // fetching activity
+      this.fetchIssueActivity();
+    } catch {
+      Object.keys(issue).forEach((key) => {
+        const issueKey = key as keyof TIssue;
+        set(this.issue, issueKey, inboxIssue[issueKey]);
+      });
+    }
+  };
+
+  fetchIssueActivity = async () => {
+    try {
+      if (!this.issue.id) return;
+      await this.store.issue.issueDetail.fetchActivities(this.workspaceSlug, this.projectId, this.issue.id);
+    } catch {
+      console.error("Failed to fetch issue activity");
     }
   };
 }
