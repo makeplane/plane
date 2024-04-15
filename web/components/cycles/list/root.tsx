@@ -29,7 +29,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
             isArchived={isArchived}
           />
           {completedCycleIds.length !== 0 && (
-            <Disclosure as="div" className="pt-8 pl-3 space-y-4">
+            <Disclosure as="div" className="py-8 pl-3 space-y-4">
               <Disclosure.Button className="bg-custom-background-80 font-semibold text-sm py-1 px-2 rounded ml-5 flex items-center gap-1">
                 {({ open }) => (
                   <>
