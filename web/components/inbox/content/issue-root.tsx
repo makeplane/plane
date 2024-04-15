@@ -11,6 +11,7 @@ import {
   IssueActivity,
   IssueReaction,
   TIssueOperations,
+  IssueAttachmentRoot,
 } from "@/components/issues";
 // hooks
 import { useEventTracker, useProjectInbox, useUser } from "@/hooks/store";
@@ -153,6 +154,12 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           />
         )}
       </div>
+      <IssueAttachmentRoot
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issue.id}
+        disabled={!isEditable}
+      />
 
       <InboxIssueContentProperties
         workspaceSlug={workspaceSlug}

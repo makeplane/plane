@@ -362,6 +362,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
         await this.store.issue.issueDetail.fetchActivities(workspaceSlug, projectId, issueId);
         // fetching comments
         await this.store.issue.issueDetail.fetchComments(workspaceSlug, projectId, issueId);
+        // fetching attachments
+        await this.store.issue.issueDetail.fetchAttachments(workspaceSlug, projectId, issueId);
         this.loader = undefined;
       }
       return inboxIssue;
