@@ -21,7 +21,7 @@ export const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
           const placeholder = document.createElement("div");
           placeholder.setAttribute("class", "img-placeholder");
           const image = document.createElement("img");
-          image.setAttribute("class", "opacity-10 rounded-lg border border-custom-border-300");
+          image.setAttribute("class", "opacity-60 rounded-lg border border-custom-border-300");
           image.src = src;
           placeholder.appendChild(image);
 
@@ -73,13 +73,7 @@ const removePlaceholder = (view: EditorView, id: {}) => {
   view.dispatch(removePlaceholderTr);
 };
 
-export async function startImageUpload(
-  file: File,
-  view: EditorView,
-  pos: number,
-  uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
-) {
+export async function startImageUpload(file: File, view: EditorView, pos: number, uploadFile: UploadImage) {
   if (!file) {
     alert("No file selected. Please select a file to upload.");
     return;
@@ -120,7 +114,7 @@ export async function startImageUpload(
     return;
   };
 
-  setIsSubmitting?.("submitting");
+  // setIsSubmitting?.("submitting");
 
   try {
     const src = await UploadImageHandler(file, uploadFile);
@@ -134,6 +128,7 @@ export async function startImageUpload(
     const transaction = view.state.tr.insert(pos - 1, node).setMeta(uploadKey, { remove: { id } });
 
     view.dispatch(transaction);
+    view.focus();
   } catch (error) {
     console.error("Upload error: ", error);
     removePlaceholder(view, id);

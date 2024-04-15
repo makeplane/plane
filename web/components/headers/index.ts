@@ -14,6 +14,7 @@ export * from "./cycles";
 export * from "./modules-list";
 export * from "./project-settings";
 export * from "./workspace-settings";
+export * from "./page-details";
 export * from "./pages";
 export * from "./project-draft-issues";
 export * from "./project-archived-issue-details";

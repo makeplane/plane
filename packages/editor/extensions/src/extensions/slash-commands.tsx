@@ -54,7 +54,20 @@ const Command = Extension.create<SlashCommandOptions>({
           props.command({ editor, range });
         },
         allow({ editor }: { editor: Editor }) {
-          return !editor.isActive("table");
+          const { selection } = editor.state;
+
+          const parentNode = selection.$from.node(selection.$from.depth);
+          const blockType = parentNode.type.name;
+
+          if (blockType === "codeBlock") {
+            return false;
+          }
+
+          if (editor.isActive("table")) {
+            return false;
+          }
+
+          return true;
         },
         allowSpaces: true,
       },
@@ -71,11 +84,7 @@ const Command = Extension.create<SlashCommandOptions>({
 });
 
 const getSuggestionItems =
-  (
-    uploadFile: UploadImage,
-    setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-    additionalOptions?: Array<ISlashCommandItem>
-  ) =>
+  (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
   ({ query }: { query: string }) => {
     let slashCommands: ISlashCommandItem[] = [
       {
@@ -186,7 +195,7 @@ const getSuggestionItems =
         searchTerms: ["img", "photo", "picture", "media"],
         icon: <ImageIcon className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          insertImageCommand(editor, uploadFile, setIsSubmitting, range);
+          insertImageCommand(editor, uploadFile, null, range);
         },
       },
       {
@@ -300,9 +309,9 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
         <button
           key={item.key}
           className={cn(
-            `flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-custom-text-100 hover:bg-custom-primary-100/5`,
+            `flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-custom-text-100 hover:bg-custom-background-80`,
             {
-              "bg-custom-primary-100/5": index === selectedIndex,
+              "bg-custom-background-80": index === selectedIndex,
             }
           )}
           onClick={() => selectItem(index)}
@@ -315,19 +324,21 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
   ) : null;
 };
 
-const renderItems = () => {
-  let component: ReactRenderer | null = null;
-  let popup: any | null = null;
+interface CommandListInstance {
+  onKeyDown: (props: { event: KeyboardEvent }) => boolean;
+}
 
+const renderItems = () => {
+  let component: ReactRenderer<CommandListInstance, typeof CommandList> | null = null;
+  let popup: any | null = null;
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component = new ReactRenderer(CommandList, {
         props,
-        // @ts-ignore
         editor: props.editor,
       });
 
-      // @ts-ignore
+      // @ts-expect-error Tippy overloads are messed up
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
         appendTo: () => document.querySelector(".active-editor") ?? document.querySelector("#editor-container"),
@@ -353,8 +364,10 @@ const renderItems = () => {
         return true;
       }
 
-      // @ts-ignore
-      return component?.ref?.onKeyDown(props);
+      if (component?.ref?.onKeyDown(props)) {
+        return true;
+      }
+      return false;
     },
     onExit: () => {
       popup?.[0].destroy();
@@ -363,14 +376,10 @@ const renderItems = () => {
   };
 };
 
-export const SlashCommand = (
-  uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-  additionalOptions?: Array<ISlashCommandItem>
-) =>
+export const SlashCommand = (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(uploadFile, setIsSubmitting, additionalOptions),
+      items: getSuggestionItems(uploadFile, additionalOptions),
       render: renderItems,
     },
   });

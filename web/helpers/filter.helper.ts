@@ -5,7 +5,7 @@ import { getDate } from "./date-time.helper";
 // import { IIssueFilterOptions } from "@plane/types";
 
 type TFilters = {
-  [key: string]: string[] | null;
+  [key: string]: boolean | string[] | null;
 };
 
 /**
@@ -16,13 +16,13 @@ type TFilters = {
 export const calculateTotalFilters = (filters: TFilters): number =>
   filters && Object.keys(filters).length > 0
     ? Object.keys(filters)
-        .map((key) =>
-          filters[key as keyof TFilters] !== null
-            ? isNaN((filters[key as keyof TFilters] as string[]).length)
-              ? 0
-              : (filters[key as keyof TFilters] as string[]).length
-            : 0
-        )
+        .map((key) => {
+          const value = filters[key as keyof TFilters];
+          if (value === null) return 0;
+          if (Array.isArray(value)) return value.length;
+          if (typeof value === "boolean") return value ? 1 : 0;
+          return 0;
+        })
         .reduce((curr, prev) => curr + prev, 0)
     : 0;
 
