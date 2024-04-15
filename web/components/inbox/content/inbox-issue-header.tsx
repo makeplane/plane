@@ -60,9 +60,9 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const issue = inboxIssue?.issue;
   // derived values
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  const canMarkAsDuplicate = isAllowed && inboxIssue?.status === -2;
+  const canMarkAsDuplicate = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsAccepted = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
-  const canMarkAsDeclined = isAllowed && inboxIssue?.status === -2;
+  const canMarkAsDeclined = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canDelete = isAllowed || inboxIssue?.created_by === currentUser?.id;
   const isAcceptedOrDeclined = inboxIssue?.status ? [-1, 1, 2].includes(inboxIssue.status) : undefined;
 
