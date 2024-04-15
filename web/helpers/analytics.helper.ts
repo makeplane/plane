@@ -1,13 +1,13 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
-// helpers
-import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "helpers/string.helper";
-// types
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TStateGroups } from "@plane/types";
+// helpers
+import { DATE_KEYS } from "@/constants/analytics";
+import { MONTHS_LIST } from "@/constants/calendar";
+import { STATE_GROUPS } from "@/constants/state";
+import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "@/helpers/string.helper";
+// types
 // constants
-import { STATE_GROUPS } from "constants/state";
-import { MONTHS_LIST } from "constants/calendar";
-import { DATE_KEYS } from "constants/analytics";
 
 export const convertResponseToBarGraphData = (
   response: IAnalyticsData | undefined,
@@ -75,7 +75,7 @@ export const generateBarColor = (
   if (params[type] === "labels__id")
     color = analytics?.extras.label_details.find((l) => l.labels__id === value)?.labels__color ?? undefined;
 
-  if (params[type] === "state__group") color = STATE_GROUPS[value.toLowerCase() as TStateGroups].color;
+  if (params[type] === "state__group") color = STATE_GROUPS[value.toLowerCase() as TStateGroups]?.color ?? undefined;
 
   if (params[type] === "priority") {
     const priority = value.toLowerCase();

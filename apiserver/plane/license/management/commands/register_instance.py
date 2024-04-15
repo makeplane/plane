@@ -1,6 +1,5 @@
 # Python imports
 import json
-import requests
 import secrets
 
 # Django imports
@@ -56,9 +55,9 @@ class Command(BaseCommand):
                 user_count=payload.get("user_count", 0),
             )
 
-            self.stdout.write(self.style.SUCCESS(f"Instance registered"))
+            self.stdout.write(self.style.SUCCESS("Instance registered"))
         else:
             self.stdout.write(
-                self.style.SUCCESS(f"Instance already registered")
+                self.style.SUCCESS("Instance already registered")
             )
             return

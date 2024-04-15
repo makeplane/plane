@@ -1,9 +1,9 @@
 // nivo
 import { BarTooltipProps } from "@nivo/bar";
-import { DATE_KEYS } from "constants/analytics";
-import { renderMonthAndYear } from "helpers/analytics.helper";
-// types
 import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
+import { DATE_KEYS } from "@/constants/analytics";
+import { renderMonthAndYear } from "@/helpers/analytics.helper";
+// types
 
 type Props = {
   datum: BarTooltipProps<any>;
@@ -60,8 +60,8 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
               ? "capitalize"
               : ""
             : params.x_axis === "priority" || params.x_axis === "state__group"
-            ? "capitalize"
-            : ""
+              ? "capitalize"
+              : ""
         }`}
       >
         {params.segment === "assignees__id" ? renderAssigneeName(tooltipValue.toString()) : tooltipValue}:

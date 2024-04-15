@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
 // hooks
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 // ui
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   issueId: string;
@@ -19,6 +20,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   const { getProjectStates } = useProjectState();
   const {
     issue: { getIssueById },
+    peekIssue,
     setPeekIssue,
   } = useIssueDetail();
   // derived values
@@ -30,10 +32,13 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     workspaceSlug &&
     issueDetails &&
     !issueDetails.tempId &&
+    peekIssue?.issueId !== issueDetails.id &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
+  const { isMobile } = usePlatformOS();
 
   return (
     <div
+      id={`issue-${issueId}`}
       className="relative flex h-full w-full cursor-pointer items-center rounded"
       style={{
         backgroundColor: stateDetails?.color,
@@ -42,6 +47,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
+        isMobile={isMobile}
         tooltipContent={
           <div className="space-y-1">
             <h5>{issueDetails?.name}</h5>
@@ -83,6 +89,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
     workspaceSlug &&
     issueDetails &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
+  const { isMobile } = usePlatformOS();
 
   return (
     <ControlLink
@@ -97,7 +104,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
         <div className="flex-shrink-0 text-xs text-custom-text-300">
           {projectIdentifier} {issueDetails?.sequence_id}
         </div>
-        <Tooltip tooltipHeading="Title" tooltipContent={issueDetails?.name}>
+        <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>
           <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
         </Tooltip>
       </div>

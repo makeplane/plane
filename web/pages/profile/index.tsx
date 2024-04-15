@@ -1,29 +1,42 @@
 import React, { useEffect, useState, ReactElement } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// services
-import { FileService } from "services/file.service";
-// hooks
-import { useApplication, useUser } from "hooks/store";
-import useUserAuth from "hooks/use-user-auth";
-import useToast from "hooks/use-toast";
-// layouts
-import { ProfileSettingsLayout } from "layouts/settings-layout";
-// components
-import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
-import { DeactivateAccountModal } from "components/account";
-// ui
-import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
-// icons
+import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, User2 } from "lucide-react";
-// types
+import { Disclosure, Transition } from "@headlessui/react";
+// services
+// hooks
+// layouts
+// components
 import type { IUser } from "@plane/types";
-import type { NextPageWithLayout } from "lib/types";
+import {
+  Button,
+  CustomSelect,
+  CustomSearchSelect,
+  Input,
+  Spinner,
+  TOAST_TYPE,
+  setPromiseToast,
+  setToast,
+} from "@plane/ui";
+import { DeactivateAccountModal } from "@/components/account";
+import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components/core";
+// ui
+// icons
+// components
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 // constants
-import { USER_ROLES } from "constants/workspace";
-import { TIME_ZONES } from "constants/timezones";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { TIME_ZONES } from "@/constants/timezones";
+import { USER_ROLES } from "@/constants/workspace";
+// hooks
+import { useApplication, useUser } from "@/hooks/store";
+import useUserAuth from "@/hooks/use-user-auth";
+import { ProfileSettingsLayout } from "@/layouts/settings-layout";
+// layouts
+// lib types
+import type { NextPageWithLayout } from "@/lib/types";
+import { FileService } from "@/services/file.service";
+// services
+// types
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -52,8 +65,6 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
     control,
     formState: { errors },
   } = useForm<IUser>({ defaultValues });
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
   // custom hooks
@@ -72,28 +83,26 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
       avatar: formData.avatar,
       cover_image: formData.cover_image,
       role: formData.role,
-      display_name: formData.display_name,
+      display_name: formData?.display_name,
       user_timezone: formData.user_timezone,
     };
 
-    await updateCurrentUser(payload)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Profile updated successfully.",
-        });
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "There was some error in updating your profile. Please try again.",
-        })
-      );
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
+    const updateCurrentUserDetail = updateCurrentUser(payload).finally(() => setIsLoading(false));
+    setPromiseToast(updateCurrentUserDetail, {
+      loading: "Updating...",
+      success: {
+        title: "Success!",
+        message: () => `Profile updated successfully.`,
+      },
+      error: {
+        title: "Error!",
+        message: () => `There was some error in updating your profile. Please try again.`,
+      },
+    });
+
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 300);
   };
 
   const handleDelete = (url: string | null | undefined, updateUser: boolean = false) => {
@@ -105,16 +114,16 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
       if (updateUser)
         updateCurrentUser({ avatar: "" })
           .then(() => {
-            setToastAlert({
-              type: "success",
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
               title: "Success!",
-              message: "Profile picture removed successfully.",
+              message: "Profile picture deleted successfully.",
             });
             setIsRemoving(false);
           })
           .catch(() => {
-            setToastAlert({
-              type: "error",
+            setToast({
+              type: TOAST_TYPE.ERROR,
               title: "Error!",
               message: "There was some error in deleting your profile picture. Please try again.",
             });
@@ -139,8 +148,8 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title="Profile - General Settings" />
-      <div className="flex flex-col h-full">
-        <div className="block md:hidden flex-shrink-0 border-b border-custom-border-200 p-4">
+      <div className="flex h-full flex-col">
+        <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
           <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
         </div>
         <div className="overflow-hidden">
@@ -163,7 +172,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
             )}
           />
           <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
-          <div className="mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto pt-10 md:pt-16 px-8 pb-8 lg:w-3/5">
+          <div className="vertical-scrollbar scrollbar-md mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto px-8 pb-8 pt-10 md:pt-16 lg:w-3/5">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex w-full flex-col gap-8">
                 <div className="relative h-44 w-full">
@@ -186,7 +195,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                                 src={watch("avatar")}
                                 className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
                                 onClick={() => setIsImageUploadModalOpen(true)}
-                                alt={myProfile.display_name}
+                                alt={myProfile?.display_name}
                                 role="button"
                               />
                             </div>
@@ -206,6 +215,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           onChange={(imageUrl) => onChange(imageUrl)}
                           control={control}
                           value={value ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
+                          isProfileCover
                         />
                       )}
                     />
@@ -299,7 +309,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           ref={ref}
                           hasError={Boolean(errors.email)}
                           placeholder="Enter your email"
-                          className={`w-full rounded-md cursor-not-allowed !bg-custom-background-80 ${
+                          className={`w-full cursor-not-allowed rounded-md !bg-custom-background-80 ${
                             errors.email ? "border-red-500" : ""
                           }`}
                           disabled
@@ -368,14 +378,14 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           value={value}
                           onChange={onChange}
                           ref={ref}
-                          hasError={Boolean(errors.display_name)}
+                          hasError={Boolean(errors?.display_name)}
                           placeholder="Enter your display name"
-                          className={`w-full ${errors.display_name ? "border-red-500" : ""}`}
+                          className={`w-full ${errors?.display_name ? "border-red-500" : ""}`}
                           maxLength={24}
                         />
                       )}
                     />
-                    {errors.display_name && <span className="text-xs text-red-500">Please enter display name</span>}
+                    {errors?.display_name && <span className="text-xs text-red-500">Please enter display name</span>}
                   </div>
 
                   <div className="flex flex-col gap-1">

@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { Combobox } from "@headlessui/react";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
+import { usePopper } from "react-popper";
+import { Check, Search } from "lucide-react";
+import { Combobox } from "@headlessui/react";
 //components
 import { Avatar } from "@plane/ui";
 //store
-import { useApplication, useMember, useUser } from "hooks/store";
+import { useApplication, useMember, useUser } from "@/hooks/store";
 //hooks
-import { usePopper } from "react-popper";
 //icon
-import { Check, Search } from "lucide-react";
 //types
-import { Placement } from "@popperjs/core";
 
 interface Props {
   projectId?: string;

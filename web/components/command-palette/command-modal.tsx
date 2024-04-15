@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { Command } from "cmdk";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Command } from "cmdk";
-import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 import { FolderPlus, Search, Settings } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+// icons
+import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
-import { useApplication, useEventTracker, useProject } from "hooks/store";
-// services
-import { WorkspaceService } from "services/workspace.service";
-import { IssueService } from "services/issue";
-// hooks
-import useDebounce from "hooks/use-debounce";
-// components
+import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import {
   CommandPaletteThemeActions,
   ChangeIssueAssignee,
@@ -23,20 +19,29 @@ import {
   CommandPaletteProjectActions,
   CommandPaletteWorkspaceSettingsActions,
   CommandPaletteSearchResults,
-} from "components/command-palette";
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-// types
-import { IWorkspaceSearchResults } from "@plane/types";
-// fetch-keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
-
+} from "@/components/command-palette";
+import { EmptyState } from "@/components/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
+import { ISSUE_DETAILS } from "@/constants/fetch-keys";
+import { useApplication, useEventTracker, useProject } from "@/hooks/store";
+import useDebounce from "@/hooks/use-debounce";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
+import { IssueService } from "@/services/issue";
+import { WorkspaceService } from "@/services/workspace.service";
+// ui
+// components
+// types
+// fetch-keys
+// constants
+
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
   // hooks
-  const { getProjectById } = useProject();
+  const { getProjectById, workspaceProjectIds } = useProject();
+  const { isMobile } = usePlatformOS();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -197,7 +202,7 @@ export const CommandModal: React.FC = observer(() => {
                         </div>
                       )}
                       {projectId && (
-                        <Tooltip tooltipContent="Toggle workspace level search">
+                        <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
                           <div className="flex flex-shrink-0 cursor-pointer items-center gap-1 self-end text-xs sm:self-center">
                             <button
                               type="button"
@@ -244,7 +249,9 @@ export const CommandModal: React.FC = observer(() => {
                       )}
 
                       {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
-                        <div className="my-4 text-center text-sm text-custom-text-200">No results found.</div>
+                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                          <EmptyState type={EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE} layout="screen-simple" />
+                        </div>
                       )}
 
                       {(isLoading || isSearching) && (
@@ -275,22 +282,24 @@ export const CommandModal: React.FC = observer(() => {
                               setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
                             />
                           )}
-                          <Command.Group heading="Issue">
-                            <Command.Item
-                              onSelect={() => {
-                                closePalette();
-                                setTrackElement("Command Palette");
-                                toggleCreateIssueModal(true);
-                              }}
-                              className="focus:bg-custom-background-80"
-                            >
-                              <div className="flex items-center gap-2 text-custom-text-200">
-                                <LayersIcon className="h-3.5 w-3.5" />
-                                Create new issue
-                              </div>
-                              <kbd>C</kbd>
-                            </Command.Item>
-                          </Command.Group>
+                          {workspaceSlug && workspaceProjectIds && workspaceProjectIds.length > 0 && (
+                            <Command.Group heading="Issue">
+                              <Command.Item
+                                onSelect={() => {
+                                  closePalette();
+                                  setTrackElement("Command Palette");
+                                  toggleCreateIssueModal(true);
+                                }}
+                                className="focus:bg-custom-background-80"
+                              >
+                                <div className="flex items-center gap-2 text-custom-text-200">
+                                  <LayersIcon className="h-3.5 w-3.5" />
+                                  Create new issue
+                                </div>
+                                <kbd>C</kbd>
+                              </Command.Item>
+                            </Command.Group>
+                          )}
 
                           {workspaceSlug && (
                             <Command.Group heading="Project">

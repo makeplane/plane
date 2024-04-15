@@ -1,13 +1,12 @@
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import { useProject } from "hooks/store";
-import { useIssues } from "hooks/store/use-issues";
-import useToast from "hooks/use-toast";
-// ui
-import { Button } from "@plane/ui";
-// types
 import { TIssue } from "@plane/types";
+// hooks
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { useProject } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
+// ui
+// types
 
 type Props = {
   data?: TIssue;
@@ -24,8 +23,6 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
   // store hooks
   const { getProjectById } = useProject();
   const { issueMap } = useIssues();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   if (!dataId && !data) return null;
 
@@ -42,10 +39,17 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
 
     setIsArchiving(true);
     await onSubmit()
-      .then(() => onClose())
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Archive success",
+          message: "Your archives can be found in project archives.",
+        });
+        onClose();
+      })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Issue could not be archived. Please try again.",
         })
@@ -84,10 +88,10 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
                   <h3 className="text-xl font-medium 2xl:text-2xl">
                     Archive issue {projectDetails?.identifier} {issue.sequence_id}
                   </h3>
-                  <p className="text-sm text-custom-text-200 mt-3">
+                  <p className="mt-3 text-sm text-custom-text-200">
                     Are you sure you want to archive the issue? All your archived issues can be restored later.
                   </p>
-                  <div className="flex justify-end gap-2 mt-3">
+                  <div className="mt-3 flex justify-end gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>

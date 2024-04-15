@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useDropzone } from "react-dropzone";
+import { UserCircle2 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // hooks
-import { useApplication } from "hooks/store";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+
+import { MAX_FILE_SIZE } from "@/constants/common";
+import { useApplication } from "@/hooks/store";
 // services
-import { FileService } from "services/file.service";
-// hooks
-import useToast from "hooks/use-toast";
+import { FileService } from "@/services/file.service";
 // ui
-import { Button } from "@plane/ui";
 // icons
-import { UserCircle2 } from "lucide-react";
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
 
 type Props = {
   handleDelete?: () => void;
@@ -32,8 +31,6 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     config: { envConfig },
@@ -76,8 +73,8 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
         if (value) fileService.deleteUserFile(value);
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

@@ -1,17 +1,17 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // services
-import { WorkspaceService } from "services/workspace.service";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { WorkspaceService } from "@/services/workspace.service";
 // types
-import { RootStore } from "store/root.store";
+import { IRouterStore } from "@/store/application/router.store";
+import { RootStore } from "@/store/root.store";
+import { IUserRootStore } from "@/store/user";
 import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { IRouterStore } from "store/application/router.store";
 import { IMemberRootStore } from ".";
-import { IUserRootStore } from "store/user";
 
 export interface IWorkspaceMembership {
   id: string;
@@ -127,9 +127,8 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     const searchedWorkspaceMemberIds = workspaceMemberIds?.filter((userId) => {
       const memberDetails = this.getWorkspaceMemberDetails(userId);
       if (!memberDetails) return false;
-      const memberSearchQuery = `${memberDetails.member.first_name} ${memberDetails.member.last_name} ${
-        memberDetails.member.display_name
-      } ${memberDetails.member.email ?? ""}`;
+      const memberSearchQuery = `${memberDetails.member.first_name} ${memberDetails.member.last_name} ${memberDetails
+        .member?.display_name} ${memberDetails.member.email ?? ""}`;
       return memberSearchQuery.toLowerCase()?.includes(searchQuery.toLowerCase());
     });
     return searchedWorkspaceMemberIds;

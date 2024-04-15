@@ -1,10 +1,10 @@
+import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import set from "lodash/set";
 // services
-import { DashboardService } from "services/dashboard.service";
+import { DashboardService } from "@/services/dashboard.service";
 // types
-import { RootStore } from "store/root.store";
+import { RootStore } from "@/store/root.store";
 import {
   THomeDashboardResponse,
   TWidget,
@@ -15,6 +15,8 @@ import {
 } from "@plane/types";
 
 export interface IDashboardStore {
+  // error states
+  widgetStatsError: { [workspaceSlug: string]: Record<string, Record<TWidgetKeys, any | null>> };
   // observables
   homeDashboardId: string | null;
   widgetDetails: { [workspaceSlug: string]: Record<string, TWidget[]> };
@@ -36,6 +38,7 @@ export interface IDashboardStore {
   // computed actions
   getWidgetDetails: (workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => TWidget | undefined;
   getWidgetStats: <T>(workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => T | undefined;
+  getWidgetStatsError: (workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => any | null;
   // actions
   fetchHomeDashboardWidgets: (workspaceSlug: string) => Promise<THomeDashboardResponse>;
   fetchWidgetStats: (
@@ -58,6 +61,8 @@ export interface IDashboardStore {
 }
 
 export class DashboardStore implements IDashboardStore {
+  // error states
+  widgetStatsError: { [workspaceSlug: string]: Record<string, Record<TWidgetKeys, any>> } = {};
   // observables
   homeDashboardId: string | null = null;
   widgetDetails: { [workspaceSlug: string]: Record<string, TWidget[]> } = {};
@@ -70,6 +75,8 @@ export class DashboardStore implements IDashboardStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
+      // error states
+      widgetStatsError: observable,
       // observables
       homeDashboardId: observable.ref,
       widgetDetails: observable,
@@ -93,7 +100,7 @@ export class DashboardStore implements IDashboardStore {
 
   /**
    * @description get home dashboard widgets
-   * @returns home dashboard widgets
+   * @returns {TWidget[] | undefined}
    */
   get homeDashboardWidgets() {
     const workspaceSlug = this.routerStore.workspaceSlug;
@@ -104,10 +111,10 @@ export class DashboardStore implements IDashboardStore {
 
   /**
    * @description get widget details
-   * @param workspaceSlug
-   * @param dashboardId
-   * @param widgetId
-   * @returns widget details
+   * @param {string} workspaceSlug
+   * @param {string} dashboardId
+   * @param {TWidgetKeys} widgetKey
+   * @returns {TWidget | undefined}
    */
   getWidgetDetails = computedFn((workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) => {
     const widgets = this.widgetDetails?.[workspaceSlug]?.[dashboardId];
@@ -117,20 +124,30 @@ export class DashboardStore implements IDashboardStore {
 
   /**
    * @description get widget stats
-   * @param workspaceSlug
-   * @param dashboardId
-   * @param widgetKey
-   * @returns widget stats
+   * @param {string} workspaceSlug
+   * @param {string} dashboardId
+   * @param {TWidgetKeys} widgetKey
+   * @returns {T | undefined}
    */
   getWidgetStats = <T>(workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys): T | undefined =>
     (this.widgetStats?.[workspaceSlug]?.[dashboardId]?.[widgetKey] as unknown as T) ?? undefined;
 
   /**
-   * @description fetch home dashboard details and widgets
-   * @param workspaceSlug
-   * @returns home dashboard response
+   * @description get widget stats error
+   * @param {string} workspaceSlug
+   * @param {string} dashboardId
+   * @param {TWidgetKeys} widgetKey
+   * @returns {any | null}
    */
-  fetchHomeDashboardWidgets = async (workspaceSlug: string) => {
+  getWidgetStatsError = (workspaceSlug: string, dashboardId: string, widgetKey: TWidgetKeys) =>
+    this.widgetStatsError?.[workspaceSlug]?.[dashboardId]?.[widgetKey] ?? null;
+
+  /**
+   * @description fetch home dashboard details and widgets
+   * @param {string} workspaceSlug
+   * @returns {Promise<THomeDashboardResponse>}
+   */
+  fetchHomeDashboardWidgets = async (workspaceSlug: string): Promise<THomeDashboardResponse> => {
     try {
       const response = await this.dashboardService.getHomeDashboardWidgets(workspaceSlug);
 
@@ -151,27 +168,36 @@ export class DashboardStore implements IDashboardStore {
 
   /**
    * @description fetch widget stats
-   * @param workspaceSlug
-   * @param dashboardId
-   * @param widgetKey
+   * @param {string} workspaceSlug
+   * @param {string} dashboardId
+   * @param {TWidgetStatsRequestParams} widgetKey
    * @returns widget stats
    */
   fetchWidgetStats = async (workspaceSlug: string, dashboardId: string, params: TWidgetStatsRequestParams) =>
-    this.dashboardService.getWidgetStats(workspaceSlug, dashboardId, params).then((res) => {
-      runInAction(() => {
-        // @ts-ignore
-        if (res.issues) this.issueStore.addIssue(res.issues);
-        set(this.widgetStats, [workspaceSlug, dashboardId, params.widget_key], res);
-      });
+    this.dashboardService
+      .getWidgetStats(workspaceSlug, dashboardId, params)
+      .then((res) => {
+        runInAction(() => {
+          // @ts-ignore
+          if (res.issues) this.issueStore.addIssue(res.issues);
+          set(this.widgetStats, [workspaceSlug, dashboardId, params.widget_key], res);
+          set(this.widgetStatsError, [workspaceSlug, dashboardId, params.widget_key], null);
+        });
+        return res;
+      })
+      .catch((error) => {
+        runInAction(() => {
+          set(this.widgetStatsError, [workspaceSlug, dashboardId, params.widget_key], error);
+        });
 
-      return res;
-    });
+        throw error;
+      });
 
   /**
    * @description update dashboard widget
-   * @param dashboardId
-   * @param widgetId
-   * @param data
+   * @param {string} dashboardId
+   * @param {string} widgetId
+   * @param {Partial<TWidget>} data
    * @returns updated widget
    */
   updateDashboardWidget = async (
@@ -209,9 +235,9 @@ export class DashboardStore implements IDashboardStore {
 
   /**
    * @description update dashboard widget filters
-   * @param dashboardId
-   * @param widgetId
-   * @param data
+   * @param {string} dashboardId
+   * @param {string} widgetId
+   * @param {TWidgetFiltersFormData} data
    * @returns updated widget
    */
   updateDashboardWidgetFilters = async (

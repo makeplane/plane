@@ -1,9 +1,11 @@
 import { useCallback } from "react";
 
 type TUseDropdownKeyDown = {
-  (onEnterKeyDown: () => void, onEscKeyDown: () => void, stopPropagation?: boolean): (
-    event: React.KeyboardEvent<HTMLElement>
-  ) => void;
+  (
+    onEnterKeyDown: () => void,
+    onEscKeyDown: () => void,
+    stopPropagation?: boolean
+  ): (event: React.KeyboardEvent<HTMLElement>) => void;
 };
 
 export const useDropdownKeyDown: TUseDropdownKeyDown = (onEnterKeyDown, onEscKeyDown, stopPropagation = true) => {

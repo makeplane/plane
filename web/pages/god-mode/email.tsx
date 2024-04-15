@@ -1,17 +1,17 @@
 import { ReactElement } from "react";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import useSWR from "swr";
 // layouts
-import { InstanceAdminLayout } from "layouts/admin-layout";
-// types
-import { NextPageWithLayout } from "lib/types";
-// hooks
-import { useApplication } from "hooks/store";
-// ui
 import { Loader } from "@plane/ui";
+import { PageHead } from "@/components/core";
+import { InstanceEmailForm } from "@/components/instance";
+import { useApplication } from "@/hooks/store";
+import { InstanceAdminLayout } from "@/layouts/admin-layout";
+// types
+import { NextPageWithLayout } from "@/lib/types";
+// hooks
+// ui
 // components
-import { InstanceEmailForm } from "components/instance";
-import { PageHead } from "components/core";
 
 const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
   // store

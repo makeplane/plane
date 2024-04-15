@@ -1,21 +1,22 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
-import { Combobox } from "@headlessui/react";
+import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
-import { useTheme } from "next-themes";
-// hooks
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// icons
-import { PriorityIcon, Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "helpers/common.helper";
-// types
+import { Combobox } from "@headlessui/react";
 import { TIssuePriorities } from "@plane/types";
+// hooks
+import { PriorityIcon, Tooltip } from "@plane/ui";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
+import { cn } from "@/helpers/common.helper";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// icons
+// helpers
+// types
+import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
-import { ISSUE_PRIORITIES } from "constants/issue";
-import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -58,11 +59,18 @@ const BorderButton = (props: ButtonProps) => {
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "bg-custom-background-80 border-custom-border-300",
+    none: "hover:bg-custom-background-80 border-custom-border-300",
   };
 
+  const { isMobile } = usePlatformOS();
+
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip}>
+    <Tooltip
+      tooltipHeading="Priority"
+      tooltipContent={priorityDetails?.title ?? "None"}
+      disabled={!showTooltip}
+      isMobile={isMobile}
+    >
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5",
@@ -71,7 +79,7 @@ const BorderButton = (props: ButtonProps) => {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent,
+            "bg-red-600 border-red-600": priority === "urgent" && hideText && highlightUrgent,
           },
           className
         )}
@@ -80,7 +88,7 @@ const BorderButton = (props: ButtonProps) => {
           <div
             className={cn({
               // highlight just the icon if text is visible and priority is urgent
-              "bg-red-500 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
+              "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
             })}
           >
             <PriorityIcon
@@ -130,8 +138,15 @@ const BackgroundButton = (props: ButtonProps) => {
     none: "bg-custom-background-80",
   };
 
+  const { isMobile } = usePlatformOS();
+
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip}>
+    <Tooltip
+      tooltipHeading="Priority"
+      tooltipContent={priorityDetails?.title ?? "None"}
+      disabled={!showTooltip}
+      isMobile={isMobile}
+    >
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5",
@@ -140,7 +155,7 @@ const BackgroundButton = (props: ButtonProps) => {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent,
+            "bg-red-600 border-red-600": priority === "urgent" && hideText && highlightUrgent,
           },
           className
         )}
@@ -149,7 +164,7 @@ const BackgroundButton = (props: ButtonProps) => {
           <div
             className={cn({
               // highlight just the icon if text is visible and priority is urgent
-              "bg-red-500 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
+              "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
             })}
           >
             <PriorityIcon
@@ -197,11 +212,18 @@ const TransparentButton = (props: ButtonProps) => {
     high: "text-orange-950",
     medium: "text-yellow-950",
     low: "text-blue-950",
-    none: "",
+    none: "hover:text-custom-text-300",
   };
 
+  const { isMobile } = usePlatformOS();
+
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip}>
+    <Tooltip
+      tooltipHeading="Priority"
+      tooltipContent={priorityDetails?.title ?? "None"}
+      disabled={!showTooltip}
+      isMobile={isMobile}
+    >
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
@@ -210,7 +232,7 @@ const TransparentButton = (props: ButtonProps) => {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-red-500 border-red-500": priority === "urgent" && hideText && highlightUrgent,
+            "bg-red-600 border-red-600": priority === "urgent" && hideText && highlightUrgent,
             "bg-custom-background-80": isActive,
           },
           className
@@ -220,7 +242,7 @@ const TransparentButton = (props: ButtonProps) => {
           <div
             className={cn({
               // highlight just the icon if text is visible and priority is urgent
-              "bg-red-500 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
+              "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
             })}
           >
             <PriorityIcon
@@ -342,8 +364,8 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
-    ? BackgroundButton
-    : TransparentButton;
+      ? BackgroundButton
+      : TransparentButton;
 
   useEffect(() => {
     if (isOpen && inputRef.current) {

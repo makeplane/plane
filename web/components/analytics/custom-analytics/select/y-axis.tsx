@@ -1,9 +1,9 @@
 // ui
+import { TYAxisValues } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // types
-import { TYAxisValues } from "@plane/types";
+import { ANALYTICS_Y_AXIS_VALUES } from "@/constants/analytics";
 // constants
-import { ANALYTICS_Y_AXIS_VALUES } from "constants/analytics";
 
 type Props = {
   value: TYAxisValues;

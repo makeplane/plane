@@ -1,6 +1,6 @@
 import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
 // types
-import { TModuleStatus } from "@plane/types";
+import { TModuleLayoutOptions, TModuleOrderByOptions, TModuleStatus } from "@plane/types";
 
 export const MODULE_STATUS: {
   label: string;
@@ -53,20 +53,43 @@ export const MODULE_STATUS: {
   },
 ];
 
-export const MODULE_VIEW_LAYOUTS: { key: "list" | "grid" | "gantt_chart"; icon: any; title: string }[] = [
+export const MODULE_VIEW_LAYOUTS: { key: TModuleLayoutOptions; icon: any; title: string }[] = [
   {
     key: "list",
     icon: List,
     title: "List layout",
   },
   {
-    key: "grid",
+    key: "board",
     icon: LayoutGrid,
     title: "Grid layout",
   },
   {
-    key: "gantt_chart",
+    key: "gantt",
     icon: GanttChartSquare,
     title: "Gantt layout",
+  },
+];
+
+export const MODULE_ORDER_BY_OPTIONS: { key: TModuleOrderByOptions; label: string }[] = [
+  {
+    key: "name",
+    label: "Name",
+  },
+  {
+    key: "progress",
+    label: "Progress",
+  },
+  {
+    key: "issues_length",
+    label: "Number of issues",
+  },
+  {
+    key: "target_date",
+    label: "Due date",
+  },
+  {
+    key: "created_at",
+    label: "Created date",
   },
 ];

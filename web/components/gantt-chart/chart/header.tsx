@@ -1,13 +1,13 @@
+import { observer } from "mobx-react";
 import { Expand, Shrink } from "lucide-react";
 // hooks
 // helpers
-import { cn } from "helpers/common.helper";
+import { VIEWS_LIST } from "@/components/gantt-chart/data";
+import { cn } from "@/helpers/common.helper";
 // types
+import { useGanttChart } from "../hooks/use-gantt-chart";
 import { IGanttBlock, TGanttViews } from "../types";
 // constants
-import { VIEWS_LIST } from "components/gantt-chart/data";
-import { useGanttChart } from "../hooks/use-gantt-chart";
-import { observer } from "mobx-react";
 
 type Props = {
   blocks: IGanttBlock[] | null;
@@ -25,7 +25,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
   const { currentView } = useGanttChart();
 
   return (
-    <div className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2 z-10">
+    <div className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2">
       <div className="flex items-center gap-2 text-lg font-medium">{title}</div>
       <div className="ml-auto">
         <div className="ml-auto text-sm font-medium">{blocks ? `${blocks.length} ${loaderTitle}` : "Loading..."}</div>

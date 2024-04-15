@@ -1,22 +1,22 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
+import { Combobox } from "@headlessui/react";
 // hooks
-import { useApplication, useProjectState } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { Spinner, StateGroupIcon } from "@plane/ui";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useProjectState } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
 // icons
-import { StateGroupIcon } from "@plane/ui";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -50,6 +50,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   // states
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [stateLoader, setStateLoader] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -74,6 +75,8 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   } = useApplication();
   const { fetchProjectStates, getProjectStates, getStateById } = useProjectState();
   const statesList = getProjectStates(projectId);
+  const defaultStateList = statesList?.find((state) => state.default);
+  const stateValue = value ? value : defaultStateList?.id;
 
   const options = statesList?.map((state) => ({
     value: state.id,
@@ -89,11 +92,19 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  const selectedState = getStateById(value);
+  const selectedState = stateValue ? getStateById(stateValue) : undefined;
 
-  const onOpen = () => {
-    if (!statesList && workspaceSlug) fetchProjectStates(workspaceSlug, projectId);
+  const onOpen = async () => {
+    if (!statesList && workspaceSlug) {
+      setStateLoader(true);
+      await fetchProjectStates(workspaceSlug, projectId);
+      setStateLoader(false);
+    }
   };
+  useEffect(() => {
+    if (projectId) onOpen();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
 
   const handleClose = () => {
     if (!isOpen) return;
@@ -141,7 +152,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("h-full", className)}
-      value={value}
+      value={stateValue}
       onChange={dropdownOnChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
@@ -178,18 +189,27 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
               showTooltip={showTooltip}
               variant={buttonVariant}
             >
-              {!hideIcon && (
-                <StateGroupIcon
-                  stateGroup={selectedState?.group ?? "backlog"}
-                  color={selectedState?.color}
-                  className="h-3 w-3 flex-shrink-0"
-                />
-              )}
-              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate">{selectedState?.name ?? "State"}</span>
-              )}
-              {dropdownArrow && (
-                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              {stateLoader ? (
+                <Spinner className="w-3.5 h-3.5" />
+              ) : (
+                <>
+                  {!hideIcon && (
+                    <StateGroupIcon
+                      stateGroup={selectedState?.group ?? "backlog"}
+                      color={selectedState?.color}
+                      className="h-3 w-3 flex-shrink-0"
+                    />
+                  )}
+                  {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+                    <span className="flex-grow truncate">{selectedState?.name ?? "State"}</span>
+                  )}
+                  {dropdownArrow && (
+                    <ChevronDown
+                      className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)}
+                      aria-hidden="true"
+                    />
+                  )}
+                </>
               )}
             </DropdownButton>
           </button>

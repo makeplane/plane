@@ -1,12 +1,12 @@
 import { FC } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 // images
+import { LayoutGrid } from "lucide-react";
+import { Button } from "@plane/ui";
 import AccessDeniedImg from "public/auth/access-denied.svg";
 // ui
-import { Button } from "@plane/ui";
 // icons
-import { LayoutGrid } from "lucide-react";
 
 interface InstanceAdminRestrictionProps {
   redirectWorkspaceSlug: string;

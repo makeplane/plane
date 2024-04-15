@@ -1,32 +1,29 @@
 import { FC } from "react";
 import { X } from "lucide-react";
 // types
+import { useLabel } from "@/hooks/store";
 import { TLabelOperations } from "./root";
-import { useIssueDetail, useLabel } from "hooks/store";
 
 type TLabelListItem = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   labelId: string;
+  values: string[];
   labelOperations: TLabelOperations;
   disabled: boolean;
 };
 
 export const LabelListItem: FC<TLabelListItem> = (props) => {
-  const { workspaceSlug, projectId, issueId, labelId, labelOperations, disabled } = props;
+  const { workspaceSlug, projectId, issueId, labelId, values, labelOperations, disabled } = props;
   // hooks
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
   const { getLabelById } = useLabel();
 
-  const issue = getIssueById(issueId);
   const label = getLabelById(labelId);
 
   const handleLabel = async () => {
-    if (issue && !disabled) {
-      const currentLabels = issue.label_ids.filter((_labelId) => _labelId !== labelId);
+    if (values && !disabled) {
+      const currentLabels = values.filter((_labelId) => _labelId !== labelId);
       await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
     }
   };

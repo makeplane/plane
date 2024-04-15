@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // services
-import { AuthService } from "services/auth.service";
 // hooks
-import useToast from "hooks/use-toast";
-import { useEventTracker } from "hooks/store";
 // ui
-import { Button, Input } from "@plane/ui";
-// helpers
-import { checkEmailValidity } from "helpers/string.helper";
-// icons
 import { Eye, EyeOff } from "lucide-react";
-import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "constants/event-tracker";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "@/constants/event-tracker";
+import { checkEmailValidity } from "@/helpers/string.helper";
+// icons
+import { useEventTracker } from "@/hooks/store";
+import { AuthService } from "@/services/auth.service";
 
 type Props = {
   email: string;
@@ -38,8 +37,6 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     control,
@@ -62,8 +59,8 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
     await authService
       .setPassword(payload)
       .then(async () => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Password created successfully.",
         });
@@ -78,8 +75,8 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
           state: "FAILED",
           first_time: false,
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });
@@ -160,7 +157,7 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
               </div>
             )}
           />
-          <p className="text-onboarding-text-200 text-xs mt-2 pb-3">
+          <p className="mt-2 pb-3 text-xs text-onboarding-text-200">
             Whatever you choose now will be your account{"'"}s password until you change it.
           </p>
         </div>

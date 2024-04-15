@@ -1,13 +1,13 @@
 import { BarDatum } from "@nivo/bar";
 
 // icons
+import { IAnalyticsParams, IAnalyticsResponse, TIssuePriorities } from "@plane/types";
 import { PriorityIcon } from "@plane/ui";
 // helpers
-import { generateBarColor, generateDisplayName } from "helpers/analytics.helper";
+import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@/constants/analytics";
+import { generateBarColor, generateDisplayName } from "@/helpers/analytics.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, TIssuePriorities } from "@plane/types";
 // constants
-import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "constants/analytics";
 
 type Props = {
   analytics: IAnalyticsResponse;

@@ -11,36 +11,24 @@ import {
 } from "lucide-react";
 
 // types
-import { TCycleLayout, TCycleView } from "@plane/types";
+import { TCycleLayoutOptions, TCycleTabOptions } from "@plane/types";
 
-export const CYCLE_TAB_LIST: {
-  key: TCycleView;
+export const CYCLE_TABS_LIST: {
+  key: TCycleTabOptions;
   name: string;
 }[] = [
-  {
-    key: "all",
-    name: "All",
-  },
   {
     key: "active",
     name: "Active",
   },
   {
-    key: "upcoming",
-    name: "Upcoming",
-  },
-  {
-    key: "completed",
-    name: "Completed",
-  },
-  {
-    key: "draft",
-    name: "Drafts",
+    key: "all",
+    name: "All",
   },
 ];
 
 export const CYCLE_VIEW_LAYOUTS: {
-  key: TCycleLayout;
+  key: TCycleLayoutOptions;
   icon: any;
   title: string;
 }[] = [
@@ -64,6 +52,7 @@ export const CYCLE_VIEW_LAYOUTS: {
 export const CYCLE_STATUS: {
   label: string;
   value: "current" | "upcoming" | "completed" | "draft";
+  title: string;
   color: string;
   textColor: string;
   bgColor: string;
@@ -71,6 +60,7 @@ export const CYCLE_STATUS: {
   {
     label: "day left",
     value: "current",
+    title: "Active",
     color: "#F59E0B",
     textColor: "text-amber-500",
     bgColor: "bg-amber-50",
@@ -78,6 +68,7 @@ export const CYCLE_STATUS: {
   {
     label: "Yet to start",
     value: "upcoming",
+    title: "Yet to start",
     color: "#3F76FF",
     textColor: "text-blue-500",
     bgColor: "bg-indigo-50",
@@ -85,6 +76,7 @@ export const CYCLE_STATUS: {
   {
     label: "Completed",
     value: "completed",
+    title: "Completed",
     color: "#16A34A",
     textColor: "text-green-600",
     bgColor: "bg-green-50",
@@ -92,6 +84,7 @@ export const CYCLE_STATUS: {
   {
     label: "Draft",
     value: "draft",
+    title: "Draft",
     color: "#525252",
     textColor: "text-custom-text-300",
     bgColor: "bg-custom-background-90",
@@ -162,5 +155,3 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     icon: Microscope,
   },
 ];
-
-

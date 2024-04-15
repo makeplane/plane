@@ -2,13 +2,13 @@
 import React from "react";
 // react-hook-form
 import { Control, Controller, UseFormWatch } from "react-hook-form";
+import { IModule } from "@plane/types";
 // ui
 import { CustomSelect, DoubleCircleIcon } from "@plane/ui";
 // types
-import { IModule } from "@plane/types";
+import { MODULE_STATUS } from "@/constants/module";
 // common
 // constants
-import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   control: Control<Partial<IModule>, any>;

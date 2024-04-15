@@ -1,15 +1,15 @@
-import { action, makeObservable, observable, runInAction, computed } from "mobx";
+import concat from "lodash/concat";
+import pull from "lodash/pull";
 import set from "lodash/set";
 import update from "lodash/update";
-import pull from "lodash/pull";
-import concat from "lodash/concat";
+import { action, makeObservable, observable, runInAction, computed } from "mobx";
+// types
+import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 // base class
+import { IssueService, IssueArchiveService } from "@/services/issue";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
-import { IssueService, IssueArchiveService } from "services/issue";
-// types
 import { IIssueRootStore } from "../root.store";
-import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 
 export interface IProjectIssues {
   // observable
@@ -18,6 +18,7 @@ export interface IProjectIssues {
   viewFlags: ViewFlags;
   // computed
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
+  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
@@ -100,6 +101,30 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     return issues;
   }
 
+  getIssueIds = (groupId?: string, subGroupId?: string) => {
+    const groupedIssueIds = this.groupedIssueIds;
+
+    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    if (!displayFilters || !groupedIssueIds) return undefined;
+
+    const subGroupBy = displayFilters?.sub_group_by;
+    const groupBy = displayFilters?.group_by;
+
+    if (!groupBy && !subGroupBy) {
+      return groupedIssueIds as string[];
+    }
+
+    if (groupBy && subGroupBy && groupId && subGroupId) {
+      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[];
+    }
+
+    if (groupBy && groupId) {
+      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[];
+    }
+
+    return undefined;
+  };
+
   fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader") => {
     try {
       this.loader = loadType;
@@ -117,6 +142,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       });
 
       this.rootStore.issues.addIssue(response);
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
 
       return response;
     } catch (error) {
@@ -137,6 +163,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       });
 
       this.rootStore.issues.addIssue([response]);
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
 
       return response;
     } catch (error) {
@@ -164,6 +191,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       });
 
       this.rootStore.issues.removeIssue(issueId);
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
     } catch (error) {
       throw error;
     }
@@ -179,6 +207,8 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
         });
         pull(this.issues[projectId], issueId);
       });
+
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
     } catch (error) {
       throw error;
     }
@@ -216,6 +246,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       });
 
       const response = await this.issueService.bulkDeleteIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
 
       return response;
     } catch (error) {

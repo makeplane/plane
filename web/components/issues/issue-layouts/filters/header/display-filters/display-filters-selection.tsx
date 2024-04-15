@@ -1,5 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
 
 // components
 import {
@@ -9,17 +10,19 @@ import {
   FilterIssueType,
   FilterOrderBy,
   FilterSubGroupBy,
-} from "components/issues";
+} from "@/components/issues";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
-import { ILayoutDisplayFiltersOptions } from "constants/issue";
+import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 
 type Props = {
-  displayFilters: IIssueDisplayFilterOptions;
+  displayFilters: IIssueDisplayFilterOptions | undefined;
   displayProperties: IIssueDisplayProperties;
   handleDisplayFiltersUpdate: (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => void;
   handleDisplayPropertiesUpdate: (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
+  ignoreGroupedFilters?: Partial<TIssueGroupByOptions>[];
+  cycleViewDisabled?: boolean;
+  moduleViewDisabled?: boolean;
 };
 
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
@@ -29,17 +32,33 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
     handleDisplayFiltersUpdate,
     handleDisplayPropertiesUpdate,
     layoutDisplayFiltersOptions,
+    ignoreGroupedFilters = [],
+    cycleViewDisabled = false,
+    moduleViewDisabled = false,
   } = props;
 
   const isDisplayFilterEnabled = (displayFilter: keyof IIssueDisplayFilterOptions) =>
     Object.keys(layoutDisplayFiltersOptions?.display_filters ?? {}).includes(displayFilter);
 
+  const computedIgnoreGroupedFilters: Partial<TIssueGroupByOptions>[] = [];
+  if (cycleViewDisabled) {
+    ignoreGroupedFilters.push("cycle");
+  }
+  if (moduleViewDisabled) {
+    ignoreGroupedFilters.push("module");
+  }
+
   return (
-    <div className="relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
+    <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
       {/* display properties */}
       {layoutDisplayFiltersOptions?.display_properties && (
         <div className="py-2">
-          <FilterDisplayProperties displayProperties={displayProperties} handleUpdate={handleDisplayPropertiesUpdate} />
+          <FilterDisplayProperties
+            displayProperties={displayProperties}
+            handleUpdate={handleDisplayPropertiesUpdate}
+            cycleViewDisabled={cycleViewDisabled}
+            moduleViewDisabled={moduleViewDisabled}
+          />
         </div>
       )}
 
@@ -54,14 +73,15 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
                 group_by: val,
               })
             }
+            ignoreGroupedFilters={[...ignoreGroupedFilters, ...computedIgnoreGroupedFilters]}
           />
         </div>
       )}
 
       {/* sub-group by */}
       {isDisplayFilterEnabled("sub_group_by") &&
-        displayFilters.group_by !== null &&
-        displayFilters.layout === "kanban" && (
+        displayFilters?.group_by !== null &&
+        displayFilters?.layout === "kanban" && (
           <div className="py-2">
             <FilterSubGroupBy
               displayFilters={displayFilters}
@@ -71,6 +91,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
                 })
               }
               subGroupByOptions={layoutDisplayFiltersOptions?.display_filters.sub_group_by ?? []}
+              ignoreGroupedFilters={[...ignoreGroupedFilters, ...computedIgnoreGroupedFilters]}
             />
           </div>
         )}
@@ -79,7 +100,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       {isDisplayFilterEnabled("order_by") && (
         <div className="py-2">
           <FilterOrderBy
-            selectedOrderBy={displayFilters.order_by}
+            selectedOrderBy={displayFilters?.order_by}
             handleUpdate={(val) =>
               handleDisplayFiltersUpdate({
                 order_by: val,
@@ -94,7 +115,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       {isDisplayFilterEnabled("type") && (
         <div className="py-2">
           <FilterIssueType
-            selectedIssueType={displayFilters.type}
+            selectedIssueType={displayFilters?.type}
             handleUpdate={(val) =>
               handleDisplayFiltersUpdate({
                 type: val,
@@ -109,8 +130,8 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
         <div className="py-2">
           <FilterExtraOptions
             selectedExtraOptions={{
-              show_empty_groups: displayFilters.show_empty_groups ?? true,
-              sub_issue: displayFilters.sub_issue ?? true,
+              show_empty_groups: displayFilters?.show_empty_groups ?? true,
+              sub_issue: displayFilters?.sub_issue ?? true,
             }}
             handleUpdate={(key, val) =>
               handleDisplayFiltersUpdate({

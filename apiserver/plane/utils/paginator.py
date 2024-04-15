@@ -134,7 +134,7 @@ class OffsetPaginator:
             results=results,
             next=next_cursor,
             prev=prev_cursor,
-            hits=None,
+            hits=count,
             max_hits=max_hits,
         )
 
@@ -193,7 +193,7 @@ class BasePaginator:
             cursor_result = paginator.get_result(
                 limit=per_page, cursor=input_cursor
             )
-        except BadPaginationError as e:
+        except BadPaginationError:
             raise ParseError(detail="Error in parsing")
 
         # Serialize result according to the on_result function
@@ -217,6 +217,7 @@ class BasePaginator:
                 "prev_page_results": cursor_result.prev.has_results,
                 "count": cursor_result.__len__(),
                 "total_pages": cursor_result.max_hits,
+                "total_results": cursor_result.hits,
                 "extra_stats": extra_stats,
                 "results": results,
             }

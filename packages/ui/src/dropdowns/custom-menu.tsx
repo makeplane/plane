@@ -27,6 +27,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     noBorder = false,
     noChevron = false,
     optionsClassName = "",
+    menuItemsClassName = "",
     verticalEllipsis = false,
     portalElement,
     menuButtonOnClick,
@@ -70,7 +71,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   let menuItems = (
-    <Menu.Items className="fixed z-10" static>
+    <Menu.Items className={cn("fixed z-10", menuItemsClassName)} static>
       <div
         className={cn(
           "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
@@ -113,7 +114,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  openDropdown();
+                  isOpen ? closeDropdown() : openDropdown();
                   if (menuButtonOnClick) menuButtonOnClick();
                 }}
                 className={customButtonClassName}
@@ -130,8 +131,9 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     ref={setReferenceElement}
                     type="button"
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
-                      openDropdown();
+                      isOpen ? closeDropdown() : openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
                     disabled={disabled}
@@ -156,8 +158,9 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                         : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
-                      openDropdown();
+                      isOpen ? closeDropdown() : openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
                     tabIndex={customButtonTabIndex}

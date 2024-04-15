@@ -1,22 +1,22 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import { useDropzone } from "react-dropzone";
-import { Tab, Popover } from "@headlessui/react";
 import { Control, Controller } from "react-hook-form";
+import useSWR from "swr";
+import { Tab, Popover } from "@headlessui/react";
 // hooks
-import { useApplication, useWorkspace } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-// services
-import { FileService } from "services/file.service";
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// components
 import { Button, Input, Loader } from "@plane/ui";
+import { MAX_FILE_SIZE } from "@/constants/common";
+import { useApplication, useWorkspace } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+// services
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { FileService } from "@/services/file.service";
+// hooks
+// components
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
 
 const tabOptions = [
   {
@@ -40,13 +40,14 @@ type Props = {
   onChange: (data: string) => void;
   disabled?: boolean;
   tabIndex?: number;
+  isProfileCover?: boolean;
 };
 
 // services
 const fileService = new FileService();
 
 export const ImagePickerPopover: React.FC<Props> = observer((props) => {
-  const { label, value, control, onChange, disabled = false, tabIndex } = props;
+  const { label, value, control, onChange, disabled = false, tabIndex, isProfileCover = false } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
@@ -97,37 +98,53 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const handleSubmit = async () => {
     setIsImageUploading(true);
 
-    if (!image || !workspaceSlug) return;
+    if (!image) return;
 
     const formData = new FormData();
     formData.append("asset", image);
     formData.append("attributes", JSON.stringify({}));
 
-    fileService
-      .uploadFile(workspaceSlug.toString(), formData)
-      .then((res) => {
-        const oldValue = value;
-        const isUnsplashImage = oldValue?.split("/")[2] === "images.unsplash.com";
+    const oldValue = value;
+    const isUnsplashImage = oldValue?.split("/")[2] === "images.unsplash.com";
 
-        const imageUrl = res.asset;
-        onChange(imageUrl);
-        setIsImageUploading(false);
-        setImage(null);
-        setIsOpen(false);
+    const uploadCallback = (res: any) => {
+      const imageUrl = res.asset;
+      onChange(imageUrl);
+      setIsImageUploading(false);
+      setImage(null);
+      setIsOpen(false);
+    };
 
-        if (isUnsplashImage) return;
-
-        if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    if (isProfileCover) {
+      fileService
+        .uploadUserFile(formData)
+        .then((res) => {
+          uploadCallback(res);
+          if (isUnsplashImage) return;
+          if (oldValue && currentWorkspace) fileService.deleteUserFile(oldValue);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      if (!workspaceSlug) return;
+      fileService
+        .uploadFile(workspaceSlug.toString(), formData)
+        .then((res) => {
+          uploadCallback(res);
+          if (isUnsplashImage) return;
+          if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
   };
 
   useEffect(() => {
     if (!unsplashImages || value !== null) return;
 
-    onChange(unsplashImages[0].urls.regular);
+    onChange(unsplashImages[0]?.urls.regular);
   }, [value, onChange, unsplashImages]);
 
   const handleClose = () => {
@@ -149,7 +166,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   useOutsideClickDetector(ref, handleClose);
 
   return (
-    <Popover className="relative z-[2]" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
+    <Popover className="relative z-20" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
       <Popover.Button
         className="rounded border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
         onClick={handleOnClick}
@@ -160,7 +177,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
 
       {isOpen && (
         <Popover.Panel
-          className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm"
+          className="absolute right-0 z-20 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm"
           static
         >
           <div
@@ -187,7 +204,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                   );
                 })}
               </Tab.List>
-              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
+              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md">
                 {(unsplashImages || !unsplashError) && (
                   <Tab.Panel className="mt-4 h-full w-full space-y-4">
                     <div className="flex gap-x-2">

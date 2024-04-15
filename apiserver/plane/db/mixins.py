@@ -1,12 +1,10 @@
 # Python imports
-import uuid
 
 # Django imports
 from django.db import models
 
 
 class TimeAuditModel(models.Model):
-
     """To path when the record was created and last modified"""
 
     created_at = models.DateTimeField(
@@ -22,7 +20,6 @@ class TimeAuditModel(models.Model):
 
 
 class UserAuditModel(models.Model):
-
     """To path when the record was created and last modified"""
 
     created_by = models.ForeignKey(
@@ -45,7 +42,6 @@ class UserAuditModel(models.Model):
 
 
 class AuditModel(TimeAuditModel, UserAuditModel):
-
     """To path when the record was created and last modified"""
 
     class Meta:

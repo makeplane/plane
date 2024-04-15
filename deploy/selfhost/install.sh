@@ -17,16 +17,16 @@ function print_header() {
 clear
 
 cat <<"EOF"
----------------------------------------
- ____  _                  
-|  _ \| | __ _ _ __   ___ 
-| |_) | |/ _` | '_ \ / _ \
-|  __/| | (_| | | | |  __/
-|_|   |_|\__,_|_| |_|\___|    
-
----------------------------------------
+--------------------------------------------
+ ____  _                          ///////// 
+|  _ \| | __ _ _ __   ___         ///////// 
+| |_) | |/ _` | '_ \ / _ \   /////    ///// 
+|  __/| | (_| | | | |  __/   /////    ///// 
+|_|   |_|\__,_|_| |_|\___|        ////      
+                                  ////      
+--------------------------------------------
 Project management tool from the future
----------------------------------------
+--------------------------------------------
 EOF
 }
 
@@ -66,7 +66,7 @@ function buildLocalImage() {
         cd $PLANE_TEMP_CODE_DIR
         if [ "$BRANCH" == "master" ];
         then
-            export APP_RELEASE=latest
+            export APP_RELEASE=stable
         fi
 
         docker compose -f build.yml build --no-cache  >&2
@@ -99,17 +99,17 @@ function download() {
     curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s)
     curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/variables-upgrade.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env?$(date +%s)
 
-    if [ -f "$PLANE_INSTALL_DIR/.env" ];
+    if [ -f "$DOCKER_ENV_PATH" ];
     then
-        cp $PLANE_INSTALL_DIR/.env $PLANE_INSTALL_DIR/archive/$TS.env
+        cp $DOCKER_ENV_PATH $PLANE_INSTALL_DIR/archive/$TS.env
     else
-        mv $PLANE_INSTALL_DIR/variables-upgrade.env $PLANE_INSTALL_DIR/.env
+        mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
     fi
 
     if [ "$BRANCH" != "master" ];
     then
         cp $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/temp.yaml 
-        sed -e 's@${APP_RELEASE:-latest}@'"$BRANCH"'@g' \
+        sed -e 's@${APP_RELEASE:-stable}@'"$BRANCH"'@g' \
             $PLANE_INSTALL_DIR/temp.yaml > $PLANE_INSTALL_DIR/docker-compose.yaml
 
         rm $PLANE_INSTALL_DIR/temp.yaml
@@ -131,9 +131,9 @@ function download() {
     fi
     
     echo ""
-    echo "Latest version is now available for you to use"
+    echo "Most recent Stable version is now available for you to use"
     echo ""
-    echo "In case of Upgrade, your new setting file is availabe as 'variables-upgrade.env'. Please compare and set the required values in '.env 'file."
+    echo "In case of Upgrade, your new setting file is availabe as 'variables-upgrade.env'. Please compare and set the required values in 'plane.env 'file."
     echo ""
 
 }
@@ -144,7 +144,7 @@ function startServices() {
     if [ -n "$migrator_container_id" ]; then
         local idx=0
         while docker inspect --format='{{.State.Status}}' $migrator_container_id | grep -q "running"; do
-            local message=">>> Waiting for Data Migration to finish"
+            local message=">> Waiting for Data Migration to finish"
             local dots=$(printf '%*s' $idx | tr ' ' '.')
             echo -ne "\r$message$dots"
             ((idx++))
@@ -152,13 +152,18 @@ function startServices() {
         done
     fi
     printf "\r\033[K"
+    echo ""
+    echo "   Data Migration completed successfully ✅"
 
     # if migrator exit status is not 0, show error message and exit
     if [ -n "$migrator_container_id" ]; then
         local migrator_exit_code=$(docker inspect --format='{{.State.ExitCode}}' $migrator_container_id)
         if [ $migrator_exit_code -ne 0 ]; then
             echo "Plane Server failed to start ❌"
-            stopServices
+            # stopServices
+            echo
+            echo "Please check the logs for the 'migrator' service and resolve the issue(s)."
+            echo "Stop the services by running the command: ./setup.sh stop"
             exit 1
         fi
     fi
@@ -167,26 +172,35 @@ function startServices() {
     local idx2=0
     while ! docker logs $api_container_id 2>&1 | grep -m 1 -i "Application startup complete" | grep -q ".";
     do
-        local message=">>> Waiting for API Service to Start"
+        local message=">> Waiting for API Service to Start"
         local dots=$(printf '%*s' $idx2 | tr ' ' '.')    
         echo -ne "\r$message$dots"
         ((idx2++))
         sleep 1
     done
     printf "\r\033[K"
+    echo "   API Service started successfully ✅"
+    source "${DOCKER_ENV_PATH}"
+    echo "   Plane Server started successfully ✅"
+    echo ""
+    echo "   You can access the application at $WEB_URL"
+    echo ""
+
 }
 function stopServices() {
     docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH down
 }
 function restartServices() {
-    docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH restart
+    # docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH restart
+    stopServices
+    startServices
 }
 function upgrade() {
     echo "***** STOPPING SERVICES ****"
     stopServices
 
     echo
-    echo "***** DOWNLOADING LATEST VERSION ****"
+    echo "***** DOWNLOADING STABLE VERSION ****"
     download
 
     echo "***** PLEASE VALIDATE AND START SERVICES ****"
@@ -303,15 +317,15 @@ function askForAction() {
     elif [ "$ACTION" == "2" ] || [ "$DEFAULT_ACTION" == "start" ]
     then
         startServices
-        askForAction
+        # askForAction
     elif [ "$ACTION" == "3" ] || [ "$DEFAULT_ACTION" == "stop" ]
     then
         stopServices
-        askForAction
+        # askForAction
     elif [ "$ACTION" == "4" ] || [ "$DEFAULT_ACTION" == "restart" ]
     then
         restartServices
-        askForAction
+        # askForAction
     elif [ "$ACTION" == "5" ]  || [ "$DEFAULT_ACTION" == "upgrade" ]
     then
         upgrade
@@ -343,7 +357,7 @@ fi
 
 if [ "$BRANCH" == "master" ];
 then
-    export APP_RELEASE=latest
+    export APP_RELEASE=stable
 fi
 
 # REMOVE SPECIAL CHARACTERS FROM BRANCH NAME
@@ -354,7 +368,21 @@ fi
 mkdir -p $PLANE_INSTALL_DIR/archive
 
 DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/docker-compose.yaml
-DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/.env
+DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/plane.env
+
+# BACKWARD COMPATIBILITY
+OLD_DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/.env
+if [ -f "$OLD_DOCKER_ENV_PATH" ];
+then
+    mv "$OLD_DOCKER_ENV_PATH" "$DOCKER_ENV_PATH"
+    OS_NAME=$(uname)
+    if [ "$OS_NAME" == "Darwin" ];
+    then
+        sed -i '' -e 's@APP_RELEASE=latest@APP_RELEASE=stable@' "$DOCKER_ENV_PATH" 
+    else
+        sed -i -e 's@APP_RELEASE=latest@APP_RELEASE=stable@' "$DOCKER_ENV_PATH" 
+    fi
+fi
 
 print_header
 askForAction $@

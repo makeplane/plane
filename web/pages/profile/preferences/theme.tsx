@@ -1,19 +1,18 @@
 import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
-// hooks
-import { useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// layouts
-import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
-// components
-import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
 // ui
-import { Spinner } from "@plane/ui";
+import { Spinner, setPromiseToast } from "@plane/ui";
+// components
+import { CustomThemeSelector, ThemeSwitch, PageHead } from "@/components/core";
 // constants
-import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
+import { I_THEME_OPTION, THEME_OPTIONS } from "@/constants/themes";
+// hooks
+import { useUser } from "@/hooks/store";
+// layouts
+import { ProfilePreferenceSettingsLayout } from "@/layouts/settings-layout/profile/preferences";
 // type
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
   // states
@@ -24,7 +23,6 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
   const userTheme = currentUser?.theme;
   // hooks
   const { setTheme } = useTheme();
-  const { setToastAlert } = useToast();
 
   useEffect(() => {
     if (userTheme) {
@@ -37,11 +35,18 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
 
   const handleThemeChange = (themeOption: I_THEME_OPTION) => {
     setTheme(themeOption.value);
-    updateCurrentUserTheme(themeOption.value).catch(() => {
-      setToastAlert({
-        title: "Failed to Update the theme",
-        type: "error",
-      });
+    const updateCurrentUserThemePromise = updateCurrentUserTheme(themeOption.value);
+
+    setPromiseToast(updateCurrentUserThemePromise, {
+      loading: "Updating theme...",
+      success: {
+        title: "Success!",
+        message: () => "Theme updated successfully!",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Failed to Update the theme",
+      },
     });
   };
 
@@ -49,7 +54,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
     <>
       <PageHead title="Profile - Theme Prefrence" />
       {currentUser ? (
-        <div className="mx-auto mt-10 md:mt-14 h-full w-full overflow-y-auto px-6 lg:px-20 pb-8">
+        <div className="mx-auto mt-10 h-full w-full overflow-y-auto px-6 pb-8 md:mt-14 lg:px-20 vertical-scrollbar scrollbar-md">
           <div className="flex items-center border-b border-custom-border-100 pb-3.5">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>

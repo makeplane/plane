@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// hooks
-import { useLabel, useMember } from "hooks/store";
-// components
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
+import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
-// types
-import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
+// components
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// hooks
+import { useLabel, useMember } from "@/hooks/store";
+// types
 
 type Props = {
   handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;
@@ -200,8 +200,8 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-            ? "Creating View..."
-            : "Create View"}
+              ? "Creating View..."
+              : "Create View"}
         </Button>
       </div>
     </form>

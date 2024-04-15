@@ -2,12 +2,12 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
-// mobx store provider
 import { IUser } from "@plane/types";
-// helpers
-import { getUserRole } from "helpers/user.helper";
 // constants
-import { GROUP_WORKSPACE } from "constants/event-tracker";
+import { GROUP_WORKSPACE } from "@/constants/event-tracker";
+// helpers
+import { getUserRole } from "@/helpers/user.helper";
+// types
 
 export interface IPosthogWrapper {
   children: ReactNode;
@@ -42,9 +42,10 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
   }, [user, workspaceRole, projectRole]);
 
   useEffect(() => {
-    if (posthogAPIKey && posthogHost) {
+    if (posthogAPIKey && (process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost)) {
       posthog.init(posthogAPIKey, {
-        api_host: posthogHost || "https://app.posthog.com",
+        api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost || "https://app.posthog.com",
+        debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1", // Debug mode based on the environment variable
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });
@@ -58,7 +59,7 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
       posthog?.identify(user.email);
       posthog?.group(GROUP_WORKSPACE, currentWorkspaceId);
     }
-  }, [currentWorkspaceId, user]);
+  }, [currentWorkspaceId, lastWorkspaceId, user]);
 
   useEffect(() => {
     // Track page views

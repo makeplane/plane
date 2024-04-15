@@ -1,7 +1,7 @@
 // types
+import { weeks, months } from "../data";
 import { ChartDataType } from "../types";
 // data
-import { weeks, months } from "../data";
 
 export const getWeekNumberByDate = (date: Date) => {
   const firstDayOfYear = new Date(date.getFullYear(), 0, 1);

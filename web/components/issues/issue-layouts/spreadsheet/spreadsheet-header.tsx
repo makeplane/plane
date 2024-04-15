@@ -1,9 +1,7 @@
 // ui
-import { LayersIcon } from "@plane/ui";
-// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { LayersIcon } from "@plane/ui";
 // constants
-import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
@@ -13,16 +11,18 @@ interface Props {
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   isEstimateEnabled: boolean;
+  spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
 }
 
 export const SpreadsheetHeader = (props: Props) => {
-  const { displayProperties, displayFilters, handleDisplayFilterUpdate, isEstimateEnabled } = props;
+  const { displayProperties, displayFilters, handleDisplayFilterUpdate, isEstimateEnabled, spreadsheetColumnsList } =
+    props;
 
   return (
-    <thead className="sticky top-0 left-0 z-[2] border-b-[0.5px] border-custom-border-100">
+    <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-custom-border-100">
       <tr>
         <th
-          className="sticky left-0 z-[2] h-11 w-[28rem] flex items-center bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px]  before:border-custom-border-100"
+          className="sticky left-0 z-[15] h-11 w-[28rem] flex items-center bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px]  before:border-custom-border-100"
           tabIndex={-1}
         >
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
@@ -36,8 +36,9 @@ export const SpreadsheetHeader = (props: Props) => {
           </span>
         </th>
 
-        {SPREADSHEET_PROPERTY_LIST.map((property) => (
+        {spreadsheetColumnsList.map((property) => (
           <SpreadsheetHeaderColumn
+            key={property}
             property={property}
             displayProperties={displayProperties}
             displayFilters={displayFilters}

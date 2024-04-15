@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
-// hooks
-import { useDashboard } from "hooks/store";
-// components
-import { WidgetLoader } from "components/dashboard/widgets";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-// types
 import { TOverviewStatsWidgetResponse } from "@plane/types";
-import { cn } from "helpers/common.helper";
+// hooks
+import { WidgetLoader } from "@/components/dashboard/widgets";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { useDashboard } from "@/hooks/store";
+// components
+// helpers
+// types
 
 export type WidgetProps = {
   dashboardId: string;
@@ -37,7 +37,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
       key: "overdue",
       title: "Issues overdue",
       count: widgetStats?.pending_issues_count,
-      link: `/${workspaceSlug}/workspace-views/assigned/?target_date=${today};before`,
+      link: `/${workspaceSlug}/workspace-views/assigned/?state_group=backlog,unstarted,started&target_date=${today};before`,
     },
     {
       key: "created",
@@ -74,6 +74,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
     >
       {STATS_LIST.map((stat, index) => (
         <div
+          key={stat.key}
           className={cn(
             `w-full flex flex-col gap-2 hover:bg-custom-background-80`,
             index === 0 ? "rounded-tl-xl lg:rounded-l-xl" : "",

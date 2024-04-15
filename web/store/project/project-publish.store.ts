@@ -1,9 +1,9 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
 import set from "lodash/set";
+import { observable, action, makeObservable, runInAction } from "mobx";
 // types
+import { ProjectPublishService } from "@/services/project";
 import { ProjectRootStore } from "./";
 // services
-import { ProjectPublishService } from "services/project";
 
 export type TProjectPublishViews = "list" | "gantt" | "kanban" | "calendar" | "spreadsheet";
 

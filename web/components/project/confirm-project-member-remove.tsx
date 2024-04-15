@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
-// hooks
-import { useUser } from "hooks/store";
-// ui
-import { Button } from "@plane/ui";
-// types
+import { Dialog, Transition } from "@headlessui/react";
 import { IUserLite } from "@plane/types";
+// hooks
+import { Button } from "@plane/ui";
+import { useUser } from "@/hooks/store";
+// ui
+// types
 
 type Props = {
   data: IUserLite;
@@ -94,8 +94,8 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
                         ? "Leaving..."
                         : "Leave"
                       : isDeleteLoading
-                      ? "Removing..."
-                      : "Remove"}
+                        ? "Removing..."
+                        : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

@@ -40,7 +40,9 @@ def update_mentions_for_issue(issue, project, new_mentions, removed_mention):
         )
 
     IssueMention.objects.bulk_create(aggregated_issue_mentions, batch_size=100)
-    IssueMention.objects.filter(issue=issue, mention__in=removed_mention).delete()
+    IssueMention.objects.filter(
+        issue=issue, mention__in=removed_mention
+    ).delete()
 
 
 def get_new_mentions(requested_instance, current_instance):
@@ -92,7 +94,9 @@ def extract_mentions_as_subscribers(project_id, issue_id, mentions):
                 project_id=project_id,
             ).exists()
             and not IssueAssignee.objects.filter(
-                project_id=project_id, issue_id=issue_id, assignee_id=mention_id
+                project_id=project_id,
+                issue_id=issue_id,
+                assignee_id=mention_id,
             ).exists()
             and not Issue.objects.filter(
                 project_id=project_id, pk=issue_id, created_by_id=mention_id
@@ -120,12 +124,14 @@ def extract_mentions(issue_instance):
         data = json.loads(issue_instance)
         html = data.get("description_html")
         soup = BeautifulSoup(html, "html.parser")
-        mention_tags = soup.find_all("mention-component", attrs={"target": "users"})
+        mention_tags = soup.find_all(
+            "mention-component", attrs={"target": "users"}
+        )
 
         mentions = [mention_tag["id"] for mention_tag in mention_tags]
 
         return list(set(mentions))
-    except Exception as e:
+    except Exception:
         return []
 
 
@@ -134,11 +140,13 @@ def extract_comment_mentions(comment_value):
     try:
         mentions = []
         soup = BeautifulSoup(comment_value, "html.parser")
-        mentions_tags = soup.find_all("mention-component", attrs={"target": "users"})
+        mentions_tags = soup.find_all(
+            "mention-component", attrs={"target": "users"}
+        )
         for mention_tag in mentions_tags:
             mentions.append(mention_tag["id"])
         return list(set(mentions))
-    except Exception as e:
+    except Exception:
         return []
 
 
@@ -157,7 +165,13 @@ def get_new_comment_mentions(new_value, old_value):
 
 
 def create_mention_notification(
-    project, notification_comment, issue, actor_id, mention_id, issue_id, activity
+    project,
+    notification_comment,
+    issue,
+    actor_id,
+    mention_id,
+    issue_id,
+    activity,
 ):
     return Notification(
         workspace=project.workspace,
@@ -304,9 +318,11 @@ def notifications(
                 # add the user to issue subscriber
                 try:
                     _ = IssueSubscriber.objects.get_or_create(
-                        project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
+                        project_id=project_id,
+                        issue_id=issue_id,
+                        subscriber_id=actor_id,
                     )
-                except Exception as e:
+                except Exception:
                     pass
 
             project = Project.objects.get(pk=project_id)
@@ -334,11 +350,14 @@ def notifications(
                     user_id=subscriber
                 )
 
-                for issue_activity in issue_activities_created:   
+                for issue_activity in issue_activities_created:
                     # If activity done in blocking then blocked by email should not go
-                    if issue_activity.get("issue_detail").get("id") != issue_id:
-                        continue;
-                    
+                    if (
+                        issue_activity.get("issue_detail").get("id")
+                        != issue_id
+                    ):
+                        continue
+
                     # Do not send notification for description update
                     if issue_activity.get("field") == "description":
                         continue
@@ -471,7 +490,9 @@ def notifications(
                                             if issue_comment is not None
                                             else ""
                                         ),
-                                        "activity_time": issue_activity.get("created_at"),
+                                        "activity_time": issue_activity.get(
+                                            "created_at"
+                                        ),
                                     },
                                 },
                             )
@@ -552,7 +573,9 @@ def notifications(
                                             "old_value": str(
                                                 issue_activity.get("old_value")
                                             ),
-                                            "activity_time": issue_activity.get("created_at"),
+                                            "activity_time": issue_activity.get(
+                                                "created_at"
+                                            ),
                                         },
                                     },
                                 )
@@ -640,7 +663,9 @@ def notifications(
                                             "old_value": str(
                                                 last_activity.old_value
                                             ),
-                                            "activity_time": issue_activity.get("created_at"),
+                                            "activity_time": issue_activity.get(
+                                                "created_at"
+                                            ),
                                         },
                                     },
                                 )
@@ -697,7 +722,9 @@ def notifications(
                                                         "old_value"
                                                     )
                                                 ),
-                                                "activity_time": issue_activity.get("created_at"),
+                                                "activity_time": issue_activity.get(
+                                                    "created_at"
+                                                ),
                                             },
                                         },
                                     )

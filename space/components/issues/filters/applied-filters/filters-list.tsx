@@ -1,11 +1,11 @@
 // components
-import { AppliedPriorityFilters } from "./priority";
-import { AppliedStateFilters } from "./state";
 // icons
 import { X } from "lucide-react";
 // helpers
-import { IIssueFilterOptions } from "store/issues/types";
+import { IIssueFilterOptions } from "@/store/issues/types";
 import { IIssueLabel, IIssueState } from "types/issue";
+import { AppliedPriorityFilters } from "./priority";
+import { AppliedStateFilters } from "./state";
 // types
 
 type Props = {
@@ -19,7 +19,7 @@ type Props = {
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
 
 export const AppliedFiltersList: React.FC<Props> = (props) => {
-  const { appliedFilters, handleRemoveAllFilters, handleRemoveFilter, states } = props;
+  const { appliedFilters = {}, handleRemoveAllFilters, handleRemoveFilter, states } = props;
 
   return (
     <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">

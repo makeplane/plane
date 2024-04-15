@@ -3,15 +3,15 @@ import isEmpty from "lodash/isEmpty";
 export const storage = {
   set: (key: string, value: object | string | boolean): void => {
     if (typeof window === undefined || typeof window === "undefined" || !key || !value) return undefined;
-    const _value: string | undefined = value
+    const tempValue: string | undefined = value
       ? ["string", "boolean"].includes(typeof value)
         ? value.toString()
         : isEmpty(value)
-        ? undefined
-        : JSON.stringify(value)
+          ? undefined
+          : JSON.stringify(value)
       : undefined;
-    if (!_value) return undefined;
-    window.localStorage.setItem(key, _value);
+    if (!tempValue) return undefined;
+    window.localStorage.setItem(key, tempValue);
   },
 
   get: (key: string): string | undefined => {

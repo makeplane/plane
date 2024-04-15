@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
-
-// hooks
-import useToast from "hooks/use-toast";
-// services
-import { IssueService } from "services/issue";
-// ui
-import { Button, LayersIcon } from "@plane/ui";
-// icons
 import { Search } from "lucide-react";
-// fetch-keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { useProject, useProjectState } from "hooks/store";
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+// hooks
+// icons
+// components
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+// services
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
+import { PROJECT_ISSUES_LIST } from "@/constants/fetch-keys";
+import { useProject, useProjectState } from "@/hooks/store";
+import { IssueService } from "@/services/issue";
 
 type Props = {
   isOpen: boolean;
@@ -28,9 +29,6 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const { isOpen, onClose, onSubmit, value } = props;
 
   const [query, setQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState<string>("");
-
-  const { setToastAlert } = useToast();
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -49,22 +47,15 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
       : null
   );
 
-  useEffect(() => {
-    if (!value) {
-      setSelectedItem("");
-      return;
-    } else setSelectedItem(value);
-  }, [value]);
-
   const handleClose = () => {
     onClose();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (selectedItem: string) => {
     if (!selectedItem || selectedItem.length === 0)
-      return setToastAlert({
+      return setToast({
         title: "Error",
-        type: "error",
+        type: TOAST_TYPE.ERROR,
       });
     onSubmit(selectedItem);
     handleClose();
@@ -100,12 +91,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
-                  <Combobox
-                    value={selectedItem}
-                    onChange={(value) => {
-                      setSelectedItem(value);
-                    }}
-                  >
+                  <Combobox value={value} onChange={handleSubmit}>
                     <div className="relative m-1">
                       <Search
                         className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
@@ -163,27 +149,19 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                           </ul>
                         </li>
                       ) : (
-                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                          <LayersIcon height="56" width="56" />
-                          <h3 className="text-sm text-custom-text-200">
-                            No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
-                          </h3>
+                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                          <EmptyState
+                            type={
+                              query === ""
+                                ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE
+                                : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
+                            }
+                            layout="screen-simple"
+                          />
                         </div>
                       )}
                     </Combobox.Options>
                   </Combobox>
-
-                  {filteredIssues.length > 0 && (
-                    <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                        Cancel
-                      </Button>
-                      <Button variant="primary" size="sm" onClick={handleSubmit}>
-                        Mark as original
-                      </Button>
-                    </div>
-                  )}
                 </Dialog.Panel>
               </Transition.Child>
             </div>

@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-import { AlertTriangle } from "lucide-react";
-// store hooks
-import { useGlobalView, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useRouter } from "next/router";
 // ui
-import { Button } from "@plane/ui";
-// types
+import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+// icons
 import { IWorkspaceView } from "@plane/types";
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { GLOBAL_VIEW_DELETED } from "constants/event-tracker";
+import { GLOBAL_VIEW_DELETED } from "@/constants/event-tracker";
+// store hooks
+import { useGlobalView, useEventTracker } from "@/hooks/store";
+// ui
+// types
 
 type Props = {
   data: IWorkspaceView;
@@ -29,8 +31,6 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { deleteGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -53,8 +53,8 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
           view_id: data.id,
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong while deleting the view. Please try again.",
         });

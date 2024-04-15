@@ -1,20 +1,19 @@
 import React from "react";
-import { useRouter } from "next/router";
-import { Controller, useForm } from "react-hook-form";
-import { TwitterPicker } from "react-color";
-import { Dialog, Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useProjectState } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
-// icons
+import { useRouter } from "next/router";
+import { TwitterPicker } from "react-color";
+import { Controller, useForm } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
-// types
+import { Dialog, Popover, Transition } from "@headlessui/react";
+// icons
 import type { IState } from "@plane/types";
+// ui
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { GROUP_CHOICES } from "constants/project";
+import { GROUP_CHOICES } from "@/constants/project";
+// hooks
+import { useProjectState } from "@/hooks/store";
+// types
 
 // types
 type Props = {
@@ -37,8 +36,6 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { createState } = useProjectState();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     formState: { errors, isSubmitting },
@@ -71,15 +68,15 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
 
         if (typeof error === "object") {
           Object.keys(error).forEach((key) => {
-            setToastAlert({
-              type: "error",
+            setToast({
+              type: TOAST_TYPE.ERROR,
               title: "Error!",
               message: Array.isArray(error[key]) ? error[key].join(", ") : error[key],
             });
           });
         } else {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               error ?? err.status === 400

@@ -1,24 +1,22 @@
 # Python imports
 import csv
 import io
-import requests
-import json
+import logging
+
+# Third party imports
+from celery import shared_task
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.conf import settings
-
-# Third party imports
-from celery import shared_task
-from sentry_sdk import capture_exception
 
 # Module imports
 from plane.db.models import Issue
-from plane.utils.analytics_plot import build_graph_plot
-from plane.utils.issue_filters import issue_filters
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.analytics_plot import build_graph_plot
+from plane.utils.exception_logger import log_exception
+from plane.utils.issue_filters import issue_filters
 
 row_mapping = {
     "state__name": "State",
@@ -57,6 +55,7 @@ def send_export_email(email, slug, csv_buffer, rows):
         EMAIL_HOST_PASSWORD,
         EMAIL_PORT,
         EMAIL_USE_TLS,
+        EMAIL_USE_SSL,
         EMAIL_FROM,
     ) = get_email_configuration()
 
@@ -66,6 +65,7 @@ def send_export_email(email, slug, csv_buffer, rows):
         username=EMAIL_HOST_USER,
         password=EMAIL_HOST_PASSWORD,
         use_tls=EMAIL_USE_TLS == "1",
+        use_ssl=EMAIL_USE_SSL == "1",
     )
 
     msg = EmailMultiAlternatives(
@@ -212,9 +212,9 @@ def generate_segmented_rows(
                 None,
             )
             if assignee:
-                generated_row[
-                    0
-                ] = f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                generated_row[0] = (
+                    f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                )
 
         if x_axis == LABEL_ID:
             label = next(
@@ -281,9 +281,9 @@ def generate_segmented_rows(
                 None,
             )
             if assignee:
-                row_zero[
-                    index + 2
-                ] = f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                row_zero[index + 2] = (
+                    f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                )
 
     if segmented == LABEL_ID:
         for index, segm in enumerate(row_zero[2:]):
@@ -368,9 +368,9 @@ def generate_non_segmented_rows(
                 None,
             )
             if assignee:
-                row[
-                    0
-                ] = f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                row[0] = (
+                    f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                )
 
         if x_axis == LABEL_ID:
             label = next(
@@ -506,10 +506,8 @@ def analytic_export_task(email, data, slug):
 
         csv_buffer = generate_csv_from_rows(rows)
         send_export_email(email, slug, csv_buffer, rows)
+        logging.getLogger("plane").info("Email sent succesfully.")
         return
     except Exception as e:
-        print(e)
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
+        log_exception(e)
         return

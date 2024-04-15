@@ -3,7 +3,6 @@ import os
 
 # Django imports
 from django.core.management.base import BaseCommand
-from django.conf import settings
 
 # Module imports
 from plane.license.models import InstanceConfiguration
@@ -86,6 +85,12 @@ class Command(BaseCommand):
             {
                 "key": "EMAIL_USE_TLS",
                 "value": os.environ.get("EMAIL_USE_TLS", "1"),
+                "category": "SMTP",
+                "is_encrypted": False,
+            },
+            {
+                "key": "EMAIL_USE_SSL",
+                "value": os.environ.get("EMAIL_USE_SSL", "0"),
                 "category": "SMTP",
                 "is_encrypted": False,
             },

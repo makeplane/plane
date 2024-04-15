@@ -1,57 +1,45 @@
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useUser } from "hooks/store";
-// views
-import { SpreadsheetView } from "./spreadsheet-view";
-// types
+import { useRouter } from "next/router";
 import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
-import { EIssueActions } from "../types";
-import { IQuickActionProps } from "../list/list-view-types";
+// hooks
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+// views
+// types
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { ICycleIssuesFilter, ICycleIssues } from "store/issue/cycle";
-import { IModuleIssuesFilter, IModuleIssues } from "store/issue/module";
-import { IProjectIssuesFilter, IProjectIssues } from "store/issue/project";
-import { IProjectViewIssuesFilter, IProjectViewIssues } from "store/issue/project-views";
-import { EIssueFilterType } from "constants/issue";
+import { IQuickActionProps } from "../list/list-view-types";
+import { SpreadsheetView } from "./spreadsheet-view";
 
+export type SpreadsheetStoreType =
+  | EIssuesStoreType.PROJECT
+  | EIssuesStoreType.MODULE
+  | EIssuesStoreType.CYCLE
+  | EIssuesStoreType.PROJECT_VIEW;
 interface IBaseSpreadsheetRoot {
-  issueFiltersStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
-  issueStore: IProjectIssues | ICycleIssues | IModuleIssues | IProjectViewIssues;
   viewId?: string;
   QuickActions: FC<IQuickActionProps>;
-  issueActions: {
-    [EIssueActions.DELETE]: (issue: TIssue) => void;
-    [EIssueActions.UPDATE]?: (issue: TIssue) => void;
-    [EIssueActions.REMOVE]?: (issue: TIssue) => void;
-    [EIssueActions.ARCHIVE]?: (issue: TIssue) => void;
-    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
-  };
+  storeType: SpreadsheetStoreType;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const {
-    issueFiltersStore,
-    issueStore,
-    viewId,
-    QuickActions,
-    issueActions,
-    canEditPropertiesBasedOnProject,
-    isCompletedCycle = false,
-  } = props;
+  const { viewId, QuickActions, storeType, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { projectId } = router.query;
   // store hooks
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { issues, issuesFilter } = useIssues(storeType);
+  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
+    useIssuesActions(storeType);
   // derived values
-  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
+  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
   // user role validation
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -65,32 +53,17 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
 
-  const issueIds = (issueStore.groupedIssueIds ?? []) as TUnGroupedIssues;
-
-  const handleIssues = useCallback(
-    async (issue: TIssue, action: EIssueActions) => {
-      if (issueActions[action]) {
-        issueActions[action]!(issue);
-      }
-    },
-    [issueActions]
-  );
+  const issueIds = (issues.groupedIssueIds ?? []) as TUnGroupedIssues;
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!projectId) return;
 
-      issueFiltersStore.updateFilters(
-        workspaceSlug,
-        projectId,
-        EIssueFilterType.DISPLAY_FILTERS,
-        {
-          ...updatedDisplayFilter,
-        },
-        viewId
-      );
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+        ...updatedDisplayFilter,
+      });
     },
-    [issueFiltersStore?.updateFilters, projectId, workspaceSlug, viewId]
+    [projectId, updateFilters]
   );
 
   const renderQuickActions = useCallback(
@@ -98,37 +71,28 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       <QuickActions
         customActionButton={customActionButton}
         issue={issue}
-        handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
-        handleUpdate={
-          issueActions[EIssueActions.UPDATE] ? async (data) => handleIssues(data, EIssueActions.UPDATE) : undefined
-        }
-        handleRemoveFromView={
-          issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
-        }
-        handleArchive={
-          issueActions[EIssueActions.ARCHIVE] ? async () => handleIssues(issue, EIssueActions.ARCHIVE) : undefined
-        }
-        handleRestore={
-          issueActions[EIssueActions.RESTORE] ? async () => handleIssues(issue, EIssueActions.RESTORE) : undefined
-        }
+        handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+        handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+        handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
+        handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+        handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
         portalElement={portalElement}
         readOnly={!isEditingAllowed || isCompletedCycle}
       />
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [handleIssues]
+    [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   return (
     <SpreadsheetView
-      displayProperties={issueFiltersStore.issueFilters?.displayProperties ?? {}}
-      displayFilters={issueFiltersStore.issueFilters?.displayFilters ?? {}}
+      displayProperties={issuesFilter.issueFilters?.displayProperties ?? {}}
+      displayFilters={issuesFilter.issueFilters?.displayFilters ?? {}}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issueIds={issueIds}
       quickActions={renderQuickActions}
-      handleIssues={handleIssues}
+      updateIssue={updateIssue}
       canEditProperties={canEditProperties}
-      quickAddCallback={issueStore.quickAddIssue}
+      quickAddCallback={issues.quickAddIssue}
       viewId={viewId}
       enableQuickCreateIssue={enableQuickAdd}
       disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}

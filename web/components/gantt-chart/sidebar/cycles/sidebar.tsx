@@ -2,9 +2,9 @@ import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea
 // ui
 import { Loader } from "@plane/ui";
 // components
+import { IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart/types";
 import { CyclesSidebarBlock } from "./block";
 // types
-import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
 
 type Props = {
   title: string;

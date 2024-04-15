@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Triangle } from "lucide-react";
 // hooks
-import { useEstimate, useIssueDetail } from "hooks/store";
+import { useEstimate, useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 
@@ -33,13 +33,11 @@ export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props
         {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
         {activity.new_value && (
           <>
-
             <span className="font-medium text-custom-text-100">
               {areEstimatesEnabledForCurrentProject
                 ? estimateValue
                 : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
             </span>
-
           </>
         )}
         {showIssue && (activity.new_value ? ` to ` : ` from `)}

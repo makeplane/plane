@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { Rocket, Search, X } from "lucide-react";
-// services
-import { ProjectService } from "services/project";
-// hooks
-import useToast from "hooks/use-toast";
-import useDebounce from "hooks/use-debounce";
-// ui
-import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-// types
+import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
+// services
+import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import useDebounce from "@/hooks/use-debounce";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { ProjectService } from "@/services/project";
+// hooks
+// components
+import { IssueSearchModalEmptyState } from "./issue-search-modal-empty-state";
+// ui
+// types
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -40,10 +42,8 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
-
+  const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
-
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -54,8 +54,8 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
 
   const onSubmit = async () => {
     if (selectedIssues.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one issue.",
       });
@@ -68,12 +68,6 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     await handleOnSubmit(selectedIssues).finally(() => setIsSubmitting(false));
 
     handleClose();
-
-    setToastAlert({
-      title: "Success",
-      type: "success",
-      message: `Issue${selectedIssues.length > 1 ? "s" : ""} added successfully`,
-    });
   };
 
   useEffect(() => {
@@ -162,7 +156,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       </div>
                     )}
                     {workspaceLevelToggle && (
-                      <Tooltip tooltipContent="Toggle workspace level search">
+                      <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
                         <div
                           className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
                             isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
@@ -184,7 +178,10 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     )}
                   </div>
 
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
+                  <Combobox.Options
+                    static
+                    className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
+                  >
                     {searchTerm !== "" && (
                       <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
                         Search results for{" "}
@@ -197,15 +194,12 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       </h5>
                     )}
 
-                    {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
-                      <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                        <LayersIcon height="52" width="52" />
-                        <h3 className="text-custom-text-200">
-                          No issues found. Create a new issue with{" "}
-                          <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
-                        </h3>
-                      </div>
-                    )}
+                    <IssueSearchModalEmptyState
+                      debouncedSearchTerm={debouncedSearchTerm}
+                      isSearching={isSearching}
+                      issues={issues}
+                      searchTerm={searchTerm}
+                    />
 
                     {isSearching ? (
                       <Loader className="space-y-3 p-3">

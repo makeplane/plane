@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
-import { Popover } from "@headlessui/react";
 import { X } from "lucide-react";
+import { Popover } from "@headlessui/react";
 
 export const ForgotPasswordPopover = () => {
   // popper-js refs

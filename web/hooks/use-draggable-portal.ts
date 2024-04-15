@@ -1,6 +1,6 @@
-import { createPortal } from "react-dom";
 import { useEffect, useRef } from "react";
 import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
+import { createPortal } from "react-dom";
 
 const useDraggableInPortal = () => {
   const self = useRef<Element>();

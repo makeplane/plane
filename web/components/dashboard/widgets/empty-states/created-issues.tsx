@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
-// types
 import { TIssuesListTypes } from "@plane/types";
+// types
+import { CREATED_ISSUES_EMPTY_STATES } from "@/constants/dashboard";
 // constants
-import { CREATED_ISSUES_EMPTY_STATES } from "constants/dashboard";
 
 type Props = {
   type: TIssuesListTypes;

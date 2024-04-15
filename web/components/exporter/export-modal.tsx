@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import { useProject } from "hooks/store";
-// services
-import { ProjectExportService } from "services/project";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button, CustomSearchSelect } from "@plane/ui";
-// types
 import { IUser, IImporterService } from "@plane/types";
+// hooks
+import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
+
+import { useProject } from "@/hooks/store";
+// services
+import { ProjectExportService } from "@/services/project";
+// ui
+// types
 
 type Props = {
   isOpen: boolean;
@@ -34,8 +33,6 @@ export const Exporter: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { workspaceProjectIds, getProjectById } = useProject();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const options = workspaceProjectIds?.map((projectId) => {
     const projectDetails = getProjectById(projectId);
@@ -71,8 +68,8 @@ export const Exporter: React.FC<Props> = observer((props) => {
           mutateServices();
           router.push(`/${workspaceSlug}/settings/exports`);
           setExportLoading(false);
-          setToastAlert({
-            type: "success",
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
             title: "Export Successful",
             message: `You will be able to download the exported ${
               provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""
@@ -81,8 +78,8 @@ export const Exporter: React.FC<Props> = observer((props) => {
         })
         .catch(() => {
           setExportLoading(false);
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Export was unsuccessful. Please try again.",
           });

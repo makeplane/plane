@@ -24,10 +24,9 @@ def widgets_filter_change(apps, schema_editor):
     # Bulk update the widgets
     Widget.objects.bulk_update(widgets_to_update, ["filters"], batch_size=10)
 
+
 class Migration(migrations.Migration):
     dependencies = [
-        ('db', '0058_alter_moduleissue_issue_and_more'),
+        ("db", "0058_alter_moduleissue_issue_and_more"),
     ]
-    operations = [
-        migrations.RunPython(widgets_filter_change)
-    ]
+    operations = [migrations.RunPython(widgets_filter_change)]

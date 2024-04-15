@@ -1,18 +1,18 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useUser, useWorkspace } from "hooks/store";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
-// component
-import { WorkspaceSettingHeader } from "components/headers";
-import { PageHead } from "components/core";
-// ui
 import { Button } from "@plane/ui";
+import { PageHead } from "@/components/core";
+import { WorkspaceSettingHeader } from "@/components/headers";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { useUser, useWorkspace } from "@/hooks/store";
+// layouts
+import { AppLayout } from "@/layouts/app-layout";
+import { WorkspaceSettingLayout } from "@/layouts/settings-layout";
+// component
+// ui
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 
 const BillingSettingsPage: NextPageWithLayout = observer(() => {
   // store hooks

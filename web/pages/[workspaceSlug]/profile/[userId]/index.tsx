@@ -1,27 +1,27 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { IUserStateDistribution, TStateGroups } from "@plane/types";
 // services
-import { UserService } from "services/user.service";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
-import { UserProfileHeader } from "components/headers";
-import { PageHead } from "components/core";
+import { PageHead } from "@/components/core";
+import { UserProfileHeader } from "@/components/headers";
 import {
   ProfileActivity,
   ProfilePriorityDistribution,
   ProfileStateDistribution,
   ProfileStats,
   ProfileWorkload,
-} from "components/profile";
+} from "@/components/profile";
 // types
-import { IUserStateDistribution, TStateGroups } from "@plane/types";
-import { NextPageWithLayout } from "lib/types";
 // constants
-import { USER_PROFILE_DATA } from "constants/fetch-keys";
-import { GROUP_CHOICES } from "constants/project";
+import { USER_PROFILE_DATA } from "@/constants/fetch-keys";
+import { GROUP_CHOICES } from "@/constants/project";
+import { AppLayout } from "@/layouts/app-layout";
+import { ProfileAuthWrapper } from "@/layouts/user-profile-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { UserService } from "@/services/user.service";
 
 // services
 const userService = new UserService();
@@ -45,7 +45,7 @@ const ProfileOverviewPage: NextPageWithLayout = () => {
   return (
     <>
       <PageHead title="Profile - Summary" />
-      <div className="h-full w-full space-y-7 overflow-y-auto px-5 py-5 md:px-9">
+      <div className="h-full w-full space-y-7 overflow-y-auto px-5 py-5 md:px-9 vertical-scrollbar scrollbar-md">
         <ProfileStats userProfile={userProfile} />
         <ProfileWorkload stateDistribution={stateDistribution} />
         <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2">

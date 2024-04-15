@@ -1,30 +1,28 @@
 import { useState } from "react";
-import Link from "next/link";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
 // hooks
-import { useUser } from "hooks/store";
-import useUserAuth from "hooks/use-user-auth";
-// services
-import { IntegrationService } from "services/integrations";
-// components
-import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
-// ui
-import { Button } from "@plane/ui";
-import { ImportExportSettingsLoader } from "components/ui";
-// icons
 import { RefreshCw } from "lucide-react";
-// types
 import { IImporterService } from "@plane/types";
-// fetch-keys
-import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
+import { Button } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
+import { ImportExportSettingsLoader } from "@/components/ui";
+import { EmptyStateType } from "@/constants/empty-state";
+import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+import { IMPORTERS_LIST } from "@/constants/workspace";
+import { useUser } from "@/hooks/store";
+import useUserAuth from "@/hooks/use-user-auth";
+// services
+import { IntegrationService } from "@/services/integrations";
+// components
+// ui
+// icons
+// types
 // constants
-import { IMPORTERS_LIST } from "constants/workspace";
-import { WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 // services
 const integrationService = new IntegrationService();
@@ -37,8 +35,6 @@ const IntegrationGuide = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { currentUser, currentUserLoader } = useUser();
   // custom hooks
@@ -48,10 +44,6 @@ const IntegrationGuide = observer(() => {
     workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
     workspaceSlug ? () => integrationService.getImporterServicesList(workspaceSlug as string) : null
   );
-
-  const emptyStateDetail = WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS["import"];
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("workspace-settings", "imports", isLightMode);
 
   const handleDeleteImport = (importService: IImporterService) => {
     setImportToDelete(importService);
@@ -145,12 +137,7 @@ const IntegrationGuide = observer(() => {
                     </div>
                   ) : (
                     <div className="h-full w-full flex items-center justify-center">
-                      <EmptyState
-                        title={emptyStateDetail.title}
-                        description={emptyStateDetail.description}
-                        image={emptyStateImage}
-                        size="sm"
-                      />
+                      <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" />
                     </div>
                   )
                 ) : (

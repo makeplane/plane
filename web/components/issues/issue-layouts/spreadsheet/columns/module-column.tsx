@@ -1,15 +1,15 @@
 import React, { useCallback } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import xor from "lodash/xor";
-// hooks
-import { useEventTracker, useIssues } from "hooks/store";
-// components
-import { ModuleDropdown } from "components/dropdowns";
-// types
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
+// hooks
+import { ModuleDropdown } from "@/components/dropdowns";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useEventTracker, useIssues } from "@/hooks/store";
+// components
+// types
 // constants
-import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   issue: TIssue;
@@ -71,7 +71,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
         buttonClassName="relative border-[0.5px] border-custom-border-400 h-4.5"
         onClose={onClose}
         multiple
-        showCount={true}
+        showCount
         showTooltip
       />
     </div>

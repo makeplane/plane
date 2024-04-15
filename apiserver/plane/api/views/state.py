@@ -1,16 +1,16 @@
 # Django imports
 from django.db import IntegrityError
-from django.db.models import Q
 
 # Third party imports
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
+
+from plane.api.serializers import StateSerializer
+from plane.app.permissions import ProjectEntityPermission
+from plane.db.models import Issue, State
 
 # Module imports
 from .base import BaseAPIView
-from plane.api.serializers import StateSerializer
-from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import State, Issue
 
 
 class StateAPIEndpoint(BaseAPIView):
@@ -28,7 +28,8 @@ class StateAPIEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
-            .filter(~Q(name="Triage"))
+            .filter(is_triage=False)
+            .filter(project__archived_at__isnull=True)
             .select_related("project")
             .select_related("workspace")
             .distinct()
@@ -66,8 +67,10 @@ class StateAPIEndpoint(BaseAPIView):
 
                 serializer.save(project_id=project_id)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except IntegrityError as e:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+        except IntegrityError:
             state = State.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
@@ -83,7 +86,11 @@ class StateAPIEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id, state_id=None):
         if state_id:
-            serializer = StateSerializer(self.get_queryset().get(pk=state_id))
+            serializer = StateSerializer(
+                self.get_queryset().get(pk=state_id),
+                fields=self.fields,
+                expand=self.expand,
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return self.paginate(
             request=request,
@@ -98,7 +105,7 @@ class StateAPIEndpoint(BaseAPIView):
 
     def delete(self, request, slug, project_id, state_id):
         state = State.objects.get(
-            ~Q(name="Triage"),
+            is_triage=False,
             pk=state_id,
             project_id=project_id,
             workspace__slug=slug,
@@ -136,7 +143,9 @@ class StateAPIEndpoint(BaseAPIView):
                 and State.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source", state.external_source),
+                    external_source=request.data.get(
+                        "external_source", state.external_source
+                    ),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):

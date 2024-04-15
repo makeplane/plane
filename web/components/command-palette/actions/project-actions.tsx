@@ -1,9 +1,9 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker } from "hooks/store";
-// ui
 import { DiceIcon, PhotoFilterIcon } from "@plane/ui";
+import { useApplication, useEventTracker } from "@/hooks/store";
+// ui
 
 type Props = {
   closePalette: () => void;

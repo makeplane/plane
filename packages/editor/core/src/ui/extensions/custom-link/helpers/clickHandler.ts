@@ -15,9 +15,15 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
           return false;
         }
 
-        const eventTarget = event.target as HTMLElement;
+        let a = event.target as HTMLElement;
+        const els = [];
 
-        if (eventTarget.nodeName !== "A") {
+        while (a.nodeName !== "DIV") {
+          els.push(a);
+          a = a.parentNode as HTMLElement;
+        }
+
+        if (!els.find((value) => value.nodeName === "A")) {
           return false;
         }
 
@@ -28,9 +34,7 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
         const target = link?.target ?? attrs.target;
 
         if (link && href) {
-          if (view.editable) {
-            window.open(href, target);
-          }
+          window.open(href, target);
 
           return true;
         }

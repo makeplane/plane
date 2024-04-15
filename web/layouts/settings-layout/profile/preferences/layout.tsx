@@ -1,13 +1,13 @@
 import { FC, ReactNode } from "react";
 // layout
-import { ProfileSettingsLayout } from "layouts/settings-layout";
-import { ProfilePreferenceSettingsSidebar } from "./sidebar";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { CustomMenu } from "@plane/ui";
-import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useApplication } from "hooks/store";
+import { ChevronDown } from "lucide-react";
+import { CustomMenu } from "@plane/ui";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { useApplication } from "@/hooks/store";
+import { ProfileSettingsLayout } from "@/layouts/settings-layout";
+import { ProfilePreferenceSettingsSidebar } from "./sidebar";
 
 interface IProfilePreferenceSettingsLayout {
   children: ReactNode;
@@ -73,7 +73,7 @@ export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayou
         <ProfilePreferenceSettingsSidebar />
         <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
           {header}
-          <div className="h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
+          <div className="h-full w-full overflow-hidden">{children}</div>
         </main>
       </div>
     </ProfileSettingsLayout>

@@ -91,7 +91,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
         )}
       </>
       {isOpen && (
-        <Listbox.Options className="fixed z-10" onClick={() => closeDropdown()} static>
+        <Listbox.Options className="fixed z-20" onClick={() => closeDropdown()} static>
           <div
             className={cn(
               "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",

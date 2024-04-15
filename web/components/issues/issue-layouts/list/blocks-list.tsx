@@ -1,23 +1,22 @@
 import { FC, MutableRefObject } from "react";
 // components
-import { IssueBlock } from "components/issues";
-// types
 import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
-import { EIssueActions } from "../types";
-import RenderIfVisible from "components/core/render-if-visible-HOC";
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { IssueBlock } from "@/components/issues";
+// types
 
 interface Props {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
   canEditProperties: (projectId: string | undefined) => boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   containerRef: MutableRefObject<HTMLDivElement | null>;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { issueIds, issuesMap, handleIssues, quickActions, displayProperties, canEditProperties, containerRef } = props;
+  const { issueIds, issuesMap, updateIssue, quickActions, displayProperties, canEditProperties, containerRef } = props;
 
   return (
     <div className="relative h-full w-full">
@@ -35,7 +34,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
               <IssueBlock
                 issueId={issueId}
                 issuesMap={issuesMap}
-                handleIssues={handleIssues}
+                updateIssue={updateIssue}
                 quickActions={quickActions}
                 canEditProperties={canEditProperties}
                 displayProperties={displayProperties}

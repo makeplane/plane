@@ -1,4 +1,4 @@
-from plane.db.models import APIToken, APIActivityLog
+from plane.db.models import APIActivityLog
 
 
 class APITokenLogMiddleware:
@@ -39,6 +39,5 @@ class APITokenLogMiddleware:
             except Exception as e:
                 print(e)
                 # If the token does not exist, you can decide whether to log this as an invalid attempt
-                pass
 
         return None

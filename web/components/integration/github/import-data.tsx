@@ -1,16 +1,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Control, Controller, UseFormWatch } from "react-hook-form";
-// hooks
-import { useProject } from "hooks/store";
-// components
-import { SelectRepository, TFormValues, TIntegrationSteps } from "components/integration";
-// ui
-import { Button, CustomSearchSelect, ToggleSwitch } from "@plane/ui";
-// helpers
-import { truncateText } from "helpers/string.helper";
-// types
 import { IWorkspaceIntegration } from "@plane/types";
+// hooks
+// components
+import { Button, CustomSearchSelect, ToggleSwitch } from "@plane/ui";
+import { SelectRepository, TFormValues, TIntegrationSteps } from "@/components/integration";
+// ui
+// helpers
+import { truncateText } from "@/helpers/string.helper";
+import { useProject } from "@/hooks/store";
+// types
 
 type Props = {
   handleStepChange: (value: TIntegrationSteps) => void;

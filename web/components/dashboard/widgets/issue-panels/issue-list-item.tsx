@@ -1,13 +1,13 @@
-import { observer } from "mobx-react-lite";
 import isToday from "date-fns/isToday";
+import { observer } from "mobx-react-lite";
+import { TIssue, TWidgetIssue } from "@plane/types";
 // hooks
-import { useIssueDetail, useMember, useProject } from "hooks/store";
 // ui
 import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";
 // helpers
-import { findTotalDaysInRange, renderFormattedDate } from "helpers/date-time.helper";
+import { findTotalDaysInRange, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+import { useIssueDetail, useMember, useProject } from "@/hooks/store";
 // types
-import { TIssue, TWidgetIssue } from "@plane/types";
 
 export type IssueListItemProps = {
   issueId: string;
@@ -34,6 +34,8 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
   const blockedByIssueProjectDetails =
     blockedByIssues.length === 1 ? getProjectById(blockedByIssues[0]?.project_id ?? "") : null;
 
+  const targetDate = getDate(issueDetails.target_date);
+
   return (
     <ControlLink
       href={`/${workspaceSlug}/projects/${issueDetails.project_id}/issues/${issueDetails.id}`}
@@ -48,11 +50,7 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
         <h6 className="text-sm flex-grow truncate">{issueDetails.name}</h6>
       </div>
       <div className="text-xs text-center">
-        {issueDetails.target_date
-          ? isToday(new Date(issueDetails.target_date))
-            ? "Today"
-            : renderFormattedDate(issueDetails.target_date)
-          : "-"}
+        {targetDate ? (isToday(targetDate) ? "Today" : renderFormattedDate(targetDate)) : "-"}
       </div>
       <div className="text-xs text-center">
         {blockedByIssues.length > 0
@@ -83,7 +81,7 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
   const blockedByIssueProjectDetails =
     blockedByIssues.length === 1 ? getProjectById(blockedByIssues[0]?.project_id ?? "") : null;
 
-  const dueBy = findTotalDaysInRange(new Date(issueDetails.target_date ?? ""), new Date(), false) ?? 0;
+  const dueBy = findTotalDaysInRange(getDate(issueDetails.target_date), new Date(), false) ?? 0;
 
   return (
     <ControlLink
@@ -157,6 +155,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
   if (!issue) return null;
 
   const projectDetails = getProjectById(issue.project_id);
+  const targetDate = getDate(issue.target_date);
 
   return (
     <ControlLink
@@ -172,11 +171,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
         <h6 className="text-sm flex-grow truncate">{issue.name}</h6>
       </div>
       <div className="text-xs text-center">
-        {issue.target_date
-          ? isToday(new Date(issue.target_date))
-            ? "Today"
-            : renderFormattedDate(issue.target_date)
-          : "-"}
+        {targetDate ? (isToday(targetDate) ? "Today" : renderFormattedDate(targetDate)) : "-"}
       </div>
       <div className="text-xs flex justify-center">
         {issue.assignee_ids && issue.assignee_ids?.length > 0 ? (
@@ -212,7 +207,7 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
 
   const projectDetails = getProjectById(issue.project_id);
 
-  const dueBy = findTotalDaysInRange(new Date(issue.target_date ?? ""), new Date(), false) ?? 0;
+  const dueBy: number = findTotalDaysInRange(getDate(issue.target_date), new Date(), false) ?? 0;
 
   return (
     <ControlLink

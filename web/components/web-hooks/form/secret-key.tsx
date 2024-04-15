@@ -1,18 +1,21 @@
 import { useState, FC } from "react";
-import { useRouter } from "next/router";
-import { Button, Tooltip } from "@plane/ui";
-import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useWebhook, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useRouter } from "next/router";
+// icons
+import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
+import { IWebhook } from "@plane/types";
+// ui
+import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
-import { csvDownload } from "helpers/download.helper";
+import { csvDownload } from "@/helpers/download.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useWebhook, useWorkspace } from "@/hooks/store";
+// types
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
-// types
-import { IWebhook } from "@plane/types";
+// hooks
 
 type Props = {
   data: Partial<IWebhook>;
@@ -29,23 +32,21 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
-  // hooks
-  const { setToastAlert } = useToast();
-
+  const { isMobile } = usePlatformOS();
   const handleCopySecretKey = () => {
     if (!webhookSecretKey) return;
 
     copyTextToClipboard(webhookSecretKey)
       .then(() =>
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Secret key copied to clipboard.",
         })
       )
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Error occurred while copying secret key.",
         })
@@ -59,8 +60,8 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
 
     regenerateSecretKey(workspaceSlug.toString(), data.id)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "New key regenerated successfully.",
         });
@@ -71,8 +72,8 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
         }
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })
@@ -109,7 +110,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
               {webhookSecretKey && (
                 <div className="flex items-center gap-2">
                   {SECRET_KEY_OPTIONS.map((option) => (
-                    <Tooltip key={option.key} tooltipContent={option.label}>
+                    <Tooltip key={option.key} tooltipContent={option.label} isMobile={isMobile}>
                       <button type="button" className="grid flex-shrink-0 place-items-center" onClick={option.onClick}>
                         <option.Icon className="h-3 w-3 text-custom-text-400" />
                       </button>

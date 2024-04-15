@@ -1,10 +1,10 @@
+import { set } from "lodash";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
-import { set } from "lodash";
 // services
-import { WorkspaceService } from "services/workspace.service";
+import { WorkspaceService } from "@/services/workspace.service";
 // types
-import { RootStore } from "store/root.store";
+import { RootStore } from "@/store/root.store";
 import { IWorkspaceView } from "@plane/types";
 
 export interface IGlobalViewStore {

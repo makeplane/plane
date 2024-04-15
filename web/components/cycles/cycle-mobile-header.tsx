@@ -1,16 +1,16 @@
 import { useCallback, useState } from "react";
 import router from "next/router";
 //components
-import { CustomMenu } from "@plane/ui";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 // hooks
-import { useIssues, useCycle, useProjectState, useLabel, useMember } from "hooks/store";
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+import { useIssues, useCycle, useProjectState, useLabel, useMember, useProject } from "@/hooks/store";
 
 export const CycleMobileHeader = () => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -21,13 +21,10 @@ export const CycleMobileHeader = () => {
     { key: "calendar", title: "Calendar", icon: Calendar },
   ];
 
-  const { workspaceSlug, projectId, cycleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-  };
+  const { workspaceSlug, projectId, cycleId } = router.query;
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   // store hooks
+  const { currentProjectDetails } = useProject();
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.CYCLE);
@@ -35,8 +32,14 @@ export const CycleMobileHeader = () => {
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
+      if (!workspaceSlug || !projectId || !cycleId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        cycleId.toString()
+      );
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -49,7 +52,7 @@ export const CycleMobileHeader = () => {
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !cycleId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
@@ -61,23 +64,41 @@ export const CycleMobileHeader = () => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, cycleId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        cycleId.toString()
+      );
     },
     [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
+      if (!workspaceSlug || !projectId || !cycleId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        updatedDisplayFilter,
+        cycleId.toString()
+      );
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, cycleId);
+      if (!workspaceSlug || !projectId || !cycleId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        cycleId.toString()
+      );
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -89,7 +110,7 @@ export const CycleMobileHeader = () => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="flex justify-evenly py-2 border-b border-custom-border-200">
+      <div className="flex justify-evenly py-2 border-b border-custom-border-200 md:hidden bg-custom-background-100">
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-custom-text-200 text-sm"
@@ -100,6 +121,7 @@ export const CycleMobileHeader = () => {
         >
           {layouts.map((layout, index) => (
             <CustomMenu.MenuItem
+              key={ISSUE_LAYOUTS[index].key}
               onClick={() => {
                 handleLayoutChange(ISSUE_LAYOUTS[index].key);
               }}
@@ -130,6 +152,8 @@ export const CycleMobileHeader = () => {
               labels={projectLabels}
               memberIds={projectMemberIds ?? undefined}
               states={projectStates}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
         </div>
@@ -152,6 +176,9 @@ export const CycleMobileHeader = () => {
               handleDisplayFiltersUpdate={handleDisplayFilters}
               displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
+              ignoreGroupedFilters={["cycle"]}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
         </div>

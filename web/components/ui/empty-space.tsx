@@ -1,7 +1,7 @@
 // next
+import React from "react";
 import Link from "next/link";
 // react
-import React from "react";
 // icons
 import { ChevronRight } from "lucide-react";
 

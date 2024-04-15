@@ -1,16 +1,16 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
-import set from "lodash/set";
-import update from "lodash/update";
 import concat from "lodash/concat";
 import find from "lodash/find";
 import pull from "lodash/pull";
+import set from "lodash/set";
+import update from "lodash/update";
+import { action, makeObservable, observable, runInAction } from "mobx";
 // services
-import { IssueReactionService } from "services/issue";
 // types
-import { IIssueDetail } from "./root.store";
-import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap } from "@plane/types";
 // helpers
-import { groupReactions } from "helpers/emoji.helper";
+import { groupReactions } from "@/helpers/emoji.helper";
+import { IssueReactionService } from "@/services/issue";
+import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap } from "@plane/types";
+import { IIssueDetail } from "./root.store";
 
 export interface IIssueReactionStoreActions {
   // actions
@@ -84,7 +84,7 @@ export class IssueReactionStore implements IIssueReactionStore {
       if (reactions?.[reaction])
         reactions?.[reaction].map((reactionId) => {
           const currentReaction = this.getReactionById(reactionId);
-          if (currentReaction && currentReaction.actor_id === userId) _userReactions.push(currentReaction);
+          if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
         });
     });
 
@@ -151,7 +151,7 @@ export class IssueReactionStore implements IIssueReactionStore {
   ) => {
     try {
       const userReactions = this.reactionsByUser(issueId, userId);
-      const currentReaction = find(userReactions, { actor_id: userId, reaction: reaction });
+      const currentReaction = find(userReactions, { actor: userId, reaction: reaction });
 
       if (currentReaction && currentReaction.id) {
         runInAction(() => {

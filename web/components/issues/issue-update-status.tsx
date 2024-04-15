@@ -1,15 +1,16 @@
 import React from "react";
+import { observer } from "mobx-react";
 import { RefreshCw } from "lucide-react";
-// types
 import { TIssue } from "@plane/types";
-import { useProject } from "hooks/store";
+// types
+import { useProject } from "@/hooks/store";
 
 type Props = {
   isSubmitting: "submitting" | "submitted" | "saved";
   issueDetail?: TIssue;
 };
 
-export const IssueUpdateStatus: React.FC<Props> = (props) => {
+export const IssueUpdateStatus: React.FC<Props> = observer((props) => {
   const { isSubmitting, issueDetail } = props;
   // hooks
   const { getProjectById } = useProject();
@@ -23,7 +24,7 @@ export const IssueUpdateStatus: React.FC<Props> = (props) => {
       )}
       <div
         className={`flex items-center gap-x-2 transition-all duration-300 ${
-          isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+          isSubmitting === "saved" ? "fade-out" : "fade-in"
         }`}
       >
         {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
@@ -33,4 +34,4 @@ export const IssueUpdateStatus: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+});

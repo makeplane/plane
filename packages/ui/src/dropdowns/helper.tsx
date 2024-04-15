@@ -24,6 +24,7 @@ export interface ICustomMenuDropdownProps extends IDropdownProps {
   noBorder?: boolean;
   verticalEllipsis?: boolean;
   menuButtonOnClick?: (...args: any) => void;
+  menuItemsClassName?: string;
   onMenuClose?: () => void;
   closeOnSelect?: boolean;
   portalElement?: Element | null;

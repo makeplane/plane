@@ -1,13 +1,13 @@
-import { action, observable, makeObservable, computed, runInAction } from "mobx";
-import set from "lodash/set";
 import pull from "lodash/pull";
+import set from "lodash/set";
+import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
+import { IssueArchiveService } from "@/services/issue";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
-import { IssueArchiveService } from "services/issue";
 // types
 import { IIssueRootStore } from "../root.store";
-import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 
 export interface IArchivedIssues {
   // observable
@@ -17,7 +17,7 @@ export interface IArchivedIssues {
   // computed
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue>;
+  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restoreIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: undefined;

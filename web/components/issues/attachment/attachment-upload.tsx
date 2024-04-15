@@ -2,11 +2,11 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useDropzone } from "react-dropzone";
 // hooks
-import { useApplication } from "hooks/store";
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
+import { MAX_FILE_SIZE } from "@/constants/common";
 // helpers
-import { generateFileName } from "helpers/attachment.helper";
+import { generateFileName } from "@/helpers/attachment.helper";
+import { useApplication } from "@/hooks/store";
 // types
 import { TAttachmentOperations } from "./root";
 

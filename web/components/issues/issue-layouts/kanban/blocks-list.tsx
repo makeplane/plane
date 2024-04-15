@@ -1,9 +1,8 @@
 import { MutableRefObject, memo } from "react";
 //types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
-import { EIssueActions } from "../types";
+import { KanbanIssueBlock } from "@/components/issues";
 // components
-import { KanbanIssueBlock } from "components/issues";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
@@ -13,11 +12,10 @@ interface IssueBlocksListProps {
   issueIds: string[];
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  isDragStarted?: boolean;
 }
 
 const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
@@ -29,18 +27,17 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
     issueIds,
     displayProperties,
     isDragDisabled,
-    handleIssues,
+    updateIssue,
     quickActions,
     canEditProperties,
     scrollableContainerRef,
-    isDragStarted,
   } = props;
 
   return (
     <>
       {issueIds && issueIds.length > 0 ? (
         <>
-          {issueIds.map((issueId, index) => {
+          {issueIds.map((issueId) => {
             if (!issueId) return null;
 
             let draggableId = issueId;
@@ -54,14 +51,12 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
                 issueId={issueId}
                 issuesMap={issuesMap}
                 displayProperties={displayProperties}
-                handleIssues={handleIssues}
+                updateIssue={updateIssue}
                 quickActions={quickActions}
                 draggableId={draggableId}
-                index={index}
                 isDragDisabled={isDragDisabled}
                 canEditProperties={canEditProperties}
                 scrollableContainerRef={scrollableContainerRef}
-                isDragStarted={isDragStarted}
                 issueIds={issueIds} //passing to force render for virtualization whenever parent rerenders
               />
             );

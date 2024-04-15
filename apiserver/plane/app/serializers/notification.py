@@ -15,7 +15,6 @@ class NotificationSerializer(BaseSerializer):
 
 
 class UserNotificationPreferenceSerializer(BaseSerializer):
-
     class Meta:
         model = UserNotificationPreference
         fields = "__all__"

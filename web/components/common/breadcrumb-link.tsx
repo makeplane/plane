@@ -1,5 +1,6 @@
-import { Tooltip } from "@plane/ui";
 import Link from "next/link";
+import { Tooltip } from "@plane/ui";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   label?: string;
@@ -9,8 +10,9 @@ type Props = {
 
 export const BreadcrumbLink: React.FC<Props> = (props) => {
   const { href, label, icon } = props;
+  const { isMobile } = usePlatformOS();
   return (
-    <Tooltip tooltipContent={label} position="bottom">
+    <Tooltip tooltipContent={label} position="bottom" isMobile={isMobile}>
       <li className="flex items-center space-x-2" tabIndex={-1}>
         <div className="flex flex-wrap items-center gap-2.5">
           {href ? (

@@ -1,10 +1,15 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
+// icons
+import { UserCog2 } from "lucide-react";
+// ui
+import { getButtonStyling } from "@plane/ui";
 // images
 import instanceNotReady from "public/instance/plane-instance-not-ready.webp";
-import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
+import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 
 export const InstanceNotReady = () => {
   const { resolvedTheme } = useTheme();
@@ -25,6 +30,10 @@ export const InstanceNotReady = () => {
             <div className="flex w-full flex-col items-center gap-5 py-12 pb-20">
               <h3 className="text-2xl font-medium">Your Plane instance isn{"'"}t ready yet</h3>
               <p className="text-sm">Ask your Instance Admin to complete set-up first.</p>
+              <Link href="/god-mode" className={`${getButtonStyling("primary", "md")} mt-4`}>
+                <UserCog2 className="h-3.5 w-3.5" />
+                Get started
+              </Link>
             </div>
           </div>
         </div>

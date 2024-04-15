@@ -1,18 +1,17 @@
 import React, { forwardRef, useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
-// hooks
-import { useLabel } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-import { Button, Input } from "@plane/ui";
-// types
 import { IIssueLabel } from "@plane/types";
-// fetch-keys
-import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@/constants/label";
+// hooks
+import { useLabel } from "@/hooks/store";
+// types
 
 type Props = {
   labelForm: boolean;
@@ -35,8 +34,6 @@ export const CreateUpdateLabelInline = observer(
     const { workspaceSlug, projectId } = router.query;
     // store hooks
     const { createLabel, updateLabel } = useLabel();
-    // toast alert
-    const { setToastAlert } = useToast();
     // form info
     const {
       handleSubmit,
@@ -65,9 +62,9 @@ export const CreateUpdateLabelInline = observer(
           reset(defaultValues);
         })
         .catch((error) => {
-          setToastAlert({
+          setToast({
             title: "Oops!",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: error?.error ?? "Error while adding the label",
           });
           reset(formData);
@@ -77,15 +74,16 @@ export const CreateUpdateLabelInline = observer(
     const handleLabelUpdate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
       await updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
         .then(() => {
           reset(defaultValues);
           handleClose();
         })
         .catch((error) => {
-          setToastAlert({
+          setToast({
             title: "Oops!",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: error?.error ?? "Error while updating the label",
           });
           reset(formData);

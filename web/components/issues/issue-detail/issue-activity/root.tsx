@@ -1,18 +1,20 @@
 import { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { History, LucideIcon, MessageCircle, ListRestart } from "lucide-react";
-// hooks
-import { useIssueDetail, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "./";
 // types
 import { TIssueComment } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "@/components/issues";
+// hooks
+import { useIssueDetail, useProject } from "@/hooks/store";
 
 type TIssueActivity = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  disabled?: boolean;
 };
 
 type TActivityTabs = "all" | "activity" | "comments";
@@ -42,10 +44,9 @@ export type TActivityOperations = {
 };
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
-  const { workspaceSlug, projectId, issueId } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
-  const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
   // state
   const [activityTab, setActivityTab] = useState<TActivityTabs>("all");
@@ -56,15 +57,15 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await createComment(workspaceSlug, projectId, issueId, data);
-          setToastAlert({
+          setToast({
             title: "Comment created successfully.",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Comment created successfully.",
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Comment creation failed.",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Comment creation failed. Please try again later.",
           });
         }
@@ -73,15 +74,15 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await updateComment(workspaceSlug, projectId, issueId, commentId, data);
-          setToastAlert({
+          setToast({
             title: "Comment updated successfully.",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Comment updated successfully.",
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Comment update failed.",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Comment update failed. Please try again later.",
           });
         }
@@ -90,21 +91,21 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await removeComment(workspaceSlug, projectId, issueId, commentId);
-          setToastAlert({
+          setToast({
             title: "Comment removed successfully.",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Comment removed successfully.",
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Comment remove failed.",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Comment remove failed. Please try again later.",
           });
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createComment, updateComment, removeComment, setToastAlert]
+    [workspaceSlug, projectId, issueId, createComment, updateComment, removeComment]
   );
 
   const project = getProjectById(projectId);
@@ -141,32 +142,42 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           {activityTab === "all" ? (
             <div className="space-y-3">
               <IssueActivityCommentRoot
+                projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 issueId={issueId}
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
+                disabled={disabled}
               />
-              <IssueCommentCreate
-                workspaceSlug={workspaceSlug}
-                activityOperations={activityOperations}
-                showAccessSpecifier={project.is_deployed}
-              />
+              {!disabled && (
+                <IssueCommentCreate
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                  activityOperations={activityOperations}
+                  showAccessSpecifier={project.is_deployed}
+                />
+              )}
             </div>
           ) : activityTab === "activity" ? (
             <IssueActivityRoot issueId={issueId} />
           ) : (
             <div className="space-y-3">
               <IssueCommentRoot
+                projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 issueId={issueId}
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
+                disabled={disabled}
               />
-              <IssueCommentCreate
-                workspaceSlug={workspaceSlug}
-                activityOperations={activityOperations}
-                showAccessSpecifier={project.is_deployed}
-              />
+              {!disabled && (
+                <IssueCommentCreate
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                  activityOperations={activityOperations}
+                  showAccessSpecifier={project.is_deployed}
+                />
+              )}
             </div>
           )}
         </div>

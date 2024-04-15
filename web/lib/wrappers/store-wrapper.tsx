@@ -1,12 +1,12 @@
 import { ReactNode, useEffect, useState, FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-// hooks
-import { useApplication, useUser } from "hooks/store";
+import useSWR from "swr";
 // helpers
-import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
+import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
+// hooks
+import { useApplication, useUser } from "@/hooks/store";
 
 interface IStoreWrapper {
   children: ReactNode;
@@ -15,7 +15,7 @@ interface IStoreWrapper {
 const StoreWrapper: FC<IStoreWrapper> = observer((props) => {
   const { children } = props;
   // states
-  const [dom, setDom] = useState<any>();
+  const [dom, setDom] = useState<unknown>();
   // router
   const router = useRouter();
   // store hooks

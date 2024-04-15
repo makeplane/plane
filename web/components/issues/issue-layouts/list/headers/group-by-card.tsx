@@ -1,19 +1,19 @@
+import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
-// components
-import { CreateUpdateIssueModal } from "components/issues";
-import { ExistingIssuesListModal } from "components/core";
-import { CustomMenu } from "@plane/ui";
-// mobx
-import { observer } from "mobx-react-lite";
-// hooks
-import { useEventTracker } from "hooks/store";
-// types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
-import useToast from "hooks/use-toast";
-import { useState } from "react";
-import { TCreateModalStoreTypes } from "constants/issue";
+// components
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { ExistingIssuesListModal } from "@/components/core";
+import { CreateUpdateIssueModal } from "@/components/issues";
+// ui
+// mobx
+// hooks
+import { EIssuesStoreType } from "@/constants/issue";
+import { useEventTracker } from "@/hooks/store";
+// types
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
@@ -21,7 +21,7 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  storeType: TCreateModalStoreTypes;
+  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
@@ -38,8 +38,6 @@ export const HeaderGroupByCard = observer(
 
     const isDraftIssue = router.pathname.includes("draft-issue");
 
-    const { setToastAlert } = useToast();
-
     const renderExistingIssueModal = moduleId || cycleId;
     const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
 
@@ -49,10 +47,16 @@ export const HeaderGroupByCard = observer(
       const issues = data.map((i) => i.id);
 
       try {
-        addIssuesToView && addIssuesToView(issues);
+        await addIssuesToView?.(issues);
+
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Issues added to the cycle successfully.",
+        });
       } catch (error) {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Selected issues could not be added to the cycle. Please try again.",
         });
@@ -66,8 +70,8 @@ export const HeaderGroupByCard = observer(
             {icon ? icon : <CircleDashed className="h-3.5 w-3.5" strokeWidth={2} />}
           </div>
 
-          <div className="flex w-full flex-row items-center gap-1">
-            <div className="line-clamp-1 font-medium text-custom-text-100">{title}</div>
+          <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
+            <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
             <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
           </div>
 

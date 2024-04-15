@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-import { observer } from "mobx-react-lite";
-// hooks
-import { useApplication } from "hooks/store";
-import useIntegrationPopup from "hooks/use-integration-popup";
-// services
-import { AppInstallationService } from "services/app_installation.service";
-// ui
-import { Loader } from "@plane/ui";
-// types
 import { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
+// hooks
+import { Loader } from "@plane/ui";
+import { SLACK_CHANNEL_INFO } from "@/constants/fetch-keys";
+import { useApplication } from "@/hooks/store";
+import useIntegrationPopup from "@/hooks/use-integration-popup";
+// services
+import { AppInstallationService } from "@/services/app_installation.service";
+// ui
+// types
 // fetch-keys
-import { SLACK_CHANNEL_INFO } from "constants/fetch-keys";
 
 type Props = {
   integration: IWorkspaceIntegration;
