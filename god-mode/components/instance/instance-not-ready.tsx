@@ -1,11 +1,3 @@
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 
-type TInstanceNotReady = {
-  children: ReactNode;
-};
-
-export const InstanceNotReady: FC<TInstanceNotReady> = (props) => {
-  const {} = props;
-
-  return <div>SignIn Form</div>;
-};
+export const InstanceNotReady: FC = () => <div>SignIn Form</div>;

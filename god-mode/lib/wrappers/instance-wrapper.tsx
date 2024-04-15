@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
@@ -6,7 +6,7 @@ import { Spinner } from "@plane/ui";
 // components
 import { InstanceNotReady } from "@/components/instance";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/use-instance";
 
 type TInstanceWrapper = {
   children: ReactNode;
@@ -15,7 +15,10 @@ type TInstanceWrapper = {
 export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const { isLoading, instance, error, fetchInstanceInfo } = useInstance();
+  const { instance, fetchInstanceInfo } = useInstance();
+  // derived values
+  const isLoading = false;
+  const error: any = {};
 
   useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,

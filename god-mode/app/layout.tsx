@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 // lib
 // import { ThemeProvider } from "lib/theme-provider";
 // import AppWrapper from "lib/wrappers/app-wrapper";
@@ -15,7 +16,7 @@ export const metadata = {
 };
 
 interface RootLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export const RootLayout = async ({ children }: RootLayoutProps) => (

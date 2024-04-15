@@ -9,7 +9,8 @@ import { observer } from "mobx-react-lite";
 // components
 // import { InstanceGeneralForm } from "components/general";
 // import { PageHead } from "components/core";
-import { InstanceSignInForm, InstanceSignUpForm } from "@/components/user-authentication-forms";
+import { InstanceSignUpForm } from "@/components/user-authentication-forms";
+// InstanceSignInForm;
 
 const GeneralSettingsPage = observer(() => {
   // store

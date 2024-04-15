@@ -1,17 +1,6 @@
-import {
-  observable,
-  action,
-  computed,
-  makeObservable,
-  runInAction,
-} from "mobx";
+import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // types
-import {
-  IInstance,
-  IInstanceConfiguration,
-  IFormattedInstanceConfiguration,
-  IInstanceAdmin,
-} from "@plane/types";
+import { IInstance, IInstanceConfiguration, IFormattedInstanceConfiguration, IInstanceAdmin } from "@plane/types";
 // services
 import { InstanceService } from "services/instance.service";
 
@@ -27,9 +16,7 @@ export interface IInstanceStore {
   fetchInstanceAdmins: () => Promise<IInstanceAdmin[]>;
   updateInstanceInfo: (data: Partial<IInstance>) => Promise<IInstance>;
   fetchInstanceConfigurations: () => Promise<any>;
-  updateInstanceConfigurations: (
-    data: Partial<IFormattedInstanceConfiguration>
-  ) => Promise<IInstanceConfiguration[]>;
+  updateInstanceConfigurations: (data: Partial<IFormattedInstanceConfiguration>) => Promise<IInstanceConfiguration[]>;
 }
 
 export class InstanceStore implements IInstanceStore {
@@ -64,13 +51,10 @@ export class InstanceStore implements IInstanceStore {
    */
   get formattedConfig() {
     if (!this.configurations) return null;
-    return this.configurations?.reduce(
-      (formData: IFormattedInstanceConfiguration, config) => {
-        formData[config.key] = config.value;
-        return formData;
-      },
-      {} as IFormattedInstanceConfiguration
-    );
+    return this.configurations?.reduce((formData: IFormattedInstanceConfiguration, config) => {
+      formData[config.key] = config.value;
+      return formData;
+    }, {} as IFormattedInstanceConfiguration);
   }
 
   /**
@@ -117,8 +101,7 @@ export class InstanceStore implements IInstanceStore {
    */
   fetchInstanceConfigurations = async () => {
     try {
-      const configurations =
-        await this.instanceService.getInstanceConfigurations();
+      const configurations = await this.instanceService.getInstanceConfigurations();
       runInAction(() => {
         this.configurations = configurations;
       });
@@ -133,17 +116,11 @@ export class InstanceStore implements IInstanceStore {
    * update instance configurations
    * @param data
    */
-  updateInstanceConfigurations = async (
-    data: Partial<IFormattedInstanceConfiguration>
-  ) =>
-    await this.instanceService
-      .updateInstanceConfigurations(data)
-      .then((response) => {
-        runInAction(() => {
-          this.configurations = this.configurations
-            ? [...this.configurations, ...response]
-            : response;
-        });
-        return response;
+  updateInstanceConfigurations = async (data: Partial<IFormattedInstanceConfiguration>) =>
+    await this.instanceService.updateInstanceConfigurations(data).then((response) => {
+      runInAction(() => {
+        this.configurations = this.configurations ? [...this.configurations, ...response] : response;
       });
+      return response;
+    });
 }
