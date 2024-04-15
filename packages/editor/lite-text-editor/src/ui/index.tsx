@@ -32,6 +32,7 @@ export interface ILiteTextEditor {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   tabIndex?: number;
+  placeholder?: string | ((isFocused: boolean) => string);
 }
 
 const LiteTextEditor = (props: ILiteTextEditor) => {
@@ -46,6 +47,7 @@ const LiteTextEditor = (props: ILiteTextEditor) => {
     onEnterKeyPress,
     tabIndex,
     mentionHandler,
+    placeholder = "Add comment...",
   } = props;
 
   const editor = useEditor({
@@ -60,6 +62,7 @@ const LiteTextEditor = (props: ILiteTextEditor) => {
     forwardedRef,
     extensions: LiteTextEditorExtensions(onEnterKeyPress),
     mentionHandler,
+    placeholder,
   });
 
   const editorContainerClassName = getEditorClassNames({
