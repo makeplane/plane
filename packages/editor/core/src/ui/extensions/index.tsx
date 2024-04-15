@@ -28,6 +28,8 @@ import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
 import { CustomTypographyExtension } from "src/ui/extensions/typography";
 import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
 import { CustomCodeMarkPlugin } from "./custom-code-inline/inline-code-plugin";
+import { UploadImage } from "src/types/upload-image";
+import { DropHandlerExtension } from "./drop";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -36,6 +38,7 @@ export const CoreEditorExtensions = (
   },
   deleteFile: DeleteImage,
   restoreFile: RestoreImage,
+  uploadFile: UploadImage,
   cancelUploadImage?: () => any
 ) => [
   StarterKit.configure({
@@ -63,10 +66,8 @@ export const CoreEditorExtensions = (
       width: 1,
     },
   }),
-  // BulletList,
-  // OrderedList,
-  // ListItem,
   CustomQuoteExtension,
+  DropHandlerExtension(uploadFile),
   CustomHorizontalRule.configure({
     HTMLAttributes: {
       class: "my-4",

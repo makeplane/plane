@@ -22,40 +22,40 @@ export function CoreEditorProps(uploadFile: UploadImage, editorClassName: string
         }
       },
     },
-    handlePaste: (view, event) => {
-      if (typeof window !== "undefined") {
-        const selection: any = window?.getSelection();
-        if (selection.rangeCount !== 0) {
-          const range = selection.getRangeAt(0);
-          if (findTableAncestor(range.startContainer)) {
-            return;
-          }
-        }
-      }
-      if (event.clipboardData && event.clipboardData.files && event.clipboardData.files[0]) {
-        event.preventDefault();
-        const file = event.clipboardData.files[0];
-        const pos = view.state.selection.from;
-        startImageUpload(file, view, pos, uploadFile);
-        return true;
-      }
-      return false;
-    },
-    handleDrop: (view, event, _slice, moved) => {
-      if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
-        event.preventDefault();
-        const file = event.dataTransfer.files[0];
-        const coordinates = view.posAtCoords({
-          left: event.clientX,
-          top: event.clientY,
-        });
-        if (coordinates) {
-          startImageUpload(file, view, coordinates.pos - 1, uploadFile);
-        }
-        return true;
-      }
-      return false;
-    },
+    // handlePaste: (view, event) => {
+    //   if (typeof window !== "undefined") {
+    //     const selection: any = window?.getSelection();
+    //     if (selection.rangeCount !== 0) {
+    //       const range = selection.getRangeAt(0);
+    //       if (findTableAncestor(range.startContainer)) {
+    //         return;
+    //       }
+    //     }
+    //   }
+    //   if (event.clipboardData && event.clipboardData.files && event.clipboardData.files[0]) {
+    //     event.preventDefault();
+    //     const file = event.clipboardData.files[0];
+    //     const pos = view.state.selection.from;
+    //     startImageUpload(editor, file, view, pos, uploadFile);
+    //     return true;
+    //   }
+    //   return false;
+    // },
+    // handleDrop: (view, event, _slice, moved) => {
+    //   if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+    //     event.preventDefault();
+    //     const file = event.dataTransfer.files[0];
+    //     const coordinates = view.posAtCoords({
+    //       left: event.clientX,
+    //       top: event.clientY,
+    //     });
+    //     if (coordinates) {
+    //       startImageUpload(this.editor, file, view, coordinates.pos - 1, uploadFile);
+    //     }
+    //     return true;
+    //   }
+    //   return false;
+    // },
     transformPastedHTML(html) {
       return html.replace(/<img.*?>/g, "");
     },

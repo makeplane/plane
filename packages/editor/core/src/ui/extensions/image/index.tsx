@@ -28,7 +28,7 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreIma
     },
     addProseMirrorPlugins() {
       return [
-        UploadImagesPlugin(cancelUploadImage),
+        UploadImagesPlugin(this.editor, cancelUploadImage),
         new Plugin({
           key: deleteKey,
           appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
@@ -124,6 +124,7 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreIma
     addStorage() {
       return {
         images: new Map<string, boolean>(),
+        uploadInProgress: false,
       };
     },
 

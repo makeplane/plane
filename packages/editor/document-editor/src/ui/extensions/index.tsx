@@ -12,6 +12,10 @@ export const DocumentEditorExtensions = (
   DragAndDrop(setHideDragHandle),
   Placeholder.configure({
     placeholder: ({ editor, node }) => {
+      if (editor?.storage.image.uploadInProgress) {
+        return "";
+      }
+
       if (node.type.name === "heading") {
         return `Heading ${node.attrs.level}`;
       }

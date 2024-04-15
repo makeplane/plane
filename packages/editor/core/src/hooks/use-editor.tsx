@@ -13,6 +13,7 @@ import { insertContentAtSavedSelection } from "src/helpers/insert-content-at-cur
 import { EditorMenuItemNames, getEditorMenuItems } from "src/ui/menus/menu-items";
 import { EditorRefApi } from "src/types/editor-ref-api";
 import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
+import { startImageUpload } from "src/ui/plugins/upload-image";
 
 interface CustomEditorProps {
   id?: string;
@@ -65,6 +66,7 @@ export const useEditor = ({
         },
         deleteFile,
         restoreFile,
+        uploadFile,
         cancelUploadImage
       ),
       ...extensions,
@@ -90,12 +92,57 @@ export const useEditor = ({
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
     if (value === null || value === undefined) return;
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(value);
+    if (editor && !editor.isDestroyed && !editor.storage.image.uploadInProgress) {
+      editor?.commands.setContent(value);
+    }
   }, [editor, value, id]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
 
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
+
+  // useEffect(() => {
+  //   if (!editor) return;
+  //
+  //   const handlePaste = (event: ClipboardEvent) => {
+  //     // Access editor instance here
+  //     if (event.clipboardData && event.clipboardData.files && event.clipboardData.files[0]) {
+  //       event.preventDefault();
+  //       const file = event.clipboardData.files[0];
+  //       // __AUTO_GENERATED_PRINT_VAR_START__
+  //       console.log("useEditor#(anon)#handlePaste#if file: %s", file); // __AUTO_GENERATED_PRINT_VAR_END__
+  //       const pos = editor.view.state.selection.from;
+  //       startImageUpload(editor, file, editor.view, pos, uploadFile);
+  //       return true;
+  //     }
+  //     return false;
+  //   };
+  //
+  //   const handleDrop = (event: DragEvent) => {
+  //     event.preventDefault();
+  //     event.stopPropagation();
+  //
+  //     if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+  //       const file = event.dataTransfer.files[0];
+  //       const coordinates = editor.view.posAtCoords({ left: event.clientX, top: event.clientY });
+  //
+  //       if (coordinates) {
+  //         startImageUpload(editor, file, editor.view, coordinates.pos, uploadFile);
+  //       }
+  //     }
+  //     return false; // Prevent the default handling of the drop by the editor
+  //   };
+  //
+  //   // Register event listeners
+  //   editor.view.dom.addEventListener("paste", handlePaste);
+  //   editor.view.dom.addEventListener("drop", handleDrop);
+  //
+  //   // Cleanup
+  //   return () => {
+  //     editor.view.dom.removeEventListener("paste", handlePaste);
+  //     editor.view.dom.removeEventListener("drop", handleDrop);
+  //   };
+  // }, [editor, uploadFile]);
 
   useImperativeHandle(
     forwardedRef,
