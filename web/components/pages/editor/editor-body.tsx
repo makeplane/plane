@@ -91,7 +91,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(description_html ?? "<p></p>");
   }, [description_html, updateMarkings]);
 
-  if (!issues && issuesLoading)
+  if (!issues || issuesLoading)
     return (
       <div className="h-full w-full grid place-items-center">
         <Spinner />
