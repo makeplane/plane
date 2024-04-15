@@ -13,7 +13,6 @@ import { insertContentAtSavedSelection } from "src/helpers/insert-content-at-cur
 import { EditorMenuItemNames, getEditorMenuItems } from "src/ui/menus/menu-items";
 import { EditorRefApi } from "src/types/editor-ref-api";
 import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
-import { startImageUpload } from "src/ui/plugins/upload-image";
 
 interface CustomEditorProps {
   id?: string;
@@ -55,7 +54,7 @@ export const useEditor = ({
 }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
-      ...CoreEditorProps(uploadFile, editorClassName),
+      ...CoreEditorProps(editorClassName),
       ...editorProps,
     },
     extensions: [
