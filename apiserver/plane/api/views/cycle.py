@@ -746,7 +746,7 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
 class TransferCycleIssueAPIEndpoint(BaseAPIView):
     """
-    This viewset provides `create` actions for transfering the issues into a particular cycle.
+    This viewset provides `create` actions for transferring the issues into a particular cycle.
 
     """
 
