@@ -28,9 +28,9 @@ import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
 import { CustomTypographyExtension } from "src/ui/extensions/typography";
 import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
-import { CustomCodeMarkPlugin } from "./custom-code-inline/inline-code-plugin";
+import { CustomCodeMarkPlugin } from "src/ui/extensions/custom-code-inline/inline-code-plugin";
 import { UploadImage } from "src/types/upload-image";
-import { DropHandlerExtension } from "./drop";
+import { DropHandlerExtension } from "src/ui/extensions/drop";
 
 type TArguments = {
   mentionConfig: {
