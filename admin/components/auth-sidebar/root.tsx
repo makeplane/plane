@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import { useTheme } from "@/hooks";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { HelpSection, SidebarMenu, SidebarDropdown } from "components/sidebar";
+import { HelpSection, SidebarMenu, SidebarDropdown } from "@/components/auth-sidebar";
 
 export interface IInstanceSidebar {}
 

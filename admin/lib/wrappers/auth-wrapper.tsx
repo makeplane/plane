@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // layouts
-import { DefaultLayout } from "@/layouts";
+import { AuthLayout, DefaultLayout } from "@/layouts";
 // components
 import { InstanceSignInForm } from "@/components/user-authentication-forms";
 // hooks
@@ -47,5 +47,5 @@ export const AuthWrapper: FC<IAuthWrapper> = observer((props) => {
       </DefaultLayout>
     );
 
-  return <>{children}</>;
+  return <AuthLayout>{children}</AuthLayout>;
 });

@@ -71,7 +71,7 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
             id="email"
             name="email"
             type="email"
-            value={instanceAdmins[0].user_detail.email ?? ""}
+            value={instanceAdmins[0]?.user_detail?.email ?? ""}
             placeholder="Admin email"
             className="w-full cursor-not-allowed !text-custom-text-400"
             disabled

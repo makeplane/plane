@@ -1,0 +1,23 @@
+import { FC, ReactNode } from "react";
+import { InstanceSidebar } from "@/components/auth-sidebar";
+import { InstanceHeader } from "@/components/auth-header";
+
+type TAuthLayout = {
+  children: ReactNode;
+};
+
+export const AuthLayout: FC<TAuthLayout> = (props) => {
+  const { children } = props;
+
+  return (
+    <div className="relative flex h-screen w-screen overflow-hidden">
+      <InstanceSidebar />
+      <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+        <InstanceHeader />
+        <div className="h-full w-full overflow-hidden px-10 py-6">
+          <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
+        </div>
+      </main>
+    </div>
+  );
+};
