@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
-  output: "export",
+  output: "standalone",
   images: {
     unoptimized: true,
   },

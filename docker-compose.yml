@@ -19,6 +19,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    command: node admin/server.js admin
     depends_on:
       - api
       - web
