@@ -37,6 +37,7 @@ export const UploadImagesPlugin = (editor: Editor, cancelUploadImage?: () => voi
 
           // Create cancel button
           const cancelButton = document.createElement("button");
+          cancelButton.type = "button";
           cancelButton.style.position = "absolute";
           cancelButton.style.right = "3px";
           cancelButton.style.top = "3px";
