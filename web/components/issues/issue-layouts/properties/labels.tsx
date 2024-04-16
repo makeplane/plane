@@ -221,7 +221,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       value={value}
       onChange={onChange}
       disabled={disabled}
-      onKeyDownCapture={handleKeyDown}
+      onKeyDown={handleKeyDown}
       multiple
     >
       <Combobox.Button as={Fragment}>
@@ -232,8 +232,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
-              ? "cursor-pointer"
-              : "cursor-pointer hover:bg-custom-background-80"
+                ? "cursor-pointer"
+                : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
           onClick={handleOnClick}
         >
@@ -270,6 +270,12 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   <Combobox.Option
                     key={option.value}
                     value={option.value}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }
+                    }}
                     className={({ active, selected }) =>
                       `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
                         active ? "bg-custom-background-80" : ""
