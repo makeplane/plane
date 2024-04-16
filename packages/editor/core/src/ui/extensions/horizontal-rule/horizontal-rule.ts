@@ -1,4 +1,4 @@
-import { isNodeSelection, mergeAttributes, Node, nodeInputRule } from "@tiptap/core";
+import { InputRule, isNodeSelection, mergeAttributes, Node } from "@tiptap/core";
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 
 export interface HorizontalRuleOptions {
@@ -28,11 +28,22 @@ export const CustomHorizontalRule = Node.create<HorizontalRuleOptions>({
   group: "block",
 
   parseHTML() {
-    return [{ tag: "hr" }];
+    return [
+      {
+        tag: `div[data-type="${this.name}"]`,
+      },
+      { tag: "hr" },
+    ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["hr", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)];
+    return [
+      "div",
+      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
+        "data-type": this.name,
+      }),
+      ["div", {}],
+    ];
   },
 
   addCommands() {
@@ -102,9 +113,11 @@ export const CustomHorizontalRule = Node.create<HorizontalRuleOptions>({
 
   addInputRules() {
     return [
-      nodeInputRule({
+      new InputRule({
         find: /^(?:---|—-|___\s|\*\*\*\s)$/,
-        type: this.type,
+        handler: ({ state, range }) => {
+          state.tr.replaceRangeWith(range.from, range.to, this.type.create());
+        },
       }),
     ];
   },
