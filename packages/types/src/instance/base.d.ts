@@ -6,6 +6,11 @@ import {
   TInstanceAuthenticationKeys,
 } from "./index";
 
+export type TInstanceNotReady = {
+  is_activated: boolean;
+  is_setup_done: boolean;
+};
+
 export interface IInstance {
   instance: {
     id: string;

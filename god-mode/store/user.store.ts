@@ -1,87 +1,60 @@
 import { action, observable, runInAction, makeObservable } from "mobx";
 // services
 import { UserService } from "services/user.service";
-import { AuthService } from "services/auth.service";
 // interfaces
 import { IUser } from "@plane/types";
 // root store
 import { RootStore } from "@/store/root-store";
 
 export interface IUserStore {
-  // states
-  currentUserError: any | null;
-  currentUserLoader: boolean;
   // observables
+  isLoading: boolean;
   isUserLoggedIn: boolean | null;
   currentUser: IUser | null;
-  isUserInstanceAdmin: boolean | null;
   // fetch actions
   fetchCurrentUser: () => Promise<IUser>;
-  fetchCurrentUserInstanceAdminStatus: () => Promise<boolean>;
 }
 
 export class UserStore implements IUserStore {
-  // states
-  currentUserError: any | null = null;
-  currentUserLoader: boolean = false;
   // observables
+  isLoading: boolean = true;
   isUserLoggedIn: boolean | null = null;
   currentUser: IUser | null = null;
-  isUserInstanceAdmin: boolean | null = null;
-
   // services
   userService;
-  authService;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
-      // states
-      currentUserError: observable.ref,
-      currentUserLoader: observable.ref,
-      // observable
+      // observables
+      isLoading: observable.ref,
+      isUserLoggedIn: observable.ref,
       currentUser: observable,
-      isUserInstanceAdmin: observable.ref,
       // action
       fetchCurrentUser: action,
-      fetchCurrentUserInstanceAdminStatus: action,
     });
     this.userService = new UserService();
-    this.authService = new AuthService();
   }
 
   /**
-   * Fetches the current user
+   * @description Fetches the current user
    * @returns Promise<IUser>
    */
   fetchCurrentUser = async () => {
     try {
-      this.currentUserLoader = true;
+      this.isLoading = true;
       const response = await this.userService.currentUser();
       runInAction(() => {
         this.isUserLoggedIn = true;
         this.currentUser = response;
-        this.currentUserError = null;
-        this.currentUserLoader = false;
+
+        this.isLoading = false;
       });
       return response;
     } catch (error) {
       runInAction(() => {
-        this.currentUserLoader = false;
-        this.currentUserError = error;
+        this.isLoading = false;
       });
       throw error;
     }
   };
-
-  /**
-   * Fetches the current user instance admin status
-   * @returns Promise<boolean>
-   */
-  fetchCurrentUserInstanceAdminStatus = async () =>
-    await this.userService.currentUserInstanceAdminStatus().then((response) => {
-      runInAction(() => {
-        this.isUserInstanceAdmin = response.is_instance_admin;
-      });
-      return response.is_instance_admin;
-    });
 }

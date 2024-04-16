@@ -1,20 +1,31 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
-// types
-import { IInstance, IInstanceConfiguration, IFormattedInstanceConfiguration, IInstanceAdmin } from "@plane/types";
+import {
+  TInstanceNotReady,
+  IInstance,
+  IInstanceConfiguration,
+  IFormattedInstanceConfiguration,
+  IInstanceAdmin,
+} from "@plane/types";
+// helpers
+import { EInstanceStatus, TInstanceStatus } from "@/helpers";
 // services
-import { InstanceService } from "services/instance.service";
+import { InstanceService } from "@/services/instance.service";
 // root store
 import { RootStore } from "@/store/root-store";
 
 export interface IInstanceStore {
   // issues
-  instance: IInstance | null;
+  isLoading: boolean;
+  instanceStatus: TInstanceStatus | undefined;
+  instance: IInstance | undefined;
+
   instanceAdmins: IInstanceAdmin[] | null;
   configurations: IInstanceConfiguration[] | null;
   // computed
   formattedConfig: IFormattedInstanceConfiguration | null;
   // action
   fetchInstanceInfo: () => Promise<IInstance>;
+
   fetchInstanceAdmins: () => Promise<IInstanceAdmin[]>;
   updateInstanceInfo: (data: Partial<IInstance>) => Promise<IInstance>;
   fetchInstanceConfigurations: () => Promise<any>;
@@ -22,15 +33,20 @@ export interface IInstanceStore {
 }
 
 export class InstanceStore implements IInstanceStore {
-  instance: IInstance | null = null;
-  instanceAdmins: IInstanceAdmin[] | null = null;
+  isLoading: boolean = true;
+  instanceStatus: TInstanceStatus | undefined = undefined;
+  instance: IInstance | undefined = undefined;
+
   configurations: IInstanceConfiguration[] | null = null;
+  instanceAdmins: IInstanceAdmin[] | null = null;
   // service
   instanceService;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
       // observable
+      isLoading: observable.ref,
+      instanceStatus: observable,
       instance: observable,
       instanceAdmins: observable,
       configurations: observable,
@@ -60,17 +76,40 @@ export class InstanceStore implements IInstanceStore {
   }
 
   /**
-   * fetch instance info from API
+   * @description fetch instance information
    */
   fetchInstanceInfo = async () => {
     try {
+      this.isLoading = true;
       const instance = await this.instanceService.getInstanceInfo();
-      runInAction(() => {
-        this.instance = instance;
-      });
+      this.isLoading = false;
+
+      const isInstanceNotSetup = (instance: IInstance) => "is_activated" in instance && "is_setup_done" in instance;
+
+      if (isInstanceNotSetup(instance)) {
+        const instanceData: TInstanceNotReady = instance as unknown as TInstanceNotReady;
+        runInAction(() => {
+          this.isLoading = false;
+          this.instanceStatus = {
+            status: EInstanceStatus.NOT_YET_READY,
+            data: {
+              is_activated: instanceData?.is_activated,
+              is_setup_done: instanceData?.is_setup_done,
+            },
+          };
+        });
+      } else
+        runInAction(() => {
+          this.isLoading = false;
+          this.instance = instance;
+        });
       return instance;
     } catch (error) {
       console.log("Error while fetching the instance info");
+      this.isLoading = false;
+      this.instanceStatus = {
+        status: EInstanceStatus.ERROR,
+      };
       throw error;
     }
   };

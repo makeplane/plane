@@ -1,13 +1,18 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
-// hooks
-import { useInstance } from "@/hooks";
+// layouts
+import { DefaultLayout } from "@/layouts";
 // components
 import { InstanceNotReady } from "@/components/instance";
+import { InstanceSignUpForm } from "@/components/user-authentication-forms";
+// hooks
+import { useInstance } from "@/hooks";
+// helpers
+import { EInstanceStatus } from "@/helpers";
 
 type TInstanceWrapper = {
   children: ReactNode;
@@ -16,16 +21,14 @@ type TInstanceWrapper = {
 export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const { instance, fetchInstanceInfo } = useInstance();
-  // derived values
-  const isLoading = false;
-  const error: any = {};
+  const { isLoading, instanceStatus, instance, fetchInstanceInfo } = useInstance();
+  // state
+  const [signUpEnabled, setSignUpEnabled] = useState<boolean>(false);
 
   useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
   });
 
-  // loading state
   if (isLoading)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
@@ -33,21 +36,30 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
       </div>
     );
 
-  // something went wrong while in the request
-  if (error && error?.status === "error")
+  if (instanceStatus && instanceStatus?.status === EInstanceStatus.ERROR)
     return (
       <div className="relative flex h-screen w-screen items-center justify-center">
         Something went wrong. please try again later
       </div>
     );
 
-  // checking if the instance is activated or not
-  if (error && !error?.data?.is_activated) return <InstanceNotReady />;
+  if (instanceStatus && instanceStatus?.status === EInstanceStatus.NOT_YET_READY)
+    return (
+      <DefaultLayout>
+        <InstanceNotReady isRedirectionEnabled={false} />
+      </DefaultLayout>
+    );
 
-  // instance is not ready and setup is not done
   if (instance?.instance?.is_setup_done === false)
-    // if (isGodModeEnabled) return <MiniGodModeForm />;
-    return <InstanceNotReady />;
+    return (
+      <DefaultLayout>
+        {signUpEnabled ? (
+          <InstanceSignUpForm />
+        ) : (
+          <InstanceNotReady isRedirectionEnabled handleSignUpToggle={() => setSignUpEnabled(true)} />
+        )}
+      </DefaultLayout>
+    );
 
   return <>{children}</>;
 });

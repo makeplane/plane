@@ -10,7 +10,7 @@ export class InstanceService extends APIService {
   }
 
   async getInstanceInfo(): Promise<IInstance> {
-    return this.get("/api/instances/", { headers: {} })
+    return this.get("/api/instances/")
       .then((response) => response.data)
       .catch((error) => {
         throw error;
