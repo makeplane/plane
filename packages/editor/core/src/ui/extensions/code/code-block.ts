@@ -234,7 +234,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
   addProseMirrorPlugins() {
     return [
       new Plugin({
-        key: new PluginKey("codeBlockVSCodeHandler"),
+        key: new PluginKey("codeBlockVSCodeHandlerCustom"),
         props: {
           handlePaste: (view, event) => {
             if (!event.clipboardData) {
