@@ -1,14 +1,16 @@
 import { action, observable, runInAction, makeObservable } from "mobx";
+import { IUser } from "@plane/types";
+// helpers
+import { EUserStatus, TUserStatus } from "@/helpers";
 // services
 import { UserService } from "services/user.service";
-// interfaces
-import { IUser } from "@plane/types";
 // root store
 import { RootStore } from "@/store/root-store";
 
 export interface IUserStore {
   // observables
   isLoading: boolean;
+  userStatus: TUserStatus | undefined;
   isUserLoggedIn: boolean | null;
   currentUser: IUser | null;
   // fetch actions
@@ -18,6 +20,7 @@ export interface IUserStore {
 export class UserStore implements IUserStore {
   // observables
   isLoading: boolean = true;
+  userStatus: TUserStatus | undefined = undefined;
   isUserLoggedIn: boolean | null = null;
   currentUser: IUser | null = null;
   // services
@@ -27,6 +30,7 @@ export class UserStore implements IUserStore {
     makeObservable(this, {
       // observables
       isLoading: observable.ref,
+      userStatus: observable,
       isUserLoggedIn: observable.ref,
       currentUser: observable,
       // action
@@ -42,18 +46,26 @@ export class UserStore implements IUserStore {
   fetchCurrentUser = async () => {
     try {
       this.isLoading = true;
-      const response = await this.userService.currentUser();
+      const currentUser = await this.userService.currentUser();
       runInAction(() => {
         this.isUserLoggedIn = true;
-        this.currentUser = response;
-
+        this.currentUser = currentUser;
         this.isLoading = false;
       });
-      return response;
-    } catch (error) {
-      runInAction(() => {
-        this.isLoading = false;
-      });
+      return currentUser;
+    } catch (error: any) {
+      this.isLoading = false;
+      this.isUserLoggedIn = false;
+      if (error.status === 403)
+        this.userStatus = {
+          status: EUserStatus.AUTHENTICATION_NOT_DONE,
+          message: error?.message || "",
+        };
+      else
+        this.userStatus = {
+          status: EUserStatus.ERROR,
+          message: error?.message || "",
+        };
       throw error;
     }
   };

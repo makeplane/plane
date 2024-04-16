@@ -20,7 +20,7 @@ type TInstanceWrapper = {
 
 export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   const { children } = props;
-  // store
+  // hooks
   const { isLoading, instanceStatus, instance, fetchInstanceInfo } = useInstance();
   // state
   const [signUpEnabled, setSignUpEnabled] = useState<boolean>(false);
