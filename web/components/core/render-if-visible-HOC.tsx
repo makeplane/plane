@@ -48,7 +48,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
           // } else {
           //   setShouldVisible(entries[0].isIntersecting);
           // }
-          setShouldVisible(entries[0].isIntersecting);
+          setShouldVisible(entries[entries.length - 1].isIntersecting);
         },
         {
           root: root?.current,
