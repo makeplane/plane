@@ -30,7 +30,7 @@ http {
         }
         
         location /god-mode/ {
-            proxy_pass http://godmode/;
+            proxy_pass http://admin:8000/;
         }
 
         location /${BUCKET_NAME}/ {

@@ -5,7 +5,7 @@ WORKDIR /app
 RUN yarn global add turbo
 COPY . .
 
-RUN turbo prune --scope=god-mode --docker
+RUN turbo prune --scope=admin --docker
 
 FROM node:18-alpine AS installer
 
@@ -27,7 +27,7 @@ ARG NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
 
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
-RUN yarn turbo run build --filter=god-mode
+RUN yarn turbo run build --filter=admin
 
 FROM nginx:1.25.0-alpine AS runner
 WORKDIR /app
@@ -37,5 +37,5 @@ ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV TURBO_TELEMETRY_DISABLED 1
 
-COPY --from=installer /app/god-mode/out /usr/share/nginx/html
+COPY --from=installer /app/admin/out /usr/share/nginx/html
 
