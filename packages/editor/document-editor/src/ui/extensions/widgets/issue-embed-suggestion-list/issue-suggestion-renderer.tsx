@@ -151,7 +151,7 @@ const IssueSuggestionList = ({
     <div
       id="issue-list-container"
       ref={commandListContainer}
-      className=" fixed z-[10] max-h-80 w-96 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
+      className="z-10 max-h-80 w-96 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
     >
       {sections.map((section) => {
         const sectionItems = displayedItems[section];
@@ -159,11 +159,7 @@ const IssueSuggestionList = ({
           sectionItems &&
           sectionItems.length > 0 && (
             <div className={"flex h-full w-full flex-col"} key={`${section}-container`} id={`${section}-container`}>
-              <h6
-                className={
-                  "sticky top-0 z-[10] bg-custom-background-100 px-2 py-1 text-xs font-medium text-custom-text-400"
-                }
-              >
+              <h6 className="sticky top-0 z-10 bg-custom-background-100 px-2 py-1 text-xs font-medium text-custom-text-400">
                 {section}
               </h6>
               <div key={section} id={section} className={"max-h-[140px] overflow-x-hidden overflow-y-scroll"}>
@@ -198,11 +194,9 @@ const IssueSuggestionList = ({
       ref={commandListContainer}
       className="fixed z-[10] max-h-80 w-60 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
     >
-      <div className={"flex h-full w-full flex-col"} key={`no-issue-container`} id={`no-issue-container`}>
-        <h6
-          className={"sticky top-0 z-[10] bg-custom-background-100 px-2 py-1 text-xs font-medium text-custom-text-400"}
-        >
-          {"No issues found"}
+      <div id="no-issue-container" className="h-full w-full">
+        <h6 className="z-10 bg-custom-background-100 px-2 py-1 text-xs font-medium text-custom-text-400">
+          No issues found
         </h6>
       </div>
     </div>
@@ -214,16 +208,16 @@ export const IssueListRenderer = () => {
 
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
-      const container = document.querySelector(".frame-renderer") as HTMLElement;
+      const tippyContainer = document.querySelector(".active-editor") ?? document.querySelector("#editor-container");
+
       component = new ReactRenderer(IssueSuggestionList, {
         props,
-        // @ts-ignore
         editor: props.editor,
       });
-      // @ts-ignore
-      popup = tippy(".frame-renderer", {
+      // @ts-expect-error Tippy overloads are messed up
+      popup = tippy("body", {
         flipbehavior: ["bottom", "top"],
-        appendTo: () => document.querySelector(".frame-renderer") as HTMLElement,
+        appendTo: tippyContainer,
         flip: true,
         flipOnUpdate: true,
         getReferenceClientRect: props.clientRect,
@@ -234,7 +228,7 @@ export const IssueListRenderer = () => {
         placement: "bottom-start",
       });
 
-      container.addEventListener("scroll", () => {
+      tippyContainer?.addEventListener("scroll", () => {
         popup?.[0].destroy();
       });
     },
@@ -254,7 +248,7 @@ export const IssueListRenderer = () => {
 
       const navigationKeys = ["ArrowUp", "ArrowDown", "Enter", "Tab"];
       if (navigationKeys.includes(props.event.key)) {
-        // @ts-ignore
+        // @ts-expect-error fix the types
         component?.ref?.onKeyDown(props);
         return true;
       }
