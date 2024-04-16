@@ -309,7 +309,6 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
               // Create a new code block node with the pasted content
               const textNode = view.state.schema.text(text.replace(/\r\n?/g, "\n"));
               const codeBlock = this.type.create({ language }, textNode);
-              console.log(insertPos, tr.doc.content.size);
               if (insertPos <= tr.doc.content.size) {
                 tr.insert(insertPos, codeBlock);
                 view.dispatch(tr);
