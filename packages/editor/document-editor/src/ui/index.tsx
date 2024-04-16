@@ -77,6 +77,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     mentionHandler,
     extensions: DocumentEditorExtensions(fileHandler.upload, setHideDragHandleFunction, embedConfig?.issueEmbedConfig),
     placeholder,
+    tabIndex,
   });
 
   const editorContainerClassNames = getEditorClassNames({
