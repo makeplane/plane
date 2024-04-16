@@ -172,12 +172,16 @@ function DragHandle(options: DragHandleOptions) {
     if (!(node instanceof Element)) return;
 
     if (node.matches("blockquote")) {
-      console.log("matched node", node);
-      const nodePosForBlockquotes = nodePosAtDOMForBlockquotes(node, view, options);
+      let nodePosForBlockquotes = nodePosAtDOMForBlockquotes(node, view);
       if (nodePosForBlockquotes === null || nodePosForBlockquotes === undefined) return;
 
-      const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockquotes);
-      view.dispatch(view.state.tr.setSelection(nodeSelection));
+      const docSize = view.state.doc.content.size;
+      nodePosForBlockquotes = Math.max(0, Math.min(nodePosForBlockquotes, docSize));
+
+      if (nodePosForBlockquotes >= 0 && nodePosForBlockquotes <= docSize) {
+        const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockquotes);
+        view.dispatch(view.state.tr.setSelection(nodeSelection));
+      }
       return;
     }
 
