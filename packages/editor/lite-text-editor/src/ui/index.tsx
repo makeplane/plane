@@ -63,6 +63,7 @@ const LiteTextEditor = (props: ILiteTextEditor) => {
     extensions: LiteTextEditorExtensions(onEnterKeyPress),
     mentionHandler,
     placeholder,
+    tabIndex,
   });
 
   const editorContainerClassName = getEditorClassNames({
