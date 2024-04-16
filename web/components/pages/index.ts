@@ -1,4 +1,5 @@
 export * from "./dropdowns";
+export * from "./edit-history";
 export * from "./editor";
 export * from "./header";
 export * from "./list";

@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { Clipboard, Copy, Link, Lock } from "lucide-react";
+import { Clipboard, Copy, History, Link, Lock } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
 // ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+// components
+import { PageEditHistoryModal } from "@/components/pages";
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -17,8 +20,18 @@ type Props = {
   pageStore: IPageStore;
 };
 
+type TMenuItems = {
+  key: string;
+  action: () => void;
+  label: string;
+  icon: React.FC<any>;
+  shouldRender: boolean;
+};
+
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, pageStore } = props;
+  // states
+  const [editHistoryModal, setEditHistoryModal] = useState(false);
   // store values
   const {
     archive,
@@ -73,13 +86,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     );
 
   // menu items list
-  const MENU_ITEMS: {
-    key: string;
-    action: () => void;
-    label: string;
-    icon: React.FC<any>;
-    shouldRender: boolean;
-  }[] = [
+  const PAGE_ACTIONS: TMenuItems[] = [
     {
       key: "copy-markdown",
       action: () => {
@@ -148,28 +155,52 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     },
   ];
 
+  const EXTRA_OPTIONS: TMenuItems[] = [
+    {
+      key: "edit-history",
+      action: () => setEditHistoryModal(true),
+      label: "View edit history",
+      icon: History,
+      shouldRender: true,
+    },
+  ];
+
   return (
-    <CustomMenu maxHeight="md" placement="bottom-start" verticalEllipsis closeOnSelect>
-      <CustomMenu.MenuItem
-        className="flex w-full items-center justify-between gap-2"
-        onClick={() =>
-          updateViewProps({
-            full_width: !view_props?.full_width,
-          })
-        }
-      >
-        Full width
-        <ToggleSwitch value={!!view_props?.full_width} onChange={() => {}} />
-      </CustomMenu.MenuItem>
-      {MENU_ITEMS.map((item) => {
-        if (!item.shouldRender) return null;
-        return (
-          <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
-            <item.icon className="h-3 w-3" />
-            <div className="text-custom-text-300">{item.label}</div>
-          </CustomMenu.MenuItem>
-        );
-      })}
-    </CustomMenu>
+    <>
+      <PageEditHistoryModal isOpen={editHistoryModal} onClose={() => setEditHistoryModal(false)} />
+      <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
+        <CustomMenu.MenuItem
+          className="flex w-full items-center justify-between gap-2"
+          onClick={() =>
+            updateViewProps({
+              full_width: !view_props?.full_width,
+            })
+          }
+        >
+          Full width
+          <ToggleSwitch value={!!view_props?.full_width} onChange={() => {}} />
+        </CustomMenu.MenuItem>
+        <hr className="my-2 border-custom-border-200" />
+        {PAGE_ACTIONS.map((item) => {
+          if (!item.shouldRender) return null;
+          return (
+            <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
+              <item.icon className="h-3 w-3" />
+              <span>{item.label}</span>
+            </CustomMenu.MenuItem>
+          );
+        })}
+        <hr className="my-2 border-custom-border-200" />
+        {EXTRA_OPTIONS.map((item) => {
+          if (!item.shouldRender) return null;
+          return (
+            <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
+              <item.icon className="h-3 w-3" />
+              <span>{item.label}</span>
+            </CustomMenu.MenuItem>
+          );
+        })}
+      </CustomMenu>
+    </>
   );
 });
