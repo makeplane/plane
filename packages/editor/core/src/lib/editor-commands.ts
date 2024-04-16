@@ -1,6 +1,5 @@
 import { Editor, Range } from "@tiptap/core";
 import { startImageUpload } from "src/ui/plugins/upload-image";
-import { DOMParser, Node } from "@tiptap/pm/model";
 import { findTableAncestor } from "src/lib/utils";
 import { Selection } from "@tiptap/pm/state";
 import { UploadImage } from "src/types/upload-image";
@@ -37,39 +36,44 @@ export const toggleUnderline = (editor: Editor, range?: Range) => {
 
 const replaceCodeBlockWithContent = (editor: Editor) => {
   try {
-    const { schema, tr } = editor.state;
-    const { codeBlock } = schema.nodes;
+    const { schema } = editor.state;
+    const { paragraph } = schema.nodes;
     let replaced = false;
 
     const replaceCodeBlock = (from: number, to: number, textContent: string) => {
-      // Validate range
       const docSize = editor.state.doc.content.size;
+
       if (from < 0 || to > docSize || from > to) {
-        console.error("Invalid range for replacement.");
+        console.error("Invalid range for replacement: ", from, to, "in a document of size", docSize);
         return;
       }
 
+      // split the textContent by new lines to handle each line as a separate paragraph
       const lines = textContent.split(/\r?\n/);
-      const parsedContent = lines.map((line) => `<p>${line.replace(/ /g, "&nbsp;")}</p>`).join("");
-      const div = document.createElement("div");
-      div.innerHTML = parsedContent;
-      const domFragment = document.createDocumentFragment();
-      while (div.firstChild) {
-        domFragment.appendChild(div.firstChild);
-      }
 
-      const fragment = DOMParser.fromSchema(editor.state.schema).parse(domFragment);
-      if (!fragment || fragment.firstChild === null) {
-        console.error("Failed to parse content into a ProseMirror node.");
-        return;
-      }
+      const tr = editor.state.tr;
 
-      editor.view.dispatch(tr.replaceRangeWith(from, to, fragment));
+      // Calculate the position for inserting the first paragraph
+      let insertPos = from;
+
+      // Remove the code block first
+      tr.delete(from, to);
+
+      // For each line, create a paragraph node and insert it
+      lines.forEach((line) => {
+        const paragraphNode = paragraph.create({}, schema.text(line));
+        tr.insert(insertPos, paragraphNode);
+        // Update insertPos for the next insertion
+        insertPos += paragraphNode.nodeSize;
+      });
+
+      // Dispatch the transaction
+      editor.view.dispatch(tr);
       replaced = true;
     };
 
     editor.state.doc.nodesBetween(editor.state.selection.from, editor.state.selection.to, (node, pos) => {
-      if (node.type === codeBlock) {
+      if (node.type === schema.nodes.codeBlock) {
         const startPos = pos;
         const endPos = pos + node.nodeSize;
         const textContent = node.textContent;
