@@ -58,10 +58,10 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
           [
             "li",
             "p:not(:first-child)",
-            "pre",
+            ".code-block",
             "blockquote",
             "h1, h2, h3",
-            ".table-wrapper",
+            "table",
             "[data-type=horizontalRule]",
           ].join(", ")
         )
@@ -77,10 +77,25 @@ function nodePosAtDOM(node: Element, view: EditorView, options: DragHandleOption
   })?.inside;
 }
 
+function nodePosAtDOMForBlockquotes(node: Element, view: EditorView) {
+  const boundingRect = node.getBoundingClientRect();
+
+  return view.posAtCoords({
+    left: boundingRect.left + 1,
+    top: boundingRect.top + 1,
+  })?.inside;
+}
+
 function calcNodePos(pos: number, view: EditorView) {
-  const $pos = view.state.doc.resolve(pos);
-  if ($pos.depth > 1) return $pos.before($pos.depth);
-  return pos;
+  const maxPos = view.state.doc.content.size;
+  const safePos = Math.max(0, Math.min(pos, maxPos));
+  const $pos = view.state.doc.resolve(safePos);
+
+  if ($pos.depth > 1) {
+    const newPos = $pos.before($pos.depth);
+    return Math.max(0, Math.min(newPos, maxPos));
+  }
+  return safePos;
 }
 
 function DragHandle(options: DragHandleOptions) {
@@ -155,6 +170,20 @@ function DragHandle(options: DragHandleOptions) {
     });
 
     if (!(node instanceof Element)) return;
+
+    if (node.matches("blockquote")) {
+      let nodePosForBlockquotes = nodePosAtDOMForBlockquotes(node, view);
+      if (nodePosForBlockquotes === null || nodePosForBlockquotes === undefined) return;
+
+      const docSize = view.state.doc.content.size;
+      nodePosForBlockquotes = Math.max(0, Math.min(nodePosForBlockquotes, docSize));
+
+      if (nodePosForBlockquotes >= 0 && nodePosForBlockquotes <= docSize) {
+        const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockquotes);
+        view.dispatch(view.state.tr.setSelection(nodeSelection));
+      }
+      return;
+    }
 
     let nodePos = nodePosAtDOM(node, view, options);
 
@@ -244,11 +273,13 @@ function DragHandle(options: DragHandleOptions) {
 
           rect.top += (lineHeight - 20) / 2;
           rect.top += paddingTop;
+
           // Li markers
           if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
             rect.top += 4;
             rect.left -= 18;
           }
+
           rect.width = options.dragHandleWidth;
 
           if (!dragHandleElement) return;
