@@ -50,7 +50,11 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
     });
 
   const commentHTML = watch("comment_html");
-  const isEmpty = commentHTML?.trim() === "" || commentHTML === "<p></p>" || isEmptyHtmlString(commentHTML ?? "");
+
+  const isEmpty =
+    commentHTML?.trim() === "" ||
+    commentHTML === "<p></p>" ||
+    (isEmptyHtmlString(commentHTML ?? "") && !commentHTML?.includes("mention-component"));
 
   return (
     <div
@@ -70,7 +74,9 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 workspaceId={workspaceId}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
-                onEnterKeyPress={(e) => handleSubmit(onSubmit)(e)}
+                onEnterKeyPress={(e) => {
+                  if (!isEmpty && !isSubmitting) handleSubmit(onSubmit)(e);
+                }}
                 ref={editorRef}
                 initialValue={value ?? "<p></p>"}
                 containerClassName="min-h-[35px]"
