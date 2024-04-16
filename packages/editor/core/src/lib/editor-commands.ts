@@ -126,7 +126,7 @@ export const insertImageCommand = (
     if (input.files?.length) {
       const file = input.files[0];
       const pos = savedSelection?.anchor ?? editor.view.state.selection.from;
-      startImageUpload(file, editor.view, pos, uploadFile);
+      startImageUpload(editor, file, editor.view, pos, uploadFile);
     }
   };
   input.click();
