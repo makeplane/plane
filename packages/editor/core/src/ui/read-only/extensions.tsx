@@ -49,7 +49,9 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   CustomQuoteExtension,
   CustomHorizontalRule.configure({
-    HTMLAttributes: { class: "my-4" },
+    HTMLAttributes: {
+      class: "my-4 border-custom-border-400",
+    },
   }),
   CustomLinkExtension.configure({
     openOnClick: true,
@@ -83,7 +85,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   CustomCodeBlockExtension.configure({
     HTMLAttributes: {
-      class: "bg-custom-background-90 text-custom-text-100 rounded-lg p-8 pl-9 pr-4",
+      class: "",
     },
   }),
   CustomCodeInlineExtension,
