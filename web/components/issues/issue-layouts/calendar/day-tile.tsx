@@ -96,7 +96,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
           <Droppable droppableId={formattedDatePayload} isDropDisabled={readOnly}>
             {(provided, snapshot) => (
               <div
-                className={`h-full w-full select-none overflow-y-auto ${
+                className={`h-full w-full select-none ${
                   snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
                     ? "bg-custom-background-90"
                     : "bg-custom-background-100"
