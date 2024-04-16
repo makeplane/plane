@@ -55,15 +55,9 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
       (elem: Element) =>
         elem.parentElement?.matches?.(".ProseMirror") ||
         elem.matches(
-          [
-            "li",
-            "p:not(:first-child)",
-            "pre",
-            "blockquote",
-            "h1, h2, h3",
-            ".table-wrapper",
-            "[data-type=horizontalRule]",
-          ].join(", ")
+          ["li", "p:not(:first-child)", "pre", "blockquote", "h1, h2, h3", "table", "[data-type=horizontalRule]"].join(
+            ", "
+          )
         )
     );
 }
