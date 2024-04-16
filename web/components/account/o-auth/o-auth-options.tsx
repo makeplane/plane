@@ -36,7 +36,7 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         const response = await authService.socialAuth(socialAuthPayload);
 
         if (response) handleSignInRedirection();
-      } else throw Error("Cant find credentials");
+      } else throw Error("Can't find credentials");
     } catch (err: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -57,7 +57,7 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         const response = await authService.socialAuth(socialAuthPayload);
 
         if (response) handleSignInRedirection();
-      } else throw Error("Cant find credentials");
+      } else throw Error("Can't find credentials");
     } catch (err: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
