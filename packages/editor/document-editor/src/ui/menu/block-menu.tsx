@@ -101,21 +101,44 @@ export default function BlockMenu(props: BlockMenuProps) {
       label: "Duplicate",
       isDisabled: editor.state.selection.content().content.firstChild?.type.name === "image",
       onClick: (e) => {
-        const { view } = editor;
-        const { state } = view;
-        const { selection } = state;
-
-        editor
-          .chain()
-          .insertContentAt(selection.to, selection.content().content.firstChild!.toJSON(), {
-            updateSelection: true,
-          })
-          .focus(selection.to + 1, { scrollIntoView: false })
-          .run();
-
-        popup.current?.hide();
         e.preventDefault();
         e.stopPropagation();
+
+        try {
+          const { state } = editor;
+          const { selection } = state;
+          const firstChild = selection.content().content.firstChild;
+          const docSize = state.doc.content.size;
+
+          if (!firstChild) {
+            throw new Error("No content selected or content is not duplicable.");
+          }
+
+          // Directly use selection.to as the insertion position
+          const insertPos = selection.to;
+
+          // Ensure the insertion position is within the document's bounds
+          if (insertPos < 0 || insertPos > docSize) {
+            throw new Error("The insertion position is invalid or outside the document.");
+          }
+
+          const contentToInsert = firstChild.toJSON();
+
+          // Insert the content at the calculated position
+          editor
+            .chain()
+            .insertContentAt(insertPos, contentToInsert, {
+              updateSelection: true,
+            })
+            .focus(Math.min(insertPos + 1, docSize), { scrollIntoView: false })
+            .run();
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
+
+        popup.current?.hide();
       },
     },
   ];

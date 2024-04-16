@@ -46,19 +46,24 @@ export const ListKeymap = Extension.create<ListKeymapOptions>({
         return true;
       },
       Delete: ({ editor }) => {
-        let handled = false;
+        try {
+          let handled = false;
 
-        this.options.listTypes.forEach(({ itemName }) => {
-          if (editor.state.schema.nodes[itemName] === undefined) {
-            return;
-          }
+          this.options.listTypes.forEach(({ itemName }) => {
+            if (editor.state.schema.nodes[itemName] === undefined) {
+              return;
+            }
 
-          if (handleDelete(editor, itemName)) {
-            handled = true;
-          }
-        });
+            if (handleDelete(editor, itemName)) {
+              handled = true;
+            }
+          });
 
-        return handled;
+          return handled;
+        } catch (e) {
+          console.log("error in handling delete:", e);
+          return false;
+        }
       },
       "Mod-Delete": ({ editor }) => {
         let handled = false;
@@ -76,19 +81,24 @@ export const ListKeymap = Extension.create<ListKeymapOptions>({
         return handled;
       },
       Backspace: ({ editor }) => {
-        let handled = false;
+        try {
+          let handled = false;
 
-        this.options.listTypes.forEach(({ itemName, wrapperNames }) => {
-          if (editor.state.schema.nodes[itemName] === undefined) {
-            return;
-          }
+          this.options.listTypes.forEach(({ itemName, wrapperNames }) => {
+            if (editor.state.schema.nodes[itemName] === undefined) {
+              return;
+            }
 
-          if (handleBackspace(editor, itemName, wrapperNames)) {
-            handled = true;
-          }
-        });
+            if (handleBackspace(editor, itemName, wrapperNames)) {
+              handled = true;
+            }
+          });
 
-        return handled;
+          return handled;
+        } catch (e) {
+          console.log("error in handling Backspace:", e);
+          return false;
+        }
       },
       "Mod-Backspace": ({ editor }) => {
         let handled = false;
