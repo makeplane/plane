@@ -2394,11 +2394,6 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-bullet-list/-/extension-bullet-list-2.3.0.tgz#14400e19b87e7e9b1cf9c6d3900e7243461abc8d"
   integrity sha512-4nU4vJ5FjRDLqHm085vYAkuo68UK84Wl6CDSjm7sPVcu0FvQX02Okqt65azoSYQeS1SSSd5qq9YZuGWcYdp4Cw==
 
-"@tiptap/extension-code-block-lowlight@^2.1.13":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@tiptap/extension-code-block-lowlight/-/extension-code-block-lowlight-2.3.0.tgz#0bd1c45c2c5115d9cd964288a58f23688217f4fe"
-  integrity sha512-xMxWr/Fvv0hnN+u+6SW0OI3RVan+C6nJDU8xKh2Tx2DlBXJ0yODmq5v8WJJpW38AbaLkFuJuY/OA3AZ6n9pNbg==
-
 "@tiptap/extension-code-block@^2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-code-block/-/extension-code-block-2.3.0.tgz#9bfaaeaf6abf2452233d1da64b6c5712cab2503b"
@@ -2408,11 +2403,6 @@
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-code/-/extension-code-2.3.0.tgz#19b5435c59021f11e24ac8427da4434b03596b35"
   integrity sha512-O2FZmosiIRoVbW82fZy8xW4h4gb2xAzxWzHEcsHPlwCbE3vYvcBMmbkQ5p+33eRtuRQInzl3Q/cwupv9ctIepQ==
-
-"@tiptap/extension-color@^2.1.13":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@tiptap/extension-color/-/extension-color-2.3.0.tgz#982bead161a09f668cabebcba8b8ed98789f2085"
-  integrity sha512-rqtdTaGawPZSRszwC/BlkJTF1diosIBBRSO5/YCRHT7CfGJNJyomL3eFREynXLKnXZ69SMceDh6yU6B54uTHXQ==
 
 "@tiptap/extension-document@^2.3.0":
   version "2.3.0"
@@ -6944,9 +6934,9 @@ postcss@^8.4.21, postcss@^8.4.23, postcss@^8.4.29:
     source-map-js "^1.2.0"
 
 posthog-js@^1.105.0:
-  version "1.122.0"
-  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.122.0.tgz#235272197914a640554c3b04c7889c89ab3c0303"
-  integrity sha512-+8R2/nLaWyI5Jp2Ly7L52qcgDFU3xryyoNG52DPJ8dlGnagphxIc0mLNGurgyKeeTGycsOsuOIP4dtofv3ZoBA==
+  version "1.125.0"
+  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.125.0.tgz#a45357dd140b82463d9eff44176d01bb0482bd5a"
+  integrity sha512-9DZIwIMvq6X6lL1GCzs+bibJ6L+hYhlv9T+OmA/PIGQmI1vSC8YJtUIFm94X1SeQ6oIYz/ZWebGD/owFuJFZOw==
   dependencies:
     fflate "^0.4.8"
     preact "^10.19.3"
@@ -8516,7 +8506,7 @@ turbo-windows-arm64@1.13.2:
   resolved "https://registry.yarnpkg.com/turbo-windows-arm64/-/turbo-windows-arm64-1.13.2.tgz#07d6a01a1bfc6293ee8365cf3639914244f6f0b9"
   integrity sha512-WnPMrwfCXxK69CdDfS1/j2DlzcKxSmycgDAqV0XCYpK/812KB0KlvsVAt5PjEbZGXkY88pCJ1BLZHAjF5FcbqA==
 
-turbo@^1.11.3:
+turbo@^1.13.2:
   version "1.13.2"
   resolved "https://registry.yarnpkg.com/turbo/-/turbo-1.13.2.tgz#c45919cb1cebc86390516184396247eedf65e232"
   integrity sha512-rX/d9f4MgRT3yK6cERPAkfavIxbpBZowDQpgvkYwGMGDQ0Nvw1nc0NVjruE76GrzXQqoxR1UpnmEP54vBARFHQ==

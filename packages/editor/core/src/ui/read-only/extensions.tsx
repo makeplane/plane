@@ -1,7 +1,6 @@
 import StarterKit from "@tiptap/starter-kit";
 import TiptapUnderline from "@tiptap/extension-underline";
 import TextStyle from "@tiptap/extension-text-style";
-import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
@@ -50,7 +49,9 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   CustomQuoteExtension,
   CustomHorizontalRule.configure({
-    HTMLAttributes: { class: "my-4" },
+    HTMLAttributes: {
+      class: "my-4 border-custom-border-400",
+    },
   }),
   CustomLinkExtension.configure({
     openOnClick: true,
@@ -71,7 +72,6 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   TiptapUnderline,
   TextStyle,
-  Color,
   TaskList.configure({
     HTMLAttributes: {
       class: "not-prose pl-2 space-y-2",
@@ -85,7 +85,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   CustomCodeBlockExtension.configure({
     HTMLAttributes: {
-      class: "bg-custom-background-90 text-custom-text-100 rounded-lg p-8 pl-9 pr-4",
+      class: "",
     },
   }),
   CustomCodeInlineExtension,

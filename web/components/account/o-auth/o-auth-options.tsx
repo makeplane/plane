@@ -1,28 +1,29 @@
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
-
-// services
-import { GitHubSignInButton, GoogleSignInButton } from "@/components/accounts";
-import { AppConfigService } from "@/services/app-config.service";
-import { AuthService } from "@/services/authentication.service";
-// hooks
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { GitHubSignInButton, GoogleSignInButton } from "@/components/account";
+// hooks
+import { useApplication } from "@/hooks/store";
+// services
+import { AuthService } from "@/services/auth.service";
 
 type Props = {
   handleSignInRedirection: () => Promise<void>;
+  type: "sign_in" | "sign_up";
 };
 
 // services
 const authService = new AuthService();
-const appConfig = new AppConfigService();
 
 export const OAuthOptions: React.FC<Props> = observer((props) => {
-  const { handleSignInRedirection } = props;
-  // toast alert
-  const { setToastAlert } = useToast();
-
-  const { data: envConfig } = useSWR("APP_CONFIG", () => appConfig.envConfig());
+  const { handleSignInRedirection, type } = props;
+  // mobx store
+  const {
+    config: { envConfig },
+  } = useApplication();
+  // derived values
+  const areBothOAuthEnabled = envConfig?.google_client_id && envConfig?.github_client_id;
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
@@ -37,9 +38,9 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         if (response) handleSignInRedirection();
       } else throw Error("Can't find credentials");
     } catch (err: any) {
-      setToastAlert({
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error signing in!",
-        type: "error",
         message: err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
@@ -58,9 +59,9 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         if (response) handleSignInRedirection();
       } else throw Error("Can't find credentials");
     } catch (err: any) {
-      setToastAlert({
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error signing in!",
-        type: "error",
         message: err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
@@ -73,12 +74,14 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         <p className="mx-3 flex-shrink-0 text-center text-sm text-onboarding-text-400">Or continue with</p>
         <hr className="w-full border-onboarding-border-100" />
       </div>
-      <div className="mx-auto space-y-4 overflow-hidden pt-7 sm:w-96">
+      <div className={`mx-auto mt-7 grid gap-4 overflow-hidden sm:w-96 ${areBothOAuthEnabled ? "grid-cols-2" : ""}`}>
         {envConfig?.google_client_id && (
-          <GoogleSignInButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} />
+          <div className="flex h-[42px] items-center !overflow-hidden">
+            <GoogleSignInButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} type={type} />
+          </div>
         )}
         {envConfig?.github_client_id && (
-          <GitHubSignInButton clientId={envConfig?.github_client_id} handleSignIn={handleGitHubSignIn} />
+          <GitHubSignInButton clientId={envConfig?.github_client_id} handleSignIn={handleGitHubSignIn} type={type} />
         )}
       </div>
     </>
