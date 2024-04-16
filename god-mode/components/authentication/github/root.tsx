@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 // hooks
-import useInstance from "hooks/use-instance";
+import { useInstance } from "@/hooks";
 // ui
 import { ToggleSwitch, getButtonStyling } from "@plane/ui";
 // icons
@@ -25,21 +25,13 @@ export const GithubConfiguration: React.FC<Props> = observer((props) => {
   const { formattedConfig } = useInstance();
   // derived values
   const enableGithubConfig = formattedConfig?.IS_GITHUB_ENABLED ?? "";
-  const isGithubConfigured =
-    !!formattedConfig?.GITHUB_CLIENT_ID &&
-    !!formattedConfig?.GITHUB_CLIENT_SECRET;
+  const isGithubConfigured = !!formattedConfig?.GITHUB_CLIENT_ID && !!formattedConfig?.GITHUB_CLIENT_SECRET;
 
   return (
     <>
       {isGithubConfigured ? (
         <div className="flex items-center gap-4">
-          <Link
-            href="authentication/github"
-            className={cn(
-              getButtonStyling("link-primary", "md"),
-              "font-medium"
-            )}
-          >
+          <Link href="authentication/github" className={cn(getButtonStyling("link-primary", "md"), "font-medium")}>
             Edit
           </Link>
           <ToggleSwitch
@@ -56,10 +48,7 @@ export const GithubConfiguration: React.FC<Props> = observer((props) => {
       ) : (
         <Link
           href="authentication/github"
-          className={cn(
-            getButtonStyling("neutral-primary", "sm"),
-            "text-custom-text-300"
-          )}
+          className={cn(getButtonStyling("neutral-primary", "sm"), "text-custom-text-300")}
         >
           <Settings2 className="h-4 w-4 p-0.5 text-custom-text-300/80" />
           Configure

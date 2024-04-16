@@ -4,6 +4,8 @@ import { UserService } from "services/user.service";
 import { AuthService } from "services/auth.service";
 // interfaces
 import { IUser } from "@plane/types";
+// root store
+import { RootStore } from "@/store/root-store";
 
 export interface IUserStore {
   // states
@@ -16,8 +18,6 @@ export interface IUserStore {
   // fetch actions
   fetchCurrentUser: () => Promise<IUser>;
   fetchCurrentUserInstanceAdminStatus: () => Promise<boolean>;
-
-  signOut: () => Promise<void>;
 }
 
 export class UserStore implements IUserStore {
@@ -33,7 +33,7 @@ export class UserStore implements IUserStore {
   userService;
   authService;
 
-  constructor() {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // states
       currentUserError: observable.ref,
@@ -44,7 +44,6 @@ export class UserStore implements IUserStore {
       // action
       fetchCurrentUser: action,
       fetchCurrentUserInstanceAdminStatus: action,
-      signOut: action,
     });
     this.userService = new UserService();
     this.authService = new AuthService();
@@ -84,17 +83,5 @@ export class UserStore implements IUserStore {
         this.isUserInstanceAdmin = response.is_instance_admin;
       });
       return response.is_instance_admin;
-    });
-
-  /**
-   * Signs out the current user
-   * @returns Promise<void>
-   */
-  signOut = async () =>
-    await this.authService.signOut().then(() => {
-      runInAction(() => {
-        this.currentUser = null;
-        this.isUserLoggedIn = false;
-      });
     });
 }

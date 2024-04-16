@@ -1,16 +1,13 @@
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 // hooks
-import useInstance from "hooks/use-instance";
+import { useInstance } from "@/hooks";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ControllerInput, TControllerInputFormField } from "components/common";
 // types
-import {
-  IFormattedInstanceConfiguration,
-  TInstanceAIConfigurationKeys,
-} from "@plane/types";
+import { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
 
 type IInstanceAIForm = {
   config: IFormattedInstanceConfiguration;
@@ -111,11 +108,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
         ))}
       </div>
       <div className="flex items-center py-1">
-        <Button
-          variant="primary"
-          onClick={handleSubmit(onSubmit)}
-          loading={isSubmitting}
-        >
+        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>

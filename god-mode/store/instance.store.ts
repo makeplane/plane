@@ -3,6 +3,8 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 import { IInstance, IInstanceConfiguration, IFormattedInstanceConfiguration, IInstanceAdmin } from "@plane/types";
 // services
 import { InstanceService } from "services/instance.service";
+// root store
+import { RootStore } from "@/store/root-store";
 
 export interface IInstanceStore {
   // issues
@@ -26,7 +28,7 @@ export class InstanceStore implements IInstanceStore {
   // service
   instanceService;
 
-  constructor() {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // observable
       instance: observable,

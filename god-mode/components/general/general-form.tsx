@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import useInstance from "hooks/use-instance";
+import { useInstance } from "@/hooks";
 // ui
 import { Button, Input, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
@@ -32,15 +32,15 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
     formState: { errors, isSubmitting },
   } = useForm<GeneralFormValues>({
     defaultValues: {
-      instance_name: instance.instance_name,
-      is_telemetry_enabled: instance.is_telemetry_enabled,
+      instance_name: instance.instance.instance_name,
+      is_telemetry_enabled: instance.instance.is_telemetry_enabled,
     },
   });
 
   const onSubmit = async (formData: GeneralFormValues) => {
     const payload: Partial<GeneralFormValues> = { ...formData };
 
-    await updateInstanceInfo(payload)
+    await updateInstanceInfo(payload as Partial<IInstance>)
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -84,7 +84,7 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
             id="instance_id"
             name="instance_id"
             type="text"
-            value={instance.instance_id}
+            value={instance.instance.instance_id}
             className="w-full cursor-not-allowed rounded-md font-medium !text-custom-text-400"
             disabled
           />
@@ -103,8 +103,7 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
               Allow Plane to collect anonymous usage events
             </div>
             <div className="text-xs font-normal text-custom-text-300 leading-5">
-              We collect usage events without any PII to analyse and improve
-              Plane.{" "}
+              We collect usage events without any PII to analyse and improve Plane.{" "}
               <a
                 href="https://docs.plane.so/self-hosting/telemetry"
                 target="_blank"
@@ -121,22 +120,13 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
             control={control}
             name="is_telemetry_enabled"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={value}
-                onChange={onChange}
-                size="sm"
-                disabled={isSubmitting}
-              />
+              <ToggleSwitch value={value} onChange={onChange} size="sm" disabled={isSubmitting} />
             )}
           />
         </div>
       </div>
       <div className="flex items-center py-4">
-        <Button
-          variant="primary"
-          onClick={handleSubmit(onSubmit)}
-          loading={isSubmitting}
-        >
+        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>

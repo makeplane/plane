@@ -32,11 +32,6 @@ type TError = {
   message: string | undefined;
 };
 
-const defaultErrorData: TError = {
-  type: undefined,
-  message: undefined,
-};
-
 // form data
 type TFormData = {
   first_name: string;
@@ -64,7 +59,6 @@ export const InstanceSignUpForm: FC = (props) => {
   const errorMessage = searchParams.get("error_message") || undefined;
   // state
   const [showPassword, setShowPassword] = useState(false);
-  const [errorData, setErrorData] = useState<TError>(defaultErrorData);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
 
@@ -75,38 +69,25 @@ export const InstanceSignUpForm: FC = (props) => {
     if (csrfToken === undefined) authService.requestCSRFToken().then((data) => setCsrfToken(data.csrf_token));
   }, [csrfToken]);
 
-  useEffect(() => {
-    if (errorCode && errorMessage)
+  const errorData: TError = useMemo(() => {
+    if (errorCode && errorMessage) {
       switch (errorCode) {
         case EErrorCodes.INSTANCE_NOT_CONFIGURED:
-          setErrorData({ type: EErrorCodes.INSTANCE_NOT_CONFIGURED, message: errorMessage });
-          break;
+          return { type: EErrorCodes.INSTANCE_NOT_CONFIGURED, message: errorMessage };
         case EErrorCodes.ADMIN_ALREADY_EXIST:
-          setErrorData({ type: EErrorCodes.ADMIN_ALREADY_EXIST, message: errorMessage });
-          break;
+          return { type: EErrorCodes.ADMIN_ALREADY_EXIST, message: errorMessage };
         case EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME:
-          setErrorData({ type: EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME, message: errorMessage });
-          break;
+          return { type: EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME, message: errorMessage };
         case EErrorCodes.INVALID_EMAIL:
-          setErrorData({ type: EErrorCodes.INVALID_EMAIL, message: errorMessage });
-          break;
+          return { type: EErrorCodes.INVALID_EMAIL, message: errorMessage };
         case EErrorCodes.INVALID_PASSWORD:
-          setErrorData({ type: EErrorCodes.INVALID_PASSWORD, message: errorMessage });
-          break;
+          return { type: EErrorCodes.INVALID_PASSWORD, message: errorMessage };
         case EErrorCodes.USER_ALREADY_EXISTS:
-          setErrorData({ type: EErrorCodes.USER_ALREADY_EXISTS, message: errorMessage });
-          break;
+          return { type: EErrorCodes.USER_ALREADY_EXISTS, message: errorMessage };
         default:
-          setErrorData({ type: undefined, message: undefined });
-          break;
+          return { type: undefined, message: undefined };
       }
-  }, [errorCode, errorMessage]);
-
-  useEffect(() => {
-    if (errorCode && errorMessage)
-      setTimeout(() => {
-        setErrorData({ type: undefined, message: undefined });
-      }, 3000);
+    } else return { type: undefined, message: undefined };
   }, [errorCode, errorMessage]);
 
   // derived values

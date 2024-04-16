@@ -1,16 +1,13 @@
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 // hooks
-import useInstance from "hooks/use-instance";
+import { useInstance } from "@/hooks";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ControllerInput } from "components/common";
 // types
-import {
-  IFormattedInstanceConfiguration,
-  TInstanceImageConfigurationKeys,
-} from "@plane/types";
+import { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";
 
 type IInstanceImageConfigForm = {
   config: IFormattedInstanceConfiguration;
@@ -18,9 +15,7 @@ type IInstanceImageConfigForm = {
 
 type ImageConfigFormValues = Record<TInstanceImageConfigurationKeys, string>;
 
-export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (
-  props
-) => {
+export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => {
   const { config } = props;
   // store hooks
   const { updateInstanceConfigurations } = useInstance();
@@ -76,11 +71,7 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (
         />
       </div>
       <div className="flex items-center py-1">
-        <Button
-          variant="primary"
-          onClick={handleSubmit(onSubmit)}
-          loading={isSubmitting}
-        >
+        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>

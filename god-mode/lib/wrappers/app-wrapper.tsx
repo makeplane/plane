@@ -4,9 +4,7 @@ import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { SWRConfig } from "swr";
 // hooks
-import useAppTheme from "hooks/use-theme";
-import useUser from "hooks/use-user";
-import { useTheme } from "next-themes";
+import { useTheme, useUser } from "@/hooks";
 // ui
 import { Toast } from "@plane/ui";
 // constants
@@ -18,29 +16,22 @@ interface IAppWrapper {
   children: ReactNode;
 }
 
-const AppWrapper: FC<IAppWrapper> = observer(({ children }) => {
+export const AppWrapper: FC<IAppWrapper> = observer(({ children }) => {
   // store hooks
-  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { theme, isSidebarCollapsed, toggleSidebar } = useTheme();
   const { currentUser } = useUser();
-  // themes
-  const { resolvedTheme } = useTheme();
+  const {} = useTheme();
 
-  /**
-   * Sidebar collapsed fetching from local storage
-   */
   useEffect(() => {
     const localValue = localStorage && localStorage.getItem("god_mode_sidebar_collapsed");
     const localBoolValue = localValue ? (localValue === "true" ? true : false) : false;
-
-    if (localValue && sidebarCollapsed === undefined) toggleSidebar(localBoolValue);
-  }, [sidebarCollapsed, currentUser, toggleSidebar]);
+    if (isSidebarCollapsed === undefined && localBoolValue != isSidebarCollapsed) toggleSidebar(localBoolValue);
+  }, [isSidebarCollapsed, currentUser, toggleSidebar]);
 
   return (
     <>
-      <Toast theme={resolveGeneralTheme(resolvedTheme)} />
+      <Toast theme={resolveGeneralTheme(theme)} />
       <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
     </>
   );
 });
-
-export default AppWrapper;

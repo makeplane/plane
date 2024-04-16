@@ -10,13 +10,6 @@ export class UserService extends APIService {
     super(API_BASE_URL);
   }
 
-  currentUserConfig() {
-    return {
-      url: `${this.baseURL}/api/users/me/`,
-      headers: this.getHeaders(),
-    };
-  }
-
   async currentUser(): Promise<IUser> {
     return this.get("/api/users/me/")
       .then((response) => response?.data)

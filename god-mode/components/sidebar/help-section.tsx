@@ -3,7 +3,7 @@ import { Transition } from "@headlessui/react";
 import Link from "next/link";
 import { FileText, HelpCircle, MoveLeft } from "lucide-react";
 // hooks
-import { useAppTheme } from "hooks/use-theme";
+import { useTheme } from "@/hooks";
 // icons
 import { DiscordIcon, GithubIcon } from "@plane/ui";
 // assets
@@ -31,25 +31,23 @@ export const HelpSection: FC = () => {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store
-  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { isSidebarCollapsed, toggleSidebar } = useTheme();
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <div
       className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
-        sidebarCollapsed ? "flex-col" : ""
+        isSidebarCollapsed ? "flex-col" : ""
       }`}
     >
       <div
-        className={`flex items-center gap-1 ${
-          sidebarCollapsed ? "flex-col justify-center" : "w-full justify-end"
-        }`}
+        className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full justify-end"}`}
       >
         <button
           type="button"
           className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
-            sidebarCollapsed ? "w-full" : ""
+            isSidebarCollapsed ? "w-full" : ""
           }`}
           onClick={() => setIsNeedHelpOpen((prev) => !prev)}
         >
@@ -58,22 +56,18 @@ export const HelpSection: FC = () => {
         <button
           type="button"
           className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
-          onClick={() => toggleSidebar()}
+          onClick={() => toggleSidebar(!isSidebarCollapsed)}
         >
           <MoveLeft className="h-3.5 w-3.5" />
         </button>
         <button
           type="button"
           className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
-            sidebarCollapsed ? "w-full" : ""
+            isSidebarCollapsed ? "w-full" : ""
           }`}
-          onClick={() => toggleSidebar()}
+          onClick={() => toggleSidebar(!isSidebarCollapsed)}
         >
-          <MoveLeft
-            className={`h-3.5 w-3.5 duration-300 ${
-              sidebarCollapsed ? "rotate-180" : ""
-            }`}
-          />
+          <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`} />
         </button>
       </div>
 
@@ -89,7 +83,7 @@ export const HelpSection: FC = () => {
         >
           <div
             className={`absolute bottom-2 min-w-[10rem] ${
-              sidebarCollapsed ? "left-full" : "-left-[75px]"
+              isSidebarCollapsed ? "left-full" : "-left-[75px]"
             } divide-y divide-custom-border-200 whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
             ref={helpOptionsRef}
           >
@@ -100,10 +94,7 @@ export const HelpSection: FC = () => {
                     <Link href={href} key={name} target="_blank">
                       <div className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80">
                         <div className="grid flex-shrink-0 place-items-center">
-                          <Icon
-                            className="h-3.5 w-3.5 text-custom-text-200"
-                            size={14}
-                          />
+                          <Icon className="h-3.5 w-3.5 text-custom-text-200" size={14} />
                         </div>
                         <span className="text-xs">{name}</span>
                       </div>
@@ -124,9 +115,7 @@ export const HelpSection: FC = () => {
                   );
               })}
             </div>
-            <div className="px-2 pb-1 pt-2 text-[10px]">
-              Version: v{packageJson.version}
-            </div>
+            <div className="px-2 pb-1 pt-2 text-[10px]">Version: v{packageJson.version}</div>
           </div>
         </Transition>
       </div>

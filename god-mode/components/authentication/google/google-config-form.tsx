@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 // hooks
-import useInstance from "hooks/use-instance";
+import { useInstance } from "@/hooks";
 // ui
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 // components

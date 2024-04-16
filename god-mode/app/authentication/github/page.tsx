@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import useInstance from "hooks/use-instance";
+import { useInstance } from "@/hooks";
 // ui
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components

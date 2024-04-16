@@ -1,12 +1,13 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// ui
 import { Spinner } from "@plane/ui";
+// hooks
+import { useInstance } from "@/hooks";
 // components
 import { InstanceNotReady } from "@/components/instance";
-// hooks
-import { useInstance } from "@/hooks/use-instance";
 
 type TInstanceWrapper = {
   children: ReactNode;

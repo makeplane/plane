@@ -2,7 +2,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 // hooks
-import { useAppTheme } from "hooks/use-theme";
+import { useTheme } from "@/hooks";
 // ui
 import { Tooltip } from "@plane/ui";
 import { observer } from "mobx-react-lite";
@@ -47,13 +47,13 @@ const INSTANCE_ADMIN_LINKS = [
 
 export const SidebarMenu = observer(() => {
   // store hooks
-  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { isSidebarCollapsed, toggleSidebar } = useTheme();
   // router
   const pathName = usePathname();
 
   const handleItemClick = () => {
     if (window.innerWidth < 768) {
-      toggleSidebar();
+      toggleSidebar(!isSidebarCollapsed);
     }
   };
 
@@ -64,36 +64,27 @@ export const SidebarMenu = observer(() => {
         return (
           <Link key={index} href={item.href} onClick={handleItemClick}>
             <div>
-              <Tooltip
-                tooltipContent={item.name}
-                position="right"
-                className="ml-2"
-                disabled={!sidebarCollapsed}
-              >
+              <Tooltip tooltipContent={item.name} position="right" className="ml-2" disabled={!isSidebarCollapsed}>
                 <div
                   className={`group flex w-full items-center gap-3 rounded-md px-3 py-2 outline-none ${
                     isActive
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
-                  } ${sidebarCollapsed ? "justify-center" : ""}`}
+                  } ${isSidebarCollapsed ? "justify-center" : ""}`}
                 >
                   {<item.Icon className="h-4 w-4" />}
-                  {!sidebarCollapsed && (
+                  {!isSidebarCollapsed && (
                     <div className="flex flex-col leading-snug">
                       <span
                         className={`text-sm font-medium ${
-                          isActive
-                            ? "text-custom-primary-100"
-                            : "text-custom-sidebar-text-200"
+                          isActive ? "text-custom-primary-100" : "text-custom-sidebar-text-200"
                         }`}
                       >
                         {item.name}
                       </span>
                       <span
                         className={`text-[10px] ${
-                          isActive
-                            ? "text-custom-primary-90"
-                            : "text-custom-sidebar-text-400"
+                          isActive ? "text-custom-primary-90" : "text-custom-sidebar-text-400"
                         }`}
                       >
                         {item.description}

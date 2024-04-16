@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
-import useInstance from "hooks/use-instance";
+import { useInstance } from "@/hooks";
 // ui
 import { Loader } from "@plane/ui";
 // icons

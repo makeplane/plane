@@ -3,7 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import useInstance from "hooks/use-instance";
+import { useInstance } from "@/hooks";
 // ui
 import { ToggleSwitch } from "@plane/ui";
 // types
