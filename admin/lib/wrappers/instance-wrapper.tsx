@@ -1,14 +1,13 @@
 "use client";
 
-import { FC, ReactNode, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { FC, ReactNode } from "react";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // layouts
 import { DefaultLayout } from "@/layouts";
 // components
 import { InstanceNotReady } from "@/components/instance";
-import { InstanceSignUpForm } from "@/components/user-authentication-forms";
 // hooks
 import { useInstance } from "@/hooks";
 // helpers
@@ -22,8 +21,6 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   const { children } = props;
   // hooks
   const { isLoading, instanceStatus, instance, fetchInstanceInfo } = useInstance();
-  // state
-  const [signUpEnabled, setSignUpEnabled] = useState<boolean>(false);
 
   useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
@@ -53,11 +50,7 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   if (instance?.instance?.is_setup_done === false)
     return (
       <DefaultLayout>
-        {signUpEnabled ? (
-          <InstanceSignUpForm />
-        ) : (
-          <InstanceNotReady isRedirectionEnabled handleSignUpToggle={() => setSignUpEnabled(true)} />
-        )}
+        <InstanceNotReady isRedirectionEnabled />
       </DefaultLayout>
     );
 

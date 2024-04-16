@@ -1,7 +1,9 @@
+"use client";
+
 import { Fragment } from "react";
 // import { useRouter } from "next/navigation";
 import { useTheme as useNextTheme } from "next-themes";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // import { mutate } from "swr";
 // components
 import { Menu, Transition } from "@headlessui/react";

@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useEffect, useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { useTheme } from "@/hooks";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";

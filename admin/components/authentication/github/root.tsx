@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { useInstance } from "@/hooks";
 // ui

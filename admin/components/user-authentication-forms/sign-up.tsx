@@ -69,6 +69,7 @@ export const InstanceSignUpForm: FC = (props) => {
     if (csrfToken === undefined) authService.requestCSRFToken().then((data) => setCsrfToken(data.csrf_token));
   }, [csrfToken]);
 
+  // derived values
   const errorData: TError = useMemo(() => {
     if (errorCode && errorMessage) {
       switch (errorCode) {
@@ -90,7 +91,6 @@ export const InstanceSignUpForm: FC = (props) => {
     } else return { type: undefined, message: undefined };
   }, [errorCode, errorMessage]);
 
-  // derived values
   const isButtonDisabled = useMemo(
     () =>
       formData.first_name && formData.email && formData.password && getPasswordStrength(formData.password) >= 3

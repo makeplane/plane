@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect } from "react";
 
 const useOutsideClickDetector = (ref: React.RefObject<HTMLElement>, callback: () => void) => {

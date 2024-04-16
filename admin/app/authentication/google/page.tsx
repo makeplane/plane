@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
 import { useInstance } from "@/hooks";

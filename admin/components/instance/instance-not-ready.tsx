@@ -1,7 +1,9 @@
+"use client";
+
 import { FC } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@plane/ui";
-
 // assets
 import PlaneTakeOffImage from "@/public/images/plane-takeoff.png";
 
@@ -25,9 +27,11 @@ export const InstanceNotReady: FC<TInstanceNotReady> = (props) => {
         </div>
 
         {isRedirectionEnabled && (
-          <Button size="lg" className="w-full" onClick={handleSignUpToggle}>
-            Get started
-          </Button>
+          <Link href="/setup">
+            <Button size="lg" className="w-full" onClick={handleSignUpToggle}>
+              Get started
+            </Button>
+          </Link>
         )}
       </div>
     </div>

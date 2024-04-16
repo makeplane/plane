@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -30,11 +30,6 @@ type TError = {
   message: string | undefined;
 };
 
-const defaultErrorData: TError = {
-  type: undefined,
-  message: undefined,
-};
-
 // form data
 type TFormData = {
   email: string;
@@ -53,9 +48,7 @@ export const InstanceSignInForm: FC = (props) => {
   const errorCode = searchParams.get("error_code") || undefined;
   const errorMessage = searchParams.get("error_message") || undefined;
   // state
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [errorData, setErrorData] = useState<TError>(defaultErrorData);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
 
@@ -66,41 +59,27 @@ export const InstanceSignInForm: FC = (props) => {
     if (csrfToken === undefined) authService.requestCSRFToken().then((data) => setCsrfToken(data.csrf_token));
   }, [csrfToken]);
 
-  useEffect(() => {
-    if (formData.email && formData.password) setIsButtonDisabled(false);
-    else setIsButtonDisabled(true);
-  }, [formData]);
-
-  useEffect(() => {
-    if (errorCode && errorMessage)
+  // derived values
+  const errorData: TError = useMemo(() => {
+    if (errorCode && errorMessage) {
       switch (errorCode) {
         case EErrorCodes.INSTANCE_NOT_CONFIGURED:
-          setErrorData({ type: EErrorCodes.INVALID_EMAIL, message: errorMessage });
-          break;
+          return { type: EErrorCodes.INVALID_EMAIL, message: errorMessage };
         case EErrorCodes.REQUIRED_EMAIL_PASSWORD:
-          setErrorData({ type: EErrorCodes.REQUIRED_EMAIL_PASSWORD, message: errorMessage });
-          break;
+          return { type: EErrorCodes.REQUIRED_EMAIL_PASSWORD, message: errorMessage };
         case EErrorCodes.INVALID_EMAIL:
-          setErrorData({ type: EErrorCodes.INVALID_EMAIL, message: errorMessage });
-          break;
+          return { type: EErrorCodes.INVALID_EMAIL, message: errorMessage };
         case EErrorCodes.USER_DOES_NOT_EXIST:
-          setErrorData({ type: EErrorCodes.USER_DOES_NOT_EXIST, message: errorMessage });
-          break;
+          return { type: EErrorCodes.USER_DOES_NOT_EXIST, message: errorMessage };
         case EErrorCodes.AUTHENTICATION_FAILED:
-          setErrorData({ type: EErrorCodes.AUTHENTICATION_FAILED, message: errorMessage });
-          break;
+          return { type: EErrorCodes.AUTHENTICATION_FAILED, message: errorMessage };
         default:
-          setErrorData({ type: undefined, message: undefined });
-          break;
+          return { type: undefined, message: undefined };
       }
+    } else return { type: undefined, message: undefined };
   }, [errorCode, errorMessage]);
 
-  useEffect(() => {
-    if (errorCode && errorMessage)
-      setTimeout(() => {
-        setErrorData({ type: undefined, message: undefined });
-      }, 3000);
-  }, [errorCode, errorMessage]);
+  const isButtonDisabled = useMemo(() => (formData.email && formData.password ? false : true), [formData]);
 
   return (
     <div className="relative w-full h-full overflow-hidden container mx-auto px-5 md:px-0 flex justify-center items-center">
