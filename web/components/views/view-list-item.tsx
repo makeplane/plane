@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
+import { LinkIcon, PencilIcon, TrashIcon } from "lucide-react";
+// types
 import { IProjectView } from "@plane/types";
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { FavoriteStar } from "@/components/core";
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "@/components/views";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
@@ -15,7 +17,6 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProjectView, useUser } from "@/hooks/store";
-// types
 
 type Props = {
   view: IProjectView;
@@ -91,32 +92,17 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                   <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
                     {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
                   </p>
-                  {isEditingAllowed &&
-                    (view.is_favorite ? (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleRemoveFromFavorites();
-                        }}
-                        className="grid place-items-center"
-                      >
-                        <StarIcon className="h-3.5 w-3.5 fill-orange-400 text-orange-400" strokeWidth={2} />
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleAddToFavorites();
-                        }}
-                        className="grid place-items-center"
-                      >
-                        <StarIcon size={14} strokeWidth={2} />
-                      </button>
-                    ))}
+                  {isEditingAllowed && (
+                    <FavoriteStar
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (view.is_favorite) handleRemoveFromFavorites();
+                        else handleAddToFavorites();
+                      }}
+                      selected={view.is_favorite}
+                    />
+                  )}
 
                   <CustomMenu ellipsis>
                     {isEditingAllowed && (
