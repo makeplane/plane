@@ -108,15 +108,19 @@ export const useEditor = ({
     // supported and value is undefined when the data from swr is not populated
     if (value === null || value === undefined) return;
     if (editor && !editor.isDestroyed && !editor.storage.image.uploadInProgress) {
-      editor.commands.setContent(value);
-      const currentSavedSelection = savedSelectionRef.current;
-      if (currentSavedSelection) {
-        editor.view.focus();
-        const docLength = editor.state.doc.content.size;
-        const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
-        editor.commands.setTextSelection(relativePosition);
-      } else {
-        editor.commands.focus("end");
+      try {
+        editor.commands.setContent(value);
+        const currentSavedSelection = savedSelectionRef.current;
+        if (currentSavedSelection) {
+          editor.view.focus();
+          const docLength = editor.state.doc.content.size;
+          const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
+          editor.commands.setTextSelection(relativePosition);
+        } else {
+          editor.commands.focus("end");
+        }
+      } catch (error) {
+        console.error("Error syncing editor content with external value:", error);
       }
     }
   }, [editor, value, id]);
@@ -179,12 +183,21 @@ export const useEditor = ({
         scrollSummary(editorRef.current, marking);
       },
       setFocusAtPosition: (position: number) => {
-        if (!editorRef.current) return;
-        editorRef.current
-          .chain()
-          .insertContentAt(position, [{ type: "paragraph" }])
-          .focus()
-          .run();
+        if (!editorRef.current || editorRef.current.isDestroyed) {
+          console.error("Editor reference is not available or has been destroyed.");
+          return;
+        }
+        try {
+          const docSize = editorRef.current.state.doc.content.size;
+          const safePosition = Math.max(0, Math.min(position, docSize));
+          editorRef.current
+            .chain()
+            .insertContentAt(safePosition, [{ type: "paragraph" }])
+            .focus()
+            .run();
+        } catch (error) {
+          console.error("An error occurred while setting focus at position:", error);
+        }
       },
     }),
     [editorRef, savedSelection, uploadFile]

@@ -11,7 +11,7 @@ export const DropHandlerExtension = (uploadFile: UploadImage) =>
     addProseMirrorPlugins() {
       return [
         new Plugin({
-          key: new PluginKey("dropHandler"),
+          key: new PluginKey("drop-handler-plugin"),
           props: {
             handlePaste: (view, event) => {
               if (event.clipboardData && event.clipboardData.files && event.clipboardData.files[0]) {
