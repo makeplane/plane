@@ -532,7 +532,7 @@ const emptyStateDetails = {
   [EmptyStateType.ISSUE_COMMENT_EMPTY_STATE]: {
     key: EmptyStateType.ISSUE_COMMENT_EMPTY_STATE,
     title: "No comments yet",
-    description: "Comments can be used as a discussion and follow-up space for the issues",
+    description: "Comments can be used as a discussion and \n follow-up space for the issues",
     path: "/empty-state/search/comments",
   },
 
