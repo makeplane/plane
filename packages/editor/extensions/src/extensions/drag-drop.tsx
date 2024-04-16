@@ -77,6 +77,15 @@ function nodePosAtDOM(node: Element, view: EditorView, options: DragHandleOption
   })?.inside;
 }
 
+function nodePosAtDOMForBlockquotes(node: Element, view: EditorView) {
+  const boundingRect = node.getBoundingClientRect();
+
+  return view.posAtCoords({
+    left: boundingRect.left + 1,
+    top: boundingRect.top + 1,
+  })?.inside;
+}
+
 function calcNodePos(pos: number, view: EditorView) {
   const maxPos = view.state.doc.content.size;
   const safePos = Math.max(0, Math.min(pos, maxPos));
@@ -161,6 +170,16 @@ function DragHandle(options: DragHandleOptions) {
     });
 
     if (!(node instanceof Element)) return;
+
+    if (node.matches("blockquote")) {
+      console.log("matched node", node);
+      const nodePosForBlockquotes = nodePosAtDOMForBlockquotes(node, view, options);
+      if (nodePosForBlockquotes === null || nodePosForBlockquotes === undefined) return;
+
+      const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockquotes);
+      view.dispatch(view.state.tr.setSelection(nodeSelection));
+      return;
+    }
 
     let nodePos = nodePosAtDOM(node, view, options);
 

@@ -114,23 +114,27 @@ export default function BlockMenu(props: BlockMenuProps) {
             throw new Error("No content selected or content is not duplicable.");
           }
 
+          // Directly use selection.to as the insertion position
           const insertPos = selection.to;
-          const focusPos = selection.to === docSize ? selection.to : selection.to + 1;
 
-          if (insertPos < 0 || insertPos > docSize || focusPos < 0 || focusPos > docSize) {
+          // Ensure the insertion position is within the document's bounds
+          if (insertPos < 0 || insertPos > docSize) {
             throw new Error("The insertion position is invalid or outside the document.");
           }
 
+          const contentToInsert = firstChild.toJSON();
+
+          // Insert the content at the calculated position
           editor
             .chain()
-            .insertContentAt(insertPos - 1, firstChild.toJSON(), {
+            .insertContentAt(insertPos, contentToInsert, {
               updateSelection: true,
             })
-            .focus(focusPos, { scrollIntoView: false })
+            .focus(Math.min(insertPos + 1, docSize), { scrollIntoView: false })
             .run();
         } catch (error) {
           if (error instanceof Error) {
-            console.log(error.message);
+            console.error(error.message);
           }
         }
 
