@@ -34,6 +34,7 @@ interface CustomEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   handleEditorReady?: (value: boolean) => void;
+  placeholder?: string | ((isFocused: boolean) => string);
 }
 
 export const useEditor = ({
@@ -51,6 +52,7 @@ export const useEditor = ({
   restoreFile,
   handleEditorReady,
   mentionHandler,
+  placeholder,
 }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
@@ -58,15 +60,18 @@ export const useEditor = ({
       ...editorProps,
     },
     extensions: [
-      ...CoreEditorExtensions(
-        {
+      ...CoreEditorExtensions({
+        mentionConfig: {
           mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
           mentionHighlights: mentionHandler.highlights ?? [],
         },
-        deleteFile,
-        restoreFile,
-        cancelUploadImage
-      ),
+        fileConfig: {
+          deleteFile,
+          restoreFile,
+          cancelUploadImage,
+        },
+        placeholder,
+      }),
       ...extensions,
     ],
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
