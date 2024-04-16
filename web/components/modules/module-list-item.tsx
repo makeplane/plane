@@ -2,11 +2,11 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// icons
-import { Check, Info, Star, User2 } from "lucide-react";
+import { Check, Info, User2 } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, CircularProgressIndicator, Tooltip, setPromiseToast } from "@plane/ui";
 // components
+import { FavoriteStar } from "@/components/core";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
@@ -212,17 +212,15 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
               </div>
             </Tooltip>
 
-            {isEditingAllowed &&
-              !isArchived &&
-              (moduleDetails.is_favorite ? (
-                <button type="button" onClick={handleRemoveFromFavorites} className="z-[1]">
-                  <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                </button>
-              ) : (
-                <button type="button" onClick={handleAddToFavorites} className="z-[1]">
-                  <Star className="h-3.5 w-3.5 text-custom-text-300" />
-                </button>
-              ))}
+            {isEditingAllowed && !isArchived && (
+              <FavoriteStar
+                onClick={(e) => {
+                  if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);
+                  else handleAddToFavorites(e);
+                }}
+                selected={moduleDetails.is_favorite}
+              />
+            )}
             {workspaceSlug && projectId && (
               <ModuleQuickActions
                 moduleId={moduleId}

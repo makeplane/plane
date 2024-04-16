@@ -121,8 +121,8 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
 
                     <div className="mb-3 space-y-4">
                       {fields.map((field, index) => (
-                        <div key={field.id} className="group relative grid grid-cols-11 items-start gap-4">
-                          <div className="col-span-7">
+                        <div key={field.id} className="group relative grid grid-cols-12 items-start gap-4">
+                          <div className="col-span-9">
                             <Controller
                               control={control}
                               name={`emails.${index}.email`}
