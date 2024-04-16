@@ -19,7 +19,7 @@ interface CustomEditorProps {
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
   deleteFile: DeleteImage;
-  cancelUploadImage?: () => any;
+  cancelUploadImage?: () => void;
   initialValue: string;
   editorClassName: string;
   // undefined when prop is not passed, null if intentionally passed to stop
@@ -56,7 +56,7 @@ export const useEditor = ({
 }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
-      ...CoreEditorProps(uploadFile, editorClassName),
+      ...CoreEditorProps(editorClassName),
       ...editorProps,
     },
     extensions: [
@@ -69,6 +69,7 @@ export const useEditor = ({
           deleteFile,
           restoreFile,
           cancelUploadImage,
+          uploadFile,
         },
         placeholder,
       }),
@@ -89,18 +90,36 @@ export const useEditor = ({
     },
   });
 
-  // for syncing swr data on tab refocus etc, can remove it once this is merged
-  // https://github.com/ueberdosis/tiptap/pull/4453
+  const editorRef: MutableRefObject<Editor | null> = useRef(null);
+
+  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
+
+  // Inside your component or hook
+  const savedSelectionRef = useRef(savedSelection);
+
+  // Update the ref whenever savedSelection changes
+  useEffect(() => {
+    savedSelectionRef.current = savedSelection;
+  }, [savedSelection]);
+
+  // Effect for syncing SWR data
   useEffect(() => {
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
     if (value === null || value === undefined) return;
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(value);
+    if (editor && !editor.isDestroyed && !editor.storage.image.uploadInProgress) {
+      editor.commands.setContent(value);
+      const currentSavedSelection = savedSelectionRef.current;
+      if (currentSavedSelection) {
+        editor.view.focus();
+        const docLength = editor.state.doc.content.size;
+        const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
+        editor.commands.setTextSelection(relativePosition);
+      } else {
+        editor.commands.focus("end");
+      }
+    }
   }, [editor, value, id]);
-
-  const editorRef: MutableRefObject<Editor | null> = useRef(null);
-
-  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
 
   useImperativeHandle(
     forwardedRef,

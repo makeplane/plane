@@ -29,6 +29,8 @@ import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
 import { CustomTypographyExtension } from "src/ui/extensions/typography";
 import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
 import { CustomCodeMarkPlugin } from "./custom-code-inline/inline-code-plugin";
+import { UploadImage } from "src/types/upload-image";
+import { DropHandlerExtension } from "./drop";
 
 type TArguments = {
   mentionConfig: {
@@ -38,14 +40,15 @@ type TArguments = {
   fileConfig: {
     deleteFile: DeleteImage;
     restoreFile: RestoreImage;
-    cancelUploadImage?: () => any;
+    cancelUploadImage?: () => void;
+    uploadFile: UploadImage;
   };
   placeholder?: string | ((isFocused: boolean) => string);
 };
 
 export const CoreEditorExtensions = ({
   mentionConfig,
-  fileConfig: { deleteFile, restoreFile, cancelUploadImage },
+  fileConfig: { deleteFile, restoreFile, cancelUploadImage, uploadFile },
   placeholder,
 }: TArguments) => [
   StarterKit.configure({
@@ -73,10 +76,8 @@ export const CoreEditorExtensions = ({
       width: 1,
     },
   }),
-  // BulletList,
-  // OrderedList,
-  // ListItem,
   CustomQuoteExtension,
+  DropHandlerExtension(uploadFile),
   CustomHorizontalRule.configure({
     HTMLAttributes: {
       class: "my-4 border-custom-border-400",
