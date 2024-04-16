@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, ReactNode } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // layouts

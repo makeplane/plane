@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 // hooks
 import { useTheme } from "@/hooks";
 // icons

@@ -1,6 +1,6 @@
 "use client";
 
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 // components
 import { PageHeader } from "@/components/core";
 import { InstanceGeneralForm } from "@/components/general";
