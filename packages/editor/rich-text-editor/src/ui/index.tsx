@@ -81,6 +81,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
       dragDropEnabled,
       setHideDragHandle: setHideDragHandleFunction,
     }),
+    tabIndex,
     mentionHandler,
     placeholder,
   });

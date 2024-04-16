@@ -35,6 +35,7 @@ interface CustomEditorProps {
   };
   handleEditorReady?: (value: boolean) => void;
   placeholder?: string | ((isFocused: boolean) => string);
+  tabIndex?: number;
 }
 
 export const useEditor = ({
@@ -49,6 +50,7 @@ export const useEditor = ({
   extensions = [],
   onChange,
   forwardedRef,
+  tabIndex,
   restoreFile,
   handleEditorReady,
   mentionHandler,
@@ -72,6 +74,7 @@ export const useEditor = ({
           uploadFile,
         },
         placeholder,
+        tabIndex,
       }),
       ...extensions,
     ],
