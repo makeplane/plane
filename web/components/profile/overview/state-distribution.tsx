@@ -28,7 +28,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                     id: group.state_group,
                     label: group.state_group,
                     value: group.state_count,
-                    color: STATE_GROUPS[group.state_group].color,
+                    color: STATE_GROUPS[group.state_group]?.color ?? "rgb(var(--color-primary-100))",
                   })) ?? []
                 }
                 height="250px"
@@ -39,7 +39,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                 arcLabelsTextColor="#000000"
                 enableArcLinkLabels={false}
                 activeInnerRadiusOffset={5}
-                colors={(datum) => datum.data.color}
+                colors={(datum) => datum?.data?.color}
                 tooltip={(datum) => (
                   <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs">
                     <span className="capitalize text-custom-text-200">{datum.datum.label} issues:</span>{" "}
@@ -62,7 +62,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                       <div
                         className="h-2.5 w-2.5 rounded-sm"
                         style={{
-                          backgroundColor: STATE_GROUPS[group.state_group].color,
+                          backgroundColor: STATE_GROUPS[group.state_group]?.color ?? "rgb(var(--color-primary-100))",
                         }}
                       />
                       <div className="whitespace-nowrap">{STATE_GROUPS[group.state_group].label}</div>
