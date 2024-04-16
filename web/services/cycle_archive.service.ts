@@ -18,6 +18,14 @@ export class CycleArchiveService extends APIService {
       });
   }
 
+  async getArchivedCycleDetails(workspaceSlug: string, projectId: string, cycleId: string): Promise<ICycle> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-cycles/${cycleId}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async archiveCycle(
     workspaceSlug: string,
     projectId: string,

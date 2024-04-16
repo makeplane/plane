@@ -135,7 +135,7 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
   return (
     <div
       ref={commandListContainer}
-      className="mentions absolute max-h-48 min-w-[12rem] rounded-md bg-custom-background-100 border-[0.5px] border-custom-border-300 px-2 py-2.5 text-xs shadow-custom-shadow-rg overflow-y-scroll"
+      className="mentions max-h-48 min-w-[12rem] rounded-md bg-custom-background-100 border-[0.5px] border-custom-border-300 px-2 py-2.5 text-xs shadow-custom-shadow-rg overflow-y-scroll"
     >
       {isLoading ? (
         <div className="text-center text-custom-text-400">Loading...</div>

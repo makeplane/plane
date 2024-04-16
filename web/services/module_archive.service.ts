@@ -18,6 +18,14 @@ export class ModuleArchiveService extends APIService {
       });
   }
 
+  async getArchivedModuleDetails(workspaceSlug: string, projectId: string, moduleId: string): Promise<IModule> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-modules/${moduleId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async archiveModule(
     workspaceSlug: string,
     projectId: string,

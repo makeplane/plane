@@ -19,7 +19,7 @@ interface CustomEditorProps {
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
   deleteFile: DeleteImage;
-  cancelUploadImage?: () => any;
+  cancelUploadImage?: () => void;
   initialValue: string;
   editorClassName: string;
   // undefined when prop is not passed, null if intentionally passed to stop
@@ -34,6 +34,7 @@ interface CustomEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   handleEditorReady?: (value: boolean) => void;
+  placeholder?: string | ((isFocused: boolean) => string);
 }
 
 export const useEditor = ({
@@ -51,6 +52,7 @@ export const useEditor = ({
   restoreFile,
   handleEditorReady,
   mentionHandler,
+  placeholder,
 }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
@@ -58,16 +60,19 @@ export const useEditor = ({
       ...editorProps,
     },
     extensions: [
-      ...CoreEditorExtensions(
-        {
+      ...CoreEditorExtensions({
+        mentionConfig: {
           mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
           mentionHighlights: mentionHandler.highlights ?? [],
         },
-        deleteFile,
-        restoreFile,
-        uploadFile,
-        cancelUploadImage
-      ),
+        fileConfig: {
+          deleteFile,
+          restoreFile,
+          cancelUploadImage,
+          uploadFile,
+        },
+        placeholder,
+      }),
       ...extensions,
     ],
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",

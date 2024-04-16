@@ -33,6 +33,7 @@ export interface IModuleStore {
   fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
+  fetchArchivedModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   // crud
   createModule: (workspaceSlug: string, projectId: string, data: Partial<IModule>) => Promise<IModule>;
@@ -91,6 +92,7 @@ export class ModulesStore implements IModuleStore {
       fetchWorkspaceModules: action,
       fetchModules: action,
       fetchArchivedModules: action,
+      fetchArchivedModuleDetails: action,
       fetchModuleDetails: action,
       createModule: action,
       updateModuleDetails: action,
@@ -273,6 +275,21 @@ export class ModulesStore implements IModuleStore {
         return undefined;
       });
   };
+
+  /**
+   * @description fetch module details
+   * @param workspaceSlug
+   * @param projectId
+   * @param moduleId
+   * @returns IModule
+   */
+  fetchArchivedModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
+    await this.moduleArchiveService.getArchivedModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
+      runInAction(() => {
+        set(this.moduleMap, [moduleId], response);
+      });
+      return response;
+    });
 
   /**
    * @description fetch module details

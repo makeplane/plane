@@ -35,7 +35,7 @@ export type TIssueHelperStore = {
   getGroupArray(value: boolean | number | string | string[] | null, isDate?: boolean): string[];
 };
 
-const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
+export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
   project: "project_id",
   cycle: "cycle_id",
   module: "module_ids",

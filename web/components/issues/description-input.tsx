@@ -19,6 +19,7 @@ export type IssueDescriptionInputProps = {
   initialValue: string | undefined;
   disabled?: boolean;
   issueOperations: TIssueOperations;
+  placeholder?: string | ((isFocused: boolean) => string);
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
   swrIssueDescription: string | null | undefined;
 };
@@ -33,6 +34,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     initialValue,
     issueOperations,
     setIsSubmitting,
+    placeholder,
   } = props;
 
   const { handleSubmit, reset, control } = useForm<TIssue>({
@@ -103,11 +105,19 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                   onChange(description_html);
                   debouncedFormSave();
                 }}
+                placeholder={
+                  placeholder
+                    ? placeholder
+                    : (isFocused) => {
+                        if (isFocused) return "Press '/' for commands...";
+                        else return "Click to add description";
+                      }
+                }
               />
             ) : (
               <RichTextReadOnlyEditor
                 initialValue={localIssueDescription.description_html ?? ""}
-                containerClassName="!p-0 !pt-2 text-custom-text-200"
+                containerClassName="!p-0 !pt-2 text-custom-text-200 min-h-[150px]"
               />
             )
           }

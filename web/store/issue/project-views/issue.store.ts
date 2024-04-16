@@ -17,6 +17,7 @@ export interface IProjectViewIssues {
   // computed
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
+  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
@@ -113,6 +114,30 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
 
     return issues;
   }
+
+  getIssueIds = (groupId?: string, subGroupId?: string) => {
+    const groupedIssueIds = this.groupedIssueIds;
+
+    const displayFilters = this.rootIssueStore?.projectViewIssuesFilter?.issueFilters?.displayFilters;
+    if (!displayFilters || !groupedIssueIds) return undefined;
+
+    const subGroupBy = displayFilters?.sub_group_by;
+    const groupBy = displayFilters?.group_by;
+
+    if (!groupBy && !subGroupBy) {
+      return groupedIssueIds as string[];
+    }
+
+    if (groupBy && subGroupBy && groupId && subGroupId) {
+      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[];
+    }
+
+    if (groupBy && groupId) {
+      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[];
+    }
+
+    return undefined;
+  };
 
   fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader", viewId: string) => {
     try {

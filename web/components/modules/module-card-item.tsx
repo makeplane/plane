@@ -2,11 +2,11 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// icons
-import { Info, Star } from "lucide-react";
+import { Info } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
 // components
+import { FavoriteStar } from "@/components/core";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
@@ -139,8 +139,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === moduleDetails.completed_issues
-      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-      : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
+        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   return (
@@ -224,16 +224,15 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             )}
 
             <div className="z-[5] flex items-center gap-1.5">
-              {isEditingAllowed &&
-                (moduleDetails.is_favorite ? (
-                  <button type="button" onClick={handleRemoveFromFavorites}>
-                    <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                  </button>
-                ) : (
-                  <button type="button" onClick={handleAddToFavorites}>
-                    <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                  </button>
-                ))}
+              {isEditingAllowed && (
+                <FavoriteStar
+                  onClick={(e) => {
+                    if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);
+                    else handleAddToFavorites(e);
+                  }}
+                  selected={!!moduleDetails.is_favorite}
+                />
+              )}
               {workspaceSlug && projectId && (
                 <ModuleQuickActions
                   moduleId={moduleId}

@@ -18,7 +18,7 @@ interface ImageNode extends ProseMirrorNode {
 const deleteKey = new PluginKey("delete-image");
 const IMAGE_NODE_TYPE = "image";
 
-export const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreImage, cancelUploadImage?: () => any) =>
+export const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreImage, cancelUploadImage?: () => void) =>
   ImageExt.extend({
     addKeyboardShortcuts() {
       return {

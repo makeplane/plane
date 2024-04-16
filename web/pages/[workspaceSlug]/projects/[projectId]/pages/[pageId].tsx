@@ -46,7 +46,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   });
 
   // fetching page details
-  const { data: swrPageDetails } = useSWR(
+  const { data: swrPageDetails, isValidating } = useSWR(
     pageId ? `PAGE_DETAILS_${pageId}` : null,
     pageId ? () => getPageById(pageId.toString()) : null,
     {
@@ -120,6 +120,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               editorReady={editorReady}
               readOnlyEditorReady={readOnlyEditorReady}
               handleDuplicatePage={handleDuplicatePage}
+              isSyncing={isValidating}
               markings={markings}
               pageStore={pageStore}
               projectId={projectId.toString()}
