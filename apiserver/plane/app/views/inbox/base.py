@@ -391,7 +391,9 @@ class InboxIssueViewSet(BaseViewSet):
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )
-
+            current_instance = json.dumps(
+                InboxIssueSerializer(inbox_issue).data, cls=DjangoJSONEncoder
+            )
             if serializer.is_valid():
                 serializer.save()
                 # Update the issue state if the issue is rejected or marked as duplicate
@@ -429,6 +431,21 @@ class InboxIssueViewSet(BaseViewSet):
                         if state is not None:
                             issue.state = state
                             issue.save()
+                # create a activity for status change
+                issue_activity.delay(
+                    type="inbox.activity.created",
+                    requested_data=json.dumps(
+                        request.data, cls=DjangoJSONEncoder
+                    ),
+                    actor_id=str(request.user.id),
+                    issue_id=str(issue_id),
+                    project_id=str(project_id),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=False,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 inbox_issue = (
                     InboxIssue.objects.filter(
                         inbox_id=inbox_id.id,
