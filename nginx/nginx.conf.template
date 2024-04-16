@@ -25,7 +25,6 @@ http {
         }
 
         location /spaces/ {
-            rewrite ^/spaces/?$ /spaces/login break;
             proxy_pass http://space:3000/spaces/;
         }
         
