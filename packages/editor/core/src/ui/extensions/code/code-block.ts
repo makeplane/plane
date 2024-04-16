@@ -70,6 +70,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
         default: null,
         parseHTML: (element) => {
           const { languageClassPrefix } = this.options;
+          // @ts-expect-error element is a DOM element
           const classNames = [...(element.firstElementChild?.classList || [])];
           const languages = classNames
             .filter((className) => className.startsWith(languageClassPrefix))
@@ -318,36 +319,36 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
               return false;
             } else {
               // // complicated paste logic, to be handled later
-              const containsNewline = text.includes("\n");
-              const isCurrentLineEmptyNode = isCurrentLineEmpty(view);
-              if (!containsNewline) {
-                console.log("run contians n");
-                return false;
-              }
-
-              // Wrap the text in a div
-              const html = `<div>${text.replace(/\r?\n/g, "<br>")}</div>`;
-              let insertPos = view.state.selection.from;
-
-              // Parse the HTML string to a ProseMirror document fragment
-              const div = document.createElement("div");
-              div.innerHTML = html;
-              const domNode = div.firstChild;
-              if (!domNode) {
-                return false;
-              }
-              const fragment = DOMParser.fromSchema(view.state.schema).parse(domNode);
-
-              if (isCurrentLineEmptyNode) {
-                // If the current line is empty, use the current position
-                insertPos = view.state.selection.from - 1;
-              }
-
-              // Insert the fragment into the document
-              const transaction = view.state.tr.insert(insertPos, fragment);
-              view.dispatch(transaction);
-
-              return true;
+              // const containsNewline = text.includes("\n");
+              // const isCurrentLineEmptyNode = isCurrentLineEmpty(view);
+              // if (!containsNewline) {
+              //   console.log("run contians n");
+              //   return false;
+              // }
+              //
+              // // Wrap the text in a div
+              // const html = `<div>${text.replace(/\r?\n/g, "<br>")}</div>`;
+              // let insertPos = view.state.selection.from;
+              //
+              // // Parse the HTML string to a ProseMirror document fragment
+              // const div = document.createElement("div");
+              // div.innerHTML = html;
+              // const domNode = div.firstChild;
+              // if (!domNode) {
+              //   return false;
+              // }
+              // const fragment = DOMParser.fromSchema(view.state.schema).parse(domNode);
+              //
+              // if (isCurrentLineEmptyNode) {
+              //   // If the current line is empty, use the current position
+              //   insertPos = view.state.selection.from - 1;
+              // }
+              //
+              // // Insert the fragment into the document
+              // const transaction = view.state.tr.insert(insertPos, fragment);
+              // view.dispatch(transaction);
+              //
+              // return true;
               return false;
             }
           },
@@ -357,11 +358,11 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
   },
 });
 
-function isCurrentLineEmpty(view: EditorView) {
-  const { $from } = view.state.selection;
-  const blockNode = $from.node($from.depth); // Get the block node at the current selection depth
-
-  const isEmpty = !blockNode.textContent.trim();
-
-  return isEmpty;
-}
+// function isCurrentLineEmpty(view: EditorView) {
+//   const { $from } = view.state.selection;
+//   const blockNode = $from.node($from.depth); // Get the block node at the current selection depth
+//
+//   const isEmpty = !blockNode.textContent.trim();
+//
+//   return isEmpty;
+// }
