@@ -35,6 +35,7 @@ interface CustomEditorProps {
   };
   handleEditorReady?: (value: boolean) => void;
   placeholder?: string | ((isFocused: boolean) => string);
+  tabIndex?: number;
 }
 
 export const useEditor = ({
@@ -49,6 +50,7 @@ export const useEditor = ({
   extensions = [],
   onChange,
   forwardedRef,
+  tabIndex,
   restoreFile,
   handleEditorReady,
   mentionHandler,
@@ -72,6 +74,7 @@ export const useEditor = ({
           uploadFile,
         },
         placeholder,
+        tabIndex,
       }),
       ...extensions,
     ],
@@ -112,12 +115,9 @@ export const useEditor = ({
         editor.commands.setContent(value);
         const currentSavedSelection = savedSelectionRef.current;
         if (currentSavedSelection) {
-          editor.view.focus();
           const docLength = editor.state.doc.content.size;
           const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
           editor.commands.setTextSelection(relativePosition);
-        } else {
-          editor.commands.focus("end");
         }
       } catch (error) {
         console.error("Error syncing editor content with external value:", error);

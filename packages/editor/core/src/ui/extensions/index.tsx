@@ -44,12 +44,14 @@ type TArguments = {
     uploadFile: UploadImage;
   };
   placeholder?: string | ((isFocused: boolean) => string);
+  tabIndex?: number;
 };
 
 export const CoreEditorExtensions = ({
   mentionConfig,
   fileConfig: { deleteFile, restoreFile, cancelUploadImage, uploadFile },
   placeholder,
+  tabIndex,
 }: TArguments) => [
   StarterKit.configure({
     bulletList: {
@@ -84,7 +86,7 @@ export const CoreEditorExtensions = ({
     },
   }),
   CustomKeymap,
-  ListKeymap,
+  ListKeymap({ tabIndex }),
   CustomLinkExtension.configure({
     openOnClick: true,
     autolink: true,
