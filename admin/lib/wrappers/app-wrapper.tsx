@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode, useEffect, Suspense } from "react";
 import { observer } from "mobx-react-lite";
 import { SWRConfig } from "swr";
 // hooks
@@ -29,9 +29,9 @@ export const AppWrapper: FC<IAppWrapper> = observer(({ children }) => {
   }, [isSidebarCollapsed, currentUser, toggleSidebar]);
 
   return (
-    <>
+    <Suspense>
       <Toast theme={resolveGeneralTheme(theme)} />
       <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-    </>
+    </Suspense>
   );
 });

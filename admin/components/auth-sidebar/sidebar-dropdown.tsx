@@ -49,6 +49,8 @@ export const SidebarDropdown = observer(() => {
     setTheme(newTheme);
   };
 
+  console.log("currentUser", currentUser);
+
   return (
     <div className="flex max-h-[3.75rem] items-center gap-x-5 gap-y-2 border-b border-custom-sidebar-border-200 px-4 py-3.5">
       <div className="h-full w-full truncate">

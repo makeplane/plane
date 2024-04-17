@@ -12,7 +12,7 @@ interface RootLayoutProps {
   children: ReactNode;
 }
 
-export const RootLayout = async ({ children, ...pageProps }: RootLayoutProps) => (
+const RootLayout = ({ children, ...pageProps }: RootLayoutProps) => (
   <html lang="en">
     <body className={`antialiased`}>
       <StoreProvider {...pageProps}>

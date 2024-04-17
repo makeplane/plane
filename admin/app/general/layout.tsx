@@ -6,11 +6,11 @@ import { AuthLayout } from "@/layouts";
 // lib
 import { AuthWrapper, InstanceWrapper } from "@/lib/wrappers";
 
-interface RootLayoutProps {
+interface GeneralLayoutProps {
   children: ReactNode;
 }
 
-export const RootLayout = async ({ children }: RootLayoutProps) => (
+const GeneralLayout = ({ children }: GeneralLayoutProps) => (
   <InstanceWrapper>
     <AuthWrapper>
       <AuthLayout>{children}</AuthLayout>
@@ -18,4 +18,4 @@ export const RootLayout = async ({ children }: RootLayoutProps) => (
   </InstanceWrapper>
 );
 
-export default RootLayout;
+export default GeneralLayout;

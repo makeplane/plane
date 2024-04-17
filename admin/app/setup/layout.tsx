@@ -6,14 +6,14 @@ import { AuthWrapper, InstanceWrapper } from "@/lib/wrappers";
 // helpers
 import { EAuthenticationPageType } from "@/helpers";
 
-interface RootLayoutProps {
+interface SetupLayoutProps {
   children: ReactNode;
 }
 
-export const RootLayout = async ({ children }: RootLayoutProps) => (
+const SetupLayout = ({ children }: SetupLayoutProps) => (
   <InstanceWrapper>
     <AuthWrapper authType={EAuthenticationPageType.NOT_AUTHENTICATED}>{children}</AuthWrapper>
   </InstanceWrapper>
 );
 
-export default RootLayout;
+export default SetupLayout;
