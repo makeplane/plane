@@ -68,6 +68,13 @@ jobs:
               - 'yarn.lock'
               - 'tsconfig.json'
               - 'turbo.json'
+            admin:
+              - admin/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
             backend:
               - apiserver/**
             proxy:
