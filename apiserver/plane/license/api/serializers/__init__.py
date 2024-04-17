@@ -1,6 +1,6 @@
 from .instance import (
     InstanceSerializer,
-    InstanceAdminSerializer,
-    InstanceConfigurationSerializer,
-    InstanceAdminMeSerializer,
 )
+
+from .configuration import InstanceConfigurationSerializer
+from .admin import InstanceAdminSerializer, InstanceAdminMeSerializer
