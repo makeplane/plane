@@ -236,7 +236,7 @@ div[data-type="horizontalRule"] {
   margin-bottom: 0;
 
   & > div {
-    border-bottom: 1px solid rgb(var(--color-border-200));
+    border-bottom: 2px solid rgb(var(--color-border-200));
   }
 }
 

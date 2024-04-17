@@ -148,7 +148,7 @@ export class ProjectPageStore implements IProjectPageStore {
       });
 
       return pages;
-    } catch {
+    } catch (error) {
       runInAction(() => {
         this.loader = undefined;
         this.error = {
@@ -156,6 +156,7 @@ export class ProjectPageStore implements IProjectPageStore {
           description: "Failed to fetch the pages, Please try again later.",
         };
       });
+      throw error;
     }
   };
 
@@ -181,7 +182,7 @@ export class ProjectPageStore implements IProjectPageStore {
       });
 
       return page;
-    } catch {
+    } catch (error) {
       runInAction(() => {
         this.loader = undefined;
         this.error = {
@@ -189,6 +190,7 @@ export class ProjectPageStore implements IProjectPageStore {
           description: "Failed to fetch the page, Please try again later.",
         };
       });
+      throw error;
     }
   };
 
@@ -213,7 +215,7 @@ export class ProjectPageStore implements IProjectPageStore {
       });
 
       return page;
-    } catch {
+    } catch (error) {
       runInAction(() => {
         this.loader = undefined;
         this.error = {
@@ -221,6 +223,7 @@ export class ProjectPageStore implements IProjectPageStore {
           description: "Failed to create a page, Please try again later.",
         };
       });
+      throw error;
     }
   };
 
@@ -235,7 +238,7 @@ export class ProjectPageStore implements IProjectPageStore {
 
       await this.service.remove(workspaceSlug, projectId, pageId);
       runInAction(() => unset(this.data, [pageId]));
-    } catch {
+    } catch (error) {
       runInAction(() => {
         this.loader = undefined;
         this.error = {
@@ -243,6 +246,7 @@ export class ProjectPageStore implements IProjectPageStore {
           description: "Failed to delete a page, Please try again later.",
         };
       });
+      throw error;
     }
   };
 }

@@ -55,12 +55,19 @@ body:
       - Safari
       - Other
 - type: dropdown
-  id: version
+  id: variant
   attributes:
-    label: Version
+    label: Variant
     options:
       - Cloud
       - Self-hosted
       - Local
+  validations:
+    required: true
+- type: input
+  id: version
+  attributes:
+    label: Version
+    placeholder: v0.17.0-dev
   validations:
     required: true

@@ -720,7 +720,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         setSelectedParentIssue(issue);
                       }}
                       projectId={projectId}
-                      issueId={data?.id}
+                      issueId={isDraft ? undefined : data?.id}
                     />
                   )}
                 />

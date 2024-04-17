@@ -28,7 +28,9 @@ import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
 import { CustomTypographyExtension } from "src/ui/extensions/typography";
 import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
-import { CustomCodeMarkPlugin } from "./custom-code-inline/inline-code-plugin";
+import { CustomCodeMarkPlugin } from "src/ui/extensions/custom-code-inline/inline-code-plugin";
+import { UploadImage } from "src/types/upload-image";
+import { DropHandlerExtension } from "src/ui/extensions/drop";
 
 type TArguments = {
   mentionConfig: {
@@ -38,15 +40,18 @@ type TArguments = {
   fileConfig: {
     deleteFile: DeleteImage;
     restoreFile: RestoreImage;
-    cancelUploadImage?: () => any;
+    cancelUploadImage?: () => void;
+    uploadFile: UploadImage;
   };
   placeholder?: string | ((isFocused: boolean) => string);
+  tabIndex?: number;
 };
 
 export const CoreEditorExtensions = ({
   mentionConfig,
-  fileConfig: { deleteFile, restoreFile, cancelUploadImage },
+  fileConfig: { deleteFile, restoreFile, cancelUploadImage, uploadFile },
   placeholder,
+  tabIndex,
 }: TArguments) => [
   StarterKit.configure({
     bulletList: {
@@ -73,17 +78,15 @@ export const CoreEditorExtensions = ({
       width: 1,
     },
   }),
-  // BulletList,
-  // OrderedList,
-  // ListItem,
   CustomQuoteExtension,
+  DropHandlerExtension(uploadFile),
   CustomHorizontalRule.configure({
     HTMLAttributes: {
       class: "my-4 border-custom-border-400",
     },
   }),
   CustomKeymap,
-  ListKeymap,
+  ListKeymap({ tabIndex }),
   CustomLinkExtension.configure({
     openOnClick: true,
     autolink: true,

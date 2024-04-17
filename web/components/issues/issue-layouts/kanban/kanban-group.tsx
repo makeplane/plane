@@ -166,7 +166,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     <div
       id={`${groupId}__${sub_group_id}`}
       className={cn(
-        "relative h-full transition-all",
+        "relative h-full transition-all min-h-[50px]",
         { "bg-custom-background-80": isDraggingOverColumn },
         { "vertical-scrollbar scrollbar-md": !sub_group_by }
       )}

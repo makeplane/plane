@@ -20,7 +20,17 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   // store hooks
-  const { access, archive, archived_at, makePublic, makePrivate, restore } = usePage(pageId);
+  const {
+    access,
+    archive,
+    archived_at,
+    makePublic,
+    makePrivate,
+    restore,
+    canCurrentUserArchivePage,
+    canCurrentUserChangeAccess,
+    canCurrentUserDeletePage,
+  } = usePage(pageId);
 
   const pageLink = `${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
   const handleCopyText = () =>
@@ -31,7 +41,52 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
         message: "Page link copied to clipboard.",
       });
     });
+
   const handleOpenInNewTab = () => window.open(`/${pageLink}`, "_blank");
+
+  const MENU_ITEMS: {
+    key: string;
+    action: () => void;
+    label: string;
+    icon: React.FC<any>;
+    shouldRender: boolean;
+  }[] = [
+    {
+      key: "copy-link",
+      action: handleCopyText,
+      label: "Copy link",
+      icon: Link,
+      shouldRender: true,
+    },
+    {
+      key: "open-new-tab",
+      action: handleOpenInNewTab,
+      label: "Open in new tab",
+      icon: ExternalLink,
+      shouldRender: true,
+    },
+    {
+      key: "archive-restore",
+      action: archived_at ? restore : archive,
+      label: archived_at ? "Restore" : "Archive",
+      icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
+      shouldRender: canCurrentUserArchivePage,
+    },
+    {
+      key: "make-public-private",
+      action: access === 0 ? makePrivate : makePublic,
+      label: access === 0 ? "Make private" : "Make public",
+      icon: access === 0 ? Lock : UsersRound,
+      shouldRender: canCurrentUserChangeAccess && !archived_at,
+    },
+    {
+      key: "delete",
+      action: () => setDeletePageModal(true),
+      label: "Delete",
+      icon: Trash2,
+      shouldRender: canCurrentUserDeletePage && !!archived_at,
+    },
+  ];
 
   return (
     <>
@@ -42,89 +97,23 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
         projectId={projectId}
       />
       <CustomMenu placement="bottom-end" ellipsis closeOnSelect>
-        <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleCopyText();
-          }}
-        >
-          <span className="flex items-center gap-2">
-            <Link className="h-3 w-3" />
-            Copy link
-          </span>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleOpenInNewTab();
-          }}
-        >
-          <span className="flex items-center gap-2">
-            <ExternalLink className="h-3 w-3" />
-            Open in new tab
-          </span>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (archived_at) restore();
-            else archive();
-          }}
-        >
-          <span className="flex items-center gap-2">
-            {archived_at ? (
-              <>
-                <ArchiveRestoreIcon className="h-3 w-3" />
-                Restore
-              </>
-            ) : (
-              <>
-                <ArchiveIcon className="h-3 w-3" />
-                Archive
-              </>
-            )}
-          </span>
-        </CustomMenu.MenuItem>
-        {!archived_at && (
-          <CustomMenu.MenuItem
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              access === 0 ? makePrivate() : makePublic();
-            }}
-          >
-            <span className="flex items-center gap-2">
-              {access === 0 ? (
-                <>
-                  <Lock className="h-3 w-3" />
-                  Make private
-                </>
-              ) : (
-                <>
-                  <UsersRound className="h-3 w-3" />
-                  Make public
-                </>
-              )}
-            </span>
-          </CustomMenu.MenuItem>
-        )}
-        {archived_at && (
-          <CustomMenu.MenuItem
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setDeletePageModal(true);
-            }}
-          >
-            <span className="flex items-center gap-2">
-              <Trash2 className="h-3 w-3" />
-              Delete
-            </span>
-          </CustomMenu.MenuItem>
-        )}
+        {MENU_ITEMS.map((item) => {
+          if (!item.shouldRender) return null;
+          return (
+            <CustomMenu.MenuItem
+              key={item.key}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                item.action();
+              }}
+              className="flex items-center gap-2"
+            >
+              <item.icon className="h-3 w-3" />
+              {item.label}
+            </CustomMenu.MenuItem>
+          );
+        })}
       </CustomMenu>
     </>
   );

@@ -70,7 +70,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <span>{issue.name}</span>
         </Tooltip>
       ) : (
-        <div className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100 mb-1.5">
+        <div className="w-full line-clamp-1 text-sm text-custom-text-100 mb-1.5">
           <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
             <span>{issue.name}</span>
           </Tooltip>
@@ -186,7 +186,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
           <div
             className={cn(
               "rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
-              { "hover:cursor-grab": !isDragDisabled },
+              { "hover:cursor-pointer": !isDragDisabled },
               { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id },
               { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
             )}

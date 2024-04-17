@@ -1,12 +1,22 @@
+import { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
 import { UploadImage } from "src/types/upload-image";
 
 const uploadKey = new PluginKey("upload-image");
 
-export const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
-  new Plugin({
+export const UploadImagesPlugin = (editor: Editor, cancelUploadImage?: () => void) => {
+  let currentView: EditorView | null = null;
+  return new Plugin({
     key: uploadKey,
+    view(editorView) {
+      currentView = editorView;
+      return {
+        destroy() {
+          currentView = null;
+        },
+      };
+    },
     state: {
       init() {
         return DecorationSet.empty;
@@ -27,13 +37,17 @@ export const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
 
           // Create cancel button
           const cancelButton = document.createElement("button");
+          cancelButton.type = "button";
           cancelButton.style.position = "absolute";
           cancelButton.style.right = "3px";
           cancelButton.style.top = "3px";
           cancelButton.setAttribute("class", "opacity-90 rounded-lg");
 
           cancelButton.onclick = () => {
-            cancelUploadImage?.();
+            if (currentView) {
+              cancelUploadImage?.();
+              removePlaceholder(editor, currentView, id);
+            }
           };
 
           // Create an SVG element from the SVG string
@@ -59,6 +73,7 @@ export const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
       },
     },
   });
+};
 
 function findPlaceholder(state: EditorState, id: {}) {
   const decos = uploadKey.getState(state);
@@ -66,26 +81,38 @@ function findPlaceholder(state: EditorState, id: {}) {
   return found.length ? found[0].from : null;
 }
 
-const removePlaceholder = (view: EditorView, id: {}) => {
+const removePlaceholder = (editor: Editor, view: EditorView, id: {}) => {
   const removePlaceholderTr = view.state.tr.setMeta(uploadKey, {
     remove: { id },
   });
   view.dispatch(removePlaceholderTr);
+  editor.storage.image.uploadInProgress = false;
 };
 
-export async function startImageUpload(file: File, view: EditorView, pos: number, uploadFile: UploadImage) {
+export async function startImageUpload(
+  editor: Editor,
+  file: File,
+  view: EditorView,
+  pos: number,
+  uploadFile: UploadImage
+) {
+  editor.storage.image.uploadInProgress = true;
+
   if (!file) {
     alert("No file selected. Please select a file to upload.");
+    editor.storage.image.uploadInProgress = false;
     return;
   }
 
   if (!file.type.includes("image/")) {
     alert("Invalid file type. Please select an image file.");
+    editor.storage.image.uploadInProgress = false;
     return;
   }
 
   if (file.size > 5 * 1024 * 1024) {
     alert("File size too large. Please select a file smaller than 5MB.");
+    editor.storage.image.uploadInProgress = false;
     return;
   }
 
@@ -110,7 +137,7 @@ export async function startImageUpload(file: File, view: EditorView, pos: number
   // Handle FileReader errors
   reader.onerror = (error) => {
     console.error("FileReader error: ", error);
-    removePlaceholder(view, id);
+    removePlaceholder(editor, view, id);
     return;
   };
 
@@ -121,7 +148,10 @@ export async function startImageUpload(file: File, view: EditorView, pos: number
     const { schema } = view.state;
     pos = findPlaceholder(view.state, id);
 
-    if (pos == null) return;
+    if (pos == null) {
+      editor.storage.image.uploadInProgress = false;
+      return;
+    }
     const imageSrc = typeof src === "object" ? reader.result : src;
 
     const node = schema.nodes.image.create({ src: imageSrc });
@@ -129,9 +159,9 @@ export async function startImageUpload(file: File, view: EditorView, pos: number
 
     view.dispatch(transaction);
     view.focus();
+    editor.storage.image.uploadInProgress = false;
   } catch (error) {
-    console.error("Upload error: ", error);
-    removePlaceholder(view, id);
+    removePlaceholder(editor, view, id);
   }
 }
 
