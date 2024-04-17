@@ -2,23 +2,23 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ArchiveRestoreIcon, Check, LinkIcon, Lock, Pencil, Star, Trash2 } from "lucide-react";
-import { cn } from "@plane/editor-core";
+import { ArchiveRestoreIcon, Check, LinkIcon, Lock, Pencil, Trash2 } from "lucide-react";
+// types
 import type { IProject } from "@plane/types";
 // ui
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 // components
+import { FavoriteStar } from "@/components/core";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal, ProjectLogo } from "@/components/project";
-// helpers
+// constants
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProject } from "@/hooks/store";
-// types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// hooks
-// constants
 
 type Props = {
   project: IProject;
@@ -166,19 +166,19 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 >
                   <LinkIcon className="h-3 w-3 text-white" />
                 </button>
-                <button
-                  className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
+                <FavoriteStar
+                  buttonClassName="h-6 w-6 bg-white/10"
+                  iconClassName={cn("h-3 w-3", {
+                    "text-white": !project.is_favorite,
+                  })}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     if (project.is_favorite) handleRemoveFromFavorites();
                     else handleAddToFavorites();
                   }}
-                >
-                  <Star
-                    className={`h-3 w-3 ${project.is_favorite ? "fill-amber-400 text-transparent" : "text-white"} `}
-                  />
-                </button>
+                  selected={project.is_favorite}
+                />
               </div>
             )}
           </div>

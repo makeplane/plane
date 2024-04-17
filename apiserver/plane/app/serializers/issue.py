@@ -620,6 +620,26 @@ class IssueStateSerializer(DynamicBaseSerializer):
         fields = "__all__"
 
 
+class IssueInboxSerializer(DynamicBaseSerializer):
+    label_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=False,
+    )
+
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "name",
+            "priority",
+            "sequence_id",
+            "project_id",
+            "created_at",
+            "label_ids",
+        ]
+        read_only_fields = fields
+
+
 class IssueSerializer(DynamicBaseSerializer):
     # ids
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -688,7 +708,7 @@ class IssueLiteSerializer(DynamicBaseSerializer):
 
 class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
-    is_subscribed = serializers.BooleanField()
+    is_subscribed = serializers.BooleanField(read_only=True)
 
     class Meta(IssueSerializer.Meta):
         fields = IssueSerializer.Meta.fields + [

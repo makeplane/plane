@@ -1,17 +1,18 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Star, User2 } from "lucide-react";
-// hooks
-import { Avatar, AvatarGroup, setPromiseToast } from "@plane/ui";
-import { CycleQuickActions } from "@/components/cycles";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { useCycle, useEventTracker, useMember } from "@/hooks/store";
-// components
+import { User2 } from "lucide-react";
 // ui
-// helpers
+import { Avatar, AvatarGroup, setPromiseToast } from "@plane/ui";
+// components
+import { FavoriteStar } from "@/components/core";
+import { CycleQuickActions } from "@/components/cycles";
 // constants
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
+// helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
+import { useCycle, useEventTracker, useMember } from "@/hooks/store";
 
 type Props = {
   cycleId: string;
@@ -99,7 +100,7 @@ export const UpcomingCycleListItem: React.FC<Props> = observer((props) => {
             {renderFormattedDate(cycle.start_date)} - {renderFormattedDate(cycle.end_date)}
           </div>
         )}
-        {cycle.assignee_ids?.length > 0 ? (
+        {cycle.assignee_ids && cycle.assignee_ids?.length > 0 ? (
           <AvatarGroup showTooltip={false}>
             {cycle.assignee_ids?.map((assigneeId) => {
               const member = getUserDetails(assigneeId);
@@ -112,15 +113,13 @@ export const UpcomingCycleListItem: React.FC<Props> = observer((props) => {
           </span>
         )}
 
-        {cycle.is_favorite ? (
-          <button type="button" onClick={handleRemoveFromFavorites}>
-            <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-          </button>
-        ) : (
-          <button type="button" onClick={handleAddToFavorites}>
-            <Star className="h-3.5 w-3.5 text-custom-text-200" />
-          </button>
-        )}
+        <FavoriteStar
+          onClick={(e) => {
+            if (cycle.is_favorite) handleRemoveFromFavorites(e);
+            else handleAddToFavorites(e);
+          }}
+          selected={!!cycle.is_favorite}
+        />
 
         {workspaceSlug && projectId && (
           <CycleQuickActions

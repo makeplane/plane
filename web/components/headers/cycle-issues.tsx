@@ -142,11 +142,12 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
   // derived values
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
+  const isCompletedCycle = cycleDetails?.status?.toLocaleLowerCase() === "completed";
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const issueCount = cycleDetails
-    ? issueFilters?.displayFilters?.sub_issue
+    ? issueFilters?.displayFilters?.sub_issue && cycleDetails?.sub_issues
       ? cycleDetails.total_issues + cycleDetails?.sub_issues
       : cycleDetails.total_issues
     : undefined;
@@ -274,16 +275,18 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
                   Analytics
                 </Button>
-                <Button
-                  onClick={() => {
-                    setTrackElement("Cycle issues page");
-                    toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
-                  }}
-                  size="sm"
-                  prependIcon={<Plus />}
-                >
-                  Add Issue
-                </Button>
+                {!isCompletedCycle && (
+                  <Button
+                    onClick={() => {
+                      setTrackElement("Cycle issues page");
+                      toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
+                    }}
+                    size="sm"
+                    prependIcon={<Plus />}
+                  >
+                    Add Issue
+                  </Button>
+                )}
               </>
             )}
             <button

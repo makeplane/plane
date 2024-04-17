@@ -62,7 +62,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
 
   const isCompletedCycleSnapshotAvailable = !isEmpty(cycleDetails?.progress_snapshot ?? {});
 
-  const isCompletedAndEmpty = isCompletedCycleSnapshotAvailable || cycleDetails?.status.toLowerCase() === "completed";
+  const isCompletedAndEmpty = isCompletedCycleSnapshotAvailable || cycleDetails?.status?.toLowerCase() === "completed";
 
   const emptyStateType = isCompletedAndEmpty
     ? EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES

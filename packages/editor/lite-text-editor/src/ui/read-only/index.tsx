@@ -1,66 +1,59 @@
 import * as React from "react";
-import { EditorContainer, EditorContentWrapper, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
+import {
+  EditorContainer,
+  EditorContentWrapper,
+  EditorReadOnlyRefApi,
+  getEditorClassNames,
+  IMentionHighlight,
+  useReadOnlyEditor,
+} from "@plane/editor-core";
 
-interface ICoreReadOnlyEditor {
-  value: string;
-  editorContentCustomClassNames?: string;
-  noBorder?: boolean;
+export interface ILiteTextReadOnlyEditor {
+  initialValue: string;
   borderOnFocus?: boolean;
-  customClassName?: string;
-  mentionHighlights: string[];
+  containerClassName?: string;
+  editorClassName?: string;
+  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+  };
   tabIndex?: number;
 }
 
-interface EditorCoreProps extends ICoreReadOnlyEditor {
-  forwardedRef?: React.Ref<EditorHandle>;
-}
-
-interface EditorHandle {
-  clearEditor: () => void;
-  setEditorValue: (content: string) => void;
-}
-
-const LiteReadOnlyEditor = ({
-  editorContentCustomClassNames,
-  noBorder,
-  borderOnFocus,
-  customClassName,
-  value,
+const LiteTextReadOnlyEditor = ({
+  containerClassName,
+  editorClassName = "",
+  initialValue,
   forwardedRef,
-  mentionHighlights,
+  mentionHandler,
   tabIndex,
-}: EditorCoreProps) => {
+}: ILiteTextReadOnlyEditor) => {
   const editor = useReadOnlyEditor({
-    value,
+    initialValue,
+    editorClassName,
     forwardedRef,
-    mentionHighlights,
+    mentionHandler,
   });
 
-  const editorClassNames = getEditorClassNames({
-    noBorder,
-    borderOnFocus,
-    customClassName,
+  const editorContainerClassName = getEditorClassNames({
+    containerClassName,
   });
 
   if (!editor) return null;
 
   return (
-    <EditorContainer editor={editor} editorClassNames={editorClassNames}>
+    <EditorContainer editor={editor} editorContainerClassName={editorContainerClassName}>
       <div className="flex flex-col">
-        <EditorContentWrapper
-          tabIndex={tabIndex}
-          editor={editor}
-          editorContentCustomClassNames={editorContentCustomClassNames}
-        />
+        <EditorContentWrapper tabIndex={tabIndex} editor={editor} />
       </div>
     </EditorContainer>
   );
 };
 
-const LiteReadOnlyEditorWithRef = React.forwardRef<EditorHandle, ICoreReadOnlyEditor>((props, ref) => (
-  <LiteReadOnlyEditor {...props} forwardedRef={ref} />
+const LiteTextReadOnlyEditorWithRef = React.forwardRef<EditorReadOnlyRefApi, ILiteTextReadOnlyEditor>((props, ref) => (
+  <LiteTextReadOnlyEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorReadOnlyRefApi | null>} />
 ));
 
-LiteReadOnlyEditorWithRef.displayName = "LiteReadOnlyEditorWithRef";
+LiteTextReadOnlyEditorWithRef.displayName = "LiteReadOnlyEditorWithRef";
 
-export { LiteReadOnlyEditor, LiteReadOnlyEditorWithRef };
+export { LiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef };

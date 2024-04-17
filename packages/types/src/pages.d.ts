@@ -1,64 +1,50 @@
-// types
-import {
-  TIssue,
-  IIssueLabel,
-  IWorkspaceLite,
-  IProjectLite,
-} from "@plane/types";
+import { EPageAccess } from "./enums";
 
-export interface IPage {
-  access: number;
-  archived_at: string | null;
-  blocks: IPageBlock[];
-  color: string;
-  created_at: string | null;
-  created_by: string;
-  description: string;
-  description_html: string;
-  description_stripped: string | null;
-  id: string;
+export type TPage = {
+  access: EPageAccess | undefined;
+  archived_at: string | null | undefined;
+  color: string | undefined;
+  created_at: Date | undefined;
+  created_by: string | undefined;
+  description_html: string | undefined;
+  id: string | undefined;
   is_favorite: boolean;
   is_locked: boolean;
-  label_details: IIssueLabel[];
-  labels: string[];
-  name: string;
-  owned_by: string;
-  project: string;
-  project_detail: IProjectLite;
-  updated_at: string | null;
-  updated_by: string;
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
-}
+  labels: string[] | undefined;
+  name: string | undefined;
+  owned_by: string | undefined;
+  project: string | undefined;
+  updated_at: Date | undefined;
+  updated_by: string | undefined;
+  view_props: TPageViewProps | undefined;
+  workspace: string | undefined;
+};
 
-export interface IRecentPages {
-  today: string[];
-  yesterday: string[];
-  this_week: string[];
-  older: string[];
-  [key: string]: string[];
-}
+export type TPageViewProps = {
+  full_width?: boolean;
+};
 
-export interface IPageBlock {
-  completed_at: Date | null;
-  created_at: Date;
-  created_by: string;
-  description: any;
-  description_html: any;
-  description_stripped: any;
-  id: string;
-  issue: string | null;
-  issue_detail: TIssue | null;
-  name: string;
-  page: string;
-  project: string;
-  project_detail: IProjectLite;
-  sort_order: number;
-  sync: boolean;
-  updated_at: Date;
-  updated_by: string;
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
-}
+// page filters
+export type TPageNavigationTabs = "public" | "private" | "archived";
 
-export type TPageViewProps = "list" | "detailed" | "masonry";
+export type TPageFiltersSortKey =
+  | "name"
+  | "created_at"
+  | "updated_at"
+  | "opened_at";
+
+export type TPageFiltersSortBy = "asc" | "desc";
+
+export type TPageFilterProps = {
+  created_at?: string[] | null;
+  created_by?: string[] | null;
+  favorites?: boolean;
+  labels?: string[] | null;
+};
+
+export type TPageFilters = {
+  searchQuery: string;
+  sortKey: TPageFiltersSortKey;
+  sortBy: TPageFiltersSortBy;
+  filters?: TPageFilterProps;
+};

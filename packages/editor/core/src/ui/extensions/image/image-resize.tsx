@@ -7,10 +7,19 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
     const imageInfo = document.querySelector(".ProseMirror-selectednode") as HTMLImageElement;
     if (imageInfo) {
       const selection = editor.state.selection;
+
+      // Use the style width/height if available, otherwise fall back to the element's natural width/height
+      const width = imageInfo.style.width
+        ? Number(imageInfo.style.width.replace("px", ""))
+        : imageInfo.getAttribute("width");
+      const height = imageInfo.style.height
+        ? Number(imageInfo.style.height.replace("px", ""))
+        : imageInfo.getAttribute("height");
+
       editor.commands.setImage({
         src: imageInfo.src,
-        width: Number(imageInfo.style.width.replace("px", "")),
-        height: Number(imageInfo.style.height.replace("px", "")),
+        width: width,
+        height: height,
       } as any);
       editor.commands.setNodeSelection(selection.from);
     }
@@ -21,7 +30,7 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
   return (
     <>
       <Moveable
-        target={document.querySelector(".ProseMirror-selectednode") as any}
+        target={document.querySelector(".ProseMirror-selectednode") as HTMLElement}
         container={null}
         origin={false}
         edge={false}
@@ -37,27 +46,29 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
             setAspectRatio(originalWidth / originalHeight);
           }
         }}
-        onResize={({ target, width, height, delta }: any) => {
-          if (delta[0]) {
-            const newWidth = Math.max(width, 100);
-            const newHeight = newWidth / aspectRatio;
-            target!.style.width = `${newWidth}px`;
-            target!.style.height = `${newHeight}px`;
-          }
-          if (delta[1]) {
-            const newHeight = Math.max(height, 100);
-            const newWidth = newHeight * aspectRatio;
-            target!.style.height = `${newHeight}px`;
-            target!.style.width = `${newWidth}px`;
+        onResize={({ target, width, height, delta }) => {
+          if (delta[0] || delta[1]) {
+            let newWidth, newHeight;
+            if (delta[0]) {
+              // Width change detected
+              newWidth = Math.max(width, 100);
+              newHeight = newWidth / aspectRatio;
+            } else if (delta[1]) {
+              // Height change detected
+              newHeight = Math.max(height, 100);
+              newWidth = newHeight * aspectRatio;
+            }
+            target.style.width = `${newWidth}px`;
+            target.style.height = `${newHeight}px`;
           }
         }}
         onResizeEnd={() => {
           updateMediaSize();
         }}
         scalable
-        renderDirections={["w", "e"]}
-        onScale={({ target, transform }: any) => {
-          target!.style.transform = transform;
+        renderDirections={["se"]}
+        onScale={({ target, transform }) => {
+          target.style.transform = transform;
         }}
       />
     </>

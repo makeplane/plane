@@ -202,16 +202,7 @@ def send_webhook(event, payload, kw, action, slug, bulk, current_site):
         if webhooks:
             if action in ["POST", "PATCH"]:
                 if bulk and event in ["cycle_issue", "module_issue"]:
-                    event_data = IssueExpandSerializer(
-                        Issue.objects.filter(
-                            pk__in=[
-                                str(event.get("issue")) for event in payload
-                            ]
-                        ).prefetch_related("issue_cycle", "issue_module"),
-                        many=True,
-                    ).data
-                    event = "issue"
-                    action = "PATCH"
+                    return
                 else:
                     event_data = [
                         get_model_data(
@@ -219,7 +210,7 @@ def send_webhook(event, payload, kw, action, slug, bulk, current_site):
                             event_id=(
                                 payload.get("id")
                                 if isinstance(payload, dict)
-                                else None
+                                else kw.get("pk")
                             ),
                             many=False,
                         )
