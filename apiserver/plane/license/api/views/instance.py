@@ -1,52 +1,25 @@
 # Python imports
 import os
-import uuid
-from smtplib import (
-    SMTPAuthenticationError,
-    SMTPConnectError,
-    SMTPRecipientsRefused,
-    SMTPSenderRefused,
-    SMTPServerDisconnected,
-)
-from urllib.parse import urlencode, urljoin
 
 # Django imports
-from django.contrib.auth.hashers import make_password
-from django.core.exceptions import ValidationError
-from django.core.mail import (
-    BadHeaderError,
-    EmailMultiAlternatives,
-    get_connection,
-)
-from django.core.validators import validate_email
-from django.http import HttpResponseRedirect
-from django.utils import timezone
-from django.views import View
 
 # Third party imports
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from zxcvbn import zxcvbn
 
 # Module imports
 from plane.app.views import BaseAPIView
-from plane.authentication.utils.login import user_login
-from plane.db.models import Profile, User, Workspace
+from plane.db.models import Workspace
 from plane.license.api.permissions import (
     InstanceAdminPermission,
 )
 from plane.license.api.serializers import (
-    InstanceAdminSerializer,
-    InstanceConfigurationSerializer,
     InstanceSerializer,
-    InstanceAdminMeSerializer,
 )
-from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
-from plane.license.utils.encryption import encrypt_data
+from plane.license.models import Instance
 from plane.license.utils.instance_value import (
     get_configuration_value,
-    get_email_configuration,
 )
 from plane.utils.cache import cache_response, invalidate_cache
 
