@@ -177,7 +177,7 @@ const rowsToolboxItems: ToolboxItem[] = [
     action: (args: any) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
-    label: "Delete Row",
+    label: "Delete row",
     icon: icons.deleteRow,
     action: ({ editor }: { editor: Editor }) => editor.chain().focus().deleteRow().run(),
   },
@@ -202,38 +202,44 @@ function createToolbox({
   const toolbox = tippy(triggerButton, {
     content: h(
       "div",
-      { className: "tableToolbox" },
-      items.map((item, index) => {
+      {
+        className:
+          "rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg min-w-[12rem] whitespace-nowrap",
+      },
+      items.map((item) => {
         if (item.label === "Pick color") {
           return h("div", { className: "flex flex-col" }, [
-            h("div", { className: "divider" }),
-            h("div", { className: "colorPickerLabel" }, item.label),
+            h("hr", { className: "my-2 border-custom-border-200" }),
+            h("div", { className: "text-custom-text-200 text-sm" }, item.label),
             h(
               "div",
-              { className: "colorPicker grid" },
+              { className: "grid grid-cols-6 gap-x-1 gap-y-2.5 mt-2" },
               Object.entries(colors).map(([colorName, colorValue]) =>
                 h("div", {
-                  className: "colorPickerItem flex items-center justify-center",
-                  style: `background-color: ${colorValue.backgroundColor}; 
-          color: ${colorValue.textColor || "inherit"};`,
+                  className: "grid place-items-center size-6 rounded cursor-pointer",
+                  style: `background-color: ${colorValue.backgroundColor};color: ${colorValue.textColor || "inherit"};`,
                   innerHTML:
                     colorValue.icon ?? `<span class="text-md" style:"color: ${colorValue.backgroundColor}>A</span>`,
                   onClick: () => onSelectColor(colorValue),
                 })
               )
             ),
-            h("div", { className: "divider" }),
+            h("hr", { className: "my-2 border-custom-border-200" }),
           ]);
         } else {
           return h(
             "div",
             {
-              className: "toolboxItem",
+              className:
+                "flex items-center gap-2 px-1 py-1.5 bg-custom-background-100 hover:bg-custom-background-80 text-sm text-custom-text-200 rounded cursor-pointer",
               itemType: "div",
               onClick: () => onClickItem(item),
             },
             [
-              h("div", { className: "iconContainer", innerHTML: item.icon }),
+              h("span", {
+                className: "h-3 w-3 flex-shrink-0",
+                innerHTML: item.icon,
+              }),
               h("div", { className: "label" }, item.label),
             ]
           );
@@ -290,27 +296,27 @@ export class TableView implements NodeView {
     if (editor.isEditable) {
       this.rowsControl = h(
         "div",
-        { className: "rowsControl" },
+        { className: "rows-control" },
         h("div", {
           itemType: "button",
-          className: "rowsControlDiv",
+          className: "rows-control-div",
           onClick: () => this.selectRow(),
         })
       );
 
       this.columnsControl = h(
         "div",
-        { className: "columnsControl" },
+        { className: "columns-control" },
         h("div", {
           itemType: "button",
-          className: "columnsControlDiv",
+          className: "columns-control-div",
           onClick: () => this.selectColumn(),
         })
       );
 
       this.controls = h(
         "div",
-        { className: "tableControls", contentEditable: "false" },
+        { className: "table-controls", contentEditable: "false" },
         this.rowsControl,
         this.columnsControl
       );
@@ -331,7 +337,7 @@ export class TableView implements NodeView {
       };
 
       this.columnsToolbox = createToolbox({
-        triggerButton: this.columnsControl.querySelector(".columnsControlDiv"),
+        triggerButton: this.columnsControl.querySelector(".columns-control-div"),
         items: columnsToolboxItems,
         colors: columnColors,
         onSelectColor: (color) => setCellsBackgroundColor(this.editor, color),
@@ -380,7 +386,7 @@ export class TableView implements NodeView {
     this.root = h(
       "div",
       {
-        className: "tableWrapper controls--disabled",
+        className: "table-wrapper horizontal-scrollbar scrollbar-md controls--disabled",
       },
       this.controls,
       this.table

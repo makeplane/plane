@@ -41,7 +41,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const isEditingAllowed =
     !!currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId] >= EUserProjectRoles.MEMBER;
 
-  const moduleState = moduleDetails?.status.toLocaleLowerCase();
+  const moduleState = moduleDetails?.status?.toLocaleLowerCase();
   const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {

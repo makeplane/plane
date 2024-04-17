@@ -61,7 +61,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
   return (
     <>
       <div
-        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
+        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-[6px] ${
           isCollapsed ? "flex-col" : ""
         }`}
       >
@@ -142,16 +142,18 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
                     </span>
                   </Link>
                 ))}
-                <button
-                  type="button"
-                  onClick={handleCrispWindowShow}
-                  className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
-                >
-                  <div className="grid flex-shrink-0 place-items-center">
-                    <MessagesSquare className="h-3.5 w-3.5 text-custom-text-200" />
-                  </div>
-                  <span className="text-xs">Chat with us</span>
-                </button>
+                {process.env.NEXT_PUBLIC_CRISP_ID && (
+                  <button
+                    type="button"
+                    onClick={handleCrispWindowShow}
+                    className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
+                  >
+                    <div className="grid flex-shrink-0 place-items-center">
+                      <MessagesSquare className="h-3.5 w-3.5 text-custom-text-200" />
+                    </div>
+                    <span className="text-xs">Chat with us</span>
+                  </button>
+                )}
               </div>
               <div className="px-2 pb-1 pt-2 text-[10px]">Version: v{packageJson.version}</div>
             </div>

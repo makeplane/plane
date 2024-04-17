@@ -1,9 +1,9 @@
 export * from "./attachment";
 export * from "./issue-modal";
 export * from "./delete-issue-modal";
-export * from "./description-form";
 export * from "./issue-layouts";
-
+export * from "./description-input";
+export * from "./title-input";
 export * from "./parent-issues-list-modal";
 export * from "./label";
 export * from "./confirm-issue-discard";

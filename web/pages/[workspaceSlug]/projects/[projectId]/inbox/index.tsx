@@ -1,41 +1,62 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-// hooks
+// components
+import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/empty-state";
 import { ProjectInboxHeader } from "@/components/headers";
-import { InboxLayoutLoader } from "@/components/ui";
-import { useInbox, useProject } from "@/hooks/store";
+import { InboxIssueRoot } from "@/components/inbox";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
+// helpers
+import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
+// hooks
+import { useProject, useProjectInbox } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
-// ui
-// components
 // types
 import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
+  /// router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
+  const { workspaceSlug, projectId, currentTab: navigationTab, inboxIssueId } = router.query;
+  // hooks
   const { currentProjectDetails } = useProject();
-  const { fetchInboxes } = useInbox();
+  const { currentTab, handleCurrentTab } = useProjectInbox();
 
-  useSWR(
-    workspaceSlug && projectId && currentProjectDetails && currentProjectDetails?.inbox_view
-      ? `INBOX_${workspaceSlug.toString()}_${projectId.toString()}`
-      : null,
-    async () => {
-      if (workspaceSlug && projectId && currentProjectDetails && currentProjectDetails?.inbox_view) {
-        const inboxes = await fetchInboxes(workspaceSlug.toString(), projectId.toString());
-        if (inboxes && inboxes.length > 0)
-          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxes[0].id}`);
-      }
-    }
-  );
+  useEffect(() => {
+    if (navigationTab && currentTab != navigationTab)
+      handleCurrentTab(navigationTab === "open" ? EInboxIssueCurrentTab.OPEN : EInboxIssueCurrentTab.CLOSED);
+  }, [currentTab, navigationTab, handleCurrentTab]);
+
+  // No access to inbox
+  if (currentProjectDetails?.inbox_view === false)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <EmptyState
+          type={EmptyStateType.DISABLED_PROJECT_INBOX}
+          primaryButtonLink={`/${workspaceSlug}/projects/${projectId}/settings/features`}
+        />
+      </div>
+    );
+
+  // derived values
+  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : "Plane - Inbox";
+
+  if (!workspaceSlug || !projectId) return <></>;
 
   return (
     <div className="flex h-full flex-col">
-      {currentProjectDetails?.inbox_view ? <InboxLayoutLoader /> : <div>You don{"'"}t have access to inbox</div>}
+      <PageHead title={pageTitle} />
+      <div className="w-full h-full overflow-hidden">
+        <InboxIssueRoot
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          inboxIssueId={inboxIssueId?.toString() || undefined}
+          inboxAccessible={currentProjectDetails?.inbox_view || false}
+        />
+      </div>
     </div>
   );
 });

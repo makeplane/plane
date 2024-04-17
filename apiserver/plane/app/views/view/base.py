@@ -326,11 +326,11 @@ class IssueViewFavoriteViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, view_id):
-        view_favourite = IssueViewFavorite.objects.get(
+        view_favorite = IssueViewFavorite.objects.get(
             project=project_id,
             user=request.user,
             workspace__slug=slug,
             view_id=view_id,
         )
-        view_favourite.delete()
+        view_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

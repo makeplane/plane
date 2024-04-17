@@ -1,88 +1,132 @@
-import { FC, useState, useEffect } from "react";
-// components
-import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
-import { Loader } from "@plane/ui";
-// hooks
-import { useMention, useWorkspace } from "@/hooks/store";
-import useDebounce from "@/hooks/use-debounce";
-// services
-import { FileService } from "@/services/file.service";
-const fileService = new FileService();
+import { FC, useCallback, useEffect, useState } from "react";
+import debounce from "lodash/debounce";
+import { observer } from "mobx-react";
+import { Controller, useForm } from "react-hook-form";
 // types
-import { TIssueOperations } from "./issue-detail";
+import { TIssue } from "@plane/types";
+// ui
+import { Loader } from "@plane/ui";
+// components
+import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
+import { TIssueOperations } from "@/components/issues/issue-detail";
+// hooks
+import { useWorkspace } from "@/hooks/store";
 
 export type IssueDescriptionInputProps = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  value: string | undefined;
   initialValue: string | undefined;
   disabled?: boolean;
   issueOperations: TIssueOperations;
-  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
+  placeholder?: string | ((isFocused: boolean) => string);
+  setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
+  swrIssueDescription: string | null | undefined;
 };
 
-export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => {
-  const { workspaceSlug, projectId, issueId, value, initialValue, disabled, issueOperations, setIsSubmitting } = props;
-  // states
-  const [descriptionHTML, setDescriptionHTML] = useState(value);
-  // store hooks
-  const { mentionHighlights, mentionSuggestions } = useMention();
+export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
+  const {
+    workspaceSlug,
+    projectId,
+    issueId,
+    disabled,
+    swrIssueDescription,
+    initialValue,
+    issueOperations,
+    setIsSubmitting,
+    placeholder,
+  } = props;
+
+  const { handleSubmit, reset, control } = useForm<TIssue>({
+    defaultValues: {
+      description_html: initialValue,
+    },
+  });
+
+  const [localIssueDescription, setLocalIssueDescription] = useState({
+    id: issueId,
+    description_html: initialValue,
+  });
+
+  const handleDescriptionFormSubmit = useCallback(
+    async (formData: Partial<TIssue>) => {
+      await issueOperations.update(workspaceSlug, projectId, issueId, {
+        description_html: formData.description_html ?? "<p></p>",
+      });
+    },
+    [workspaceSlug, projectId, issueId, issueOperations]
+  );
+
   const { getWorkspaceBySlug } = useWorkspace();
-  // hooks
-  const debouncedValue = useDebounce(descriptionHTML, 1500);
   // computed values
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
 
+  // reset form values
   useEffect(() => {
-    setDescriptionHTML(value);
-  }, [value]);
+    if (!issueId) return;
+    reset({
+      id: issueId,
+      description_html: initialValue === "" ? "<p></p>" : initialValue,
+    });
+    setLocalIssueDescription({
+      id: issueId,
+      description_html: initialValue === "" ? "<p></p>" : initialValue,
+    });
+  }, [initialValue, issueId, reset]);
 
-  useEffect(() => {
-    if (debouncedValue && debouncedValue !== value) {
-      issueOperations.update(workspaceSlug, projectId, issueId, { description_html: debouncedValue }).finally(() => {
-        setIsSubmitting("submitted");
-      });
-    }
-    // DO NOT Add more dependencies here. It will cause multiple requests to be sent.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedValue]);
-
-  if (!descriptionHTML) {
-    return (
-      <Loader>
-        <Loader.Item height="150px" />
-      </Loader>
-    );
-  }
-
-  if (disabled) {
-    return (
-      <RichReadOnlyEditor
-        value={descriptionHTML}
-        customClassName="!p-0 !pt-2 text-custom-text-200"
-        noBorder={disabled}
-        mentionHighlights={mentionHighlights}
-      />
-    );
-  }
+  // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  // TODO: Verify the exhaustive-deps warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedFormSave = useCallback(
+    debounce(async () => {
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+    }, 1500),
+    [handleSubmit, issueId]
+  );
 
   return (
-    <RichTextEditor
-      cancelUploadImage={fileService.cancelUpload}
-      uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-      deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-      restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-      value={descriptionHTML}
-      initialValue={initialValue}
-      dragDropEnabled
-      customClassName="min-h-[150px] shadow-sm"
-      onChange={(description: any, description_html: string) => {
-        setIsSubmitting("submitting");
-        setDescriptionHTML(description_html === "" ? "<p></p>" : description_html);
-      }}
-      mentionSuggestions={mentionSuggestions}
-      mentionHighlights={mentionHighlights}
-    />
+    <>
+      {localIssueDescription.description_html ? (
+        <Controller
+          name="description_html"
+          control={control}
+          render={({ field: { onChange } }) =>
+            !disabled ? (
+              <RichTextEditor
+                id={issueId}
+                initialValue={localIssueDescription.description_html ?? "<p></p>"}
+                value={swrIssueDescription ?? null}
+                workspaceSlug={workspaceSlug}
+                workspaceId={workspaceId}
+                projectId={projectId}
+                dragDropEnabled
+                onChange={(_description: object, description_html: string) => {
+                  setIsSubmitting("submitting");
+                  onChange(description_html);
+                  debouncedFormSave();
+                }}
+                placeholder={
+                  placeholder
+                    ? placeholder
+                    : (isFocused) => {
+                        if (isFocused) return "Press '/' for commands...";
+                        else return "Click to add description";
+                      }
+                }
+              />
+            ) : (
+              <RichTextReadOnlyEditor
+                initialValue={localIssueDescription.description_html ?? ""}
+                containerClassName="!p-0 !pt-2 text-custom-text-200 min-h-[150px]"
+              />
+            )
+          }
+        />
+      ) : (
+        <Loader>
+          <Loader.Item height="150px" />
+        </Loader>
+      )}
+    </>
   );
-};
+});

@@ -4,73 +4,58 @@ import {
   EditorContainer,
   EditorContentWrapper,
   getEditorClassNames,
+  IMentionHighlight,
   IMentionSuggestion,
   RestoreImage,
   UploadImage,
   useEditor,
+  EditorRefApi,
 } from "@plane/editor-core";
 import * as React from "react";
 import { RichTextEditorExtensions } from "src/ui/extensions";
 import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
 
 export type IRichTextEditor = {
-  value: string;
-  initialValue?: string;
+  initialValue: string;
+  value?: string | null;
   dragDropEnabled?: boolean;
-  uploadFile: UploadImage;
-  restoreFile: RestoreImage;
-  deleteFile: DeleteImage;
-  noBorder?: boolean;
-  borderOnFocus?: boolean;
-  cancelUploadImage?: () => any;
-  rerenderOnPropsChange?: {
-    id: string;
-    description_html: string;
+  fileHandler: {
+    cancel: () => void;
+    delete: DeleteImage;
+    upload: UploadImage;
+    restore: RestoreImage;
   };
-  customClassName?: string;
-  editorContentCustomClassNames?: string;
-  onChange?: (json: any, html: string) => void;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
-  setShouldShowAlert?: (showAlert: boolean) => void;
-  forwardedRef?: any;
+  id?: string;
+  containerClassName?: string;
+  editorClassName?: string;
+  onChange?: (json: object, html: string) => void;
+  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   debouncedUpdatesEnabled?: boolean;
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+    suggestions: () => Promise<IMentionSuggestion[]>;
+  };
+  placeholder?: string | ((isFocused: boolean) => string);
   tabIndex?: number;
 };
 
-export interface RichTextEditorProps extends IRichTextEditor {
-  forwardedRef?: React.Ref<EditorHandle>;
-}
+const RichTextEditor = (props: IRichTextEditor) => {
+  const {
+    onChange,
+    dragDropEnabled,
+    initialValue,
+    value,
+    fileHandler,
+    containerClassName,
+    editorClassName = "",
+    forwardedRef,
+    // rerenderOnPropsChange,
+    id = "",
+    placeholder,
+    tabIndex,
+    mentionHandler,
+  } = props;
 
-interface EditorHandle {
-  clearEditor: () => void;
-  setEditorValue: (content: string) => void;
-  setEditorValueAtCursorPosition: (content: string) => void;
-}
-
-const RichTextEditor = ({
-  onChange,
-  dragDropEnabled,
-  debouncedUpdatesEnabled,
-  setIsSubmitting,
-  setShouldShowAlert,
-  editorContentCustomClassNames,
-  value,
-  initialValue,
-  uploadFile,
-  deleteFile,
-  noBorder,
-  cancelUploadImage,
-  borderOnFocus,
-  customClassName,
-  restoreFile,
-  forwardedRef,
-  mentionHighlights,
-  rerenderOnPropsChange,
-  mentionSuggestions,
-  tabIndex,
-}: RichTextEditorProps) => {
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
 
   // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
@@ -80,50 +65,51 @@ const RichTextEditor = ({
   };
 
   const editor = useEditor({
+    id,
+    editorClassName,
+    restoreFile: fileHandler.restore,
+    uploadFile: fileHandler.upload,
+    deleteFile: fileHandler.delete,
+    cancelUploadImage: fileHandler.cancel,
     onChange,
-    debouncedUpdatesEnabled,
-    setIsSubmitting,
-    setShouldShowAlert,
+    initialValue,
     value,
-    uploadFile,
-    cancelUploadImage,
-    deleteFile,
-    restoreFile,
     forwardedRef,
-    rerenderOnPropsChange,
-    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting, dragDropEnabled, setHideDragHandleFunction),
-    mentionHighlights,
-    mentionSuggestions,
+    // rerenderOnPropsChange,
+    extensions: RichTextEditorExtensions({
+      uploadFile: fileHandler.upload,
+      dragDropEnabled,
+      setHideDragHandle: setHideDragHandleFunction,
+    }),
+    tabIndex,
+    mentionHandler,
+    placeholder,
   });
 
-  const editorClassNames = getEditorClassNames({
-    noBorder,
-    borderOnFocus,
-    customClassName,
+  const editorContainerClassName = getEditorClassNames({
+    noBorder: true,
+    borderOnFocus: false,
+    containerClassName,
   });
 
-  // React.useEffect(() => {
-  //   if (editor && initialValue && editor.getHTML() != initialValue) editor.commands.setContent(initialValue);
-  // }, [editor, initialValue]);
-  //
   if (!editor) return null;
 
   return (
-    <EditorContainer hideDragHandle={hideDragHandleOnMouseLeave} editor={editor} editorClassNames={editorClassNames}>
+    <EditorContainer
+      hideDragHandle={hideDragHandleOnMouseLeave}
+      editor={editor}
+      editorContainerClassName={editorContainerClassName}
+    >
       {editor && <EditorBubbleMenu editor={editor} />}
       <div className="flex flex-col">
-        <EditorContentWrapper
-          tabIndex={tabIndex}
-          editor={editor}
-          editorContentCustomClassNames={editorContentCustomClassNames}
-        />
+        <EditorContentWrapper tabIndex={tabIndex} editor={editor} />
       </div>
     </EditorContainer>
   );
 };
 
-const RichTextEditorWithRef = React.forwardRef<EditorHandle, IRichTextEditor>((props, ref) => (
-  <RichTextEditor {...props} forwardedRef={ref} />
+const RichTextEditorWithRef = React.forwardRef<EditorRefApi, IRichTextEditor>((props, ref) => (
+  <RichTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
 ));
 
 RichTextEditorWithRef.displayName = "RichTextEditorWithRef";

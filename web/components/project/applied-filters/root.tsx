@@ -48,7 +48,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
     <div className="flex items-start justify-between gap-1.5">
       <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
         {/* Applied filters */}
-        {Object.entries(appliedFilters).map(([key, value]) => {
+        {Object.entries(appliedFilters ?? {}).map(([key, value]) => {
           const filterKey = key as keyof TProjectFilters;
 
           if (!value) return;

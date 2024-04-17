@@ -143,7 +143,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden text-custom-text-200">
+    <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
@@ -221,7 +221,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       value={value}
       onChange={onChange}
       disabled={disabled}
-      onKeyDownCapture={handleKeyDown}
+      onKeyDown={handleKeyDown}
       multiple
     >
       <Combobox.Button as={Fragment}>
@@ -270,6 +270,12 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   <Combobox.Option
                     key={option.value}
                     value={option.value}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }
+                    }}
                     className={({ active, selected }) =>
                       `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
                         active ? "bg-custom-background-80" : ""

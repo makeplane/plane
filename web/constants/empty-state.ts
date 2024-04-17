@@ -66,12 +66,9 @@ export enum EmptyStateType {
   PROJECT_ARCHIVED_NO_MODULES = "project-archived-no-modules",
   PROJECT_VIEW = "project-view",
   PROJECT_PAGE = "project-page",
-  PROJECT_PAGE_ALL = "project-page-all",
-  PROJECT_PAGE_FAVORITES = "project-page-favorites",
   PROJECT_PAGE_PRIVATE = "project-page-private",
-  PROJECT_PAGE_SHARED = "project-page-shared",
+  PROJECT_PAGE_PUBLIC = "project-page-public",
   PROJECT_PAGE_ARCHIVED = "project-page-archived",
-  PROJECT_PAGE_RECENT = "project-page-recent",
 
   COMMAND_K_SEARCH_EMPTY_STATE = "command-k-search-empty-state",
   ISSUE_RELATION_SEARCH_EMPTY_STATE = "issue-relation-search-empty-state",
@@ -90,6 +87,17 @@ export enum EmptyStateType {
   ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE = "active-cycle-priority-issue-empty-state",
   ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE = "active-cycle-assignee-empty-state",
   ACTIVE_CYCLE_LABEL_EMPTY_STATE = "active-cycle-label-empty-state",
+
+  DISABLED_PROJECT_INBOX = "disabled-project-inbox",
+  DISABLED_PROJECT_CYCLE = "disabled-project-cycle",
+  DISABLED_PROJECT_MODULE = "disabled-project-module",
+  DISABLED_PROJECT_VIEW = "disabled-project-view",
+  DISABLED_PROJECT_PAGE = "disabled-project-page",
+
+  INBOX_SIDEBAR_OPEN_TAB = "inbox-sidebar-open-tab",
+  INBOX_SIDEBAR_CLOSED_TAB = "inbox-sidebar-closed-tab",
+  INBOX_SIDEBAR_FILTER_EMPTY_STATE = "inbox-sidebar-filter-empty-state",
+  INBOX_DETAIL_EMPTY_STATE = "inbox-detail-empty-state",
 }
 
 const emptyStateDetails = {
@@ -487,48 +495,23 @@ const emptyStateDetails = {
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
   },
-  [EmptyStateType.PROJECT_PAGE_ALL]: {
-    key: EmptyStateType.PROJECT_PAGE_ALL,
-    title: "Write a note, a doc, or a full knowledge base",
-    description:
-      "Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely!",
-    path: "/empty-state/pages/all",
-  },
-  [EmptyStateType.PROJECT_PAGE_FAVORITES]: {
-    key: EmptyStateType.PROJECT_PAGE_FAVORITES,
-    title: "No favorite pages yet",
-    description: "Favorites for quick access? mark them and find them right here.",
-    path: "/empty-state/pages/favorites",
-  },
   [EmptyStateType.PROJECT_PAGE_PRIVATE]: {
     key: EmptyStateType.PROJECT_PAGE_PRIVATE,
     title: "No private pages yet",
     description: "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
     path: "/empty-state/pages/private",
   },
-  [EmptyStateType.PROJECT_PAGE_SHARED]: {
-    key: EmptyStateType.PROJECT_PAGE_SHARED,
-    title: "No shared pages yet",
+  [EmptyStateType.PROJECT_PAGE_PUBLIC]: {
+    key: EmptyStateType.PROJECT_PAGE_PUBLIC,
+    title: "No public pages yet",
     description: "See pages shared with everyone in your project right here.",
-    path: "/empty-state/pages/shared",
+    path: "/empty-state/pages/public",
   },
   [EmptyStateType.PROJECT_PAGE_ARCHIVED]: {
     key: EmptyStateType.PROJECT_PAGE_ARCHIVED,
     title: "No archived pages yet",
     description: "Archive pages not on your radar. Access them here when needed.",
     path: "/empty-state/pages/archived",
-  },
-  [EmptyStateType.PROJECT_PAGE_RECENT]: {
-    key: EmptyStateType.PROJECT_PAGE_RECENT,
-    title: "Write a note, a doc, or a full knowledge base",
-    description:
-      "Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely! Pages will be sorted and grouped by last updated",
-    path: "/empty-state/pages/recent",
-    primaryButton: {
-      text: "Create new page",
-    },
-    accessType: "project",
-    access: EUserProjectRoles.MEMBER,
   },
 
   [EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE]: {
@@ -549,7 +532,7 @@ const emptyStateDetails = {
   [EmptyStateType.ISSUE_COMMENT_EMPTY_STATE]: {
     key: EmptyStateType.ISSUE_COMMENT_EMPTY_STATE,
     title: "No comments yet",
-    description: "Comments can be used as a discussion and follow-up space for the issues",
+    description: "Comments can be used as a discussion and \n follow-up space for the issues",
     path: "/empty-state/search/comments",
   },
 
@@ -614,6 +597,89 @@ const emptyStateDetails = {
     key: EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
     title: "Add labels to issues to see the \n breakdown of work by labels.",
     path: "/empty-state/active-cycle/label",
+  },
+  [EmptyStateType.DISABLED_PROJECT_INBOX]: {
+    key: EmptyStateType.DISABLED_PROJECT_INBOX,
+    title: "Inbox is not enabled for the project.",
+    description:
+      "Inbox helps you manage incoming requests to your project and add them as issues in your workflow. Enable inbox \n from project settings to manage requests.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/inbox",
+    primaryButton: {
+      text: "Manage features",
+    },
+  },
+  [EmptyStateType.DISABLED_PROJECT_CYCLE]: {
+    key: EmptyStateType.DISABLED_PROJECT_CYCLE,
+    title: "Cycles is not enabled for this project.",
+    description:
+      "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/cycles",
+    primaryButton: {
+      text: "Manage features",
+    },
+  },
+  [EmptyStateType.DISABLED_PROJECT_MODULE]: {
+    key: EmptyStateType.DISABLED_PROJECT_MODULE,
+    title: "Modules are not enabled for the project.",
+    description:
+      "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. Enable modules from project settings.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/modules",
+    primaryButton: {
+      text: "Manage features",
+    },
+  },
+  [EmptyStateType.DISABLED_PROJECT_PAGE]: {
+    key: EmptyStateType.DISABLED_PROJECT_PAGE,
+    title: "Pages are not enabled for the project.",
+    description:
+      "Pages are thought spotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. Enable the pages feature to start creating them in your project.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/pages",
+    primaryButton: {
+      text: "Manage features",
+    },
+  },
+  [EmptyStateType.DISABLED_PROJECT_VIEW]: {
+    key: EmptyStateType.DISABLED_PROJECT_VIEW,
+    title: "Views is not enabled for this project.",
+    description:
+      "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best. Enable views in the project settings to start using them.",
+    accessType: "project",
+    access: EUserProjectRoles.ADMIN,
+    path: "/empty-state/disabled-feature/views",
+    primaryButton: {
+      text: "Manage features",
+    },
+  },
+  [EmptyStateType.INBOX_SIDEBAR_OPEN_TAB]: {
+    key: EmptyStateType.INBOX_SIDEBAR_OPEN_TAB,
+    title: "No open issues",
+    description: "Find open issues here. Create new issue.",
+    path: "/empty-state/inbox/inbox-issue",
+  },
+  [EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB]: {
+    key: EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB,
+    title: "No closed issues",
+    description: "All the issues whether accepted or \n declined can be found here.",
+    path: "/empty-state/inbox/inbox-issue",
+  },
+  [EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE]: {
+    key: EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE,
+    title: "No  matching issues",
+    description: "No issue matches filter applied in inbox. \n Create a new issue.",
+    path: "/empty-state/inbox/filter-issue",
+  },
+  [EmptyStateType.INBOX_DETAIL_EMPTY_STATE]: {
+    key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
+    title: "Select an issue to view its details.",
+    path: "/empty-state/inbox/issue-detail",
   },
 } as const;
 

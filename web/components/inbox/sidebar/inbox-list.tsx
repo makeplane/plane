@@ -1,33 +1,32 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
-// hooks
-import { useInboxIssues } from "@/hooks/store";
 // components
-import { InboxIssueListItem } from "../";
+import { InboxIssueListItem } from "@/components/inbox";
+// store
+import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
-type TInboxIssueList = { workspaceSlug: string; projectId: string; inboxId: string };
+export type InboxIssueListProps = {
+  workspaceSlug: string;
+  projectId: string;
+  projectIdentifier?: string;
+  inboxIssues: IInboxIssueStore[];
+};
 
-export const InboxIssueList: FC<TInboxIssueList> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId } = props;
-  // hooks
-  const {
-    issues: { getInboxIssuesByInboxId },
-  } = useInboxIssues();
+export const InboxIssueList: FC<InboxIssueListProps> = observer((props) => {
+  const { workspaceSlug, projectId, projectIdentifier, inboxIssues } = props;
 
-  const inboxIssueIds = getInboxIssuesByInboxId(inboxId);
-
-  if (!inboxIssueIds) return <></>;
   return (
-    <div className="overflow-y-auto w-full h-full vertical-scrollbar scrollbar-md">
-      {inboxIssueIds.map((issueId) => (
-        <InboxIssueListItem
-          key={issueId}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          inboxId={inboxId}
-          issueId={issueId}
-        />
+    <>
+      {inboxIssues.map((inboxIssue) => (
+        <Fragment key={inboxIssue.id}>
+          <InboxIssueListItem
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            projectIdentifier={projectIdentifier}
+            inboxIssue={inboxIssue}
+          />
+        </Fragment>
       ))}
-    </div>
+    </>
   );
 });

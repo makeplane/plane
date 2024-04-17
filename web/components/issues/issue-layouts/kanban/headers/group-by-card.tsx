@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
-import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";
+import { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -16,8 +16,8 @@ import { useEventTracker } from "@/hooks/store";
 import { KanbanStoreType } from "../base-kanban-root";
 
 interface IHeaderGroupByCard {
-  sub_group_by: string | null;
-  group_by: string | null;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
   column_id: string;
   icon?: React.ReactNode;
   title: string;

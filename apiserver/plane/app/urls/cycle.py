@@ -101,4 +101,9 @@ urlpatterns = [
         CycleArchiveUnarchiveEndpoint.as_view(),
         name="cycle-archive-unarchive",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-cycles/<uuid:pk>/",
+        CycleArchiveUnarchiveEndpoint.as_view(),
+        name="cycle-archive-unarchive",
+    ),
 ]

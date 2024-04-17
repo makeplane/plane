@@ -1,9 +1,18 @@
 import { Extension } from "@tiptap/core";
 
-import { PluginKey, NodeSelection, Plugin } from "@tiptap/pm/state";
-// @ts-ignore
+import { NodeSelection, Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import { Fragment, Slice, Node } from "@tiptap/pm/model";
+// @ts-expect-error __serializeForClipboard's is not exported
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
-import React from "react";
+
+export interface DragHandleOptions {
+  dragHandleWidth: number;
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
+  scrollThreshold: {
+    up: number;
+    down: number;
+  };
+}
 
 function createDragHandleElement(): HTMLElement {
   const dragHandleElement = document.createElement("div");
@@ -29,13 +38,8 @@ function createDragHandleElement(): HTMLElement {
   return dragHandleElement;
 }
 
-export interface DragHandleOptions {
-  dragHandleWidth: number;
-  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
-}
-
 function absoluteRect(node: Element) {
-  const data = node?.getBoundingClientRect();
+  const data = node.getBoundingClientRect();
 
   return {
     top: data.top,
@@ -54,34 +58,27 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
           [
             "li",
             "p:not(:first-child)",
-            "pre",
+            ".code-block",
             "blockquote",
             "h1, h2, h3",
+            "table",
             "[data-type=horizontalRule]",
-            ".tableWrapper",
           ].join(", ")
         )
     );
 }
 
-function nodePosAtDOM(node: Element, view: EditorView) {
-  const boundingRect = node?.getBoundingClientRect();
+function nodePosAtDOM(node: Element, view: EditorView, options: DragHandleOptions) {
+  const boundingRect = node.getBoundingClientRect();
 
-  if (node.nodeName === "IMG") {
-    return view.posAtCoords({
-      left: boundingRect.left + 1,
-      top: boundingRect.top + 1,
-    })?.pos;
-  }
+  return view.posAtCoords({
+    left: boundingRect.left + 50 + options.dragHandleWidth,
+    top: boundingRect.top + 1,
+  })?.inside;
+}
 
-  if (node.nodeName === "PRE") {
-    return (
-      view.posAtCoords({
-        left: boundingRect.left + 1,
-        top: boundingRect.top + 1,
-      })?.pos! - 1
-    );
-  }
+function nodePosAtDOMForBlockquotes(node: Element, view: EditorView) {
+  const boundingRect = node.getBoundingClientRect();
 
   return view.posAtCoords({
     left: boundingRect.left + 1,
@@ -89,23 +86,67 @@ function nodePosAtDOM(node: Element, view: EditorView) {
   })?.inside;
 }
 
+function calcNodePos(pos: number, view: EditorView) {
+  const maxPos = view.state.doc.content.size;
+  const safePos = Math.max(0, Math.min(pos, maxPos));
+  const $pos = view.state.doc.resolve(safePos);
+
+  if ($pos.depth > 1) {
+    const newPos = $pos.before($pos.depth);
+    return Math.max(0, Math.min(newPos, maxPos));
+  }
+  return safePos;
+}
+
 function DragHandle(options: DragHandleOptions) {
+  let listType = "";
   function handleDragStart(event: DragEvent, view: EditorView) {
     view.focus();
 
     if (!event.dataTransfer) return;
 
     const node = nodeDOMAtCoords({
-      x: event.clientX + options.dragHandleWidth + 50,
+      x: event.clientX + 50 + options.dragHandleWidth,
       y: event.clientY,
     });
 
     if (!(node instanceof Element)) return;
 
-    const nodePos = nodePosAtDOM(node, view);
-    if (nodePos === null || nodePos === undefined || nodePos < 0) return;
+    let draggedNodePos = nodePosAtDOM(node, view, options);
+    if (draggedNodePos == null || draggedNodePos < 0) return;
+    draggedNodePos = calcNodePos(draggedNodePos, view);
 
-    view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
+    const { from, to } = view.state.selection;
+    const diff = from - to;
+
+    const fromSelectionPos = calcNodePos(from, view);
+    let differentNodeSelected = false;
+
+    const nodePos = view.state.doc.resolve(fromSelectionPos);
+
+    // Check if nodePos points to the top level node
+    if (nodePos.node().type.name === "doc") differentNodeSelected = true;
+    else {
+      const nodeSelection = NodeSelection.create(view.state.doc, nodePos.before());
+      // Check if the node where the drag event started is part of the current selection
+      differentNodeSelected = !(
+        draggedNodePos + 1 >= nodeSelection.$from.pos && draggedNodePos <= nodeSelection.$to.pos
+      );
+    }
+
+    if (!differentNodeSelected && diff !== 0 && !(view.state.selection instanceof NodeSelection)) {
+      const endSelection = NodeSelection.create(view.state.doc, to - 1);
+      const multiNodeSelection = TextSelection.create(view.state.doc, draggedNodePos, endSelection.$to.pos);
+      view.dispatch(view.state.tr.setSelection(multiNodeSelection));
+    } else {
+      const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
+      view.dispatch(view.state.tr.setSelection(nodeSelection));
+    }
+
+    // If the selected node is a list item, we need to save the type of the wrapping list e.g. OL or UL
+    if (view.state.selection instanceof NodeSelection && view.state.selection.node.type.name === "listItem") {
+      listType = node.parentElement!.tagName;
+    }
 
     const slice = view.state.selection.content();
     const { dom, text } = __serializeForClipboard(view, slice);
@@ -123,8 +164,6 @@ function DragHandle(options: DragHandleOptions) {
   function handleClick(event: MouseEvent, view: EditorView) {
     view.focus();
 
-    view.dom.classList.remove("dragging");
-
     const node = nodeDOMAtCoords({
       x: event.clientX + 50 + options.dragHandleWidth,
       y: event.clientY,
@@ -132,11 +171,32 @@ function DragHandle(options: DragHandleOptions) {
 
     if (!(node instanceof Element)) return;
 
-    const nodePos = nodePosAtDOM(node, view);
+    if (node.matches("blockquote")) {
+      let nodePosForBlockquotes = nodePosAtDOMForBlockquotes(node, view);
+      if (nodePosForBlockquotes === null || nodePosForBlockquotes === undefined) return;
 
-    if (nodePos === null || nodePos === undefined || nodePos < 0) return;
+      const docSize = view.state.doc.content.size;
+      nodePosForBlockquotes = Math.max(0, Math.min(nodePosForBlockquotes, docSize));
 
-    view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
+      if (nodePosForBlockquotes >= 0 && nodePosForBlockquotes <= docSize) {
+        const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockquotes);
+        view.dispatch(view.state.tr.setSelection(nodeSelection));
+      }
+      return;
+    }
+
+    let nodePos = nodePosAtDOM(node, view, options);
+
+    if (nodePos === null || nodePos === undefined) return;
+
+    // Adjust the nodePos to point to the start of the node, ensuring NodeSelection can be applied
+    nodePos = calcNodePos(nodePos, view);
+
+    // Use NodeSelection to select the node at the calculated position
+    const nodeSelection = NodeSelection.create(view.state.doc, nodePos);
+
+    // Dispatch the transaction to update the selection
+    view.dispatch(view.state.tr.setSelection(nodeSelection));
   }
 
   let dragHandleElement: HTMLElement | null = null;
@@ -166,11 +226,15 @@ function DragHandle(options: DragHandleOptions) {
         handleClick(e, view);
       });
 
-      dragHandleElement.addEventListener("dragstart", (e) => {
-        handleDragStart(e, view);
-      });
-      dragHandleElement.addEventListener("click", (e) => {
-        handleClick(e, view);
+      dragHandleElement.addEventListener("drag", (e) => {
+        hideDragHandle();
+        const a = document.querySelector(".frame-renderer");
+        if (!a) return;
+        if (e.clientY < options.scrollThreshold.up) {
+          a.scrollBy({ top: -70, behavior: "smooth" });
+        } else if (window.innerHeight - e.clientY < options.scrollThreshold.down) {
+          a.scrollBy({ top: 70, behavior: "smooth" });
+        }
       });
 
       hideDragHandle();
@@ -192,11 +256,11 @@ function DragHandle(options: DragHandleOptions) {
           }
 
           const node = nodeDOMAtCoords({
-            x: event.clientX + options.dragHandleWidth,
+            x: event.clientX + 50 + options.dragHandleWidth,
             y: event.clientY,
           });
 
-          if (!(node instanceof Element)) {
+          if (!(node instanceof Element) || node.matches("ul, ol")) {
             hideDragHandle();
             return;
           }
@@ -207,32 +271,76 @@ function DragHandle(options: DragHandleOptions) {
 
           const rect = absoluteRect(node);
 
-          rect.top += (lineHeight - 24) / 2;
+          rect.top += (lineHeight - 20) / 2;
           rect.top += paddingTop;
+
           // Li markers
           if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
-            rect.left -= options.dragHandleWidth;
+            rect.top += 4;
+            rect.left -= 18;
           }
+
           rect.width = options.dragHandleWidth;
 
           if (!dragHandleElement) return;
 
           dragHandleElement.style.left = `${rect.left - rect.width}px`;
-          dragHandleElement.style.top = `${rect.top + 3}px`;
+          dragHandleElement.style.top = `${rect.top}px`;
           showDragHandle();
         },
         keydown: () => {
           hideDragHandle();
         },
-        wheel: () => {
+        mousewheel: () => {
           hideDragHandle();
         },
-        // dragging className is used for CSS
-        dragstart: (view) => {
+        dragenter: (view) => {
           view.dom.classList.add("dragging");
+          hideDragHandle();
         },
-        drop: (view) => {
+        drop: (view, event) => {
           view.dom.classList.remove("dragging");
+          hideDragHandle();
+          let droppedNode: Node | null = null;
+          const dropPos = view.posAtCoords({
+            left: event.clientX,
+            top: event.clientY,
+          });
+
+          if (!dropPos) return;
+
+          if (view.state.selection instanceof NodeSelection) {
+            droppedNode = view.state.selection.node;
+          }
+          if (!droppedNode) return;
+
+          const resolvedPos = view.state.doc.resolve(dropPos.pos);
+          let isDroppedInsideList = false;
+
+          // Traverse up the document tree to find if we're inside a list item
+          for (let i = resolvedPos.depth; i > 0; i--) {
+            if (resolvedPos.node(i).type.name === "listItem") {
+              isDroppedInsideList = true;
+              break;
+            }
+          }
+
+          // If the selected node is a list item and is not dropped inside a list, we need to wrap it inside <ol> tag otherwise ol list items will be transformed into ul list item when dropped
+          if (
+            view.state.selection instanceof NodeSelection &&
+            view.state.selection.node.type.name === "listItem" &&
+            !isDroppedInsideList &&
+            listType == "OL"
+          ) {
+            const text = droppedNode.textContent;
+            if (!text) return;
+            const paragraph = view.state.schema.nodes.paragraph?.createAndFill({}, view.state.schema.text(text));
+            const listItem = view.state.schema.nodes.listItem?.createAndFill({}, paragraph);
+
+            const newList = view.state.schema.nodes.orderedList?.createAndFill(null, listItem);
+            const slice = new Slice(Fragment.from(newList), 0, 0);
+            view.dragging = { slice, move: event.ctrlKey };
+          }
         },
         dragend: (view) => {
           view.dom.classList.remove("dragging");
@@ -250,6 +358,7 @@ export const DragAndDrop = (setHideDragHandle?: (hideDragHandlerFromDragDrop: ()
       return [
         DragHandle({
           dragHandleWidth: 24,
+          scrollThreshold: { up: 300, down: 100 },
           setHideDragHandle,
         }),
       ];

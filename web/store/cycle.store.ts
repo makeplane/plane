@@ -46,6 +46,7 @@ export interface ICycleStore {
   fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchActiveCycle: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchArchivedCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
+  fetchArchivedCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   // crud
   createCycle: (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => Promise<ICycle>;
@@ -99,6 +100,7 @@ export class CycleStore implements ICycleStore {
       fetchAllCycles: action,
       fetchActiveCycle: action,
       fetchArchivedCycles: action,
+      fetchArchivedCycleDetails: action,
       fetchCycleDetails: action,
       createCycle: action,
       updateCycleDetails: action,
@@ -256,7 +258,7 @@ export class CycleStore implements ICycleStore {
       (c) =>
         c.project_id === projectId &&
         !c.archived_at &&
-        c.status.toLowerCase() === "completed" &&
+        c.status?.toLowerCase() === "completed" &&
         c.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
         shouldFilterCycle(c, filters ?? {})
     );
@@ -411,6 +413,21 @@ export class CycleStore implements ICycleStore {
           set(this.activeCycleIdMap, [cycle.id], true);
           set(this.cycleMap, [cycle.id], cycle);
         });
+      });
+      return response;
+    });
+
+  /**
+   * @description fetches cycle details
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @returns
+   */
+  fetchArchivedCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string) =>
+    await this.cycleArchiveService.getArchivedCycleDetails(workspaceSlug, projectId, cycleId).then((response) => {
+      runInAction(() => {
+        set(this.cycleMap, [response.id], { ...this.cycleMap?.[response.id], ...response });
       });
       return response;
     });

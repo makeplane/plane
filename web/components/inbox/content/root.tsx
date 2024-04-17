@@ -1,86 +1,66 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { Inbox } from "lucide-react";
-// hooks
-import { Loader } from "@plane/ui";
-import { InboxIssueActionsHeader } from "@/components/inbox";
-import { InboxIssueDetailRoot } from "@/components/issues/issue-detail/inbox";
-import { useInboxIssues } from "@/hooks/store";
-// components
-// ui
+import useSWR from "swr";
+import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
+import { EUserProjectRoles } from "@/constants/project";
+import { useProjectInbox, useUser } from "@/hooks/store";
 
 type TInboxContentRoot = {
   workspaceSlug: string;
   projectId: string;
-  inboxId: string;
-  inboxIssueId: string | undefined;
+  inboxIssueId: string;
 };
 
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId, inboxIssueId } = props;
+  const { workspaceSlug, projectId, inboxIssueId } = props;
+  // states
+  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
+  const { fetchInboxIssueById, getIssueInboxByIssueId } = useProjectInbox();
+  const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
   const {
-    issues: { loader, getInboxIssuesByInboxId },
-  } = useInboxIssues();
+    membership: { currentProjectRole },
+  } = useUser();
 
-  const inboxIssuesList = inboxId ? getInboxIssuesByInboxId(inboxId) : undefined;
+  const { data: swrIssueDetails } = useSWR(
+    workspaceSlug && projectId && inboxIssueId
+      ? `PROJECT_INBOX_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${inboxIssueId}`
+      : null,
+    workspaceSlug && projectId && inboxIssueId
+      ? () => fetchInboxIssueById(workspaceSlug, projectId, inboxIssueId)
+      : null,
+    { revalidateOnFocus: true }
+  );
+
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+
+  if (!inboxIssue) return <></>;
+
+  const isIssueDisabled = [-1, 1, 2].includes(inboxIssue.status);
 
   return (
     <>
-      {loader === "init-loader" ? (
-        <Loader className="flex h-full gap-5 p-5">
-          <div className="basis-2/3 space-y-2">
-            <Loader.Item height="30px" width="40%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="40%" />
-          </div>
-          <div className="basis-1/3 space-y-3">
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-          </div>
-        </Loader>
-      ) : (
-        <>
-          {!inboxIssueId ? (
-            <div className="grid h-full place-items-center p-4 text-custom-text-200">
-              <div className="grid h-full place-items-center">
-                <div className="my-5 flex flex-col items-center gap-4">
-                  <Inbox size={60} strokeWidth={1.5} />
-                  {inboxIssuesList && inboxIssuesList.length > 0 ? (
-                    <span className="text-custom-text-200">
-                      {inboxIssuesList?.length} issues found. Select an issue from the sidebar to view its details.
-                    </span>
-                  ) : (
-                    <span className="text-custom-text-200">No issues found</span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="w-full h-full overflow-hidden relative flex flex-col">
-              <div className="flex-shrink-0 min-h-[50px] border-b border-custom-border-300">
-                <InboxIssueActionsHeader
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  inboxId={inboxId}
-                  inboxIssueId={inboxIssueId}
-                />
-              </div>
-              <div className="w-full h-full">
-                <InboxIssueDetailRoot
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  inboxId={inboxId}
-                  issueId={inboxIssueId}
-                />
-              </div>
-            </div>
-          )}
-        </>
-      )}
+      <div className="w-full h-full overflow-hidden relative flex flex-col">
+        <div className="flex-shrink-0 min-h-[50px] border-b border-custom-border-300">
+          <InboxIssueActionsHeader
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            inboxIssue={inboxIssue}
+            isSubmitting={isSubmitting}
+          />
+        </div>
+        <div className="h-full w-full space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5 vertical-scrollbar scrollbar-md">
+          <InboxIssueMainContent
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            inboxIssue={inboxIssue}
+            isEditable={isEditable && !isIssueDisabled}
+            isSubmitting={isSubmitting}
+            setIsSubmitting={setIsSubmitting}
+            swrIssueDescription={swrIssueDetails?.issue.description_html}
+          />
+        </div>
+      </div>
     </>
   );
 });

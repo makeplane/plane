@@ -7,7 +7,6 @@ import { Popover } from "@headlessui/react";
 import { IIssueLabel } from "@plane/types";
 // hooks
 import { Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { useIssueDetail } from "@/hooks/store";
 // ui
 // types
 import { TLabelOperations } from "./root";
@@ -16,6 +15,7 @@ type ILabelCreate = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  values: string[];
   labelOperations: TLabelOperations;
   disabled?: boolean;
 };
@@ -26,11 +26,7 @@ const defaultValues: Partial<IIssueLabel> = {
 };
 
 export const LabelCreate: FC<ILabelCreate> = (props) => {
-  const { workspaceSlug, projectId, issueId, labelOperations, disabled = false } = props;
-  // hooks
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
+  const { workspaceSlug, projectId, issueId, values, labelOperations, disabled = false } = props;
   // state
   const [isCreateToggle, setIsCreateToggle] = useState(false);
   const handleIsCreateToggle = () => setIsCreateToggle(!isCreateToggle);
@@ -70,10 +66,10 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
     try {
-      const issue = getIssueById(issueId);
       const labelResponse = await labelOperations.createLabel(workspaceSlug, projectId, formData);
-      const currentLabels = [...(issue?.label_ids || []), labelResponse.id];
+      const currentLabels = [...(values || []), labelResponse.id];
       await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
+      handleIsCreateToggle();
       reset(defaultValues);
     } catch (error) {
       setToast({
