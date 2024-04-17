@@ -143,19 +143,21 @@ class PageViewSet(BaseViewSet):
             serializer = PageDetailSerializer(
                 page, data=request.data, partial=True
             )
+            # capture the page transaction
+            if request.data.get("description_html"):
+                page_transaction.delay(
+                    new_value=request.data,
+                    old_value=json.dumps(
+                        {
+                            "description_html": page.description_html,
+                        },
+                        cls=DjangoJSONEncoder,
+                    ),
+                    page_id=pk,
+                )
             if serializer.is_valid():
                 serializer.save()
-                # capture the page transaction
-                if request.data.get("description_html"):
-                    page_transaction.delay(
-                        new_value=request.data,
-                        old_value=json.dumps(
-                            {
-                                "description_html": page.description_html,
-                            }, cls=DjangoJSONEncoder,
-                        ),
-                        page_id=pk,
-                    )
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
