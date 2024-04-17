@@ -1,6 +1,7 @@
 # Python imports
 import json
 from datetime import datetime
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
 from django.db import connection
@@ -151,7 +152,7 @@ class PageViewSet(BaseViewSet):
                         old_value=json.dumps(
                             {
                                 "description_html": page.description_html,
-                            }
+                            }, cls=DjangoJSONEncoder,
                         ),
                         page_id=pk,
                     )
