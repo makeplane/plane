@@ -15,6 +15,7 @@ export * from "./label";
 export * from "./link";
 export * from "./attachment";
 export * from "./archived-at";
+export * from "./inbox";
 
 // helpers
 export * from "./helpers/activity-block";
