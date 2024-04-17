@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
@@ -8,12 +9,14 @@ import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
 // types
 import { TPage } from "@plane/types";
 // ui
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Spinner, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
 import { PageDetailsHeader } from "@/components/headers";
 import { IssuePeekOverview } from "@/components/issues";
 import { PageEditorBody, PageEditorHeaderRoot } from "@/components/pages";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePage, useProjectPages } from "@/hooks/store";
 // layouts
@@ -46,15 +49,16 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   });
 
   // fetching page details
-  const { data: swrPageDetails, isValidating } = useSWR(
-    pageId ? `PAGE_DETAILS_${pageId}` : null,
-    pageId ? () => getPageById(pageId.toString()) : null,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: true,
-      revalidateOnReconnect: true,
-    }
-  );
+  const {
+    data: swrPageDetails,
+    isValidating,
+    error: pageDetailsError,
+  } = useSWR(pageId ? `PAGE_DETAILS_${pageId}` : null, pageId ? () => getPageById(pageId.toString()) : null, {
+    revalidateIfStale: false,
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+  });
+
   useEffect(
     () => () => {
       if (pageStore.cleanup) pageStore.cleanup();
@@ -62,14 +66,26 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     [pageStore]
   );
 
-  const handleEditorReady = (value: boolean) => setEditorReady(value);
-
-  const handleReadOnlyEditorReady = () => setReadOnlyEditorReady(true);
-
-  if (!pageStore || !pageStore.id)
+  if ((!pageStore || !pageStore.id) && !pageDetailsError)
     return (
       <div className="h-full w-full grid place-items-center">
         <Spinner />
+      </div>
+    );
+
+  if (pageDetailsError)
+    return (
+      <div className="h-full w-full flex flex-col items-center justify-center">
+        <h3 className="text-lg font-semibold text-center">Page not found</h3>
+        <p className="text-sm text-custom-text-200 text-center mt-3">
+          The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
+        </p>
+        <Link
+          href={`/${workspaceSlug}/projects/${projectId}/pages`}
+          className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}
+        >
+          View other Pages
+        </Link>
       </div>
     );
 
@@ -132,9 +148,9 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
             swrPageDetails={swrPageDetails}
             control={control}
             editorRef={editorRef}
-            handleEditorReady={handleEditorReady}
+            handleEditorReady={(val) => setEditorReady(val)}
             readOnlyEditorRef={readOnlyEditorRef}
-            handleReadOnlyEditorReady={handleReadOnlyEditorReady}
+            handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
             handleSubmit={() => handleSubmit(handleUpdatePage)()}
             markings={markings}
             pageStore={pageStore}
