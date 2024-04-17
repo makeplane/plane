@@ -45,7 +45,7 @@ export class UserStore implements IUserStore {
    */
   fetchCurrentUser = async () => {
     try {
-      this.isLoading = true;
+      if (this.currentUser === undefined) this.isLoading = true;
       const currentUser = await this.userService.currentUser();
       runInAction(() => {
         this.isUserLoggedIn = true;

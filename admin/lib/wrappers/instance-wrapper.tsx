@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useState } from "react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
@@ -21,6 +21,8 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   const { children } = props;
   // hooks
   const { isLoading, instanceStatus, instance, fetchInstanceInfo } = useInstance();
+  // state
+  const [userSignUp, setUserSignUp] = useState(true);
 
   useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
@@ -43,14 +45,14 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   if (instanceStatus && instanceStatus?.status === EInstanceStatus.NOT_YET_READY)
     return (
       <DefaultLayout>
-        <InstanceNotReady isRedirectionEnabled={false} />
+        <InstanceNotReady />
       </DefaultLayout>
     );
 
-  if (instance?.instance?.is_setup_done === false)
+  if (instance?.instance?.is_setup_done === false && userSignUp)
     return (
       <DefaultLayout>
-        <InstanceNotReady isRedirectionEnabled />
+        <InstanceNotReady handleUserSignUp={() => setUserSignUp(false)} />
       </DefaultLayout>
     );
 

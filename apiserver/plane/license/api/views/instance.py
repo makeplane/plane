@@ -302,7 +302,7 @@ class InstanceAdminSignUpEndpoint(View):
         if instance is None:
             url = urljoin(
                 referer,
-                "?"
+                "setup/?"
                 + urlencode(
                     {
                         "error_code": "INSTANCE_NOT_CONFIGURED",
@@ -316,7 +316,7 @@ class InstanceAdminSignUpEndpoint(View):
         if InstanceAdmin.objects.first():
             url = urljoin(
                 referer,
-                "?"
+                "setup/?"
                 + urlencode(
                     {
                         "error_code": "ADMIN_ALREADY_EXIST",
@@ -338,7 +338,7 @@ class InstanceAdminSignUpEndpoint(View):
         if not email or not password or not first_name:
             url = urljoin(
                 referer,
-                "?"
+                "setup/?"
                 + urlencode(
                     {
                         "email": email,
@@ -360,7 +360,7 @@ class InstanceAdminSignUpEndpoint(View):
         except ValidationError:
             url = urljoin(
                 referer,
-                "?"
+                "setup/?"
                 + urlencode(
                     {
                         "email": email,
@@ -380,7 +380,7 @@ class InstanceAdminSignUpEndpoint(View):
         if User.objects.filter(email=email).exists():
             url = urljoin(
                 referer,
-                "?"
+                "setup/?"
                 + urlencode(
                     {
                         "email": email,
@@ -400,7 +400,7 @@ class InstanceAdminSignUpEndpoint(View):
             if results["score"] < 3:
                 url = urljoin(
                     referer,
-                    "?"
+                    "setup/?"
                     + urlencode(
                         {
                             "email": email,
@@ -462,7 +462,7 @@ class InstanceAdminSignInEndpoint(View):
         if instance is None:
             url = urljoin(
                 referer,
-                "?"
+                "login/?"
                 + urlencode(
                     {
                         "error_code": "INSTANCE_NOT_CONFIGURED",
@@ -480,7 +480,7 @@ class InstanceAdminSignInEndpoint(View):
         if not email or not password:
             url = urljoin(
                 referer,
-                "?"
+                "login/?"
                 + urlencode(
                     {
                         "email": email,
@@ -498,7 +498,7 @@ class InstanceAdminSignInEndpoint(View):
         except ValidationError:
             url = urljoin(
                 referer,
-                "?"
+                "login/?"
                 + urlencode(
                     {
                         "email": email,
@@ -516,7 +516,7 @@ class InstanceAdminSignInEndpoint(View):
         if not user:
             url = urljoin(
                 referer,
-                "?"
+                "login/?"
                 + urlencode(
                     {
                         "email": email,
@@ -531,7 +531,7 @@ class InstanceAdminSignInEndpoint(View):
         if not user.check_password(password):
             url = urljoin(
                 referer,
-                "?"
+                "login/?"
                 + urlencode(
                     {
                         "email": email,
@@ -546,7 +546,7 @@ class InstanceAdminSignInEndpoint(View):
         if not InstanceAdmin.objects.filter(instance=instance, user=user):
             url = urljoin(
                 referer,
-                "?"
+                "login/?"
                 + urlencode(
                     {
                         "email": email,

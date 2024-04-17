@@ -17,7 +17,7 @@ export const InstanceHeader: FC = observer(() => {
 
   const getHeaderTitle = (pathName: string) => {
     switch (pathName) {
-      case "":
+      case "general":
         return "General";
       case "ai":
         return "Artificial Intelligence";
@@ -39,6 +39,8 @@ export const InstanceHeader: FC = observer(() => {
   // Function to dynamically generate breadcrumb items based on pathname
   const generateBreadcrumbItems = (pathname: string) => {
     const pathSegments = pathname.split("/").slice(1); // removing the first empty string.
+    pathSegments.pop();
+
     let currentUrl = "";
     const breadcrumbItems = pathSegments.map((segment) => {
       currentUrl += "/" + segment;
@@ -63,7 +65,7 @@ export const InstanceHeader: FC = observer(() => {
                 type="text"
                 link={
                   <BreadcrumbLink
-                    href="/"
+                    href="/general/"
                     label="Settings"
                     icon={<Settings className="h-4 w-4 text-custom-text-300" />}
                   />

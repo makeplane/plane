@@ -4,21 +4,19 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
-// layouts
-import { AuthLayout, DefaultLayout } from "@/layouts";
-// components
-import { InstanceSignInForm } from "@/components/user-authentication-forms";
 // hooks
 import { useUser } from "@/hooks";
 // helpers
-import { EUserStatus } from "@/helpers";
+import { EAuthenticationPageType, EUserStatus } from "@/helpers";
+import { redirect } from "next/navigation";
 
 export interface IAuthWrapper {
   children: ReactNode;
+  authType?: EAuthenticationPageType;
 }
 
 export const AuthWrapper: FC<IAuthWrapper> = observer((props) => {
-  const { children } = props;
+  const { children, authType = EAuthenticationPageType.AUTHENTICATED } = props;
   // hooks
   const { isLoading, userStatus, currentUser, fetchCurrentUser } = useUser();
 
@@ -40,12 +38,15 @@ export const AuthWrapper: FC<IAuthWrapper> = observer((props) => {
       </div>
     );
 
-  if ((userStatus && userStatus?.status === EUserStatus.AUTHENTICATION_NOT_DONE) || currentUser === undefined)
-    return (
-      <DefaultLayout>
-        <InstanceSignInForm />
-      </DefaultLayout>
-    );
+  if ([EAuthenticationPageType.AUTHENTICATED, EAuthenticationPageType.NOT_AUTHENTICATED].includes(authType)) {
+    if (authType === EAuthenticationPageType.NOT_AUTHENTICATED) {
+      if (userStatus && userStatus?.status === EUserStatus.AUTHENTICATION_NOT_DONE) return <>{children}</>;
+      else redirect("/general/");
+    } else {
+      if (currentUser) return <>{children}</>;
+      else redirect("/login/");
+    }
+  }
 
-  return <AuthLayout>{children}</AuthLayout>;
+  return <>{children}</>;
 });

@@ -80,9 +80,8 @@ export class InstanceStore implements IInstanceStore {
    */
   fetchInstanceInfo = async () => {
     try {
-      this.isLoading = true;
+      if (this.instance === undefined) this.isLoading = true;
       const instance = await this.instanceService.getInstanceInfo();
-      this.isLoading = false;
 
       const isInstanceNotSetup = (instance: IInstance) => "is_activated" in instance && "is_setup_done" in instance;
 

@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 // lib
 import { StoreProvider } from "@/lib/store-context";
-import { AppWrapper, InstanceWrapper, AuthWrapper } from "@/lib/wrappers";
+import { AppWrapper } from "@/lib/wrappers";
 // styles
 import "./globals.css";
 
@@ -17,11 +17,7 @@ export const RootLayout = async ({ children, ...pageProps }: RootLayoutProps) =>
     <body className={`antialiased`}>
       <StoreProvider {...pageProps}>
         <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-          <AppWrapper>
-            <InstanceWrapper>
-              <AuthWrapper>{children}</AuthWrapper>
-            </InstanceWrapper>
-          </AppWrapper>
+          <AppWrapper>{children}</AppWrapper>
         </ThemeProvider>
       </StoreProvider>
     </body>
