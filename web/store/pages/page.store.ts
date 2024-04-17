@@ -21,6 +21,7 @@ export interface IPageStore extends TPage {
   canCurrentUserEditPage: boolean; // it will give the user permission to read the page or write the page
   canCurrentUserDuplicatePage: boolean;
   canCurrentUserLockPage: boolean;
+  canCurrentUserChangeAccess: boolean;
   canCurrentUserArchivePage: boolean;
   canCurrentUserDeletePage: boolean;
   isContentEditable: boolean;
@@ -72,7 +73,10 @@ export class PageStore implements IPageStore {
   // service
   pageService: PageService;
 
-  constructor(private store: RootStore, page: TPage) {
+  constructor(
+    private store: RootStore,
+    page: TPage
+  ) {
     this.id = page?.id || undefined;
     this.name = page?.name || undefined;
     this.description_html = page?.description_html || undefined;
@@ -122,6 +126,7 @@ export class PageStore implements IPageStore {
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
       canCurrentUserLockPage: computed,
+      canCurrentUserChangeAccess: computed,
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
       isContentEditable: computed,
@@ -246,11 +251,18 @@ export class PageStore implements IPageStore {
   }
 
   /**
+   * @description returns true if the current logged in user can change the access of the page
+   */
+  get canCurrentUserChangeAccess() {
+    return this.isCurrentUserOwner;
+  }
+
+  /**
    * @description returns true if the current logged in user can archive the page
    */
   get canCurrentUserArchivePage() {
     const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserProjectRoles.MEMBER);
+    return this.isCurrentUserOwner || currentUserProjectRole === EUserProjectRoles.ADMIN;
   }
 
   /**
@@ -315,13 +327,14 @@ export class PageStore implements IPageStore {
             set(this, key, currentPageResponse?.[currentPageKey] || undefined);
           });
         });
-    } catch {
+    } catch (error) {
       runInAction(() => {
         Object.keys(pageData).forEach((key) => {
           const currentPageKey = key as keyof TPage;
           set(this, key, currentPage?.[currentPageKey] || undefined);
         });
       });
+      throw error;
     }
   };
 
@@ -349,10 +362,11 @@ export class PageStore implements IPageStore {
           ...updatedProps,
         },
       });
-    } catch {
+    } catch (error) {
       runInAction(() => {
         this.view_props = currentViewProps;
       });
+      throw error;
     }
   };
 
@@ -366,13 +380,16 @@ export class PageStore implements IPageStore {
     const pageAccess = this.access;
     runInAction(() => (this.access = EPageAccess.PUBLIC));
 
-    await this.pageService
-      .update(workspaceSlug, projectId, this.id, {
+    try {
+      await this.pageService.update(workspaceSlug, projectId, this.id, {
         access: EPageAccess.PUBLIC,
-      })
-      .catch(() => {
-        runInAction(() => (this.access = pageAccess));
       });
+    } catch (error) {
+      runInAction(() => {
+        this.access = pageAccess;
+      });
+      throw error;
+    }
   };
 
   /**
@@ -385,13 +402,16 @@ export class PageStore implements IPageStore {
     const pageAccess = this.access;
     runInAction(() => (this.access = EPageAccess.PRIVATE));
 
-    await this.pageService
-      .update(workspaceSlug, projectId, this.id, {
+    try {
+      await this.pageService.update(workspaceSlug, projectId, this.id, {
         access: EPageAccess.PRIVATE,
-      })
-      .catch(() => {
-        runInAction(() => (this.access = pageAccess));
       });
+    } catch (error) {
+      runInAction(() => {
+        this.access = pageAccess;
+      });
+      throw error;
+    }
   };
 
   /**
@@ -404,36 +424,11 @@ export class PageStore implements IPageStore {
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = true));
 
-    await this.pageService.lock(workspaceSlug, projectId, this.id).catch(() => {
-      runInAction(() => (this.is_locked = pageIsLocked));
-    });
-  };
-
-  /**
-   * @description archive the page
-   */
-  archive = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !projectId || !this.id) return undefined;
-
-    await this.pageService.archive(workspaceSlug, projectId, this.id).then((res) => {
+    await this.pageService.lock(workspaceSlug, projectId, this.id).catch((error) => {
       runInAction(() => {
-        this.archived_at = res.archived_at;
+        this.is_locked = pageIsLocked;
       });
-    });
-  };
-
-  /**
-   * @description restore the page
-   */
-  restore = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !projectId || !this.id) return undefined;
-
-    await this.pageService.restore(workspaceSlug, projectId, this.id).then(() => {
-      runInAction(() => {
-        this.archived_at = null;
-      });
+      throw error;
     });
   };
 
@@ -447,9 +442,46 @@ export class PageStore implements IPageStore {
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = false));
 
-    await this.pageService.unlock(workspaceSlug, projectId, this.id).catch(() => {
-      runInAction(() => (this.is_locked = pageIsLocked));
+    await this.pageService.unlock(workspaceSlug, projectId, this.id).catch((error) => {
+      runInAction(() => {
+        this.is_locked = pageIsLocked;
+      });
+      throw error;
     });
+  };
+
+  /**
+   * @description archive the page
+   */
+  archive = async () => {
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
+
+    try {
+      const response = await this.pageService.archive(workspaceSlug, projectId, this.id);
+      runInAction(() => {
+        this.archived_at = response.archived_at;
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * @description restore the page
+   */
+  restore = async () => {
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
+
+    try {
+      await this.pageService.restore(workspaceSlug, projectId, this.id);
+      runInAction(() => {
+        this.archived_at = null;
+      });
+    } catch (error) {
+      throw error;
+    }
   };
 
   /**
@@ -464,8 +496,11 @@ export class PageStore implements IPageStore {
       this.is_favorite = true;
     });
 
-    await this.pageService.addToFavorites(workspaceSlug, projectId, this.id).catch(() => {
-      runInAction(() => (this.is_favorite = pageIsFavorite));
+    await this.pageService.addToFavorites(workspaceSlug, projectId, this.id).catch((error) => {
+      runInAction(() => {
+        this.is_favorite = pageIsFavorite;
+      });
+      throw error;
     });
   };
 
@@ -481,8 +516,11 @@ export class PageStore implements IPageStore {
       this.is_favorite = false;
     });
 
-    await this.pageService.removeFromFavorites(workspaceSlug, projectId, this.id).catch(() => {
-      runInAction(() => (this.is_favorite = pageIsFavorite));
+    await this.pageService.removeFromFavorites(workspaceSlug, projectId, this.id).catch((error) => {
+      runInAction(() => {
+        this.is_favorite = pageIsFavorite;
+      });
+      throw error;
     });
   };
 }
