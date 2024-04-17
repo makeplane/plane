@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-// services
-// hooks
-// ui
-import { Eye, EyeOff } from "lucide-react";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// helpers
-import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "@/constants/event-tracker";
-import { checkEmailValidity } from "@/helpers/string.helper";
 // icons
+import { Eye, EyeOff } from "lucide-react";
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "@/constants/event-tracker";
+// helpers
+import { checkEmailValidity } from "@/helpers/string.helper";
+// hooks
 import { useEventTracker } from "@/hooks/store";
+// services
 import { AuthService } from "@/services/auth.service";
+// components
+import { PasswordStrengthMeter } from "../password-strength-meter";
 
 type Props = {
   email: string;
@@ -40,6 +43,7 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
   // form info
   const {
     control,
+    getValues,
     formState: { errors, isSubmitting, isValid },
     handleSubmit,
   } = useForm<TCreatePasswordFormValues>({
@@ -96,34 +100,42 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Set your password</h1>
-      <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
-        If you{"'"}d like to do away with codes, set a password here.
-      </p>
+      <div className="text-center space-y-1 py-4 mx-auto sm:w-96">
+        <h3 className="text-3xl font-bold text-onboarding-text-100">Secure your account</h3>
+        <p className="font-medium text-onboarding-text-400">Setting password helps you login securely</p>
+      </div>
       <form onSubmit={handleSubmit(handleCreatePassword)} className="mx-auto mt-5 space-y-4 sm:w-96">
-        <Controller
-          control={control}
-          name="email"
-          rules={{
-            required: "Email is required",
-            validate: (value) => checkEmailValidity(value) || "Email is invalid",
-          }}
-          render={({ field: { value, onChange, ref } }) => (
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={value}
-              onChange={onChange}
-              ref={ref}
-              hasError={Boolean(errors.email)}
-              placeholder="name@company.com"
-              className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400"
-              disabled
-            />
-          )}
-        />
-        <div>
+        <div className="space-y-1">
+          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+            Email <span className="text-red-500">*</span>
+          </label>
+          <Controller
+            control={control}
+            name="email"
+            rules={{
+              required: "Email is required",
+              validate: (value) => checkEmailValidity(value) || "Email is invalid",
+            }}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.email)}
+                placeholder="name@company.com"
+                className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400"
+                disabled
+              />
+            )}
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
+            Set a password <span className="text-red-500">*</span>
+          </label>
           <Controller
             control={control}
             name="password"
@@ -131,42 +143,42 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
               required: "Password is required",
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.password)}
-                  placeholder="Enter password"
-                  className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-                  minLength={8}
-                  autoFocus
-                />
-                {showPassword ? (
-                  <EyeOff
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => setShowPassword(false)}
+              <>
+                <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    hasError={Boolean(errors.password)}
+                    placeholder="Enter password"
+                    className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                    minLength={8}
+                    autoFocus
                   />
-                ) : (
-                  <Eye
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => setShowPassword(true)}
-                  />
-                )}
-              </div>
+                  {showPassword ? (
+                    <EyeOff
+                      className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                      onClick={() => setShowPassword(false)}
+                    />
+                  ) : (
+                    <Eye
+                      className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                      onClick={() => setShowPassword(true)}
+                    />
+                  )}
+                </div>
+                <PasswordStrengthMeter password={getValues("password")} />
+              </>
             )}
           />
-          <p className="mt-2 pb-3 text-xs text-onboarding-text-200">
-            Whatever you choose now will be your account{"'"}s password until you change it.
-          </p>
         </div>
         <div className="space-y-2.5">
           <Button
             type="submit"
             variant="primary"
             className="w-full"
-            size="xl"
+            size="lg"
             disabled={!isValid}
             loading={isSubmitting}
           >
@@ -176,7 +188,7 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
             type="button"
             variant="outline-primary"
             className="w-full"
-            size="xl"
+            size="lg"
             onClick={handleGoToWorkspace}
             loading={isGoingToWorkspace}
           >

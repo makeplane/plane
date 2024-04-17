@@ -1,22 +1,19 @@
 import React, { useState } from "react";
-import Link from "next/link";
-import { Controller, useForm } from "react-hook-form";
-import { XCircle } from "lucide-react";
+import { CircleCheck, XCircle } from "lucide-react";
+// types
 import { IEmailCheckData, IMagicSignInData } from "@plane/types";
-// services
+// ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-
+// constants
 import { CODE_VERIFIED } from "@/constants/event-tracker";
-import { checkEmailValidity } from "@/helpers/string.helper";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
+// hooks
 import { useEventTracker } from "@/hooks/store";
 import useTimer from "@/hooks/use-timer";
+// services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
-// hooks
-// ui
-// helpers
-// types
-// constants
 
 type Props = {
   email: string;
@@ -41,54 +38,43 @@ const userService = new UserService();
 export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
   const { email, handleEmailClear, onSubmit } = props;
   // states
+  const [uniqueCodeFormData, setUniqueCodeFormData] = useState<TUniqueCodeFormValues>({ ...defaultValues, email });
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(30);
-  // form info
-  const {
-    control,
-    formState: { errors, isSubmitting, isValid },
-    getValues,
-    handleSubmit,
-    reset,
-  } = useForm<TUniqueCodeFormValues>({
-    defaultValues: {
-      ...defaultValues,
-      email,
-    },
-    mode: "onChange",
-    reValidateMode: "onChange",
-  });
 
-  const handleUniqueCodeSignIn = async (formData: TUniqueCodeFormValues) => {
-    const payload: IMagicSignInData = {
-      email: formData.email,
-      key: `magic_${formData.email}`,
-      token: formData.token,
-    };
+  // const handleUniqueCodeSignIn = async (formData: TUniqueCodeFormValues) => {
+  //   const payload: IMagicSignInData = {
+  //     email: formData.email,
+  //     key: `magic_${formData.email}`,
+  //     token: formData.token,
+  //   };
 
-    await authService
-      .magicSignIn(payload)
-      .then(async () => {
-        captureEvent(CODE_VERIFIED, {
-          state: "SUCCESS",
-        });
-        const currentUser = await userService.currentUser();
-        await onSubmit(currentUser.is_password_autoset);
-      })
-      .catch((err) => {
-        captureEvent(CODE_VERIFIED, {
-          state: "FAILED",
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        });
-      });
-  };
+  //   await authService
+  //     .magicSignIn(payload)
+  //     .then(async () => {
+  //       captureEvent(CODE_VERIFIED, {
+  //         state: "SUCCESS",
+  //       });
+  //       const currentUser = await userService.currentUser();
+  //       await onSubmit(currentUser.is_password_autoset);
+  //     })
+  //     .catch((err) => {
+  //       captureEvent(CODE_VERIFIED, {
+  //         state: "FAILED",
+  //       });
+  //       setToast({
+  //         type: TOAST_TYPE.ERROR,
+  //         title: "Error!",
+  //         message: err?.error ?? "Something went wrong. Please try again.",
+  //       });
+  //     });
+  // };
+
+  const handleFormChange = (key: keyof TUniqueCodeFormValues, value: string) =>
+    setUniqueCodeFormData((prev) => ({ ...prev, [key]: value }));
 
   const handleSendNewCode = async (formData: TUniqueCodeFormValues) => {
     const payload: IEmailCheckData = {
@@ -104,10 +90,7 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
           title: "Success!",
           message: "A new unique code has been sent to your email.",
         });
-        reset({
-          email: formData.email,
-          token: "",
-        });
+        handleFormChange("token", "");
       })
       .catch((err) =>
         setToast({
@@ -121,7 +104,7 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
   const handleRequestNewCode = async () => {
     setIsRequestingNewCode(true);
 
-    await handleSendNewCode(getValues())
+    await handleSendNewCode(uniqueCodeFormData)
       .then(() => setResendCodeTimer(30))
       .finally(() => setIsRequestingNewCode(false));
   };
@@ -130,92 +113,90 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Moving to the runway</h1>
-      <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
-        Paste the code you got at
-        <br />
-        <span className="font-semibold text-custom-primary-100">{email}</span> below.
-      </p>
-
-      <form onSubmit={handleSubmit(handleUniqueCodeSignIn)} className="mx-auto mt-5 space-y-4 sm:w-96">
-        <div>
-          <Controller
-            control={control}
-            name="email"
-            rules={{
-              required: "Email is required",
-              validate: (value) => checkEmailValidity(value) || "Email is invalid",
-            }}
-            render={({ field: { value, onChange, ref } }) => (
-              <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.email)}
-                  placeholder="name@company.com"
-                  className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-                  disabled
-                />
-                {value.length > 0 && (
-                  <XCircle
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={handleEmailClear}
-                  />
-                )}
-              </div>
+      <div className="mx-auto space-y-1 py-4 text-center sm:w-96">
+        <h3 className="text-3xl font-bold text-onboarding-text-100">Create your account</h3>
+        <p className="font-medium text-onboarding-text-400">
+          Progress, visualize, and measure work how it works best for you.
+        </p>
+      </div>
+      <form
+        className="mx-auto mt-5 space-y-4 sm:w-96"
+        method="POST"
+        action={`${API_BASE_URL}/api/instances/admins/sign-up/`}
+      >
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
+            Email <span className="text-red-500">*</span>
+          </label>
+          <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={uniqueCodeFormData.email}
+              onChange={(e) => handleFormChange("email", e.target.value)}
+              // hasError={Boolean(errors.email)}
+              placeholder="name@company.com"
+              className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+              disabled
+            />
+            {uniqueCodeFormData.email.length > 0 && (
+              <XCircle
+                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                onClick={handleEmailClear}
+              />
             )}
-          />
+          </div>
         </div>
-        <div>
-          <Controller
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-onboarding-text-300" htmlFor="token">
+            Unique code <span className="text-red-500">*</span>
+          </label>
+          {/* <Controller
             control={control}
             name="token"
             rules={{
               required: "Code is required",
             }}
-            render={({ field: { value, onChange } }) => (
-              <Input
-                value={value}
-                onChange={onChange}
-                hasError={Boolean(errors.token)}
-                placeholder="gets-sets-flys"
-                className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-                autoFocus
-              />
-            )}
+            render={({ field: { value, onChange } }) => ( */}
+          <Input
+            name="token"
+            value={uniqueCodeFormData.token}
+            onChange={(e) => handleFormChange("token", e.target.value)}
+            // hasError={Boolean(errors.token)}
+            placeholder="gets-sets-flys"
+            className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+            autoFocus
           />
-          <div className="w-full text-right">
+          {/* )}
+          /> */}
+          <div className="flex w-full items-center justify-between px-1 text-xs">
+            <p className="flex items-center gap-1 font-medium text-green-700">
+              <CircleCheck height={12} width={12} />
+              Paste the code sent to your email
+            </p>
             <button
               type="button"
               onClick={handleRequestNewCode}
-              className={`text-xs ${
+              className={`${
                 isRequestNewCodeDisabled
-                  ? "text-onboarding-text-300"
-                  : "text-onboarding-text-200 hover:text-custom-primary-100"
+                  ? "text-onboarding-text-400"
+                  : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
               }`}
               disabled={isRequestNewCodeDisabled}
             >
               {resendTimerCode > 0
-                ? `Request new code in ${resendTimerCode}s`
+                ? `Resend in ${resendTimerCode}s`
                 : isRequestingNewCode
-                  ? "Requesting new code"
-                  : "Request new code"}
+                ? "Requesting new code"
+                : "Resend"}
             </button>
           </div>
         </div>
-        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
+        {/* <Button type="submit" variant="primary" className="w-full" size="lg" disabled={!isValid} loading={isSubmitting}> */}
+        <Button type="submit" variant="primary" className="w-full" size="lg">
           Create account
         </Button>
-        <p className="text-xs text-onboarding-text-200">
-          When you click the button above, you agree with our{" "}
-          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-            <span className="font-semibold underline">terms and conditions of service.</span>
-          </Link>
-        </p>
       </form>
     </>
   );

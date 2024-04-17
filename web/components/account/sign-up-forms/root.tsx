@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+// types
+import { IEmailCheckData } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   OAuthOptions,
@@ -9,11 +13,13 @@ import {
   SignUpPasswordForm,
   SignUpUniqueCodeForm,
 } from "@/components/account";
-// constants
-import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 import useSignInRedirection from "@/hooks/use-sign-in-redirection";
+// services
+import { AuthService } from "@/services/auth.service";
+
+const authService = new AuthService();
 
 export enum ESignUpSteps {
   EMAIL = "EMAIL",
@@ -22,20 +28,33 @@ export enum ESignUpSteps {
   OPTIONAL_SET_PASSWORD = "OPTIONAL_SET_PASSWORD",
 }
 
-const OAUTH_ENABLED_STEPS = [ESignUpSteps.EMAIL];
-
 export const SignUpRoot = observer(() => {
   // states
-  const [signInStep, setSignInStep] = useState<ESignUpSteps | null>(null);
+  const [signInStep, setSignInStep] = useState<ESignUpSteps | null>(ESignUpSteps.EMAIL);
   const [email, setEmail] = useState("");
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // mobx store
   const { instance } = useInstance();
-  const { captureEvent } = useEventTracker();
 
   // step 1 submit handler- email verification
-  const handleEmailVerification = () => setSignInStep(ESignUpSteps.UNIQUE_CODE);
+  const handleEmailVerification = async (data: IEmailCheckData) => {
+    setEmail(data.email);
+
+    await authService
+      .emailCheck(data)
+      .then(() => {
+        if (instance?.config?.is_smtp_configured) setSignInStep(ESignUpSteps.UNIQUE_CODE);
+        else setSignInStep(ESignUpSteps.PASSWORD);
+      })
+      .catch((err) =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
+        })
+      );
+  };
 
   // step 2 submit handler- unique code sign in
   const handleUniqueCodeSignIn = async (isPasswordAutoset: boolean) => {
@@ -51,18 +70,11 @@ export const SignUpRoot = observer(() => {
   const isOAuthEnabled =
     instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled);
 
-  useEffect(() => {
-    if (instance?.config?.is_smtp_configured) setSignInStep(ESignUpSteps.EMAIL);
-    else setSignInStep(ESignUpSteps.PASSWORD);
-  }, [instance?.config?.is_smtp_configured]);
-
   return (
     <>
       <div className="mx-auto flex flex-col">
         <>
-          {signInStep === ESignUpSteps.EMAIL && (
-            <SignUpEmailForm onSubmit={handleEmailVerification} updateEmail={(newEmail) => setEmail(newEmail)} />
-          )}
+          {signInStep === ESignUpSteps.EMAIL && <SignUpEmailForm onSubmit={handleEmailVerification} />}
           {signInStep === ESignUpSteps.UNIQUE_CODE && (
             <SignUpUniqueCodeForm
               email={email}
@@ -73,7 +85,16 @@ export const SignUpRoot = observer(() => {
               onSubmit={handleUniqueCodeSignIn}
             />
           )}
-          {signInStep === ESignUpSteps.PASSWORD && <SignUpPasswordForm onSubmit={handlePasswordSignIn} />}
+          {signInStep === ESignUpSteps.PASSWORD && (
+            <SignUpPasswordForm
+              email={email}
+              handleEmailClear={() => {
+                setEmail("");
+                setSignInStep(ESignUpSteps.EMAIL);
+              }}
+              onSubmit={handlePasswordSignIn}
+            />
+          )}
           {signInStep === ESignUpSteps.OPTIONAL_SET_PASSWORD && (
             <SignUpOptionalSetPasswordForm
               email={email}
@@ -83,19 +104,30 @@ export const SignUpRoot = observer(() => {
           )}
         </>
       </div>
-      {isOAuthEnabled && signInStep && OAUTH_ENABLED_STEPS.includes(signInStep) && (
+      {signInStep && (
         <>
-          <OAuthOptions />
-          <p className="mt-6 text-center text-xs text-onboarding-text-300">
-            Already using Plane?{" "}
+          {isOAuthEnabled && <OAuthOptions />}
+          <div className="mx-auto mt-8 text-center text-base text-onboarding-text-300 sm:w-96">
+            By creating an account, you agree to our <br />
             <Link
-              href="/"
-              onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
-              className="font-medium text-custom-primary-100 underline"
+              href="https://plane.so/legals/terms-and-conditions"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium underline"
             >
-              Sign in
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="https://plane.so/legals/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium underline"
+            >
+              Privacy Policy
             </Link>
-          </p>
+            .
+          </div>
         </>
       )}
     </>
