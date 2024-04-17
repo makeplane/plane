@@ -1,27 +1,32 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { DraggableProvidedDragHandleProps, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { useRouter } from "next/router";
 import { X, Pencil } from "lucide-react";
+// types
 import { IIssueLabel } from "@plane/types";
 // hooks
 import { useLabel } from "@/hooks/store";
-// types
 // components
 import { CreateUpdateLabelInline } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
+import { LabelDndHOC } from "./label-drag-n-drop-HOC";
 
 type Props = {
   label: IIssueLabel;
   handleLabelDelete: (label: IIssueLabel) => void;
-  draggableSnapshot: DraggableStateSnapshot;
-  dragHandleProps: DraggableProvidedDragHandleProps;
   setIsUpdating: Dispatch<SetStateAction<boolean>>;
+  isParentDragging?: boolean;
   isChild: boolean;
+  isLastChild: boolean;
+  onDrop: (
+    draggingLabelId: string,
+    droppedParentId: string | null,
+    droppedLabelId: string | undefined,
+    dropAtEndOfList: boolean
+  ) => void;
 };
 
 export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
-  const { label, setIsUpdating, handleLabelDelete, draggableSnapshot, dragHandleProps, isChild } = props;
-  const { combineTargetFor, isDragging } = draggableSnapshot;
+  const { label, setIsUpdating, handleLabelDelete, isChild, isLastChild, isParentDragging = false, onDrop } = props;
   // states
   const [isEditLabelForm, setEditLabelForm] = useState(false);
   // router
@@ -59,31 +64,39 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
   ];
 
   return (
-    <div
-      className={`group relative flex items-center justify-between gap-2 space-y-3 rounded border-[0.5px] border-custom-border-200 ${
-        !isChild && combineTargetFor ? "bg-custom-background-80" : ""
-      } ${isDragging ? "bg-custom-background-80 shadow-custom-shadow-xs" : ""} bg-custom-background-100 px-1 py-2.5`}
-    >
-      {isEditLabelForm ? (
-        <CreateUpdateLabelInline
-          labelForm={isEditLabelForm}
-          setLabelForm={setEditLabelForm}
-          isUpdating
-          labelToUpdate={label}
-          onClose={() => {
-            setEditLabelForm(false);
-            setIsUpdating(false);
-          }}
-        />
-      ) : (
-        <LabelItemBlock
-          label={label}
-          isDragging={isDragging}
-          customMenuItems={customMenuItems}
-          dragHandleProps={dragHandleProps}
-          handleLabelDelete={handleLabelDelete}
-        />
+    <LabelDndHOC label={label} isGroup={false} isChild={isChild} isLastChild={isLastChild} onDrop={onDrop}>
+      {(isDragging, isDroppingInLabel, dragHandleRef) => (
+        <div
+          className={`rounded ${isDroppingInLabel ? "border-[2px] border-custom-primary-100" : "border-[1.5px] border-transparent"}`}
+        >
+          <div
+            className={`py-3 px-1 group relative flex items-center justify-between gap-2 space-y-3 rounded  ${
+              isDroppingInLabel ? "" : "border-[0.5px] border-custom-border-200"
+            } ${isDragging || isParentDragging ? "bg-custom-background-80" : "bg-custom-background-100"}`}
+          >
+            {isEditLabelForm ? (
+              <CreateUpdateLabelInline
+                labelForm={isEditLabelForm}
+                setLabelForm={setEditLabelForm}
+                isUpdating
+                labelToUpdate={label}
+                onClose={() => {
+                  setEditLabelForm(false);
+                  setIsUpdating(false);
+                }}
+              />
+            ) : (
+              <LabelItemBlock
+                label={label}
+                isDragging={isDragging}
+                customMenuItems={customMenuItems}
+                handleLabelDelete={handleLabelDelete}
+                dragHandleRef={dragHandleRef}
+              />
+            )}
+          </div>
+        </div>
       )}
-    </div>
+    </LabelDndHOC>
   );
 };
