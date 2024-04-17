@@ -42,7 +42,7 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
           {inboxSorting?.order_by?.includes(option.key) && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2" />
+      <hr className="my-2 border-custom-border-200" />
       {INBOX_ISSUE_SORT_BY_OPTIONS.map((option) => (
         <CustomMenu.MenuItem
           key={option.key}
