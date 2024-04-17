@@ -34,7 +34,7 @@ urlpatterns = [
         name="transfer-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:pk>/archive/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/archive/",
         CycleArchiveUnarchiveAPIEndpoint.as_view(),
         name="cycle-archive-unarchive",
     ),

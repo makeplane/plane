@@ -247,14 +247,15 @@ export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
 };
 
 const CommandList = ({ items, command }: { items: CommandItemProps[]; command: any; editor: any; range: any }) => {
+  // states
   const [selectedIndex, setSelectedIndex] = useState(0);
+  // refs
+  const commandListContainer = useRef<HTMLDivElement>(null);
 
   const selectItem = useCallback(
     (index: number) => {
       const item = items[index];
-      if (item) {
-        command(item);
-      }
+      if (item) command(item);
     },
     [command, items]
   );
@@ -289,8 +290,6 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
     setSelectedIndex(0);
   }, [items]);
 
-  const commandListContainer = useRef<HTMLDivElement>(null);
-
   useLayoutEffect(() => {
     const container = commandListContainer?.current;
 
@@ -299,29 +298,31 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
     if (item && container) updateScrollView(container, item);
   }, [selectedIndex]);
 
-  return items.length > 0 ? (
+  if (items.length <= 0) return null;
+
+  return (
     <div
       id="slash-command"
       ref={commandListContainer}
-      className="fixed z-50 h-auto max-h-[330px] w-52 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
+      className="z-10 max-h-80 min-w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
     >
       {items.map((item, index) => (
         <button
           key={item.key}
           className={cn(
-            `flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-custom-text-100 hover:bg-custom-background-80`,
+            "flex items-center gap-2 w-full rounded px-1 py-1.5 text-sm text-left truncate text-custom-text-200 hover:bg-custom-background-80",
             {
               "bg-custom-background-80": index === selectedIndex,
             }
           )}
           onClick={() => selectItem(index)}
         >
-          <div className="grid flex-shrink-0 place-items-center">{item.icon}</div>
-          <p>{item.title}</p>
+          <span className="grid place-items-center flex-shrink-0">{item.icon}</span>
+          <p className="flex-grow truncate">{item.title}</p>
         </button>
       ))}
     </div>
-  ) : null;
+  );
 };
 
 interface CommandListInstance {
@@ -338,10 +339,12 @@ const renderItems = () => {
         editor: props.editor,
       });
 
+      const tippyContainer = document.querySelector(".active-editor") ?? document.querySelector("#editor-container");
+
       // @ts-expect-error Tippy overloads are messed up
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.querySelector(".active-editor") ?? document.querySelector("#editor-container"),
+        appendTo: tippyContainer,
         content: component.element,
         showOnCreate: true,
         interactive: true,

@@ -11,14 +11,15 @@ services:
     depends_on:
       - api
 
-  godmode:
-    container_name: godmode
+  admin:
+    container_name: admin
     build:
       context: .
-      dockerfile: ./god-mode/Dockerfile.godmode
+      dockerfile: ./admin/Dockerfile.admin
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    command: node admin/server.js admin
     depends_on:
       - api
       - web
@@ -150,7 +151,7 @@ services:
       - web
       - api
       - space
-      - godmode
+      - admin
 
 volumes:
   pgdata:

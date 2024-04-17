@@ -19,7 +19,7 @@ export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspa
   // refs
   const ref = React.useRef(null);
   // store hooks
-  const { fetchCycleDetails } = useCycle();
+  const { fetchCycleDetails, fetchArchivedCycleDetails } = useCycle();
 
   const handleClose = () => {
     delete router.query.peekCycle;
@@ -30,9 +30,10 @@ export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspa
   };
 
   useEffect(() => {
-    if (!peekCycle || isArchived) return;
-    fetchCycleDetails(workspaceSlug, projectId, peekCycle.toString());
-  }, [fetchCycleDetails, isArchived, peekCycle, projectId, workspaceSlug]);
+    if (!peekCycle) return;
+    if (isArchived) fetchArchivedCycleDetails(workspaceSlug, projectId, peekCycle.toString());
+    else fetchCycleDetails(workspaceSlug, projectId, peekCycle.toString());
+  }, [fetchArchivedCycleDetails, fetchCycleDetails, isArchived, peekCycle, projectId, workspaceSlug]);
 
   return (
     <>

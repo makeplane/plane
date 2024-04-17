@@ -1,12 +1,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Circle, Info, Lock, Minus, Star, UsersRound } from "lucide-react";
+import { Circle, Info, Lock, Minus, UsersRound } from "lucide-react";
 import { Avatar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
+import { FavoriteStar } from "@/components/core";
 import { PageQuickActions } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useMember, usePage } from "@/hooks/store";
@@ -86,21 +86,14 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
         </Tooltip>
 
         {/* favorite/unfavorite */}
-        <button
-          type="button"
-          className="h-4 w-4 grid place-items-center"
+        <FavoriteStar
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             handleFavorites();
           }}
-        >
-          <Star
-            className={cn("h-4 w-4 text-custom-text-300 transition-all", {
-              "fill-yellow-500 stroke-yellow-500": is_favorite,
-            })}
-          />
-        </button>
+          selected={is_favorite}
+        />
 
         {/* quick actions dropdown */}
         <PageQuickActions pageId={pageId} projectId={projectId} workspaceSlug={workspaceSlug} />

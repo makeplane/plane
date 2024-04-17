@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
+// types
+import { IEmailCheckData } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   SignInEmailForm,
@@ -9,12 +12,13 @@ import {
   OAuthOptions,
   SignInOptionalSetPasswordForm,
 } from "@/components/account";
-import { LatestFeatureBlock } from "@/components/common";
-// constants
-import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 import useSignInRedirection from "@/hooks/use-sign-in-redirection";
+// services
+import { AuthService } from "@/services/auth.service";
+
+const authService = new AuthService();
 
 export enum ESignInSteps {
   EMAIL = "EMAIL",
@@ -26,20 +30,32 @@ export enum ESignInSteps {
 
 export const SignInRoot = observer(() => {
   // states
-  const [signInStep, setSignInStep] = useState<ESignInSteps | null>(null);
+  const [signInStep, setSignInStep] = useState<ESignInSteps | null>(ESignInSteps.EMAIL);
   const [email, setEmail] = useState("");
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // hooks
   const { instance } = useInstance();
-  const { captureEvent } = useEventTracker();
   // derived values
   const isSmtpConfigured = instance?.config?.is_smtp_configured;
 
   // step 1 submit handler- email verification
-  const handleEmailVerification = (isPasswordAutoset: boolean) => {
-    if (isSmtpConfigured && isPasswordAutoset) setSignInStep(ESignInSteps.UNIQUE_CODE);
-    else setSignInStep(ESignInSteps.PASSWORD);
+  const handleEmailVerification = async (data: IEmailCheckData) => {
+    setEmail(data.email);
+
+    await authService
+      .emailCheck(data)
+      .then((res) => {
+        if (isSmtpConfigured && res.is_password_autoset) setSignInStep(ESignInSteps.UNIQUE_CODE);
+        else setSignInStep(ESignInSteps.PASSWORD);
+      })
+      .catch((err) =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
+        })
+      );
   };
 
   // step 2 submit handler- unique code sign in
@@ -56,18 +72,11 @@ export const SignInRoot = observer(() => {
   const isOAuthEnabled =
     instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled);
 
-  useEffect(() => {
-    if (isSmtpConfigured) setSignInStep(ESignInSteps.EMAIL);
-    else setSignInStep(ESignInSteps.PASSWORD);
-  }, [isSmtpConfigured]);
-
   return (
     <>
       <div className="mx-auto flex flex-col">
         <>
-          {signInStep === ESignInSteps.EMAIL && (
-            <SignInEmailForm onSubmit={handleEmailVerification} updateEmail={(newEmail) => setEmail(newEmail)} />
-          )}
+          {signInStep === ESignInSteps.EMAIL && <SignInEmailForm onSubmit={handleEmailVerification} />}
           {signInStep === ESignInSteps.UNIQUE_CODE && (
             <SignInUniqueCodeForm
               email={email}
@@ -107,23 +116,7 @@ export const SignInRoot = observer(() => {
         </>
       </div>
 
-      {isOAuthEnabled &&
-        (signInStep === ESignInSteps.EMAIL || (!isSmtpConfigured && signInStep === ESignInSteps.PASSWORD)) && (
-          <>
-            <OAuthOptions />
-            <p className="mt-6 text-center text-xs text-onboarding-text-300">
-              Don{"'"}t have an account?{" "}
-              <Link
-                href="/accounts/sign-up"
-                onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
-                className="font-medium text-custom-primary-100 underline"
-              >
-                Sign up
-              </Link>
-            </p>
-          </>
-        )}
-      <LatestFeatureBlock />
+      {isOAuthEnabled && signInStep !== ESignInSteps.OPTIONAL_SET_PASSWORD && <OAuthOptions />}
     </>
   );
 });

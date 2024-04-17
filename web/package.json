@@ -12,6 +12,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "^1.1.3",
+    "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^1.0.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
     "@hello-pangea/dnd": "^16.3.0",
@@ -58,9 +60,11 @@
     "swr": "^2.1.3",
     "tailwind-merge": "^2.0.0",
     "use-debounce": "^9.0.4",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
+    "prettier": "^3.2.5",
     "@types/dompurify": "^3.0.5",
     "@types/js-cookie": "^3.0.2",
     "@types/lodash": "^4.14.202",
@@ -70,8 +74,8 @@
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^18.2.17",
     "@types/uuid": "^8.3.4",
+    "@types/zxcvbn": "^4.4.4",
     "eslint-config-custom": "*",
-    "prettier": "^2.8.7",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
     "typescript": "4.7.4"

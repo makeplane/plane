@@ -6,7 +6,7 @@
   "workspaces": [
     "web",
     "space",
-    "god-mode",
+    "admin",
     "packages/editor/*",
     "packages/eslint-config-custom",
     "packages/tailwind-config-custom",
@@ -29,7 +29,7 @@
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
     "tailwindcss": "^3.3.3",
-    "turbo": "^1.11.3"
+    "turbo": "^1.13.2"
   },
   "resolutions": {
     "@types/react": "18.2.48"

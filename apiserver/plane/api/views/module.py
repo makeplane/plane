@@ -554,7 +554,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
-    def get(self, request, slug, project_id):
+    def get(self, request, slug, project_id, pk):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
@@ -570,6 +570,13 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         module = Module.objects.get(
             pk=pk, project_id=project_id, workspace__slug=slug
         )
+        if module.status not in ["completed", "cancelled"]:
+            return Response(
+                {
+                    "error": "Only completed or cancelled modules can be archived"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         module.archived_at = timezone.now()
         module.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

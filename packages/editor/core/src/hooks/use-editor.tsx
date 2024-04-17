@@ -19,7 +19,7 @@ interface CustomEditorProps {
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
   deleteFile: DeleteImage;
-  cancelUploadImage?: () => any;
+  cancelUploadImage?: () => void;
   initialValue: string;
   editorClassName: string;
   // undefined when prop is not passed, null if intentionally passed to stop
@@ -34,6 +34,8 @@ interface CustomEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   handleEditorReady?: (value: boolean) => void;
+  placeholder?: string | ((isFocused: boolean) => string);
+  tabIndex?: number;
 }
 
 export const useEditor = ({
@@ -48,25 +50,32 @@ export const useEditor = ({
   extensions = [],
   onChange,
   forwardedRef,
+  tabIndex,
   restoreFile,
   handleEditorReady,
   mentionHandler,
+  placeholder,
 }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
-      ...CoreEditorProps(uploadFile, editorClassName),
+      ...CoreEditorProps(editorClassName),
       ...editorProps,
     },
     extensions: [
-      ...CoreEditorExtensions(
-        {
+      ...CoreEditorExtensions({
+        mentionConfig: {
           mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
           mentionHighlights: mentionHandler.highlights ?? [],
         },
-        deleteFile,
-        restoreFile,
-        cancelUploadImage
-      ),
+        fileConfig: {
+          deleteFile,
+          restoreFile,
+          cancelUploadImage,
+          uploadFile,
+        },
+        placeholder,
+        tabIndex,
+      }),
       ...extensions,
     ],
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
@@ -84,18 +93,37 @@ export const useEditor = ({
     },
   });
 
-  // for syncing swr data on tab refocus etc, can remove it once this is merged
-  // https://github.com/ueberdosis/tiptap/pull/4453
+  const editorRef: MutableRefObject<Editor | null> = useRef(null);
+
+  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
+
+  // Inside your component or hook
+  const savedSelectionRef = useRef(savedSelection);
+
+  // Update the ref whenever savedSelection changes
+  useEffect(() => {
+    savedSelectionRef.current = savedSelection;
+  }, [savedSelection]);
+
+  // Effect for syncing SWR data
   useEffect(() => {
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
     if (value === null || value === undefined) return;
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(value);
+    if (editor && !editor.isDestroyed && !editor.storage.image.uploadInProgress) {
+      try {
+        editor.commands.setContent(value);
+        const currentSavedSelection = savedSelectionRef.current;
+        if (currentSavedSelection) {
+          const docLength = editor.state.doc.content.size;
+          const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
+          editor.commands.setTextSelection(relativePosition);
+        }
+      } catch (error) {
+        console.error("Error syncing editor content with external value:", error);
+      }
+    }
   }, [editor, value, id]);
-
-  const editorRef: MutableRefObject<Editor | null> = useRef(null);
-
-  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
 
   useImperativeHandle(
     forwardedRef,
@@ -155,12 +183,21 @@ export const useEditor = ({
         scrollSummary(editorRef.current, marking);
       },
       setFocusAtPosition: (position: number) => {
-        if (!editorRef.current) return;
-        editorRef.current
-          .chain()
-          .insertContentAt(position, [{ type: "paragraph" }])
-          .focus()
-          .run();
+        if (!editorRef.current || editorRef.current.isDestroyed) {
+          console.error("Editor reference is not available or has been destroyed.");
+          return;
+        }
+        try {
+          const docSize = editorRef.current.state.doc.content.size;
+          const safePosition = Math.max(0, Math.min(position, docSize));
+          editorRef.current
+            .chain()
+            .insertContentAt(safePosition, [{ type: "paragraph" }])
+            .focus()
+            .run();
+        } catch (error) {
+          console.error("An error occurred while setting focus at position:", error);
+        }
       },
     }),
     [editorRef, savedSelection, uploadFile]
