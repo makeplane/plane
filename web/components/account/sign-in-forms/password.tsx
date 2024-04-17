@@ -8,7 +8,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ESignInSteps, ForgotPasswordPopover } from "@/components/account";
 // constants
-import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "@/constants/event-tracker";
+import { FORGOT_PASSWORD } from "@/constants/event-tracker";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { checkEmailValidity } from "@/helpers/string.helper";
@@ -37,7 +37,7 @@ const defaultValues: TPasswordFormValues = {
 const authService = new AuthService();
 
 export const SignInPasswordForm: React.FC<Props> = observer((props) => {
-  const { email, handleStepChange, handleEmailClear, onSubmit } = props;
+  const { email, handleStepChange, handleEmailClear } = props;
   // states
   const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);

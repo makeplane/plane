@@ -1,18 +1,15 @@
 import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import { CircleCheck, XCircle } from "lucide-react";
-import { IEmailCheckData, IMagicSignInData } from "@plane/types";
+import { IEmailCheckData } from "@plane/types";
 // services
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 
-import { CODE_VERIFIED } from "@/constants/event-tracker";
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { checkEmailValidity } from "@/helpers/string.helper";
-import { useEventTracker } from "@/hooks/store";
+// import { useEventTracker } from "@/hooks/store";
 
 import useTimer from "@/hooks/use-timer";
 import { AuthService } from "@/services/auth.service";
-import { UserService } from "@/services/user.service";
+// import { UserService } from "@/services/user.service";
 // hooks
 // ui
 // helpers
@@ -38,15 +35,14 @@ const defaultValues: TUniqueCodeFormValues = {
 
 // services
 const authService = new AuthService();
-const userService = new UserService();
 
 export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
-  const { email, onSubmit, handleEmailClear, submitButtonText } = props;
+  const { email,  handleEmailClear, submitButtonText } = props;
   // states
   const [uniqueCodeFormData, setUniqueCodeFormData] = useState<TUniqueCodeFormValues>({ ...defaultValues, email });
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // store hooks
-  const { captureEvent } = useEventTracker();
+  // const { captureEvent } = useEventTracker();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(30);
 

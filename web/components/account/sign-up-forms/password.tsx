@@ -26,7 +26,7 @@ const defaultValues: TPasswordFormValues = {
 };
 
 export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
-  const { email, handleEmailClear, onSubmit } = props;
+  const { email, handleEmailClear } = props;
   // states
   const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
   const [showPassword, setShowPassword] = useState(false);
