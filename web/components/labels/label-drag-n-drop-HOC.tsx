@@ -3,14 +3,31 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
-import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
+import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import { createRoot } from "react-dom/client";
 // types
-import { IIssueLabel, IPragmaticPayloadLocation, InstructionType, TDropTarget } from "@plane/types";
+import { IIssueLabel, InstructionType } from "@plane/types";
+// ui
 import { DropIndicator } from "@plane/ui";
-import { useLabel } from "@/hooks/store";
+// components
 import { LabelName } from "./label-block/label-name";
+import { TargetData, getCanDrop, getInstructionFromPayload } from "./label-utils";
+
+type LabelDragPreviewProps = {
+  label: IIssueLabel;
+  isGroup: boolean;
+};
+
+export const LabelDragPreview = (props: LabelDragPreviewProps) => {
+  const { label, isGroup } = props;
+
+  return (
+    <div className="py-3 pl-2 pr-4 border-[1px] border-custom-border-200 bg-custom-background-100">
+      <LabelName name={label.name} color={label.color} isGroup={isGroup} />
+    </div>
+  );
+};
 
 type Props = {
   label: IIssueLabel;
@@ -30,54 +47,8 @@ type Props = {
   ) => void;
 };
 
-type TargetData = {
-  id: string;
-  parentId: string | null;
-  isGroup: boolean;
-  isChild: boolean;
-};
-
-const getInstructionFromPayload = (
-  dropTarget: TDropTarget,
-  source: TDropTarget,
-  location: IPragmaticPayloadLocation
-): InstructionType | undefined => {
-  const dropTargetData = dropTarget?.data as TargetData;
-  const sourceData = source?.data as TargetData;
-
-  const allDropTargets = location?.current?.dropTargets;
-
-  if (allDropTargets?.length > 1 && dropTargetData?.isGroup) return "make-child";
-
-  if (!dropTargetData || !sourceData) return undefined;
-
-  let instruction = extractInstruction(dropTargetData)?.type;
-
-  if (instruction === "instruction-blocked") {
-    instruction = dropTargetData.isChild ? "reorder-above" : "make-child";
-  }
-
-  if (instruction === "make-child" && sourceData.isGroup) instruction = "reorder-above";
-
-  return instruction;
-};
-
-const getCanDrop = (source: TDropTarget, label: IIssueLabel | undefined, isCurrentChild: boolean) => {
-  const sourceData = source?.data;
-
-  if (!sourceData) return false;
-
-  if (sourceData.id === label?.id || sourceData.id === label?.parent) return false;
-
-  if (isCurrentChild && sourceData.isGroup) return false;
-
-  return true;
-};
-
 export const LabelDndHOC = observer((props: Props) => {
   const { label, isGroup, isChild, isLastChild, children, onDrop } = props;
-
-  const { getLabelById } = useLabel();
 
   const [isDragging, setIsDragging] = useState(false);
   const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
@@ -122,7 +93,9 @@ export const LabelDndHOC = observer((props: Props) => {
 
           const blockedStates: InstructionType[] = [];
 
+          // if is currently a child then block make-child instruction
           if (isChild) blockedStates.push("make-child");
+          // if is currently is not a last child then block reorder-below instruction
           if (!isLastChild) blockedStates.push("reorder-below");
 
           return attachInstruction(data, {
@@ -148,6 +121,7 @@ export const LabelDndHOC = observer((props: Props) => {
 
           if (isChild || !dropTargets || dropTargets.length <= 0) return;
 
+          // if the label is dropped on both a child and it's parent at the same time then get only the child's drop target
           const dropTarget =
             dropTargets.length > 1 ? dropTargets.find((target) => target?.data?.isChild) : dropTargets[0];
 
@@ -158,24 +132,22 @@ export const LabelDndHOC = observer((props: Props) => {
 
           if (!dropTarget || !dropTargetData) return;
 
+          // get possible instructions for the dropTarget
           const instruction = getInstructionFromPayload(dropTarget, source, location);
 
+          // if instruction is make child the set parentId as current dropTarget Id or else set it as dropTarget's parentId
           parentId = instruction === "make-child" ? dropTargetData.id : dropTargetData.parentId;
+          // if instruction is any other than make-child, i.e., reorder-above and reorder-below then set the droppedId as dropTarget's id
           const droppedLabelId = instruction !== "make-child" ? dropTargetData.id : undefined;
+          // if instruction is to reorder-below that is enabled only for end of the last items in the list then dropAtEndOfList as true
           if (instruction === "reorder-below") dropAtEndOfList = true;
 
           const sourceData = source.data as TargetData;
-          console.log("onDrop", {
-            draggingLabelId: sourceData.id ? getLabelById(sourceData.id)?.name : source.data.id,
-            droppedParentId: parentId ? getLabelById(parentId)?.name : parentId,
-            droppedLabelId: droppedLabelId ? getLabelById(droppedLabelId)?.name : droppedLabelId,
-            dropAtEndOfList,
-          });
           if (sourceData.id) onDrop(sourceData.id as string, parentId, droppedLabelId, dropAtEndOfList);
         },
       })
     );
-  }, [label, isChild, isGroup, isLastChild]);
+  }, [labelRef?.current, dragHandleRef?.current, label, isChild, isGroup, isLastChild, onDrop]);
 
   const isMakeChild = instruction == "make-child";
 
@@ -187,18 +159,3 @@ export const LabelDndHOC = observer((props: Props) => {
     </div>
   );
 });
-
-type LabelDragPreviewProps = {
-  label: IIssueLabel;
-  isGroup: boolean;
-};
-
-export const LabelDragPreview = (props: LabelDragPreviewProps) => {
-  const { label, isGroup } = props;
-
-  return (
-    <div className="py-3 pl-2 pr-4 border-[1px] border-custom-border-200 bg-custom-background-100">
-      <LabelName name={label.name} color={label.color} isGroup={isGroup} />
-    </div>
-  );
-};

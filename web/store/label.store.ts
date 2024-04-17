@@ -223,15 +223,17 @@ export class LabelStore implements ILabelStore {
 
     if (!currLabel || !labelTree) return;
 
+    //If its is dropped in the same parent then, there is not specific label on which it is mentioned then keep it's original position
     if (currLabel.parent === droppedParentId && !droppedLabelId) return;
 
     const data: Partial<IIssueLabel> = { parent: droppedParentId };
-    //find array in which the label is to be added
+
+    // find array in which the label is to be added
     if (!droppedParentId) currentArray = labelTree;
     else currentArray = labelTree?.find((label) => label.id === droppedParentId)?.children || [];
 
     let droppedLabelIndex = currentArray.findIndex((label) => label.id === droppedLabelId);
-
+    //if the position of droppedLabelId cannot be determined then drop it at the end of the list
     if (dropAtEndOfList || droppedLabelIndex === -1) droppedLabelIndex = currentArray.length;
 
     //if currently adding to a new array, then let backend assign a sort order
@@ -256,6 +258,7 @@ export class LabelStore implements ILabelStore {
       }
       data.sort_order = sortOrder;
     }
+
     return this.updateLabel(workspaceSlug, projectId, draggingLabelId, data);
   };
 
