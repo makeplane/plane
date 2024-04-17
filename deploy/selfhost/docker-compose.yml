@@ -59,6 +59,18 @@ services:
       - api
       - worker
       - web
+  
+  admin:
+    <<: *app-env
+    image: ${DOCKERHUB_USER:-makeplane}/plane-space:${APP_RELEASE:-stable}
+    pull_policy: ${PULL_POLICY:-always}
+    restart: unless-stopped
+    command:  node admin/server.js admin
+    deploy:
+      replicas: ${ADMIN_REPLICAS:-1}
+    depends_on:
+      - api
+      - web
 
   api:
     <<: *app-env
