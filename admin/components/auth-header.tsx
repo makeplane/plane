@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { usePathname } from "next/navigation";
 // mobx
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 // ui
 import { Settings } from "lucide-react";
 // icons

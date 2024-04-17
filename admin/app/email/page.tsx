@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 // hooks
 import { useInstance } from "@/hooks";
 // ui

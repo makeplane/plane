@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "next-themes";

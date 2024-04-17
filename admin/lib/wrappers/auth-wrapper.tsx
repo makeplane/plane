@@ -1,12 +1,13 @@
 "use client";
 
 import { FC, ReactNode } from "react";
-import { usePathname, redirect } from "next/navigation";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // layouts
-import { AuthLayout } from "@/layouts";
+import { AuthLayout, DefaultLayout } from "@/layouts";
+// components
+import { InstanceSignInForm } from "@/components/user-authentication-forms";
 // hooks
 import { useUser } from "@/hooks";
 // helpers
@@ -17,8 +18,6 @@ export interface IAuthWrapper {
 }
 
 export const AuthWrapper: FC<IAuthWrapper> = observer((props) => {
-  const pathname = usePathname();
-
   const { children } = props;
   // hooks
   const { isLoading, userStatus, currentUser, fetchCurrentUser } = useUser();
@@ -41,11 +40,12 @@ export const AuthWrapper: FC<IAuthWrapper> = observer((props) => {
       </div>
     );
 
-  if ((userStatus && userStatus?.status === EUserStatus.AUTHENTICATION_NOT_DONE) || currentUser === undefined) {
-    if (!["/", "/setup", "/login"].includes(pathname)) redirect("/general");
-  } else {
-    if (["/", "/setup", "/login"].includes(pathname)) redirect("/general");
-  }
+  if ((userStatus && userStatus?.status === EUserStatus.AUTHENTICATION_NOT_DONE) || currentUser === undefined)
+    return (
+      <DefaultLayout>
+        <InstanceSignInForm />
+      </DefaultLayout>
+    );
 
   return <AuthLayout>{children}</AuthLayout>;
 });

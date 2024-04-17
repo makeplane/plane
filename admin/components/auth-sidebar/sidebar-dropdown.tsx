@@ -3,7 +3,7 @@
 import { Fragment } from "react";
 // import { useRouter } from "next/navigation";
 import { useTheme as useNextTheme } from "next-themes";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 // import { mutate } from "swr";
 // components
 import { Menu, Transition } from "@headlessui/react";

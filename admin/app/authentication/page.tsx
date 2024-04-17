@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 // hooks
 import { useInstance } from "@/hooks";
 // ui

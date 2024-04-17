@@ -7,7 +7,7 @@ import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 import { useTheme } from "@/hooks";
 // ui
 import { Tooltip } from "@plane/ui";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
 const INSTANCE_ADMIN_LINKS = [
   {

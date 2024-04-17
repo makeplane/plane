@@ -1,3 +1,5 @@
+"use client";
+
 // layouts
 import { DefaultLayout } from "@/layouts";
 // components

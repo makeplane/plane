@@ -1,6 +1,6 @@
 "use client";
 
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 // components
 import { PageHeader } from "@/components/core";
 import { InstanceGeneralForm } from "@/components/general";
@@ -13,7 +13,7 @@ const GeneralPage = observer(() => {
   return (
     <>
       <PageHeader title="General Settings - God Mode" />
-      <div className="flex h-full w-full max-w-6xl flex-col gap-4">
+      <div className="flex h-full w-full max-w-6xl flex-col gap-4 border border-red-500">
         <div className="border-b border-custom-border-100 pb-3">
           <div className="pb-1 text-xl font-medium text-custom-text-100">General settings</div>
           <div className="text-sm font-normal text-custom-text-300">
