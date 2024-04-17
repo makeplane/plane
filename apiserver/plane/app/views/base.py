@@ -19,7 +19,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 # Module imports
-from plane.app.authentication.session import BaseSessionAuthentication
+from plane.authentication.session import BaseSessionAuthentication
 from plane.bgtasks.webhook_task import send_webhook
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator

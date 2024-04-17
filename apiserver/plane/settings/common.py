@@ -56,7 +56,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
+    "plane.authentication.middleware.session.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -330,6 +330,9 @@ SESSION_COOKIE_AGE = 604800
 SESSION_COOKIE_NAME = "plane-session-id"
 SESSION_COOKIE_DOMAIN = None
 SESSION_SAVE_EVERY_REQUEST = True
+
+# Admin Cookie
+ADMIN_SESSION_COOKIE_NAME = "plane-admin-session-id"
 
 # CSRF cookies
 CSRF_COOKIE_SECURE = secure_origins
