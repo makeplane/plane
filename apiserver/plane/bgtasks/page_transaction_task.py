@@ -37,10 +37,10 @@ def page_transaction(new_value, old_value, page_id):
     page = Page.objects.get(pk=page_id)
     new_page_mention = PageLog.objects.filter(page_id=page_id).exists()
 
-    old_value = json.loads(old_value)
+    old_value = json.loads(old_value) if old_value else {}
 
     new_transactions = []
-    deleted_transaction_ids = set() 
+    deleted_transaction_ids = set()
 
     # TODO - Add "issue-embed-component", "img", "todo" components
     components = ["mention-component"]
@@ -49,8 +49,8 @@ def page_transaction(new_value, old_value, page_id):
         new_mentions = extract_components(new_value, component)
 
         new_mentions_ids = {mention["id"] for mention in new_mentions}
-        old_mention_ids = {mention["id"] for mention in old_mentions} 
-        deleted_transaction_ids.update(old_mention_ids - new_mentions_ids)  
+        old_mention_ids = {mention["id"] for mention in old_mentions}
+        deleted_transaction_ids.update(old_mention_ids - new_mentions_ids)
 
         new_transactions.extend(
             PageLog(
@@ -68,9 +68,9 @@ def page_transaction(new_value, old_value, page_id):
         )
 
     # Create new PageLog objects for new transactions
-    PageLog.objects.bulk_create(new_transactions, batch_size=10, ignore_conflicts=True)
+    PageLog.objects.bulk_create(
+        new_transactions, batch_size=10, ignore_conflicts=True
+    )
 
     # Delete the removed transactions
-    PageLog.objects.filter(
-        transaction__in=deleted_transaction_ids
-    ).delete()
+    PageLog.objects.filter(transaction__in=deleted_transaction_ids).delete()

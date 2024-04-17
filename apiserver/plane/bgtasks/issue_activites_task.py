@@ -1553,6 +1553,46 @@ def delete_draft_issue_activity(
     )
 
 
+def create_inbox_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+    status_dict = {
+        -2: "Pending",
+        -1: "Rejected",
+        0: "Snoozed",
+        1: "Accepted",
+        2: "Duplicate",
+    }
+    if requested_data.get("status") is not None:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the inbox status",
+                field="inbox",
+                verb=requested_data.get("status"),
+                actor_id=actor_id,
+                epoch=epoch,
+                old_value=status_dict.get(current_instance.get("status")),
+                new_value=status_dict.get(requested_data.get("status")),
+            )
+        )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1613,6 +1653,7 @@ def issue_activity(
             "issue_draft.activity.created": create_draft_issue_activity,
             "issue_draft.activity.updated": update_draft_issue_activity,
             "issue_draft.activity.deleted": delete_draft_issue_activity,
+            "inbox.activity.created": create_inbox_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

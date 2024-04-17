@@ -1,12 +1,4 @@
 import React, { useState, useRef } from "react";
-import {
-  DragDropContext,
-  Draggable,
-  DraggableProvided,
-  DraggableStateSnapshot,
-  DropResult,
-  Droppable,
-} from "@hello-pangea/dnd";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { IIssueLabel } from "@plane/types";
@@ -21,20 +13,16 @@ import {
 } from "@/components/labels";
 import { EmptyStateType } from "@/constants/empty-state";
 import { useLabel } from "@/hooks/store";
-import useDraggableInPortal from "@/hooks/use-draggable-portal";
 // components
 // ui
 // types
 // constants
-
-const LABELS_ROOT = "labels.root";
 
 export const ProjectSettingsLabelList: React.FC = observer(() => {
   // states
   const [showLabelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabel | null>(null);
-  const [isDraggingGroup, setIsDraggingGroup] = useState(false);
   // refs
   const scrollToRef = useRef<HTMLFormElement>(null);
   // router
@@ -42,44 +30,28 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
-  // portal
-  const renderDraggable = useDraggableInPortal();
 
   const newLabel = () => {
     setIsUpdating(false);
     setLabelForm(true);
   };
 
-  const onDragEnd = (result: DropResult) => {
-    const { combine, draggableId, destination, source } = result;
-
-    // return if dropped outside the DragDropContext
-    if (!combine && !destination) return;
-
-    const childLabel = draggableId.split(".")[2];
-    let parentLabel: string | undefined | null = destination?.droppableId?.split(".")[3];
-    const index = destination?.index || 0;
-
-    const prevParentLabel: string | undefined | null = source?.droppableId?.split(".")[3];
-    const prevIndex = source?.index;
-
-    if (combine && combine.draggableId) parentLabel = combine?.draggableId?.split(".")[2];
-
-    if (destination?.droppableId === LABELS_ROOT) parentLabel = null;
-
-    if (result.reason == "DROP" && childLabel != parentLabel) {
-      if (workspaceSlug && projectId) {
-        updateLabelPosition(
-          workspaceSlug?.toString(),
-          projectId?.toString(),
-          childLabel,
-          parentLabel,
-          index,
-          prevParentLabel == parentLabel,
-          prevIndex
-        );
-        return;
-      }
+  const onDrop = (
+    draggingLabelId: string,
+    droppedParentId: string | null,
+    droppedLabelId: string | undefined,
+    dropAtEndOfList: boolean
+  ) => {
+    if (workspaceSlug && projectId) {
+      updateLabelPosition(
+        workspaceSlug?.toString(),
+        projectId?.toString(),
+        draggingLabelId,
+        droppedParentId,
+        droppedLabelId,
+        dropAtEndOfList
+      );
+      return;
     }
   };
 
@@ -118,82 +90,35 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
             </div>
           ) : (
             projectLabelsTree && (
-              <DragDropContext
-                onDragEnd={onDragEnd}
-                autoScrollerOptions={{
-                  startFromPercentage: 1,
-                  disabled: false,
-                  maxScrollAtPercentage: 0,
-                  maxPixelScroll: 2,
-                }}
-              >
-                <Droppable
-                  droppableId={LABELS_ROOT}
-                  isCombineEnabled={!isDraggingGroup}
-                  ignoreContainerClipping
-                  isDropDisabled={isUpdating}
-                >
-                  {(droppableProvided, droppableSnapshot) => (
-                    <div className="mt-3" ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
-                      {projectLabelsTree.map((label, index) => {
-                        if (label.children && label.children.length) {
-                          return (
-                            <Draggable
-                              key={`label.draggable.${label.id}`}
-                              draggableId={`label.draggable.${label.id}.group`}
-                              index={index}
-                              isDragDisabled={isUpdating}
-                            >
-                              {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => {
-                                const isGroup = droppableSnapshot.draggingFromThisWith?.split(".")[3] === "group";
-                                setIsDraggingGroup(isGroup);
-
-                                return (
-                                  <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
-                                    <ProjectSettingLabelGroup
-                                      key={label.id}
-                                      label={label}
-                                      labelChildren={label.children || []}
-                                      isDropDisabled={isGroup}
-                                      dragHandleProps={provided.dragHandleProps!}
-                                      handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
-                                      draggableSnapshot={snapshot}
-                                      isUpdating={isUpdating}
-                                      setIsUpdating={setIsUpdating}
-                                    />
-                                  </div>
-                                );
-                              }}
-                            </Draggable>
-                          );
-                        }
-                        return (
-                          <Draggable
-                            key={`label.draggable.${label.id}`}
-                            draggableId={`label.draggable.${label.id}`}
-                            index={index}
-                            isDragDisabled={isUpdating}
-                          >
-                            {renderDraggable((provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-                              <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
-                                <ProjectSettingLabelItem
-                                  dragHandleProps={provided.dragHandleProps!}
-                                  draggableSnapshot={snapshot}
-                                  label={label}
-                                  setIsUpdating={setIsUpdating}
-                                  handleLabelDelete={(label) => setSelectDeleteLabel(label)}
-                                  isChild={false}
-                                />
-                              </div>
-                            ))}
-                          </Draggable>
-                        );
-                      })}
-                      {droppableProvided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </DragDropContext>
+              <div className="mt-3">
+                {projectLabelsTree.map((label, index) => {
+                  if (label.children && label.children.length) {
+                    return (
+                      <ProjectSettingLabelGroup
+                        key={label.id}
+                        label={label}
+                        labelChildren={label.children || []}
+                        handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
+                        isUpdating={isUpdating}
+                        setIsUpdating={setIsUpdating}
+                        isLastChild={index === projectLabelsTree.length - 1}
+                        onDrop={onDrop}
+                      />
+                    );
+                  }
+                  return (
+                    <ProjectSettingLabelItem
+                      label={label}
+                      key={label.id}
+                      setIsUpdating={setIsUpdating}
+                      handleLabelDelete={(label) => setSelectDeleteLabel(label)}
+                      isChild={false}
+                      isLastChild={index === projectLabelsTree.length - 1}
+                      onDrop={onDrop}
+                    />
+                  );
+                })}
+              </div>
             )
           )
         ) : (

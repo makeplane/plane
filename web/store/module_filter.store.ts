@@ -63,6 +63,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
       (projectId) => {
         if (!projectId) return;
         this.initProjectModuleFilters(projectId);
+        this.searchQuery = "";
       }
     );
   }

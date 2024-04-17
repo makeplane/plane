@@ -177,7 +177,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
               setSelectedParentIssue(issue);
             }}
             projectId={projectId}
-            issueId={data?.id}
+            issueId={undefined}
           />
         </>
       )}
