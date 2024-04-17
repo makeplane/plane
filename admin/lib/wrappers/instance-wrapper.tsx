@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
@@ -19,10 +20,10 @@ type TInstanceWrapper = {
 
 export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   const { children } = props;
+  const searchparams = useSearchParams();
+  const authEnabled = searchparams.get("auth_enabled") || "1";
   // hooks
   const { isLoading, instanceStatus, instance, fetchInstanceInfo } = useInstance();
-  // state
-  const [userSignUp, setUserSignUp] = useState(true);
 
   useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
@@ -49,10 +50,10 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
       </DefaultLayout>
     );
 
-  if (instance?.instance?.is_setup_done === false && userSignUp)
+  if (instance?.instance?.is_setup_done === false && authEnabled === "1")
     return (
       <DefaultLayout>
-        <InstanceNotReady handleUserSignUp={() => setUserSignUp(false)} />
+        <InstanceNotReady />
       </DefaultLayout>
     );
 

@@ -1,11 +1,11 @@
 "use client";
 
 import { FC, ReactNode } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // hooks
-import { useUser } from "@/hooks";
+import { useInstance, useUser } from "@/hooks";
 // helpers
 import { EAuthenticationPageType, EUserStatus } from "@/helpers";
 import { redirect } from "next/navigation";
@@ -19,6 +19,7 @@ export const AuthWrapper: FC<IAuthWrapper> = observer((props) => {
   const { children, authType = EAuthenticationPageType.AUTHENTICATED } = props;
   // hooks
   const { isLoading, userStatus, currentUser, fetchCurrentUser } = useUser();
+  const { instance } = useInstance();
 
   useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
     shouldRetryOnError: false,
@@ -44,7 +45,10 @@ export const AuthWrapper: FC<IAuthWrapper> = observer((props) => {
       else redirect("/general/");
     } else {
       if (currentUser) return <>{children}</>;
-      else redirect("/login/");
+      else {
+        if (instance?.instance?.is_setup_done) redirect("/login/");
+        else redirect("/setup/");
+      }
     }
   }
 

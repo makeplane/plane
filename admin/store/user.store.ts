@@ -11,8 +11,8 @@ export interface IUserStore {
   // observables
   isLoading: boolean;
   userStatus: TUserStatus | undefined;
-  isUserLoggedIn: boolean | null;
-  currentUser: IUser | null;
+  isUserLoggedIn: boolean | undefined;
+  currentUser: IUser | undefined;
   // fetch actions
   fetchCurrentUser: () => Promise<IUser>;
 }
@@ -21,8 +21,8 @@ export class UserStore implements IUserStore {
   // observables
   isLoading: boolean = true;
   userStatus: TUserStatus | undefined = undefined;
-  isUserLoggedIn: boolean | null = null;
-  currentUser: IUser | null = null;
+  isUserLoggedIn: boolean | undefined = undefined;
+  currentUser: IUser | undefined = undefined;
   // services
   userService;
 

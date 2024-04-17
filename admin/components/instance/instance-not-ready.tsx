@@ -1,17 +1,18 @@
 "use client";
 
 import { FC } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@plane/ui";
 // assets
 import PlaneTakeOffImage from "@/public/images/plane-takeoff.png";
 
 type TInstanceNotReady = {
-  handleUserSignUp?: () => void;
+  isRedirectionEnabled?: boolean;
 };
 
 export const InstanceNotReady: FC<TInstanceNotReady> = (props) => {
-  const { handleUserSignUp } = props;
+  const { isRedirectionEnabled = true } = props;
   return (
     <div className="h-full w-full relative container px-5 mx-auto flex justify-center items-center">
       <div className="w-auto max-w-2xl relative space-y-8 py-10">
@@ -23,10 +24,14 @@ export const InstanceNotReady: FC<TInstanceNotReady> = (props) => {
           </p>
         </div>
 
-        {handleUserSignUp && (
-          <Button size="lg" className="w-full" onClick={handleUserSignUp}>
-            Get started
-          </Button>
+        {isRedirectionEnabled && (
+          <div>
+            <Link href={"/setup/?auth_enabled=0"}>
+              <Button size="lg" className="w-full">
+                Get started
+              </Button>
+            </Link>
+          </div>
         )}
       </div>
     </div>
