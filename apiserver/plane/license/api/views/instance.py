@@ -696,9 +696,8 @@ class InstanceAdminUserMeEndpoint(BaseAPIView):
     ]
 
     def get(self, request):
-        serialized_data = InstanceAdminMeSerializer(request.user).data
-        print(serialized_data)
+        serializer = InstanceAdminMeSerializer(request.user)
         return Response(
-            serialized_data,
+            serializer.data,
             status=status.HTTP_200_OK,
         )
