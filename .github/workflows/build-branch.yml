@@ -175,7 +175,7 @@ jobs:
         uses: docker/build-push-action@v5.1.0
         with:
           context: .
-          file: ./web/Dockerfile.web
+          file: ./admin/Dockerfile.admin
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.ADMIN_TAG }}
           push: true
