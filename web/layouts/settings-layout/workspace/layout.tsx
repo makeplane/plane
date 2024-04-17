@@ -15,7 +15,7 @@ export const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
       <div className="w-80 flex-shrink-0 overflow-y-hidden pt-8 sm:hidden hidden md:block lg:block">
         <WorkspaceSettingsSidebar />
       </div>
-      <div className="relative w-full overflow-hidden">
+      <div className="flex flex-col relative w-full overflow-hidden">
         <MobileWorkspaceSettingsTabs />
         <div className="w-full pl-10 md:pl-0 overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">
           {children}
