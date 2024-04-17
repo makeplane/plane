@@ -168,15 +168,14 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
             </span>
           </CustomMenu.MenuItem>
         )}
+        <hr className="my-2 border-custom-border-200" />
         {!isCompleted && isEditingAllowed && (
-          <div className="border-t pt-1 mt-1">
-            <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-              <span className="flex items-center justify-start gap-2">
-                <Trash2 className="h-3 w-3" />
-                <span>Delete cycle</span>
-              </span>
-            </CustomMenu.MenuItem>
-          </div>
+          <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+            <span className="flex items-center justify-start gap-2">
+              <Trash2 className="h-3 w-3" />
+              <span>Delete cycle</span>
+            </span>
+          </CustomMenu.MenuItem>
         )}
       </CustomMenu>
     </>

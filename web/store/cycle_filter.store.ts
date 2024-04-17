@@ -63,6 +63,7 @@ export class CycleFilterStore implements ICycleFilterStore {
       (projectId) => {
         if (!projectId) return;
         this.initProjectCycleFilters(projectId);
+        this.searchQuery = "";
       }
     );
   }

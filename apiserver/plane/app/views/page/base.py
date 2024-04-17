@@ -1,6 +1,7 @@
 # Python imports
 import json
 from datetime import datetime
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
 from django.db import connection
@@ -142,6 +143,7 @@ class PageViewSet(BaseViewSet):
             serializer = PageDetailSerializer(
                 page, data=request.data, partial=True
             )
+            page_description = page.description_html
             if serializer.is_valid():
                 serializer.save()
                 # capture the page transaction
@@ -150,11 +152,13 @@ class PageViewSet(BaseViewSet):
                         new_value=request.data,
                         old_value=json.dumps(
                             {
-                                "description_html": page.description_html,
-                            }
+                                "description_html": page_description,
+                            },
+                            cls=DjangoJSONEncoder,
                         ),
                         page_id=pk,
                     )
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
