@@ -169,9 +169,15 @@ class PageViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, pk=None):
         page = self.get_queryset().filter(pk=pk).first()
-        return Response(
-            PageDetailSerializer(page).data, status=status.HTTP_200_OK
-        )
+        if page is None:
+            return Response(
+                {"error": "Page not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        else:
+            return Response(
+                PageDetailSerializer(page).data, status=status.HTTP_200_OK
+            )
 
     def lock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
