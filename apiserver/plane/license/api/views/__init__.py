@@ -6,4 +6,5 @@ from .instance import (
     SignUpScreenVisitedEndpoint,
     EmailCredentialCheckEndpoint,
     InstanceAdminSignUpEndpoint,
+    InstanceAdminUserMeEndpoint,
 )

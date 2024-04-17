@@ -8,6 +8,7 @@ from plane.license.api.views import (
     InstanceConfigurationEndpoint,
     InstanceEndpoint,
     SignUpScreenVisitedEndpoint,
+    InstanceAdminUserMeEndpoint,
 )
 
 urlpatterns = [
@@ -23,7 +24,7 @@ urlpatterns = [
     ),
     path(
         "admins/me/",
-        InstanceAdminEndpoint.as_view(),
+        InstanceAdminUserMeEndpoint.as_view(),
         name="instance-admins",
     ),
     path(

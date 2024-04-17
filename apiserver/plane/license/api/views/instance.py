@@ -692,12 +692,12 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
 class InstanceAdminUserMeEndpoint(BaseAPIView):
 
     permission_classes = [
-        InstanceAdmin,
+        InstanceAdminPermission,
     ]
 
-    @cache_response(60 * 60)
     def get(self, request):
         serialized_data = InstanceAdminMeSerializer(request.user).data
+        print(serialized_data)
         return Response(
             serialized_data,
             status=status.HTTP_200_OK,
