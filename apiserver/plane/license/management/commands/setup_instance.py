@@ -68,7 +68,7 @@ class Command(BaseCommand):
                     self.style.WARNING("given email is already an instance admin")
                 )
 
-            self.stdout.write(self.style.SUCCESS(f"Successful"))
+            self.stdout.write(self.style.SUCCESS("Successful"))
         except Exception as e:
             print(e)
             raise CommandError("Failure")

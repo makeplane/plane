@@ -10,6 +10,7 @@ import {
   TSubGroupedIssues,
   TUnGroupedIssues,
   TIssueKanbanFilters,
+  TIssueGroupByOptions,
 } from "@plane/types";
 // constants
 // hooks
@@ -30,13 +31,14 @@ import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 import { KanbanStoreType } from "./base-kanban-root";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
+import { KanbanDropLocation } from "./utils";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
-  sub_group_by: string | null;
-  group_by: string | null;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
   sub_group_id: string;
   isDragDisabled: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -56,7 +58,7 @@ export interface IGroupByKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  isDragStarted?: boolean;
+  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
   subGroupIssueHeaderCount?: (listId: string) => number;
 }
@@ -82,7 +84,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     addIssuesToView,
     canEditProperties,
     scrollableContainerRef,
-    isDragStarted,
+    handleOnDrop,
     showEmptyGroup = true,
     subGroupIssueHeaderCount,
   } = props;
@@ -188,7 +190,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   disableIssueCreation={disableIssueCreation}
                   canEditProperties={canEditProperties}
                   scrollableContainerRef={scrollableContainerRef}
-                  isDragStarted={isDragStarted}
+                  handleOnDrop={handleOnDrop}
                 />
               )}
             </div>
@@ -202,8 +204,8 @@ export interface IKanBan {
   issuesMap: IIssueMap;
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
-  sub_group_by: string | null;
-  group_by: string | null;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
   sub_group_id?: string;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
@@ -223,7 +225,7 @@ export interface IKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  isDragStarted?: boolean;
+  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
   subGroupIssueHeaderCount?: (listId: string) => number;
 }
 
@@ -247,7 +249,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     addIssuesToView,
     canEditProperties,
     scrollableContainerRef,
-    isDragStarted,
+    handleOnDrop,
     showEmptyGroup,
     subGroupIssueHeaderCount,
   } = props;
@@ -275,7 +277,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       addIssuesToView={addIssuesToView}
       canEditProperties={canEditProperties}
       scrollableContainerRef={scrollableContainerRef}
-      isDragStarted={isDragStarted}
+      handleOnDrop={handleOnDrop}
       showEmptyGroup={showEmptyGroup}
       subGroupIssueHeaderCount={subGroupIssueHeaderCount}
     />

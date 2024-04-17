@@ -1,7 +1,6 @@
 import StarterKit from "@tiptap/starter-kit";
 import TiptapUnderline from "@tiptap/extension-underline";
 import TextStyle from "@tiptap/extension-text-style";
-import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
@@ -14,7 +13,7 @@ import { TableRow } from "src/ui/extensions/table/table-row/table-row";
 import { ReadOnlyImageExtension } from "src/ui/extensions/image/read-only-image";
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
-import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { IMentionHighlight } from "src/types/mention-suggestion";
 import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
 import { CustomQuoteExtension } from "src/ui/extensions/quote";
@@ -23,23 +22,22 @@ import { CustomCodeBlockExtension } from "src/ui/extensions/code";
 import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
 
 export const CoreReadOnlyEditorExtensions = (mentionConfig: {
-  mentionSuggestions: IMentionSuggestion[];
-  mentionHighlights: string[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
 }) => [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "list-disc list-outside leading-3 -mt-2",
+        class: "list-disc pl-7 space-y-2",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "list-decimal list-outside leading-3 -mt-2",
+        class: "list-decimal pl-7 space-y-2",
       },
     },
     listItem: {
       HTMLAttributes: {
-        class: "leading-normal -mb-2",
+        class: "not-prose space-y-2",
       },
     },
     code: false,
@@ -49,11 +47,11 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     dropcursor: false,
     gapcursor: false,
   }),
-  CustomQuoteExtension.configure({
-    HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
-  }),
+  CustomQuoteExtension,
   CustomHorizontalRule.configure({
-    HTMLAttributes: { class: "mt-4 mb-4" },
+    HTMLAttributes: {
+      class: "my-4 border-custom-border-400",
+    },
   }),
   CustomLinkExtension.configure({
     openOnClick: true,
@@ -69,24 +67,27 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   CustomTypographyExtension,
   ReadOnlyImageExtension.configure({
     HTMLAttributes: {
-      class: "rounded-lg border border-custom-border-300",
+      class: "rounded-md",
     },
   }),
   TiptapUnderline,
   TextStyle,
-  Color,
   TaskList.configure({
     HTMLAttributes: {
-      class: "not-prose pl-2",
+      class: "not-prose pl-2 space-y-2",
     },
   }),
   TaskItem.configure({
     HTMLAttributes: {
-      class: "flex items-start my-4",
+      class: "flex pointer-events-none",
     },
     nested: true,
   }),
-  CustomCodeBlockExtension,
+  CustomCodeBlockExtension.configure({
+    HTMLAttributes: {
+      class: "",
+    },
+  }),
   CustomCodeInlineExtension,
   Markdown.configure({
     html: true,
@@ -96,5 +97,8 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   TableHeader,
   TableCell,
   TableRow,
-  Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, true),
+  Mentions({
+    mentionHighlights: mentionConfig.mentionHighlights,
+    readonly: true,
+  }),
 ];

@@ -19,7 +19,7 @@ export const ModulePeekOverview: React.FC<Props> = observer(({ projectId, worksp
   // refs
   const ref = React.useRef(null);
   // store hooks
-  const { fetchModuleDetails } = useModule();
+  const { fetchModuleDetails, fetchArchivedModuleDetails } = useModule();
 
   const handleClose = () => {
     delete router.query.peekModule;
@@ -30,10 +30,10 @@ export const ModulePeekOverview: React.FC<Props> = observer(({ projectId, worksp
   };
 
   useEffect(() => {
-    if (!peekModule || isArchived) return;
-
-    fetchModuleDetails(workspaceSlug, projectId, peekModule.toString());
-  }, [fetchModuleDetails, isArchived, peekModule, projectId, workspaceSlug]);
+    if (!peekModule) return;
+    if (isArchived) fetchArchivedModuleDetails(workspaceSlug, projectId, peekModule.toString());
+    else fetchModuleDetails(workspaceSlug, projectId, peekModule.toString());
+  }, [fetchArchivedModuleDetails, fetchModuleDetails, isArchived, peekModule, projectId, workspaceSlug]);
 
   return (
     <>

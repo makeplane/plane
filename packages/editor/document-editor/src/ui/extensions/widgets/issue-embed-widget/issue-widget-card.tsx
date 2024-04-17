@@ -25,30 +25,23 @@ export const IssueWidgetCard = (props) => {
   };
 
   return (
-    <NodeViewWrapper className="issue-embed-component m-2">
+    <NodeViewWrapper className="issue-embed-component my-2">
       {loading == 0 ? (
         <div
           onClick={completeIssueEmbedAction}
-          className={`${
-            props.selected ? "border-custom-primary-200 border-[2px]" : ""
-          } w-full cursor-pointer space-y-2 rounded-md border-[0.5px] border-custom-border-200 p-3 shadow-custom-shadow-2xs`}
+          className="w-full cursor-pointer space-y-2 rounded-md bg-custom-background-90 border-[0.5px] border-custom-border-300 p-3 shadow-custom-shadow-2xs"
         >
           <h5 className="text-xs text-custom-text-300">
             {issueDetails?.project_detail?.identifier}-{issueDetails?.sequence_id}
           </h5>
           <h4 className="break-words text-sm font-medium">{issueDetails?.name}</h4>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <div>
-              <PriorityIcon priority={issueDetails?.priority} />
-            </div>
+            <PriorityIcon priority={issueDetails?.priority} />
             <div>
               <AvatarGroup size="sm">
                 {(issueDetails?.assignee_details).map((assignee, index) => {
-                  if (assignee) {
-                    return (
-                      <Avatar key={index} name={assignee?.display_name} src={assignee?.avatar} className={"m-0"} />
-                    );
-                  }
+                  if (!assignee) null;
+                  return <Avatar key={index} name={assignee?.display_name} src={assignee?.avatar} className="!m-0" />;
                 })}
               </AvatarGroup>
             </div>

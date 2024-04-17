@@ -29,6 +29,7 @@ export type TInboxIssueFilter = {
 } & {
   [key in TInboxIssueFilterDateKeys]: string[] | undefined;
 } & {
+  state: string[] | undefined;
   status: TInboxIssueStatus[] | undefined;
   priority: TIssuePriorities[] | undefined;
   labels: string[] | undefined;

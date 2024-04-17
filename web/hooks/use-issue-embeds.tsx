@@ -19,7 +19,11 @@ export const useIssueEmbeds = () => {
 
   const { data: issuesResponse, isLoading: issuesLoading } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
-    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
   );
 
   const issues = Object.values(issuesResponse ?? {});
