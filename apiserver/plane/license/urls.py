@@ -22,6 +22,11 @@ urlpatterns = [
         name="instance-admins",
     ),
     path(
+        "admins/me/",
+        InstanceAdminEndpoint.as_view(),
+        name="instance-admins",
+    ),
+    path(
         "admins/<uuid:pk>/",
         InstanceAdminEndpoint.as_view(),
         name="instance-admins",

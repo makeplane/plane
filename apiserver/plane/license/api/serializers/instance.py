@@ -3,6 +3,7 @@ from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
 from plane.app.serializers import BaseSerializer
 from plane.app.serializers import UserAdminLiteSerializer
 from plane.license.utils.encryption import decrypt_data
+from plane.db.models import User
 
 
 class InstanceSerializer(BaseSerializer):
@@ -50,3 +51,26 @@ class InstanceConfigurationSerializer(BaseSerializer):
             data["value"] = decrypt_data(instance.value)
 
         return data
+
+
+class InstanceAdminMeSerializer(BaseSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "avatar",
+            "cover_image",
+            "date_joined",
+            "display_name",
+            "email",
+            "first_name",
+            "last_name",
+            "is_active",
+            "is_bot",
+            "is_email_verified",
+            "user_timezone",
+            "username",
+            "is_password_autoset",
+            "is_email_verified",
+        ]
+        read_only_fields = fields

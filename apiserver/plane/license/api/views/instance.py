@@ -40,6 +40,7 @@ from plane.license.api.serializers import (
     InstanceAdminSerializer,
     InstanceConfigurationSerializer,
     InstanceSerializer,
+    InstanceAdminMeSerializer,
 )
 from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
 from plane.license.utils.encryption import encrypt_data
@@ -686,3 +687,18 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class InstanceAdminUserMeEndpoint(BaseAPIView):
+
+    permission_classes = [
+        InstanceAdmin,
+    ]
+
+    @cache_response(60 * 60)
+    def get(self, request):
+        serialized_data = InstanceAdminMeSerializer(request.user).data
+        return Response(
+            serialized_data,
+            status=status.HTTP_200_OK,
+        )
