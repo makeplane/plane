@@ -66,7 +66,7 @@ export const sortByField = (array: any[], field: string): any[] =>
 
 export const orderGroupedDataByField = <T>(groupedData: GroupedItems<T>, orderBy: keyof T): GroupedItems<T> => {
   for (const key in groupedData) {
-    if (groupedData.hasOwnProperty(key)) {
+    if (groupedData?.hasOwnProperty(key)) {
       groupedData[key] = groupedData[key].sort((a, b) => {
         if (a[orderBy] < b[orderBy]) return -1;
         if (a[orderBy] > b[orderBy]) return 1;

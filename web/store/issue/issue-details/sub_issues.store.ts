@@ -199,7 +199,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
         );
 
       // parent update
-      if (issueData.hasOwnProperty("parent_id") && issueData.parent_id !== oldIssue.parent_id) {
+      if (issueData?.hasOwnProperty("parent_id") && issueData.parent_id !== oldIssue.parent_id) {
         runInAction(() => {
           if (oldIssue.parent_id) pull(this.subIssues[oldIssue.parent_id], issueId);
           if (issueData.parent_id)
@@ -208,7 +208,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       }
 
       // state update
-      if (issueData.hasOwnProperty("state_id") && issueData.state_id !== oldIssue.state_id) {
+      if (issueData?.hasOwnProperty("state_id") && issueData.state_id !== oldIssue.state_id) {
         let oldIssueStateGroup: string | undefined = undefined;
         let issueStateGroup: string | undefined = undefined;
 

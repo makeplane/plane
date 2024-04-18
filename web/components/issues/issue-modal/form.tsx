@@ -182,7 +182,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         };
 
     // this condition helps to move the issues from draft to project issues
-    if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
+    if (formData?.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
 
     await onSubmit(submitData, is_draft_issue);
 

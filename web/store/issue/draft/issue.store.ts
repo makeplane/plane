@@ -168,7 +168,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     try {
       this.rootStore.issues.updateIssue(issueId, data);
 
-      if (data.hasOwnProperty("is_draft") && data?.is_draft === false) {
+      if (data?.hasOwnProperty("is_draft") && data?.is_draft === false) {
         runInAction(() => {
           update(this.issues, [projectId], (issueIds = []) => {
             if (issueIds.includes(issueId)) pull(issueIds, issueId);

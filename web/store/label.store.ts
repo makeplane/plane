@@ -168,7 +168,7 @@ export class LabelStore implements ILabelStore {
   createLabel = async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) =>
     await this.issueLabelService.createIssueLabel(workspaceSlug, projectId, data).then((response) => {
       runInAction(() => {
-        set(this.labelMap, [response.id], response);
+        response && set(this.labelMap, [response.id], response);
       });
       return response;
     });
