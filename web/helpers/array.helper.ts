@@ -1,4 +1,4 @@
-import { IIssueLabelTree } from "@plane/types";
+import { IIssueLabel, IIssueLabelTree } from "@plane/types";
 
 export const groupBy = (array: any[], key: string) => {
   const innerKey = key.split("."); // split the key by dot
@@ -77,7 +77,7 @@ export const orderGroupedDataByField = <T>(groupedData: GroupedItems<T>, orderBy
   return groupedData;
 };
 
-export const buildTree = (array: any[], parent = null) => {
+export const buildTree = (array: IIssueLabel[], parent = null) => {
   const tree: IIssueLabelTree[] = [];
 
   array.forEach((item: any) => {

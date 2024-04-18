@@ -8,6 +8,7 @@ import {
   SignInPasswordForm,
   OAuthOptions,
   SignInOptionalSetPasswordForm,
+  TermsAndConditions,
 } from "@/components/account";
 import { LatestFeatureBlock } from "@/components/common";
 import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
@@ -121,6 +122,7 @@ export const SignInRoot = observer(() => {
                 Sign up
               </Link>
             </p>
+            <TermsAndConditions />
           </>
         )}
       <LatestFeatureBlock />

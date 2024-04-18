@@ -1,4 +1,6 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect, useRef } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // layouts
 import { PageHead } from "@/components/core";
@@ -16,10 +18,25 @@ const LabelsSettingsPage: NextPageWithLayout = observer(() => {
   const { currentProjectDetails } = useProject();
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Labels` : undefined;
 
+  const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Enable Auto Scroll for Labels list
+  useEffect(() => {
+    const element = scrollableContainerRef.current;
+
+    if (!element) return;
+
+    return combine(
+      autoScrollForElements({
+        element,
+      })
+    );
+  }, [scrollableContainerRef?.current]);
+
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="h-full w-full gap-10 overflow-y-auto py-8 pr-9">
+      <div ref={scrollableContainerRef} className="h-full w-full gap-10 overflow-y-auto py-8 pr-9">
         <ProjectSettingsLabelList />
       </div>
     </>

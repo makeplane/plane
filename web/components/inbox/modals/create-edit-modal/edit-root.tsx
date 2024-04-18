@@ -77,7 +77,7 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
       cycle_id: formData?.cycle_id || "",
       module_ids: formData?.module_ids || [],
       estimate_point: formData?.estimate_point || undefined,
-      parent_id: formData?.parent_id || "",
+      parent_id: formData?.parent_id || null,
     };
     setFormSubmitting(true);
 

@@ -36,12 +36,11 @@ export interface ILabelStore {
   updateLabelPosition: (
     workspaceSlug: string,
     projectId: string,
-    labelId: string,
-    parentId: string | null | undefined,
-    index: number,
-    isSameParent: boolean,
-    prevIndex: number | undefined
-  ) => Promise<IIssueLabel | undefined>;
+    draggingLabelId: string,
+    droppedParentId: string | null,
+    droppedLabelId: string | undefined,
+    dropAtEndOfList: boolean
+  ) => Promise<void>;
   deleteLabel: (workspaceSlug: string, projectId: string, labelId: string) => Promise<void>;
 }
 
@@ -81,8 +80,8 @@ export class LabelStore implements ILabelStore {
    */
   get workspaceLabels() {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
-    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
-    if (!currentWorkspaceDetails || !this.fetchedMap[worksapceSlug]) return;
+    const workspaceSlug = this.rootStore.app.router.workspaceSlug || "";
+    if (!currentWorkspaceDetails || !this.fetchedMap[workspaceSlug]) return;
     return sortBy(
       Object.values(this.labelMap).filter((label) => label.workspace_id === currentWorkspaceDetails.id),
       "sort_order"
@@ -94,8 +93,8 @@ export class LabelStore implements ILabelStore {
    */
   get projectLabels() {
     const projectId = this.rootStore.app.router.projectId;
-    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
-    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
+    const workspaceSlug = this.rootStore.app.router.workspaceSlug || "";
+    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
     return sortBy(
       Object.values(this.labelMap).filter((label) => label.project_id === projectId),
       "sort_order"
@@ -111,8 +110,8 @@ export class LabelStore implements ILabelStore {
   }
 
   getProjectLabels = computedFn((projectId: string | null) => {
-    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
-    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
+    const workspaceSlug = this.rootStore.app.router.workspaceSlug || "";
+    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
     return sortBy(
       Object.values(this.labelMap).filter((label) => label.project_id === projectId),
       "sort_order"
@@ -186,7 +185,7 @@ export class LabelStore implements ILabelStore {
     const originalLabel = this.labelMap[labelId];
     try {
       runInAction(() => {
-        set(this.labelMap, [labelId], { ...this.labelMap[labelId], ...data });
+        set(this.labelMap, [labelId], { ...originalLabel, ...data });
       });
       const response = await this.issueLabelService.patchIssueLabel(workspaceSlug, projectId, labelId, data);
       return response;
@@ -213,50 +212,54 @@ export class LabelStore implements ILabelStore {
   updateLabelPosition = async (
     workspaceSlug: string,
     projectId: string,
-    labelId: string,
-    parentId: string | null | undefined,
-    index: number,
-    isSameParent: boolean,
-    prevIndex: number | undefined
+    draggingLabelId: string,
+    droppedParentId: string | null,
+    droppedLabelId: string | undefined,
+    dropAtEndOfList: boolean
   ) => {
-    const currLabel = this.labelMap?.[labelId];
+    const currLabel = this.labelMap?.[draggingLabelId];
     const labelTree = this.projectLabelsTree;
     let currentArray: IIssueLabel[];
 
     if (!currLabel || !labelTree) return;
 
-    const data: Partial<IIssueLabel> = { parent: parentId };
-    //find array in which the label is to be added
-    if (!parentId) currentArray = labelTree;
-    else currentArray = labelTree?.find((label) => label.id === parentId)?.children || [];
+    //If its is dropped in the same parent then, there is not specific label on which it is mentioned then keep it's original position
+    if (currLabel.parent === droppedParentId && !droppedLabelId) return;
 
-    //Add the array at the destination
-    if (isSameParent && prevIndex !== undefined) currentArray.splice(prevIndex, 1);
-    currentArray.splice(index, 0, currLabel);
+    const data: Partial<IIssueLabel> = { parent: droppedParentId };
+
+    // find array in which the label is to be added
+    if (!droppedParentId) currentArray = labelTree;
+    else currentArray = labelTree?.find((label) => label.id === droppedParentId)?.children || [];
+
+    let droppedLabelIndex = currentArray.findIndex((label) => label.id === droppedLabelId);
+    //if the position of droppedLabelId cannot be determined then drop it at the end of the list
+    if (dropAtEndOfList || droppedLabelIndex === -1) droppedLabelIndex = currentArray.length;
 
     //if currently adding to a new array, then let backend assign a sort order
-    if (currentArray.length > 1) {
+    if (currentArray.length > 0) {
       let prevSortOrder: number | undefined, nextSortOrder: number | undefined;
 
-      if (typeof currentArray[index - 1] !== "undefined") {
-        prevSortOrder = currentArray[index - 1].sort_order;
+      if (typeof currentArray[droppedLabelIndex - 1] !== "undefined") {
+        prevSortOrder = currentArray[droppedLabelIndex - 1].sort_order;
       }
-      if (typeof currentArray[index + 1] !== "undefined") {
-        nextSortOrder = currentArray[index + 1].sort_order;
+      if (typeof currentArray[droppedLabelIndex] !== "undefined") {
+        nextSortOrder = currentArray[droppedLabelIndex].sort_order;
       }
 
-      let sortOrder: number;
+      let sortOrder: number = 65535;
       //based on the next and previous labelMap calculate current sort order
       if (prevSortOrder && nextSortOrder) {
         sortOrder = (prevSortOrder + nextSortOrder) / 2;
       } else if (nextSortOrder) {
-        sortOrder = nextSortOrder + 10000;
-      } else {
-        sortOrder = prevSortOrder! / 2;
+        sortOrder = nextSortOrder / 2;
+      } else if (prevSortOrder) {
+        sortOrder = prevSortOrder + 10000;
       }
       data.sort_order = sortOrder;
     }
-    return this.updateLabel(workspaceSlug, projectId, labelId, data);
+
+    return this.updateLabel(workspaceSlug, projectId, draggingLabelId, data);
   };
 
   /**
