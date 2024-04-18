@@ -174,7 +174,7 @@ export const WorkspaceDetails: FC = observer(() => {
           />
         )}
       />
-      <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+      <div className={`w-full overflow-y-auto md:py-8 py-4 md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex items-center gap-5 border-b border-custom-border-100 pb-7">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
@@ -195,7 +195,7 @@ export const WorkspaceDetails: FC = observer(() => {
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
-            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight">{`${
+            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight text-left">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (
