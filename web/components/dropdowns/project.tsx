@@ -176,7 +176,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
                 </span>
               )}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate">{selectedProject?.name ?? placeholder}</span>
+                <span className="flex-grow truncate max-w-40">{selectedProject?.name ?? placeholder}</span>
               )}
               {dropdownArrow && (
                 <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
