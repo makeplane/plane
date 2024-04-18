@@ -1,13 +1,12 @@
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-// hooks
-import { useInstance } from "@/hooks";
-// ui
+import { Lightbulb } from "lucide-react";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
 // components
 import { ControllerInput, TControllerInputFormField } from "components/common";
-// types
-import { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
+// hooks
+import { useInstance } from "@/hooks";
 
 type IInstanceAIForm = {
   config: IFormattedInstanceConfiguration;
@@ -91,27 +90,39 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
   };
 
   return (
-    <>
-      <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-16 gap-y-8 lg:grid-cols-3">
-        {aiFormFields.map((field) => (
-          <ControllerInput
-            key={field.key}
-            control={control}
-            type={field.type}
-            name={field.key}
-            label={field.label}
-            description={field.description}
-            placeholder={field.placeholder}
-            error={field.error}
-            required={field.required}
-          />
-        ))}
+    <div className="space-y-8">
+      <div className="space-y-3">
+        <div>
+          <div className="pb-1 text-xl font-medium text-custom-text-100">OpenAI</div>
+          <div className="text-sm font-normal text-custom-text-300">If you use ChatGPT, this is for you.</div>
+        </div>
+        <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-16 gap-y-8 lg:grid-cols-3">
+          {aiFormFields.map((field) => (
+            <ControllerInput
+              key={field.key}
+              control={control}
+              type={field.type}
+              name={field.key}
+              label={field.label}
+              description={field.description}
+              placeholder={field.placeholder}
+              error={field.error}
+              required={field.required}
+            />
+          ))}
+        </div>
       </div>
-      <div className="flex items-center py-1">
+
+      <div className="space-y-4">
         <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
+
+        <div className="relative inline-flex items-center gap-2 rounded border border-custom-primary-100/20 bg-custom-primary-100/10 px-4 py-2 text-xs text-custom-primary-200">
+          <Lightbulb height="14" width="14" />
+          <div>If you have a preferred AI models vendor, please get in touch with us.</div>
+        </div>
       </div>
-    </>
+    </div>
   );
 };

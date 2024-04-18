@@ -16,7 +16,7 @@ export abstract class APIService {
 
   private setupInterceptors() {
     this.axiosInstance.interceptors.response.use(
-      (response) => response.data,
+      (response) => response,
       (error) => {
         if (error.response && error.response.status === 401) window.location.href = "/login";
         return Promise.reject(error.response?.data ?? error);
@@ -25,19 +25,19 @@ export abstract class APIService {
   }
 
   get<ResponseType>(url: string, params = {}): Promise<AxiosResponse<ResponseType>> {
-    return this.axiosInstance.get<ResponseType>(url, { params });
+    return this.axiosInstance.get(url, { params });
   }
 
   post<RequestType, ResponseType>(url: string, data: RequestType, config = {}): Promise<AxiosResponse<ResponseType>> {
-    return this.axiosInstance.post<ResponseType>(url, data, config);
+    return this.axiosInstance.post(url, data, config);
   }
 
   put<RequestType, ResponseType>(url: string, data: RequestType, config = {}): Promise<AxiosResponse<ResponseType>> {
-    return this.axiosInstance.put<ResponseType>(url, data, config);
+    return this.axiosInstance.put(url, data, config);
   }
 
   patch<RequestType, ResponseType>(url: string, data: RequestType, config = {}): Promise<AxiosResponse<ResponseType>> {
-    return this.axiosInstance.patch<ResponseType>(url, data, config);
+    return this.axiosInstance.patch(url, data, config);
   }
 
   delete<RequestType>(url: string, data?: RequestType, config = {}) {

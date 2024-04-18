@@ -31,7 +31,7 @@ export const GoogleConfiguration: React.FC<Props> = observer((props) => {
     <>
       {isGoogleConfigured ? (
         <div className="flex items-center gap-4">
-          <Link href="authentication/google" className={cn(getButtonStyling("link-primary", "md"), "font-medium")}>
+          <Link href="/authentication/google" className={cn(getButtonStyling("link-primary", "md"), "font-medium")}>
             Edit
           </Link>
           <ToggleSwitch
@@ -47,7 +47,7 @@ export const GoogleConfiguration: React.FC<Props> = observer((props) => {
         </div>
       ) : (
         <Link
-          href="authentication/google"
+          href="/authentication/google"
           className={cn(getButtonStyling("neutral-primary", "sm"), "text-custom-text-300")}
         >
           <Settings2 className="h-4 w-4 p-0.5 text-custom-text-300/80" />

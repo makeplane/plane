@@ -1,13 +1,11 @@
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-// hooks
-import { useInstance } from "@/hooks";
-// ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";
 // components
 import { ControllerInput } from "components/common";
-// types
-import { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";
+// hooks
+import { useInstance } from "@/hooks";
 
 type IInstanceImageConfigForm = {
   config: IFormattedInstanceConfiguration;
@@ -45,7 +43,7 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
   };
 
   return (
-    <>
+    <div className="space-y-8">
       <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-16 gap-y-8 lg:grid-cols-2">
         <ControllerInput
           control={control}
@@ -54,7 +52,7 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
           label="Access key from your Unsplash account"
           description={
             <>
-              You will find your access key in your Unsplash developer console.{" "}
+              You will find your access key in your Unsplash developer console.&nbsp;
               <a
                 href="https://unsplash.com/documentation#creating-a-developer-account"
                 target="_blank"
@@ -70,11 +68,12 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
           required
         />
       </div>
-      <div className="flex items-center py-1">
+
+      <div>
         <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>
-    </>
+    </div>
   );
 };

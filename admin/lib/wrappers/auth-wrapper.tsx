@@ -18,10 +18,13 @@ export interface IAuthWrapper {
 export const AuthWrapper: FC<IAuthWrapper> = observer((props) => {
   const { children, authType = EAuthenticationPageType.AUTHENTICATED } = props;
   // hooks
+  const { instance, fetchInstanceAdmins } = useInstance();
   const { isLoading, userStatus, currentUser, fetchCurrentUser } = useUser();
-  const { instance } = useInstance();
 
   useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
+    shouldRetryOnError: false,
+  });
+  useSWR("INSTANCE_ADMINS", () => fetchInstanceAdmins(), {
     shouldRetryOnError: false,
   });
 
@@ -41,7 +44,7 @@ export const AuthWrapper: FC<IAuthWrapper> = observer((props) => {
 
   if ([EAuthenticationPageType.AUTHENTICATED, EAuthenticationPageType.NOT_AUTHENTICATED].includes(authType)) {
     if (authType === EAuthenticationPageType.NOT_AUTHENTICATED) {
-      if (userStatus && userStatus?.status === EUserStatus.AUTHENTICATION_NOT_DONE) return <>{children}</>;
+      if (currentUser === undefined) return <>{children}</>;
       else redirect("/general/");
     } else {
       if (currentUser) return <>{children}</>;

@@ -14,9 +14,7 @@ export const AuthLayout: FC<TAuthLayout> = (props) => {
       <InstanceSidebar />
       <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
         <InstanceHeader />
-        <div className="h-full w-full overflow-hidden px-10 py-6">
-          <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
-        </div>
+        <div className="h-full w-full overflow-hidden">{children}</div>
       </main>
     </div>
   );

@@ -100,73 +100,51 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   };
 
   return (
-    <>
-      <SendTestEmailModal isOpen={isSendTestEmailModalOpen} handleClose={() => setIsSendTestEmailModalOpen(false)} />
-      <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-center justify-between gap-x-20 gap-y-10 lg:grid-cols-2">
-        {emailFormFields.map((field) => (
-          <ControllerInput
-            key={field.key}
-            control={control}
-            type={field.type}
-            name={field.key}
-            label={field.label}
-            description={field.description}
-            placeholder={field.placeholder}
-            error={field.error}
-            required={field.required}
-          />
-        ))}
-      </div>
-      <div className="flex w-full max-w-md flex-col gap-y-10 px-1">
-        <div className="mr-8 flex items-center gap-10 pt-4">
-          <div className="grow">
-            <div className="text-sm font-medium text-custom-text-100">
-              Turn TLS {Boolean(parseInt(watch("EMAIL_USE_TLS"))) ? "off" : "on"}
-            </div>
-            <div className="text-xs font-normal text-custom-text-300">Use this if your email domain supports TLS.</div>
-          </div>
-          <div className="shrink-0">
-            <Controller
+    <div className="space-y-8">
+      <div>
+        <SendTestEmailModal isOpen={isSendTestEmailModalOpen} handleClose={() => setIsSendTestEmailModalOpen(false)} />
+        <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-center justify-between gap-x-20 gap-y-10 lg:grid-cols-2">
+          {emailFormFields.map((field) => (
+            <ControllerInput
+              key={field.key}
               control={control}
-              name="EMAIL_USE_TLS"
-              render={({ field: { value, onChange } }) => (
-                <ToggleSwitch
-                  value={Boolean(parseInt(value))}
-                  onChange={() => {
-                    Boolean(parseInt(value)) === true ? onChange("0") : onChange("1");
-                  }}
-                  size="sm"
-                />
-              )}
+              type={field.type}
+              name={field.key}
+              label={field.label}
+              description={field.description}
+              placeholder={field.placeholder}
+              error={field.error}
+              required={field.required}
             />
+          ))}
+        </div>
+        <div className="flex w-full max-w-md flex-col gap-y-10 px-1">
+          <div className="mr-8 flex items-center gap-10 pt-4">
+            <div className="grow">
+              <div className="text-sm font-medium text-custom-text-100">
+                Turn TLS {Boolean(parseInt(watch("EMAIL_USE_TLS"))) ? "off" : "on"}
+              </div>
+              <div className="text-xs font-normal text-custom-text-300">
+                Use this if your email domain supports TLS.
+              </div>
+            </div>
+            <div className="shrink-0">
+              <Controller
+                control={control}
+                name="EMAIL_USE_TLS"
+                render={({ field: { value, onChange } }) => (
+                  <ToggleSwitch
+                    value={Boolean(parseInt(value))}
+                    onChange={() => {
+                      Boolean(parseInt(value)) === true ? onChange("0") : onChange("1");
+                    }}
+                    size="sm"
+                  />
+                )}
+              />
+            </div>
           </div>
         </div>
-
-        {/* <div className="flex items-center gap-10 pt-4 mr-8">
-          <div className="grow">
-            <div className="text-custom-text-100 font-medium text-sm">
-              Turn SSL {Boolean(parseInt(watch("EMAIL_USE_SSL"))) ? "off" : "on"}
-            </div>
-            <div className="text-custom-text-300 font-normal text-xs">
-              Most email domains support SSL. Use this to secure comms between this instance and your users.
-            </div>
-          </div>
-          <div className="shrink-0">
-            <Controller
-              control={control}
-              name="EMAIL_USE_SSL"
-              render={({ field: { value, onChange } }) => (
-                <ToggleSwitch
-                  value={Boolean(parseInt(value))}
-                  onChange={() => {
-                    Boolean(parseInt(value)) === true ? onChange("0") : onChange("1");
-                  }}
-                  size="sm"
-                />
-              )}
-            />
-          </div>
-        </div> */}
       </div>
 
       <div className="flex max-w-4xl items-center py-1 gap-4">
@@ -177,6 +155,6 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
           Send test email
         </Button>
       </div>
-    </>
+    </div>
   );
 };

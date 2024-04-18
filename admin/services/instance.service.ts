@@ -25,8 +25,8 @@ export class InstanceService extends APIService {
       });
   }
 
-  async updateInstanceInfo(data: Partial<IInstance>): Promise<IInstance> {
-    return this.patch<Partial<IInstance>, IInstance>("/api/instances/", data)
+  async updateInstanceInfo(data: Partial<IInstance["instance"]>): Promise<IInstance["instance"]> {
+    return this.patch<Partial<IInstance["instance"]>, IInstance["instance"]>("/api/instances/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

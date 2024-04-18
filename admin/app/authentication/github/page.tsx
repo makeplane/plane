@@ -5,17 +5,17 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// hooks
-import { useInstance } from "@/hooks";
-// ui
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
 import { AuthenticationMethodCard, InstanceGithubConfigForm } from "components/authentication";
-// icons
-import githubLightModeImage from "/public/logos/github-black.png";
-import githubDarkModeImage from "/public/logos/github-white.png";
+import { PageHeader } from "@/components/core";
+// hooks
+import { useInstance } from "@/hooks";
 // helpers
-import { resolveGeneralTheme } from "helpers/common.helper";
+import { resolveGeneralTheme } from "@/helpers/common.helper";
+// icons
+import githubLightModeImage from "@/public/logos/github-black.png";
+import githubDarkModeImage from "@/public/logos/github-white.png";
 
 const InstanceGithubAuthenticationPage = observer(() => {
   // store
@@ -60,47 +60,52 @@ const InstanceGithubAuthenticationPage = observer(() => {
       });
   };
   return (
-    <div className="flex flex-col gap-4 max-w-6xl pb-6 md:px-2">
-      <div className="flex items-center gap-4 mb-2 border-b border-custom-border-100 pb-3">
-        <AuthenticationMethodCard
-          name="Github"
-          description="Allow members to login or sign up to plane with their Github accounts."
-          icon={
-            <Image
-              src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
-              height={24}
-              width={24}
-              alt="GitHub Logo"
-            />
-          }
-          config={
-            <ToggleSwitch
-              value={Boolean(parseInt(enableGithubConfig))}
-              onChange={() => {
-                Boolean(parseInt(enableGithubConfig)) === true
-                  ? updateConfig("IS_GITHUB_ENABLED", "0")
-                  : updateConfig("IS_GITHUB_ENABLED", "1");
-              }}
-              size="sm"
-              disabled={isSubmitting || !formattedConfig}
-            />
-          }
-          disabled={isSubmitting || !formattedConfig}
-          withBorder={false}
-        />
+    <>
+      <PageHeader title="Authentication - God Mode" />
+      <div className="relative container mx-auto w-full h-full p-8 py-4 space-y-6 flex flex-col">
+        <div className="border-b border-custom-border-100 pb-3 space-y-1 flex-shrink-0">
+          <AuthenticationMethodCard
+            name="Github"
+            description="Allow members to login or sign up to plane with their Github accounts."
+            icon={
+              <Image
+                src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
+                height={24}
+                width={24}
+                alt="GitHub Logo"
+              />
+            }
+            config={
+              <ToggleSwitch
+                value={Boolean(parseInt(enableGithubConfig))}
+                onChange={() => {
+                  Boolean(parseInt(enableGithubConfig)) === true
+                    ? updateConfig("IS_GITHUB_ENABLED", "0")
+                    : updateConfig("IS_GITHUB_ENABLED", "1");
+                }}
+                size="sm"
+                disabled={isSubmitting || !formattedConfig}
+              />
+            }
+            disabled={isSubmitting || !formattedConfig}
+            withBorder={false}
+          />
+        </div>
+        <div className="flex-grow overflow-hidden overflow-y-auto">
+          {formattedConfig ? (
+            <InstanceGithubConfigForm config={formattedConfig} />
+          ) : (
+            <Loader className="space-y-8">
+              <Loader.Item height="50px" width="25%" />
+              <Loader.Item height="50px" />
+              <Loader.Item height="50px" />
+              <Loader.Item height="50px" />
+              <Loader.Item height="50px" width="50%" />
+            </Loader>
+          )}
+        </div>
       </div>
-      {formattedConfig ? (
-        <InstanceGithubConfigForm config={formattedConfig} />
-      ) : (
-        <Loader className="space-y-8">
-          <Loader.Item height="50px" width="25%" />
-          <Loader.Item height="50px" />
-          <Loader.Item height="50px" />
-          <Loader.Item height="50px" />
-          <Loader.Item height="50px" width="50%" />
-        </Loader>
-      )}
-    </div>
+    </>
   );
 });
 

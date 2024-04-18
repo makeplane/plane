@@ -45,6 +45,7 @@ export const InstanceSignInForm: FC = (props) => {
   const {} = props;
   // search params
   const searchParams = useSearchParams();
+  const emailParam = searchParams.get("email") || undefined;
   const errorCode = searchParams.get("error_code") || undefined;
   const errorMessage = searchParams.get("error_message") || undefined;
   // state
@@ -56,8 +57,13 @@ export const InstanceSignInForm: FC = (props) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
-    if (csrfToken === undefined) authService.requestCSRFToken().then((data) => setCsrfToken(data.csrf_token));
+    if (csrfToken === undefined)
+      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
+
+  useEffect(() => {
+    if (emailParam) setFormData((prev) => ({ ...prev, email: emailParam }));
+  }, [emailParam]);
 
   // derived values
   const errorData: TError = useMemo(() => {

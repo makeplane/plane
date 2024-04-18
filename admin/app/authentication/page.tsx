@@ -5,19 +5,9 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useInstance } from "@/hooks";
-// ui
-import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
-// types
-import { TInstanceConfigurationKeys } from "@plane/types";
-// icons
 import { Mails, KeyRound } from "lucide-react";
-import GoogleLogo from "/public/logos/google-logo.svg";
-import githubLightModeImage from "/public/logos/github-black.png";
-import githubDarkModeImage from "/public/logos/github-white.png";
-// helpers
-import { resolveGeneralTheme } from "helpers/common.helper";
+import { Loader, setPromiseToast } from "@plane/ui";
+import { TInstanceConfigurationKeys } from "@plane/types";
 // components
 import {
   AuthenticationMethodCard,
@@ -26,6 +16,15 @@ import {
   GoogleConfiguration,
   GithubConfiguration,
 } from "components/authentication";
+import { PageHeader } from "@/components/core";
+// hooks
+import { useInstance } from "@/hooks";
+// helpers
+import { resolveGeneralTheme } from "@/helpers/common.helper";
+// images
+import GoogleLogo from "@/public/logos/google-logo.svg";
+import githubLightModeImage from "@/public/logos/github-black.png";
+import githubDarkModeImage from "@/public/logos/github-white.png";
 
 type TInstanceAuthenticationMethodCard = {
   key: string;
@@ -45,9 +44,6 @@ const InstanceAuthenticationPage = observer(() => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // theme
   const { resolvedTheme } = useTheme();
-
-  // Sign-up config
-  const enableSignup = formattedConfig?.ENABLE_SIGNUP ?? "";
 
   const updateConfig = async (key: TInstanceConfigurationKeys, value: string) => {
     setIsSubmitting(true);
@@ -120,63 +116,42 @@ const InstanceAuthenticationPage = observer(() => {
   ];
 
   return (
-    <div className="flex max-w-6xl flex-col gap-4 pb-6">
-      <div className="mb-2 border-b border-custom-border-100 pb-3">
-        <div className="text-xl font-medium text-custom-text-100">Manage authentication for your instance</div>
-        <div className="text-sm font-normal text-custom-text-300">
-          Configure authentication modes for your team and restrict sign ups to be invite only.
+    <>
+      <PageHeader title="Authentication - God Mode" />
+      <div className="relative container mx-auto w-full h-full p-8 py-4 space-y-6 flex flex-col">
+        <div className="border-b border-custom-border-100 pb-3 space-y-1 flex-shrink-0">
+          <div className="text-xl font-medium text-custom-text-100">Manage authentication for your instance</div>
+          <div className="text-sm font-normal text-custom-text-300">
+            Configure authentication modes for your team and restrict sign ups to be invite only.
+          </div>
+        </div>
+        <div className="flex-grow overflow-hidden overflow-y-auto">
+          {formattedConfig ? (
+            <div className="space-y-3">
+              <div className="text-lg font-medium">Authentication modes</div>
+              {authenticationMethodsCard.map((method) => (
+                <AuthenticationMethodCard
+                  key={method.key}
+                  name={method.name}
+                  description={method.description}
+                  icon={method.icon}
+                  config={method.config}
+                  disabled={isSubmitting}
+                />
+              ))}
+            </div>
+          ) : (
+            <Loader className="space-y-10">
+              <Loader.Item height="50px" width="75%" />
+              <Loader.Item height="50px" width="75%" />
+              <Loader.Item height="50px" width="40%" />
+              <Loader.Item height="50px" width="40%" />
+              <Loader.Item height="50px" width="20%" />
+            </Loader>
+          )}
         </div>
       </div>
-      {formattedConfig ? (
-        <>
-          <div className="pt-2 text-lg font-medium">Sign-up configuration</div>
-          <div className="mr-4 flex items-center gap-14">
-            <div className="grow">
-              <div className="text-sm font-medium leading-5 text-custom-text-100">
-                Allow anyone to sign up without invite
-              </div>
-              <div className="text-xs font-normal leading-5 text-custom-text-300">
-                Toggling this off will disable self sign ups.
-              </div>
-            </div>
-            <div className={`shrink-0 ${isSubmitting && "opacity-70"}`}>
-              <ToggleSwitch
-                value={Boolean(parseInt(enableSignup))}
-                onChange={() => {
-                  Boolean(parseInt(enableSignup)) === true
-                    ? updateConfig("ENABLE_SIGNUP", "0")
-                    : updateConfig("ENABLE_SIGNUP", "1");
-                }}
-                size="sm"
-                disabled={isSubmitting}
-              />
-            </div>
-          </div>
-          {/* Authentication modes */}
-          <div className="pt-8 text-lg font-medium">Authentication modes</div>
-          {authenticationMethodsCard.map((method) => (
-            <AuthenticationMethodCard
-              key={method.key}
-              name={method.name}
-              description={method.description}
-              icon={method.icon}
-              config={method.config}
-              disabled={isSubmitting}
-            />
-          ))}
-        </>
-      ) : (
-        <Loader className="space-y-4">
-          <Loader.Item height="50px" width="50%" />
-          <Loader.Item height="50px" width="25%" />
-          <Loader.Item height="50px" />
-          <Loader.Item height="50px" width="25%" />
-          <Loader.Item height="50px" />
-          <Loader.Item height="50px" />
-          <Loader.Item height="50px" />
-        </Loader>
-      )}
-    </div>
+    </>
   );
 });
 

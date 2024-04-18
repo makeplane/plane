@@ -55,6 +55,11 @@ export const InstanceSignUpForm: FC = (props) => {
   const {} = props;
   // search params
   const searchParams = useSearchParams();
+  const firstNameParam = searchParams.get("first_name") || undefined;
+  const lastNameParam = searchParams.get("last_name") || undefined;
+  const companyParam = searchParams.get("company") || undefined;
+  const emailParam = searchParams.get("email") || undefined;
+  const isTelemetryEnabledParam = (searchParams.get("is_telemetry_enabled") === "True" ? true : false) || true;
   const errorCode = searchParams.get("error_code") || undefined;
   const errorMessage = searchParams.get("error_message") || undefined;
   // state
@@ -66,8 +71,17 @@ export const InstanceSignUpForm: FC = (props) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
-    if (csrfToken === undefined) authService.requestCSRFToken().then((data) => setCsrfToken(data.csrf_token));
+    if (csrfToken === undefined)
+      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
+
+  useEffect(() => {
+    if (firstNameParam) setFormData((prev) => ({ ...prev, first_name: firstNameParam }));
+    if (lastNameParam) setFormData((prev) => ({ ...prev, last_name: lastNameParam }));
+    if (companyParam) setFormData((prev) => ({ ...prev, company_name: companyParam }));
+    if (emailParam) setFormData((prev) => ({ ...prev, email: emailParam }));
+    if (isTelemetryEnabledParam) setFormData((prev) => ({ ...prev, is_telemetry_enabled: isTelemetryEnabledParam }));
+  }, [firstNameParam, lastNameParam, companyParam, emailParam, isTelemetryEnabledParam]);
 
   // derived values
   const errorData: TError = useMemo(() => {
@@ -100,7 +114,7 @@ export const InstanceSignUpForm: FC = (props) => {
   );
 
   return (
-    <div className="relative w-full min-h-full h-auto overflow-hidden container mx-auto px-5 md:px-10 flex justify-center items-center">
+    <div className="relative w-full min-h-full h-auto overflow-hidden container mx-auto px-5 lg:px-0 flex justify-center items-center">
       <div className="w-full md:w-4/6 lg:w-3/6 xl:w-2/6 space-y-10">
         <div className="text-center space-y-1">
           <h3 className="text-3xl font-bold">Setup your Plane Instance</h3>

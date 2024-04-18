@@ -4,12 +4,7 @@ import {
   TInstanceEmailConfigurationKeys,
   TInstanceImageConfigurationKeys,
   TInstanceAuthenticationKeys,
-} from "./index";
-
-export type TInstanceNotReady = {
-  is_activated: boolean;
-  is_setup_done: boolean;
-};
+} from "./";
 
 export interface IInstance {
   instance: {
@@ -51,6 +46,18 @@ export interface IInstance {
   };
 }
 
+export interface IInstanceAdmin {
+  created_at: string;
+  created_by: string;
+  id: string;
+  instance: string;
+  role: string;
+  updated_at: string;
+  updated_by: string;
+  user: string;
+  user_detail: IUserLite;
+}
+
 export type TInstanceConfigurationKeys =
   | TInstanceAIConfigurationKeys
   | TInstanceEmailConfigurationKeys
@@ -70,15 +77,3 @@ export interface IInstanceConfiguration {
 export type IFormattedInstanceConfiguration = {
   [key in TInstanceConfigurationKeys]: string;
 };
-
-export interface IInstanceAdmin {
-  created_at: string;
-  created_by: string;
-  id: string;
-  instance: string;
-  role: string;
-  updated_at: string;
-  updated_by: string;
-  user: string;
-  user_detail: IUserLite;
-}
