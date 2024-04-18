@@ -41,7 +41,7 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
     handleClose();
   };
 
-  if (!projectId) return;
+  if (!projectId) return <></>;
 
   const isCurrentUser = currentUser?.id === data?.id;
   const currentProjectDetails = getProjectById(projectId.toString());
