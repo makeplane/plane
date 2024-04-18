@@ -169,13 +169,14 @@ class WorkspaceJoinEndpoint(BaseAPIView):
     """Invitation response endpoint the user can respond to the invitation"""
 
     @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/")
+    @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
     @invalidate_cache(
         path="/api/workspaces/:slug/members/",
         user=False,
         multiple=True,
         url_params=True,
     )
+    @invalidate_cache(path="/api/users/me/settings/", multiple=True)
     def post(self, request, slug, pk):
         workspace_invite = WorkspaceMemberInvite.objects.get(
             pk=pk, workspace__slug=slug
@@ -273,7 +274,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
         )
 
     @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/")
+    @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
     def create(self, request):
         invitations = request.data.get("invitations", [])
         workspace_invitations = WorkspaceMemberInvite.objects.filter(
