@@ -148,7 +148,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleModule = useCallback(
-    (moduleIds: string[] | null) => {
+    async (moduleIds: string[] | null) => {
       if (!issue || !issue.module_ids || !moduleIds) return;
 
       const updatedModuleIds = xor(issue.module_ids, moduleIds);
@@ -157,8 +157,8 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       for (const moduleId of updatedModuleIds)
         if (issue.module_ids.includes(moduleId)) modulesToRemove.push(moduleId);
         else modulesToAdd.push(moduleId);
-      if (modulesToAdd.length > 0) issueOperations.addModulesToIssue(modulesToAdd);
-      if (modulesToRemove.length > 0) issueOperations.removeModulesFromIssue(modulesToRemove);
+      if (modulesToAdd.length > 0) await issueOperations.addModulesToIssue(modulesToAdd);
+      if (modulesToRemove.length > 0) await issueOperations.removeModulesFromIssue(modulesToRemove);
 
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
@@ -171,10 +171,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleCycle = useCallback(
-    (cycleId: string | null) => {
+    async (cycleId: string | null) => {
       if (!issue || issue.cycle_id === cycleId) return;
-      if (cycleId) issueOperations.addIssueToCycle?.(cycleId);
-      else issueOperations.removeIssueFromCycle?.(issue.cycle_id ?? "");
+      if (cycleId) await issueOperations.addIssueToCycle?.(cycleId);
+      else await issueOperations.removeIssueFromCycle?.(issue.cycle_id ?? "");
 
       captureIssueEvent({
         eventName: ISSUE_UPDATED,

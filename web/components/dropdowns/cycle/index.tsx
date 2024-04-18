@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { ChevronDown } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
-import { ContrastIcon } from "@plane/ui";
+import { ContrastIcon, Spinner } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { useCycle } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
@@ -22,7 +22,7 @@ type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
-  onChange: (val: string | null) => void;
+  onChange: (val: string | null) => Promise<void>;
   onClose?: () => void;
   projectId: string;
   value: string | null;
@@ -56,6 +56,8 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  // states
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const selectedName = value ? getCycleNameById(value) : null;
 
@@ -70,9 +72,10 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     if (isOpen) onClose && onClose();
   };
 
-  const dropdownOnChange = (val: string | null) => {
-    onChange(val);
+  const dropdownOnChange = async (val: string | null) => {
+    setIsUpdating(true);
     handleClose();
+    await onChange(val).finally(() => setIsUpdating(false));
   };
 
   const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
@@ -93,7 +96,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
       className={cn("h-full", className)}
       value={value}
       onChange={dropdownOnChange}
-      disabled={disabled}
+      disabled={disabled || isUpdating}
       onKeyDown={handleKeyDown}
     >
       <Combobox.Button as={Fragment}>
@@ -116,8 +119,8 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
             className={cn(
               "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
               {
-                "cursor-not-allowed text-custom-text-200": disabled,
-                "cursor-pointer": !disabled,
+                "cursor-not-allowed text-custom-text-200": disabled || isUpdating,
+                "cursor-pointer": !disabled && !isUpdating,
               },
               buttonContainerClassName
             )}
@@ -131,7 +134,8 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
               showTooltip={showTooltip}
               variant={buttonVariant}
             >
-              {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
+              {isUpdating && <Spinner className="h-3 w-3" />}
+              {!hideIcon && !isUpdating && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
                 <span className="flex-grow truncate max-w-40">{selectedName ?? placeholder}</span>
               )}

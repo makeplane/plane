@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { ChevronDown, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
-import { DiceIcon, Tooltip } from "@plane/ui";
+import { DiceIcon, Tooltip, Spinner } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { useModule } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
@@ -29,12 +29,12 @@ type Props = TDropdownProps & {
 } & (
     | {
         multiple: false;
-        onChange: (val: string | null) => void;
+        onChange: (val: string | null) => Promise<void>;
         value: string | null;
       }
     | {
         multiple: true;
-        onChange: (val: string[]) => void;
+        onChange: (val: string[]) => Promise<void>;
         value: string[];
       }
   );
@@ -45,7 +45,7 @@ type ButtonContentProps = {
   dropdownArrowClassName: string;
   hideIcon: boolean;
   hideText: boolean;
-  onChange: (moduleIds: string[]) => void;
+  onChange: (moduleIds: string[]) => Promise<void>;
   placeholder?: string;
   showCount: boolean;
   showTooltip?: boolean;
@@ -175,6 +175,8 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  // states
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const { getModuleNameById } = useModule();
 
@@ -189,9 +191,10 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     if (isOpen) onClose && onClose();
   };
 
-  const dropdownOnChange = (val: string & string[]) => {
-    onChange(val);
+  const dropdownOnChange = async (val: string & string[]) => {
+    setIsUpdating(true);
     if (!multiple) handleClose();
+    await onChange(val).finally(() => setIsUpdating(false));
   };
 
   const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
@@ -207,7 +210,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
   const comboboxProps: any = {
     value,
     onChange: dropdownOnChange,
-    disabled,
+    disabled: disabled || isUpdating,
   };
   if (multiple) comboboxProps.multiple = true;
 
@@ -246,8 +249,8 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
             className={cn(
               "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
               {
-                "cursor-not-allowed text-custom-text-200": disabled,
-                "cursor-pointer": !disabled,
+                "cursor-not-allowed text-custom-text-200": disabled || isUpdating,
+                "cursor-pointer": !disabled && !isUpdating,
               },
               buttonContainerClassName
             )}
@@ -268,17 +271,18 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
               showTooltip={showTooltip}
               variant={buttonVariant}
             >
+              {isUpdating && <Spinner className="h-3 w-3" />}
               <ButtonContent
-                disabled={disabled}
+                disabled={disabled || isUpdating}
                 dropdownArrow={dropdownArrow}
                 dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
+                hideIcon={hideIcon || isUpdating}
                 hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
                 placeholder={placeholder}
                 showCount={showCount}
                 showTooltip={showTooltip}
                 value={value}
-                onChange={onChange as any}
+                onChange={dropdownOnChange as any}
               />
             </DropdownButton>
           </button>
