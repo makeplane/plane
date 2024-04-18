@@ -19,10 +19,10 @@ export interface IInstanceStore {
   instanceStatus: TInstanceStatus | undefined;
   instance: IInstance | undefined;
 
-  instanceAdmins: IInstanceAdmin[] | null;
-  configurations: IInstanceConfiguration[] | null;
+  instanceAdmins: IInstanceAdmin[] | undefined;
+  configurations: IInstanceConfiguration[] | undefined;
   // computed
-  formattedConfig: IFormattedInstanceConfiguration | null;
+  formattedConfig: IFormattedInstanceConfiguration | undefined;
   // action
   fetchInstanceInfo: () => Promise<IInstance>;
 
@@ -37,8 +37,8 @@ export class InstanceStore implements IInstanceStore {
   instanceStatus: TInstanceStatus | undefined = undefined;
   instance: IInstance | undefined = undefined;
 
-  configurations: IInstanceConfiguration[] | null = null;
-  instanceAdmins: IInstanceAdmin[] | null = null;
+  configurations: IInstanceConfiguration[] | undefined = undefined;
+  instanceAdmins: IInstanceAdmin[] | undefined = undefined;
   // service
   instanceService;
 
@@ -68,7 +68,7 @@ export class InstanceStore implements IInstanceStore {
    * @returns configurations in the form of {key, value} pair.
    */
   get formattedConfig() {
-    if (!this.configurations) return null;
+    if (!this.configurations) return undefined;
     return this.configurations?.reduce((formData: IFormattedInstanceConfiguration, config) => {
       formData[config.key] = config.value;
       return formData;
@@ -141,11 +141,11 @@ export class InstanceStore implements IInstanceStore {
    */
   fetchInstanceConfigurations = async () => {
     try {
-      const configurations = await this.instanceService.getInstanceConfigurations();
+      const currentConfigurations = await this.instanceService.getInstanceConfigurations();
       runInAction(() => {
-        this.configurations = configurations;
+        this.configurations = currentConfigurations;
       });
-      return configurations;
+      return currentConfigurations;
     } catch (error) {
       console.log("Error while fetching the instance configurations");
       throw error;

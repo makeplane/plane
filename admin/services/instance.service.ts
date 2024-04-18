@@ -26,7 +26,7 @@ export class InstanceService extends APIService {
   }
 
   async updateInstanceInfo(data: Partial<IInstance>): Promise<IInstance> {
-    return this.patch<IInstance>("/api/instances/", data)
+    return this.patch<Partial<IInstance>, IInstance>("/api/instances/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -34,7 +34,7 @@ export class InstanceService extends APIService {
   }
 
   async getInstanceConfigurations() {
-    return this.get("/api/instances/configurations/")
+    return this.get<IInstanceConfiguration[]>("/api/instances/configurations/")
       .then((response) => response.data)
       .catch((error) => {
         throw error;
@@ -44,15 +44,20 @@ export class InstanceService extends APIService {
   async updateInstanceConfigurations(
     data: Partial<IFormattedInstanceConfiguration>
   ): Promise<IInstanceConfiguration[]> {
-    return this.patch<any>("/api/instances/configurations/", data)
+    return this.patch<Partial<IFormattedInstanceConfiguration>, IInstanceConfiguration[]>(
+      "/api/instances/configurations/",
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async sendTestEmail(receiverEmail: string) {
-    return this.post("/api/instances/email-credentials-check/", { receiver_email: receiverEmail })
+  async sendTestEmail(receiverEmail: string): Promise<undefined> {
+    return this.post<{ receiver_email: string }, undefined>("/api/instances/email-credentials-check/", {
+      receiver_email: receiverEmail,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -68,7 +68,7 @@ export class ProjectPageStore implements IProjectPageStore {
     this.service = new PageService();
     // initialize display filters of the current project
     reaction(
-      () => this.store.app.router.projectId,
+      () => this.store.router.projectId,
       (projectId) => {
         if (!projectId) return;
         this.filters.searchQuery = "";

@@ -24,24 +24,24 @@ export abstract class APIService {
     );
   }
 
-  get<T>(url: string, params = {}): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.get<T>(url, { params });
+  get<ResponseType>(url: string, params = {}): Promise<AxiosResponse<ResponseType>> {
+    return this.axiosInstance.get<ResponseType>(url, { params });
   }
 
-  post<T>(url: string, data: Partial<T> = {}, config = {}): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.post<T>(url, data, config);
+  post<RequestType, ResponseType>(url: string, data: RequestType, config = {}): Promise<AxiosResponse<ResponseType>> {
+    return this.axiosInstance.post<ResponseType>(url, data, config);
   }
 
-  put<T>(url: string, data: Partial<T> = {}, config = {}): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.put<T>(url, data, config);
+  put<RequestType, ResponseType>(url: string, data: RequestType, config = {}): Promise<AxiosResponse<ResponseType>> {
+    return this.axiosInstance.put<ResponseType>(url, data, config);
   }
 
-  patch<T>(url: string, data: Partial<T> = {}, config = {}): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.patch<T>(url, data, config);
+  patch<RequestType, ResponseType>(url: string, data: RequestType, config = {}): Promise<AxiosResponse<ResponseType>> {
+    return this.axiosInstance.patch<ResponseType>(url, data, config);
   }
 
-  delete<T>(url: string, data?: Partial<T>, config = {}): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.delete<T>(url, { data, ...config });
+  delete<RequestType>(url: string, data?: RequestType, config = {}) {
+    return this.axiosInstance.delete(url, { data, ...config });
   }
 
   request<T>(config: AxiosRequestConfig = {}): Promise<AxiosResponse<T>> {
