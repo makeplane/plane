@@ -365,6 +365,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               issueId={issueId}
               issueOperations={issueOperations}
               isEditable={!is_archived && isEditable}
+              isArchived={is_archived}
             />
           </div>
           <div
