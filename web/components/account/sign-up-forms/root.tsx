@@ -12,6 +12,7 @@ import {
   SignUpOptionalSetPasswordForm,
   SignUpPasswordForm,
   SignUpUniqueCodeForm,
+  TermsAndConditions,
 } from "@/components/account";
 // hooks
 import { useInstance } from "@/hooks/store";
@@ -126,8 +127,8 @@ export const SignUpRoot = observer(() => {
             >
               Privacy Policy
             </Link>
-            .
           </div>
+          <TermsAndConditions isSignUp />
         </>
       )}
     </>

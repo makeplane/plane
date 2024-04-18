@@ -109,7 +109,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         })}
       >
         <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <div className="w-full flex-shrink-0 ml-5">
+          <div className="relative w-full flex-shrink-0 pl-5">
             <PageEditorTitle
               editorRef={editorRef}
               title={pageTitle}

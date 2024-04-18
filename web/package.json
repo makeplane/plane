@@ -14,6 +14,7 @@
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.3",
     "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^1.0.3",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
     "@hello-pangea/dnd": "^16.3.0",
@@ -64,7 +65,6 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
     "@types/dompurify": "^3.0.5",
     "@types/js-cookie": "^3.0.2",
     "@types/lodash": "^4.14.202",
@@ -76,6 +76,7 @@
     "@types/uuid": "^8.3.4",
     "@types/zxcvbn": "^4.4.4",
     "eslint-config-custom": "*",
+    "prettier": "^3.2.5",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
     "typescript": "4.7.4"

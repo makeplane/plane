@@ -10,7 +10,7 @@ export class InstanceService extends APIService {
   }
 
   async getInstanceInfo(): Promise<IInstance> {
-    return this.get("/api/instances/")
+    return this.get<IInstance>("/api/instances/")
       .then((response) => response.data)
       .catch((error) => {
         throw error;
@@ -18,7 +18,7 @@ export class InstanceService extends APIService {
   }
 
   async getInstanceAdmins(): Promise<IInstanceAdmin[]> {
-    return this.get("/api/instances/admins/")
+    return this.get<IInstanceAdmin[]>("/api/instances/admins/")
       .then((response) => response.data)
       .catch((error) => {
         throw error;
@@ -26,7 +26,7 @@ export class InstanceService extends APIService {
   }
 
   async updateInstanceInfo(data: Partial<IInstance>): Promise<IInstance> {
-    return this.patch("/api/instances/", data)
+    return this.patch<IInstance>("/api/instances/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -44,7 +44,7 @@ export class InstanceService extends APIService {
   async updateInstanceConfigurations(
     data: Partial<IFormattedInstanceConfiguration>
   ): Promise<IInstanceConfiguration[]> {
-    return this.patch("/api/instances/configurations/", data)
+    return this.patch<any>("/api/instances/configurations/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

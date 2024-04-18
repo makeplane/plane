@@ -1,6 +1,6 @@
 import set from "lodash/set";
 import unset from "lodash/unset";
-import { makeObservable, observable, runInAction, action } from "mobx";
+import { makeObservable, observable, runInAction, action, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
@@ -64,8 +64,16 @@ export class ProjectPageStore implements IProjectPageStore {
       createPage: action,
       removePage: action,
     });
-
+    // service
     this.service = new PageService();
+    // initialize display filters of the current project
+    reaction(
+      () => this.store.app.router.projectId,
+      (projectId) => {
+        if (!projectId) return;
+        this.filters.searchQuery = "";
+      }
+    );
   }
 
   /**

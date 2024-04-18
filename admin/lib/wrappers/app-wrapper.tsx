@@ -17,10 +17,9 @@ interface IAppWrapper {
 }
 
 export const AppWrapper: FC<IAppWrapper> = observer(({ children }) => {
-  // store hooks
+  // hooks
   const { theme, isSidebarCollapsed, toggleSidebar } = useTheme();
   const { currentUser } = useUser();
-  const {} = useTheme();
 
   useEffect(() => {
     const localValue = localStorage && localStorage.getItem("god_mode_sidebar_collapsed");

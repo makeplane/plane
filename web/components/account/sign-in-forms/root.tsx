@@ -11,6 +11,7 @@ import {
   SignInPasswordForm,
   OAuthOptions,
   SignInOptionalSetPasswordForm,
+  TermsAndConditions,
 } from "@/components/account";
 // hooks
 import { useInstance } from "@/hooks/store";
@@ -115,8 +116,9 @@ export const SignInRoot = observer(() => {
           )}
         </>
       </div>
-
       {isOAuthEnabled && signInStep !== ESignInSteps.OPTIONAL_SET_PASSWORD && <OAuthOptions />}
+
+      <TermsAndConditions />
     </>
   );
 });

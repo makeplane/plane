@@ -46,7 +46,7 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   if (instanceStatus && instanceStatus?.status === EInstanceStatus.NOT_YET_READY)
     return (
       <DefaultLayout>
-        <InstanceNotReady />
+        <InstanceNotReady isRedirectionEnabled={false} />
       </DefaultLayout>
     );
 

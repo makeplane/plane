@@ -11,7 +11,7 @@ export class UserService extends APIService {
   }
 
   async currentUser(): Promise<IUser> {
-    return this.get("/api/instances/admins/me/")
+    return this.get<IUser>("/api/instances/admins/me/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
