@@ -118,7 +118,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
         <div className="h-7">
           <CycleDropdown
             value={data?.cycle_id || ""}
-            onChange={(cycleId) => handleData("cycle_id", cycleId)}
+            onChange={async (cycleId) => handleData("cycle_id", cycleId)}
             projectId={projectId}
             placeholder="Cycle"
             buttonVariant="border-with-text"
@@ -131,7 +131,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
         <div className="h-7">
           <ModuleDropdown
             value={data?.module_ids || []}
-            onChange={(moduleIds) => handleData("module_ids", moduleIds)}
+            onChange={async (moduleIds) => handleData("module_ids", moduleIds)}
             projectId={projectId}
             placeholder="Modules"
             buttonVariant="border-with-text"

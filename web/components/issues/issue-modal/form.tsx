@@ -602,7 +602,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       <div className="h-7">
                         <CycleDropdown
                           projectId={projectId}
-                          onChange={(cycleId) => {
+                          onChange={async (cycleId) => {
                             onChange(cycleId);
                             handleFormChange();
                           }}
@@ -624,7 +624,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         <ModuleDropdown
                           projectId={projectId}
                           value={value ?? []}
-                          onChange={(moduleIds) => {
+                          onChange={async (moduleIds) => {
                             onChange(moduleIds);
                             handleFormChange();
                           }}
