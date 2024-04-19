@@ -33,6 +33,7 @@ export interface IModuleStore {
   fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
+  fetchArchivedModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   // crud
   createModule: (workspaceSlug: string, projectId: string, data: Partial<IModule>) => Promise<IModule>;
@@ -91,6 +92,7 @@ export class ModulesStore implements IModuleStore {
       fetchWorkspaceModules: action,
       fetchModules: action,
       fetchArchivedModules: action,
+      fetchArchivedModuleDetails: action,
       fetchModuleDetails: action,
       createModule: action,
       updateModuleDetails: action,
@@ -281,6 +283,21 @@ export class ModulesStore implements IModuleStore {
    * @param moduleId
    * @returns IModule
    */
+  fetchArchivedModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
+    await this.moduleArchiveService.getArchivedModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
+      runInAction(() => {
+        set(this.moduleMap, [moduleId], response);
+      });
+      return response;
+    });
+
+  /**
+   * @description fetch module details
+   * @param workspaceSlug
+   * @param projectId
+   * @param moduleId
+   * @returns IModule
+   */
   fetchModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
     await this.moduleService.getModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
       runInAction(() => {
@@ -380,7 +397,7 @@ export class ModulesStore implements IModuleStore {
   ) => {
     const originalModuleDetails = this.getModuleById(moduleId);
     try {
-      const linkModules = originalModuleDetails?.link_module.map((link) =>
+      const linkModules = originalModuleDetails?.link_module?.map((link) =>
         link.id === linkId ? { ...link, ...data } : link
       );
       runInAction(() => {
@@ -407,7 +424,7 @@ export class ModulesStore implements IModuleStore {
   deleteModuleLink = async (workspaceSlug: string, projectId: string, moduleId: string, linkId: string) =>
     await this.moduleService.deleteModuleLink(workspaceSlug, projectId, moduleId, linkId).then(() => {
       const moduleDetails = this.getModuleById(moduleId);
-      const linkModules = moduleDetails?.link_module.filter((link) => link.id !== linkId);
+      const linkModules = moduleDetails?.link_module?.filter((link) => link.id !== linkId);
       runInAction(() => {
         set(this.moduleMap, [moduleId, "link_module"], linkModules);
       });

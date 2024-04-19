@@ -8,11 +8,12 @@ import {
   PeekOverviewIssueProperties,
 } from "@/components/issues/peek-overview";
 // types
-import { IIssue } from "types/issue";
+import { IIssue } from "@/types/issue";
 
 type Props = {
   handleClose: () => void;
   issueDetails: IIssue | undefined;
+  workspace_slug: string;
 };
 
 export const FullScreenPeekView: React.FC<Props> = observer((props) => {

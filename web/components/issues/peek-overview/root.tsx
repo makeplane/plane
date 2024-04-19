@@ -135,22 +135,12 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Issue archived successfully.",
-          });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
             path: router.asPath,
           });
         } catch (error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be archived. Please try again.",
-          });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
@@ -163,8 +153,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           await restoreIssue(workspaceSlug, projectId, issueId);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Issue restored successfully.",
+            title: "Restore success",
+            message: "Your issue can be found in project issues.",
           });
           captureIssueEvent({
             eventName: ISSUE_RESTORED,
@@ -382,7 +372,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const currentProjectRole = currentWorkspaceAllProjectsRole?.[peekIssue?.projectId];
   // Check if issue is editable, based on user role
-  const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const isLoading = !issue || loader ? true : false;
 
   return (
@@ -392,7 +382,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       issueId={peekIssue.issueId}
       isLoading={isLoading}
       is_archived={is_archived}
-      disabled={!is_editable}
+      disabled={!isEditable}
       issueOperations={issueOperations}
     />
   );

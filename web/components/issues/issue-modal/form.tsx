@@ -3,9 +3,8 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { EditorRefApi } from "@plane/rich-text-editor";
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
-// editor
 // hooks
 import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover } from "@/components/core";
@@ -19,17 +18,17 @@ import {
   MemberDropdown,
   StateDropdown,
 } from "@/components/dropdowns";
+import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "@/hooks/store";
+import { useApplication, useEstimate, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
 import { AIService } from "@/services/ai.service";
-import { FileService } from "@/services/file.service";
 // components
 // ui
 // helpers
@@ -65,7 +64,6 @@ export interface IssueFormProps {
 
 // services
 const aiService = new AIService();
-const fileService = new FileService();
 
 const TAB_INDICES = [
   "name",
@@ -112,7 +110,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
 
   // refs
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -126,7 +124,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = useApplication();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
-  const { mentionHighlights, mentionSuggestions } = useMention();
+
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -193,6 +191,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     reset({
       ...defaultValues,
       project_id: getValues("project_id"),
+      description_html: data?.description_html ?? "<p></p>",
     });
     editorRef?.current?.clearEditor();
   };
@@ -327,32 +326,38 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             </h3>
           </div>
           {watch("parent_id") && selectedParentIssue && (
-            <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span
-                  className="block h-1.5 w-1.5 rounded-full"
-                  style={{
-                    backgroundColor: selectedParentIssue.state__color,
-                  }}
-                />
-                <span className="flex-shrink-0 text-custom-text-200">
-                  {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
-                </span>
-                <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
-                <button
-                  type="button"
-                  className="grid place-items-center"
-                  onClick={() => {
-                    setValue("parent_id", null);
-                    handleFormChange();
-                    setSelectedParentIssue(null);
-                  }}
-                  tabIndex={getTabIndex("remove_parent")}
-                >
-                  <X className="h-3 w-3 cursor-pointer" />
-                </button>
-              </div>
-            </div>
+            <Controller
+              control={control}
+              name="parent_id"
+              render={({ field: { onChange } }) => (
+                <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="block h-1.5 w-1.5 rounded-full"
+                      style={{
+                        backgroundColor: selectedParentIssue.state__color,
+                      }}
+                    />
+                    <span className="flex-shrink-0 text-custom-text-200">
+                      {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
+                    </span>
+                    <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
+                    <button
+                      type="button"
+                      className="grid place-items-center"
+                      onClick={() => {
+                        onChange(null);
+                        handleFormChange();
+                        setSelectedParentIssue(null);
+                      }}
+                      tabIndex={getTabIndex("remove_parent")}
+                    >
+                      <X className="h-3 w-3 cursor-pointer" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            />
           )}
           <div className="space-y-3">
             <div className="mt-2 space-y-3">
@@ -459,27 +464,23 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       name="description_html"
                       control={control}
                       render={({ field: { value, onChange } }) => (
-                        <RichTextEditorWithRef
-                          cancelUploadImage={fileService.cancelUpload}
-                          uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                          deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                          restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-                          ref={editorRef}
-                          debouncedUpdatesEnabled={false}
-                          value={
-                            !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                              ? watch("description_html")
-                              : value
-                          }
-                          initialValue={data?.description_html}
-                          customClassName="min-h-[7rem] border-custom-border-100"
-                          onChange={(description: any, description_html: string) => {
+                        <RichTextEditor
+                          initialValue={value}
+                          value={data.description_html}
+                          workspaceSlug={workspaceSlug?.toString() as string}
+                          workspaceId={workspaceId}
+                          projectId={projectId}
+                          // dragDropEnabled={false}
+                          onChange={(_description: object, description_html: string) => {
                             onChange(description_html);
                             handleFormChange();
                           }}
-                          mentionHighlights={mentionHighlights}
-                          mentionSuggestions={mentionSuggestions}
+                          ref={editorRef}
                           tabIndex={getTabIndex("description_html")}
+                          placeholder={(isFocused) => {
+                            if (isFocused) return "Press '/' for commands...";
+                            else return "Click to add description";
+                          }}
                         />
                       )}
                     />
@@ -535,7 +536,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           handleFormChange();
                         }}
                         buttonVariant={value?.length > 0 ? "transparent-without-text" : "border-with-text"}
-                        buttonClassName={value?.length > 0 ? "hover:bg-transparent px-0" : ""}
+                        buttonClassName={value?.length > 0 ? "hover:bg-transparent" : ""}
                         placeholder="Assignees"
                         multiple
                         tabIndex={getTabIndex("assignee_ids")}
@@ -652,58 +653,60 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           projectId={projectId}
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("estimate_point")}
+                          placeholder="Estimate"
                         />
                       </div>
                     )}
                   />
                 )}
-                <CustomMenu
-                  customButton={
-                    <button
-                      type="button"
-                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
-                    >
-                      {watch("parent_id") ? (
-                        <div className="flex items-center gap-1 text-custom-text-200">
-                          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-                          <span className="whitespace-nowrap">
-                            {selectedParentIssue &&
-                              `${selectedParentIssue.project__identifier}-
-                                  ${selectedParentIssue.sequence_id}`}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1 text-custom-text-300">
-                          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-                          <span className="whitespace-nowrap">Add parent</span>
-                        </div>
-                      )}
-                    </button>
-                  }
-                  placement="bottom-start"
-                  tabIndex={getTabIndex("parent_id")}
-                >
-                  {watch("parent_id") ? (
+                {watch("parent_id") ? (
+                  <CustomMenu
+                    customButton={
+                      <button
+                        type="button"
+                        className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
+                      >
+                        <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                        <span className="whitespace-nowrap">
+                          {selectedParentIssue &&
+                            `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`}
+                        </span>
+                      </button>
+                    }
+                    placement="bottom-start"
+                    tabIndex={getTabIndex("parent_id")}
+                  >
                     <>
                       <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
                         Change parent issue
                       </CustomMenu.MenuItem>
-                      <CustomMenu.MenuItem
-                        className="!p-1"
-                        onClick={() => {
-                          setValue("parent_id", null);
-                          handleFormChange();
-                        }}
-                      >
-                        Remove parent issue
-                      </CustomMenu.MenuItem>
+                      <Controller
+                        control={control}
+                        name="parent_id"
+                        render={({ field: { onChange } }) => (
+                          <CustomMenu.MenuItem
+                            className="!p-1"
+                            onClick={() => {
+                              onChange(null);
+                              handleFormChange();
+                            }}
+                          >
+                            Remove parent issue
+                          </CustomMenu.MenuItem>
+                        )}
+                      />
                     </>
-                  ) : (
-                    <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-                      Select parent Issue
-                    </CustomMenu.MenuItem>
-                  )}
-                </CustomMenu>
+                  </CustomMenu>
+                ) : (
+                  <button
+                    type="button"
+                    className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
+                    onClick={() => setParentIssueListModalOpen(true)}
+                  >
+                    <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                    <span className="whitespace-nowrap">Add parent</span>
+                  </button>
+                )}
                 <Controller
                   control={control}
                   name="parent_id"
@@ -717,7 +720,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         setSelectedParentIssue(issue);
                       }}
                       projectId={projectId}
-                      issueId={data?.id}
+                      issueId={isDraft ? undefined : data?.id}
                     />
                   )}
                 />

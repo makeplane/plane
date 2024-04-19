@@ -1,36 +1,39 @@
 # Python imports
-import jwt
 from datetime import datetime
+
+import jwt
 
 # Django imports
 from django.conf import settings
-from django.utils import timezone
-from django.db.models import Count
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.db.models import Count
+from django.utils import timezone
 
 # Third party modules
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 # Module imports
+from plane.app.permissions import WorkSpaceAdminPermission
 from plane.app.serializers import (
-    WorkSpaceMemberSerializer,
     WorkSpaceMemberInviteSerializer,
+    WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from .. import BaseViewSet
+from plane.bgtasks.event_tracking_task import workspace_invite_event
+from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import (
     User,
     Workspace,
-    WorkspaceMemberInvite,
     WorkspaceMember,
+    WorkspaceMemberInvite,
 )
-from plane.app.permissions import WorkSpaceAdminPermission
-from plane.bgtasks.workspace_invitation_task import workspace_invitation
-from plane.bgtasks.event_tracking_task import workspace_invite_event
-from plane.utils.cache import invalidate_cache
+from plane.utils.cache import invalidate_cache, invalidate_cache_directly
+
+from .. import BaseViewSet
+
 
 class WorkspaceInvitationsViewset(BaseViewSet):
     """Endpoint for creating, listing and  deleting workspaces"""
@@ -166,7 +169,14 @@ class WorkspaceJoinEndpoint(BaseAPIView):
     """Invitation response endpoint the user can respond to the invitation"""
 
     @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/")
+    @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
+    @invalidate_cache(
+        path="/api/workspaces/:slug/members/",
+        user=False,
+        multiple=True,
+        url_params=True,
+    )
+    @invalidate_cache(path="/api/users/me/settings/", multiple=True)
     def post(self, request, slug, pk):
         workspace_invite = WorkspaceMemberInvite.objects.get(
             pk=pk, workspace__slug=slug
@@ -264,10 +274,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
         )
 
     @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/")
-    @invalidate_cache(
-        path="/api/workspaces/:slug/members/", url_params=True, user=False
-    )
+    @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
     def create(self, request):
         invitations = request.data.get("invitations", [])
         workspace_invitations = WorkspaceMemberInvite.objects.filter(
@@ -276,6 +283,12 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
 
         # If the user is already a member of workspace and was deactivated then activate the user
         for invitation in workspace_invitations:
+            invalidate_cache_directly(
+                path=f"/api/workspaces/{invitation.workspace.slug}/members/",
+                user=False,
+                request=request,
+                multiple=True,
+            )
             # Update the WorkspaceMember for this specific invitation
             WorkspaceMember.objects.filter(
                 workspace_id=invitation.workspace_id, member=request.user

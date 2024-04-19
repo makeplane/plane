@@ -37,7 +37,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const { getCycleById, restoreCycle } = useCycle();
   // derived values
   const cycleDetails = getCycleById(cycleId);
-  const isCompleted = cycleDetails?.status.toLowerCase() === "completed";
+  const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
   // auth
   const isEditingAllowed =
     !!currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId] >= EUserProjectRoles.MEMBER;
@@ -78,7 +78,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
           title: "Restore success",
           message: "Your cycle can be found in project cycles.",
         });
-        router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`);
+        router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles`);
       })
       .catch(() =>
         setToast({
@@ -168,15 +168,14 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
             </span>
           </CustomMenu.MenuItem>
         )}
+        <hr className="my-2 border-custom-border-200" />
         {!isCompleted && isEditingAllowed && (
-          <div className="border-t pt-1 mt-1">
-            <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-              <span className="flex items-center justify-start gap-2">
-                <Trash2 className="h-3 w-3" />
-                <span>Delete cycle</span>
-              </span>
-            </CustomMenu.MenuItem>
-          </div>
+          <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+            <span className="flex items-center justify-start gap-2">
+              <Trash2 className="h-3 w-3" />
+              <span>Delete cycle</span>
+            </span>
+          </CustomMenu.MenuItem>
         )}
       </CustomMenu>
     </>

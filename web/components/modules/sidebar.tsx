@@ -84,7 +84,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
-  const moduleState = moduleDetails?.status.toLocaleLowerCase();
+  const moduleState = moduleDetails?.status?.toLocaleLowerCase();
   const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
 
   const { reset, control } = useForm({
@@ -227,7 +227,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           title: "Restore success",
           message: "Your module can be found in project modules.",
         });
-        router.push(`/${workspaceSlug}/projects/${projectId}/modules/${moduleId}`);
+        router.push(`/${workspaceSlug}/projects/${projectId}/archives/modules`);
       })
       .catch(() =>
         setToast({

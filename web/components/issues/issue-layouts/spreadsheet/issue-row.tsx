@@ -8,8 +8,6 @@ import { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { ControlLink, Tooltip } from "@plane/ui";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
-// constants
-import { SPREADSHEET_PROPERTY_LIST } from "@/constants/spreadsheet";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -37,6 +35,7 @@ interface Props {
   isScrolled: MutableRefObject<boolean>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
   issueIds: string[];
+  spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
 }
 
 export const SpreadsheetIssueRow = observer((props: Props) => {
@@ -52,6 +51,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     isScrolled,
     containerRef,
     issueIds,
+    spreadsheetColumnsList,
   } = props;
 
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -81,6 +81,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           isScrolled={isScrolled}
           isExpanded={isExpanded}
           setExpanded={setExpanded}
+          spreadsheetColumnsList={spreadsheetColumnsList}
         />
       </RenderIfVisible>
 
@@ -101,6 +102,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             isScrolled={isScrolled}
             containerRef={containerRef}
             issueIds={issueIds}
+            spreadsheetColumnsList={spreadsheetColumnsList}
           />
         ))}
     </>
@@ -123,6 +125,7 @@ interface IssueRowDetailsProps {
   isScrolled: MutableRefObject<boolean>;
   isExpanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
+  spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
 }
 
 const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
@@ -138,6 +141,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     isScrolled,
     isExpanded,
     setExpanded,
+    spreadsheetColumnsList,
   } = props;
   // router
   const router = useRouter();
@@ -150,10 +154,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const [isMenuActive, setIsMenuActive] = useState(false);
   const menuActionRef = useRef<HTMLDivElement | null>(null);
 
-  const handleIssuePeekOverview = (issue: TIssue) => {
-    if (workspaceSlug && issue && issue.project_id && issue.id)
-      setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
-  };
+  const handleIssuePeekOverview = (issue: TIssue) =>
+    workspaceSlug &&
+    issue &&
+    issue.project_id &&
+    issue.id &&
+    peekIssue?.issueId !== issue.id &&
+    setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
 
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
@@ -236,6 +243,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           </div>
         </WithDisplayPropertiesHOC>
         <ControlLink
+          id={`issue-${issueId}`}
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
@@ -255,7 +263,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         </ControlLink>
       </td>
       {/* Rest of the columns */}
-      {SPREADSHEET_PROPERTY_LIST.map((property) => (
+      {spreadsheetColumnsList.map((property) => (
         <IssueColumn
           key={property}
           displayProperties={displayProperties}

@@ -6,8 +6,8 @@ export interface ICycle {
   backlog_issues: number;
   cancelled_issues: number;
   completed_issues: number;
-  created_at: Date;
-  created_by: string;
+  created_at?: string;
+  created_by?: string;
   description: string;
   distribution?: {
     assignees: TAssigneesDistribution[];
@@ -16,23 +16,22 @@ export interface ICycle {
   };
   end_date: string | null;
   id: string;
-  is_favorite: boolean;
-  issue: string;
+  is_favorite?: boolean;
   name: string;
   owned_by_id: string;
   progress_snapshot: TProgressSnapshot;
   project_id: string;
-  status: TCycleGroups;
+  status?: TCycleGroups;
   sort_order: number;
   start_date: string | null;
   started_issues: number;
-  sub_issues: number;
+  sub_issues?: number;
   total_issues: number;
   unstarted_issues: number;
-  updated_at: Date;
-  updated_by: string;
+  updated_at?: string;
+  updated_by?: string;
   archived_at: string | null;
-  assignee_ids: string[];
+  assignee_ids?: string[];
   view_props: {
     filters: IIssueFilterOptions;
   };
@@ -97,10 +96,6 @@ export interface CycleIssueResponse {
 export type SelectCycleType =
   | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
   | undefined;
-
-export type SelectIssue =
-  | (TIssue & { actionType: "edit" | "delete" | "create" })
-  | null;
 
 export type CycleDateCheckData = {
   start_date: string;

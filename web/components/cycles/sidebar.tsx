@@ -129,7 +129,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
           title: "Restore success",
           message: "Your cycle can be found in project cycles.",
         });
-        router.push(`/${workspaceSlug.toString()}/projects/${projectId.toString()}/cycles/${cycleId}`);
+        router.push(`/${workspaceSlug.toString()}/projects/${projectId.toString()}/archives/cycles`);
       })
       .catch(() =>
         setToast({
@@ -211,7 +211,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   //   [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   // );
 
-  const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
+  const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
 
   const startDate = getDate(cycleDetails?.start_date);

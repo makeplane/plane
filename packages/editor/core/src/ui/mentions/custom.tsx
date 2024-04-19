@@ -5,7 +5,7 @@ import { MentionNodeView } from "src/ui/mentions/mention-node-view";
 import { IMentionHighlight } from "src/types/mention-suggestion";
 
 export interface CustomMentionOptions extends MentionOptions {
-  mentionHighlights: IMentionHighlight[];
+  mentionHighlights: () => Promise<IMentionHighlight[]>;
   readonly?: boolean;
 }
 
@@ -32,6 +32,12 @@ export const CustomMention = Mention.extend<CustomMentionOptions>({
       redirect_uri: {
         default: "/",
       },
+      entity_identifier: {
+        default: null,
+      },
+      entity_name: {
+        default: null,
+      },
     };
   },
 
@@ -43,17 +49,6 @@ export const CustomMention = Mention.extend<CustomMentionOptions>({
     return [
       {
         tag: "mention-component",
-        getAttrs: (node: string | HTMLElement) => {
-          if (typeof node === "string") {
-            return null;
-          }
-          return {
-            id: node.getAttribute("data-mention-id") || "",
-            target: node.getAttribute("data-mention-target") || "",
-            label: node.innerText.slice(1) || "",
-            redirect_uri: node.getAttribute("redirect_uri"),
-          };
-        },
       },
     ];
   },

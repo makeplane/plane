@@ -3,12 +3,13 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // icons
-import { Check, Info, Star, User2 } from "lucide-react";
+import { Check, Info, User2 } from "lucide-react";
 // types
 import type { TCycleGroups } from "@plane/types";
 // ui
 import { Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar, setPromiseToast } from "@plane/ui";
 // components
+import { FavoriteStar } from "@/components/core";
 import { CycleQuickActions } from "@/components/cycles";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
@@ -216,7 +217,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
             <div className="relative flex flex-shrink-0 items-center gap-3">
               <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
                 <div className="flex w-10 cursor-default items-center justify-center">
-                  {cycleDetails.assignee_ids?.length > 0 ? (
+                  {cycleDetails.assignee_ids && cycleDetails.assignee_ids?.length > 0 ? (
                     <AvatarGroup showTooltip={false}>
                       {cycleDetails.assignee_ids?.map((assignee_id) => {
                         const member = getUserDetails(assignee_id);
@@ -231,17 +232,15 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
                 </div>
               </Tooltip>
 
-              {isEditingAllowed &&
-                !isArchived &&
-                (cycleDetails.is_favorite ? (
-                  <button type="button" onClick={handleRemoveFromFavorites}>
-                    <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                  </button>
-                ) : (
-                  <button type="button" onClick={handleAddToFavorites}>
-                    <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                  </button>
-                ))}
+              {isEditingAllowed && !isArchived && (
+                <FavoriteStar
+                  onClick={(e) => {
+                    if (cycleDetails.is_favorite) handleRemoveFromFavorites(e);
+                    else handleAddToFavorites(e);
+                  }}
+                  selected={!!cycleDetails.is_favorite}
+                />
+              )}
               <CycleQuickActions
                 cycleId={cycleId}
                 projectId={projectId}

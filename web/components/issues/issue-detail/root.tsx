@@ -48,10 +48,11 @@ export type TIssueDetailRoot = {
   projectId: string;
   issueId: string;
   is_archived?: boolean;
+  swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, is_archived = false } = props;
+  const { workspaceSlug, projectId, issueId, swrIssueDetails, is_archived = false } = props;
   // router
   const router = useRouter();
   // hooks
@@ -144,22 +145,12 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Issue archived successfully.",
-          });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
             path: router.asPath,
           });
         } catch (error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be archived. Please try again.",
-          });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: "Issue details page" },
@@ -350,7 +341,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   // issue details
   const issue = getIssueById(issueId);
   // checking if issue is editable, based on user role
-  const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -369,10 +360,12 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           <div className="max-w-2/3 h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
+              swrIssueDetails={swrIssueDetails}
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}
-              is_editable={!is_archived && is_editable}
+              isEditable={!is_archived && isEditable}
+              isArchived={is_archived}
             />
           </div>
           <div
@@ -385,7 +378,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               issueId={issueId}
               issueOperations={issueOperations}
               is_archived={is_archived}
-              is_editable={!is_archived && is_editable}
+              isEditable={!is_archived && isEditable}
             />
           </div>
         </div>

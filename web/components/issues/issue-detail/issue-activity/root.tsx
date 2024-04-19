@@ -1,19 +1,20 @@
 import { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { History, LucideIcon, MessageCircle, ListRestart } from "lucide-react";
-import { TIssueComment } from "@plane/types";
-// hooks
-import { TOAST_TYPE, setToast } from "@plane/ui";
-import { useIssueDetail, useProject } from "@/hooks/store";
-// ui
-// components
-import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "./";
 // types
+import { TIssueComment } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "@/components/issues";
+// hooks
+import { useIssueDetail, useProject } from "@/hooks/store";
 
 type TIssueActivity = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  disabled?: boolean;
 };
 
 type TActivityTabs = "all" | "activity" | "comments";
@@ -43,7 +44,7 @@ export type TActivityOperations = {
 };
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
-  const { workspaceSlug, projectId, issueId } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { getProjectById } = useProject();
@@ -141,32 +142,42 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           {activityTab === "all" ? (
             <div className="space-y-3">
               <IssueActivityCommentRoot
+                projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 issueId={issueId}
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
+                disabled={disabled}
               />
-              <IssueCommentCreate
-                workspaceSlug={workspaceSlug}
-                activityOperations={activityOperations}
-                showAccessSpecifier={project.is_deployed}
-              />
+              {!disabled && (
+                <IssueCommentCreate
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                  activityOperations={activityOperations}
+                  showAccessSpecifier={project.is_deployed}
+                />
+              )}
             </div>
           ) : activityTab === "activity" ? (
             <IssueActivityRoot issueId={issueId} />
           ) : (
             <div className="space-y-3">
               <IssueCommentRoot
+                projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 issueId={issueId}
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
+                disabled={disabled}
               />
-              <IssueCommentCreate
-                workspaceSlug={workspaceSlug}
-                activityOperations={activityOperations}
-                showAccessSpecifier={project.is_deployed}
-              />
+              {!disabled && (
+                <IssueCommentCreate
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                  activityOperations={activityOperations}
+                  showAccessSpecifier={project.is_deployed}
+                />
+              )}
             </div>
           )}
         </div>

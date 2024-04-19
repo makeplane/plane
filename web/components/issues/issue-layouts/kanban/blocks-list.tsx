@@ -16,7 +16,6 @@ interface IssueBlocksListProps {
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  isDragStarted?: boolean;
 }
 
 const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
@@ -32,14 +31,13 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
     quickActions,
     canEditProperties,
     scrollableContainerRef,
-    isDragStarted,
   } = props;
 
   return (
     <>
       {issueIds && issueIds.length > 0 ? (
         <>
-          {issueIds.map((issueId, index) => {
+          {issueIds.map((issueId) => {
             if (!issueId) return null;
 
             let draggableId = issueId;
@@ -56,11 +54,9 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
                 updateIssue={updateIssue}
                 quickActions={quickActions}
                 draggableId={draggableId}
-                index={index}
                 isDragDisabled={isDragDisabled}
                 canEditProperties={canEditProperties}
                 scrollableContainerRef={scrollableContainerRef}
-                isDragStarted={isDragStarted}
                 issueIds={issueIds} //passing to force render for virtualization whenever parent rerenders
               />
             );

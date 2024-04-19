@@ -34,6 +34,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     issue &&
     issue.project_id &&
     issue.id &&
+    peekIssue?.issueId !== issue.id &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const issue = issuesMap[issueId];
@@ -53,7 +54,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         }
       )}
     >
-      <div className="flex">
+      <div className="flex w-full">
         <div className="flex flex-grow items-center gap-3">
           {displayProperties && displayProperties?.key && (
             <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
@@ -71,6 +72,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
             </Tooltip>
           ) : (
             <ControlLink
+              id={`issue-${issue.id}`}
               href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
                 issue.id
               }`}

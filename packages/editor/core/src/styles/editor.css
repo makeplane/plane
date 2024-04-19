@@ -7,10 +7,17 @@
 }
 
 /* block quotes */
+.ProseMirror blockquote {
+  font-style: normal;
+  font-weight: 400;
+  border-left: 3px solid rgb(var(--color-border-300));
+}
+
 .ProseMirror blockquote p::before,
 .ProseMirror blockquote p::after {
   display: none;
 }
+/* end block quotes */
 
 .ProseMirror code::before,
 .ProseMirror code::after {
@@ -28,8 +35,8 @@
 /* Custom image styles */
 .ProseMirror img {
   transition: filter 0.1s ease-in-out;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
+  margin-top: 8px;
+  margin-bottom: 0;
 
   &:hover {
     cursor: pointer;
@@ -37,20 +44,47 @@
   }
 
   &.ProseMirror-selectednode {
-    outline: 3px solid #5abbf7;
+    outline: 3px solid rgba(var(--color-primary-100));
     filter: brightness(90%);
   }
 }
 
-.ProseMirror-gapcursor:after {
+/* Custom gap cursor styles  */
+.ProseMirror-gapcursor::after {
   border-top: 1px solid rgb(var(--color-text-100)) !important;
 }
 
-/* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
+/* to-do list */
+ul[data-type="taskList"] li {
+  font-size: 1rem;
+  line-height: 1.5;
+}
 
 ul[data-type="taskList"] li > label {
-  margin-right: 0.2rem;
+  margin: 0.1rem 0.15rem 0 0;
   user-select: none;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"] {
+  border: 1px solid rgba(var(--color-border-300)) !important;
+  outline: none;
+  border-radius: 2px;
+  transform: scale(1.05);
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"]:hover {
+  background-color: rgba(var(--color-background-80)) !important;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
+  background-color: rgba(var(--color-primary-100)) !important;
+  border-color: rgba(var(--color-primary-100)) !important;
+  color: white !important;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
+  background-color: rgba(var(--color-primary-300)) !important;
+  border-color: rgba(var(--color-primary-300)) !important;
 }
 
 @media screen and (max-width: 768px) {
@@ -60,6 +94,7 @@ ul[data-type="taskList"] li > label {
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"] {
+  position: relative;
   -webkit-appearance: none;
   appearance: none;
   background-color: rgb(var(--color-background-100));
@@ -71,8 +106,6 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   border: 1.5px solid rgb(var(--color-text-100));
   margin-right: 0.2rem;
   margin-top: 0.15rem;
-  display: grid;
-  place-content: center;
 
   &:hover {
     background-color: rgb(var(--color-background-80));
@@ -82,27 +115,32 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
     background-color: rgb(var(--color-background-90));
   }
 
+  /* check sign */
   &::before {
     content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
     width: 0.5em;
     height: 0.5em;
     transform: scale(0);
+    transform-origin: center;
     transition: 120ms transform ease-in-out;
     box-shadow: inset 1em 1em;
-    transform-origin: center;
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
   }
 
   &:checked::before {
-    transform: scale(1);
+    transform: scale(1) translate(-50%, -50%);
   }
 }
 
 ul[data-type="taskList"] li[data-checked="true"] > div > p {
-  color: rgb(var(--color-text-200));
+  color: rgb(var(--color-text-400));
   text-decoration: line-through;
   text-decoration-thickness: 2px;
 }
+/* end to-do list */
 
 /* Overwrite tippy-box original max-width */
 
@@ -133,12 +171,12 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   -moz-appearance: textfield;
 }
 
-.fadeIn {
+.fade-in {
   opacity: 1;
   transition: opacity 0.3s ease-in;
 }
 
-.fadeOut {
+.fade-out {
   opacity: 0;
   transition: opacity 0.2s ease-out;
 }
@@ -149,7 +187,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 
-  &:before {
+  &::before {
     content: "";
     box-sizing: border-box;
     position: absolute;
@@ -175,21 +213,13 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   cursor: col-resize;
 }
 
-.ProseMirror table * p {
-  padding: 0px 1px;
-  margin: 6px 2px;
-}
-
 .ProseMirror table * .is-empty::before {
   opacity: 0;
 }
 
 .ProseMirror pre {
-  background: rgba(var(--color-background-80));
-  border-radius: 0.5rem;
-  color: rgba(var(--color-text-100));
-  font-family: "JetBrainsMono", monospace;
-  padding: 0.75rem 1rem;
+  font-family: JetBrainsMono, monospace;
+  tab-size: 2;
 }
 
 .ProseMirror pre code {
@@ -206,7 +236,7 @@ div[data-type="horizontalRule"] {
   margin-bottom: 0;
 
   & > div {
-    border-bottom: 1px solid rgb(var(--color-text-100));
+    border-bottom: 2px solid rgb(var(--color-border-200));
   }
 }
 
@@ -214,3 +244,107 @@ div[data-type="horizontalRule"] {
 .moveable-control-box {
   z-index: 10 !important;
 }
+
+/* Cursor styles for the inline code blocks */
+@keyframes blink {
+  49% {
+    border-color: unset;
+  }
+
+  50% {
+    border-color: transparent;
+  }
+
+  99% {
+    border-color: transparent;
+  }
+}
+
+.no-cursor {
+  caret-color: transparent;
+}
+
+div:focus .fake-cursor,
+span:focus .fake-cursor {
+  margin-right: -1px;
+  border-left-width: 1.5px;
+  border-left-style: solid;
+  animation: blink 1s;
+  animation-iteration-count: infinite;
+  position: relative;
+  z-index: 1;
+}
+
+/* numbered, bulleted and to-do lists spacing */
+.prose ol:where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+.prose
+  ul:not([data-type="taskList"]):where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+.prose ul[data-type="taskList"]:where(.prose > :first-child) {
+  margin-top: 0.25rem !important;
+  margin-bottom: 1px !important;
+}
+
+.prose ol:not(:where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *))),
+.prose
+  ul:not([data-type="taskList"]):not(
+    :where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *))
+  ),
+.prose ul[data-type="taskList"]:not(:where(.prose > :first-child)) {
+  margin-top: calc(0.25rem + 3px) !important;
+  margin-bottom: 1px !important;
+}
+
+ol ol,
+ol ul:not([data-type="taskList"]),
+ul:not([data-type="taskList"]) ul:not([data-type="taskList"]),
+ul:not([data-type="taskList"]) ol {
+  margin-top: 0.45rem !important;
+}
+
+ul[data-type="taskList"] ul[data-type="taskList"] {
+  margin-top: 0.6rem;
+}
+/* end numbered, bulleted and to-do lists spacing */
+
+/* tailwind typography */
+.prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 2rem;
+  margin-bottom: 4px;
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 1.4rem;
+  margin-bottom: 1px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 1rem;
+  margin-bottom: 1px;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+.prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 0.25rem;
+  margin-bottom: 1px;
+  padding: 3px 2px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p,
+.prose :where(ul):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.prose :where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 0;
+}
+/* end tailwind typography */

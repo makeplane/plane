@@ -147,7 +147,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const issueCount = moduleDetails
-    ? issueFilters?.displayFilters?.sub_issue
+    ? issueFilters?.displayFilters?.sub_issue && moduleDetails.sub_issues
       ? moduleDetails.total_issues + moduleDetails.sub_issues
       : moduleDetails.total_issues
     : undefined;
@@ -252,6 +252,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   labels={projectLabels}
                   memberIds={projectMemberIds ?? undefined}
                   states={projectStates}
+                  cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                  moduleViewDisabled={!currentProjectDetails?.module_view}
                 />
               </FiltersDropdown>
               <FiltersDropdown title="Display" placement="bottom-end">
@@ -264,6 +266,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   displayProperties={issueFilters?.displayProperties ?? {}}
                   handleDisplayPropertiesUpdate={handleDisplayProperties}
                   ignoreGroupedFilters={["module"]}
+                  cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                  moduleViewDisabled={!currentProjectDetails?.module_view}
                 />
               </FiltersDropdown>
             </div>

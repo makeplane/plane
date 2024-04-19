@@ -1,5 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0&display=swap");
+@import url("fonts/main.css");
 
 @tailwind base;
 @tailwind components;
@@ -45,8 +44,8 @@
     --color-primary-900: 13, 24, 51;
 
     --color-background-100: 255, 255, 255; /* primary bg */
-    --color-background-90: 250, 250, 250; /* secondary bg */
-    --color-background-80: 245, 245, 245; /* tertiary bg */
+    --color-background-90: 247, 247, 247; /* secondary bg */
+    --color-background-80: 232, 232, 232; /* tertiary bg */
 
     --color-text-100: 23, 23, 23; /* primary text */
     --color-text-200: 58, 58, 58; /* secondary text */
@@ -111,8 +110,8 @@
     color-scheme: light !important;
 
     --color-background-100: 255, 255, 255; /* primary bg */
-    --color-background-90: 250, 250, 250; /* secondary bg */
-    --color-background-80: 245, 245, 245; /* tertiary bg */
+    --color-background-90: 247, 247, 247; /* secondary bg */
+    --color-background-80: 232, 232, 232; /* tertiary bg */
   }
 
   [data-theme="light"] {
@@ -190,9 +189,9 @@
   [data-theme="dark-contrast"] {
     color-scheme: dark !important;
 
-    --color-background-100: 7, 7, 7; /* primary bg */
-    --color-background-90: 11, 11, 11; /* secondary bg */
-    --color-background-80: 23, 23, 23; /* tertiary bg */
+    --color-background-100: 25, 25, 25; /* primary bg */
+    --color-background-90: 32, 32, 32; /* secondary bg */
+    --color-background-80: 44, 44, 44; /* tertiary bg */
 
     --color-shadow-2xs: 0px 0px 1px 0px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.5);
     --color-shadow-xs: 0px 0px 2px 0px rgba(0, 0, 0, 0.2), 0px 2px 4px 0px rgba(0, 0, 0, 0.5);

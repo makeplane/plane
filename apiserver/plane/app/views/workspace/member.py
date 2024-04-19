@@ -102,7 +102,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @invalidate_cache(
-        path="/api/workspaces/:slug/members/", url_params=True, user=False
+        path="/api/workspaces/:slug/members/",
+        url_params=True,
+        user=False,
+        multiple=True,
     )
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
@@ -147,9 +150,15 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @invalidate_cache(
-        path="/api/workspaces/:slug/members/", url_params=True, user=False
+        path="/api/workspaces/:slug/members/",
+        url_params=True,
+        user=False,
+        multiple=True,
     )
-    @invalidate_cache(path="/api/users/me/settings/")
+    @invalidate_cache(path="/api/users/me/settings/", multiple=True)
+    @invalidate_cache(
+        path="/api/users/me/workspaces/", user=False, multiple=True
+    )
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
         workspace_member = WorkspaceMember.objects.get(
@@ -215,9 +224,15 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(
-        path="/api/workspaces/:slug/members/", url_params=True, user=False
+        path="/api/workspaces/:slug/members/",
+        url_params=True,
+        user=False,
+        multiple=True,
     )
     @invalidate_cache(path="/api/users/me/settings/")
+    @invalidate_cache(
+        path="api/users/me/workspaces/", user=False, multiple=True
+    )
     def leave(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug,

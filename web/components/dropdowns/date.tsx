@@ -149,9 +149,10 @@ export const DateDropdown: React.FC<Props> = (props) => {
             )}
             {isClearable && !disabled && isDateSelected && (
               <X
-                className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
+                className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
                 onClick={(e) => {
                   e.stopPropagation();
+                  e.preventDefault();
                   onChange(null);
                 }}
               />

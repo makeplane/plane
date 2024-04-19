@@ -59,6 +59,7 @@ export class ProjectFilterStore implements IProjectFilterStore {
       (workspaceSlug) => {
         if (!workspaceSlug) return;
         this.initWorkspaceFilters(workspaceSlug);
+        this.searchQuery = "";
       }
     );
   }

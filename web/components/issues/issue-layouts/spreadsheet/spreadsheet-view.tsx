@@ -4,6 +4,7 @@ import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@pl
 // components
 import { Spinner } from "@plane/ui";
 import { SpreadsheetQuickAddIssueForm } from "@/components/issues";
+import { SPREADSHEET_PROPERTY_LIST } from "@/constants/spreadsheet";
 import { useProject } from "@/hooks/store";
 import { SpreadsheetTable } from "./spreadsheet-table";
 // types
@@ -31,6 +32,7 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   enableQuickCreateIssue?: boolean;
   disableIssueCreation?: boolean;
+  isWorkspaceLevel?: boolean;
 };
 
 export const SpreadsheetView: React.FC<Props> = observer((props) => {
@@ -46,6 +48,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     canEditProperties,
     enableQuickCreateIssue,
     disableIssueCreation,
+    isWorkspaceLevel = false,
   } = props;
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
@@ -54,6 +57,14 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   const { currentProjectDetails } = useProject();
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
+
+  const spreadsheetColumnsList = isWorkspaceLevel
+    ? SPREADSHEET_PROPERTY_LIST
+    : SPREADSHEET_PROPERTY_LIST.filter((property) => {
+        if (property === "cycle" && !currentProjectDetails?.cycle_view) return false;
+        if (property === "modules" && !currentProjectDetails?.module_view) return false;
+        return true;
+      });
 
   if (!issueIds || issueIds.length === 0)
     return (
@@ -77,6 +88,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           updateIssue={updateIssue}
           canEditProperties={canEditProperties}
           containerRef={containerRef}
+          spreadsheetColumnsList={spreadsheetColumnsList}
         />
       </div>
       <div className="border-t border-custom-border-100">

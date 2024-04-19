@@ -4,6 +4,7 @@ import {
   TIssueActivityIssueDetail,
   TIssueActivityUserDetail,
 } from "./base";
+import { EIssueCommentAccessSpecifier } from "../../enums";
 
 export type TIssueComment = {
   id: string;
@@ -20,14 +21,13 @@ export type TIssueComment = {
   created_by: string | undefined;
   updated_by: string | undefined;
   attachments: any[];
-
   comment_reactions: any[];
   comment_stripped: string;
   comment_html: string;
   comment_json: object;
   external_id: string | undefined;
   external_source: string | undefined;
-  access: "EXTERNAL" | "INTERNAL";
+  access: EIssueCommentAccessSpecifier;
 };
 
 export type TIssueCommentMap = {

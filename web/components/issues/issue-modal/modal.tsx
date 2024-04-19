@@ -75,6 +75,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { createIssue, updateIssue } = useIssuesActions(storeType);
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
+    setDescription(undefined);
     if (!workspaceSlug) return;
 
     if (!projectId || issueId === undefined) {
@@ -173,6 +174,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       !createMore && handleClose();
       if (createMore) {
         issueTitleRef && issueTitleRef?.current?.focus();
+        setDescription("<p></p>");
         setChangesMade(null);
       }
       return response;

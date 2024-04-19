@@ -1,5 +1,7 @@
 # Python imports
+import json
 from datetime import datetime
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
 from django.db import connection
@@ -17,6 +19,7 @@ from plane.app.serializers import (
     PageLogSerializer,
     PageSerializer,
     SubPageSerializer,
+    PageDetailSerializer,
 )
 from plane.db.models import (
     Page,
@@ -27,6 +30,8 @@ from plane.db.models import (
 
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
+
+from plane.bgtasks.page_transaction_task import page_transaction
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -87,11 +92,21 @@ class PageViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         serializer = PageSerializer(
             data=request.data,
-            context={"project_id": project_id, "owned_by_id": request.user.id},
+            context={
+                "project_id": project_id,
+                "owned_by_id": request.user.id,
+                "description_html": request.data.get(
+                    "description_html", "<p></p>"
+                ),
+            },
         )
 
         if serializer.is_valid():
             serializer.save()
+            # capture the page transaction
+            page_transaction.delay(request.data, None, serializer.data["id"])
+            page = Page.objects.get(pk=serializer.data["id"])
+            serializer = PageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -125,9 +140,25 @@ class PageViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = PageSerializer(page, data=request.data, partial=True)
+            serializer = PageDetailSerializer(
+                page, data=request.data, partial=True
+            )
+            page_description = page.description_html
             if serializer.is_valid():
                 serializer.save()
+                # capture the page transaction
+                if request.data.get("description_html"):
+                    page_transaction.delay(
+                        new_value=request.data,
+                        old_value=json.dumps(
+                            {
+                                "description_html": page_description,
+                            },
+                            cls=DjangoJSONEncoder,
+                        ),
+                        page_id=pk,
+                    )
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -140,18 +171,30 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def lock(self, request, slug, project_id, page_id):
+    def retrieve(self, request, slug, project_id, pk=None):
+        page = self.get_queryset().filter(pk=pk).first()
+        if page is None:
+            return Response(
+                {"error": "Page not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        else:
+            return Response(
+                PageDetailSerializer(page).data, status=status.HTTP_200_OK
+            )
+
+    def lock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
-            pk=page_id, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, project_id=project_id
         ).first()
 
         page.is_locked = True
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def unlock(self, request, slug, project_id, page_id):
+    def unlock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
-            pk=page_id, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, project_id=project_id
         ).first()
 
         page.is_locked = False
@@ -160,13 +203,13 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request, slug, project_id):
-        queryset = self.get_queryset().filter(archived_at__isnull=True)
+        queryset = self.get_queryset()
         pages = PageSerializer(queryset, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
-    def archive(self, request, slug, project_id, page_id):
+    def archive(self, request, slug, project_id, pk):
         page = Page.objects.get(
-            pk=page_id, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, project_id=project_id
         )
 
         # only the owner or admin can archive the page
@@ -184,13 +227,16 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        unarchive_archive_page_and_descendants(page_id, datetime.now())
+        unarchive_archive_page_and_descendants(pk, datetime.now())
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"archived_at": str(datetime.now())},
+            status=status.HTTP_200_OK,
+        )
 
-    def unarchive(self, request, slug, project_id, page_id):
+    def unarchive(self, request, slug, project_id, pk):
         page = Page.objects.get(
-            pk=page_id, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, project_id=project_id
         )
 
         # only the owner or admin can un archive the page
@@ -213,18 +259,9 @@ class PageViewSet(BaseViewSet):
             page.parent = None
             page.save(update_fields=["parent"])
 
-        unarchive_archive_page_and_descendants(page_id, None)
+        unarchive_archive_page_and_descendants(pk, None)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def archive_list(self, request, slug, project_id):
-        pages = Page.objects.filter(
-            project_id=project_id,
-            workspace__slug=slug,
-        ).filter(archived_at__isnull=False)
-
-        pages = PageSerializer(pages, many=True).data
-        return Response(pages, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, pk):
         page = Page.objects.get(
@@ -269,29 +306,20 @@ class PageFavoriteViewSet(BaseViewSet):
     serializer_class = PageFavoriteSerializer
     model = PageFavorite
 
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(archived_at__isnull=True)
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(user=self.request.user)
-            .select_related("page", "page__owned_by")
+    def create(self, request, slug, project_id, pk):
+        _ = PageFavorite.objects.create(
+            project_id=project_id,
+            page_id=pk,
+            user=request.user,
         )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def create(self, request, slug, project_id):
-        serializer = PageFavoriteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user, project_id=project_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def destroy(self, request, slug, project_id, page_id):
+    def destroy(self, request, slug, project_id, pk):
         page_favorite = PageFavorite.objects.get(
             project=project_id,
             user=request.user,
             workspace__slug=slug,
-            page_id=page_id,
+            page_id=pk,
         )
         page_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

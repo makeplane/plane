@@ -12,7 +12,7 @@ urlpatterns = [
         name="project",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/",
+        "workspaces/<str:slug>/projects/<uuid:pk>/",
         ProjectAPIEndpoint.as_view(),
         name="project",
     ),

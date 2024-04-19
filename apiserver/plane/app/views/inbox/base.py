@@ -3,7 +3,7 @@ import json
 
 # Django import
 from django.utils import timezone
-from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Exists
+from django.db.models import Q, Count, OuterRef, Func, F, Prefetch
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -24,16 +24,15 @@ from plane.db.models import (
     State,
     IssueLink,
     IssueAttachment,
+    Project,
     ProjectMember,
-    IssueReaction,
-    IssueSubscriber,
 )
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueSerializer,
     InboxSerializer,
     InboxIssueSerializer,
-    IssueDetailSerializer,
+    InboxIssueDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activites_task import issue_activity
@@ -64,13 +63,20 @@ class InboxViewSet(BaseViewSet):
             .select_related("workspace", "project")
         )
 
+    def list(self, request, slug, project_id):
+        inbox = self.get_queryset().first()
+        return Response(
+            InboxSerializer(inbox).data,
+            status=status.HTTP_200_OK,
+        )
+
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"))
 
     def destroy(self, request, slug, project_id, pk):
-        inbox = Inbox.objects.get(
+        inbox = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        ).first()
         # Handle default inbox delete
         if inbox.is_default:
             return Response(
@@ -98,7 +104,6 @@ class InboxIssueViewSet(BaseViewSet):
             Issue.objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
-                issue_inbox__inbox_id=self.kwargs.get("inbox_id"),
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
@@ -162,51 +167,49 @@ class InboxIssueViewSet(BaseViewSet):
             )
         ).distinct()
 
-    def list(self, request, slug, project_id, inbox_id):
-        filters = issue_filters(request.query_params, "GET")
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
-            .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
-        )
-        if self.expand:
-            issues = IssueSerializer(
-                issue_queryset, expand=self.expand, many=True
-            ).data
-        else:
-            issues = issue_queryset.values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
+    def list(self, request, slug, project_id):
+        inbox_id = Inbox.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).first()
+        filters = issue_filters(request.GET, "GET", "issue__")
+        inbox_issue = (
+            InboxIssue.objects.filter(
+                inbox_id=inbox_id.id, project_id=project_id, **filters
             )
-        return Response(
-            issues,
-            status=status.HTTP_200_OK,
+            .select_related("issue")
+            .prefetch_related(
+                "issue__labels",
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__labels__id",
+                        distinct=True,
+                        filter=~Q(issue__labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+        ).order_by(request.GET.get("order_by", "-issue__created_at"))
+        # inbox status filter
+        inbox_status = [
+            item
+            for item in request.GET.get("status", "-2").split(",")
+            if item != "null"
+        ]
+        if inbox_status:
+            inbox_issue = inbox_issue.filter(status__in=inbox_status)
+
+        return self.paginate(
+            request=request,
+            queryset=(inbox_issue),
+            on_results=lambda inbox_issues: InboxIssueSerializer(
+                inbox_issues,
+                many=True,
+            ).data,
         )
 
-    def create(self, request, slug, project_id, inbox_id):
+    def create(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
                 {"error": "Name is required"},
@@ -229,49 +232,88 @@ class InboxIssueViewSet(BaseViewSet):
         # Create or get state
         state, _ = State.objects.get_or_create(
             name="Triage",
-            group="backlog",
+            group="triage",
             description="Default state for managing all Inbox Issues",
             project_id=project_id,
             color="#ff7700",
+            is_triage=True,
         )
 
         # create an issue
-        issue = Issue.objects.create(
-            name=request.data.get("issue", {}).get("name"),
-            description=request.data.get("issue", {}).get("description", {}),
-            description_html=request.data.get("issue", {}).get(
-                "description_html", "<p></p>"
-            ),
-            priority=request.data.get("issue", {}).get("priority", "low"),
-            project_id=project_id,
-            state=state,
+        project = Project.objects.get(pk=project_id)
+        serializer = IssueCreateSerializer(
+            data=request.data.get("issue"),
+            context={
+                "project_id": project_id,
+                "workspace_id": project.workspace_id,
+                "default_assignee_id": project.default_assignee_id,
+            },
         )
+        if serializer.is_valid():
+            serializer.save()
+            # Create an Issue Activity
+            issue_activity.delay(
+                type="issue.activity.created",
+                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(serializer.data["id"]),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+            inbox_id = Inbox.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).first()
+            # create an inbox issue
+            inbox_issue = InboxIssue.objects.create(
+                inbox_id=inbox_id.id,
+                project_id=project_id,
+                issue_id=serializer.data["id"],
+                source=request.data.get("source", "in-app"),
+            )
+            inbox_issue = (
+                InboxIssue.objects.select_related("issue")
+                .prefetch_related(
+                    "issue__labels",
+                    "issue__assignees",
+                )
+                .annotate(
+                    label_ids=Coalesce(
+                        ArrayAgg(
+                            "issue__labels__id",
+                            distinct=True,
+                            filter=~Q(issue__labels__id__isnull=True),
+                        ),
+                        Value([], output_field=ArrayField(UUIDField())),
+                    ),
+                    assignee_ids=Coalesce(
+                        ArrayAgg(
+                            "issue__assignees__id",
+                            distinct=True,
+                            filter=~Q(issue__assignees__id__isnull=True),
+                        ),
+                        Value([], output_field=ArrayField(UUIDField())),
+                    ),
+                )
+                .get(
+                    inbox_id=inbox_id.id,
+                    issue_id=serializer.data["id"],
+                    project_id=project_id,
+                )
+            )
+            serializer = InboxIssueDetailSerializer(inbox_issue)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
-        # Create an Issue Activity
-        issue_activity.delay(
-            type="issue.activity.created",
-            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-            actor_id=str(request.user.id),
-            issue_id=str(issue.id),
-            project_id=str(project_id),
-            current_instance=None,
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
-        )
-        # create an inbox issue
-        InboxIssue.objects.create(
-            inbox_id=inbox_id,
-            project_id=project_id,
-            issue=issue,
-            source=request.data.get("source", "in-app"),
-        )
-
-        issue = self.get_queryset().filter(pk=issue.id).first()
-        serializer = IssueSerializer(issue, expand=self.expand)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def partial_update(self, request, slug, project_id, inbox_id, issue_id):
+    def partial_update(self, request, slug, project_id, issue_id):
+        inbox_id = Inbox.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).first()
         inbox_issue = InboxIssue.objects.get(
             issue_id=issue_id,
             workspace__slug=slug,
@@ -296,9 +338,12 @@ class InboxIssueViewSet(BaseViewSet):
 
         # Get issue data
         issue_data = request.data.pop("issue", False)
-
         if bool(issue_data):
-            issue = self.get_queryset().filter(pk=inbox_issue.issue_id).first()
+            issue = Issue.objects.get(
+                pk=inbox_issue.issue_id,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
             # Only allow guests and viewers to edit name and description
             if project_member.role <= 10:
                 # viewers and guests since only viewers and guests
@@ -346,7 +391,9 @@ class InboxIssueViewSet(BaseViewSet):
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )
-
+            current_instance = json.dumps(
+                InboxIssueSerializer(inbox_issue).data, cls=DjangoJSONEncoder
+            )
             if serializer.is_valid():
                 serializer.save()
                 # Update the issue state if the issue is rejected or marked as duplicate
@@ -374,7 +421,7 @@ class InboxIssueViewSet(BaseViewSet):
                     )
 
                     # Update the issue state only if it is in triage state
-                    if issue.state.name == "Triage":
+                    if issue.state.is_triage:
                         # Move to default state
                         state = State.objects.filter(
                             workspace__slug=slug,
@@ -384,60 +431,108 @@ class InboxIssueViewSet(BaseViewSet):
                         if state is not None:
                             issue.state = state
                             issue.save()
-                return Response(status=status.HTTP_204_NO_CONTENT)
+                # create a activity for status change
+                issue_activity.delay(
+                    type="inbox.activity.created",
+                    requested_data=json.dumps(
+                        request.data, cls=DjangoJSONEncoder
+                    ),
+                    actor_id=str(request.user.id),
+                    issue_id=str(issue_id),
+                    project_id=str(project_id),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=False,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
+                inbox_issue = (
+                    InboxIssue.objects.filter(
+                        inbox_id=inbox_id.id,
+                        issue_id=serializer.data["id"],
+                        project_id=project_id,
+                    )
+                    .select_related("issue")
+                    .prefetch_related(
+                        "issue__labels",
+                        "issue__assignees",
+                    )
+                    .annotate(
+                        label_ids=Coalesce(
+                            ArrayAgg(
+                                "issue__labels__id",
+                                distinct=True,
+                                filter=~Q(issue__labels__id__isnull=True),
+                            ),
+                            Value(
+                                [],
+                                output_field=ArrayField(UUIDField()),
+                            ),
+                        ),
+                        assignee_ids=Coalesce(
+                            ArrayAgg(
+                                "issue__assignees__id",
+                                distinct=True,
+                                filter=~Q(issue__assignees__id__isnull=True),
+                            ),
+                            Value(
+                                [],
+                                output_field=ArrayField(UUIDField()),
+                            ),
+                        ),
+                    ).first()
+                )
+                serializer = InboxIssueDetailSerializer(inbox_issue).data
+                return Response(serializer, status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
         else:
-            issue = self.get_queryset().filter(pk=issue_id).first()
-            serializer = IssueSerializer(issue, expand=self.expand)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer = InboxIssueDetailSerializer(inbox_issue).data
+            return Response(serializer, status=status.HTTP_200_OK)
 
-    def retrieve(self, request, slug, project_id, inbox_id, issue_id):
-        issue = (
-            self.get_queryset()
-            .filter(pk=issue_id)
+    def retrieve(self, request, slug, project_id, issue_id):
+        inbox_id = Inbox.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).first()
+        inbox_issue = (
+            InboxIssue.objects.select_related("issue")
             .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related(
-                        "issue", "actor"
-                    ),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_link",
-                    queryset=IssueLink.objects.select_related("created_by"),
-                )
+                "issue__labels",
+                "issue__assignees",
             )
             .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        workspace__slug=slug,
-                        project_id=project_id,
-                        issue_id=OuterRef("pk"),
-                        subscriber=request.user,
-                    )
-                )
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__labels__id",
+                        distinct=True,
+                        filter=~Q(issue__labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__assignees__id",
+                        distinct=True,
+                        filter=~Q(issue__assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
+            .get(
+                inbox_id=inbox_id.id, issue_id=issue_id, project_id=project_id
+            )
+        )
+        issue = InboxIssueDetailSerializer(inbox_issue).data
+        return Response(
+            issue,
+            status=status.HTTP_200_OK,
+        )
+
+    def destroy(self, request, slug, project_id, issue_id):
+        inbox_id = Inbox.objects.filter(
+            workspace__slug=slug, project_id=project_id
         ).first()
-        if issue is None:
-            return Response(
-                {"error": "Requested object was not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        serializer = IssueDetailSerializer(issue)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def destroy(self, request, slug, project_id, inbox_id, issue_id):
         inbox_issue = InboxIssue.objects.get(
             issue_id=issue_id,
             workspace__slug=slug,
