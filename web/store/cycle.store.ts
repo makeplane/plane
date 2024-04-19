@@ -1,6 +1,7 @@
 import { isFuture, isPast, isToday } from "date-fns";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import update from "lodash/update";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -427,7 +428,7 @@ export class CycleStore implements ICycleStore {
   fetchArchivedCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string) =>
     await this.cycleArchiveService.getArchivedCycleDetails(workspaceSlug, projectId, cycleId).then((response) => {
       runInAction(() => {
-        set(this.cycleMap, [response.id], { ...this.cycleMap?.[response.id], ...response });
+        update(this.cycleMap, cycleId, (cycle) => ({ ...cycle, ...response }));
       });
       return response;
     });
