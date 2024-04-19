@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 // types
 import { IEmailCheckData } from "@plane/types";
 // ui
@@ -9,7 +11,6 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import {
   OAuthOptions,
   SignUpEmailForm,
-  SignUpOptionalSetPasswordForm,
   SignUpPasswordForm,
   SignUpUniqueCodeForm,
   TermsAndConditions,
@@ -30,31 +31,43 @@ export enum ESignUpSteps {
 }
 
 export const SignUpRoot = observer(() => {
+  // router
+  const router = useRouter();
+  const { email: emailParam } = router.query;
   // states
   const [signInStep, setSignInStep] = useState<ESignUpSteps | null>(ESignUpSteps.EMAIL);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // mobx store
   const { instance } = useInstance();
+
+  const redirectToSignIn = (email: string) => {
+    if (isEmpty(email)) router.push("/");
+    else router.push({ pathname: "/", query: { ...router.query, email: email } });
+  };
 
   // step 1 submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
 
     await authService
-      .emailCheck(data)
+      .signUpEmailCheck(data)
       .then(() => {
         if (instance?.config?.is_smtp_configured) setSignInStep(ESignUpSteps.UNIQUE_CODE);
         else setSignInStep(ESignUpSteps.PASSWORD);
       })
-      .catch((err) =>
+      .catch((err) => {
+        if (err?.error_code === "USER_ALREADY_EXIST") {
+          redirectToSignIn(data.email);
+          return;
+        }
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      );
+        });
+      });
   };
 
   // step 2 submit handler- unique code sign in
@@ -75,7 +88,9 @@ export const SignUpRoot = observer(() => {
     <>
       <div className="mx-auto flex flex-col">
         <>
-          {signInStep === ESignUpSteps.EMAIL && <SignUpEmailForm onSubmit={handleEmailVerification} />}
+          {signInStep === ESignUpSteps.EMAIL && (
+            <SignUpEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />
+          )}
           {signInStep === ESignUpSteps.UNIQUE_CODE && (
             <SignUpUniqueCodeForm
               email={email}
@@ -94,13 +109,6 @@ export const SignUpRoot = observer(() => {
                 setSignInStep(ESignUpSteps.EMAIL);
               }}
               onSubmit={handlePasswordSignIn}
-            />
-          )}
-          {signInStep === ESignUpSteps.OPTIONAL_SET_PASSWORD && (
-            <SignUpOptionalSetPasswordForm
-              email={email}
-              handleSignInRedirection={handleRedirection}
-              handleStepChange={(step) => setSignInStep(step)}
             />
           )}
         </>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
 // types
 import { IEmailCheckData } from "@plane/types";
@@ -40,6 +40,7 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
   // states
   const [uniqueCodeFormData, setUniqueCodeFormData] = useState<TUniqueCodeFormValues>({ ...defaultValues, email });
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
+  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   // store hooks
   // const { captureEvent } = useEventTracker();
   // timer
@@ -109,6 +110,11 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
       .finally(() => setIsRequestingNewCode(false));
   };
 
+  useEffect(() => {
+    if (csrfToken === undefined)
+      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+  }, [csrfToken]);
+
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
 
   return (
@@ -119,11 +125,8 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
           Progress, visualize, and measure work how it works best for you.
         </p>
       </div>
-      <form
-        className="mx-auto mt-5 space-y-4 sm:w-96"
-        method="POST"
-        action={`${API_BASE_URL}/api/instances/admins/sign-up/`}
-      >
+      <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/sign-up/`}>
+        <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
           <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
             Email <span className="text-red-500">*</span>
@@ -138,7 +141,6 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
               // hasError={Boolean(errors.email)}
               placeholder="name@company.com"
               className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-              disabled
             />
             {uniqueCodeFormData.email.length > 0 && (
               <XCircle
@@ -188,8 +190,8 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
               {resendTimerCode > 0
                 ? `Resend in ${resendTimerCode}s`
                 : isRequestingNewCode
-                ? "Requesting new code"
-                : "Resend"}
+                  ? "Requesting new code"
+                  : "Resend"}
             </button>
           </div>
         </div>

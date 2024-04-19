@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
 import { IEmailCheckData } from "@plane/types";
 // services
@@ -19,7 +19,6 @@ import { AuthService } from "@/services/auth.service";
 type Props = {
   email: string;
   handleEmailClear: () => void;
-  onSubmit: (isPasswordAutoset: boolean) => Promise<void>;
   submitButtonText: string;
 };
 
@@ -37,42 +36,15 @@ const defaultValues: TUniqueCodeFormValues = {
 const authService = new AuthService();
 
 export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
-  const { email,  handleEmailClear, submitButtonText } = props;
+  const { email, handleEmailClear, submitButtonText } = props;
   // states
   const [uniqueCodeFormData, setUniqueCodeFormData] = useState<TUniqueCodeFormValues>({ ...defaultValues, email });
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
+  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   // store hooks
   // const { captureEvent } = useEventTracker();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(30);
-
-  // const handleUniqueCodeSignIn = async (formData: TUniqueCodeFormValues) => {
-  //   const payload: IMagicSignInData = {
-  //     email: formData.email,
-  //     key: `magic_${formData.email}`,
-  //     token: formData.token,
-  //   };
-
-  //   await authService
-  //     .magicSignIn(payload)
-  //     .then(async () => {
-  //       captureEvent(CODE_VERIFIED, {
-  //         state: "SUCCESS",
-  //       });
-  //       const currentUser = await userService.currentUser();
-  //       await onSubmit(currentUser.is_password_autoset);
-  //     })
-  //     .catch((err) => {
-  //       captureEvent(CODE_VERIFIED, {
-  //         state: "FAILED",
-  //       });
-  //       setToast({
-  //         type: TOAST_TYPE.ERROR,
-  //         title: "Error!",
-  //         message: err?.error ?? "Something went wrong. Please try again.",
-  //       });
-  //     });
-  // };
 
   const handleFormChange = (key: keyof TUniqueCodeFormValues, value: string) =>
     setUniqueCodeFormData((prev) => ({ ...prev, [key]: value }));
@@ -102,6 +74,11 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
       );
   };
 
+  useEffect(() => {
+    if (csrfToken === undefined)
+      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+  }, [csrfToken]);
+
   const handleRequestNewCode = async () => {
     setIsRequestingNewCode(true);
 
@@ -118,11 +95,8 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
         <h3 className="text-3xl font-bold text-onboarding-text-100">Sign in to Plane</h3>
         <p className="font-medium text-onboarding-text-400">Get back to your projects and make progress</p>
       </div>
-      <form
-        className="mx-auto mt-5 space-y-4 sm:w-96"
-        method="POST"
-        action={`${API_BASE_URL}/api/instances/admins/sign-up/`}
-      >
+      <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/sign-in/`}>
+        <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
           <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
             Email <span className="text-red-500">*</span>
@@ -137,7 +111,6 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
               // hasError={Boolean(errors.email)}
               placeholder="name@company.com"
               className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-              disabled
             />
             {uniqueCodeFormData.email.length > 0 && (
               <XCircle
@@ -178,8 +151,8 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
               {resendTimerCode > 0
                 ? `Resend in ${resendTimerCode}s`
                 : isRequestingNewCode
-                ? "Requesting new code"
-                : "Resend"}
+                  ? "Requesting new code"
+                  : "Resend"}
             </button>
           </div>
         </div>

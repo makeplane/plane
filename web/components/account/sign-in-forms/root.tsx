@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 // types
 import { IEmailCheckData } from "@plane/types";
 // ui
@@ -10,7 +12,6 @@ import {
   SignInUniqueCodeForm,
   SignInPasswordForm,
   OAuthOptions,
-  SignInOptionalSetPasswordForm,
   TermsAndConditions,
 } from "@/components/account";
 // hooks
@@ -26,13 +27,15 @@ export enum ESignInSteps {
   PASSWORD = "PASSWORD",
   UNIQUE_CODE = "UNIQUE_CODE",
   OPTIONAL_SET_PASSWORD = "OPTIONAL_SET_PASSWORD",
-  USE_UNIQUE_CODE_FROM_PASSWORD = "USE_UNIQUE_CODE_FROM_PASSWORD",
 }
 
 export const SignInRoot = observer(() => {
+  //router
+  const router = useRouter();
+  const { email: emailParam } = router.query;
   // states
   const [signInStep, setSignInStep] = useState<ESignInSteps | null>(ESignInSteps.EMAIL);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // hooks
@@ -40,29 +43,41 @@ export const SignInRoot = observer(() => {
   // derived values
   const isSmtpConfigured = instance?.config?.is_smtp_configured;
 
+  const redirectToSignUp = (email: string) => {
+    if (isEmpty(email)) router.push("/accounts/sign-up");
+    else router.push({ pathname: "/accounts/sign-up", query: { ...router.query, email: email } });
+  };
+
   // step 1 submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
 
     await authService
-      .emailCheck(data)
+      .signInEmailCheck(data)
       .then((res) => {
-        if (isSmtpConfigured && res.is_password_autoset) setSignInStep(ESignInSteps.UNIQUE_CODE);
-        else setSignInStep(ESignInSteps.PASSWORD);
+        if (res.is_password_autoset) {
+          if (!isSmtpConfigured) {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: "Error!",
+              message: "Unable to process request please contact Administrator to reset password",
+            });
+          } else {
+            setSignInStep(ESignInSteps.UNIQUE_CODE);
+          }
+        } else setSignInStep(ESignInSteps.PASSWORD);
       })
-      .catch((err) =>
+      .catch((err) => {
+        if (err?.error_code === "USER_DOES_NOT_EXIST") {
+          redirectToSignUp(data.email);
+          return;
+        }
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      );
-  };
-
-  // step 2 submit handler- unique code sign in
-  const handleUniqueCodeSignIn = async (isPasswordAutoset: boolean) => {
-    if (isPasswordAutoset) setSignInStep(ESignInSteps.OPTIONAL_SET_PASSWORD);
-    else await handleRedirection();
+          message: err?.error_message ?? "Something went wrong. Please try again.",
+        });
+      });
   };
 
   // step 3 submit handler- password sign in
@@ -77,7 +92,9 @@ export const SignInRoot = observer(() => {
     <>
       <div className="mx-auto flex flex-col">
         <>
-          {signInStep === ESignInSteps.EMAIL && <SignInEmailForm onSubmit={handleEmailVerification} />}
+          {signInStep === ESignInSteps.EMAIL && (
+            <SignInEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />
+          )}
           {signInStep === ESignInSteps.UNIQUE_CODE && (
             <SignInUniqueCodeForm
               email={email}
@@ -85,7 +102,6 @@ export const SignInRoot = observer(() => {
                 setEmail("");
                 setSignInStep(ESignInSteps.EMAIL);
               }}
-              onSubmit={handleUniqueCodeSignIn}
               submitButtonText="Continue"
             />
           )}
@@ -99,20 +115,6 @@ export const SignInRoot = observer(() => {
               onSubmit={handlePasswordSignIn}
               handleStepChange={(step) => setSignInStep(step)}
             />
-          )}
-          {signInStep === ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD && (
-            <SignInUniqueCodeForm
-              email={email}
-              handleEmailClear={() => {
-                setEmail("");
-                setSignInStep(ESignInSteps.EMAIL);
-              }}
-              onSubmit={handleUniqueCodeSignIn}
-              submitButtonText="Go to workspace"
-            />
-          )}
-          {signInStep === ESignInSteps.OPTIONAL_SET_PASSWORD && (
-            <SignInOptionalSetPasswordForm email={email} handleSignInRedirection={handleRedirection} />
           )}
         </>
       </div>

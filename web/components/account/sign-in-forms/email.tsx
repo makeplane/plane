@@ -12,6 +12,7 @@ import { checkEmailValidity } from "@/helpers/string.helper";
 
 type Props = {
   onSubmit: (data: IEmailCheckData) => Promise<void>;
+  defaultEmail: string;
 };
 
 type TEmailFormValues = {
@@ -19,7 +20,7 @@ type TEmailFormValues = {
 };
 
 export const SignInEmailForm: React.FC<Props> = observer((props) => {
-  const { onSubmit } = props;
+  const { onSubmit, defaultEmail } = props;
   // hooks
   const {
     control,
@@ -27,7 +28,7 @@ export const SignInEmailForm: React.FC<Props> = observer((props) => {
     handleSubmit,
   } = useForm<TEmailFormValues>({
     defaultValues: {
-      email: "",
+      email: defaultEmail,
     },
     mode: "onChange",
     reValidateMode: "onChange",

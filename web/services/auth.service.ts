@@ -4,6 +4,7 @@ import { APIService } from "@/services/api.service";
 // helpers
 // types
 import {
+  ICsrfTokenData,
   IEmailCheckData,
   IEmailCheckResponse,
   ILoginTokenResponse,
@@ -16,8 +17,23 @@ export class AuthService extends APIService {
     super(API_BASE_URL);
   }
 
-  async emailCheck(data: IEmailCheckData): Promise<IEmailCheckResponse> {
-    return this.post("/api/email-check/", data, { headers: {} })
+  async requestCSRFToken(): Promise<ICsrfTokenData> {
+    return this.get("/auth/get-csrf-token/")
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error;
+      });
+  }
+
+  async signUpEmailCheck(data: IEmailCheckData): Promise<IEmailCheckResponse> {
+    return this.post("/auth/sign-up/email-check/", data, { headers: {} })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async signInEmailCheck(data: IEmailCheckData): Promise<IEmailCheckResponse> {
+    return this.post("/auth/sign-in/email-check/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

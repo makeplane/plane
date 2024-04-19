@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
@@ -42,37 +42,19 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const { instance } = useInstance();
   const { captureEvent } = useEventTracker();
   // derived values
   const isSmtpConfigured = instance?.config?.is_smtp_configured;
 
-  // const handleFormSubmit = async (formData: TPasswordFormValues) => {
-  //   const payload: IPasswordSignInData = {
-  //     email: formData.email,
-  //     password: formData.password,
-  //   };
-
-  //   await authService
-  //     .passwordSignIn(payload)
-  //     .then(async () => {
-  //       captureEvent(SIGN_IN_WITH_PASSWORD, {
-  //         state: "SUCCESS",
-  //         first_time: false,
-  //       });
-  //       await onSubmit();
-  //     })
-  //     .catch((err) =>
-  //       setToast({
-  //         type: TOAST_TYPE.ERROR,
-  //         title: "Error!",
-  //         message: err?.error ?? "Something went wrong. Please try again.",
-  //       })
-  //     );
-  // };
-
   const handleFormChange = (key: keyof TPasswordFormValues, value: string) =>
     setPasswordFormData((prev) => ({ ...prev, [key]: value }));
+
+  useEffect(() => {
+    if (csrfToken === undefined)
+      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+  }, [csrfToken]);
 
   const handleSendUniqueCode = async () => {
     const emailFormValue = passwordFormData.password;
@@ -89,7 +71,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
 
     await authService
       .generateUniqueCode({ email: emailFormValue })
-      .then(() => handleStepChange(ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD))
+      .then(() => handleStepChange(ESignInSteps.UNIQUE_CODE))
       .catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -106,11 +88,8 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
         <h3 className="text-3xl font-bold text-onboarding-text-100">Sign in to Plane</h3>
         <p className="font-medium text-onboarding-text-400">Get back to your projects and make progress</p>
       </div>
-      <form
-        className="mx-auto mt-5 space-y-4 sm:w-96"
-        method="POST"
-        action={`${API_BASE_URL}/api/instances/admins/sign-up/`}
-      >
+      <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/sign-in/`}>
+        <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
           <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
             Email <span className="text-red-500">*</span>
@@ -125,7 +104,6 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
               // hasError={Boolean(errors.email)}
               placeholder="name@company.com"
               className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-              disabled
             />
             {passwordFormData.email.length > 0 && (
               <XCircle
@@ -142,6 +120,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
           <div className="relative flex items-center rounded-md bg-onboarding-background-200">
             <Input
               type={showPassword ? "text" : "password"}
+              name="password"
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               // hasError={Boolean(errors.password)}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { Eye, EyeOff, XCircle } from "lucide-react";
@@ -6,6 +6,8 @@ import { Eye, EyeOff, XCircle } from "lucide-react";
 import { Button, Input } from "@plane/ui";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+// services
+import { AuthService } from "@/services/auth.service";
 // components
 import { PasswordStrengthMeter } from "../password-strength-meter";
 
@@ -25,32 +27,22 @@ const defaultValues: TPasswordFormValues = {
   password: "",
 };
 
+const authService = new AuthService();
+
 export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
   const { email, handleEmailClear } = props;
   // states
   const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
   const [showPassword, setShowPassword] = useState(false);
+  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
 
   const handleFormChange = (key: keyof TPasswordFormValues, value: string) =>
     setPasswordFormData((prev) => ({ ...prev, [key]: value }));
 
-  // const handleFormSubmit = async (formData: TPasswordFormValues) => {
-  //   const payload: IPasswordSignInData = {
-  //     email: formData.email,
-  //     password: formData.password,
-  //   };
-
-  //   await authService
-  //     .passwordSignIn(payload)
-  //     .then(async () => await onSubmit())
-  //     .catch((err) =>
-  //       setToast({
-  //         type: TOAST_TYPE.ERROR,
-  //         title: "Error!",
-  //         message: err?.error ?? "Something went wrong. Please try again.",
-  //       })
-  //     );
-  // };
+  useEffect(() => {
+    if (csrfToken === undefined)
+      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+  }, [csrfToken]);
 
   return (
     <>
@@ -60,11 +52,8 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
           Progress, visualize, and measure work how it works best for you.
         </p>
       </div>
-      <form
-        className="mx-auto mt-5 space-y-4 sm:w-96"
-        method="POST"
-        action={`${API_BASE_URL}/api/instances/admins/sign-up/`}
-      >
+      <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/sign-up/`}>
+        <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
           <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
             Email <span className="text-red-500">*</span>
@@ -79,7 +68,6 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
               // hasError={Boolean(errors.email)}
               placeholder="name@company.com"
               className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-              disabled
             />
             {passwordFormData.email.length > 0 && (
               <XCircle
