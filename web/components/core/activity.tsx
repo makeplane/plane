@@ -17,6 +17,7 @@ import {
   SignalMediumIcon,
   MessageSquareIcon,
   UsersIcon,
+  Inbox,
 } from "lucide-react";
 import { IIssueActivity } from "@plane/types";
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
@@ -111,6 +112,61 @@ const EstimatePoint = observer((props: { point: string }) => {
     </span>
   );
 });
+
+const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolean) => {
+  switch (activity.verb) {
+    case "-1":
+      return (
+        <>
+          {showIssue ? (
+            <>
+              {`decline issue`} <IssueLink activity={activity} /> {`from inbox.`}
+            </>
+          ) : (
+            "declined this issue from inbox."
+          )}
+        </>
+      );
+    case "0":
+      return (
+        <>
+          {showIssue ? (
+            <>
+              {`snoozed issue`} <IssueLink activity={activity} /> {`from inbox.`}
+            </>
+          ) : (
+            "snoozed this issue."
+          )}
+        </>
+      );
+    case "1":
+      return (
+        <>
+          {showIssue ? (
+            <>
+              {`accepted issue`} <IssueLink activity={activity} /> {`from inbox.`}
+            </>
+          ) : (
+            "accepted this issue from inbox."
+          )}
+        </>
+      );
+    case "2":
+      return (
+        <>
+          {showIssue ? (
+            <>
+              {`declined issue`} <IssueLink activity={activity} /> {`from inbox by marking a duplicate issue.`}
+            </>
+          ) : (
+            "declined this issue from inbox by marking a duplicate issue."
+          )}
+        </>
+      );
+    default:
+      return "updated inbox issue status.";
+  }
+};
 
 const activityDetails: {
   [key: string]: {
@@ -658,14 +714,17 @@ const activityDetails: {
             <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
             {showIssue && (
               <>
-                {" "}
-                for <IssueLink activity={activity} />
+                <IssueLink activity={activity} />
               </>
             )}
           </>
         );
     },
     icon: <Calendar size={12} color="#6b7280" aria-hidden="true" />,
+  },
+  inbox: {
+    message: (activity, showIssue) => <>{getInboxUserActivityMessage(activity, showIssue)}</>,
+    icon: <Inbox size={12} color="#6b7280" aria-hidden="true" />,
   },
 };
 
