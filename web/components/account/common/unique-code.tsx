@@ -166,7 +166,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
         </div>
         {/* <Button type="submit" variant="primary" className="w-full" size="lg" disabled={!isValid} loading={isSubmitting}> */}
         <Button type="submit" variant="primary" className="w-full" size="lg">
-          {isRequestingNewCode ? <Spinner /> : "Create account"}
+          {isRequestingNewCode ? <Spinner /> : submitButtonText}
         </Button>
       </form>
     </>

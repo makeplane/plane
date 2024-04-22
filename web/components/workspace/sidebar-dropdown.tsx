@@ -2,9 +2,7 @@ import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
-import { mutate } from "swr";
 // icons
 import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 // ui
@@ -63,7 +61,6 @@ export const WorkspaceSidebarDropdown = observer(() => {
   } = useUser();
   const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
-  const { setTheme } = useTheme();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);

@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 // services
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 
+import { API_BASE_URL } from "@/helpers/common.helper";
 import DefaultLayout from "@/layouts/default-layout";
 import { AuthService } from "@/services/auth.service";
-import { API_BASE_URL } from "@/helpers/common.helper";
 // layouts
 // ui
 
