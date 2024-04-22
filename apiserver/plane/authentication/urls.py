@@ -14,6 +14,7 @@ from .views import (
     SignOutAuthEndpoint,
     SignUpAuthEndpoint,
     ForgotPasswordEndpoint,
+    SetUserPasswordEndpoint,
 )
 
 urlpatterns = [
@@ -88,5 +89,10 @@ urlpatterns = [
         "forgot-password/",
         ForgotPasswordEndpoint.as_view(),
         name="forgot-password",
+    ),
+    path(
+        "set-password/",
+        SetUserPasswordEndpoint.as_view(),
+        name="set-password",
     ),
 ]
