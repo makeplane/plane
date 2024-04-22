@@ -1,7 +1,11 @@
 from plane.db.models import Profile, Workspace, WorkspaceMemberInvite
 
 
-def get_redirection_path(user):
+def get_redirection_path(user, is_created=False):
+    # If user is created
+    if is_created:
+        return "create-account"
+
     # Handle redirections
     profile = Profile.objects.get(user=user)
 

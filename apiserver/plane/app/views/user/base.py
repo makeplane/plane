@@ -181,7 +181,7 @@ class UpdateUserTourCompletedEndpoint(BaseAPIView):
 
     @invalidate_cache(path="/api/users/me/")
     def patch(self, request):
-        profile = Profile.objects.get(user_id=request.user.id, is_active=True)
+        profile = Profile.objects.get(user_id=request.user.id)
         profile.is_tour_completed = request.data.get(
             "is_tour_completed", False
         )
