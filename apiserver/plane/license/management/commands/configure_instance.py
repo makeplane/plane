@@ -42,6 +42,12 @@ class Command(BaseCommand):
                 "is_encrypted": False,
             },
             {
+                "key": "GOOGLE_CLIENT_SECRET",
+                "value": os.environ.get("GOOGLE_CLIENT_SECRET"),
+                "category": "GOOGLE",
+                "is_encrypted": True,
+            },
+            {
                 "key": "GITHUB_CLIENT_ID",
                 "value": os.environ.get("GITHUB_CLIENT_ID"),
                 "category": "GITHUB",
