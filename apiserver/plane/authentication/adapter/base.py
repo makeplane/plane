@@ -61,7 +61,6 @@ class Adapter:
 
         if not user:
             # New user
-            is_created = True
             (ENABLE_SIGNUP,) = get_configuration_value(
                 [
                     {
@@ -105,8 +104,7 @@ class Adapter:
             user.last_name = last_name if last_name else ""
             user.save()
             Profile.objects.create(user=user)
-        else:
-            is_created = False
+
         # Update user details
         user.last_login_medium = self.provider
         user.last_active = timezone.now()
@@ -119,4 +117,4 @@ class Adapter:
         if self.token_data:
             self.create_update_account(user=user)
 
-        return user, is_created
+        return user

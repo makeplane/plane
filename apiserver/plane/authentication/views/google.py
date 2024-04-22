@@ -95,13 +95,13 @@ class GoogleCallbackEndpoint(View):
                 request=request,
                 code=code,
             )
-            user, is_created = provider.authenticate()
+            user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
             # Get the redirection path
-            path = get_redirection_path(user=user, is_created=is_created)
+            path = get_redirection_path(user=user)
             # redirect to referer path
             url = urljoin(base_host, path)
             return HttpResponseRedirect(url)
