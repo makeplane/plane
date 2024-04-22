@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 // types
 import { IEmailCheckData } from "@plane/types";
@@ -109,26 +108,6 @@ export const SignUpRoot = observer(() => {
       {signInStep && (
         <>
           {isOAuthEnabled && <OAuthOptions />}
-          <div className="mx-auto mt-8 text-center text-base text-onboarding-text-300 sm:w-96">
-            By creating an account, you agree to our <br />
-            <Link
-              href="https://plane.so/legals/terms-and-conditions"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium underline"
-            >
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="https://plane.so/legals/privacy-policy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium underline"
-            >
-              Privacy Policy
-            </Link>
-          </div>
           <TermsAndConditions isSignUp />
         </>
       )}

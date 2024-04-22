@@ -1,7 +1,3 @@
-// services
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { APIService } from "@/services/api.service";
-// helpers
 // types
 import {
   ICsrfTokenData,
@@ -11,6 +7,10 @@ import {
   IMagicSignInData,
   IPasswordSignInData,
 } from "@plane/types";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
+// services
+import { APIService } from "@/services/api.service";
 
 export class AuthService extends APIService {
   constructor() {
@@ -61,7 +61,7 @@ export class AuthService extends APIService {
   }
 
   async setPassword(data: { password: string }): Promise<any> {
-    return this.post(`/api/users/me/set-password/`, data)
+    return this.post(`/auth/set-password/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -154,8 +154,8 @@ export class AuthService extends APIService {
 
       if (!csrfToken) throw Error("CSRF token not found");
 
-      var form = document.createElement("form");
-      var element1 = document.createElement("input");
+      const form = document.createElement("form");
+      const element1 = document.createElement("input");
 
       form.method = "POST";
       form.action = `${baseUrl}/auth/sign-out/`;

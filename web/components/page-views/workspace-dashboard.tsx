@@ -10,8 +10,17 @@ import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
 // hooks
-import { useAppRouter, useCommandPalette, useDashboard, useEventTracker, useProject, useUser } from "@/hooks/store";
+import {
+  useAppRouter,
+  useCommandPalette,
+  useDashboard,
+  useEventTracker,
+  useProject,
+  useUser,
+  useUserProfile,
+} from "@/hooks/store";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
@@ -22,21 +31,22 @@ export const WorkspaceDashboardView = observer(() => {
   const { toggleCreateProjectModal } = useCommandPalette();
   const { workspaceSlug } = useAppRouter();
   const { data: currentUser } = useUser();
-  // const { currentUser, updateTourCompleted } = useUser();
+  const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
+  const { captureEvent } = useEventTracker();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds } = useProject();
 
   const handleTourCompleted = () => {
-    // updateTourCompleted()
-    //   .then(() => {
-    //     captureEvent(PRODUCT_TOUR_COMPLETED, {
-    //       user_id: currentUser?.id,
-    //       state: "SUCCESS",
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
+    updateTourCompleted()
+      .then(() => {
+        captureEvent(PRODUCT_TOUR_COMPLETED, {
+          user_id: currentUser?.id,
+          state: "SUCCESS",
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   // fetch home dashboard widgets on workspace change
@@ -48,7 +58,7 @@ export const WorkspaceDashboardView = observer(() => {
 
   return (
     <>
-      {currentUser && !currentUser.is_tour_completed && (
+      {currentUserProfile && !currentUserProfile.is_tour_completed && (
         <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
           <TourRoot onComplete={handleTourCompleted} />
         </div>

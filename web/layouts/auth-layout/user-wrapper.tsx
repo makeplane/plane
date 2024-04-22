@@ -6,8 +6,7 @@ import useSWR from "swr";
 // ui
 import { Spinner } from "@plane/ui";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
-// import { useUserProfile } from "@/hooks/store/use-user-profile";
+import { useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 
 export interface IUserAuthWrapper {
   children: ReactNode;
@@ -17,12 +16,15 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   const { children } = props;
   // store hooks
   const { fetchCurrentUser, data: currentUser, error: currentUserError } = useUser();
-  // const { fetchUserProfile } = useUserProfile();
+  const { fetchUserProfile } = useUserProfile();
   const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
   // fetching user information
   const { error } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
+    shouldRetryOnError: false,
+  });
+  useSWR("CURRENT_USER_PROFILE_DETAILS", () => fetchUserProfile(), {
     shouldRetryOnError: false,
   });
   // fetching current user instance admin status

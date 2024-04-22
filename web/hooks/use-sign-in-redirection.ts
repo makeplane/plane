@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store";
 // types
 // import { IUser, IUserSettings } from "@plane/types";
 
@@ -20,9 +20,9 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   const { next_path } = router.query;
   // mobx store
   const {
-    fetchCurrentUser,
+    fetchUserProfile,
     // fetchCurrentUserSettings
-  } = useUser();
+  } = useUserProfile();
 
   const isValidURL = (url: string): boolean => {
     const disallowedSchemes = /^(https?|ftp):\/\//i;
@@ -30,10 +30,10 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   };
 
   const handleSignInRedirection = useCallback(
-    async (user: any) => {
+    async (profile: any) => {
       try {
         // if the user is not onboarded, redirect them to the onboarding page
-        if (!user.is_onboarded) {
+        if (!profile.is_onboarded) {
           router.push("/onboarding");
           return;
         }
@@ -71,9 +71,9 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   const updateUserInfo = useCallback(async () => {
     setIsRedirecting(true);
 
-    await fetchCurrentUser()
-      .then(async (user) => {
-        await handleSignInRedirection(user)
+    await fetchUserProfile()
+      .then(async (profile) => {
+        await handleSignInRedirection(profile)
           .catch((err) => setError(err))
           .finally(() => setIsRedirecting(false));
       })
@@ -81,7 +81,7 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
         setError(err);
         setIsRedirecting(false);
       });
-  }, [fetchCurrentUser, handleSignInRedirection]);
+  }, [fetchUserProfile, handleSignInRedirection]);
 
   return {
     error,

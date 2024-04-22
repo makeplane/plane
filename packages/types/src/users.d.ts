@@ -5,6 +5,8 @@ import {
   TStateGroups,
 } from ".";
 
+type TLoginMediums = "email" | "magic-code" | "github" | "google";
+
 export interface IUser {
   id: string;
   avatar: string | null;
@@ -17,22 +19,15 @@ export interface IUser {
   is_active: boolean;
   is_bot: boolean;
   is_email_verified: boolean;
-  // is_onboarded: boolean;
   is_password_autoset: boolean;
   is_tour_completed: boolean;
   mobile_number: string | null;
   role: string | null;
-  onboarding_step: {
-    workspace_join?: boolean;
-    profile_complete?: boolean;
-    workspace_create?: boolean;
-    workspace_invite?: boolean;
-  };
   last_workspace_id: string;
   user_timezone: string;
   username: string;
+  last_login_medium: TLoginMediums;
   // theme: IUserTheme;
-  // use_case?: string;
 }
 
 export interface IUserAccount {
@@ -57,12 +52,7 @@ export type TUserProfile = {
     sidebarText: string | undefined;
     sidebarBackground: string | undefined;
   };
-  onboarding_step: {
-    workspace_join: boolean;
-    profile_complete: boolean;
-    workspace_create: boolean;
-    workspace_invite: boolean;
-  };
+  onboarding_step: TOnboardingSteps;
   is_onboarded: boolean;
   is_tour_completed: boolean;
   use_case: string | undefined;
