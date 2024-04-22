@@ -53,7 +53,7 @@ export class AuthService extends APIService {
   }
 
   async sendResetPasswordLink(data: { email: string }): Promise<any> {
-    return this.post(`/api/forgot-password/`, data)
+    return this.post(`/auth/forgot-password/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
