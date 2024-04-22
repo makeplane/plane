@@ -113,56 +113,35 @@ const EstimatePoint = observer((props: { point: string }) => {
   );
 });
 
+const inboxActivityMessage = {
+  declined: {
+    showIssue: "declined issue",
+    noIssue: "declined this issue from inbox.",
+  },
+  snoozed: {
+    showIssue: "snoozed issue",
+    noIssue: "snoozed this issue.",
+  },
+  accepted: {
+    showIssue: "accepted issue",
+    noIssue: "accepted this issue from inbox.",
+  },
+  markedDuplicate: {
+    showIssue: "declined issue",
+    noIssue: "declined this issue from inbox by marking a duplicate issue.",
+  },
+};
+
 const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolean) => {
   switch (activity.verb) {
     case "-1":
-      return (
-        <>
-          {showIssue ? (
-            <>
-              {`decline issue`} <IssueLink activity={activity} /> {`from inbox.`}
-            </>
-          ) : (
-            "declined this issue from inbox."
-          )}
-        </>
-      );
+      return showIssue ? inboxActivityMessage.declined.showIssue : inboxActivityMessage.declined.noIssue;
     case "0":
-      return (
-        <>
-          {showIssue ? (
-            <>
-              {`snoozed issue`} <IssueLink activity={activity} /> {`from inbox.`}
-            </>
-          ) : (
-            "snoozed this issue."
-          )}
-        </>
-      );
+      return showIssue ? inboxActivityMessage.snoozed.showIssue : inboxActivityMessage.snoozed.noIssue;
     case "1":
-      return (
-        <>
-          {showIssue ? (
-            <>
-              {`accepted issue`} <IssueLink activity={activity} /> {`from inbox.`}
-            </>
-          ) : (
-            "accepted this issue from inbox."
-          )}
-        </>
-      );
+      return showIssue ? inboxActivityMessage.accepted.showIssue : inboxActivityMessage.accepted.noIssue;
     case "2":
-      return (
-        <>
-          {showIssue ? (
-            <>
-              {`declined issue`} <IssueLink activity={activity} /> {`from inbox by marking a duplicate issue.`}
-            </>
-          ) : (
-            "declined this issue from inbox by marking a duplicate issue."
-          )}
-        </>
-      );
+      return showIssue ? inboxActivityMessage.markedDuplicate.showIssue : inboxActivityMessage.markedDuplicate.noIssue;
     default:
       return "updated inbox issue status.";
   }
@@ -723,7 +702,17 @@ const activityDetails: {
     icon: <Calendar size={12} color="#6b7280" aria-hidden="true" />,
   },
   inbox: {
-    message: (activity, showIssue) => <>{getInboxUserActivityMessage(activity, showIssue)}</>,
+    message: (activity, showIssue) => (
+      <>
+        {getInboxUserActivityMessage(activity, showIssue)}
+        {showIssue && (
+          <>
+            {" "}
+            <IssueLink activity={activity} />
+          </>
+        )}
+      </>
+    ),
     icon: <Inbox size={12} color="#6b7280" aria-hidden="true" />,
   },
 };
