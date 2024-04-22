@@ -57,12 +57,12 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   }, [csrfToken]);
 
   const handleSendUniqueCode = async () => {
-    const emailFormValue = passwordFormData.password;
+    const emailFormValue = passwordFormData.email;
 
     const isEmailValid = checkEmailValidity(emailFormValue);
 
     if (!isEmailValid) {
-      // TODO: Handle Error
+      // FIXME: Handle Error
       // setError("email", { message: "Email is invalid" });
       return;
     }
@@ -84,10 +84,6 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="text-center space-y-1 py-4 mx-auto sm:w-96">
-        <h3 className="text-3xl font-bold text-onboarding-text-100">Sign in to Plane</h3>
-        <p className="font-medium text-onboarding-text-400">Get back to your projects and make progress</p>
-      </div>
       <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/sign-in/`}>
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">

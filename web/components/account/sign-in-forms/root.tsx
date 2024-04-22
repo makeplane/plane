@@ -86,32 +86,34 @@ export const SignInRoot = observer(() => {
   return (
     <>
       <div className="mx-auto flex flex-col">
-        <>
-          {signInStep === ESignInSteps.EMAIL && (
-            <SignInEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />
-          )}
-          {signInStep === ESignInSteps.UNIQUE_CODE && (
-            <UniqueCodeForm
-              email={email}
-              handleEmailClear={() => {
-                setEmail("");
-                setSignInStep(ESignInSteps.EMAIL);
-              }}
-              submitButtonText="Continue"
-            />
-          )}
-          {signInStep === ESignInSteps.PASSWORD && (
-            <SignInPasswordForm
-              email={email}
-              handleEmailClear={() => {
-                setEmail("");
-                setSignInStep(ESignInSteps.EMAIL);
-              }}
-              onSubmit={handlePasswordSignIn}
-              handleStepChange={(step) => setSignInStep(step)}
-            />
-          )}
-        </>
+        <div className="text-center space-y-1 py-4 mx-auto sm:w-96">
+          <h3 className="text-3xl font-bold text-onboarding-text-100">Sign in to Plane</h3>
+          <p className="font-medium text-onboarding-text-400">Get back to your projects and make progress</p>
+        </div>
+        {signInStep === ESignInSteps.EMAIL && (
+          <SignInEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />
+        )}
+        {signInStep === ESignInSteps.UNIQUE_CODE && (
+          <UniqueCodeForm
+            email={email}
+            handleEmailClear={() => {
+              setEmail("");
+              setSignInStep(ESignInSteps.EMAIL);
+            }}
+            submitButtonText="Continue"
+          />
+        )}
+        {signInStep === ESignInSteps.PASSWORD && (
+          <SignInPasswordForm
+            email={email}
+            handleEmailClear={() => {
+              setEmail("");
+              setSignInStep(ESignInSteps.EMAIL);
+            }}
+            onSubmit={handlePasswordSignIn}
+            handleStepChange={(step) => setSignInStep(step)}
+          />
+        )}
       </div>
       {isOAuthEnabled && signInStep !== ESignInSteps.OPTIONAL_SET_PASSWORD && <OAuthOptions />}
 

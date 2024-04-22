@@ -77,6 +77,10 @@ export const SignUpRoot = observer(() => {
     <>
       <div className="mx-auto flex flex-col">
         <>
+          <div className="text-center space-y-1 py-4 mx-auto sm:w-96">
+            <h3 className="text-3xl font-bold text-onboarding-text-100">Create your account</h3>
+            <p className="font-medium text-onboarding-text-400">Start tracking your projects with Plane</p>
+          </div>
           {signInStep === ESignUpSteps.EMAIL && (
             <SignUpEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />
           )}

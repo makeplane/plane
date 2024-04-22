@@ -3,7 +3,7 @@ import { CircleCheck, XCircle } from "lucide-react";
 // types
 import { IEmailCheckData } from "@plane/types";
 // ui
-import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -94,81 +94,74 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
 
   return (
-    <>
-      <div className="mx-auto space-y-1 py-4 text-center sm:w-96">
-        <h3 className="text-3xl font-bold text-onboarding-text-100">Create your account</h3>
-        <p className="font-medium text-onboarding-text-400">
-          Progress, visualize, and measure work how it works best for you.
-        </p>
-      </div>
-      <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/magic-sign-in/`}>
-        <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-        <div className="space-y-1">
-          <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
-            Email <span className="text-red-500">*</span>
-          </label>
-          <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={uniqueCodeFormData.email}
-              onChange={(e) => handleFormChange("email", e.target.value)}
-              // hasError={Boolean(errors.email)}
-              placeholder="name@company.com"
-              className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-            />
-            {uniqueCodeFormData.email.length > 0 && (
-              <XCircle
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={handleEmailClear}
-              />
-            )}
-          </div>
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium text-onboarding-text-300" htmlFor="token">
-            Unique code <span className="text-red-500">*</span>
-          </label>
+    <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/magic-sign-in/`}>
+      <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
+          Email <span className="text-red-500">*</span>
+        </label>
+        <div className="relative flex items-center rounded-md bg-onboarding-background-200">
           <Input
-            name="code"
-            value={uniqueCodeFormData.code}
-            onChange={(e) => handleFormChange("code", e.target.value)}
-            // hasError={Boolean(errors.token)}
-            placeholder="gets-sets-flys"
-            className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-            autoFocus
+            id="email"
+            name="email"
+            type="email"
+            value={uniqueCodeFormData.email}
+            onChange={(e) => handleFormChange("email", e.target.value)}
+            // FIXME:
+            // hasError={Boolean(errors.email)}
+            placeholder="name@company.com"
+            className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
           />
-          {/* )}
-          /> */}
-          <div className="flex w-full items-center justify-between px-1 text-xs">
-            <p className="flex items-center gap-1 font-medium text-green-700">
-              <CircleCheck height={12} width={12} />
-              Paste the code sent to your email
-            </p>
-            <button
-              type="button"
-              onClick={handleRequestNewCode}
-              className={`${
-                isRequestNewCodeDisabled
-                  ? "text-onboarding-text-400"
-                  : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
-              }`}
-              disabled={isRequestNewCodeDisabled}
-            >
-              {resendTimerCode > 0
-                ? `Resend in ${resendTimerCode}s`
-                : isRequestingNewCode
-                  ? "Requesting new code"
-                  : "Resend"}
-            </button>
-          </div>
+          {uniqueCodeFormData.email.length > 0 && (
+            <XCircle
+              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              onClick={handleEmailClear}
+            />
+          )}
         </div>
-        {/* <Button type="submit" variant="primary" className="w-full" size="lg" disabled={!isValid} loading={isSubmitting}> */}
-        <Button type="submit" variant="primary" className="w-full" size="lg">
-          {isRequestingNewCode ? <Spinner /> : submitButtonText}
-        </Button>
-      </form>
-    </>
+      </div>
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="token">
+          Unique code <span className="text-red-500">*</span>
+        </label>
+        <Input
+          name="code"
+          value={uniqueCodeFormData.code}
+          onChange={(e) => handleFormChange("code", e.target.value)}
+          // FIXME:
+          // hasError={Boolean(errors.token)}
+          placeholder="gets-sets-flys"
+          className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+          autoFocus
+        />
+        {/* )}
+          /> */}
+        <div className="flex w-full items-center justify-between px-1 text-xs">
+          <p className="flex items-center gap-1 font-medium text-green-700">
+            <CircleCheck height={12} width={12} />
+            Paste the code sent to your email
+          </p>
+          <button
+            type="button"
+            onClick={handleRequestNewCode}
+            className={`${
+              isRequestNewCodeDisabled
+                ? "text-onboarding-text-400"
+                : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
+            }`}
+            disabled={isRequestNewCodeDisabled}
+          >
+            {resendTimerCode > 0
+              ? `Resend in ${resendTimerCode}s`
+              : isRequestingNewCode
+                ? "Requesting new code"
+                : "Resend"}
+          </button>
+        </div>
+      </div>
+      <Button type="submit" variant="primary" className="w-full" size="lg" loading={isRequestingNewCode}>
+        {isRequestingNewCode ? "Sending code" : submitButtonText}
+      </Button>
+    </form>
   );
 };
