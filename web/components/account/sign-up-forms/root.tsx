@@ -8,13 +8,8 @@ import { IEmailCheckData } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import {
-  OAuthOptions,
-  SignUpEmailForm,
-  SignUpPasswordForm,
-  SignUpUniqueCodeForm,
-  TermsAndConditions,
-} from "@/components/account";
+import { OAuthOptions, SignUpEmailForm, SignUpPasswordForm, TermsAndConditions } from "@/components/account";
+import { UniqueCodeForm } from "@/components/account/common";
 // hooks
 import { useInstance } from "@/hooks/store";
 import useSignInRedirection from "@/hooks/use-sign-in-redirection";
@@ -70,12 +65,6 @@ export const SignUpRoot = observer(() => {
       });
   };
 
-  // step 2 submit handler- unique code sign in
-  const handleUniqueCodeSignIn = async (isPasswordAutoset: boolean) => {
-    if (isPasswordAutoset) setSignInStep(ESignUpSteps.OPTIONAL_SET_PASSWORD);
-    else await handleRedirection();
-  };
-
   // step 3 submit handler- password sign in
   const handlePasswordSignIn = async () => {
     await handleRedirection();
@@ -92,13 +81,13 @@ export const SignUpRoot = observer(() => {
             <SignUpEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />
           )}
           {signInStep === ESignUpSteps.UNIQUE_CODE && (
-            <SignUpUniqueCodeForm
+            <UniqueCodeForm
               email={email}
               handleEmailClear={() => {
                 setEmail("");
                 setSignInStep(ESignUpSteps.EMAIL);
               }}
-              onSubmit={handleUniqueCodeSignIn}
+              submitButtonText="Create account"
             />
           )}
           {signInStep === ESignUpSteps.PASSWORD && (

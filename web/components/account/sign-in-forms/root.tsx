@@ -7,13 +7,8 @@ import { IEmailCheckData } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import {
-  SignInEmailForm,
-  SignInUniqueCodeForm,
-  SignInPasswordForm,
-  OAuthOptions,
-  TermsAndConditions,
-} from "@/components/account";
+import { SignInEmailForm, SignInPasswordForm, OAuthOptions, TermsAndConditions } from "@/components/account";
+import { UniqueCodeForm } from "@/components/account/common";
 // hooks
 import { useInstance } from "@/hooks/store";
 import useSignInRedirection from "@/hooks/use-sign-in-redirection";
@@ -96,7 +91,7 @@ export const SignInRoot = observer(() => {
             <SignInEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />
           )}
           {signInStep === ESignInSteps.UNIQUE_CODE && (
-            <SignInUniqueCodeForm
+            <UniqueCodeForm
               email={email}
               handleEmailClear={() => {
                 setEmail("");

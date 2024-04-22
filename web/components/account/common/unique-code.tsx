@@ -3,40 +3,37 @@ import { CircleCheck, XCircle } from "lucide-react";
 // types
 import { IEmailCheckData } from "@plane/types";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-// import { CODE_VERIFIED } from "@/constants/event-tracker";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
-// import { useEventTracker } from "@/hooks/store";
 import useTimer from "@/hooks/use-timer";
 // services
 import { AuthService } from "@/services/auth.service";
-// import { UserService } from "@/services/user.service";
 
 type Props = {
   email: string;
   handleEmailClear: () => void;
-  onSubmit: (isPasswordAutoset: boolean) => Promise<void>;
+  submitButtonText: string;
 };
 
 type TUniqueCodeFormValues = {
   email: string;
-  token: string;
+  code: string;
 };
 
 const defaultValues: TUniqueCodeFormValues = {
   email: "",
-  token: "",
+  code: "",
 };
 
 // services
 const authService = new AuthService();
 // const userService = new UserService();
 
-export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
-  const { email, handleEmailClear } = props;
+export const UniqueCodeForm: React.FC<Props> = (props) => {
+  const { email, handleEmailClear, submitButtonText } = props;
   // states
   const [uniqueCodeFormData, setUniqueCodeFormData] = useState<TUniqueCodeFormValues>({ ...defaultValues, email });
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
@@ -46,40 +43,12 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(30);
 
-  // const handleUniqueCodeSignIn = async (formData: TUniqueCodeFormValues) => {
-  //   const payload: IMagicSignInData = {
-  //     email: formData.email,
-  //     key: `magic_${formData.email}`,
-  //     token: formData.token,
-  //   };
-
-  //   await authService
-  //     .magicSignIn(payload)
-  //     .then(async () => {
-  //       captureEvent(CODE_VERIFIED, {
-  //         state: "SUCCESS",
-  //       });
-  //       const currentUser = await userService.currentUser();
-  //       await onSubmit(currentUser.is_password_autoset);
-  //     })
-  //     .catch((err) => {
-  //       captureEvent(CODE_VERIFIED, {
-  //         state: "FAILED",
-  //       });
-  //       setToast({
-  //         type: TOAST_TYPE.ERROR,
-  //         title: "Error!",
-  //         message: err?.error ?? "Something went wrong. Please try again.",
-  //       });
-  //     });
-  // };
-
   const handleFormChange = (key: keyof TUniqueCodeFormValues, value: string) =>
     setUniqueCodeFormData((prev) => ({ ...prev, [key]: value }));
 
-  const handleSendNewCode = async (formData: TUniqueCodeFormValues) => {
+  const handleSendNewCode = async (email: string) => {
     const payload: IEmailCheckData = {
-      email: formData.email,
+      email,
     };
 
     await authService
@@ -91,13 +60,13 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
           title: "Success!",
           message: "A new unique code has been sent to your email.",
         });
-        handleFormChange("token", "");
+        handleFormChange("code", "");
       })
       .catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
+          message: err?.error ?? "Something went wrong while generating unique code. Please try again.",
         })
       );
   };
@@ -105,7 +74,7 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
   const handleRequestNewCode = async () => {
     setIsRequestingNewCode(true);
 
-    await handleSendNewCode(uniqueCodeFormData)
+    await handleSendNewCode(uniqueCodeFormData.email)
       .then(() => setResendCodeTimer(30))
       .finally(() => setIsRequestingNewCode(false));
   };
@@ -114,6 +83,13 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
     if (csrfToken === undefined)
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
+
+  useEffect(() => {
+    setIsRequestingNewCode(true);
+    handleSendNewCode(email)
+      .then(() => setResendCodeTimer(30))
+      .finally(() => setIsRequestingNewCode(false));
+  }, []);
 
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
 
@@ -125,7 +101,7 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
           Progress, visualize, and measure work how it works best for you.
         </p>
       </div>
-      <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/sign-up/`}>
+      <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/magic-sign-in/`}>
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
           <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
@@ -154,17 +130,10 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
           <label className="text-sm font-medium text-onboarding-text-300" htmlFor="token">
             Unique code <span className="text-red-500">*</span>
           </label>
-          {/* <Controller
-            control={control}
-            name="token"
-            rules={{
-              required: "Code is required",
-            }}
-            render={({ field: { value, onChange } }) => ( */}
           <Input
-            name="token"
-            value={uniqueCodeFormData.token}
-            onChange={(e) => handleFormChange("token", e.target.value)}
+            name="code"
+            value={uniqueCodeFormData.code}
+            onChange={(e) => handleFormChange("code", e.target.value)}
             // hasError={Boolean(errors.token)}
             placeholder="gets-sets-flys"
             className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
@@ -197,7 +166,7 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
         </div>
         {/* <Button type="submit" variant="primary" className="w-full" size="lg" disabled={!isValid} loading={isSubmitting}> */}
         <Button type="submit" variant="primary" className="w-full" size="lg">
-          Create account
+          {isRequestingNewCode ? <Spinner /> : "Create account"}
         </Button>
       </form>
     </>

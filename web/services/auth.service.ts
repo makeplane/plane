@@ -113,7 +113,7 @@ export class AuthService extends APIService {
   }
 
   async generateUniqueCode(data: { email: string }): Promise<any> {
-    return this.post("/api/magic-generate/", data, { headers: {} })
+    return this.post("/auth/magic-generate/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
