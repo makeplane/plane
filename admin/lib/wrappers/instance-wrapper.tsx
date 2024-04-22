@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, ReactNode } from "react";
-import { useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
@@ -12,14 +12,15 @@ import { InstanceNotReady } from "@/components/instance";
 // hooks
 import { useInstance } from "@/hooks";
 // helpers
-import { EInstanceStatus } from "@/helpers";
+import { EInstancePageType, EInstanceStatus } from "@/helpers";
 
 type TInstanceWrapper = {
   children: ReactNode;
+  pageType?: EInstancePageType;
 };
 
 export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
-  const { children } = props;
+  const { children, pageType } = props;
   const searchparams = useSearchParams();
   const authEnabled = searchparams.get("auth_enabled") || "1";
   // hooks
@@ -49,6 +50,9 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
         <InstanceNotReady />
       </DefaultLayout>
     );
+
+  if (instance?.instance?.is_setup_done && pageType === EInstancePageType.PRE_SETUP) redirect("/");
+  if (!instance?.instance?.is_setup_done && pageType === EInstancePageType.POST_SETUP) redirect("/setup");
 
   return <>{children}</>;
 });

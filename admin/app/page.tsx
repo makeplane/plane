@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/core";
 const RootPage = () => {
   const router = useRouter();
 
-  useEffect(() => router.push("/setup"), [router]);
+  useEffect(() => router.push("/login"), [router]);
 
   return (
     <>

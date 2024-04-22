@@ -25,19 +25,6 @@ export const DefaultLayout: FC<TDefaultLayout> = (props) => {
             <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-2" />
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
-          {["/setup/"].includes(pathname) ? (
-            <Link href={`/login/`}>
-              <div className="font-medium text-custom-primary-100/80 hover:text-custom-primary-100 cursor-pointer transition-colors">
-                Sign In
-              </div>
-            </Link>
-          ) : (
-            <Link href={`/setup/`}>
-              <div className="font-medium text-custom-primary-100/80 hover:text-custom-primary-100 cursor-pointer transition-colors">
-                Sign Up
-              </div>
-            </Link>
-          )}
         </div>
       </div>
       <div className="w-full flex-grow">{children}</div>

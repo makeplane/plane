@@ -4,6 +4,11 @@ export enum EAuthenticationPageType {
   AUTHENTICATED = "AUTHENTICATED",
 }
 
+export enum EInstancePageType {
+  PRE_SETUP = "PRE_SETUP",
+  POST_SETUP = "POST_SETUP",
+}
+
 export enum EUserStatus {
   ERROR = "ERROR",
   AUTHENTICATION_NOT_DONE = "AUTHENTICATION_NOT_DONE",
