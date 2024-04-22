@@ -428,7 +428,7 @@ export class CycleStore implements ICycleStore {
   fetchArchivedCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string) =>
     await this.cycleArchiveService.getArchivedCycleDetails(workspaceSlug, projectId, cycleId).then((response) => {
       runInAction(() => {
-        update(this.cycleMap, cycleId, (cycle) => ({ ...cycle, ...response }));
+        set(this.cycleMap, [response.id], { ...this.cycleMap?.[response.id], ...response });
       });
       return response;
     });

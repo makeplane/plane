@@ -287,7 +287,7 @@ export class ModulesStore implements IModuleStore {
   fetchArchivedModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
     await this.moduleArchiveService.getArchivedModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
       runInAction(() => {
-        update(this.moduleMap, moduleId, (module) => ({ ...module, ...response }));
+        set(this.moduleMap, [response.id], { ...this.moduleMap?.[response.id], ...response });
       });
       return response;
     });
