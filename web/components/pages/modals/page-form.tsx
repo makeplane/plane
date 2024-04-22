@@ -39,26 +39,17 @@ export const PageForm: React.FC<Props> = (props) => {
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-4">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">Create Page</h3>
-
-        <div className="space-y-2">
-          <div>
-            <div className="text-custom-text-200">Name</div>
-            <div className="text-xs text-custom-text-300">
-              Max length of the name should be less than 255 characters
-            </div>
-          </div>
-          <Input
-            id="name"
-            type="text"
-            value={formData.name}
-            onChange={(e) => handleFormData("name", e.target.value)}
-            placeholder="Title"
-            className="w-full resize-none text-lg"
-            tabIndex={1}
-            required
-            maxLength={255}
-          />
-        </div>
+        <Input
+          id="name"
+          type="text"
+          value={formData.name}
+          onChange={(e) => handleFormData("name", e.target.value)}
+          placeholder="Title"
+          className="w-full resize-none text-lg"
+          tabIndex={1}
+          required
+          maxLength={255}
+        />
       </div>
 
       <div className="mt-5 relative flex items-center justify-between gap-2">

@@ -65,14 +65,17 @@
 }
 
 .ProseMirror:not(.dragging) .ProseMirror-selectednode::after {
+  --horizontal-offset: 5px;
+
   content: "";
   position: absolute;
   top: 0;
-  left: -5px;
+  left: calc(-1 * var(--horizontal-offset));
   height: 100%;
-  width: 100%;
+  width: calc(100% + (var(--horizontal-offset) * 2));
   background-color: rgba(var(--color-primary-100), 0.2);
   border-radius: 4px;
+  pointer-events: none;
 }
 
 .ProseMirror img {
