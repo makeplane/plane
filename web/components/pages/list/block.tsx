@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Circle, Info, Lock, Minus, UsersRound } from "lucide-react";
@@ -19,6 +19,8 @@ type TPageListBlock = {
 
 export const PageListBlock: FC<TPageListBlock> = observer((props) => {
   const { workspaceSlug, projectId, pageId } = props;
+  // refs
+  const parentRef = useRef(null);
   // hooks
   const { access, created_at, is_favorite, name, owned_by, addToFavorites, removeFromFavorites } = usePage(pageId);
   const { getUserDetails } = useMember();
@@ -46,6 +48,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
 
   return (
     <Link
+      ref={parentRef}
       href={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
       className="flex items-center justify-between gap-5 py-7 px-6 hover:bg-custom-background-90"
     >
@@ -96,7 +99,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
         />
 
         {/* quick actions dropdown */}
-        <PageQuickActions pageId={pageId} projectId={projectId} workspaceSlug={workspaceSlug} />
+        <PageQuickActions pageId={pageId} parentRef={parentRef} projectId={projectId} workspaceSlug={workspaceSlug} />
       </div>
     </Link>
   );
