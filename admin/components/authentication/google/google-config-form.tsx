@@ -16,7 +16,8 @@ import {
 // types
 import { IFormattedInstanceConfiguration, TInstanceGoogleAuthenticationConfigurationKeys } from "@plane/types";
 // helpers
-import { cn } from "helpers/common.helper";
+import { API_BASE_URL, cn } from "helpers/common.helper";
+import isEmpty from "lodash/isEmpty";
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -43,7 +44,7 @@ export const InstanceGoogleConfigForm: FC<Props> = (props) => {
     },
   });
 
-  const originURL = typeof window !== "undefined" ? window.location.origin : "";
+  const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
 
   const googleFormFields: TControllerInputFormField[] = [
     {
