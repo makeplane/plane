@@ -9,6 +9,7 @@ from plane.license.api.views import (
     InstanceEndpoint,
     SignUpScreenVisitedEndpoint,
     InstanceAdminUserMeEndpoint,
+    InstanceAdminSignOutEndpoint,
 )
 
 urlpatterns = [
@@ -25,6 +26,11 @@ urlpatterns = [
     path(
         "admins/me/",
         InstanceAdminUserMeEndpoint.as_view(),
+        name="instance-admins",
+    ),
+    path(
+        "admins/sign-out/",
+        InstanceAdminSignOutEndpoint.as_view(),
         name="instance-admins",
     ),
     path(

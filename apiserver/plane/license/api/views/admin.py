@@ -10,6 +10,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth import logout
 
 # Third party imports
 from rest_framework.response import Response
@@ -27,6 +28,7 @@ from plane.license.models import Instance, InstanceAdmin
 from plane.db.models import User, Profile
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.authentication.utils.login import user_login
+from plane.authentication.utils.host import base_host
 
 
 class InstanceAdminEndpoint(BaseAPIView):
@@ -90,13 +92,11 @@ class InstanceAdminSignUpEndpoint(View):
 
     @invalidate_cache(path="/api/instances/", user=False)
     def post(self, request):
-        referer = request.META.get("HTTP_REFERER", "/")
-
         # Check instance first
         instance = Instance.objects.first()
         if instance is None:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "setup/?"
                 + urlencode(
                     {
@@ -110,7 +110,7 @@ class InstanceAdminSignUpEndpoint(View):
         # check if the instance has already an admin registered
         if InstanceAdmin.objects.first():
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "setup/?"
                 + urlencode(
                     {
@@ -132,7 +132,7 @@ class InstanceAdminSignUpEndpoint(View):
         # return error if the email and password is not present
         if not email or not password or not first_name:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "setup/?"
                 + urlencode(
                     {
@@ -154,7 +154,7 @@ class InstanceAdminSignUpEndpoint(View):
             validate_email(email)
         except ValidationError:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "setup/?"
                 + urlencode(
                     {
@@ -174,7 +174,7 @@ class InstanceAdminSignUpEndpoint(View):
         # Existing user
         if User.objects.filter(email=email).exists():
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "setup/?"
                 + urlencode(
                     {
@@ -194,7 +194,7 @@ class InstanceAdminSignUpEndpoint(View):
             results = zxcvbn(password)
             if results["score"] < 3:
                 url = urljoin(
-                    referer,
+                    base_host(request=request),
                     "setup/?"
                     + urlencode(
                         {
@@ -240,7 +240,7 @@ class InstanceAdminSignUpEndpoint(View):
 
             # get tokens for user
             user_login(request=request, user=user)
-            url = urljoin(referer, "general")
+            url = urljoin(base_host(request=request), "general")
             return HttpResponseRedirect(url)
 
 
@@ -251,12 +251,11 @@ class InstanceAdminSignInEndpoint(View):
 
     @invalidate_cache(path="/api/instances/", user=False)
     def post(self, request):
-        referer = request.META.get("HTTP_REFERER", "/")
         # Check instance first
         instance = Instance.objects.first()
         if instance is None:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "login/?"
                 + urlencode(
                     {
@@ -274,7 +273,7 @@ class InstanceAdminSignInEndpoint(View):
         # return error if the email and password is not present
         if not email or not password:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "login/?"
                 + urlencode(
                     {
@@ -292,7 +291,7 @@ class InstanceAdminSignInEndpoint(View):
             validate_email(email)
         except ValidationError:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "login/?"
                 + urlencode(
                     {
@@ -310,7 +309,7 @@ class InstanceAdminSignInEndpoint(View):
         # Error out if the user is not present
         if not user:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "login/?"
                 + urlencode(
                     {
@@ -325,7 +324,7 @@ class InstanceAdminSignInEndpoint(View):
         # Check password of the user
         if not user.check_password(password):
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "login/?"
                 + urlencode(
                     {
@@ -340,7 +339,7 @@ class InstanceAdminSignInEndpoint(View):
         # Check if the user is an instance admin
         if not InstanceAdmin.objects.filter(instance=instance, user=user):
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "login/?"
                 + urlencode(
                     {
@@ -362,7 +361,7 @@ class InstanceAdminSignInEndpoint(View):
 
         # get tokens for user
         user_login(request=request, user=user)
-        url = urljoin(referer, "general")
+        url = urljoin(base_host(request=request), "general")
         return HttpResponseRedirect(url)
 
 
@@ -378,3 +377,18 @@ class InstanceAdminUserMeEndpoint(BaseAPIView):
             serializer.data,
             status=status.HTTP_200_OK,
         )
+
+
+class InstanceAdminSignOutEndpoint(View):
+
+    permission_classes = [
+        InstanceAdminPermission,
+    ]
+
+    def post(self, request):
+        logout(request)
+        url = urljoin(
+            base_host(request=request),
+            "?" + urlencode({"success": "true"}),
+        )
+        return HttpResponseRedirect(url)

@@ -25,6 +25,7 @@ from plane.authentication.utils.workspace_project_join import (
 )
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
+from plane.authentication.utils.host import base_host
 
 
 class MagicGenerateEndpoint(APIView):
@@ -84,15 +85,14 @@ class MagicGenerateEndpoint(APIView):
 class MagicSignInEndpoint(View):
 
     def post(self, request):
-        referer = request.META.get("HTTP_REFERER", "/")
+
         # set the referer as session to redirect after login
-        request.session["referer"] = referer
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
 
         if code == "" or email == "":
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {
@@ -114,12 +114,12 @@ class MagicSignInEndpoint(View):
             # Get the redirection path
             path = get_redirection_path(user=user)
             # redirect to referer path
-            url = urljoin(referer, path)
+            url = urljoin(base_host(request=request), path)
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {

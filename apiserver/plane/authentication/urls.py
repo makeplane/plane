@@ -13,6 +13,7 @@ from .views import (
     SignInAuthEndpoint,
     SignOutAuthEndpoint,
     SignUpAuthEndpoint,
+    ForgotPasswordEndpoint,
 )
 
 urlpatterns = [
@@ -82,5 +83,10 @@ urlpatterns = [
         "sign-in/email-check/",
         EmailCheckSignInEndpoint.as_view(),
         name="email-check-sign-in",
+    ),
+    path(
+        "forgot-password/",
+        ForgotPasswordEndpoint.as_view(),
+        name="forgot-password",
     ),
 ]

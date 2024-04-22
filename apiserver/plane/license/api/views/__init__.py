@@ -15,4 +15,5 @@ from .admin import (
     InstanceAdminSignInEndpoint,
     InstanceAdminSignUpEndpoint,
     InstanceAdminUserMeEndpoint,
+    InstanceAdminSignOutEndpoint,
 )

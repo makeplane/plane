@@ -38,6 +38,7 @@ from plane.bgtasks.forgot_password_task import forgot_password
 from plane.db.models import User
 from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
+from plane.authentication.utils.host import base_host
 
 
 class EmailCheckSignUpEndpoint(APIView):
@@ -118,7 +119,7 @@ class SignOutAuthEndpoint(View):
     def post(self, request):
         logout(request)
         url = urljoin(
-            request.META.get("HTTP_REFERER", "/"),
+            base_host(request=request),
             "?" + urlencode({"success": "true"}),
         )
         return HttpResponseRedirect(url)
@@ -231,7 +232,6 @@ class ResetPasswordEndpoint(View):
 
     def post(self, request, uidb64, token):
         try:
-            referer = request.META.get("HTTP_REFERER", "/")
             # Decode the id from the uidb64
             id = smart_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(id=id)
@@ -239,7 +239,7 @@ class ResetPasswordEndpoint(View):
             # check if the token is valid for the user
             if not PasswordResetTokenGenerator().check_token(user, token):
                 url = urljoin(
-                    referer,
+                    base_host(request=request),
                     "?"
                     + urlencode(
                         {
@@ -256,7 +256,7 @@ class ResetPasswordEndpoint(View):
             results = zxcvbn(new_password)
             if results["score"] < 3:
                 url = urljoin(
-                    referer,
+                    base_host(request=request),
                     "?"
                     + urlencode(
                         {
@@ -276,11 +276,13 @@ class ResetPasswordEndpoint(View):
             user_login(request=request, user=user)
             process_workspace_project_invitations(user=user)
 
-            url = urljoin(referer, get_redirection_path(user=user))
+            url = urljoin(
+                base_host(request=request), get_redirection_path(user=user)
+            )
             return HttpResponseRedirect(url)
         except DjangoUnicodeDecodeError:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {

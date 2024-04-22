@@ -16,18 +16,18 @@ from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
 from plane.license.models import Instance
+from plane.authentication.utils.host import base_host
 
 
 class SignInAuthEndpoint(View):
 
     def post(self, request):
-        referer = request.META.get("HTTP_REFERER", "/")
 
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {
@@ -45,7 +45,7 @@ class SignInAuthEndpoint(View):
         ## Raise exception if any of the above are missing
         if not email or not password:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {
@@ -62,7 +62,7 @@ class SignInAuthEndpoint(View):
             validate_email(email)
         except ValidationError:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {
@@ -84,11 +84,11 @@ class SignInAuthEndpoint(View):
             # Get the redirection path
             path = get_redirection_path(user=user)
             # redirect to referer path
-            url = urljoin(referer, path)
+            url = urljoin(base_host(request=request), path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {
@@ -103,13 +103,12 @@ class SignInAuthEndpoint(View):
 class SignUpAuthEndpoint(View):
 
     def post(self, request):
-        referer = request.META.get("HTTP_REFERER", "/")
 
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {
@@ -125,7 +124,7 @@ class SignUpAuthEndpoint(View):
         ## Raise exception if any of the above are missing
         if not email or not password:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {
@@ -141,7 +140,7 @@ class SignUpAuthEndpoint(View):
             validate_email(email)
         except ValidationError:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {
@@ -163,11 +162,11 @@ class SignUpAuthEndpoint(View):
             # Get the redirection path
             path = get_redirection_path(user=user)
             # redirect to referer path
-            url = urljoin(referer, path)
+            url = urljoin(base_host(request=request), path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             url = urljoin(
-                referer,
+                base_host(request=request),
                 "?"
                 + urlencode(
                     {
