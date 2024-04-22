@@ -84,13 +84,7 @@ export const ProfileLayoutSidebar = observer(() => {
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
-
     await signOut()
-      .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
-        setTheme("system");
-        router.push("/");
-      })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,

@@ -6,7 +6,7 @@ import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // ui
-import { Avatar, Tooltip } from "@plane/ui";
+import { Avatar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // hooks
 import { useAppRouter, useAppTheme, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -22,13 +22,11 @@ const PROFILE_LINKS = [
 ];
 
 export const InstanceSidebarDropdown = observer(() => {
-  // router
-  // const router = useRouter();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const { workspaceSlug } = useAppRouter();
   const { data: currentUser } = useUser();
-  // const { signOut, currentUserSettings } = useUser();
+  const { signOut } = useUser();
   // hooks
   // const { setTheme } = useTheme();
   const { isMobile } = usePlatformOS();
@@ -40,19 +38,13 @@ export const InstanceSidebarDropdown = observer(() => {
     "";
 
   const handleSignOut = async () => {
-    // await signOut()
-    //   .then(() => {
-    //     mutate("CURRENT_USER_DETAILS", null);
-    //     setTheme("system");
-    //     router.push("/");
-    //   })
-    //   .catch(() =>
-    //     setToast({
-    //       type: TOAST_TYPE.ERROR,
-    //       title: "Error!",
-    //       message: "Failed to sign out. Please try again.",
-    //     })
-    //   );
+    await signOut().catch(() =>
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
+      })
+    );
   };
 
   return (

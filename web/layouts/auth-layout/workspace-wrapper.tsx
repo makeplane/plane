@@ -68,19 +68,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
 
   const handleSignOut = async () => {
-    await signOut()
-      .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
-        setTheme("system");
-        router.push("/");
+    await signOut().catch(() =>
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
       })
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to sign out. Please try again.",
-        })
-      );
+    );
   };
 
   // if list of workspaces are not there then we have to render the spinner

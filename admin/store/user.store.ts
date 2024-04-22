@@ -6,6 +6,8 @@ import { EUserStatus, TUserStatus } from "@/helpers";
 import { UserService } from "services/user.service";
 // root store
 import { RootStore } from "@/store/root-store";
+import { AuthService } from "@/services";
+import { API_BASE_URL } from "@/helpers/common.helper";
 
 export interface IUserStore {
   // observables
@@ -15,6 +17,7 @@ export interface IUserStore {
   currentUser: IUser | undefined;
   // fetch actions
   fetchCurrentUser: () => Promise<IUser>;
+  signOut: () => Promise<void>;
 }
 
 export class UserStore implements IUserStore {
@@ -25,6 +28,9 @@ export class UserStore implements IUserStore {
   currentUser: IUser | undefined = undefined;
   // services
   userService;
+  authService;
+  // rootStore
+  rootStore;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
@@ -37,6 +43,8 @@ export class UserStore implements IUserStore {
       fetchCurrentUser: action,
     });
     this.userService = new UserService();
+    this.authService = new AuthService();
+    this.rootStore = store;
   }
 
   /**
@@ -68,5 +76,10 @@ export class UserStore implements IUserStore {
         };
       throw error;
     }
+  };
+
+  signOut = async () => {
+    await this.authService.signOut(API_BASE_URL);
+    this.rootStore.resetOnSignOut();
   };
 }

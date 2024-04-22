@@ -13,35 +13,23 @@ import { LogOut, UserCog2, Palette } from "lucide-react";
 import { useTheme, useUser } from "@/hooks";
 
 // ui
-import {
-  Avatar,
-  //  TOAST_TYPE,
-  //  setToast
-} from "@plane/ui";
+import { Avatar, TOAST_TYPE, setToast } from "@plane/ui";
 
 export const SidebarDropdown = observer(() => {
-  // router
-  // const router = useRouter();
   // store hooks
   const { isSidebarCollapsed } = useTheme();
-  const { currentUser } = useUser();
+  const { currentUser, signOut } = useUser();
   // hooks
   const { resolvedTheme, setTheme } = useNextTheme();
 
   const handleSignOut = async () => {
-    // await signOut()
-    //   .then(() => {
-    //     mutate("CURRENT_USER_DETAILS", null);
-    //     setTheme("system");
-    //     router.push("/");
-    //   })
-    //   .catch(() =>
-    //     setToast({
-    //       type: TOAST_TYPE.ERROR,
-    //       title: "Error!",
-    //       message: "Failed to sign out. Please try again.",
-    //     })
-    //   );
+    await signOut().catch(() =>
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
+      })
+    );
   };
 
   const handleThemeSwitch = () => {

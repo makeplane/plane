@@ -7,6 +7,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 
 import DefaultLayout from "@/layouts/default-layout";
 import { AuthService } from "@/services/auth.service";
+import { API_BASE_URL } from "@/helpers/common.helper";
 // layouts
 // ui
 
@@ -18,7 +19,7 @@ const CustomErrorComponent = () => {
 
   const handleSignOut = async () => {
     await authService
-      .signOut()
+      .signOut(API_BASE_URL)
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,

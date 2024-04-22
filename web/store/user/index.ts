@@ -9,6 +9,7 @@ import { RootStore } from "@/store/root.store";
 import { IAccountStore, AccountStore } from "@/store/user/account.store";
 import { ProfileStore, IProfileStore } from "@/store/user/profile.store";
 import { IUserMembershipStore, UserMembershipStore } from "@/store/user/user-membership.store";
+import { API_BASE_URL } from "@/helpers/common.helper";
 
 export interface IUserStore {
   // observables
@@ -141,7 +142,7 @@ export class UserStore implements IUserStore {
    * @returns Promise<void>
    */
   signOut = async () => {
-    await this.authService.signOut();
+    await this.authService.signOut(API_BASE_URL);
     this.rootStore.resetOnSignout();
   };
 

@@ -19,4 +19,27 @@ export class AuthService extends APIService {
         throw error;
       });
   }
+
+  async signOut(baseUrl: string): Promise<any> {
+    await this.requestCSRFToken().then((data) => {
+      const csrfToken = data?.csrf_token;
+
+      if (!csrfToken) throw Error("CSRF token not found");
+
+      var form = document.createElement("form");
+      var element1 = document.createElement("input");
+
+      form.method = "POST";
+      form.action = `${baseUrl}/api/instances/admins/sign-out/`;
+
+      element1.value = csrfToken;
+      element1.name = "csrfmiddlewaretoken";
+      element1.type = "hidden";
+      form.appendChild(element1);
+
+      document.body.appendChild(form);
+
+      form.submit();
+    });
+  }
 }
