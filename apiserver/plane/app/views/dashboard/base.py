@@ -591,10 +591,11 @@ class DashboardEndpoint(BaseAPIView):
                             ],
                             issue_assignee__issue__workspace__slug=slug,
                             issue_assignee__issue__project__project_projectmember__is_active=True,
-                            then=1,
+                            then=F("issue_assignee__issue__id"),
                         ),
                         output_field=IntegerField(),
-                    )
+                    ),
+                    distinct=True,
                 )
             )
             .values("active_issue_count", user_id=F("id"))
