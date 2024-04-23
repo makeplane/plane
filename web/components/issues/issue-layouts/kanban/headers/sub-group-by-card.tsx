@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Circle, ChevronDown, ChevronUp } from "lucide-react";
 import { TIssueKanbanFilters } from "@plane/types";
@@ -13,13 +13,14 @@ interface IHeaderSubGroupByCard {
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
 }
 
-export const HeaderSubGroupByCard = observer(
-  ({ icon, title, count, column_id, kanbanFilters, handleKanbanFilters }: IHeaderSubGroupByCard) => (
-    <div className={`relative flex w-full flex-shrink-0 flex-row items-center gap-2 rounded-sm p-1.5`}>
-      <div
-        className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
-        onClick={() => handleKanbanFilters("sub_group_by", column_id)}
-      >
+export const HeaderSubGroupByCard: FC<IHeaderSubGroupByCard> = observer((props) => {
+  const { icon, title, count, column_id, kanbanFilters, handleKanbanFilters } = props;
+  return (
+    <div
+      className={`relative flex w-full flex-shrink-0 flex-row items-center gap-2 rounded-sm p-1.5 cursor-pointer`}
+      onClick={() => handleKanbanFilters("sub_group_by", column_id)}
+    >
+      <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
         {kanbanFilters?.sub_group_by.includes(column_id) ? (
           <ChevronDown width={14} strokeWidth={2} />
         ) : (
@@ -36,5 +37,5 @@ export const HeaderSubGroupByCard = observer(
         <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
       </div>
     </div>
-  )
-);
+  );
+});

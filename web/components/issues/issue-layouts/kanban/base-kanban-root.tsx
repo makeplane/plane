@@ -233,7 +233,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
         ref={scrollableContainerRef}
       >
-        <div className="relative h-full w-max min-w-full bg-custom-background-90 px-2">
+        <div className="relative h-full w-max min-w-full bg-custom-background-90">
           {/* drag and delete component */}
           <div
             className={`fixed left-1/2 -translate-x-1/2 ${
