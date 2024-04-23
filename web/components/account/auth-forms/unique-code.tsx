@@ -6,6 +6,7 @@ import { IEmailCheckData } from "@plane/types";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // helpers
+import { EAuthModes } from "@/components/account";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import useTimer from "@/hooks/use-timer";
@@ -16,6 +17,7 @@ type Props = {
   email: string;
   handleEmailClear: () => void;
   submitButtonText: string;
+  mode: EAuthModes;
 };
 
 type TUniqueCodeFormValues = {
@@ -33,7 +35,7 @@ const authService = new AuthService();
 // const userService = new UserService();
 
 export const UniqueCodeForm: React.FC<Props> = (props) => {
-  const { email, handleEmailClear, submitButtonText } = props;
+  const { email, handleEmailClear, submitButtonText, mode } = props;
   // states
   const [uniqueCodeFormData, setUniqueCodeFormData] = useState<TUniqueCodeFormValues>({ ...defaultValues, email });
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
@@ -94,7 +96,11 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
 
   return (
-    <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/magic-sign-in/`}>
+    <form
+      className="mx-auto mt-5 space-y-4 sm:w-96"
+      method="POST"
+      action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
+    >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">

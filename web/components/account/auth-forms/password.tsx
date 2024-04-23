@@ -103,7 +103,11 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
   return (
     <>
-      <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/sign-in/`}>
+      <form
+        className="mx-auto mt-5 space-y-4 sm:w-96"
+        method="POST"
+        action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
+      >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
           <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">

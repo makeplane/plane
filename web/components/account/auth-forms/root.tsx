@@ -14,7 +14,6 @@ import {
   TermsAndConditions,
   UniqueCodeForm,
 } from "@/components/account";
-// hooks
 import { WorkspaceLogo } from "@/components/workspace/logo";
 import { useInstance } from "@/hooks/store";
 // services
@@ -208,6 +207,7 @@ export const AuthRoot = observer((props: Props) => {
               setAuthStep(EAuthSteps.EMAIL);
             }}
             submitButtonText="Continue"
+            mode={EAuthModes.SIGN_IN}
           />
         )}
         {authStep === EAuthSteps.PASSWORD && (
