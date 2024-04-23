@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -20,11 +20,12 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   moduleId: string;
-  isArchived?: boolean;
 };
 
 export const ModuleListItem: React.FC<Props> = observer((props) => {
-  const { moduleId, isArchived = false } = props;
+  const { moduleId } = props;
+  // refs
+  const parentRef = useRef(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -134,8 +135,11 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
 
   const completedModuleCheck = moduleDetails.status === "completed";
 
+  const isArchived = !!moduleDetails.archived_at;
+
   return (
     <Link
+      ref={parentRef}
       href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
       onClick={(e) => {
         if (isArchived) {
@@ -223,10 +227,10 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             )}
             {workspaceSlug && projectId && (
               <ModuleQuickActions
+                parentRef={parentRef}
                 moduleId={moduleId}
                 projectId={projectId.toString()}
                 workspaceSlug={workspaceSlug.toString()}
-                isArchived={isArchived}
               />
             )}
           </div>
