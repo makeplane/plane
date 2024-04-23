@@ -38,7 +38,7 @@ from .workspace.base import (
     WorkSpaceAvailabilityCheckEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
-    ExportWorkspaceUserActivityEndpoint
+    ExportWorkspaceUserActivityEndpoint,
 )
 
 from .workspace.member import (
@@ -91,11 +91,13 @@ from .cycle.base import (
     CycleDateCheckEndpoint,
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
-    CycleArchiveUnarchiveEndpoint,
     CycleUserPropertiesEndpoint,
 )
 from .cycle.issue import (
     CycleIssueViewSet,
+)
+from .cycle.archive import (
+    CycleArchiveUnarchiveEndpoint,
 )
 
 from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
@@ -170,12 +172,15 @@ from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
-    ModuleArchiveUnarchiveEndpoint,
     ModuleUserPropertiesEndpoint,
 )
 
 from .module.issue import (
     ModuleIssueViewSet,
+)
+
+from .module.archive import (
+    ModuleArchiveUnarchiveEndpoint,
 )
 
 from .api import ApiTokenEndpoint
