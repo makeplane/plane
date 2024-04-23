@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-// hooks
-import useSize from "@/hooks/use-window-size";
 // components
 import { Spinner } from "@plane/ui";
 import { DashboardWidgets } from "@/components/dashboard";
@@ -13,9 +11,11 @@ import { UserGreetingsView } from "@/components/user";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
-import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
+import useSize from "@/hooks/use-window-size";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
