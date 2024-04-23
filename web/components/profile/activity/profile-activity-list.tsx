@@ -120,10 +120,10 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
               return (
                 <li key={activityItem.id}>
                   <div className="relative pb-1">
-                    <div className="relative flex items-center space-x-2">
+                    <div className="relative flex items-start space-x-2">
                       <>
                         <div>
-                          <div className="relative px-1.5">
+                          <div className="relative px-1.5 mt-4">
                             <div className="mt-1.5">
                               <div className="flex h-6 w-6 items-center justify-center">
                                 {activityItem.field ? (
