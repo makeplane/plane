@@ -6,7 +6,6 @@ import { IEmailCheckData } from "@plane/types";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // helpers
-import { EAuthModes } from "@/components/account";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import useTimer from "@/hooks/use-timer";
@@ -17,7 +16,6 @@ type Props = {
   email: string;
   handleEmailClear: () => void;
   submitButtonText: string;
-  mode: EAuthModes;
 };
 
 type TUniqueCodeFormValues = {
@@ -35,7 +33,7 @@ const authService = new AuthService();
 // const userService = new UserService();
 
 export const UniqueCodeForm: React.FC<Props> = (props) => {
-  const { email, handleEmailClear, submitButtonText, mode } = props;
+  const { email, handleEmailClear, submitButtonText } = props;
   // states
   const [uniqueCodeFormData, setUniqueCodeFormData] = useState<TUniqueCodeFormValues>({ ...defaultValues, email });
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);

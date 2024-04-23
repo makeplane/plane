@@ -207,7 +207,6 @@ export const AuthRoot = observer((props: Props) => {
               setAuthStep(EAuthSteps.EMAIL);
             }}
             submitButtonText="Continue"
-            mode={EAuthModes.SIGN_IN}
           />
         )}
         {authStep === EAuthSteps.PASSWORD && (
