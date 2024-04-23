@@ -1,6 +1,7 @@
 # Python imports
 import json
 
+# Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
@@ -19,14 +20,12 @@ from django.db.models import (
     When,
 )
 from django.db.models.functions import Coalesce
-
-# Django imports
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from rest_framework import status
 
 # Third Party imports
+from rest_framework import status
 from rest_framework.response import Response
 
 from plane.app.permissions import ProjectEntityPermission

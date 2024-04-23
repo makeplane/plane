@@ -62,6 +62,7 @@ export const ModulesListHeader: React.FC = observer(() => {
       if (Array.isArray(value))
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       else {
         if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);

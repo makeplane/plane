@@ -47,11 +47,13 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
 
   const handleFilters = useCallback(
     (key: keyof TCycleFilters, value: string | string[]) => {
+      if (!projectId) return;
       const newValues = currentProjectFilters?.[key] ?? [];
 
       if (Array.isArray(value))
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       else {
         if (currentProjectFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
