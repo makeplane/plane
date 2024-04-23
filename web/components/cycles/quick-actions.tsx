@@ -10,6 +10,7 @@ import { ArchiveCycleModal, CycleCreateUpdateModal, CycleDeleteModal } from "@/c
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useCycle, useEventTracker, useUser } from "@/hooks/store";
@@ -172,10 +173,27 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
                 e.stopPropagation();
                 item.action();
               }}
-              className="flex items-center gap-2"
+              className={cn(
+                "flex items-center gap-2",
+                {
+                  "text-custom-text-400": item.disabled,
+                },
+                item.className
+              )}
             >
-              {item.icon && <item.icon className="h-3 w-3" />}
-              {item.title}
+              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+              <div>
+                <h5>{item.title}</h5>
+                {item.description && (
+                  <p
+                    className={cn("text-custom-text-300 whitespace-pre-line", {
+                      "text-custom-text-400": item.disabled,
+                    })}
+                  >
+                    {item.description}
+                  </p>
+                )}
+              </div>
             </CustomMenu.MenuItem>
           );
         })}
