@@ -571,14 +571,16 @@ def dashboard_recent_collaborators(self, request, slug):
     return self.paginate(
         request=request,
         queryset=project_members_with_activities,
-        controller=self.get_results_controller,
+        controller=lambda qs: self.get_results_controller(qs, slug),
     )
 
 
 class DashboardEndpoint(BaseAPIView):
-    def get_results_controller(self, project_members_with_activities):
+    def get_results_controller(self, project_members_with_activities, slug):
         user_active_issue_counts = (
-            User.objects.filter(id__in=project_members_with_activities)
+            User.objects.filter(
+                id__in=project_members_with_activities,
+            )
             .annotate(
                 active_issue_count=Count(
                     Case(
@@ -587,10 +589,13 @@ class DashboardEndpoint(BaseAPIView):
                                 "unstarted",
                                 "started",
                             ],
-                            then=1,
+                            issue_assignee__issue__workspace__slug=slug,
+                            issue_assignee__issue__project__project_projectmember__is_active=True,
+                            then=F("issue_assignee__issue__id"),
                         ),
                         output_field=IntegerField(),
-                    )
+                    ),
+                    distinct=True,
                 )
             )
             .values("active_issue_count", user_id=F("id"))

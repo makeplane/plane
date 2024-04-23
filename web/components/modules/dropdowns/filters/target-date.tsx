@@ -6,6 +6,8 @@ import { DateFilterModal } from "@/components/core";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
 import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
+// helpers
+import { isInDateFormat } from "@/helpers/date-time.helper";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -24,6 +26,17 @@ export const FilterTargetDate: React.FC<Props> = observer((props) => {
   const filteredOptions = DATE_AFTER_FILTER_OPTIONS.filter((d) =>
     d.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const isCustomDateSelected = () => {
+    const isValidDateSelected = appliedFilters?.filter((f) => isInDateFormat(f.split(";")[0])) || [];
+    return isValidDateSelected.length > 0 ? true : false;
+  };
+  const handleCustomDate = () => {
+    if (isCustomDateSelected()) {
+      const updateAppliedFilters = appliedFilters?.filter((f) => f.includes("-")) || [];
+      handleUpdate(updateAppliedFilters);
+    } else setIsDateFilterModalOpen(true);
+  };
 
   return (
     <>
@@ -53,7 +66,7 @@ export const FilterTargetDate: React.FC<Props> = observer((props) => {
                   multiple
                 />
               ))}
-              <FilterOption isChecked={false} onClick={() => setIsDateFilterModalOpen(true)} title="Custom" multiple />
+              <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title="Custom" multiple />
             </>
           ) : (
             <p className="text-xs italic text-custom-text-400">No matches found</p>

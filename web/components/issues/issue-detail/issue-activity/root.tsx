@@ -1,12 +1,12 @@
 import { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { History, LucideIcon, MessageCircle, ListRestart } from "lucide-react";
+import { History, LucideIcon, MessageCircle } from "lucide-react";
 // types
 import { TIssueComment } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "@/components/issues";
+import { IssueActivityCommentRoot, IssueCommentRoot, IssueCommentCreate } from "@/components/issues";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 
@@ -17,23 +17,18 @@ type TIssueActivity = {
   disabled?: boolean;
 };
 
-type TActivityTabs = "all" | "activity" | "comments";
+type TActivityTabs = "all" | "comments";
 
 const activityTabs: { key: TActivityTabs; title: string; icon: LucideIcon }[] = [
-  {
-    key: "all",
-    title: "All activity",
-    icon: History,
-  },
-  {
-    key: "activity",
-    title: "Updates",
-    icon: ListRestart,
-  },
   {
     key: "comments",
     title: "Comments",
     icon: MessageCircle,
+  },
+  {
+    key: "all",
+    title: "All activity",
+    icon: History,
   },
 ];
 
@@ -49,7 +44,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { getProjectById } = useProject();
   // state
-  const [activityTab, setActivityTab] = useState<TActivityTabs>("all");
+  const [activityTab, setActivityTab] = useState<TActivityTabs>("comments");
 
   const activityOperations: TActivityOperations = useMemo(
     () => ({
@@ -158,8 +153,6 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                 />
               )}
             </div>
-          ) : activityTab === "activity" ? (
-            <IssueActivityRoot issueId={issueId} />
           ) : (
             <div className="space-y-3">
               <IssueCommentRoot
