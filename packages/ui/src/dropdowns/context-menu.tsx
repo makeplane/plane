@@ -4,7 +4,7 @@ import { cn } from "../../helpers";
 // hooks
 import useOutsideClickDetector from "../hooks/use-outside-click-detector";
 
-type MenuItem = {
+export type TContextMenuItem = {
   key: string;
   title: string;
   description?: string;
@@ -12,11 +12,12 @@ type MenuItem = {
   action: () => void;
   shouldRender?: boolean;
   className?: string;
+  closeOnClick?: boolean;
 };
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
-  items: MenuItem[];
+  items: TContextMenuItem[];
 };
 
 export const ContextMenu: React.FC<Props> = (props) => {
@@ -143,6 +144,7 @@ export const ContextMenu: React.FC<Props> = (props) => {
                 e.preventDefault();
                 e.stopPropagation();
                 item.action();
+                if (item.closeOnClick !== false) setIsOpen(false);
               }}
               onMouseEnter={() => setActiveItemIndex(index)}
             >

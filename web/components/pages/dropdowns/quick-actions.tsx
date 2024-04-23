@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, ExternalLink, Link, Lock, Trash2, UsersRound } from "lucide-react";
-import { ArchiveIcon, ContextMenu, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DeletePageModal } from "@/components/pages";
 // helpers
@@ -45,13 +45,7 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
 
   const handleOpenInNewTab = () => window.open(`/${pageLink}`, "_blank");
 
-  const MENU_ITEMS: {
-    key: string;
-    action: () => void;
-    title: string;
-    icon: React.FC<any>;
-    shouldRender: boolean;
-  }[] = [
+  const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "copy-link",
       action: handleCopyText,
@@ -111,7 +105,7 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
               }}
               className="flex items-center gap-2"
             >
-              <item.icon className="h-3 w-3" />
+              {item.icon && <item.icon className="h-3 w-3" />}
               {item.title}
             </CustomMenu.MenuItem>
           );
