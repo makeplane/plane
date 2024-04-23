@@ -124,7 +124,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
   const [isDraggingOverBlock, setIsDraggingOverBlock] = useState(false);
   const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
 
-  const canEditIssueProperties = canEditProperties(issue.project_id);
+  const canEditIssueProperties = canEditProperties(issue?.project_id);
 
   const isDragAllowed = !isDragDisabled && !issue?.tempId && canEditIssueProperties;
 
