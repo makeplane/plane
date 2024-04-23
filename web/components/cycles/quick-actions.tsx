@@ -19,11 +19,10 @@ type Props = {
   cycleId: string;
   projectId: string;
   workspaceSlug: string;
-  isArchived?: boolean;
 };
 
 export const CycleQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, cycleId, projectId, workspaceSlug, isArchived } = props;
+  const { parentRef, cycleId, projectId, workspaceSlug } = props;
   // router
   const router = useRouter();
   // states
@@ -38,6 +37,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const { getCycleById, restoreCycle } = useCycle();
   // derived values
   const cycleDetails = getCycleById(cycleId);
+  const isArchived = !!cycleDetails?.archived_at;
   const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
   // auth
   const isEditingAllowed =
@@ -61,7 +61,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
 
   const handleArchiveCycle = () => setArchiveCycleModal(true);
 
-  const handleRestoreCycle = async () => {
+  const handleRestoreCycle = async () =>
     await restoreCycle(workspaceSlug, projectId, cycleId)
       .then(() => {
         setToast({
@@ -78,7 +78,6 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
           message: "Cycle could not be restored. Please try again.",
         })
       );
-  };
 
   const handleDeleteCycle = () => {
     setTrackElement("Cycles page list layout");

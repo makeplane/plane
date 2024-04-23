@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
+// components
+import { ContextMenuItem } from "./item";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../../../helpers";
 // hooks
-import useOutsideClickDetector from "../hooks/use-outside-click-detector";
+import useOutsideClickDetector from "../../hooks/use-outside-click-detector";
 
 export type TContextMenuItem = {
   key: string;
@@ -17,12 +19,12 @@ export type TContextMenuItem = {
   iconClassName?: string;
 };
 
-type Props = {
+type ContextMenuProps = {
   parentRef: React.RefObject<HTMLElement>;
   items: TContextMenuItem[];
 };
 
-export const ContextMenu: React.FC<Props> = (props) => {
+export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
   const { parentRef, items } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -132,45 +134,15 @@ export const ContextMenu: React.FC<Props> = (props) => {
           left: position.x,
         }}
       >
-        {renderedItems.map((item, index) => {
-          if (item.shouldRender === false) return null;
-          return (
-            <button
-              key={item.key}
-              type="button"
-              className={cn(
-                "w-full flex items-center gap-2 px-1 py-1.5 text-left text-custom-text-200 rounded text-xs select-none",
-                {
-                  "bg-custom-background-90": activeItemIndex === index,
-                  "text-custom-text-400": item.disabled,
-                },
-                item.className
-              )}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                item.action();
-                if (item.closeOnClick !== false) setIsOpen(false);
-              }}
-              onMouseEnter={() => setActiveItemIndex(index)}
-              disabled={item.disabled}
-            >
-              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-              <div>
-                <h5>{item.title}</h5>
-                {item.description && (
-                  <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
-                    })}
-                  >
-                    {item.description}
-                  </p>
-                )}
-              </div>
-            </button>
-          );
-        })}
+        {renderedItems.map((item, index) => (
+          <ContextMenuItem
+            key={item.key}
+            handleActiveItem={() => setActiveItemIndex(index)}
+            handleClose={handleClose}
+            isActive={index === activeItemIndex}
+            item={item}
+          />
+        ))}
       </div>
     </div>
   );

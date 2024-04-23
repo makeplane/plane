@@ -29,11 +29,10 @@ type TCyclesListItem = {
   handleRemoveFromFavorites?: () => void;
   workspaceSlug: string;
   projectId: string;
-  isArchived?: boolean;
 };
 
 export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
-  const { cycleId, workspaceSlug, projectId, isArchived } = props;
+  const { cycleId, workspaceSlug, projectId } = props;
   // refs
   const parentRef = useRef(null);
   // router
@@ -155,6 +154,8 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
+  const isArchived = !!cycleDetails.archived_at;
+
   return (
     <>
       <Link
@@ -249,7 +250,6 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
                 cycleId={cycleId}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
-                isArchived={isArchived}
               />
             </div>
           </div>

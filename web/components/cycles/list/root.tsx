@@ -22,12 +22,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
     <div className="h-full overflow-y-auto">
       <div className="flex h-full w-full justify-between">
         <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
-          <CyclesListMap
-            cycleIds={cycleIds}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-            isArchived={isArchived}
-          />
+          <CyclesListMap cycleIds={cycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
           {completedCycleIds.length !== 0 && (
             <Disclosure as="div" className="py-8 pl-3 space-y-4">
               <Disclosure.Button className="bg-custom-background-80 font-semibold text-sm py-1 px-2 rounded ml-5 flex items-center gap-1">
@@ -43,12 +38,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
                 )}
               </Disclosure.Button>
               <Disclosure.Panel>
-                <CyclesListMap
-                  cycleIds={completedCycleIds}
-                  projectId={projectId}
-                  workspaceSlug={workspaceSlug}
-                  isArchived={isArchived}
-                />
+                <CyclesListMap cycleIds={completedCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
               </Disclosure.Panel>
             </Disclosure>
           )}
