@@ -35,6 +35,8 @@ export const PageForm: React.FC<Props> = (props) => {
     }
   };
 
+  const isTitleLengthMoreThan255Character = formData.name ? formData.name.length > 255 : false;
+
   return (
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-4">
@@ -42,10 +44,7 @@ export const PageForm: React.FC<Props> = (props) => {
 
         <div className="space-y-2">
           <div>
-            <div className="text-custom-text-200">Name</div>
-            <div className="text-xs text-custom-text-300">
-              Max length of the name should be less than 255 characters
-            </div>
+            <div className="text-custom-text-200">Title</div>
           </div>
           <Input
             id="name"
@@ -56,8 +55,10 @@ export const PageForm: React.FC<Props> = (props) => {
             className="w-full resize-none text-lg"
             tabIndex={1}
             required
-            maxLength={255}
           />
+          {isTitleLengthMoreThan255Character && (
+            <span className="text-xs text-red-500">Max length of the name should be less than 255 characters</span>
+          )}
         </div>
       </div>
 
@@ -95,7 +96,14 @@ export const PageForm: React.FC<Props> = (props) => {
           <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={4}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={5}>
+          <Button
+            variant="primary"
+            size="sm"
+            type="submit"
+            loading={isSubmitting}
+            disabled={isTitleLengthMoreThan255Character}
+            tabIndex={5}
+          >
             {isSubmitting ? "Creating" : "Create Page"}
           </Button>
         </div>
