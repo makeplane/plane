@@ -13,6 +13,7 @@ import { IWorkspace } from "@plane/types";
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
+import { WorkspaceLogo } from "./logo";
 // types
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
@@ -108,21 +109,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 }`}
               >
                 <div className="flex items-center gap-2 truncate">
-                  <div
-                    className={`relative grid h-6 w-6 flex-shrink-0 place-items-center uppercase ${
-                      !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
-                    }`}
-                  >
-                    {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                      <img
-                        src={activeWorkspace.logo}
-                        className="absolute left-0 top-0 h-full w-full rounded object-cover"
-                        alt="Workspace Logo"
-                      />
-                    ) : (
-                      activeWorkspace?.name?.charAt(0) ?? "..."
-                    )}
-                  </div>
+                  <WorkspaceLogo logo={activeWorkspace?.logo} name={activeWorkspace?.name} />
                   {!sidebarCollapsed && (
                     <h4 className="truncate text-base font-medium text-custom-text-100">
                       {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}

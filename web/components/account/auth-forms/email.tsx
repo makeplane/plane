@@ -19,7 +19,7 @@ type TEmailFormValues = {
   email: string;
 };
 
-export const SignInEmailForm: React.FC<Props> = observer((props) => {
+export const AuthEmailForm: React.FC<Props> = observer((props) => {
   const { onSubmit, defaultEmail } = props;
   // hooks
   const {

@@ -32,6 +32,7 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   const handleSignInRedirection = useCallback(
     async (profile: any) => {
       try {
+        if (!profile) return;
         // if the user is not onboarded, redirect them to the onboarding page
         if (!profile.is_onboarded) {
           router.push("/onboarding");
