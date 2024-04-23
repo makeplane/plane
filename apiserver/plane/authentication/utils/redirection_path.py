@@ -19,7 +19,7 @@ def get_redirection_path(user):
             pk=profile.last_workspace_id,
             workspace_member__member_id=user.id,
             workspace_member__is_active=True,
-        )
+        ).first()
         return f"{workspace.slug}"
 
     fallback_workspace = (

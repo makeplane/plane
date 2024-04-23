@@ -60,7 +60,7 @@ class UserMeSerializer(BaseSerializer):
             "username",
             "is_password_autoset",
             "is_email_verified",
-            'last_login_medium',
+            "last_login_medium",
         ]
         read_only_fields = fields
 
