@@ -43,9 +43,6 @@ export const PageForm: React.FC<Props> = (props) => {
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">Create Page</h3>
 
         <div className="space-y-2">
-          <div>
-            <div className="text-custom-text-200">Title</div>
-          </div>
           <Input
             id="name"
             type="text"
