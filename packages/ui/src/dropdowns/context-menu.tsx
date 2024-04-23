@@ -54,8 +54,8 @@ export const ContextMenu: React.FC<Props> = (props) => {
       const clickX = e?.pageX || 0;
       const clickY = e?.pageY || 0;
 
-      let top = clickY;
       // check if there's enough space at the bottom, otherwise show at the top
+      let top = clickY;
       if (clickY + contextMenuHeight > window.innerHeight) top = clickY - contextMenuHeight;
 
       // check if there's enough space on the right, otherwise show on the left
@@ -121,14 +121,10 @@ export const ContextMenu: React.FC<Props> = (props) => {
       <div
         ref={contextMenuRef}
         className="fixed border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg rounded-md px-2 py-2.5 max-h-60 min-w-[12rem] overflow-y-scroll"
-        style={
-          isOpen
-            ? {
-                top: position.y,
-                left: position.x,
-              }
-            : {}
-        }
+        style={{
+          top: position.y,
+          left: position.x,
+        }}
       >
         {renderedItems.map((item, index) => {
           if (item.shouldRender === false) return null;
@@ -137,7 +133,7 @@ export const ContextMenu: React.FC<Props> = (props) => {
               key={item.key}
               type="button"
               className={cn(
-                "w-full flex items-center gap-2 px-1 py-1.5 hover:bg-custom-background-90 text-left text-custom-text-200 rounded text-xs select-none",
+                "w-full flex items-center gap-2 px-1 py-1.5 text-left text-custom-text-200 rounded text-xs select-none",
                 {
                   "bg-custom-background-90": activeItemIndex === index,
                 },
@@ -148,6 +144,7 @@ export const ContextMenu: React.FC<Props> = (props) => {
                 e.stopPropagation();
                 item.action();
               }}
+              onMouseEnter={() => setActiveItemIndex(index)}
             >
               {item.icon && <item.icon className="h-3 w-3" />}
               <div>
