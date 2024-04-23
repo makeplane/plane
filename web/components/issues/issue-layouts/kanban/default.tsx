@@ -26,6 +26,7 @@ import {
 } from "@/hooks/store";
 // types
 // parent components
+import { TRenderQuickActions } from "../list/list-view-types";
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 // components
 import { KanbanStoreType } from "./base-kanban-root";
@@ -42,7 +43,7 @@ export interface IGroupByKanBan {
   sub_group_id: string;
   isDragDisabled: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: any;
   enableQuickIssueCreate?: boolean;
@@ -208,7 +209,7 @@ export interface IKanBan {
   group_by: TIssueGroupByOptions | undefined;
   sub_group_id?: string;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   showEmptyGroup: boolean;

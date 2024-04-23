@@ -3,6 +3,7 @@ import { FC, MutableRefObject } from "react";
 import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { IssueBlock } from "@/components/issues";
+import { TRenderQuickActions } from "./list-view-types";
 // types
 
 interface Props {
@@ -10,7 +11,7 @@ interface Props {
   issuesMap: TIssueMap;
   canEditProperties: (projectId: string | undefined) => boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   containerRef: MutableRefObject<HTMLDivElement | null>;
 }
