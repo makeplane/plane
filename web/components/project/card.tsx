@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Pencil, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Pencil, Trash2, UserPlus } from "lucide-react";
 // types
 import type { IProject } from "@plane/types";
 // ui
@@ -119,18 +119,32 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       shouldRender: true,
     },
     {
+      key: "join",
+      action: () => setJoinProjectModal(true),
+      title: "Join",
+      icon: UserPlus,
+      shouldRender: !project.is_member && !isArchived,
+    },
+    {
+      key: "edit",
+      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
+      title: "Edit",
+      icon: Pencil,
+      shouldRender: !isArchived && (isOwner || isMember),
+    },
+    {
       key: "restore",
       action: () => setRestoreProject(true),
       title: "Restore",
       icon: ArchiveRestoreIcon,
-      shouldRender: isOwner && isArchived,
+      shouldRender: isArchived && isOwner,
     },
     {
       key: "delete",
       action: () => setDeleteProjectModal(true),
       title: "Delete",
       icon: Trash2,
-      shouldRender: isOwner && isArchived,
+      shouldRender: isArchived && isOwner,
     },
   ];
 
@@ -161,7 +175,6 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
           archive={false}
         />
       )}
-      <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
       <Link
         ref={projectCardRef}
         href={`/${workspaceSlug}/projects/${project.id}/issues`}
@@ -174,6 +187,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         }}
         className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
+        <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
         <div className="relative h-[118px] w-full rounded-t ">
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
 
