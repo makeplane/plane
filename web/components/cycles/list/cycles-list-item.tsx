@@ -1,4 +1,4 @@
-import { FC, MouseEvent } from "react";
+import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -34,6 +34,8 @@ type TCyclesListItem = {
 
 export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   const { cycleId, workspaceSlug, projectId, isArchived } = props;
+  // refs
+  const parentRef = useRef(null);
   // router
   const router = useRouter();
   // hooks
@@ -156,6 +158,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   return (
     <>
       <Link
+        ref={parentRef}
         href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
         onClick={(e) => {
           if (isArchived) {
@@ -242,6 +245,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
                 />
               )}
               <CycleQuickActions
+                parentRef={parentRef}
                 cycleId={cycleId}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}

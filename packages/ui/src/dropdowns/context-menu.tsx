@@ -11,8 +11,10 @@ export type TContextMenuItem = {
   icon?: React.FC<any>;
   action: () => void;
   shouldRender?: boolean;
-  className?: string;
   closeOnClick?: boolean;
+  disabled?: boolean;
+  className?: string;
+  iconClassName?: string;
 };
 
 type Props = {
@@ -95,8 +97,11 @@ export const ContextMenu: React.FC<Props> = (props) => {
       }
       if (e.key === "Enter") {
         e.preventDefault();
-        renderedItems[activeItemIndex].action();
-        setIsOpen(false);
+        const item = renderedItems[activeItemIndex];
+        if (!item.disabled) {
+          renderedItems[activeItemIndex].action();
+          setIsOpen(false);
+        }
       }
     };
 
@@ -137,6 +142,7 @@ export const ContextMenu: React.FC<Props> = (props) => {
                 "w-full flex items-center gap-2 px-1 py-1.5 text-left text-custom-text-200 rounded text-xs select-none",
                 {
                   "bg-custom-background-90": activeItemIndex === index,
+                  "text-custom-text-400": item.disabled,
                 },
                 item.className
               )}
@@ -147,11 +153,20 @@ export const ContextMenu: React.FC<Props> = (props) => {
                 if (item.closeOnClick !== false) setIsOpen(false);
               }}
               onMouseEnter={() => setActiveItemIndex(index)}
+              disabled={item.disabled}
             >
-              {item.icon && <item.icon className="h-3 w-3" />}
+              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
               <div>
                 <h5>{item.title}</h5>
-                {item.description && <p className="text-custom-text-300">{item.description}</p>}
+                {item.description && (
+                  <p
+                    className={cn("text-custom-text-300 whitespace-pre-line", {
+                      "text-custom-text-400": item.disabled,
+                    })}
+                  >
+                    {item.description}
+                  </p>
+                )}
               </div>
             </button>
           );

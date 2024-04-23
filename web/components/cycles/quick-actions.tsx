@@ -2,9 +2,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
-import { ArchiveRestoreIcon, LinkIcon, Pencil, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui
-import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveCycleModal, CycleCreateUpdateModal, CycleDeleteModal } from "@/components/cycles";
 // constants
@@ -15,6 +15,7 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useCycle, useEventTracker, useUser } from "@/hooks/store";
 
 type Props = {
+  parentRef: React.RefObject<HTMLElement>;
   cycleId: string;
   projectId: string;
   workspaceSlug: string;
@@ -22,7 +23,7 @@ type Props = {
 };
 
 export const CycleQuickActions: React.FC<Props> = observer((props) => {
-  const { cycleId, projectId, workspaceSlug, isArchived } = props;
+  const { parentRef, cycleId, projectId, workspaceSlug, isArchived } = props;
   // router
   const router = useRouter();
   // states
@@ -42,35 +43,25 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const isEditingAllowed =
     !!currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId] >= EUserProjectRoles.MEMBER;
 
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`).then(() => {
+  const cycleLink = `${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`;
+  const handleCopyText = () =>
+    copyUrlToClipboard(cycleLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Cycle link copied to clipboard.",
       });
     });
-  };
+  const handleOpenInNewTab = () => window.open(`/${cycleLink}`, "_blank");
 
-  const handleEditCycle = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleEditCycle = () => {
     setTrackElement("Cycles page list layout");
     setUpdateModal(true);
   };
 
-  const handleArchiveCycle = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setArchiveCycleModal(true);
-  };
+  const handleArchiveCycle = () => setArchiveCycleModal(true);
 
-  const handleRestoreCycle = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleRestoreCycle = async () => {
     await restoreCycle(workspaceSlug, projectId, cycleId)
       .then(() => {
         setToast({
@@ -89,12 +80,59 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
       );
   };
 
-  const handleDeleteCycle = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDeleteCycle = () => {
     setTrackElement("Cycles page list layout");
     setDeleteModal(true);
   };
+
+  const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "copy-link",
+      action: handleCopyText,
+      title: "Copy link",
+      icon: LinkIcon,
+      shouldRender: !isArchived,
+    },
+    {
+      key: "open-new-tab",
+      action: handleOpenInNewTab,
+      title: "Open in new tab",
+      icon: ExternalLink,
+      shouldRender: !isArchived,
+    },
+    {
+      key: "edit",
+      title: "Edit",
+      icon: Pencil,
+      action: handleEditCycle,
+      shouldRender: isEditingAllowed && !isCompleted && !isArchived,
+    },
+    {
+      key: "archive",
+      action: handleArchiveCycle,
+      title: "Archive",
+      description: isCompleted ? undefined : "Only completed cycle can\nbe archived.",
+      icon: ArchiveIcon,
+      className: "items-start",
+      iconClassName: "mt-1",
+      shouldRender: isEditingAllowed && !isArchived,
+      disabled: !isCompleted,
+    },
+    {
+      key: "restore",
+      action: handleRestoreCycle,
+      title: "Restore",
+      icon: ArchiveRestoreIcon,
+      shouldRender: isEditingAllowed && isArchived,
+    },
+    {
+      key: "delete",
+      action: handleDeleteCycle,
+      title: "Delete",
+      icon: Trash2,
+      shouldRender: isEditingAllowed && !isCompleted && !isArchived,
+    },
+  ];
 
   return (
     <>
@@ -123,60 +161,25 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
           />
         </div>
       )}
+      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu ellipsis placement="bottom-end">
-        {!isCompleted && isEditingAllowed && !isArchived && (
-          <CustomMenu.MenuItem onClick={handleEditCycle}>
-            <span className="flex items-center justify-start gap-2">
-              <Pencil className="h-3 w-3" />
-              <span>Edit cycle</span>
-            </span>
-          </CustomMenu.MenuItem>
-        )}
-        {isEditingAllowed && !isArchived && (
-          <CustomMenu.MenuItem onClick={handleArchiveCycle} disabled={!isCompleted}>
-            {isCompleted ? (
-              <div className="flex items-center gap-2">
-                <ArchiveIcon className="h-3 w-3" />
-                Archive cycle
-              </div>
-            ) : (
-              <div className="flex items-start gap-2">
-                <ArchiveIcon className="h-3 w-3" />
-                <div className="-mt-1">
-                  <p>Archive cycle</p>
-                  <p className="text-xs text-custom-text-400">
-                    Only completed cycle <br /> can be archived.
-                  </p>
-                </div>
-              </div>
-            )}
-          </CustomMenu.MenuItem>
-        )}
-        {isEditingAllowed && isArchived && (
-          <CustomMenu.MenuItem onClick={handleRestoreCycle}>
-            <span className="flex items-center justify-start gap-2">
-              <ArchiveRestoreIcon className="h-3 w-3" />
-              <span>Restore cycle</span>
-            </span>
-          </CustomMenu.MenuItem>
-        )}
-        {!isArchived && (
-          <CustomMenu.MenuItem onClick={handleCopyText}>
-            <span className="flex items-center justify-start gap-2">
-              <LinkIcon className="h-3 w-3" />
-              <span>Copy cycle link</span>
-            </span>
-          </CustomMenu.MenuItem>
-        )}
-        <hr className="my-2 border-custom-border-200" />
-        {!isCompleted && isEditingAllowed && (
-          <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-            <span className="flex items-center justify-start gap-2">
-              <Trash2 className="h-3 w-3" />
-              <span>Delete cycle</span>
-            </span>
-          </CustomMenu.MenuItem>
-        )}
+        {MENU_ITEMS.map((item) => {
+          if (item.shouldRender === false) return null;
+          return (
+            <CustomMenu.MenuItem
+              key={item.key}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                item.action();
+              }}
+              className="flex items-center gap-2"
+            >
+              {item.icon && <item.icon className="h-3 w-3" />}
+              {item.title}
+            </CustomMenu.MenuItem>
+          );
+        })}
       </CustomMenu>
     </>
   );
