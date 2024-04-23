@@ -86,12 +86,19 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   };
 
   useEffect(() => {
+    if (workspacesList && workspacesList?.length > 0) setTotalSteps(1);
+    else setTotalSteps(3);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     const handleStepChange = async () => {
       if (!user) return;
 
       const onboardingStep = profile.onboarding_step;
 
-      // For Invited Users, they will skip workspace create or join step.
+      if (!onboardingStep.profile_complete) setStep(EOnboardingSteps.PROFILE_SETUP);
+
       if (
         !onboardingStep.workspace_join &&
         !onboardingStep.workspace_create &&
@@ -106,14 +113,11 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
           },
           last_workspace_id: workspacesList[0]?.id,
         });
-        setStep(EOnboardingSteps.WORKSPACE_INVITE);
         return;
       }
 
-      if (workspacesList && workspacesList?.length > 0) setTotalSteps(2);
-      else setTotalSteps(3);
-
-      if (!onboardingStep.profile_complete) setStep(EOnboardingSteps.PROFILE_SETUP);
+      // For Invited Users, they will skip all other steps.
+      if (totalSteps && totalSteps === 1) return;
 
       if (onboardingStep.profile_complete && !(onboardingStep.workspace_join || onboardingStep.workspace_create)) {
         setStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
@@ -137,7 +141,12 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
       {user && totalSteps && step !== null ? (
         <div className={`flex h-full w-full flex-col`}>
           {step === EOnboardingSteps.PROFILE_SETUP ? (
-            <ProfileSetup user={user} totalSteps={totalSteps} stepChange={stepChange} />
+            <ProfileSetup
+              user={user}
+              totalSteps={totalSteps}
+              stepChange={stepChange}
+              finishOnboarding={finishOnboarding}
+            />
           ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN && invitations ? (
             <CreateOrJoinWorkspaces invitations={invitations} totalSteps={totalSteps} stepChange={stepChange} />
           ) : step === EOnboardingSteps.WORKSPACE_INVITE ? (
