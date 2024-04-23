@@ -96,11 +96,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
 
   return (
-    <form
-      className="mx-auto mt-5 space-y-4 sm:w-96"
-      method="POST"
-      action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
-    >
+    <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/magic-sign-in/`}>
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
