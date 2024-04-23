@@ -59,10 +59,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   });
 
   const isEmpty =
-    props.initialValue === "" ||
     props.initialValue?.trim() === "" ||
     props.initialValue === "<p></p>" ||
-    isEmptyHtmlString(props.initialValue ?? "");
+    (isEmptyHtmlString(props.initialValue ?? "") && !props.initialValue?.includes("mention-component"));
 
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;

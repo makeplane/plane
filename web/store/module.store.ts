@@ -1,5 +1,6 @@
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import update from "lodash/update";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -286,7 +287,7 @@ export class ModulesStore implements IModuleStore {
   fetchArchivedModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
     await this.moduleArchiveService.getArchivedModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
       runInAction(() => {
-        set(this.moduleMap, [moduleId], response);
+        set(this.moduleMap, [response.id], { ...this.moduleMap?.[response.id], ...response });
       });
       return response;
     });

@@ -35,8 +35,8 @@ export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
       <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin />
       <div className="flex items-center justify-between gap-2 mt-4 px-4 pt-4 pb-2 border-t border-custom-border-100">
         <div className="text-sm text-custom-text-300 font-medium">
-          Congrats! Project <ProjectLogo logo={currentProjectDetails.logo_props} /> {currentProjectDetails.name}{" "}
-          created.
+          Congrats! Project <ProjectLogo logo={currentProjectDetails.logo_props} />{" "}
+          <p className="break-all">{currentProjectDetails.name}</p> created.
         </div>
         <div className="flex gap-2">
           <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={1}>

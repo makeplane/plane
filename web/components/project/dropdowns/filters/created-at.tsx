@@ -6,7 +6,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
 import { DATE_BEFORE_FILTER_OPTIONS } from "@/constants/filters";
 // helpers
-import { isDate } from "@/helpers/date-time.helper";
+import { isInDateFormat } from "@/helpers/date-time.helper";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -27,7 +27,7 @@ export const FilterCreatedDate: React.FC<Props> = observer((props) => {
   );
 
   const isCustomDateSelected = () => {
-    const isValidDateSelected = appliedFilters?.filter((f) => isDate(f.split(";")[0])) || [];
+    const isValidDateSelected = appliedFilters?.filter((f) => isInDateFormat(f.split(";")[0])) || [];
     return isValidDateSelected.length > 0 ? true : false;
   };
   const handleCustomDate = () => {

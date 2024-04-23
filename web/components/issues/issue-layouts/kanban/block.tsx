@@ -124,6 +124,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
   const [isDraggingOverBlock, setIsDraggingOverBlock] = useState(false);
   const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
 
+  const canEditIssueProperties = canEditProperties(issue?.project_id);
+
+  const isDragAllowed = !isDragDisabled && !issue?.tempId && canEditIssueProperties;
+
   // Make Issue block both as as Draggable and,
   // as a DropTarget for other issues being dragged to get the location of drop
   useEffect(() => {
@@ -134,7 +138,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
     return combine(
       draggable({
         element,
-        canDrag: () => !isDragDisabled,
+        canDrag: () => isDragAllowed,
         getInitialData: () => ({ id: issue?.id, type: "ISSUE" }),
         onDragStart: () => {
           setIsCurrentBlockDragging(true);
@@ -164,15 +168,13 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
 
   if (!issue) return null;
 
-  const canEditIssueProperties = canEditProperties(issue.project_id);
-
   return (
     <>
       <DropIndicator isVisible={!isCurrentBlockDragging && isDraggingOverBlock} />
       <div
         // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
         className={cn("group/kanban-block relative p-1.5", { "z-[1]": isCurrentBlockDragging })}
-        onDragStart={() => !isDragDisabled && setIsCurrentBlockDragging(true)}
+        onDragStart={() => isDragAllowed && setIsCurrentBlockDragging(true)}
       >
         <ControlLink
           id={`issue-${issue.id}`}
@@ -186,7 +188,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
           <div
             className={cn(
               "rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
-              { "hover:cursor-pointer": !isDragDisabled },
+              { "hover:cursor-pointer": isDragAllowed },
               { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id },
               { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
             )}

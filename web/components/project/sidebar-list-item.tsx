@@ -224,7 +224,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       "justify-center": isCollapsed,
                     })}
                   >
-                    <div className="grid h-7 w-7 place-items-center">
+                    <div className="h-7 w-7 grid place-items-center flex-shrink-0">
                       <ProjectLogo logo={project.logo_props} />
                     </div>
                     {!isCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
