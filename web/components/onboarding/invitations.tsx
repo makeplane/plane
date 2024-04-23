@@ -104,8 +104,6 @@ export const Invitations: React.FC<Props> = (props) => {
           invitations.length > 0 &&
           invitations.map((invitation) => {
             const isSelected = invitationsRespond.includes(invitation.id);
-            // TODO: Check why workspace endpoint is not sending any workspaces.
-            // const invitedWorkspace = workspaces[invitation.workspace.id];
             const invitedWorkspace = invitation.workspace;
             return (
               <div

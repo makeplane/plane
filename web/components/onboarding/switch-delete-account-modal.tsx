@@ -22,7 +22,7 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
   // router
   const router = useRouter();
   // store hooks
-  const { deactivateAccount } = useUser();
+  const { signOut, deactivateAccount } = useUser();
 
   const { resolvedTheme, setTheme } = useTheme();
 
@@ -35,21 +35,20 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
   const handleSwitchAccount = async () => {
     setSwitchingAccount(true);
 
-    // await signOut()
-    //   .then(() => {
-    //     mutate("CURRENT_USER_DETAILS", null);
-    //     setTheme("system");
-    //     router.push("/");
-    //     handleClose();
-    //   })
-    //   .catch(() =>
-    //     setToast({
-    //       type: TOAST_TYPE.ERROR,
-    //       title: "Error!",
-    //       message: "Failed to sign out. Please try again.",
-    //     })
-    //   )
-    //   .finally(() => setSwitchingAccount(false));
+    await signOut()
+      .then(() => {
+        setTheme("system");
+        router.push("/");
+        handleClose();
+      })
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to sign out. Please try again.",
+        })
+      )
+      .finally(() => setSwitchingAccount(false));
   };
 
   const handleDeactivateAccount = async () => {
