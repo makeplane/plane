@@ -41,7 +41,12 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const { data: profile, updateUserOnBoard, updateUserProfile } = useUserProfile();
   const { workspaces, fetchWorkspaces } = useWorkspace();
   // custom hooks
-  const {} = useUserAuth({ routeAuth: "onboarding", user: user || null, isLoading: currentUserLoader });
+  const {} = useUserAuth({
+    routeAuth: "onboarding",
+    user: user || null,
+    userProfile: profile,
+    isLoading: currentUserLoader,
+  });
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
   // fetching workspaces list

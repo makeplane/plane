@@ -10,6 +10,7 @@ import { IAccountStore, AccountStore } from "@/store/user/account.store";
 import { ProfileStore, IProfileStore } from "@/store/user/profile.store";
 import { IUserMembershipStore, UserMembershipStore } from "@/store/user/user-membership.store";
 import { API_BASE_URL } from "@/helpers/common.helper";
+import { IUserSettingsStore, UserSettingsStore } from "./user-setting.store";
 
 export interface IUserStore {
   // observables
@@ -18,6 +19,7 @@ export interface IUserStore {
   error: any | undefined;
   // model observables
   data: IUser | undefined;
+  currentUserSettings: IUserSettingsStore;
   profile: IProfileStore;
   accounts: Record<string, IAccountStore>;
   membership: IUserMembershipStore;
@@ -52,6 +54,7 @@ export class UserStore implements IUserStore {
   user_timezone: string | undefined = undefined;
   // relational observables
   profile: IProfileStore;
+  currentUserSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore> = {};
   membership: IUserMembershipStore;
   // service
@@ -64,6 +67,7 @@ export class UserStore implements IUserStore {
     // stores
     this.rootStore = rootStore;
     this.profile = new ProfileStore();
+    this.currentUserSettings = new UserSettingsStore();
     this.membership = new UserMembershipStore(rootStore);
     // service
     this.userService = new UserService();
@@ -77,6 +81,7 @@ export class UserStore implements IUserStore {
       // model observables
       data: observable,
       profile: observable,
+      currentUserSettings: observable,
       accounts: observable,
       membership: observable,
       // actions

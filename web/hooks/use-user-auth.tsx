@@ -3,16 +3,17 @@ import { useRouter } from "next/router";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // types
-import { IUser } from "@plane/types";
+import { IUser, TUserProfile } from "@plane/types";
 
 const workspaceService = new WorkspaceService();
 type Props = {
   routeAuth?: "sign-in" | "onboarding" | "admin" | null;
   user: IUser | null;
+  userProfile: TUserProfile | undefined;
   isLoading: boolean;
 };
 const useUserAuth = (props: Props) => {
-  const { routeAuth, user, isLoading } = props;
+  const { routeAuth, user, userProfile, isLoading } = props;
   // states
   const [isRouteAccess, setIsRouteAccess] = useState(true);
   // router
@@ -25,55 +26,55 @@ const useUserAuth = (props: Props) => {
   };
 
   useEffect(() => {
-    // const handleWorkSpaceRedirection = async () => {
-    //   workspaceService.userWorkspaces().then(async (userWorkspaces) => {
-    //     if (!user) return;
+    const handleWorkSpaceRedirection = async () => {
+      workspaceService.userWorkspaces().then(async (userWorkspaces) => {
+        if (!user || !userProfile) return;
 
-    //     const firstWorkspace = Object.values(userWorkspaces ?? {})?.[0];
-    //     const lastActiveWorkspace = userWorkspaces.find((workspace) => workspace.id === user?.last_workspace_id);
+        const firstWorkspace = Object.values(userWorkspaces ?? {})?.[0];
+        const lastActiveWorkspace = userWorkspaces.find((workspace) => workspace.id === user?.last_workspace_id);
 
-    //     if (lastActiveWorkspace) {
-    //       router.push(`/${lastActiveWorkspace.slug}`);
-    //       return;
-    //     } else if (firstWorkspace) {
-    //       router.push(`/${firstWorkspace.slug}`);
-    //       return;
-    //     } else {
-    //       router.push(`/profile`);
-    //       return;
-    //     }
-    //   });
-    // };
+        if (lastActiveWorkspace) {
+          router.push(`/${lastActiveWorkspace.slug}`);
+          return;
+        } else if (firstWorkspace) {
+          router.push(`/${firstWorkspace.slug}`);
+          return;
+        } else {
+          router.push(`/profile`);
+          return;
+        }
+      });
+    };
 
     const handleUserRouteAuthentication = async () => {
-      // if (user && user.is_active) {
-      //   if (routeAuth === "sign-in") {
-      //     if (user.is_onboarded) handleWorkSpaceRedirection();
-      //     else {
-      //       router.push("/onboarding");
-      //       return;
-      //     }
-      //   } else if (routeAuth === "onboarding") {
-      //     if (user.is_onboarded) handleWorkSpaceRedirection();
-      //     else {
-      //       setIsRouteAccess(() => false);
-      //       return;
-      //     }
-      //   } else {
-      //     if (!user.is_onboarded) {
-      //       router.push("/onboarding");
-      //       return;
-      //     } else {
-      //       setIsRouteAccess(() => false);
-      //       return;
-      //     }
-      //   }
-      // } else {
-      //   // user is not active and we can redirect to no access page
-      //   // router.push("/no-access");
-      //   // remove token
-      //   return;
-      // }
+      if (user && user.is_active && userProfile) {
+        if (routeAuth === "sign-in") {
+          if (userProfile.is_onboarded) handleWorkSpaceRedirection();
+          else {
+            router.push("/onboarding");
+            return;
+          }
+        } else if (routeAuth === "onboarding") {
+          if (userProfile.is_onboarded) handleWorkSpaceRedirection();
+          else {
+            setIsRouteAccess(() => false);
+            return;
+          }
+        } else {
+          if (!userProfile.is_onboarded) {
+            router.push("/onboarding");
+            return;
+          } else {
+            setIsRouteAccess(() => false);
+            return;
+          }
+        }
+      } else {
+        // user is not active and we can redirect to no access page
+        router.push("/no-access");
+        // remove token
+        return;
+      }
     };
 
     if (routeAuth === null) {
@@ -107,8 +108,6 @@ const useUserAuth = (props: Props) => {
 
   return {
     isLoading: isRouteAccess,
-    // assignedIssuesLength: user?.assigned_issues ?? 0,
-    // workspaceInvitesLength: user?.workspace_invites ?? 0,
   };
 };
 

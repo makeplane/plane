@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // hooks
 import { useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useCurrentUserSettings } from "@/hooks/store/use-current-user-settings";
 
 export interface IUserAuthWrapper {
   children: ReactNode;
@@ -17,6 +18,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   // store hooks
   const { fetchCurrentUser, data: currentUser, error: currentUserError } = useUser();
   const { fetchUserProfile } = useUserProfile();
+  const { fetchCurrentUserSettings } = useCurrentUserSettings();
   const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
@@ -27,14 +29,10 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   useSWR("CURRENT_USER_PROFILE_DETAILS", () => fetchUserProfile(), {
     shouldRetryOnError: false,
   });
-  // fetching current user instance admin status
-  // useSWRImmutable("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
-  //   shouldRetryOnError: false,
-  // });
-  // fetching user settings
-  // const { isLoading: userSettingsLoader } = useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
-  //   shouldRetryOnError: false,
-  // });
+  //fetching user settings
+  const { isLoading: userSettingsLoader } = useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
+    shouldRetryOnError: false,
+  });
   // fetching all workspaces
   const { isLoading: workspaceLoader } = useSWR("USER_WORKSPACES_LIST", () => fetchWorkspaces(), {
     shouldRetryOnError: false,
@@ -58,3 +56,5 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
 
   return <>{children}</>;
 });
+
+

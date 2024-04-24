@@ -33,9 +33,9 @@ const IntegrationGuide = observer(() => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
   // store hooks
-  const { data: currentUser, isLoading: currentUserLoader } = useUser();
+  const { data: currentUser, isLoading: currentUserLoader, profile } = useUser();
   // custom hooks
-  const {} = useUserAuth({ user: currentUser || null, isLoading: currentUserLoader });
+  const {} = useUserAuth({ user: currentUser || null, userProfile: profile?.data, isLoading: currentUserLoader });
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,

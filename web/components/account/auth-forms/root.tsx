@@ -153,17 +153,23 @@ export const AuthRoot = observer((props: Props) => {
 
     await emailCheck(data)
       .then((res) => {
-        if (res.is_password_autoset) {
-          if (!isSmtpConfigured) {
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: "Error!",
-              message: "Unable to process request please contact Administrator to reset password",
-            });
-          } else {
+        if (mode === EAuthModes.SIGN_IN && !res.is_password_autoset) {
+          setAuthStep(EAuthSteps.PASSWORD);
+        } else {
+          if (isSmtpConfigured) {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
+          } else {
+            if (mode === EAuthModes.SIGN_IN) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: "Error!",
+                message: "Unable to process request please contact Administrator to reset password",
+              });
+            } else {
+              setAuthStep(EAuthSteps.PASSWORD);
+            }
           }
-        } else setAuthStep(EAuthSteps.PASSWORD);
+        }
       })
       .catch((err) => {
         if (err?.error_code === "USER_DOES_NOT_EXIST") {
@@ -223,7 +229,7 @@ export const AuthRoot = observer((props: Props) => {
       </div>
       {isOAuthEnabled && authStep !== EAuthSteps.OPTIONAL_SET_PASSWORD && <OAuthOptions />}
 
-      <TermsAndConditions />
+      <TermsAndConditions isSignUp={mode === EAuthModes.SIGN_UP} />
     </>
   );
 });

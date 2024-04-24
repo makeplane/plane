@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,11 +11,13 @@ import { PageHead } from "@/components/core";
 import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useInstance, useUser } from "@/hooks/store";
+import useAuthRedirection from "@/hooks/use-auth-redirection";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // types
 import { NextPageWithLayout } from "@/lib/types";
 // assets
+import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 const SignUpPage: NextPageWithLayout = observer(() => {
@@ -24,7 +26,14 @@ const SignUpPage: NextPageWithLayout = observer(() => {
   const { data: currentUser } = useUser();
   const { captureEvent } = useEventTracker();
 
-  if (currentUser || !instance?.config)
+  // login redirection hook
+  const { isRedirecting, handleRedirection } = useAuthRedirection();
+
+  useEffect(() => {
+    handleRedirection();
+  }, [handleRedirection]);
+
+  if (isRedirecting || currentUser || !instance?.config)
     return (
       <div className="grid h-screen place-items-center">
         <Spinner />
@@ -32,9 +41,12 @@ const SignUpPage: NextPageWithLayout = observer(() => {
     );
 
   return (
-    <>
+    <div className="relative">
       <PageHead title="Sign Up" />
-      <div className="h-full w-full overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <Image src={PlaneBackgroundPattern} className="w-screen object-cover" alt="Plane background pattern" />
+      </div>
+      <div className="relative z-10">
         <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28">
           <div className="flex items-center gap-x-2 py-10">
             <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-2" />
@@ -57,7 +69,7 @@ const SignUpPage: NextPageWithLayout = observer(() => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 });
 

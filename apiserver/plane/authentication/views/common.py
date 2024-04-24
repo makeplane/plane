@@ -246,10 +246,17 @@ class ResetPasswordEndpoint(View):
                 )
                 return HttpResponseRedirect(url)
 
-            new_password = request.POST.get("new_password")
+            password = request.POST.get("password", False)
+
+            if not password:
+                url = urljoin(
+                    base_host(request=request),
+                    "?" + urlencode({"error": "Password is required"}),
+                )
+                return HttpResponseRedirect(url)
 
             # Check the password complexity
-            results = zxcvbn(new_password)
+            results = zxcvbn(password)
             if results["score"] < 3:
                 url = urljoin(
                     base_host(request=request),
@@ -264,7 +271,7 @@ class ResetPasswordEndpoint(View):
                 return HttpResponseRedirect(url)
 
             # set_password also hashes the password that the user will get
-            user.set_password(new_password)
+            user.set_password(password)
             user.is_password_autoset = False
             user.save()
 

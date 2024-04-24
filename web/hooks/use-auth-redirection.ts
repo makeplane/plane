@@ -1,20 +1,23 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 // types
-import { 
-  //IUser, IUserSettings, 
-  IWorkspace } from "@plane/types";
+import {
+  //IUser, IUserSettings,
+  IWorkspace,
+  TUserProfile,
+} from "@plane/types";
 import { useUserProfile } from "@/hooks/store";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
+import { useCurrentUserSettings } from "./store/use-current-user-settings";
 
-type UseSignInRedirectionProps = {
+type TUseAuthRedirectionProps = {
   error: any | null;
   isRedirecting: boolean;
   handleRedirection: () => Promise<void>;
 };
 
-const useSignInRedirection = (): UseSignInRedirectionProps => {
+const useAuthRedirection = (): TUseAuthRedirectionProps => {
   // states
   const [isRedirecting, setIsRedirecting] = useState(true);
   const [error, setError] = useState<any | null>(null);
@@ -22,10 +25,8 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   const router = useRouter();
   const { next_path } = router.query;
   // mobx store
-  const { fetchCurrentUser, 
-    //fetchCurrentUserSettings 
-  } = useUser();
-  const {fetchUserProfile} = useUserProfile();
+  const { fetchUserProfile } = useUserProfile();
+  const { fetchCurrentUserSettings } = useCurrentUserSettings();
   const { fetchWorkspaces } = useWorkspace();
 
   const isValidURL = (url: string): boolean => {
@@ -33,52 +34,47 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
     return !disallowedSchemes.test(url);
   };
 
-  const handleSignInRedirection = useCallback(
-    async (profile: any) => {
+  const getAuthRedirectionUrl = useCallback(
+    async (profile: TUserProfile | undefined) => {
       try {
         if (!profile) return;
+
         // if the user is not onboarded, redirect them to the onboarding page
         if (!profile.is_onboarded) {
-          router.push("/onboarding");
-          return;
+          return "/onboarding";
         }
         // if next_path is provided, redirect the user to that url
         if (next_path) {
           if (isValidURL(next_path.toString())) {
-            router.push(next_path.toString());
-            return;
+            return next_path.toString();
           } else {
-            router.push("/");
-            return;
+            return "/";
           }
         }
 
-        // FIXME:
-
         // Fetch the current user settings
-        //const userSettings: IUserSettings = await fetchCurrentUserSettings();
+        const userSettings = await fetchCurrentUserSettings();
         const workspacesList: IWorkspace[] = await fetchWorkspaces();
 
         // Extract workspace details
-        // const workspaceSlug =
-        //   userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
+        const workspaceSlug =
+          userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
 
         // Redirect based on workspace details or to profile if not available
-        // if (
-        //   workspaceSlug &&
-        //   workspacesList &&
-        //   workspacesList.filter((workspace) => workspace.slug === workspaceSlug).length > 0
-        // )
-        //   router.push(`/${workspaceSlug}`);
-        // else router.push("/profile");
+        if (
+          workspaceSlug &&
+          workspacesList &&
+          workspacesList.filter((workspace) => workspace.slug === workspaceSlug).length > 0
+        )
+          return `/${workspaceSlug}`;
+        else return "/profile";
       } catch (error) {
+        setIsRedirecting(false);
         console.error("Error in handleSignInRedirection:", error);
         setError(error);
       }
     },
-    [
-      //fetchCurrentUserSettings, 
-      fetchWorkspaces, router, next_path]
+    [fetchCurrentUserSettings, fetchWorkspaces, router, next_path]
   );
 
   const updateUserInfo = useCallback(async () => {
@@ -86,15 +82,25 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
 
     await fetchUserProfile()
       .then(async (profile) => {
-        await handleSignInRedirection(profile)
-          .catch((err) => setError(err))
-          .finally(() => setIsRedirecting(false));
+        await getAuthRedirectionUrl(profile)
+          .then((url: string | undefined) => {
+            if (url) {
+              router.push(url);
+              return;
+            }
+
+            setIsRedirecting(false);
+          })
+          .catch((err) => {
+            setIsRedirecting(false);
+            setError(err);
+          });
       })
       .catch((err) => {
         setError(err);
         setIsRedirecting(false);
       });
-  }, [fetchUserProfile, handleSignInRedirection]);
+  }, [fetchUserProfile, getAuthRedirectionUrl]);
 
   return {
     error,
@@ -103,4 +109,4 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   };
 };
 
-export default useSignInRedirection;
+export default useAuthRedirection;

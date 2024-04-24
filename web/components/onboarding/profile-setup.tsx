@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
@@ -6,13 +6,15 @@ import { Eye, EyeOff, Sparkles } from "lucide-react";
 // types
 import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 import { UserImageUploadModal } from "@/components/core";
 import { OnboardingHeader, SwitchOrDeleteAccountDropdown } from "@/components/onboarding";
 // constants
 import { USER_DETAILS } from "@/constants/event-tracker";
+// helpers
+import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useEventTracker, useUser, useUserProfile } from "@/hooks/store";
 // services
@@ -26,6 +28,7 @@ type TProfileSetupFormValues = {
   last_name: string;
   avatar?: string | null;
   password?: string;
+  confirm_password?: string;
   use_case?: string;
 };
 
@@ -34,6 +37,7 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
   last_name: "",
   avatar: "",
   password: undefined,
+  confirm_password: undefined,
   use_case: undefined,
 };
 
@@ -96,7 +100,8 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
   };
 
   const handleSetPassword = async (password: string) => {
-    await authService.setPassword({ password });
+    const token = await authService.requestCSRFToken().then((data) => data?.csrf_token);
+    await authService.setPassword(token, { password });
   };
 
   const onSubmit = async (formData: TProfileSetupFormValues) => {
@@ -113,15 +118,20 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     };
 
     try {
-      await handleUserDetailUpdate(userDetailsPayload);
-      await handleUserProfileUpdate(profileUpdatePayload);
-      if (formData.password) {
-        await handleSetPassword(formData.password);
-      }
-      await stepChange({ profile_complete: true }).then(() => {
+      await Promise.all([
+        handleUserDetailUpdate(userDetailsPayload),
+        handleUserProfileUpdate(profileUpdatePayload),
+        formData.password ? handleSetPassword(formData.password) : Promise.resolve(),
+        stepChange({ profile_complete: true }),
+      ]).then(() => {
         captureEvent(USER_DETAILS, {
           state: "SUCCESS",
           element: "Onboarding",
+        });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success",
+          message: "Profile setup completed!",
         });
         if (totalSteps === 1) {
           finishOnboarding();
@@ -131,6 +141,11 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
       captureEvent(USER_DETAILS, {
         state: "FAILED",
         element: "Onboarding",
+      });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error",
+        message: "Profile setup failed. Please try again!",
       });
     }
   };
@@ -147,6 +162,26 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
 
   const isPasswordAlreadySetup = !user?.is_password_autoset;
   const isSignUpUsingMagicCode = user?.last_login_medium === "magic-code";
+
+  const password = watch("password");
+  const confirmPassword = watch("confirm_password");
+  const isValidPassword = (password: string, confirmPassword?: string) =>
+    getPasswordStrength(password) >= 3 && password === confirmPassword;
+
+  const isButtonDisabled = useMemo(
+    () =>
+      isValid &&
+      (isPasswordAlreadySetup
+        ? true
+        : isSignUpUsingMagicCode
+          ? !!password && isValidPassword(password, confirmPassword)
+          : !!password
+            ? isValidPassword(password, confirmPassword)
+            : true)
+        ? false
+        : true,
+    [isValid, isPasswordAlreadySetup, isSignUpUsingMagicCode, password, confirmPassword]
+  );
 
   return (
     <div className="flex h-full w-full">
@@ -314,6 +349,48 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                 {errors.password && <span className="text-sm text-red-500">{errors.password.message}</span>}
               </div>
             )}
+            {!isPasswordAlreadySetup && password && getPasswordStrength(password) >= 3 && (
+              <div className="space-y-1">
+                <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+                  Confirm password
+                </label>
+                <Controller
+                  control={control}
+                  name="confirm_password"
+                  rules={{
+                    validate: (value) => value === password || "Password doesn't match",
+                  }}
+                  render={({ field: { value, onChange, ref } }) => (
+                    <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        name="confirm_password"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.password)}
+                        placeholder="Confirm password..."
+                        className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                      />
+                      {showPassword ? (
+                        <EyeOff
+                          className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
+                          onClick={() => setShowPassword(false)}
+                        />
+                      ) : (
+                        <Eye
+                          className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
+                          onClick={() => setShowPassword(true)}
+                        />
+                      )}
+                    </div>
+                  )}
+                />
+                {errors.confirm_password && (
+                  <span className="text-sm text-red-500">{errors.confirm_password.message}</span>
+                )}
+              </div>
+            )}
             <div className="space-y-1">
               <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="use_case">
                 How will you use Plane? Choose one.
@@ -347,7 +424,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
               type="submit"
               size="lg"
               className="w-full"
-              disabled={!isValid}
+              disabled={isButtonDisabled}
               loading={isSubmitting}
             >
               {isSubmitting ? "Updating..." : "Continue"}

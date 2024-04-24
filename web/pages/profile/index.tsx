@@ -69,11 +69,11 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   const {
     data: currentUser,
     updateCurrentUser,
-    profile: { isLoading: currentUserLoader },
+    profile: { isLoading: currentUserLoader, data },
   } = useUser();
   const { toggleSidebar } = useAppTheme();
   // custom hooks
-  const {} = useUserAuth({ user: currentUser || null, isLoading: currentUserLoader });
+  const {} = useUserAuth({ user: currentUser || null, userProfile: data, isLoading: currentUserLoader });
 
   useEffect(() => {
     reset({ ...defaultValues, ...currentUser });
