@@ -1,31 +1,21 @@
 import { ReactElement, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Controller, useForm } from "react-hook-form";
-// services
 import { Eye, EyeOff } from "lucide-react";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// ui
+import { Button, Input } from "@plane/ui";
+// components
+import { PasswordStrengthMeter } from "@/components/account";
 import { LatestFeatureBlock } from "@/components/common";
 import { PageHead } from "@/components/core";
-import { NEW_PASS_CREATED } from "@/constants/event-tracker";
-import { checkEmailValidity } from "@/helpers/string.helper";
-import { useEventTracker } from "@/hooks/store";
-import useSignInRedirection from "@/hooks/use-sign-in-redirection";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
 import DefaultLayout from "@/layouts/default-layout";
 import { NextPageWithLayout } from "@/lib/types";
+// services
 import { AuthService } from "@/services/auth.service";
-// hooks
-// layouts
-// components
-// ui
-// images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { PasswordStrengthMeter } from "@/components/account";
-// helpers
-// type
-// icons
-// constants
+
 
 type TResetPasswordFormValues = {
   email: string;
