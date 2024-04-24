@@ -56,6 +56,8 @@ export const useEditor = ({
   mentionHandler,
   placeholder,
 }: CustomEditorProps) => {
+  const [error, setError] = useState<string | null>(null);
+
   const editor = useCustomEditor({
     editorProps: {
       ...CoreEditorProps(editorClassName),
@@ -86,6 +88,10 @@ export const useEditor = ({
       setSavedSelection(editor.state.selection);
     },
     onUpdate: async ({ editor }) => {
+      const shouldError = Math.random() < 0.05; // 10% chance to generate an error
+      if (shouldError) {
+        setError("Randomly generated error for testing purposes.");
+      }
       onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
     },
     onDestroy: async () => {
@@ -202,6 +208,11 @@ export const useEditor = ({
     }),
     [editorRef, savedSelection, uploadFile]
   );
+
+  if (error) {
+    console.log("threw error from core");
+    throw new Error(error);
+  }
 
   if (!editor) {
     return null;

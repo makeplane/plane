@@ -49,7 +49,6 @@ const RichTextEditor = (props: IRichTextEditor) => {
     containerClassName,
     editorClassName = "",
     forwardedRef,
-    // rerenderOnPropsChange,
     id = "",
     placeholder,
     tabIndex,
@@ -58,8 +57,6 @@ const RichTextEditor = (props: IRichTextEditor) => {
 
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
 
-  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
-  // loads such that we can invoke it from react when the cursor leaves the container
   const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
@@ -75,7 +72,6 @@ const RichTextEditor = (props: IRichTextEditor) => {
     initialValue,
     value,
     forwardedRef,
-    // rerenderOnPropsChange,
     extensions: RichTextEditorExtensions({
       uploadFile: fileHandler.upload,
       dragDropEnabled,
