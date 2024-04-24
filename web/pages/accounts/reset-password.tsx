@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
@@ -20,6 +20,8 @@ import { AuthService } from "@/services/auth.service";
 // ui
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { PasswordStrengthMeter } from "@/components/account";
 // helpers
 // type
 // icons
@@ -44,48 +46,23 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   const { uidb64, token, email } = router.query;
   // states
   const [showPassword, setShowPassword] = useState(false);
-  // store hooks
-  const { captureEvent } = useEventTracker();
-  // sign in redirection hook
-  const { handleRedirection } = useSignInRedirection();
-  // form info
-  const {
-    control,
-    formState: { errors, isSubmitting, isValid },
-    handleSubmit,
-  } = useForm<TResetPasswordFormValues>({
-    defaultValues: {
-      ...defaultValues,
-      email: email?.toString() ?? "",
-    },
+  const [resetFormData, setResetFormData] = useState<TResetPasswordFormValues>({
+    ...defaultValues,
+    email: email ? email.toString() : "",
   });
+  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  // store hooks
+  //const { captureEvent } = useEventTracker();
+  // sign in redirection hook
+  //const { handleRedirection } = useSignInRedirection();
 
-  const handleResetPassword = async (formData: TResetPasswordFormValues) => {
-    if (!uidb64 || !token || !email) return;
+  const handleFormChange = (key: keyof TResetPasswordFormValues, value: string) =>
+    setResetFormData((prev) => ({ ...prev, [key]: value }));
 
-    const payload = {
-      new_password: formData.password,
-    };
-
-    await authService
-      .resetPassword(uidb64.toString(), token.toString(), payload)
-      .then(() => {
-        captureEvent(NEW_PASS_CREATED, {
-          state: "SUCCESS",
-        });
-        handleRedirection();
-      })
-      .catch((err) => {
-        captureEvent(NEW_PASS_CREATED, {
-          state: "FAILED",
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        });
-      });
-  };
+  useEffect(() => {
+    if (csrfToken === undefined)
+      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+  }, [csrfToken]);
 
   return (
     <>
@@ -104,67 +81,66 @@ const ResetPasswordPage: NextPageWithLayout = () => {
               <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
                 Let{"'"}s get a new password
               </h1>
-              <form onSubmit={handleSubmit(handleResetPassword)} className="mx-auto mt-11 space-y-4 sm:w-96">
-                <Controller
-                  control={control}
-                  name="email"
-                  rules={{
-                    required: "Email is required",
-                    validate: (value) => checkEmailValidity(value) || "Email is invalid",
-                  }}
-                  render={({ field: { value, onChange, ref } }) => (
+              <form
+                className="mx-auto mt-11 space-y-4 sm:w-96"
+                method="POST"
+                action={`${API_BASE_URL}/auth/reset-password/${uidb64?.toString()}/${token?.toString()}/`}
+              >
+                <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+                <div className="space-y-1">
+                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+                    Email
+                  </label>
+                  <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                     <Input
                       id="email"
                       name="email"
                       type="email"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors.email)}
+                      value={resetFormData.email}
+                      //hasError={Boolean(errors.email)}
                       placeholder="name@company.com"
                       className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400"
                       disabled
                     />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="password"
-                  rules={{
-                    required: "Password is required",
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        value={value}
-                        onChange={onChange}
-                        hasError={Boolean(errors.password)}
-                        placeholder="Enter password"
-                        className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-                        minLength={8}
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={resetFormData.password}
+                      onChange={(e) => handleFormChange("password", e.target.value)}
+                      //hasError={Boolean(errors.password)}
+                      placeholder="Enter password"
+                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                      minLength={8}
+                    />
+                    {showPassword ? (
+                      <EyeOff
+                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                        onClick={() => setShowPassword(false)}
                       />
-                      {showPassword ? (
-                        <EyeOff
-                          className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                          onClick={() => setShowPassword(false)}
-                        />
-                      ) : (
-                        <Eye
-                          className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                          onClick={() => setShowPassword(true)}
-                        />
-                      )}
-                    </div>
-                  )}
-                />
+                    ) : (
+                      <Eye
+                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                        onClick={() => setShowPassword(true)}
+                      />
+                    )}
+                  </div>
+                  <PasswordStrengthMeter password={resetFormData.password} />
+                </div>
                 <Button
                   type="submit"
                   variant="primary"
                   className="w-full"
                   size="xl"
-                  disabled={!isValid}
-                  loading={isSubmitting}
+                  // disabled={!isValid}
+                  // loading={isSubmitting}
                 >
                   Set password
                 </Button>
