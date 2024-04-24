@@ -122,7 +122,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                 </div>
               </CustomMenu.MenuItem>
             )}
-            {canMarkAsAccepted && (
+            {canMarkAsAccepted && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => setIsSnoozeDateModalOpen(true)}>
                 <div className="flex items-center gap-2">
                   <Clock size={14} strokeWidth={2} />
@@ -130,7 +130,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                 </div>
               </CustomMenu.MenuItem>
             )}
-            {canMarkAsDuplicate && (
+            {canMarkAsDuplicate && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => setSelectDuplicateIssue(true)}>
                 <div className="flex items-center gap-2">
                   <FileStack size={14} strokeWidth={2} />
@@ -154,7 +154,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                 </div>
               </CustomMenu.MenuItem>
             )}
-            {canDelete && (
+            {canDelete && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                 <div className="flex items-center gap-2 text-red-500">
                   <Trash2 size={14} strokeWidth={2} />
