@@ -28,7 +28,7 @@ class SignInAuthEndpoint(View):
         if instance is None or not instance.is_setup_done:
             url = urljoin(
                 base_host(request=request),
-                "?"
+                "accounts/sign-in?"
                 + urlencode(
                     {
                         "error_code": "INSTANCE_NOT_CONFIGURED",
@@ -46,7 +46,7 @@ class SignInAuthEndpoint(View):
         if not email or not password:
             url = urljoin(
                 base_host(request=request),
-                "?"
+                "accounts/sign-in?"
                 + urlencode(
                     {
                         "error_code": "REQUIRED_EMAIL_PASSWORD",
@@ -63,7 +63,7 @@ class SignInAuthEndpoint(View):
         except ValidationError:
             url = urljoin(
                 base_host(request=request),
-                "?"
+                "accounts/sign-in?"
                 + urlencode(
                     {
                         "error_code": "INVALID_EMAIL",
@@ -89,7 +89,7 @@ class SignInAuthEndpoint(View):
         except AuthenticationException as e:
             url = urljoin(
                 base_host(request=request),
-                "?"
+                "accounts/sign-in?"
                 + urlencode(
                     {
                         "error_code": str(e.error_code),

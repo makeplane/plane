@@ -30,10 +30,6 @@ from plane.app.serializers import (
     UserSerializer,
 )
 from plane.authentication.utils.login import user_login
-from plane.authentication.utils.redirection_path import get_redirection_path
-from plane.authentication.utils.workspace_project_join import (
-    process_workspace_project_invitations,
-)
 from plane.bgtasks.forgot_password_task import forgot_password
 from plane.db.models import User
 from plane.license.models import Instance
@@ -240,7 +236,7 @@ class ResetPasswordEndpoint(View):
             if not PasswordResetTokenGenerator().check_token(user, token):
                 url = urljoin(
                     base_host(request=request),
-                    "?"
+                    "accounts/reset-password?"
                     + urlencode(
                         {
                             "error_code": "INVALID_TOKEN",
@@ -257,7 +253,7 @@ class ResetPasswordEndpoint(View):
             if results["score"] < 3:
                 url = urljoin(
                     base_host(request=request),
-                    "?"
+                    "accounts/reset-password?"
                     + urlencode(
                         {
                             "error_code": "INVALID_PASSWORD",
@@ -273,13 +269,14 @@ class ResetPasswordEndpoint(View):
             user.save()
 
             url = urljoin(
-                base_host(request=request), "?" + urlencode({"success", True})
+                base_host(request=request),
+                "accounts/sign-in?" + urlencode({"success", True}),
             )
             return HttpResponseRedirect(url)
         except DjangoUnicodeDecodeError:
             url = urljoin(
                 base_host(request=request),
-                "?"
+                "accounts/reset-password?"
                 + urlencode(
                     {
                         "error_code": "INVALID_TOKEN",

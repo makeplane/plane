@@ -23,4 +23,5 @@ from .google import (
 from .magic import (
     MagicGenerateEndpoint,
     MagicSignInEndpoint,
+    MagicSignUpEndpoint,
 )

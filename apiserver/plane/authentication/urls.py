@@ -16,6 +16,7 @@ from .views import (
     ForgotPasswordEndpoint,
     SetUserPasswordEndpoint,
     ResetPasswordEndpoint,
+    MagicSignUpEndpoint,
 )
 
 urlpatterns = [
@@ -52,6 +53,11 @@ urlpatterns = [
         "magic-sign-in/",
         MagicSignInEndpoint.as_view(),
         name="magic-sign-in",
+    ),
+    path(
+        "magic-sign-up/",
+        MagicSignUpEndpoint.as_view(),
+        name="magic-sign-up",
     ),
     ## Google Oauth
     path(
