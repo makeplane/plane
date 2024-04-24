@@ -15,7 +15,7 @@ class Command(BaseCommand):
         receiver_email = options.get("to_email")
 
         if not receiver_email:
-            raise CommandError("Reciever email is required")
+            raise CommandError("Receiver email is required")
 
         (
             EMAIL_HOST,
@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 connection=connection,
             )
             msg.send()
-            self.stdout.write(self.style.SUCCESS("Email succesfully sent"))
+            self.stdout.write(self.style.SUCCESS("Email successfully sent"))
         except Exception as e:
             self.stdout.write(
                 self.style.ERROR(

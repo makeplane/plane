@@ -24,11 +24,12 @@ type Props = {
   issueId: string;
   issueOperations: TIssueOperations;
   isEditable: boolean;
+  isArchived: boolean;
   swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, swrIssueDetails } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived, swrIssueDetails } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
@@ -105,6 +106,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             projectId={projectId}
             issueId={issueId}
             currentUser={currentUser}
+            disabled={isArchived}
           />
         )}
 
@@ -126,7 +128,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         disabled={!isEditable}
       />
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!isEditable} />
+      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
     </>
   );
 });

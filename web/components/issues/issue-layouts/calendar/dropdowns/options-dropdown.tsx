@@ -94,7 +94,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   };
 
   return (
-    <Popover className="relative">
+    <Popover className="relative flex items-center">
       {({ open, close: closePopover }) => (
         <>
           <Popover.Button as={React.Fragment}>

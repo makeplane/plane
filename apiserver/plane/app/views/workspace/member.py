@@ -155,7 +155,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         user=False,
         multiple=True,
     )
-    @invalidate_cache(path="/api/users/me/settings/")
+    @invalidate_cache(path="/api/users/me/settings/", multiple=True)
     @invalidate_cache(
         path="/api/users/me/workspaces/", user=False, multiple=True
     )

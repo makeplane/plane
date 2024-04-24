@@ -39,7 +39,7 @@ export const OnboardingStepIndicator: React.FC<OnboardingStepIndicatorProps> = (
       <div className="text-sm text-onboarding-text-300 font-medium">
         {currentStep} of {totalSteps} steps
       </div>
-      <div className="flex items-center justify-center my-0.5 mx-1 w-52">{renderIndicators()}</div>
+      <div className="flex items-center justify-center my-0.5 mx-1 w-40 lg:w-52">{renderIndicators()}</div>
     </div>
   );
 };

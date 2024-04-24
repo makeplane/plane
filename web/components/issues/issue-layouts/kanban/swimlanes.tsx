@@ -175,23 +175,22 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     <div className="relative h-max min-h-full w-full">
       {list &&
         list.length > 0 &&
-        list.map((_list: any) => {
+        list.map((_list: IGroupByColumn) => {
           const subGroupByVisibilityToggle = visibilitySubGroupBy(_list);
           if (subGroupByVisibilityToggle.showGroup === false) return <></>;
           return (
             <div key={_list.id} className="flex flex-shrink-0 flex-col">
-              <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
-                <div className="sticky left-0 flex-shrink-0 bg-custom-background-90 pr-2">
+              <div className="sticky top-[50px] z-[1] py-1 flex w-full items-center bg-custom-background-100 border-y-[0.5px] border-custom-border-200">
+                <div className="sticky left-0 flex-shrink-0">
                   <HeaderSubGroupByCard
                     column_id={_list.id}
-                    icon={_list.Icon}
+                    icon={_list.icon}
                     title={_list.name || ""}
                     count={calculateIssueCount(_list.id)}
                     kanbanFilters={kanbanFilters}
                     handleKanbanFilters={handleKanbanFilters}
                   />
                 </div>
-                <div className="w-full border-b border-dashed border-custom-border-400" />
               </div>
 
               {subGroupByVisibilityToggle.showIssues && (
@@ -313,7 +312,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
 
   return (
     <div className="relative">
-      <div className="sticky top-0 z-[2] h-[50px] bg-custom-background-90">
+      <div className="sticky top-0 z-[2] h-[50px] bg-custom-background-90 px-2">
         <SubGroupSwimlaneHeader
           issueIds={issueIds}
           group_by={group_by}

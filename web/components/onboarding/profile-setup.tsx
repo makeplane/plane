@@ -41,6 +41,7 @@ type Props = {
   user?: IUser;
   totalSteps: number;
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
+  finishOnboarding: () => Promise<void>;
 };
 
 const USE_CASES = [
@@ -58,7 +59,7 @@ const fileService = new FileService();
 const authService = new AuthService();
 
 export const ProfileSetup: React.FC<Props> = observer((props) => {
-  const { user, totalSteps, stepChange } = props;
+  const { user, totalSteps, stepChange, finishOnboarding } = props;
   // states
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
@@ -95,7 +96,6 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
   };
 
   const handleSetPassword = async (password: string) => {
-    console.log("Setting password");
     await authService.setPassword({ password });
   };
 
@@ -123,6 +123,9 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
           state: "SUCCESS",
           element: "Onboarding",
         });
+        if (totalSteps === 1) {
+          finishOnboarding();
+        }
       });
     } catch {
       captureEvent(USER_DETAILS, {
@@ -142,7 +145,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     });
   };
 
-  const isPasswordAlreadySetup = user?.is_password_autoset || user?.last_login_medium === "email";
+  const isPasswordAlreadySetup = !user?.is_password_autoset;
   const isSignUpUsingMagicCode = user?.last_login_medium === "magic-code";
 
   return (
@@ -151,7 +154,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
         <div className="flex items-center justify-between">
           <OnboardingHeader currentStep={1} totalSteps={totalSteps} />
           <div className="shrink-0 lg:hidden">
-            <SwitchOrDeleteAccountDropdown />
+            <SwitchOrDeleteAccountDropdown fullName={`${watch("first_name")} ${watch("last_name")}`} />
           </div>
         </div>
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6">
@@ -256,7 +259,6 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                       name="last_name"
                       type="text"
                       value={value}
-                      autoFocus
                       onChange={onChange}
                       ref={ref}
                       hasError={Boolean(errors.last_name)}

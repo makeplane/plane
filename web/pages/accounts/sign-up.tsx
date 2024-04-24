@@ -5,7 +5,7 @@ import Link from "next/link";
 // ui
 import { Spinner } from "@plane/ui";
 // components
-import { SignUpRoot } from "@/components/account";
+import { AuthRoot, EAuthModes } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
 import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
@@ -53,7 +53,7 @@ const SignUpPage: NextPageWithLayout = observer(() => {
         </div>
         <div className="mx-auto h-full">
           <div className="h-full overflow-auto px-7 pb-56 pt-4 sm:px-0">
-            <SignUpRoot />
+            <AuthRoot mode={EAuthModes.SIGN_UP} />
           </div>
         </div>
       </div>

@@ -25,20 +25,21 @@ export class AuthService extends APIService {
       });
   }
 
-  async signUpEmailCheck(data: IEmailCheckData): Promise<IEmailCheckResponse> {
+  signUpEmailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> => {
     return this.post("/auth/sign-up/email-check/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
-  }
-  async signInEmailCheck(data: IEmailCheckData): Promise<IEmailCheckResponse> {
+  };
+
+  signInEmailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> => {
     return this.post("/auth/sign-in/email-check/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
-  }
+  };
 
   async passwordSignIn(data: IPasswordSignInData): Promise<ILoginTokenResponse> {
     return this.post("/api/sign-in/", data, { headers: {} })

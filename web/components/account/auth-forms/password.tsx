@@ -6,7 +6,7 @@ import { Eye, EyeOff, XCircle } from "lucide-react";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ESignInSteps, ForgotPasswordPopover } from "@/components/account";
+import { EAuthModes, EAuthSteps, ForgotPasswordPopover, PasswordStrengthMeter } from "@/components/account";
 // constants
 import { FORGOT_PASSWORD } from "@/constants/event-tracker";
 // helpers
@@ -19,9 +19,9 @@ import { AuthService } from "@/services/auth.service";
 
 type Props = {
   email: string;
-  handleStepChange: (step: ESignInSteps) => void;
+  mode: EAuthModes;
+  handleStepChange: (step: EAuthSteps) => void;
   handleEmailClear: () => void;
-  onSubmit: () => Promise<void>;
 };
 
 type TPasswordFormValues = {
@@ -36,8 +36,8 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const SignInPasswordForm: React.FC<Props> = observer((props) => {
-  const { email, handleStepChange, handleEmailClear } = props;
+export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
+  const { email, handleStepChange, handleEmailClear, mode } = props;
   // states
   const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
@@ -71,7 +71,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
 
     await authService
       .generateUniqueCode({ email: emailFormValue })
-      .then(() => handleStepChange(ESignInSteps.UNIQUE_CODE))
+      .then(() => handleStepChange(EAuthSteps.UNIQUE_CODE))
       .catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -82,9 +82,32 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
       .finally(() => setIsSendingUniqueCode(false));
   };
 
+  const passwordSupport =
+    mode === EAuthModes.SIGN_IN ? (
+      <div className="mt-2 w-full pb-3">
+        {isSmtpConfigured ? (
+          <Link
+            onClick={() => captureEvent(FORGOT_PASSWORD)}
+            href={`/accounts/forgot-password?email=${email}`}
+            className="text-xs font-medium text-custom-primary-100"
+          >
+            Forgot your password?
+          </Link>
+        ) : (
+          <ForgotPasswordPopover />
+        )}
+      </div>
+    ) : (
+      <PasswordStrengthMeter password={passwordFormData.password} />
+    );
+
   return (
     <>
-      <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/sign-in/`}>
+      <form
+        className="mx-auto mt-5 space-y-4 sm:w-96"
+        method="POST"
+        action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
+      >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
           <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
@@ -136,41 +159,30 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
               />
             )}
           </div>
-          <div className="mt-2 w-full pb-3">
-            {isSmtpConfigured ? (
-              <Link
-                onClick={() => captureEvent(FORGOT_PASSWORD)}
-                href={`/accounts/forgot-password?email=${email}`}
-                className="text-xs font-medium text-custom-primary-100"
-              >
-                Forgot your password?
-              </Link>
-            ) : (
-              <ForgotPasswordPopover />
-            )}
-          </div>
+          {passwordSupport}
         </div>
         <div className="space-y-2.5">
-          <Button
-            type="submit"
-            variant="primary"
-            className="w-full"
-            size="lg"
-            // disabled={!isValid}
-            // loading={isSubmitting}
-          >
-            {isSmtpConfigured ? "Continue" : "Go to workspace"}
-          </Button>
-          {instance && isSmtpConfigured && (
-            <Button
-              type="button"
-              onClick={handleSendUniqueCode}
-              variant="outline-primary"
-              className="w-full"
-              size="lg"
-              loading={isSendingUniqueCode}
-            >
-              {isSendingUniqueCode ? "Sending code" : "Sign in with unique code"}
+          {mode === EAuthModes.SIGN_IN ? (
+            <>
+              <Button type="submit" variant="primary" className="w-full" size="lg">
+                {isSmtpConfigured ? "Continue" : "Go to workspace"}
+              </Button>
+              {instance && isSmtpConfigured && (
+                <Button
+                  type="button"
+                  onClick={handleSendUniqueCode}
+                  variant="outline-primary"
+                  className="w-full"
+                  size="lg"
+                  loading={isSendingUniqueCode}
+                >
+                  {isSendingUniqueCode ? "Sending code" : "Sign in with unique code"}
+                </Button>
+              )}
+            </>
+          ) : (
+            <Button type="submit" variant="primary" className="w-full" size="lg">
+              Create account
             </Button>
           )}
         </div>

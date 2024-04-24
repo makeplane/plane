@@ -46,7 +46,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
         if (email === currentUser?.email) {
           router.push("/invitations");
         } else {
-          router.push("/");
+          router.push({ pathname: "/", query: router.query });
         }
       })
       .catch((err) => console.error(err));
