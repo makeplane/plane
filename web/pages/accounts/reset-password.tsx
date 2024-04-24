@@ -1,25 +1,30 @@
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+// icons
 import { Eye, EyeOff } from "lucide-react";
 // ui
 import { Button, Input } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
-import { LatestFeatureBlock } from "@/components/common";
 import { PageHead } from "@/components/core";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+// layouts
+import { getPasswordStrength } from "@/helpers/password.helper";
 import DefaultLayout from "@/layouts/default-layout";
+// lib
 import { NextPageWithLayout } from "@/lib/types";
 // services
 import { AuthService } from "@/services/auth.service";
+// images
+import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-
 
 type TResetPasswordFormValues = {
   email: string;
   password: string;
+  confirm_password?: string;
 };
 
 const defaultValues: TResetPasswordFormValues = {
@@ -41,6 +46,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
     email: email ? email.toString() : "",
   });
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   // store hooks
   //const { captureEvent } = useEventTracker();
   // sign in redirection hook
@@ -54,25 +60,40 @@ const ResetPasswordPage: NextPageWithLayout = () => {
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
 
+  const isButtonDisabled = useMemo(
+    () =>
+      !!resetFormData.password &&
+      getPasswordStrength(resetFormData.password) >= 3 &&
+      resetFormData.password === resetFormData.confirm_password
+        ? false
+        : true,
+    [resetFormData]
+  );
+
   return (
-    <>
+    <div className="relative">
       <PageHead title="Reset Password" />
-      <div className="h-full w-full bg-onboarding-gradient-100">
-        <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28 ">
+      <div className="absolute inset-0 z-0">
+        <Image src={PlaneBackgroundPattern} className="w-screen object-cover" alt="Plane background pattern" />
+      </div>
+      <div className="relative z-10">
+        <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28">
           <div className="flex items-center gap-x-2 py-10">
             <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-2" />
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
         </div>
-
-        <div className="mx-auto h-full rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3 ">
-          <div className="h-full overflow-auto rounded-t-md bg-onboarding-gradient-200 px-7 pb-56 pt-24 sm:px-0">
-            <div className="mx-auto flex flex-col divide-y divide-custom-border-200 sm:w-96">
-              <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
-                Let{"'"}s get a new password
-              </h1>
+        <div className="mx-auto h-full">
+          <div className="h-full overflow-auto px-7 pb-56 pt-4 sm:px-0">
+            <div className="mx-auto flex flex-col">
+              <div className="text-center space-y-1 py-4 mx-auto sm:w-96">
+                <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
+                  Set new password
+                </h3>
+                <p className="font-medium text-onboarding-text-400">Secure your account with a strong password</p>
+              </div>
               <form
-                className="mx-auto mt-11 space-y-4 sm:w-96"
+                className="mx-auto mt-5 space-y-4 w-5/6 sm:w-96"
                 method="POST"
                 action={`${API_BASE_URL}/auth/reset-password/${uidb64?.toString()}/${token?.toString()}/`}
               >
@@ -89,15 +110,14 @@ const ResetPasswordPage: NextPageWithLayout = () => {
                       value={resetFormData.email}
                       //hasError={Boolean(errors.email)}
                       placeholder="name@company.com"
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400"
+                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400 cursor-not-allowed"
                       disabled
                     />
                   </div>
                 </div>
-
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
-                    Password <span className="text-red-500">*</span>
+                    Password
                   </label>
                   <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                     <Input
@@ -109,6 +129,9 @@ const ResetPasswordPage: NextPageWithLayout = () => {
                       placeholder="Enter password"
                       className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                       minLength={8}
+                      onFocus={() => setIsPasswordInputFocused(true)}
+                      onBlur={() => setIsPasswordInputFocused(false)}
+                      autoFocus
                     />
                     {showPassword ? (
                       <EyeOff
@@ -122,25 +145,48 @@ const ResetPasswordPage: NextPageWithLayout = () => {
                       />
                     )}
                   </div>
-                  <PasswordStrengthMeter password={resetFormData.password} />
+                  {isPasswordInputFocused && <PasswordStrengthMeter password={resetFormData.password} />}
                 </div>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  className="w-full"
-                  size="xl"
-                  // disabled={!isValid}
-                  // loading={isSubmitting}
-                >
+                {getPasswordStrength(resetFormData.password) >= 3 && (
+                  <div className="space-y-1">
+                    <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+                      Confirm password
+                    </label>
+                    <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        name="confirm_password"
+                        value={resetFormData.confirm_password}
+                        onChange={(e) => handleFormChange("confirm_password", e.target.value)}
+                        placeholder="Confirm password"
+                        className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                      />
+                      {showPassword ? (
+                        <EyeOff
+                          className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                          onClick={() => setShowPassword(false)}
+                        />
+                      ) : (
+                        <Eye
+                          className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                          onClick={() => setShowPassword(true)}
+                        />
+                      )}
+                    </div>
+                    {!!resetFormData.confirm_password && resetFormData.password !== resetFormData.confirm_password && (
+                      <span className="text-sm text-red-500">Password doesn{"'"}t match</span>
+                    )}
+                  </div>
+                )}
+                <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
                   Set password
                 </Button>
               </form>
             </div>
-            <LatestFeatureBlock />
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
