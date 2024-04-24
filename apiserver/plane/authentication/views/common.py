@@ -350,7 +350,10 @@ class SetUserPasswordEndpoint(APIView):
         # Check password validation
         if not password and len(str(password)) < 8:
             return Response(
-                {"error": "Password is not valid"},
+                {
+                    "error_code": "INVALID_PASSWORD",
+                    "error_message": "Invalid password.",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -368,5 +371,8 @@ class SetUserPasswordEndpoint(APIView):
         user.set_password(password)
         user.is_password_autoset = False
         user.save()
+        # Login the user as the session is invalidated
+        user_login(user=user, request=request)
+        # Return the user
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)

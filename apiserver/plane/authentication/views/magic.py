@@ -55,7 +55,7 @@ class MagicGenerateEndpoint(APIView):
             key, token = adapter.initiate()
             # If the smtp is configured send through here
             magic_link.delay(email, key, token, origin)
-            return Response({"key", str(key)}, status=status.HTTP_200_OK)
+            return Response({"key": str(key)}, status=status.HTTP_200_OK)
         except ImproperlyConfigured as e:
             return Response(
                 {
