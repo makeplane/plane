@@ -25,21 +25,17 @@ export class AuthService extends APIService {
       });
   }
 
-  signUpEmailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> => {
-    return this.post("/auth/sign-up/email-check/", data, { headers: {} })
+  signUpEmailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> => this.post("/auth/sign-up/email-check/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
-  };
 
-  signInEmailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> => {
-    return this.post("/auth/sign-in/email-check/", data, { headers: {} })
+  signInEmailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> => this.post("/auth/sign-in/email-check/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
-  };
 
   async passwordSignIn(data: IPasswordSignInData): Promise<ILoginTokenResponse> {
     return this.post("/api/sign-in/", data, { headers: {} })
@@ -61,8 +57,12 @@ export class AuthService extends APIService {
       });
   }
 
-  async setPassword(data: { password: string }): Promise<any> {
-    return this.post(`/auth/set-password/`, data)
+  async setPassword(token: string, data: { password: string }): Promise<any> {
+    return this.post(`/auth/set-password/`, data, {
+      headers: {
+        "X-CSRFTOKEN": token,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

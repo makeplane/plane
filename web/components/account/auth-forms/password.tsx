@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
@@ -11,6 +11,7 @@ import { EAuthModes, EAuthSteps, ForgotPasswordPopover, PasswordStrengthMeter } 
 import { FORGOT_PASSWORD } from "@/constants/event-tracker";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+import { getPasswordStrength } from "@/helpers/password.helper";
 import { checkEmailValidity } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useInstance } from "@/hooks/store";
@@ -27,6 +28,7 @@ type Props = {
 type TPasswordFormValues = {
   email: string;
   password: string;
+  confirm_password?: string;
 };
 
 const defaultValues: TPasswordFormValues = {
@@ -43,6 +45,8 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+  // hooks
   const { instance } = useInstance();
   const { captureEvent } = useEventTracker();
   // derived values
@@ -98,8 +102,20 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         )}
       </div>
     ) : (
-      <PasswordStrengthMeter password={passwordFormData.password} />
+      isPasswordInputFocused && <PasswordStrengthMeter password={passwordFormData.password} />
     );
+
+  const isButtonDisabled = useMemo(
+    () =>
+      !!passwordFormData.password &&
+      (mode === EAuthModes.SIGN_UP
+        ? getPasswordStrength(passwordFormData.password) >= 3 &&
+          passwordFormData.password === passwordFormData.confirm_password
+        : true)
+        ? false
+        : true,
+    [mode, passwordFormData]
+  );
 
   return (
     <>
@@ -134,7 +150,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         </div>
         <div className="space-y-1">
           <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
-            Password <span className="text-red-500">*</span>
+            {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"} <span className="text-red-500">*</span>
           </label>
           <div className="relative flex items-center rounded-md bg-onboarding-background-200">
             <Input
@@ -142,9 +158,10 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               name="password"
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
-              // hasError={Boolean(errors.password)}
               placeholder="Enter password"
               className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              onFocus={() => setIsPasswordInputFocused(true)}
+              onBlur={() => setIsPasswordInputFocused(false)}
               autoFocus
             />
             {showPassword ? (
@@ -161,10 +178,41 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
           </div>
           {passwordSupport}
         </div>
+        {mode === EAuthModes.SIGN_UP && getPasswordStrength(passwordFormData.password) >= 3 && (
+          <div className="space-y-1">
+            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+              Confirm password <span className="text-red-500">*</span>
+            </label>
+            <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+              <Input
+                type={showPassword ? "text" : "password"}
+                name="confirm_password"
+                value={passwordFormData.confirm_password}
+                onChange={(e) => handleFormChange("confirm_password", e.target.value)}
+                placeholder="Confirm password"
+                className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              />
+              {showPassword ? (
+                <EyeOff
+                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <Eye
+                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  onClick={() => setShowPassword(true)}
+                />
+              )}
+            </div>
+            {!!passwordFormData.confirm_password && passwordFormData.password !== passwordFormData.confirm_password && (
+              <span className="text-sm text-red-500">Password doesn{"'"}t match</span>
+            )}
+          </div>
+        )}
         <div className="space-y-2.5">
           {mode === EAuthModes.SIGN_IN ? (
             <>
-              <Button type="submit" variant="primary" className="w-full" size="lg">
+              <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
                 {isSmtpConfigured ? "Continue" : "Go to workspace"}
               </Button>
               {instance && isSmtpConfigured && (
@@ -181,7 +229,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               )}
             </>
           ) : (
-            <Button type="submit" variant="primary" className="w-full" size="lg">
+            <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
               Create account
             </Button>
           )}
