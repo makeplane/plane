@@ -58,7 +58,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   return (
     <>
       {!inboxIssueId && (
-        <div className="flex lg:hidden items-center px-4 w-full h-12 border-b">
+        <div className="flex lg:hidden items-center px-4 w-full h-12 border-b border-custom-border-200">
           <PanelLeft
             onClick={() => setToggleMobileSidebar(!toggleMobileSidebar)}
             className={cn("w-4 h-4 ", toggleMobileSidebar ? "text-custom-primary-100" : " text-custom-text-200")}
