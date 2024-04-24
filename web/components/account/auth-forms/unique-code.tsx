@@ -94,11 +94,11 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
 
   return (
-    <form className="mx-auto mt-5 space-y-4 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/magic-sign-in/`}>
+    <form className="mx-auto mt-5 space-y-4 w-5/6 sm:w-96" method="POST" action={`${API_BASE_URL}/auth/magic-sign-in/`}>
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
-          Email <span className="text-red-500">*</span>
+          Email
         </label>
         <div className="relative flex items-center rounded-md bg-onboarding-background-200">
           <Input
@@ -122,7 +122,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       </div>
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="token">
-          Unique code <span className="text-red-500">*</span>
+          Unique code
         </label>
         <Input
           name="code"
