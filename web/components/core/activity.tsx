@@ -17,6 +17,7 @@ import {
   SignalMediumIcon,
   MessageSquareIcon,
   UsersIcon,
+  Inbox,
 } from "lucide-react";
 import { IIssueActivity } from "@plane/types";
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
@@ -45,10 +46,10 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
           }`}`}
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
-          className="font-medium text-custom-text-100 hover:underline"
+          className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
         >
           <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
-          <span className="font-normal">{activity.issue_detail?.name}</span>
+          <span className="font-normal break-all">{activity.issue_detail?.name}</span>
         </a>
       ) : (
         <span className="inline-flex items-center gap-1 font-medium text-custom-text-100 whitespace-nowrap">
@@ -104,13 +105,47 @@ const EstimatePoint = observer((props: { point: string }) => {
   const estimateValue = getEstimatePointValue(Number(point), null);
 
   return (
-    <span className="font-medium text-custom-text-100">
+    <span className="font-medium text-custom-text-100 whitespace-nowrap">
       {areEstimatesEnabledForCurrentProject
         ? estimateValue
         : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
     </span>
   );
 });
+
+const inboxActivityMessage = {
+  declined: {
+    showIssue: "declined issue",
+    noIssue: "declined this issue from inbox.",
+  },
+  snoozed: {
+    showIssue: "snoozed issue",
+    noIssue: "snoozed this issue.",
+  },
+  accepted: {
+    showIssue: "accepted issue",
+    noIssue: "accepted this issue from inbox.",
+  },
+  markedDuplicate: {
+    showIssue: "declined issue",
+    noIssue: "declined this issue from inbox by marking a duplicate issue.",
+  },
+};
+
+const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolean) => {
+  switch (activity.verb) {
+    case "-1":
+      return showIssue ? inboxActivityMessage.declined.showIssue : inboxActivityMessage.declined.noIssue;
+    case "0":
+      return showIssue ? inboxActivityMessage.snoozed.showIssue : inboxActivityMessage.snoozed.noIssue;
+    case "1":
+      return showIssue ? inboxActivityMessage.accepted.showIssue : inboxActivityMessage.accepted.noIssue;
+    case "2":
+      return showIssue ? inboxActivityMessage.markedDuplicate.showIssue : inboxActivityMessage.markedDuplicate.noIssue;
+    default:
+      return "updated inbox issue status.";
+  }
+};
 
 const activityDetails: {
   [key: string]: {
@@ -265,11 +300,13 @@ const activityDetails: {
     message: (activity, showIssue, workspaceSlug) => {
       if (activity.old_value === "")
         return (
-          <>
+          <span className="overflow-hidden">
             added a new label{" "}
-            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="inline-flex items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.new_value}</span>
+              <span className="flex-shrink font-medium text-custom-text-100 break-all line-clamp-1">
+                {activity.new_value}
+              </span>
             </span>
             {showIssue && (
               <span className="">
@@ -277,15 +314,17 @@ const activityDetails: {
                 to <IssueLink activity={activity} />
               </span>
             )}
-          </>
+          </span>
         );
       else
         return (
           <>
             removed the label{" "}
-            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="inline-flex items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.old_value}</span>
+              <span className="flex-shrink font-medium text-custom-text-100 break-all line-clamp-1">
+                {activity.old_value}
+              </span>
             </span>
             {showIssue && (
               <span>
@@ -369,29 +408,30 @@ const activityDetails: {
         return (
           <>
             <span className="flex-shrink-0">
-              added {showIssue ? <IssueLink activity={activity} /> : "this issue"} to the cycle{" "}
+              added {showIssue ? <IssueLink activity={activity} /> : "this issue"}{" "}
+              <span className="whitespace-nowrap">to the cycle</span>{" "}
             </span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              <span className="truncate">{activity.new_value}</span>
+              <span className="break-all">{activity.new_value}</span>
             </a>
           </>
         );
       else if (activity.verb === "updated")
         return (
           <>
-            <span className="flex-shrink-0">set the cycle to </span>
+            <span className="flex-shrink-0 whitespace-nowrap">set the cycle to </span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              <span className="truncate">{activity.new_value}</span>
+              <span className="break-all">{activity.new_value}</span>
             </a>
           </>
         );
@@ -403,9 +443,9 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              <span className="truncate">{activity.old_value}</span>
+              <span className="break-all">{activity.old_value}</span>
             </a>
           </>
         );
@@ -422,9 +462,9 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              <span className="truncate">{activity.new_value}</span>
+              <span className="break-all">{activity.new_value}</span>
             </a>
           </>
         );
@@ -436,9 +476,9 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              <span className="truncate">{activity.new_value}</span>
+              <span className="break-all">{activity.new_value}</span>
             </a>
           </>
         );
@@ -450,9 +490,9 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              <span className="truncate">{activity.old_value}</span>
+              <span className="break-all">{activity.old_value}</span>
             </a>
           </>
         );
@@ -462,7 +502,7 @@ const activityDetails: {
   name: {
     message: (activity, showIssue) => (
       <>
-        <span className="truncate">set the name to {activity.new_value}</span>
+        set the name to <span className="break-all">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
@@ -478,7 +518,8 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removed the parent <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+            removed the parent{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -490,7 +531,8 @@ const activityDetails: {
       else
         return (
           <>
-            set the parent to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            set the parent to{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -525,13 +567,14 @@ const activityDetails: {
         return (
           <>
             marked that {showIssue ? <IssueLink activity={activity} /> : "this issue"} relates to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed the relation from <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            removed the relation from{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
     },
@@ -543,13 +586,14 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} is blocking issue{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed the blocking issue <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            removed the blocking issue{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
     },
@@ -561,14 +605,14 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} is being blocked by{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed {showIssue ? <IssueLink activity={activity} /> : "this issue"} being blocked by issue{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
     },
@@ -580,14 +624,14 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} as duplicate of{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed {showIssue ? <IssueLink activity={activity} /> : "this issue"} as a duplicate of{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
     },
@@ -596,7 +640,7 @@ const activityDetails: {
   state: {
     message: (activity, showIssue) => (
       <>
-        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+        set the state to <span className="font-medium text-custom-text-100 break-all">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
@@ -625,7 +669,9 @@ const activityDetails: {
         return (
           <>
             set the start date to{" "}
-            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">
+              {renderFormattedDate(activity.new_value)}
+            </span>
             {showIssue && (
               <>
                 {" "}
@@ -655,17 +701,32 @@ const activityDetails: {
         return (
           <>
             set the due date to{" "}
-            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">
+              {renderFormattedDate(activity.new_value)}
+            </span>
             {showIssue && (
               <>
-                {" "}
-                for <IssueLink activity={activity} />
+                <IssueLink activity={activity} />
               </>
             )}
           </>
         );
     },
     icon: <Calendar size={12} color="#6b7280" aria-hidden="true" />,
+  },
+  inbox: {
+    message: (activity, showIssue) => (
+      <>
+        {getInboxUserActivityMessage(activity, showIssue)}
+        {showIssue && (
+          <>
+            {" "}
+            <IssueLink activity={activity} />
+          </>
+        )}
+      </>
+    ),
+    icon: <Inbox size={12} color="#6b7280" aria-hidden="true" />,
   },
 };
 

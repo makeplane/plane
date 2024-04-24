@@ -77,7 +77,7 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
       cycle_id: formData?.cycle_id || "",
       module_ids: formData?.module_ids || [],
       estimate_point: formData?.estimate_point || undefined,
-      parent_id: formData?.parent_id || "",
+      parent_id: formData?.parent_id || null,
     };
     setFormSubmitting(true);
 
@@ -121,10 +121,16 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
     setFormSubmitting(false);
   };
 
+  const isTitleLengthMoreThan255Character = formData?.name ? formData.name.length > 255 : false;
+
   if (!workspaceSlug || !projectId || !workspaceId || !formData) return <></>;
   return (
     <div className="relative space-y-4">
-      <InboxIssueTitle data={formData} handleData={handleFormData} />
+      <InboxIssueTitle
+        data={formData}
+        handleData={handleFormData}
+        isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
+      />
       <InboxIssueDescription
         workspaceSlug={workspaceSlug}
         projectId={projectId}
@@ -138,7 +144,14 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
         <Button variant="neutral-primary" size="sm" type="button" onClick={handleModalClose}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="button" loading={formSubmitting} onClick={handleFormSubmit}>
+        <Button
+          variant="primary"
+          size="sm"
+          type="button"
+          loading={formSubmitting}
+          disabled={isTitleLengthMoreThan255Character}
+          onClick={handleFormSubmit}
+        >
           {formSubmitting ? "Adding..." : "Add to project"}
         </Button>
       </div>

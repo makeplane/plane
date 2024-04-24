@@ -54,8 +54,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         }
       )}
     >
-      <div className="flex w-full">
-        <div className="flex flex-grow items-center gap-3">
+      <div className="flex w-full truncate">
+        <div className="flex flex-grow items-center gap-3 truncate">
           {displayProperties && displayProperties?.key && (
             <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
               {projectIdentifier}-{issue.sequence_id}
@@ -68,7 +68,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
 
           {issue?.is_draft ? (
             <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-              <span>{issue.name}</span>
+              <p className="truncate">{issue.name}</p>
             </Tooltip>
           ) : (
             <ControlLink
@@ -78,11 +78,11 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
               }`}
               target="_blank"
               onClick={() => handleIssuePeekOverview(issue)}
-              className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+              className="w-full truncate cursor-pointer text-sm text-custom-text-100"
               disabled={!!issue?.tempId}
             >
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span>{issue.name}</span>
+                <p className="truncate">{issue.name}</p>
               </Tooltip>
             </ControlLink>
           )}
@@ -91,7 +91,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           <div className="block md:hidden border border-custom-border-300 rounded ">{quickActions(issue)}</div>
         )}
       </div>
-      <div className="ml-0 md:ml-auto flex flex-wrap  md:flex-shrink-0 items-center gap-2">
+      <div className="flex flex-shrink-0 items-center gap-2">
         {!issue?.tempId ? (
           <>
             <IssueProperties

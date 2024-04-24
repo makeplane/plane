@@ -34,10 +34,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     return !!ref && typeof ref === "object" && "current" in ref;
   }
   const isEmpty =
-    props.initialValue === "" ||
     props.initialValue?.trim() === "" ||
     props.initialValue === "<p></p>" ||
-    isEmptyHtmlString(props.initialValue ?? "");
+    (isEmptyHtmlString(props.initialValue ?? "") && !props.initialValue?.includes("mention-component"));
 
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">

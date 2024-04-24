@@ -8,18 +8,27 @@ export type TDropTargetMiscellaneousData = {
   isActiveDueToStickiness: boolean;
 };
 
-export interface IPragmaticDropPayload {
-  location: {
-    initial: {
-      dropTargets: (TDropTarget & TDropTargetMiscellaneousData)[];
-    };
-    current: {
-      dropTargets: (TDropTarget & TDropTargetMiscellaneousData)[];
-    };
-    previous: {
-      dropTargets: (TDropTarget & TDropTargetMiscellaneousData)[];
-    };
+export interface IPragmaticPayloadLocation {
+  initial: {
+    dropTargets: (TDropTarget & TDropTargetMiscellaneousData)[];
   };
+  current: {
+    dropTargets: (TDropTarget & TDropTargetMiscellaneousData)[];
+  };
+  previous: {
+    dropTargets: (TDropTarget & TDropTargetMiscellaneousData)[];
+  };
+}
+
+export interface IPragmaticDropPayload {
+  location: IPragmaticPayloadLocation;
   source: TDropTarget;
   self: TDropTarget & TDropTargetMiscellaneousData;
 }
+
+export type InstructionType =
+  | "reparent"
+  | "reorder-above"
+  | "reorder-below"
+  | "make-child"
+  | "instruction-blocked";

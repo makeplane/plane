@@ -125,35 +125,38 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
             Workspace Name
             <span className="ml-0.5 text-red-500">*</span>
           </label>
-          <Controller
-            control={control}
-            name="name"
-            rules={{
-              required: "Workspace name is required",
-              validate: (value) =>
-                /^[\w\s-]*$/.test(value) || `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
-              maxLength: {
-                value: 80,
-                message: "Workspace name should not exceed 80 characters",
-              },
-            }}
-            render={({ field: { value, ref, onChange } }) => (
-              <Input
-                id="workspaceName"
-                type="text"
-                value={value}
-                onChange={(e) => {
-                  onChange(e.target.value);
-                  setValue("name", e.target.value);
-                  setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
-                }}
-                ref={ref}
-                hasError={Boolean(errors.name)}
-                placeholder="Enter workspace name..."
-                className="w-full"
-              />
-            )}
-          />
+          <div className="flex flex-col gap-1">
+            <Controller
+              control={control}
+              name="name"
+              rules={{
+                required: "Workspace name is required",
+                validate: (value) =>
+                  /^[\w\s-]*$/.test(value) || `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
+                maxLength: {
+                  value: 80,
+                  message: "Workspace name should not exceed 80 characters",
+                },
+              }}
+              render={({ field: { value, ref, onChange } }) => (
+                <Input
+                  id="workspaceName"
+                  type="text"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                    setValue("name", e.target.value);
+                    setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
+                  }}
+                  ref={ref}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Enter workspace name..."
+                  className="w-full"
+                />
+              )}
+            />
+            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+          </div>
         </div>
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceUrl">

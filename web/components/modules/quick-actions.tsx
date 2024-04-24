@@ -163,15 +163,14 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
             </span>
           </CustomMenu.MenuItem>
         )}
+        <hr className="my-2 border-custom-border-200" />
         {isEditingAllowed && (
-          <div className="border-t pt-1 mt-1">
-            <CustomMenu.MenuItem onClick={handleDeleteModule}>
-              <span className="flex items-center justify-start gap-2">
-                <Trash2 className="h-3 w-3" />
-                <span>Delete module</span>
-              </span>
-            </CustomMenu.MenuItem>
-          </div>
+          <CustomMenu.MenuItem onClick={handleDeleteModule}>
+            <span className="flex items-center justify-start gap-2">
+              <Trash2 className="h-3 w-3" />
+              <span>Delete module</span>
+            </span>
+          </CustomMenu.MenuItem>
         )}
       </CustomMenu>
     </>

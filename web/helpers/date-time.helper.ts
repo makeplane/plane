@@ -224,7 +224,7 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
     return undefined;
   }
 };
-export const isDate = (date: string) => {
+export const isInDateFormat = (date: string) => {
   const datePattern = /^\d{4}-\d{2}-\d{2}$/;
   return datePattern.test(date);
 };

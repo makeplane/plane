@@ -272,6 +272,9 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )
+            current_instance = json.dumps(
+                InboxIssueSerializer(inbox_issue).data, cls=DjangoJSONEncoder
+            )
 
             if serializer.is_valid():
                 serializer.save()
@@ -310,6 +313,21 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                         if state is not None:
                             issue.state = state
                             issue.save()
+
+                # create a activity for status change
+                issue_activity.delay(
+                    type="inbox.activity.created",
+                    requested_data=json.dumps(
+                        request.data, cls=DjangoJSONEncoder
+                    ),
+                    actor_id=str(request.user.id),
+                    issue_id=str(issue_id),
+                    project_id=str(project_id),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=False,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(

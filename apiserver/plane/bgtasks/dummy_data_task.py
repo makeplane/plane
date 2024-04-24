@@ -1,4 +1,5 @@
 # Python imports
+import uuid
 import random
 from datetime import datetime, timedelta
 
@@ -36,9 +37,11 @@ from plane.db.models import (
 def create_project(workspace, user_id):
     fake = Faker()
     name = fake.name()
+    unique_id = str(uuid.uuid4())[:5] 
+
     project = Project.objects.create(
         workspace=workspace,
-        name=name,
+        name=f"{name}_{unique_id}",
         identifier=name[
             : random.randint(2, 12 if len(name) - 1 >= 12 else len(name) - 1)
         ].upper(),

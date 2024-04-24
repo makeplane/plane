@@ -1,16 +1,13 @@
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
-// hooks
 // components
 import { EmptyState } from "@/components/empty-state";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
-// ui
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
-// assets
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+// hooks
 import { useApplication, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
 import AllFiltersImage from "public/empty-state/module/all-filters.svg";
 import NameFilterImage from "public/empty-state/module/name-filter.svg";
@@ -22,14 +19,13 @@ export const ModulesListView: React.FC = observer(() => {
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const { getFilteredModuleIds, loader } = useModule();
-  const { currentProjectDisplayFilters: displayFilters, searchQuery, currentProjectFilters } = useModuleFilter();
+  const { getProjectModuleIds, getFilteredModuleIds, loader } = useModule();
+  const { currentProjectDisplayFilters: displayFilters, searchQuery } = useModuleFilter();
   // derived values
+  const projectModuleIds = projectId ? getProjectModuleIds(projectId.toString()) : undefined;
   const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
 
-  const totalFilters = calculateTotalFilters(currentProjectFilters ?? {});
-
-  if (loader || !filteredModuleIds)
+  if (loader || !projectModuleIds || !filteredModuleIds)
     return (
       <>
         {displayFilters?.layout === "list" && <CycleModuleListLayout />}
@@ -38,7 +34,18 @@ export const ModulesListView: React.FC = observer(() => {
       </>
     );
 
-  if (totalFilters > 0 && filteredModuleIds.length === 0)
+  if (projectModuleIds.length === 0)
+    return (
+      <EmptyState
+        type={EmptyStateType.PROJECT_MODULE}
+        primaryButtonOnClick={() => {
+          setTrackElement("Module empty state");
+          commandPaletteStore.toggleCreateModuleModal(true);
+        }}
+      />
+    );
+
+  if (filteredModuleIds.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
@@ -59,55 +66,43 @@ export const ModulesListView: React.FC = observer(() => {
 
   return (
     <>
-      {filteredModuleIds.length > 0 ? (
-        <>
-          {displayFilters?.layout === "list" && (
-            <div className="h-full overflow-y-auto">
-              <div className="flex h-full w-full justify-between">
-                <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
-                  {filteredModuleIds.map((moduleId) => (
-                    <ModuleListItem key={moduleId} moduleId={moduleId} />
-                  ))}
-                </div>
-                <ModulePeekOverview
-                  projectId={projectId?.toString() ?? ""}
-                  workspaceSlug={workspaceSlug?.toString() ?? ""}
-                />
-              </div>
+      {displayFilters?.layout === "list" && (
+        <div className="h-full overflow-y-auto">
+          <div className="flex h-full w-full justify-between">
+            <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
+              {filteredModuleIds.map((moduleId) => (
+                <ModuleListItem key={moduleId} moduleId={moduleId} />
+              ))}
             </div>
-          )}
-          {displayFilters?.layout === "board" && (
-            <div className="h-full w-full">
-              <div className="flex h-full w-full justify-between">
-                <div
-                  className={`grid h-full w-full grid-cols-1 gap-6 overflow-y-auto p-8 ${
-                    peekModule
-                      ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
-                      : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
-                  } auto-rows-max transition-all vertical-scrollbar scrollbar-lg`}
-                >
-                  {filteredModuleIds.map((moduleId) => (
-                    <ModuleCardItem key={moduleId} moduleId={moduleId} />
-                  ))}
-                </div>
-                <ModulePeekOverview
-                  projectId={projectId?.toString() ?? ""}
-                  workspaceSlug={workspaceSlug?.toString() ?? ""}
-                />
-              </div>
-            </div>
-          )}
-          {displayFilters?.layout === "gantt" && <ModulesListGanttChartView />}
-        </>
-      ) : (
-        <EmptyState
-          type={EmptyStateType.PROJECT_MODULE}
-          primaryButtonOnClick={() => {
-            setTrackElement("Module empty state");
-            commandPaletteStore.toggleCreateModuleModal(true);
-          }}
-        />
+            <ModulePeekOverview
+              projectId={projectId?.toString() ?? ""}
+              workspaceSlug={workspaceSlug?.toString() ?? ""}
+            />
+          </div>
+        </div>
       )}
+      {displayFilters?.layout === "board" && (
+        <div className="h-full w-full">
+          <div className="flex h-full w-full justify-between">
+            <div
+              className={`grid h-full w-full grid-cols-1 gap-6 overflow-y-auto p-8 ${
+                peekModule
+                  ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
+                  : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
+              } auto-rows-max transition-all vertical-scrollbar scrollbar-lg`}
+            >
+              {filteredModuleIds.map((moduleId) => (
+                <ModuleCardItem key={moduleId} moduleId={moduleId} />
+              ))}
+            </div>
+            <ModulePeekOverview
+              projectId={projectId?.toString() ?? ""}
+              workspaceSlug={workspaceSlug?.toString() ?? ""}
+            />
+          </div>
+        </div>
+      )}
+      {displayFilters?.layout === "gantt" && <ModulesListGanttChartView />}
     </>
   );
 });
