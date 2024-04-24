@@ -6,7 +6,7 @@ import { Avatar, Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // hooks
-import { useMember, useProjectInbox } from "@/hooks/store";
+import { useMember, useProjectInbox, useUser } from "@/hooks/store";
 
 type Props = {
   filterKey: TInboxIssueFilterMemberKeys;
@@ -20,6 +20,7 @@ export const FilterMember: FC<Props> = observer((props: Props) => {
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getUserDetails } = useMember();
+  const { currentUser } = useUser();
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -34,6 +35,7 @@ export const FilterMember: FC<Props> = observer((props: Props) => {
 
     return sortBy(filteredOptions, [
       (memberId) => !filterValue.includes(memberId),
+      (memberId) => memberId !== currentUser?.id,
       (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +73,7 @@ export const FilterMember: FC<Props> = observer((props: Props) => {
                       isChecked={filterValue?.includes(member.id) ? true : false}
                       onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(member.id))}
                       icon={<Avatar name={member.display_name} src={member.avatar} showTooltip={false} size="md" />}
-                      title={member.display_name}
+                      title={currentUser?.id === member.id ? "You" : member?.display_name}
                     />
                   );
                 })}

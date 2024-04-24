@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { Loader, Avatar } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
-import { useMember } from "@/hooks/store";
+import { useMember, useUser } from "@/hooks/store";
 // components
 // ui
 
@@ -22,16 +22,18 @@ export const FilterMentions: React.FC<Props> = observer((props: Props) => {
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // store hooks
   const { getUserDetails } = useMember();
+  const { currentUser } = useUser();
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const sortedOptions = useMemo(() => {
-    const filteredOptions = (memberIds || []).filter(
-      (memberId) => getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredOptions = (memberIds || []).filter((memberId) =>
+      getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return sortBy(filteredOptions, [
       (memberId) => !(appliedFilters ?? []).includes(memberId),
+      (memberId) => memberId !== currentUser?.id,
       (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,7 +68,7 @@ export const FilterMentions: React.FC<Props> = observer((props: Props) => {
                       isChecked={appliedFilters?.includes(member.id) ? true : false}
                       onClick={() => handleUpdate(member.id)}
                       icon={<Avatar name={member?.display_name} src={member?.avatar} showTooltip={false} size={"md"} />}
-                      title={member.display_name}
+                      title={currentUser?.id === member.id ? "You" : member?.display_name}
                     />
                   );
                 })}
