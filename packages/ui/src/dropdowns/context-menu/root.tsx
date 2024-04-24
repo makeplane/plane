@@ -102,7 +102,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
         const item = renderedItems[activeItemIndex];
         if (!item.disabled) {
           renderedItems[activeItemIndex].action();
-          setIsOpen(false);
+          if (item.closeOnClick !== false) handleClose();
         }
       }
     };
@@ -128,7 +128,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
     >
       <div
         ref={contextMenuRef}
-        className="fixed border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg rounded-md px-2 py-2.5 max-h-60 min-w-[12rem] overflow-y-scroll"
+        className="fixed border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg rounded-md px-2 py-2.5 max-h-60 min-w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
         style={{
           top: position.y,
           left: position.x,

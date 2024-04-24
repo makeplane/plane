@@ -47,11 +47,11 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {
-      key: "copy-link",
-      action: handleCopyText,
-      title: "Copy link",
-      icon: Link,
-      shouldRender: true,
+      key: "make-public-private",
+      action: access === 0 ? makePrivate : makePublic,
+      title: access === 0 ? "Make private" : "Make public",
+      icon: access === 0 ? Lock : UsersRound,
+      shouldRender: canCurrentUserChangeAccess && !archived_at,
     },
     {
       key: "open-new-tab",
@@ -61,18 +61,18 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
       shouldRender: true,
     },
     {
+      key: "copy-link",
+      action: handleCopyText,
+      title: "Copy link",
+      icon: Link,
+      shouldRender: true,
+    },
+    {
       key: "archive-restore",
       action: archived_at ? restore : archive,
       title: archived_at ? "Restore" : "Archive",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,
-    },
-    {
-      key: "make-public-private",
-      action: access === 0 ? makePrivate : makePublic,
-      title: access === 0 ? "Make private" : "Make public",
-      icon: access === 0 ? Lock : UsersRound,
-      shouldRender: canCurrentUserChangeAccess && !archived_at,
     },
     {
       key: "delete",

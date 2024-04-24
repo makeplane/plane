@@ -58,16 +58,16 @@ export const IssueQuickActions: React.FC<Props> = observer((props) => {
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {
-      key: "copy-link",
-      title: "Copy link",
-      icon: Link,
-      action: handleCopyIssueLink,
-    },
-    {
       key: "open-in-new-tab",
       title: "Open in new tab",
       icon: ExternalLink,
       action: handleOpenInNewTab,
+    },
+    {
+      key: "copy-link",
+      title: "Copy link",
+      icon: Link,
+      action: handleCopyIssueLink,
     },
     {
       key: "archive",

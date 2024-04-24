@@ -87,11 +87,11 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {
-      key: "copy-link",
-      action: handleCopyText,
-      title: "Copy link",
-      icon: LinkIcon,
-      shouldRender: !isArchived,
+      key: "edit",
+      title: "Edit",
+      icon: Pencil,
+      action: handleEditCycle,
+      shouldRender: isEditingAllowed && !isCompleted && !isArchived,
     },
     {
       key: "open-new-tab",
@@ -101,11 +101,11 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
       shouldRender: !isArchived,
     },
     {
-      key: "edit",
-      title: "Edit",
-      icon: Pencil,
-      action: handleEditCycle,
-      shouldRender: isEditingAllowed && !isCompleted && !isArchived,
+      key: "copy-link",
+      action: handleCopyText,
+      title: "Copy link",
+      icon: LinkIcon,
+      shouldRender: !isArchived,
     },
     {
       key: "archive",

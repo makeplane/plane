@@ -105,18 +105,11 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {
-      key: "copy-link",
-      action: handleCopyText,
-      title: "Copy link",
-      icon: LinkIcon,
-      shouldRender: true,
-    },
-    {
-      key: "open-new-tab",
-      action: handleOpenInNewTab,
-      title: "Open in new tab",
-      icon: ExternalLink,
-      shouldRender: true,
+      key: "edit",
+      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
+      title: "Edit",
+      icon: Pencil,
+      shouldRender: !isArchived && (isOwner || isMember),
     },
     {
       key: "join",
@@ -126,11 +119,18 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       shouldRender: !project.is_member && !isArchived,
     },
     {
-      key: "edit",
-      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
-      title: "Edit",
-      icon: Pencil,
-      shouldRender: !isArchived && (isOwner || isMember),
+      key: "open-new-tab",
+      action: handleOpenInNewTab,
+      title: "Open in new tab",
+      icon: ExternalLink,
+      shouldRender: project.is_member,
+    },
+    {
+      key: "copy-link",
+      action: handleCopyText,
+      title: "Copy link",
+      icon: LinkIcon,
+      shouldRender: true,
     },
     {
       key: "restore",

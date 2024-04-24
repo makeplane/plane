@@ -47,10 +47,11 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {
-      key: "copy-link",
-      action: handleCopyText,
-      title: "Copy link",
-      icon: Link,
+      key: "edit",
+      action: () => setCreateUpdateViewModal(true),
+      title: "Edit",
+      icon: Pencil,
+      shouldRender: isEditingAllowed,
     },
     {
       key: "open-new-tab",
@@ -59,11 +60,10 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
       icon: ExternalLink,
     },
     {
-      key: "edit",
-      action: () => setCreateUpdateViewModal(true),
-      title: "Edit",
-      icon: Pencil,
-      shouldRender: isEditingAllowed,
+      key: "copy-link",
+      action: handleCopyText,
+      title: "Copy link",
+      icon: Link,
     },
     {
       key: "delete",
