@@ -1,15 +1,16 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Inbox } from "lucide-react";
+import { Inbox, PanelLeft } from "lucide-react";
 // components
 import { EmptyState } from "@/components/empty-state";
-import { InboxSidebar, InboxContentRoot } from "@/components/inbox";
+import { InboxSidebar, InboxContentRoot, InboxIssueActionsHeader } from "@/components/inbox";
 import { InboxLayoutLoader } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
+import { cn } from "@/helpers/common.helper";
 
 type TInboxIssueRoot = {
   workspaceSlug: string;
@@ -20,6 +21,8 @@ type TInboxIssueRoot = {
 
 export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, inboxAccessible } = props;
+  // states
+  const [toggleMobileSidebar, setToggleMobileSidebar] = useState(false);
   // hooks
   const { loader, error, fetchInboxIssues } = useProjectInbox();
 
@@ -52,20 +55,43 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
     );
 
   return (
-    <div className="relative w-full h-full flex overflow-hidden">
-      <InboxSidebar workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
-
-      {inboxIssueId ? (
-        <InboxContentRoot
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          inboxIssueId={inboxIssueId.toString()}
-        />
-      ) : (
-        <div className="w-full h-full relative flex justify-center items-center">
-          <EmptyState type={EmptyStateType.INBOX_DETAIL_EMPTY_STATE} layout="screen-simple" />
+    <>
+      {!inboxIssueId && (
+        <div className="flex items-center px-4 w-full h-12 border-b">
+          <PanelLeft
+            onClick={() => setToggleMobileSidebar(!toggleMobileSidebar)}
+            className={cn("w-4 h-4 ", toggleMobileSidebar ? "text-custom-primary-100" : " text-custom-text-200")}
+          />
         </div>
       )}
-    </div>
+      <div className="w-full h-full flex overflow-hidden bg-custom-background-100">
+        <div
+          className={cn(
+            "absolute z-10 top-[50px] lg:!top-0 lg:!relative bg-custom-background-100 flex-shrink-0 w-full lg:w-2/6 bottom-0 transition-all",
+            toggleMobileSidebar ? "translate-x-0" : "-translate-x-full"
+          )}
+        >
+          <InboxSidebar
+            setToggleMobileSidebar={setToggleMobileSidebar}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+          />
+        </div>
+
+        {inboxIssueId ? (
+          <InboxContentRoot
+            setToggleMobileSidebar={setToggleMobileSidebar}
+            toggleMobileSidebar={toggleMobileSidebar}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            inboxIssueId={inboxIssueId.toString()}
+          />
+        ) : (
+          <div className="w-full h-full relative flex justify-center items-center">
+            <EmptyState type={EmptyStateType.INBOX_DETAIL_EMPTY_STATE} layout="screen-simple" />
+          </div>
+        )}
+      </div>
+    </>
   );
 });
