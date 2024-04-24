@@ -11,7 +11,7 @@ import { PageHead } from "@/components/core";
 import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useInstance, useUser } from "@/hooks/store";
-import useSignInRedirection from "@/hooks/use-sign-in-redirection";
+import useAuthRedirection from "@/hooks/use-auth-redirection";
 // assets
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
@@ -22,8 +22,8 @@ export const SignInView = observer(() => {
   const { instance } = useInstance();
   const { data: currentUser } = useUser();
   const { captureEvent } = useEventTracker();
-  // sign in redirection hook
-  const { isRedirecting, handleRedirection } = useSignInRedirection();
+  // login redirection hook
+  const { isRedirecting, handleRedirection } = useAuthRedirection();
 
   useEffect(() => {
     handleRedirection();

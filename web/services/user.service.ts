@@ -8,6 +8,7 @@ import type {
   IUserProfileProjectSegregation,
   IUserSettings,
   IUserEmailNotificationSettings,
+  TUserProfile,
 } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
@@ -52,7 +53,7 @@ export class UserService extends APIService {
       });
   }
 
-  async getCurrentUserProfile(): Promise<any> {
+  async getCurrentUserProfile(): Promise<TUserProfile> {
     return this.get("/api/users/me/profile/")
       .then((response) => response?.data)
       .catch((error) => {

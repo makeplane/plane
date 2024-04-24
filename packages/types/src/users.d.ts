@@ -68,14 +68,14 @@ export interface IInstanceAdminStatus {
 }
 
 export interface IUserSettings {
-  id: string;
-  email: string;
+  id: string | undefined;
+  email: string | undefined;
   workspace: {
-    last_workspace_id: string;
-    last_workspace_slug: string;
-    fallback_workspace_id: string;
-    fallback_workspace_slug: string;
-    invites: number;
+    last_workspace_id: string | undefined;
+    last_workspace_slug: string | undefined;
+    fallback_workspace_id: string | undefined;
+    fallback_workspace_slug: string | undefined;
+    invites: number | undefined;
   };
 }
 

@@ -15,7 +15,7 @@ export interface IProfileStore {
   data: TUserProfile;
   error: TError | undefined;
   // actions
-  fetchUserProfile: () => Promise<void>;
+  fetchUserProfile: () => Promise<TUserProfile | undefined>;
   updateUserProfile: (data: Partial<TUserProfile>) => Promise<void>;
   updateUserOnBoard: () => Promise<void>;
   updateTourCompleted: () => Promise<void>;
@@ -85,6 +85,8 @@ export class ProfileStore implements IProfileStore {
         this.isLoading = false;
         this.data = userProfile;
       });
+
+      return userProfile;
     } catch (error) {
       console.log("Failed to fetch profile details");
       runInAction(() => {
@@ -120,46 +122,46 @@ export class ProfileStore implements IProfileStore {
     }
   };
 
-    /**
+  /**
    * Updates the user onboarding status
    * @returns Promise<void>
    */
-    updateUserOnBoard = async () => {
-      try {
+  updateUserOnBoard = async () => {
+    try {
+      runInAction(() => {
+        this.data = {
+          ...this.data,
+          is_onboarded: true,
+        } as TUserProfile;
+      });
+      const user = this.data ?? undefined;
+      if (!user) return;
+      await this.userService.updateUserOnBoard();
+    } catch (error) {
+      this.fetchUserProfile();
+      throw error;
+    }
+  };
+
+  /**
+   * Updates the user tour completed status
+   * @returns Promise<void>
+   */
+  updateTourCompleted = async () => {
+    try {
+      if (this.data) {
         runInAction(() => {
           this.data = {
             ...this.data,
-            is_onboarded: true,
+            is_tour_completed: true,
           } as TUserProfile;
         });
-        const user = this.data ?? undefined;
-        if (!user) return;
-        await this.userService.updateUserOnBoard();
-      } catch (error) {
-        this.fetchUserProfile();
-        throw error;
+        const response = await this.userService.updateUserTourCompleted();
+        return response;
       }
-    };
-
-    /**
-     * Updates the user tour completed status
-     * @returns Promise<void>
-     */
-    updateTourCompleted = async () => {
-      try {
-        if (this.data) {
-          runInAction(() => {
-            this.data = {
-              ...this.data,
-              is_tour_completed: true,
-            } as TUserProfile;
-          });
-          const response = await this.userService.updateUserTourCompleted();
-          return response;
-        }
-      } catch (error) {
-        this.fetchUserProfile();
-        throw error;
-      }
-    };
+    } catch (error) {
+      this.fetchUserProfile();
+      throw error;
+    }
+  };
 }

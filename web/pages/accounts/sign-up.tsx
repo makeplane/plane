@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import { PageHead } from "@/components/core";
 import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useInstance, useUser } from "@/hooks/store";
+import useAuthRedirection from "@/hooks/use-auth-redirection";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // types
@@ -24,7 +25,14 @@ const SignUpPage: NextPageWithLayout = observer(() => {
   const { data: currentUser } = useUser();
   const { captureEvent } = useEventTracker();
 
-  if (currentUser || !instance?.config)
+  // login redirection hook
+  const { isRedirecting, handleRedirection } = useAuthRedirection();
+
+  useEffect(() => {
+    handleRedirection();
+  }, [handleRedirection]);
+
+  if (isRedirecting || currentUser || !instance?.config)
     return (
       <div className="grid h-screen place-items-center">
         <Spinner />
