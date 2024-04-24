@@ -194,7 +194,7 @@ from .page.base import (
     SubPagesEndpoint,
 )
 
-from .search import GlobalSearchEndpoint, IssueSearchEndpoint
+from .search import GlobalSearchEndpoint, IssueSearchEndpoint, SearchEndpoint
 
 
 from .external.base import (
