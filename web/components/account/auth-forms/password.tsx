@@ -120,14 +120,14 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   return (
     <>
       <form
-        className="mx-auto mt-5 space-y-4 sm:w-96"
+        className="mx-auto mt-5 space-y-4 w-5/6 sm:w-96"
         method="POST"
         action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
       >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
           <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
-            Email <span className="text-red-500">*</span>
+            Email
           </label>
           <div className="relative flex items-center rounded-md bg-onboarding-background-200">
             <Input
@@ -150,7 +150,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         </div>
         <div className="space-y-1">
           <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
-            {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"} <span className="text-red-500">*</span>
+            {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
           </label>
           <div className="relative flex items-center rounded-md bg-onboarding-background-200">
             <Input
@@ -181,7 +181,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         {mode === EAuthModes.SIGN_UP && getPasswordStrength(passwordFormData.password) >= 3 && (
           <div className="space-y-1">
             <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
-              Confirm password <span className="text-red-500">*</span>
+              Confirm password
             </label>
             <div className="relative flex items-center rounded-md bg-onboarding-background-200">
               <Input
