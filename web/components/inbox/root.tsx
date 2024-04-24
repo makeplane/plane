@@ -4,13 +4,14 @@ import useSWR from "swr";
 import { Inbox, PanelLeft } from "lucide-react";
 // components
 import { EmptyState } from "@/components/empty-state";
-import { InboxSidebar, InboxContentRoot, InboxIssueActionsHeader } from "@/components/inbox";
+import { InboxSidebar, InboxContentRoot } from "@/components/inbox";
 import { InboxLayoutLoader } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
-import { cn } from "@/helpers/common.helper";
 
 type TInboxIssueRoot = {
   workspaceSlug: string;
@@ -57,7 +58,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   return (
     <>
       {!inboxIssueId && (
-        <div className="flex items-center px-4 w-full h-12 border-b">
+        <div className="flex lg:hidden items-center px-4 w-full h-12 border-b">
           <PanelLeft
             onClick={() => setToggleMobileSidebar(!toggleMobileSidebar)}
             className={cn("w-4 h-4 ", toggleMobileSidebar ? "text-custom-primary-100" : " text-custom-text-200")}
@@ -68,7 +69,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
         <div
           className={cn(
             "absolute z-10 top-[50px] lg:!top-0 lg:!relative bg-custom-background-100 flex-shrink-0 w-full lg:w-2/6 bottom-0 transition-all",
-            toggleMobileSidebar ? "translate-x-0" : "-translate-x-full"
+            toggleMobileSidebar ? "translate-x-0" : "-translate-x-full lg:!translate-x-0",
           )}
         >
           <InboxSidebar

@@ -17,10 +17,10 @@ import { CustomMenu } from "@plane/ui";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
 import { IssueUpdateStatus } from "@/components/issues";
-// store types
-import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// store types
+import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
 type Props = {
   workspaceSlug: string;
