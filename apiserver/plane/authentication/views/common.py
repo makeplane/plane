@@ -272,12 +272,8 @@ class ResetPasswordEndpoint(View):
             user.is_password_autoset = False
             user.save()
 
-            # Generate access token for the user
-            user_login(request=request, user=user)
-            process_workspace_project_invitations(user=user)
-
             url = urljoin(
-                base_host(request=request), get_redirection_path(user=user)
+                base_host(request=request), "?" + urlencode({"success", True})
             )
             return HttpResponseRedirect(url)
         except DjangoUnicodeDecodeError:
