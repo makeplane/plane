@@ -282,7 +282,7 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
         )
         if serializer.is_valid():
             if (
-                str(request.data.get("external_id"))
+                request.data.get("external_id")
                 and (issue.external_id != str(request.data.get("external_id")))
                 and Issue.objects.filter(
                     project_id=project_id,
@@ -437,7 +437,7 @@ class LabelAPIEndpoint(BaseAPIView):
         serializer = LabelSerializer(label, data=request.data, partial=True)
         if serializer.is_valid():
             if (
-                str(request.data.get("external_id"))
+                request.data.get("external_id")
                 and (label.external_id != str(request.data.get("external_id")))
                 and Issue.objects.filter(
                     project_id=project_id,
