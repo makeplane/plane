@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -23,7 +24,7 @@ export type EmptyStateProps = {
   secondaryButtonOnClick?: () => void;
 };
 
-export const EmptyState: React.FC<EmptyStateProps> = (props) => {
+export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
   const {
     type,
     size = "lg",
@@ -173,4 +174,4 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
       )}
     </>
   );
-};
+});
