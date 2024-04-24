@@ -114,7 +114,12 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
               e.stopPropagation();
             }}
           >
-            {quickActions(issue, blockRef, customActionButton, placement)}
+            {quickActions({
+              issue,
+              parentRef: blockRef,
+              customActionButton,
+              placement,
+            })}
           </div>
         </div>
       </>

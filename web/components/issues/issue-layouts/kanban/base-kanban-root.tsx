@@ -168,7 +168,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   };
 
   const renderQuickActions: TRenderQuickActions = useCallback(
-    (issue, parentRef, customActionButton) => (
+    ({ issue, parentRef, customActionButton }) => (
       <QuickActions
         parentRef={parentRef}
         customActionButton={customActionButton}

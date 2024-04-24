@@ -69,7 +69,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
   const renderQuickActions: TRenderQuickActions = useCallback(
-    (issue, parentRef) => (
+    ({ issue, parentRef }) => (
       <QuickActions
         parentRef={parentRef}
         issue={issue}

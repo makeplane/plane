@@ -62,7 +62,10 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
             className="absolute -top-1 right-0 hidden group-hover/kanban-block:block"
             onClick={handleEventPropagation}
           >
-            {quickActions(issue, cardRef)}
+            {quickActions({
+              issue,
+              parentRef: cardRef,
+            })}
           </div>
         </div>
       </WithDisplayPropertiesHOC>

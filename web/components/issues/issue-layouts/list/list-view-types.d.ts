@@ -15,9 +15,16 @@ export interface IQuickActionProps {
   placements?: Placement;
 }
 
-export type TRenderQuickActions = (
-  issue: TIssue,
-  parentRef: React.RefObject<HTMLElement>,
-  customActionButton?: React.ReactElement,
-  placement?: Placement
-) => React.ReactNode;
+export type TRenderQuickActions = ({
+  issue,
+  parentRef,
+  customActionButton,
+  placement,
+  portalElement,
+}: {
+  issue: TIssue;
+  parentRef: React.RefObject<HTMLElement>;
+  customActionButton?: React.ReactElement;
+  placement?: Placement;
+  portalElement?: HTMLDivElement | null;
+}) => React.ReactNode;

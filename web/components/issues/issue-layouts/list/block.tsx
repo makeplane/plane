@@ -93,7 +93,10 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         </div>
         {!issue?.tempId && (
           <div className="block md:hidden border border-custom-border-300 rounded ">
-            {quickActions(issue, parentRef)}
+            {quickActions({
+              issue,
+              parentRef,
+            })}
           </div>
         )}
       </div>
@@ -108,7 +111,12 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
               displayProperties={displayProperties}
               activeLayout="List"
             />
-            <div className="hidden md:block">{quickActions(issue, parentRef)}</div>
+            <div className="hidden md:block">
+              {quickActions({
+                issue,
+                parentRef,
+              })}
+            </div>
           </>
         ) : (
           <div className="h-4 w-4">
