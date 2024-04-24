@@ -116,10 +116,16 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     setFormSubmitting(false);
   };
 
+  const isTitleLengthMoreThan255Character = formData?.name ? formData.name.length > 255 : false;
+
   if (!workspaceSlug || !projectId || !workspaceId) return <></>;
   return (
     <form className="relative space-y-4" onSubmit={handleFormSubmit}>
-      <InboxIssueTitle data={formData} handleData={handleFormData} />
+      <InboxIssueTitle
+        data={formData}
+        handleData={handleFormData}
+        isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
+      />
       <InboxIssueDescription
         workspaceSlug={workspaceSlug}
         projectId={projectId}
@@ -138,7 +144,13 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           <Button variant="neutral-primary" size="sm" type="button" onClick={handleModalClose}>
             Discard
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={formSubmitting}>
+          <Button
+            variant="primary"
+            size="sm"
+            type="submit"
+            loading={formSubmitting}
+            disabled={isTitleLengthMoreThan255Character}
+          >
             {formSubmitting ? "Adding Issue..." : "Add Issue"}
           </Button>
         </div>

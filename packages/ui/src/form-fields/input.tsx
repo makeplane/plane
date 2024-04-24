@@ -27,9 +27,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
               : mode === "true-transparent"
                 ? "rounded border-none bg-transparent ring-0"
                 : ""
-        } ${hasError ? "border-red-500" : ""} ${hasError && mode === "primary" ? "bg-red-500/20" : ""} ${
-          inputSize === "sm" ? "px-3 py-2" : inputSize === "md" ? "p-3" : ""
-        }`,
+        } ${hasError ? "border-red-500" : ""} ${inputSize === "sm" ? "px-3 py-2" : inputSize === "md" ? "p-3" : ""}`,
         className
       )}
       {...rest}
