@@ -117,13 +117,13 @@ export const AuthRoot = observer((props: Props) => {
   const isSmtpConfigured = instance?.config?.is_smtp_configured;
 
   const redirectToSignUp = (email: string) => {
-    if (isEmpty(email)) router.push({ pathname: "/accounts/sign-up", query: router.query });
-    else router.push({ pathname: "/accounts/sign-up", query: { ...router.query, email: email } });
+    if (isEmpty(email)) router.push({ pathname: "/", query: router.query });
+    else router.push({ pathname: "/", query: { ...router.query, email: email } });
   };
 
   const redirectToSignIn = (email: string) => {
-    if (isEmpty(email)) router.push({ pathname: "/", query: router.query });
-    else router.push({ pathname: "/", query: { ...router.query, email: email } });
+    if (isEmpty(email)) router.push({ pathname: "/accounts/sign-in", query: router.query });
+    else router.push({ pathname: "/accounts/sign-in", query: { ...router.query, email: email } });
   };
 
   useEffect(() => {
@@ -213,6 +213,7 @@ export const AuthRoot = observer((props: Props) => {
               setAuthStep(EAuthSteps.EMAIL);
             }}
             submitButtonText="Continue"
+            mode={mode}
           />
         )}
         {authStep === EAuthSteps.PASSWORD && (

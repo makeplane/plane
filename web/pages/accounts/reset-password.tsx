@@ -4,14 +4,16 @@ import { useRouter } from "next/router";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-// layouts
 import { getPasswordStrength } from "@/helpers/password.helper";
+// hooks
+import useAuthRedirection from "@/hooks/use-auth-redirection";
+// layouts
 import DefaultLayout from "@/layouts/default-layout";
 // lib
 import { NextPageWithLayout } from "@/lib/types";
@@ -50,7 +52,11 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   // store hooks
   //const { captureEvent } = useEventTracker();
   // sign in redirection hook
-  //const { handleRedirection } = useSignInRedirection();
+  const { isRedirecting, handleRedirection } = useAuthRedirection();
+
+  useEffect(() => {
+    handleRedirection();
+  }, [handleRedirection]);
 
   const handleFormChange = (key: keyof TResetPasswordFormValues, value: string) =>
     setResetFormData((prev) => ({ ...prev, [key]: value }));
@@ -69,6 +75,13 @@ const ResetPasswordPage: NextPageWithLayout = () => {
         : true,
     [resetFormData]
   );
+
+  if (isRedirecting)
+    return (
+      <div className="grid h-screen place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="relative">
@@ -195,3 +208,5 @@ ResetPasswordPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default ResetPasswordPage;
+
+

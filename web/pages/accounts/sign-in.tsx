@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,7 +8,7 @@ import { Spinner } from "@plane/ui";
 import { AuthRoot, EAuthModes } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
-import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
+import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useInstance, useUser } from "@/hooks/store";
 import useAuthRedirection from "@/hooks/use-auth-redirection";
@@ -20,12 +20,13 @@ import { NextPageWithLayout } from "@/lib/types";
 import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
-const SignUpPage: NextPageWithLayout = observer(() => {
+export type AuthType = "sign-in" | "sign-up";
+
+const SignInPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { instance } = useInstance();
   const { data: currentUser } = useUser();
   const { captureEvent } = useEventTracker();
-
   // login redirection hook
   const { isRedirecting, handleRedirection } = useAuthRedirection();
 
@@ -42,7 +43,7 @@ const SignUpPage: NextPageWithLayout = observer(() => {
 
   return (
     <div className="relative">
-      <PageHead title="Sign Up" />
+      <PageHead title="Sign In" />
       <div className="absolute inset-0 z-0">
         <Image src={PlaneBackgroundPattern} className="w-screen object-cover" alt="Plane background pattern" />
       </div>
@@ -53,19 +54,19 @@ const SignUpPage: NextPageWithLayout = observer(() => {
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
           <div className="text-center text-sm font-medium text-onboarding-text-300">
-            Already have an account?{" "}
+            New to Plane?{" "}
             <Link
               href="/"
-              onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
+              onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
               className="font-semibold text-custom-primary-100 hover:underline"
             >
-              Sign In
+              Create an account
             </Link>
           </div>
         </div>
         <div className="mx-auto h-full">
           <div className="h-full overflow-auto px-7 pb-56 pt-4 sm:px-0">
-            <AuthRoot mode={EAuthModes.SIGN_UP} />
+            <AuthRoot mode={EAuthModes.SIGN_IN} />
           </div>
         </div>
       </div>
@@ -73,8 +74,8 @@ const SignUpPage: NextPageWithLayout = observer(() => {
   );
 });
 
-SignUpPage.getLayout = function getLayout(page: React.ReactElement) {
+SignInPage.getLayout = function getLayout(page: React.ReactElement) {
   return <DefaultLayout>{page}</DefaultLayout>;
 };
 
-export default SignUpPage;
+export default SignInPage;

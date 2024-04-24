@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { LogOut } from "lucide-react";
 // hooks
 import { Button, Spinner, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
