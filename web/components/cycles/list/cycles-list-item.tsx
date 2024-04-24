@@ -154,7 +154,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
   return (
-    <>
+    <div className="relative">
       <Link
         href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
         onClick={(e) => {
@@ -199,58 +199,61 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
               {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
             </div>
           </div>
-          <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 md:w-auto md:flex-shrink-0 md:justify-end">
-            {currentCycle && (
-              <div
-                className="relative flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
-                style={{
-                  color: currentCycle.color,
-                  backgroundColor: `${currentCycle.color}20`,
-                }}
-              >
-                {currentCycle.value === "current"
-                  ? `${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`
-                  : `${currentCycle.label}`}
-              </div>
-            )}
-
-            <div className="relative flex flex-shrink-0 items-center gap-3">
-              <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
-                <div className="flex w-10 cursor-default items-center justify-center">
-                  {cycleDetails.assignee_ids && cycleDetails.assignee_ids?.length > 0 ? (
-                    <AvatarGroup showTooltip={false}>
-                      {cycleDetails.assignee_ids?.map((assignee_id) => {
-                        const member = getUserDetails(assignee_id);
-                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
-                      })}
-                    </AvatarGroup>
-                  ) : (
-                    <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
-                      <User2 className="h-4 w-4 text-custom-text-400" />
-                    </span>
-                  )}
-                </div>
-              </Tooltip>
-
-              {isEditingAllowed && !isArchived && (
-                <FavoriteStar
-                  onClick={(e) => {
-                    if (cycleDetails.is_favorite) handleRemoveFromFavorites(e);
-                    else handleAddToFavorites(e);
-                  }}
-                  selected={!!cycleDetails.is_favorite}
-                />
-              )}
-              <CycleQuickActions
-                cycleId={cycleId}
-                projectId={projectId}
-                workspaceSlug={workspaceSlug}
-                isArchived={isArchived}
-              />
-            </div>
-          </div>
+          <span className="h-6 w-52 flex-shrink-0" />
         </div>
       </Link>
-    </>
+      <div className="absolute right-5 bottom-8 z-[5] flex items-center gap-1.5">
+        <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 md:w-auto md:flex-shrink-0 md:justify-end">
+          {currentCycle && (
+            <div
+              className="relative flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
+              style={{
+                color: currentCycle.color,
+                backgroundColor: `${currentCycle.color}20`,
+              }}
+            >
+              {currentCycle.value === "current"
+                ? `${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`
+                : `${currentCycle.label}`}
+            </div>
+          )}
+
+          <div className="relative flex flex-shrink-0 items-center gap-3">
+            <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
+              <div className="flex w-10 cursor-default items-center justify-center">
+                {cycleDetails.assignee_ids && cycleDetails.assignee_ids?.length > 0 ? (
+                  <AvatarGroup showTooltip={false}>
+                    {cycleDetails.assignee_ids?.map((assignee_id) => {
+                      const member = getUserDetails(assignee_id);
+                      return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                    })}
+                  </AvatarGroup>
+                ) : (
+                  <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
+                    <User2 className="h-4 w-4 text-custom-text-400" />
+                  </span>
+                )}
+              </div>
+            </Tooltip>
+
+            {isEditingAllowed && !isArchived && (
+              <FavoriteStar
+                onClick={(e) => {
+                  if (cycleDetails.is_favorite) handleRemoveFromFavorites(e);
+                  else handleAddToFavorites(e);
+                }}
+                selected={!!cycleDetails.is_favorite}
+              />
+            )}
+            <CycleQuickActions
+              cycleId={cycleId}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+              isArchived={isArchived}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 });
