@@ -53,6 +53,7 @@ export class RootStore {
     this.router = new RouterStore();
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
+    this.user = new UserStore(this);
     this.memberRoot = new MemberRootStore(this);
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);
@@ -69,7 +70,6 @@ export class RootStore {
     this.theme = new ThemeStore(this);
     this.eventTracker = new EventTrackerStore(this);
     this.instance = new InstanceStore();
-    this.user = new UserStore(this);
     // inbox
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
