@@ -178,7 +178,9 @@ export const CommandModal: React.FC = observer(() => {
                       return 0;
                     }}
                     onKeyDown={(e) => {
-                      // when search is empty and page is undefined
+                      // when search term is not empty, esc should clear the search term
+                      if (e.key === "Escape" && searchTerm) setSearchTerm("");
+
                       // when user tries to close the modal with esc
                       if (e.key === "Escape" && !page && !searchTerm) closePalette();
 
