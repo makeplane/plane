@@ -1,4 +1,5 @@
 import { EPageAccess } from "./enums";
+import { TIssuePriorities } from "./issues";
 
 export type TPage = {
   access: EPageAccess | undefined;
@@ -47,4 +48,16 @@ export type TPageFilters = {
   sortKey: TPageFiltersSortKey;
   sortBy: TPageFiltersSortBy;
   filters?: TPageFilterProps;
+};
+
+export type TPageEmbedType = "mention" | "issue";
+
+export type TPageEmbedResponse = {
+  id: string;
+  name: string;
+  priority: TIssuePriorities;
+  project__identifier: string;
+  project_id: string;
+  sequence_id: string;
+  state_id: string;
 };

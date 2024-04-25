@@ -90,7 +90,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
         </div>
 
         <div className="space-y-3">
-          <div>
+          <div className="flex flex-col gap-1">
             <Controller
               control={control}
               name="name"
@@ -109,13 +109,14 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   ref={ref}
-                  hasError={Boolean(errors.name)}
+                  hasError={Boolean(errors?.name)}
                   placeholder="Module Title"
                   className="w-full resize-none placeholder:text-sm placeholder:font-medium focus:border-blue-400"
                   tabIndex={1}
                 />
               )}
             />
+            <span className="text-xs text-red-500">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // helpers
-import { DATE_BEFORE_FILTER_OPTIONS } from "@/constants/filters";
+import { PROJECT_CREATED_AT_FILTER_OPTIONS } from "@/constants/filters";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
 // constants
@@ -18,7 +18,7 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
   const getDateLabel = (value: string): string => {
     let dateLabel = "";
 
-    const dateDetails = DATE_BEFORE_FILTER_OPTIONS.find((d) => d.value === value);
+    const dateDetails = PROJECT_CREATED_AT_FILTER_OPTIONS.find((d) => d.value === value);
 
     if (dateDetails) dateLabel = dateDetails.name;
     else {

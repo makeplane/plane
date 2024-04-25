@@ -2,17 +2,14 @@ import Placeholder from "@tiptap/extension-placeholder";
 // plane imports
 import { SlashCommand, DragAndDrop } from "@plane/editor-extensions";
 import { UploadImage, ISlashCommandItem } from "@plane/editor-core";
-// local
-import { IssueWidgetExtension } from "src/ui/extensions/widgets/issue-embed-widget";
-import { IssueSuggestions } from "src/ui/extensions/widgets/issue-embed-suggestion-list";
-import { IIssueEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
 // ui
 import { LayersIcon } from "@plane/ui";
+import { IssueEmbedSuggestions, IssueWidget, IssueListRenderer, TIssueEmbedConfig } from "src/ui/extensions";
 
 export const DocumentEditorExtensions = (
   uploadFile: UploadImage,
   setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void,
-  issueEmbedConfig?: IIssueEmbedConfig
+  issueEmbedConfig?: TIssueEmbedConfig
 ) => {
   const additionalOptions: ISlashCommandItem[] = [
     {
@@ -34,7 +31,7 @@ export const DocumentEditorExtensions = (
     },
   ];
 
-  return [
+  const extensions = [
     SlashCommand(uploadFile, additionalOptions),
     DragAndDrop(setHideDragHandle),
     Placeholder.configure({
@@ -50,7 +47,24 @@ export const DocumentEditorExtensions = (
       },
       includeChildren: true,
     }),
-    IssueWidgetExtension({ issueEmbedConfig }),
-    IssueSuggestions(issueEmbedConfig ? issueEmbedConfig.issues : []),
   ];
+
+  if (issueEmbedConfig) {
+    extensions.push(
+      // TODO: check this
+      // @ts-expect-error resolve this
+      IssueWidget({
+        widgetCallback: issueEmbedConfig.widgetCallback,
+      }).configure({
+        issueEmbedConfig,
+      }),
+      IssueEmbedSuggestions.configure({
+        suggestion: {
+          render: () => IssueListRenderer(issueEmbedConfig.searchCallback),
+        },
+      })
+    );
+  }
+
+  return extensions;
 };

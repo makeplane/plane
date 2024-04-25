@@ -47,7 +47,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       description_html: "",
     },
   });
-  // const { issues, fetchIssue, issueWidgetClickAction, issuesLoading } = useIssueEmbeds();
 
   // fetching page details
   const {

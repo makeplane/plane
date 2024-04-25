@@ -12,15 +12,13 @@ import {
 } from "@plane/document-editor";
 // types
 import { IUserLite, TPage } from "@plane/types";
-// ui
-import { Spinner } from "@plane/ui";
 // components
-import { PageContentBrowser, PageEditorTitle } from "@/components/pages";
+import { IssueEmbedCard, PageContentBrowser, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
-import { useIssueEmbeds } from "@/hooks/use-issue-embeds";
+import { useIssueEmbed } from "@/hooks/use-issue-embed";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
@@ -83,7 +81,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     user: currentUser ?? undefined,
   });
   // issue-embed
-  const { issues, fetchIssue, issueWidgetClickAction, issuesLoading } = useIssueEmbeds();
+  const { fetchIssues } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
 
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
@@ -91,12 +89,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(description_html ?? "<p></p>");
   }, [description_html, updateMarkings]);
 
-  if (!issues || issuesLoading)
-    return (
-      <div className="h-full w-full grid place-items-center">
-        <Spinner />
-      </div>
-    );
+  const handleIssueSearch = async (searchQuery: string) => {
+    const response = await fetchIssues(searchQuery);
+    return response;
+  };
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -157,11 +153,22 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                     highlights: mentionHighlights,
                     suggestions: mentionSuggestions,
                   }}
-                  embedConfig={{
-                    issueEmbedConfig: {
-                      issues,
-                      fetchIssue,
-                      clickAction: issueWidgetClickAction,
+                  embedHandler={{
+                    issue: {
+                      searchCallback: async (query) =>
+                        new Promise((resolve) => {
+                          setTimeout(async () => {
+                            const response = await handleIssueSearch(query);
+                            resolve(response);
+                          }, 300);
+                        }),
+                      widgetCallback: (issueId) => (
+                        <IssueEmbedCard
+                          issueId={issueId}
+                          projectId={projectId?.toString() ?? ""}
+                          workspaceSlug={workspaceSlug?.toString() ?? ""}
+                        />
+                      ),
                     },
                   }}
                 />
@@ -177,11 +184,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               mentionHandler={{
                 highlights: mentionHighlights,
               }}
-              embedConfig={{
-                issueEmbedConfig: {
-                  issues,
-                  fetchIssue,
-                  clickAction: issueWidgetClickAction,
+              embedHandler={{
+                issue: {
+                  widgetCallback: (issueId) => (
+                    <IssueEmbedCard
+                      issueId={issueId}
+                      projectId={projectId?.toString() ?? ""}
+                      workspaceSlug={workspaceSlug?.toString() ?? ""}
+                    />
+                  ),
                 },
               }}
             />
