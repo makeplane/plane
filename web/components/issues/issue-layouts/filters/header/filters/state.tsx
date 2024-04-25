@@ -26,7 +26,7 @@ export const FilterState: React.FC<Props> = observer((props) => {
   const sortedOptions = useMemo(() => {
     const filteredOptions = (states ?? []).filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    return sortBy(filteredOptions, [(s) => !(appliedFilters ?? []).includes(s.id), (s) => s.name.toLowerCase()]);
+    return sortBy(filteredOptions, [(s) => !(appliedFilters ?? []).includes(s.id)]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
