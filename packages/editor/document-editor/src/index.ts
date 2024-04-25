@@ -1,5 +1,5 @@
-export { DocumentEditor, DocumentEditorWithRef } from "src/ui";
-export { DocumentReadOnlyEditor, DocumentReadOnlyEditorWithRef } from "src/ui/readonly";
+export { DocumentEditor, DocumentEditorWithRef } from "src/editor";
+export { DocumentReadOnlyEditor, DocumentReadOnlyEditorWithRef } from "src/readonly-editor";
 
 // hooks
 export { useEditorMarkings } from "src/hooks/use-editor-markings";

@@ -43,7 +43,6 @@
     "@tiptap/react": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
     "@tiptap/suggestion": "^2.0.13",
-    "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
     "highlight.js": "^11.8.0",
     "jsx-dom-cjs": "^8.0.3",

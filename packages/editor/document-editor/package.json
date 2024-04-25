@@ -32,12 +32,10 @@
     "@plane/editor-core": "*",
     "@plane/editor-extensions": "*",
     "@plane/ui": "*",
-    "@tippyjs/react": "^4.2.6",
     "@tiptap/core": "^2.1.13",
     "@tiptap/pm": "^2.1.13",
     "@tiptap/suggestion": "^2.1.13",
     "lucide-react": "^0.309.0",
-    "react-popper": "^2.3.0",
     "tippy.js": "^6.3.7",
     "uuid": "^9.0.1"
   },

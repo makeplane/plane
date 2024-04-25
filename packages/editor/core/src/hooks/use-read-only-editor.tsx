@@ -1,7 +1,7 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
-import { CoreReadOnlyEditorExtensions } from "src/ui/read-only/extensions";
-import { CoreReadOnlyEditorProps } from "src/ui/read-only/props";
+import { CoreReadOnlyEditorExtensions } from "src/read-only-editor/extensions";
+import { CoreReadOnlyEditorProps } from "src/read-only-editor/props";
 import { EditorProps } from "@tiptap/pm/view";
 import { EditorReadOnlyRefApi } from "src/types/editor-ref-api";
 import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";

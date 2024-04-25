@@ -1,18 +1,22 @@
-import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
-import { CoreEditorProps } from "src/ui/props";
-import { CoreEditorExtensions } from "src/ui/extensions";
+import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
+import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
+import { CoreEditorProps } from "src/props";
+// components
+import { EditorMenuItemNames, getEditorMenuItems } from "src/components/menu-items";
+// extensions
+import { CoreEditorExtensions } from "src/extensions";
 import { getTrimmedHTML } from "src/lib/utils";
+// helpers
+import { insertContentAtSavedSelection } from "src/helpers/insert-content-at-cursor-position";
+import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
+// types
 import { DeleteImage } from "src/types/delete-image";
+import { EditorRefApi } from "src/types/editor-ref-api";
 import { IMentionHighlight, IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
 import { UploadImage } from "src/types/upload-image";
-import { Selection } from "@tiptap/pm/state";
-import { insertContentAtSavedSelection } from "src/helpers/insert-content-at-cursor-position";
-import { EditorMenuItemNames, getEditorMenuItems } from "src/ui/menus/menu-items";
-import { EditorRefApi } from "src/types/editor-ref-api";
-import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
 
 interface CustomEditorProps {
   id?: string;

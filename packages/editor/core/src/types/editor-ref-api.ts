@@ -1,5 +1,5 @@
 import { IMarking } from "src/helpers/scroll-to-node";
-import { EditorMenuItemNames } from "src/ui/menus/menu-items";
+import { EditorMenuItemNames } from "src/components/menu-items";
 
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;

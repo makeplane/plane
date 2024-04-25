@@ -29,8 +29,7 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
-    "@plane/editor-core": "*",
-    "@plane/ui": "*"
+    "@plane/editor-core": "*"
   },
   "devDependencies": {
     "@types/node": "18.15.3",
