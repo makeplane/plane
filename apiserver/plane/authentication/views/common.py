@@ -320,6 +320,7 @@ class ChangePasswordEndpoint(APIView):
             user.set_password(serializer.data.get("new_password"))
             user.is_password_autoset = False
             user.save()
+            user_login(user=user, request=request)
             return Response(
                 {"message": "Password updated successfully"},
                 status=status.HTTP_200_OK,
