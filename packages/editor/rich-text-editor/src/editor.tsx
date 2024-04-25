@@ -12,8 +12,8 @@ import {
   EditorRefApi,
 } from "@plane/editor-core";
 import * as React from "react";
-import { RichTextEditorExtensions } from "src/ui/extensions";
-import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
+import { RichTextEditorExtensions } from "src/extensions";
+import { EditorBubbleMenu } from "src/components/menus/bubble-menu";
 
 export type IRichTextEditor = {
   initialValue: string;

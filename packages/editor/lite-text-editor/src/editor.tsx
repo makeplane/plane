@@ -11,7 +11,7 @@ import {
   IMentionHighlight,
   EditorRefApi,
 } from "@plane/editor-core";
-import { LiteTextEditorExtensions } from "src/ui/extensions";
+import { LiteTextEditorExtensions } from "src/extensions";
 
 export interface ILiteTextEditor {
   initialValue: string;

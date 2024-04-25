@@ -1,8 +1,8 @@
 import { BubbleMenu, BubbleMenuProps, isNodeSelection } from "@tiptap/react";
 import { FC, useEffect, useState } from "react";
 
-import { NodeSelector } from "src/ui/menus/bubble-menu/node-selector";
-import { LinkSelector } from "src/ui/menus/bubble-menu/link-selector";
+import { NodeSelector } from "src/components/menus/bubble-menu/node-selector";
+import { LinkSelector } from "src/components/menus/bubble-menu/link-selector";
 import {
   BoldItem,
   cn,
