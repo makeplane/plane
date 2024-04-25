@@ -23,11 +23,9 @@ from .views import (
     GitHubOauthInitiateSpaceEndpoint,
     GoogleCallbackSpaceEndpoint,
     GoogleOauthInitiateSpaceEndpoint,
-    MagicSignUpSpaceEndpoint,
     MagicGenerateSpaceEndpoint,
     MagicSignInSpaceEndpoint,
     SignInAuthSpaceEndpoint,
-    SignUpAuthSpaceEndpoint,
     SignOutAuthSpaceEndpoint,
 )
 
@@ -47,11 +45,6 @@ urlpatterns = [
         "spaces/sign-in/",
         SignInAuthSpaceEndpoint.as_view(),
         name="sign-in",
-    ),
-    path(
-        "spaces/sign-up/",
-        SignUpAuthSpaceEndpoint.as_view(),
-        name="sign-up",
     ),
     # signout
     path(
@@ -100,11 +93,6 @@ urlpatterns = [
         "spaces/magic-sign-in/",
         MagicSignInSpaceEndpoint.as_view(),
         name="magic-sign-in",
-    ),
-    path(
-        "spaces/magic-sign-up/",
-        MagicSignUpSpaceEndpoint.as_view(),
-        name="magic-sign-up",
     ),
     ## Google Oauth
     path(

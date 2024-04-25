@@ -28,7 +28,7 @@ from .app.magic import (
 from .app.signout import SignOutAuthEndpoint
 
 
-from .space.email import SignInAuthSpaceEndpoint, SignUpAuthSpaceEndpoint
+from .space.email import SignInAuthSpaceEndpoint
 
 from .space.github import (
     GitHubCallbackSpaceEndpoint,
@@ -43,7 +43,6 @@ from .space.google import (
 from .space.magic import (
     MagicGenerateSpaceEndpoint,
     MagicSignInSpaceEndpoint,
-    MagicSignUpSpaceEndpoint,
 )
 
 from .space.signout import SignOutAuthSpaceEndpoint
