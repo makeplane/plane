@@ -1,6 +1,8 @@
 import { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
 // images
 import githubLightModeImage from "/public/logos/github-black.png";
 import githubDarkModeImage from "/public/logos/github-dark.svg";
@@ -15,7 +17,7 @@ export const GithubOAuthButton: FC<GithubOAuthButtonProps> = (props) => {
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    window.location.assign("http://localhost:8000/auth/github/");
+    window.location.assign(`${API_BASE_URL}/auth/github/`);
   };
 
   return (

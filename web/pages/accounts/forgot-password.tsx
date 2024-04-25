@@ -2,6 +2,7 @@ import { ReactElement, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
@@ -25,6 +26,7 @@ import { NextPageWithLayout } from "@/lib/types";
 // services
 import { AuthService } from "@/services/auth.service";
 // images
+import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
@@ -45,6 +47,8 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
   const { email } = router.query;
   // store hooks
   const { captureEvent } = useEventTracker();
+    // hooks
+    const { resolvedTheme } = useTheme();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(0);
   const { isRedirecting, handleRedirection } = useAuthRedirection();
@@ -104,7 +108,11 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
     <div className="relative">
       <PageHead title="Forgot Password" />
       <div className="absolute inset-0 z-0">
-        <Image src={PlaneBackgroundPattern} className="w-screen object-cover" alt="Plane background pattern" />
+      <Image
+          src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
+          className="w-screen min-h-screen object-cover"
+          alt="Plane background pattern"
+        />
       </div>
       <div className="relative z-10">
         <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28">

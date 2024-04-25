@@ -1,6 +1,8 @@
-import { useTheme } from "next-themes";
-import Image from "next/image";
 import { FC } from "react";
+import Image from "next/image";
+import { useTheme } from "next-themes";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
 // images
 import GoogleLogo from "/public/logos/google-logo.svg";
 
@@ -14,7 +16,7 @@ export const GoogleOAuthButton: FC<GoogleOAuthButtonProps> = (props) => {
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    window.location.assign("http://localhost:8000/auth/google/");
+    window.location.assign(`${API_BASE_URL}/auth/google/`);
   };
 
   return (
