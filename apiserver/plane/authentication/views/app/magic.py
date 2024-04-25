@@ -89,7 +89,6 @@ class MagicSignInEndpoint(View):
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
-        print(request.POST)
         next_path = request.POST.get("next_path")
 
         if code == "" or email == "":
