@@ -60,30 +60,8 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
 
-  const handleSendUniqueCode = async () => {
-    const emailFormValue = passwordFormData.email;
-
-    const isEmailValid = checkEmailValidity(emailFormValue);
-
-    if (!isEmailValid) {
-      // FIXME: Handle Error
-      // setError("email", { message: "Email is invalid" });
-      return;
-    }
-
-    setIsSendingUniqueCode(true);
-
-    await authService
-      .generateUniqueCode({ email: emailFormValue })
-      .then(() => handleStepChange(EAuthSteps.UNIQUE_CODE))
-      .catch((err) =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      )
-      .finally(() => setIsSendingUniqueCode(false));
+  const redirectToUniqueCodeLogin = async () => {
+    handleStepChange(EAuthSteps.UNIQUE_CODE);
   };
 
   const passwordSupport =
@@ -218,7 +196,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               {instance && isSmtpConfigured && (
                 <Button
                   type="button"
-                  onClick={handleSendUniqueCode}
+                  onClick={redirectToUniqueCodeLogin}
                   variant="outline-primary"
                   className="w-full"
                   size="lg"
