@@ -90,6 +90,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
     handleSendNewCode(email)
       .then(() => setResendCodeTimer(30))
       .finally(() => setIsRequestingNewCode(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
@@ -126,7 +127,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="space-y-1">
-        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="token">
+        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="code">
           Unique code
         </label>
         <Input
@@ -134,7 +135,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
           // FIXME:
-          // hasError={Boolean(errors.token)}
+          // hasError={Boolean(errors.code)}
           placeholder="gets-sets-flys"
           className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
           autoFocus

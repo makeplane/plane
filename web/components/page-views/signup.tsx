@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 // ui
+import { useTheme } from "next-themes";
 import { Spinner } from "@plane/ui";
 // components
 import { AuthRoot, EAuthModes } from "@/components/account";
@@ -14,6 +15,7 @@ import { useEventTracker, useInstance, useUser } from "@/hooks/store";
 import useAuthRedirection from "@/hooks/use-auth-redirection";
 // types
 // assets
+import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
@@ -22,7 +24,8 @@ export const SignUpView = observer(() => {
   const { instance } = useInstance();
   const { data: currentUser } = useUser();
   const { captureEvent } = useEventTracker();
-
+  // hooks
+  const { resolvedTheme } = useTheme();
   // login redirection hook
   const { isRedirecting, handleRedirection } = useAuthRedirection();
 
@@ -41,7 +44,11 @@ export const SignUpView = observer(() => {
     <div className="relative">
       <PageHead title="Sign Up" />
       <div className="absolute inset-0 z-0">
-        <Image src={PlaneBackgroundPattern} className="w-screen object-cover" alt="Plane background pattern" />
+      <Image
+          src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
+          className="w-screen min-h-screen object-cover"
+          alt="Plane background pattern"
+        />
       </div>
       <div className="relative z-10">
         <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28">
