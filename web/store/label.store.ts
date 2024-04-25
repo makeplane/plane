@@ -96,7 +96,7 @@ export class LabelStore implements ILabelStore {
     const workspaceSlug = this.rootStore.app.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
     return sortBy(
-      Object.values(this.labelMap).filter((label) => label.project_id === projectId),
+      Object.values(this.labelMap).filter((label) => label?.project_id === projectId),
       "sort_order"
     );
   }
@@ -113,7 +113,7 @@ export class LabelStore implements ILabelStore {
     const workspaceSlug = this.rootStore.app.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
     return sortBy(
-      Object.values(this.labelMap).filter((label) => label.project_id === projectId),
+      Object.values(this.labelMap).filter((label) => label?.project_id === projectId),
       "sort_order"
     );
   });

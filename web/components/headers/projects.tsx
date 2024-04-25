@@ -51,16 +51,19 @@ export const ProjectsHeader = observer(() => {
   const handleFilters = useCallback(
     (key: keyof TProjectFilters, value: string | string[]) => {
       if (!workspaceSlug) return;
-      const newValues = filters?.[key] ?? [];
-
-      if (Array.isArray(value))
+      let newValues = filters?.[key] ?? [];
+      if (Array.isArray(value)) {
+        if (key === "created_at" && newValues.find((v) => v.includes("custom"))) newValues = [];
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
           else newValues.splice(newValues.indexOf(val), 1);
         });
-      else {
+      } else {
         if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
+        else {
+          if (key === "created_at") newValues = [value];
+          else newValues.push(value);
+        }
       }
 
       updateFilters(workspaceSlug, { [key]: newValues });
