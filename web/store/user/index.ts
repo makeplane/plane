@@ -161,6 +161,5 @@ export class UserStore implements IUserStore {
         this.accounts[account.provider_account_id] = new AccountStore(this.rootStore, account);
       });
     });
-    console.log("userAccounts", userAccounts);
   };
 }

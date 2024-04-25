@@ -1,11 +1,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 // types
-import {
-  //IUser, IUserSettings,
-  IWorkspace,
-  TUserProfile,
-} from "@plane/types";
+import { IUserSettings, IWorkspace, TUserProfile } from "@plane/types";
 import { useUserProfile } from "@/hooks/store";
 // hooks
 import { useWorkspace } from "@/hooks/store";
@@ -19,7 +15,7 @@ type TUseAuthRedirectionProps = {
 
 const useAuthRedirection = (): TUseAuthRedirectionProps => {
   // states
-  const [isRedirecting, setIsRedirecting] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [error, setError] = useState<any | null>(null);
   // router
   const router = useRouter();
@@ -53,7 +49,7 @@ const useAuthRedirection = (): TUseAuthRedirectionProps => {
         }
 
         // Fetch the current user settings
-        const userSettings = await fetchCurrentUserSettings();
+        const userSettings: IUserSettings | undefined = await fetchCurrentUserSettings();
         const workspacesList: IWorkspace[] = await fetchWorkspaces();
 
         // Extract workspace details
