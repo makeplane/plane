@@ -19,16 +19,12 @@ from plane.authentication.provider.credentials.magic_code import (
     MagicCodeProvider,
 )
 from plane.authentication.utils.login import user_login
-from plane.authentication.utils.redirection_path import get_redirection_path
-from plane.authentication.utils.workspace_project_join import (
-    process_workspace_project_invitations,
-)
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 
 
-class MagicGenerateEndpoint(APIView):
+class MagicGenerateSpaceEndpoint(APIView):
 
     permission_classes = [
         AllowAny,
@@ -45,7 +41,7 @@ class MagicGenerateEndpoint(APIView):
                 }
             )
 
-        origin = request.META.get("HTTP_ORIGIN", "/")
+        origin = base_host(request=request)
         email = request.data.get("email", False)
         try:
             # Clean up the email
@@ -82,7 +78,7 @@ class MagicGenerateEndpoint(APIView):
             )
 
 
-class MagicSignInEndpoint(View):
+class MagicSignInSpaceEndpoint(View):
 
     def post(self, request):
 
@@ -100,7 +96,7 @@ class MagicSignInEndpoint(View):
                 params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
+                "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
         try:
@@ -110,15 +106,11 @@ class MagicSignInEndpoint(View):
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user)
-            # Process workspace and project invitations
-            process_workspace_project_invitations(user=user)
-            if user.is_password_autoset:
-                path = "accounts/set-password"
-            else:
-                # Get the redirection path
-                path = get_redirection_path(user=user)
             # redirect to referer path
-            url = urljoin(base_host(request=request), path)
+            url = urljoin(
+                base_host(request=request),
+                str(next_path) if next_path else "spaces",
+            )
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
@@ -130,29 +122,30 @@ class MagicSignInEndpoint(View):
                 params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
+                "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
 
-class MagicSignUpEndpoint(View):
+class MagicSignUpSpaceEndpoint(View):
 
     def post(self, request):
 
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
+        next_path = request.POST.get("next_path")
 
         if code == "" or email == "":
+            params = {
+                "error_code": "EMAIL_CODE_REQUIRED",
+                "error_message": "Email and code are required",
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request),
-                "?"
-                + urlencode(
-                    {
-                        "error_code": "EMAIL_CODE_REQUIRED",
-                        "error_message": "Email and code are required",
-                    }
-                ),
+                "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
         try:
@@ -162,23 +155,22 @@ class MagicSignUpEndpoint(View):
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user)
-            # Process workspace and project invitations
-            process_workspace_project_invitations(user=user)
-            # Get the redirection path
-            path = get_redirection_path(user=user)
             # redirect to referer path
-            url = urljoin(base_host(request=request), path)
+            url = urljoin(
+                base_host(request=request),
+                str(next_path) if next_path else "/spaces",
+            )
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
+            params = {
+                "error_code": str(e.error_code),
+                "error_message": str(e.error_message),
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request),
-                "?"
-                + urlencode(
-                    {
-                        "error_code": str(e.error_code),
-                        "error_message": str(e.error_message),
-                    }
-                ),
+                "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)

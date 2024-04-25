@@ -4,19 +4,31 @@ from .views import (
     CSRFTokenEndpoint,
     EmailCheckSignInEndpoint,
     EmailCheckSignUpEndpoint,
+    ForgotPasswordEndpoint,
+    SetUserPasswordEndpoint,
+    ResetPasswordEndpoint,
+    # App
     GitHubCallbackEndpoint,
     GitHubOauthInitiateEndpoint,
     GoogleCallbackEndpoint,
     GoogleOauthInitiateEndpoint,
     MagicGenerateEndpoint,
     MagicSignInEndpoint,
+    MagicSignUpEndpoint,
     SignInAuthEndpoint,
     SignOutAuthEndpoint,
     SignUpAuthEndpoint,
-    ForgotPasswordEndpoint,
-    SetUserPasswordEndpoint,
-    ResetPasswordEndpoint,
-    MagicSignUpEndpoint,
+    # Space
+    GitHubCallbackSpaceEndpoint,
+    GitHubOauthInitiateSpaceEndpoint,
+    GoogleCallbackSpaceEndpoint,
+    GoogleOauthInitiateSpaceEndpoint,
+    MagicSignUpSpaceEndpoint,
+    MagicGenerateSpaceEndpoint,
+    MagicSignInSpaceEndpoint,
+    SignInAuthSpaceEndpoint,
+    SignUpAuthSpaceEndpoint,
+    SignOutAuthSpaceEndpoint,
 )
 
 urlpatterns = [
@@ -31,10 +43,25 @@ urlpatterns = [
         SignUpAuthEndpoint.as_view(),
         name="sign-up",
     ),
+    path(
+        "spaces/sign-in/",
+        SignInAuthSpaceEndpoint.as_view(),
+        name="sign-in",
+    ),
+    path(
+        "spaces/sign-up/",
+        SignUpAuthSpaceEndpoint.as_view(),
+        name="sign-up",
+    ),
     # signout
     path(
         "sign-out/",
         SignOutAuthEndpoint.as_view(),
+        name="sign-out",
+    ),
+    path(
+        "spaces/sign-out/",
+        SignOutAuthSpaceEndpoint.as_view(),
         name="sign-out",
     ),
     # csrf token
@@ -59,6 +86,26 @@ urlpatterns = [
         MagicSignUpEndpoint.as_view(),
         name="magic-sign-up",
     ),
+    path(
+        "get-csrf-token/",
+        CSRFTokenEndpoint.as_view(),
+        name="get_csrf_token",
+    ),
+    path(
+        "spaces/magic-generate/",
+        MagicGenerateSpaceEndpoint.as_view(),
+        name="magic-generate",
+    ),
+    path(
+        "spaces/magic-sign-in/",
+        MagicSignInSpaceEndpoint.as_view(),
+        name="magic-sign-in",
+    ),
+    path(
+        "spaces/magic-sign-up/",
+        MagicSignUpSpaceEndpoint.as_view(),
+        name="magic-sign-up",
+    ),
     ## Google Oauth
     path(
         "google/",
@@ -70,6 +117,16 @@ urlpatterns = [
         GoogleCallbackEndpoint.as_view(),
         name="google-callback",
     ),
+    path(
+        "spaces/google/",
+        GoogleOauthInitiateSpaceEndpoint.as_view(),
+        name="google-initiate",
+    ),
+    path(
+        "google/callback/",
+        GoogleCallbackSpaceEndpoint.as_view(),
+        name="google-callback",
+    ),
     ## Github Oauth
     path(
         "github/",
@@ -79,6 +136,16 @@ urlpatterns = [
     path(
         "github/callback/",
         GitHubCallbackEndpoint.as_view(),
+        name="github-callback",
+    ),
+    path(
+        "spaces/github/",
+        GitHubOauthInitiateSpaceEndpoint.as_view(),
+        name="github-initiate",
+    ),
+    path(
+        "spaces/github/callback/",
+        GitHubCallbackSpaceEndpoint.as_view(),
         name="github-callback",
     ),
     # Email Check

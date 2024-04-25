@@ -4,24 +4,46 @@ from .common import (
     ForgotPasswordEndpoint,
     ResetPasswordEndpoint,
     SetUserPasswordEndpoint,
-    SignOutAuthEndpoint,
     EmailCheckSignInEndpoint,
     EmailCheckSignUpEndpoint,
 )
-from .email import (
+from .app.email import (
     SignInAuthEndpoint,
     SignUpAuthEndpoint,
 )
-from .github import (
+from .app.github import (
     GitHubCallbackEndpoint,
     GitHubOauthInitiateEndpoint,
 )
-from .google import (
+from .app.google import (
     GoogleCallbackEndpoint,
     GoogleOauthInitiateEndpoint,
 )
-from .magic import (
+from .app.magic import (
     MagicGenerateEndpoint,
     MagicSignInEndpoint,
     MagicSignUpEndpoint,
 )
+
+from .app.signout import SignOutAuthEndpoint
+
+
+from .space.email import SignInAuthSpaceEndpoint, SignUpAuthSpaceEndpoint
+
+from .space.github import (
+    GitHubCallbackSpaceEndpoint,
+    GitHubOauthInitiateSpaceEndpoint,
+)
+
+from .space.google import (
+    GoogleCallbackSpaceEndpoint,
+    GoogleOauthInitiateSpaceEndpoint,
+)
+
+from .space.magic import (
+    MagicGenerateSpaceEndpoint,
+    MagicSignInSpaceEndpoint,
+    MagicSignUpSpaceEndpoint,
+)
+
+from .space.signout import SignOutAuthSpaceEndpoint

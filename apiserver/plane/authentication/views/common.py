@@ -3,7 +3,6 @@ import os
 from urllib.parse import urlencode, urljoin
 
 # Django imports
-from django.contrib.auth import logout
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -108,17 +107,6 @@ class EmailCheckSignInEndpoint(APIView):
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
-
-
-class SignOutAuthEndpoint(View):
-
-    def post(self, request):
-        logout(request)
-        url = urljoin(
-            base_host(request=request),
-            "?" + urlencode({"success": "true"}),
-        )
-        return HttpResponseRedirect(url)
 
 
 class CSRFTokenEndpoint(APIView):

@@ -11,12 +11,12 @@ from django.views import View
 from plane.authentication.adapter.base import AuthenticationException
 from plane.authentication.provider.credentials.email import EmailProvider
 from plane.authentication.utils.login import user_login
+from plane.license.models import Instance
+from plane.authentication.utils.host import base_host
 from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
-from plane.license.models import Instance
-from plane.authentication.utils.host import base_host
 
 
 class SignInAuthEndpoint(View):
@@ -108,86 +108,6 @@ class SignInAuthEndpoint(View):
             return HttpResponseRedirect(url)
 
 
-class SignInSpaceAuthEndpoint(View):
-
-    def post(self, request):
-        next_path = request.POST.get("next_path")
-        # Check instance configuration
-        instance = Instance.objects.first()
-        if instance is None or not instance.is_setup_done:
-            params = {
-                "error_code": "INSTANCE_NOT_CONFIGURED",
-                "error_message": "Instance is not configured",
-            }
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-
-        # set the referer as session to redirect after login
-        email = request.POST.get("email", False)
-        password = request.POST.get("password", False)
-
-        ## Raise exception if any of the above are missing
-        if not email or not password:
-            params = {
-                "error_code": "REQUIRED_EMAIL_PASSWORD",
-                "error_message": "Both email and password are required",
-            }
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-
-        # Validate email
-        email = email.strip().lower()
-        try:
-            validate_email(email)
-        except ValidationError:
-            params = {
-                "error_code": "INVALID_EMAIL",
-                "error_message": "Please provide a valid email address.",
-            }
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-        try:
-            provider = EmailProvider(
-                request=request, key=email, code=password, is_signup=False
-            )
-            user = provider.authenticate()
-            # Login the user and record his device info
-            user_login(request=request, user=user)
-            # redirect to next path
-            url = urljoin(
-                base_host(request=request),
-                str(next_path) if next_path else "/",
-            )
-            return HttpResponseRedirect(url)
-        except AuthenticationException as e:
-            params = {
-                "error_code": str(e.error_code),
-                "error_message": str(e.error_message),
-            }
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-
-
 class SignUpAuthEndpoint(View):
 
     def post(self, request):
@@ -254,83 +174,6 @@ class SignUpAuthEndpoint(View):
                 path = get_redirection_path(user=user)
             # redirect to referer path
             url = urljoin(base_host(request=request), path)
-            return HttpResponseRedirect(url)
-        except AuthenticationException as e:
-            params = {
-                "error_code": str(e.error_code),
-                "error_message": str(e.error_message),
-            }
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-
-
-class SignUpSpaceAuthEndpoint(View):
-
-    def post(self, request):
-        next_path = request.POST.get("next_path")
-        # Check instance configuration
-        instance = Instance.objects.first()
-        if instance is None or not instance.is_setup_done:
-            params = {
-                "error_code": "INSTANCE_NOT_CONFIGURED",
-                "error_message": "Instance is not configured",
-            }
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-
-        email = request.POST.get("email", False)
-        password = request.POST.get("password", False)
-        ## Raise exception if any of the above are missing
-        if not email or not password:
-            params = {
-                "error_code": "REQUIRED_EMAIL_PASSWORD",
-                "error_message": "Both email and password are required",
-            }
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-        # Validate the email
-        email = email.strip().lower()
-        try:
-            validate_email(email)
-        except ValidationError:
-            params = {
-                "error_code": "INVALID_EMAIL",
-                "error_message": "Please provide a valid email address.",
-            }
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-        try:
-            provider = EmailProvider(
-                request=request, key=email, code=password, is_signup=True
-            )
-            user = provider.authenticate()
-            # Login the user and record his device info
-            user_login(request=request, user=user)
-            # redirect to next path
-            url = urljoin(
-                base_host(request=request),
-                str(next_path) if next_path else "/",
-            )
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = {
