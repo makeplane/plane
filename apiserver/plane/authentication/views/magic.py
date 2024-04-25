@@ -89,17 +89,18 @@ class MagicSignInEndpoint(View):
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
+        next_path = request.POST.get("next_path")
 
         if code == "" or email == "":
+            params = {
+                "error_code": "EMAIL_CODE_REQUIRED",
+                "error_message": "Email and code are required",
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request),
-                "accounts/sign-in?"
-                + urlencode(
-                    {
-                        "error_code": "EMAIL_CODE_REQUIRED",
-                        "error_message": "Email and code are required",
-                    }
-                ),
+                "accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
         try:
@@ -111,22 +112,25 @@ class MagicSignInEndpoint(View):
             user_login(request=request, user=user)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
-            # Get the redirection path
-            path = get_redirection_path(user=user)
+            if user.is_password_autoset:
+                path = "accounts/set-password"
+            else:
+                # Get the redirection path
+                path = get_redirection_path(user=user)
             # redirect to referer path
             url = urljoin(base_host(request=request), path)
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
+            params = {
+                "error_code": str(e.error_code),
+                "error_message": str(e.error_message),
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request),
-                "accounts/sign-in?"
-                + urlencode(
-                    {
-                        "error_code": str(e.error_code),
-                        "error_message": str(e.error_message),
-                    }
-                ),
+                "accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
