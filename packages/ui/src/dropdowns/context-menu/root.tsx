@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import ReactDOM from "react-dom";
 // components
 import { ContextMenuItem } from "./item";
 // helpers
@@ -24,7 +25,7 @@ type ContextMenuProps = {
   items: TContextMenuItem[];
 };
 
-export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
+const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
   const { parentRef, items } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -128,7 +129,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
     >
       <div
         ref={contextMenuRef}
-        className="fixed border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg rounded-md px-2 py-2.5 max-h-60 min-w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
+        className="fixed border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg rounded-md px-2 py-2.5 max-h-72 min-w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
         style={{
           top: position.y,
           left: position.x,
@@ -148,4 +149,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
   );
 };
 
-export default ContextMenu;
+export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
+  let contextMenu = <ContextMenuWithoutPortal {...props} />;
+  const portal = document.querySelector("#context-menu-portal");
+  if (portal) contextMenu = ReactDOM.createPortal(contextMenu, portal);
+  return contextMenu;
+};

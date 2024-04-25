@@ -41,6 +41,7 @@ class MyDocument extends Document {
           )}
         </Head>
         <body>
+          <div id="context-menu-portal" />
           <Main />
           <NextScript />
           {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
