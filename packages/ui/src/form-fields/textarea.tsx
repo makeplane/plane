@@ -15,7 +15,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>((props, re
   // refs
   const textAreaRef = useRef<any>(ref);
   // auto re-size
-  useAutoResizeTextArea(textAreaRef);
+  useAutoResizeTextArea(textAreaRef, value);
 
   return (
     <textarea

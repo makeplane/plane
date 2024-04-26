@@ -6,7 +6,7 @@ import { Avatar, Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember, useUser } from "@/hooks/store";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -22,6 +22,7 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // store hooks
   const { getUserDetails } = useMember();
+  const { currentUser } = useUser();
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
@@ -32,9 +33,11 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
 
     return sortBy(filteredOptions, [
       (memberId) => !(appliedFilters ?? []).includes(memberId),
+      (memberId) => memberId !== currentUser?.id,
       (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
     ]);
-  }, [appliedFilters, getUserDetails, memberIds, searchQuery]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const handleViewToggle = () => {
     if (!sortedOptions) return;
@@ -65,7 +68,7 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
                       isChecked={appliedFilters?.includes(member.id) ? true : false}
                       onClick={() => handleUpdate(member.id)}
                       icon={<Avatar name={member.display_name} src={member.avatar} showTooltip={false} size="md" />}
-                      title={member.display_name}
+                      title={currentUser?.id === member.id ? "You" : member?.display_name}
                     />
                   );
                 })}
