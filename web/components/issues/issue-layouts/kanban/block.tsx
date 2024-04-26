@@ -60,7 +60,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
             className="absolute -top-1 right-0 hidden group-hover/kanban-block:block"
             onClick={handleEventPropagation}
           >
-            {!isReadOnly && quickActions(issue)}
+            {quickActions(issue)}
           </div>
         </div>
       </WithDisplayPropertiesHOC>
