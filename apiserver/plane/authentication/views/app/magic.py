@@ -26,6 +26,7 @@ from plane.authentication.utils.workspace_project_join import (
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
+from plane.db.models import User
 
 
 class MagicGenerateEndpoint(APIView):
@@ -103,6 +104,20 @@ class MagicSignInEndpoint(View):
                 "accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
+
+        if not User.objects.filter(email=email).exists():
+            params = {
+                "error_code": "USER_DOES_NOT_EXIST",
+                "error_message": "User could not be found with the given email.",
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
+            url = urljoin(
+                base_host(request=request),
+                "accounts/sign-in?" + urlencode(params),
+            )
+            return HttpResponseRedirect(url)
+
         try:
             provider = MagicCodeProvider(
                 request=request, key=f"magic_{email}", code=code
@@ -160,6 +175,20 @@ class MagicSignUpEndpoint(View):
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
+
+        if User.objects.filter(email=email).exists():
+            params = {
+                "error_code": "USER_ALREADY_EXIST",
+                "error_message": "User already exists with the email.",
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
+            url = urljoin(
+                base_host(request=request),
+                "?" + urlencode(params),
+            )
+            return HttpResponseRedirect(url)
+
         try:
             provider = MagicCodeProvider(
                 request=request, key=f"magic_{email}", code=code

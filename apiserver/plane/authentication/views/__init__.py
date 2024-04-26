@@ -4,9 +4,10 @@ from .common import (
     ForgotPasswordEndpoint,
     ResetPasswordEndpoint,
     SetUserPasswordEndpoint,
-    EmailCheckSignInEndpoint,
-    EmailCheckSignUpEndpoint,
 )
+
+from .app.check import EmailCheckSignInEndpoint, EmailCheckSignUpEndpoint
+
 from .app.email import (
     SignInAuthEndpoint,
     SignUpAuthEndpoint,
@@ -43,6 +44,9 @@ from .space.google import (
 from .space.magic import (
     MagicGenerateSpaceEndpoint,
     MagicSignInSpaceEndpoint,
+    MagicSignUpSpaceEndpoint,
 )
 
 from .space.signout import SignOutAuthSpaceEndpoint
+
+from .space.check import EmailCheckEndpoint

@@ -22,6 +22,7 @@ from plane.authentication.utils.login import user_login
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
+from plane.db.models import User
 
 
 class MagicGenerateSpaceEndpoint(APIView):
@@ -99,6 +100,83 @@ class MagicSignInSpaceEndpoint(View):
                 "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
+
+        if not User.objects.filter(email=email).exists():
+            params = {
+                "error_code": "USER_DOES_NOT_EXIST",
+                "error_message": "User could not be found with the given email.",
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
+            url = urljoin(
+                base_host(request=request),
+                "accounts/sign-in?" + urlencode(params),
+            )
+            return HttpResponseRedirect(url)
+
+        try:
+            provider = MagicCodeProvider(
+                request=request, key=f"magic_{email}", code=code
+            )
+            user = provider.authenticate()
+            # Login the user and record his device info
+            user_login(request=request, user=user)
+            # redirect to referer path
+            url = urljoin(
+                base_host(request=request),
+                str(next_path) if next_path else "spaces",
+            )
+            return HttpResponseRedirect(url)
+
+        except AuthenticationException as e:
+            params = {
+                "error_code": str(e.error_code),
+                "error_message": str(e.error_message),
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
+            url = urljoin(
+                base_host(request=request),
+                "spaces/accounts/sign-in?" + urlencode(params),
+            )
+            return HttpResponseRedirect(url)
+
+
+class MagicSignUpSpaceEndpoint(View):
+
+    def post(self, request):
+
+        # set the referer as session to redirect after login
+        code = request.POST.get("code", "").strip()
+        email = request.POST.get("email", "").strip().lower()
+        next_path = request.POST.get("next_path")
+
+        if code == "" or email == "":
+            params = {
+                "error_code": "EMAIL_CODE_REQUIRED",
+                "error_message": "Email and code are required",
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
+            url = urljoin(
+                base_host(request=request),
+                "spaces/accounts/sign-in?" + urlencode(params),
+            )
+            return HttpResponseRedirect(url)
+
+        if User.objects.filter(email=email).exists():
+            params = {
+                "error_code": "USER_ALREADY_EXIST",
+                "error_message": "User already exists with the email.",
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
+            url = urljoin(
+                base_host(request=request),
+                "?" + urlencode(params),
+            )
+            return HttpResponseRedirect(url)
+
         try:
             provider = MagicCodeProvider(
                 request=request, key=f"magic_{email}", code=code

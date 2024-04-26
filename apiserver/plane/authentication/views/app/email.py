@@ -17,6 +17,7 @@ from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
+from plane.db.models import User
 
 
 class SignInAuthEndpoint(View):
@@ -76,6 +77,20 @@ class SignInAuthEndpoint(View):
                 "accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
+
+        if not User.objects.filter(email=email).exists():
+            params = {
+                "error_code": "USER_DOES_NOT_EXIST",
+                "error_message": "User could not be found with the given email.",
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
+            url = urljoin(
+                base_host(request=request),
+                "accounts/sign-in?" + urlencode(params),
+            )
+            return HttpResponseRedirect(url)
+
         try:
             provider = EmailProvider(
                 request=request, key=email, code=password, is_signup=False
@@ -158,6 +173,20 @@ class SignUpAuthEndpoint(View):
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
+
+        if User.objects.filter(email=email).exists():
+            params = {
+                "error_code": "USER_ALREADY_EXIST",
+                "error_message": "User already exists with the email.",
+            }
+            if next_path:
+                params["next_path"] = str(next_path)
+            url = urljoin(
+                base_host(request=request),
+                "?" + urlencode(params),
+            )
+            return HttpResponseRedirect(url)
+
         try:
             provider = EmailProvider(
                 request=request, key=email, code=password, is_signup=True
