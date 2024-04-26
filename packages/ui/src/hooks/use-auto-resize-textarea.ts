@@ -1,24 +1,16 @@
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
-export const useAutoResizeTextArea = (textAreaRef: React.RefObject<HTMLTextAreaElement>) => {
-  useEffect(() => {
+export const useAutoResizeTextArea = (
+  textAreaRef: React.RefObject<HTMLTextAreaElement>,
+  value: string | number | readonly string[]
+) => {
+  useLayoutEffect(() => {
     const textArea = textAreaRef.current;
     if (!textArea) return;
 
-    const resizeTextArea = () => {
-      textArea.style.height = "auto";
-      const computedHeight = textArea.scrollHeight + "px";
-      textArea.style.height = computedHeight;
-    };
-
-    const handleInput = () => resizeTextArea();
-
-    // resize on mount
-    resizeTextArea();
-
-    textArea.addEventListener("input", handleInput);
-    return () => {
-      textArea.removeEventListener("input", handleInput);
-    };
-  }, [textAreaRef]);
+    // We need to reset the height momentarily to get the correct scrollHeight for the textarea
+    textArea.style.height = "0px";
+    const scrollHeight = textArea.scrollHeight;
+    textArea.style.height = scrollHeight + "px";
+  }, [textAreaRef, value]);
 };
