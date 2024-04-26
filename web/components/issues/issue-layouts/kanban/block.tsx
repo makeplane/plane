@@ -181,9 +181,6 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
           href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
             issue.id
           }`}
-          target="_blank"
-          onClick={() => handleIssuePeekOverview(issue)}
-          disabled={!!issue?.tempId}
           ref={cardRef}
           className={cn(
             "block rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
@@ -191,6 +188,9 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
             { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id },
             { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
           )}
+          target="_blank"
+          onClick={() => handleIssuePeekOverview(issue)}
+          disabled={!!issue?.tempId}
         >
           <RenderIfVisible
             classNames="space-y-2 px-3 py-2"

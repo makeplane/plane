@@ -21,6 +21,15 @@ export const ControlLink = React.forwardRef<HTMLAnchorElement, TControlLink>((pr
     }
   };
 
+  // if disabled but still has a ref or a className then it has to be rendered without a href
+  if (disabled && (ref || className))
+    return (
+      <a ref={ref} className={className}>
+        {children}
+      </a>
+    );
+
+  // else if just disabled return without the parent wrapper
   if (disabled) return <>{children}</>;
 
   return (
