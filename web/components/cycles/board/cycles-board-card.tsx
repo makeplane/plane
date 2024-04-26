@@ -149,7 +149,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
   return (
-    <div>
+    <div className="relative">
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
         <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div className="flex items-center justify-between gap-2">
@@ -231,23 +231,23 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
               ) : (
                 <span className="text-xs text-custom-text-400">No due date</span>
               )}
-              <div className="z-[5] flex items-center gap-1.5">
-                {isEditingAllowed && (
-                  <FavoriteStar
-                    onClick={(e) => {
-                      if (cycleDetails.is_favorite) handleRemoveFromFavorites(e);
-                      else handleAddToFavorites(e);
-                    }}
-                    selected={!!cycleDetails.is_favorite}
-                  />
-                )}
-
-                <CycleQuickActions cycleId={cycleId} projectId={projectId} workspaceSlug={workspaceSlug} />
-              </div>
             </div>
           </div>
         </div>
       </Link>
+      <div className="absolute right-4 bottom-3.5 z-[5] flex items-center gap-1.5">
+        {isEditingAllowed && (
+          <FavoriteStar
+            onClick={(e) => {
+              if (cycleDetails.is_favorite) handleRemoveFromFavorites(e);
+              else handleAddToFavorites(e);
+            }}
+            selected={!!cycleDetails.is_favorite}
+          />
+        )}
+
+        <CycleQuickActions cycleId={cycleId} projectId={projectId} workspaceSlug={workspaceSlug} />
+      </div>
     </div>
   );
 });

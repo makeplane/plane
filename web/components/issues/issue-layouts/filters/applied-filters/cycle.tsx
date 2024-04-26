@@ -28,9 +28,9 @@ export const AppliedCycleFilters: React.FC<Props> = observer((props) => {
         const cycleStatus = (cycleDetails?.status ? cycleDetails?.status.toLocaleLowerCase() : "draft") as TCycleGroups;
 
         return (
-          <div key={cycleId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={cycleId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs truncate">
             <CycleGroupIcon cycleGroup={cycleStatus} className="h-3 w-3 flex-shrink-0" />
-            <span className="normal-case">{cycleDetails.name}</span>
+            <span className="normal-case truncate">{cycleDetails.name}</span>
             {editable && (
               <button
                 type="button"

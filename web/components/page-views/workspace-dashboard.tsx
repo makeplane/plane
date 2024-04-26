@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-// hooks
 // components
 import { Spinner } from "@plane/ui";
 import { DashboardWidgets } from "@/components/dashboard";
@@ -12,7 +11,11 @@ import { UserGreetingsView } from "@/components/user";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
 import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
+import useSize from "@/hooks/use-window-size";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
@@ -24,6 +27,8 @@ export const WorkspaceDashboardView = observer(() => {
   const { currentUser, updateTourCompleted } = useUser();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds } = useProject();
+
+  const [windowWidth] = useSize();
 
   const handleTourCompleted = () => {
     updateTourCompleted()
@@ -57,7 +62,14 @@ export const WorkspaceDashboardView = observer(() => {
           {joinedProjectIds.length > 0 ? (
             <>
               <IssuePeekOverview />
-              <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
+              <div
+                className={cn(
+                  "space-y-7 md:p-7 p-3 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto",
+                  {
+                    "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
+                  }
+                )}
+              >
                 {currentUser && <UserGreetingsView user={currentUser} />}
 
                 <DashboardWidgets />

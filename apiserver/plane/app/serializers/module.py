@@ -210,6 +210,7 @@ class ModuleSerializer(DynamicBaseSerializer):
             "backlog_issues",
             "created_at",
             "updated_at",
+            "archived_at",
         ]
         read_only_fields = fields
 

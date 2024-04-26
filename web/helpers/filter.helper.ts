@@ -36,6 +36,14 @@ export const satisfiesDateFilter = (date: Date, filter: string): boolean => {
   const [value, operator, from] = filter.split(";");
 
   const dateValue = getDate(value);
+
+  if (operator === "custom" && from === "custom") {
+    if (value === "today") return differenceInCalendarDays(date, new Date()) === 0;
+    if (value === "yesterday") return differenceInCalendarDays(date, new Date()) === -1;
+    if (value === "last_7_days") return differenceInCalendarDays(date, new Date()) >= -7;
+    if (value === "last_30_days") return differenceInCalendarDays(date, new Date()) >= -30;
+  }
+
   if (!from && dateValue) {
     if (operator === "after") return date >= dateValue;
     if (operator === "before") return date <= dateValue;

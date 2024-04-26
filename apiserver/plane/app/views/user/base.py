@@ -49,7 +49,12 @@ class UserEndpoint(BaseViewSet):
             {"is_instance_admin": is_admin}, status=status.HTTP_200_OK
         )
 
-    @invalidate_cache(path="/api/users/me/")
+    @invalidate_cache(
+        path="/api/users/me/",
+    )
+    @invalidate_cache(
+        path="/api/users/me/settings/",
+    )
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 

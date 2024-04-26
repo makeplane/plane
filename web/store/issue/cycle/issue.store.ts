@@ -269,6 +269,10 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       });
 
       const response = await this.createIssue(workspaceSlug, projectId, data, cycleId);
+
+      if (data.module_ids && data.module_ids.length > 0)
+        await this.rootStore.moduleIssues.addModulesToIssue(workspaceSlug, projectId, response.id, data.module_ids);
+
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
 
       const quickAddIssueIndex = this.issues[cycleId].findIndex((_issueId) => _issueId === data.id);

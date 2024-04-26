@@ -91,9 +91,9 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to delete label-{" "}
-                          <span className="font-medium text-custom-text-100">{data?.name}</span>? The label will be
-                          removed from all the issues.
+                          Are you sure you wish to delete{" "}
+                          <span className="font-medium text-custom-text-100">{data?.name}</span>? This will remove the
+                          label from all the issue and from any views where the label is being filtered upon.
                         </p>
                       </div>
                     </div>

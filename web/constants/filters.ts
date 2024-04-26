@@ -31,3 +31,22 @@ export const DATE_BEFORE_FILTER_OPTIONS = [
     value: "1_months;before;fromnow",
   },
 ];
+
+export const PROJECT_CREATED_AT_FILTER_OPTIONS = [
+  {
+    name: "Today",
+    value: "today;custom;custom",
+  },
+  {
+    name: "Yesterday",
+    value: "yesterday;custom;custom",
+  },
+  {
+    name: "Last 7 days",
+    value: "last_7_days;custom;custom",
+  },
+  {
+    name: "Last 30 days",
+    value: "last_30_days;custom;custom",
+  },
+];

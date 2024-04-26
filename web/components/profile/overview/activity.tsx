@@ -61,7 +61,7 @@ export const ProfileActivity = observer(() => {
                     )}
                   </div>
                   <div className="-mt-1 w-4/5 break-words">
-                    <p className="text-sm text-custom-text-200">
+                    <p className="inline text-sm text-custom-text-200">
                       <span className="font-medium text-custom-text-100">
                         {currentUser?.id === activity.actor_detail?.id ? "You" : activity.actor_detail?.display_name}{" "}
                       </span>
@@ -73,7 +73,7 @@ export const ProfileActivity = observer(() => {
                         </span>
                       )}
                     </p>
-                    <p className="text-xs text-custom-text-200">{calculateTimeAgo(activity.created_at)}</p>
+                    <p className="text-xs text-custom-text-200 whitespace-nowrap ">{calculateTimeAgo(activity.created_at)}</p>
                   </div>
                 </div>
               ))}
