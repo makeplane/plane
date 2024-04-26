@@ -129,6 +129,23 @@ def slug_validator(value):
         raise ValidationError("Slug is not valid")
 
 
+class Site(BaseModel):
+    name = models.CharField(max_length=80)
+    description = models.TextField(blank=True)
+    use_case = models.TextField(blank=True)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="sites",
+    )
+    domain = models.TextField(blank=True)
+    user_count = models.IntegerField(default=1)
+
+    def __str__(self):
+        """Return name of site"""
+        return self.name
+
+
 class Workspace(BaseModel):
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
     logo = models.URLField(verbose_name="Logo", blank=True, null=True)
@@ -146,6 +163,9 @@ class Workspace(BaseModel):
         ],
     )
     organization_size = models.CharField(max_length=20, blank=True, null=True)
+    site = models.ForeignKey(
+        "db.Site", on_delete=models.CASCADE, related_name="workspaces"
+    )
 
     def __str__(self):
         """Return name of the Workspace"""
