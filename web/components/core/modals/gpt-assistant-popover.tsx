@@ -3,14 +3,15 @@ import { Placement } from "@popperjs/core";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
-import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
-import { Popover, Transition } from "@headlessui/react";
-// hooks
 // ui
+import { AlertCircle } from "lucide-react";
+import { Popover, Transition } from "@headlessui/react";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
+// icons
 // components
-// types
-import { AIService } from "services/ai.service";
+// hooks
+import { AIService } from "@/services/ai.service";
 
 type Props = {
   isOpen: boolean;
@@ -189,8 +190,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const generateResponseButtonText = isSubmitting
     ? "Generating response..."
     : response === ""
-      ? "Generate response"
-      : "Generate again";
+    ? "Generate response"
+    : "Generate again";
 
   return (
     <Popover as="div" className={`relative w-min text-left`}>
@@ -218,23 +219,15 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
             {prompt && (
               <div className="text-sm">
                 Content:
-                <RichReadOnlyEditorWithRef
-                  value={prompt}
-                  customClassName="-m-3"
-                  noBorder
-                  borderOnFocus={false}
-                  ref={editorRef}
-                />
+                <RichTextReadOnlyEditor initialValue={prompt} containerClassName="-m-3" ref={editorRef} />
               </div>
             )}
             {response !== "" && (
               <div className="page-block-section max-h-[8rem] text-sm">
                 Response:
-                <RichReadOnlyEditorWithRef
-                  value={`<p>${response}</p>`}
-                  customClassName={response ? "-mx-3 -my-3" : ""}
-                  noBorder
-                  borderOnFocus={false}
+                <RichTextReadOnlyEditor
+                  initialValue={`<p>${response}</p>`}
+                  containerClassName={response ? "-mx-3 -my-3" : ""}
                   ref={responseRef}
                 />
               </div>
@@ -261,11 +254,21 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
                   prompt && prompt !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
                 }`}
                 className="w-full"
+                autoFocus
               />
             )}
           />
-          <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
-            {responseActionButton}
+          <div className="flex gap-2 justify-between">
+            {responseActionButton ? (
+              <>{responseActionButton}</>
+            ) : (
+              <>
+                <div className="flex items-start justify-center gap-2 text-sm text-custom-primary">
+                  <AlertCircle className="h-4 w-4" />
+                  <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
+                </div>
+              </>
+            )}
             <div className="flex items-center gap-2">
               <Button variant="neutral-primary" size="sm" onClick={onClose}>
                 Close

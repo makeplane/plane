@@ -1,12 +1,12 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react-lite";
+import { IIssueLabel, TIssue } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail, useLabel } from "hooks/store";
+import { useIssueDetail, useLabel, useProjectInbox } from "@/hooks/store";
 // ui
 // types
-import { IIssueLabel, TIssue } from "@plane/types";
 import { LabelList, LabelCreate, IssueLabelSelectRoot } from "./";
 
 export type TIssueLabel = {
@@ -28,6 +28,12 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
   // hooks
   const { updateIssue } = useIssueDetail();
   const { createLabel } = useLabel();
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const { getIssueInboxByIssueId } = useProjectInbox();
+
+  const issue = isInboxIssue ? getIssueInboxByIssueId(issueId)?.issue : getIssueById(issueId);
 
   const labelOperations: TLabelOperations = useMemo(
     () => ({
@@ -72,6 +78,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         issueId={issueId}
+        values={issue?.label_ids || []}
         labelOperations={labelOperations}
         disabled={disabled}
       />
@@ -81,6 +88,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
+          values={issue?.label_ids || []}
           labelOperations={labelOperations}
         />
       )}
@@ -90,6 +98,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
+          values={issue?.label_ids || []}
           labelOperations={labelOperations}
         />
       )}

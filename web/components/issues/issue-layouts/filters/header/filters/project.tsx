@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from "react";
-import { observer } from "mobx-react";
 import sortBy from "lodash/sortBy";
+import { observer } from "mobx-react";
 // components
 import { Loader } from "@plane/ui";
-import { FilterHeader, FilterOption } from "components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues";
 // hooks
-import { useProject } from "hooks/store";
+import { ProjectLogo } from "@/components/project";
+import { useProject } from "@/hooks/store";
 // components
-import { ProjectLogo } from "components/project";
 // ui
 // helpers
 

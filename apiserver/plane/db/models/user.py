@@ -1,16 +1,17 @@
 # Python imports
-import uuid
-import string
 import random
+import string
+import uuid
+
 import pytz
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    UserManager,
+)
 
 # Django imports
 from django.db import models
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    UserManager,
-    PermissionsMixin,
-)
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone

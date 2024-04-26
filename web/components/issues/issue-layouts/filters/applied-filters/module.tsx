@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
 import { DiceIcon } from "@plane/ui";
-import { useModule } from "hooks/store";
+import { useModule } from "@/hooks/store";
 // ui
 
 type Props = {
@@ -24,9 +24,9 @@ export const AppliedModuleFilters: React.FC<Props> = observer((props) => {
         if (!moduleDetails) return null;
 
         return (
-          <div key={moduleId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={moduleId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs truncate">
             <DiceIcon className="h-3 w-3 flex-shrink-0" />
-            <span className="normal-case">{moduleDetails.name}</span>
+            <span className="normal-case truncate">{moduleDetails.name}</span>
             {editable && (
               <button
                 type="button"

@@ -1,16 +1,16 @@
 import size from "lodash/size";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// hooks
-import { useApplication, useEventTracker, useIssues } from "hooks/store";
-// components
-import { EmptyState } from "components/empty-state";
-// constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { EmptyStateType } from "constants/empty-state";
-import { E_PROJECT_ISSUES_EMPTY_STATE } from "constants/event-tracker";
-// types
 import { IIssueFilterOptions } from "@plane/types";
+// hooks
+// components
+import { EmptyState } from "@/components/empty-state";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
+import { E_PROJECT_ISSUES_EMPTY_STATE } from "@/constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { useApplication, useEventTracker, useIssues } from "@/hooks/store";
+// types
 
 export const ProjectEmptyState: React.FC = observer(() => {
   // router

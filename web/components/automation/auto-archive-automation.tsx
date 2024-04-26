@@ -3,15 +3,15 @@ import { observer } from "mobx-react-lite";
 // hooks
 // component
 import { ArchiveRestore } from "lucide-react";
+import { IProject } from "@plane/types";
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
-import { SelectMonthModal } from "components/automation";
+import { SelectMonthModal } from "@/components/automation";
 // icon
 // constants
-import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
 import { AUTO_ARCHIVE_TOGGLED, AUTO_ARCHIVE_UPDATED } from "constants/event-tracker";
-import { useEventTracker, useProject, useUser } from "hooks/store";
+import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
+import { useEventTracker, useProject, useUser } from "@/hooks/store";
 // types
-import { IProject } from "@plane/types";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;

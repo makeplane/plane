@@ -1,8 +1,8 @@
 import { useContext } from "react";
 // mobx store
-import { StoreContext } from "contexts/store-context";
+import { StoreContext } from "@/contexts/store-context";
 // types
-import { IProjectFilterStore } from "store/project/project_filter.store";
+import { IProjectFilterStore } from "@/store/project/project_filter.store";
 
 export const useProjectFilter = (): IProjectFilterStore => {
   const context = useContext(StoreContext);

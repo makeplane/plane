@@ -1,12 +1,12 @@
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { TIssue } from "@plane/types";
 // hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { useProject } from "hooks/store";
-import { useIssues } from "hooks/store/use-issues";
+import { useProject } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 // ui
 // types
-import { TIssue } from "@plane/types";
 
 type Props = {
   data?: TIssue;
@@ -39,7 +39,14 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
 
     setIsArchiving(true);
     await onSubmit()
-      .then(() => onClose())
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Archive success",
+          message: "Your archives can be found in project archives.",
+        });
+        onClose();
+      })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,

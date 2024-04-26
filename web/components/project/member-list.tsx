@@ -4,12 +4,12 @@ import { Search } from "lucide-react";
 // hooks
 // components
 import { Button } from "@plane/ui";
-import { ProjectMemberListItem, SendProjectInvitationModal } from "components/project";
+import { ProjectMemberListItem, SendProjectInvitationModal } from "@/components/project";
 // ui
-import { MembersSettingsLoader } from "components/ui";
-import { useEventTracker, useMember } from "hooks/store";
+import { MembersSettingsLoader } from "@/components/ui";
 // constants
-import { E_PROJECT_MEMBERS } from "constants/event-tracker";
+import { E_PROJECT_MEMBERS } from "@/constants/event-tracker";
+import { useEventTracker, useMember } from "@/hooks/store";
 
 export const ProjectMemberList: React.FC = observer(() => {
   // states

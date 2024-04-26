@@ -2,16 +2,16 @@ import { FC, Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
+import { IProjectView } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ProjectViewForm } from "components/views";
-// hooks
-import { useEventTracker, useProjectView } from "hooks/store";
-// types
-import { IProjectView } from "@plane/types";
+import { ProjectViewForm } from "@/components/views";
 // constants
-import { E_VIEWS, VIEW_CREATED, VIEW_UPDATED, elementFromPath } from "constants/event-tracker";
+import { E_VIEWS, VIEW_CREATED, VIEW_UPDATED, elementFromPath } from "@/constants/event-tracker";
+// hooks
+import { useProjectView, useEventTracker } from "@/hooks/store";
+// types
 
 type Props = {
   data?: IProjectView | null;
@@ -84,7 +84,7 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err.detail ?? "Something went wrong. Please try again.",
+          message: err?.detail ?? "Something went wrong. Please try again.",
         });
       });
   };

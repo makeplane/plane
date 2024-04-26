@@ -1,20 +1,21 @@
 import { useState, useRef } from "react";
-import { MoreHorizontal } from "lucide-react";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
+import { MoreHorizontal } from "lucide-react";
+import { TIssue } from "@plane/types";
 // components
 import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
-import { TIssue } from "@plane/types";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   issue: TIssue;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
   isDragging?: boolean;
 };
 
@@ -40,6 +41,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
     issue &&
     issue.project_id &&
     issue.id &&
+    peekIssue?.issueId !== issue.id &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
@@ -56,8 +58,14 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
     </div>
   );
 
+  const isMenuActionRefAboveScreenBottom =
+    menuActionRef?.current && menuActionRef?.current?.getBoundingClientRect().bottom < window.innerHeight - 220;
+
+  const placement = isMenuActionRefAboveScreenBottom ? "bottom-end" : "top-end";
+
   return (
     <ControlLink
+      id={`issue-${issue.id}`}
       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
       target="_blank"
       onClick={() => handleIssuePeekOverview(issue)}
@@ -104,7 +112,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
               e.stopPropagation();
             }}
           >
-            {quickActions(issue, customActionButton)}
+            {quickActions(issue, customActionButton, placement)}
           </div>
         </div>
       </>

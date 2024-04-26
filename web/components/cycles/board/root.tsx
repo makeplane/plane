@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { Disclosure } from "@headlessui/react";
 import { ChevronRight } from "lucide-react";
+import { Disclosure } from "@headlessui/react";
 // components
-import { CyclePeekOverview, CyclesBoardMap } from "components/cycles";
+import { CyclePeekOverview, CyclesBoardMap } from "@/components/cycles";
 // helpers
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 
 export interface ICyclesBoard {
   completedCycleIds: string[];

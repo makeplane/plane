@@ -3,17 +3,17 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
+import { TIssue } from "@plane/types";
 // hooks
 import { setPromiseToast } from "@plane/ui";
-import { E_KANBAN_QUICK_ADD, ISSUE_CREATED } from "constants/event-tracker";
-import { createIssuePayload } from "helpers/issue.helper";
-import { useEventTracker, useProject } from "hooks/store";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { E_KANBAN_QUICK_ADD, ISSUE_CREATED } from "@/constants/event-tracker";
+import { createIssuePayload } from "@/helpers/issue.helper";
+import { useEventTracker, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
 // ui
 // types
-import { TIssue } from "@plane/types";
 // constants
 
 const Inputs = (props: any) => {
@@ -151,7 +151,7 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
         </div>
       ) : (
         <div
-          className="flex w-full cursor-pointer items-center gap-2 p-3 py-3 text-custom-primary-100"
+          className="flex w-full cursor-pointer items-center gap-2 p-3 py-1.5 text-custom-primary-100"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-3.5 w-3.5 stroke-2" />

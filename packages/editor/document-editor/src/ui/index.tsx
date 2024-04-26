@@ -1,187 +1,104 @@
-"use client";
 import React, { useState } from "react";
-import { UploadImage, DeleteImage, RestoreImage, getEditorClassNames, useEditor } from "@plane/editor-core";
+import {
+  UploadImage,
+  DeleteImage,
+  RestoreImage,
+  getEditorClassNames,
+  useEditor,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+} from "@plane/editor-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
-import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "src/types/menu-actions";
-import { EditorHeader } from "src/ui/components/editor-header";
-import { useEditorMarkings } from "src/hooks/use-editor-markings";
-import { SummarySideBar } from "src/ui/components/summary-side-bar";
-import { DocumentDetails } from "src/types/editor-types";
 import { PageRenderer } from "src/ui/components/page-renderer";
-import { getMenuOptions } from "src/utils/menu-options";
-import { useRouter } from "next/router";
-import { FixedMenu } from "src";
 
 interface IDocumentEditor {
-  // document info
-  documentDetails: DocumentDetails;
-  value: string;
-  rerenderOnPropsChange?: {
-    id: string;
-    description_html: string;
+  initialValue: string;
+  value?: string;
+  fileHandler: {
+    cancel: () => void;
+    delete: DeleteImage;
+    upload: UploadImage;
+    restore: RestoreImage;
   };
-
-  // file operations
-  uploadFile: UploadImage;
-  deleteFile: DeleteImage;
-  restoreFile: RestoreImage;
-  cancelUploadImage: () => any;
-
-  // editor state managers
-  onActionCompleteHandler: (action: {
-    title: string;
-    message: string;
-    type: "success" | "error" | "warning" | "info";
-  }) => void;
-  customClassName?: string;
-  editorContentCustomClassNames?: string;
-  onChange: (json: any, html: string) => void;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
-  setShouldShowAlert?: (showAlert: boolean) => void;
-  forwardedRef?: any;
-  updatePageTitle: (title: string) => void;
-  debouncedUpdatesEnabled?: boolean;
-  isSubmitting: "submitting" | "submitted" | "saved";
-
-  // embed configuration
-  duplicationConfig?: IDuplicationConfig;
-  pageLockConfig?: IPageLockConfig;
-  pageArchiveConfig?: IPageArchiveConfig;
-
+  handleEditorReady?: (value: boolean) => void;
+  containerClassName?: string;
+  editorClassName?: string;
+  onChange: (json: object, html: string) => void;
+  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+    suggestions: () => Promise<IMentionSuggestion[]>;
+  };
   tabIndex?: number;
-}
-interface DocumentEditorProps extends IDocumentEditor {
-  forwardedRef?: React.Ref<EditorHandle>;
+  placeholder?: string | ((isFocused: boolean) => string);
 }
 
-interface EditorHandle {
-  clearEditor: () => void;
-  setEditorValue: (content: string) => void;
-  setEditorValueAtCursorPosition: (content: string) => void;
-}
-
-const DocumentEditor = ({
-  documentDetails,
-  onChange,
-  debouncedUpdatesEnabled,
-  setIsSubmitting,
-  setShouldShowAlert,
-  editorContentCustomClassNames,
-  value,
-  uploadFile,
-  deleteFile,
-  restoreFile,
-  isSubmitting,
-  customClassName,
-  forwardedRef,
-  duplicationConfig,
-  pageLockConfig,
-  pageArchiveConfig,
-  updatePageTitle,
-  cancelUploadImage,
-  onActionCompleteHandler,
-  rerenderOnPropsChange,
-  tabIndex,
-}: IDocumentEditor) => {
-  const { markings, updateMarkings } = useEditorMarkings();
-  const [sidePeekVisible, setSidePeekVisible] = useState(true);
-  const router = useRouter();
-
-  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
+const DocumentEditor = (props: IDocumentEditor) => {
+  const {
+    onChange,
+    initialValue,
+    value,
+    fileHandler,
+    containerClassName,
+    editorClassName = "",
+    mentionHandler,
+    handleEditorReady,
+    forwardedRef,
+    tabIndex,
+    placeholder,
+  } = props;
+  // states
+  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
 
   // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
   // loads such that we can invoke it from react when the cursor leaves the container
   const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
-
+  // use editor
   const editor = useEditor({
     onChange(json, html) {
-      updateMarkings(json);
       onChange(json, html);
     },
-    onStart(json) {
-      updateMarkings(json);
-    },
-    debouncedUpdatesEnabled,
-    restoreFile,
-    setIsSubmitting,
-    setShouldShowAlert,
+    editorClassName,
+    restoreFile: fileHandler.restore,
+    uploadFile: fileHandler.upload,
+    deleteFile: fileHandler.delete,
+    cancelUploadImage: fileHandler.cancel,
+    initialValue,
     value,
-    uploadFile,
-    deleteFile,
-    cancelUploadImage,
-    rerenderOnPropsChange,
+    handleEditorReady,
     forwardedRef,
-    extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction, setIsSubmitting),
+    mentionHandler,
+    extensions: DocumentEditorExtensions({
+      uploadFile: fileHandler.upload,
+      setHideDragHandle: setHideDragHandleFunction,
+    }),
+    placeholder,
+    tabIndex,
   });
 
-  if (!editor) {
-    return null;
-  }
-
-  const KanbanMenuOptions = getMenuOptions({
-    editor: editor,
-    router: router,
-    duplicationConfig: duplicationConfig,
-    pageLockConfig: pageLockConfig,
-    pageArchiveConfig: pageArchiveConfig,
-    onActionCompleteHandler,
-  });
-
-  const editorClassNames = getEditorClassNames({
+  const editorContainerClassNames = getEditorClassNames({
     noBorder: true,
     borderOnFocus: false,
-    customClassName,
+    containerClassName,
   });
 
   if (!editor) return null;
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden">
-      <EditorHeader
-        readonly={false}
-        KanbanMenuOptions={KanbanMenuOptions}
-        editor={editor}
-        sidePeekVisible={sidePeekVisible}
-        setSidePeekVisible={(val) => setSidePeekVisible(val)}
-        markings={markings}
-        uploadFile={uploadFile}
-        setIsSubmitting={setIsSubmitting}
-        isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
-        isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
-        archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
-        documentDetails={documentDetails}
-        isSubmitting={isSubmitting}
-      />
-      <div className="flex-shrink-0 md:hidden border-b border-custom-border-200 pl-3 py-2">
-        {uploadFile && <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />}
-      </div>
-      <div className="flex h-full w-full overflow-y-auto frame-renderer">
-        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72 hidden md:block">
-          <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
-        </div>
-        <div className="h-full w-full md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
-          <PageRenderer
-            tabIndex={tabIndex}
-            onActionCompleteHandler={onActionCompleteHandler}
-            hideDragHandle={hideDragHandleOnMouseLeave}
-            readonly={false}
-            editor={editor}
-            editorContentCustomClassNames={editorContentCustomClassNames}
-            editorClassNames={editorClassNames}
-            documentDetails={documentDetails}
-            updatePageTitle={updatePageTitle}
-          />
-        </div>
-        <div className="hidden w-56 flex-shrink-0 lg:block lg:w-72" />
-      </div>
-    </div>
+    <PageRenderer
+      tabIndex={tabIndex}
+      editor={editor}
+      editorContainerClassName={editorContainerClassNames}
+      hideDragHandle={hideDragHandleOnMouseLeave}
+    />
   );
 };
 
-const DocumentEditorWithRef = React.forwardRef<EditorHandle, IDocumentEditor>((props, ref) => (
-  <DocumentEditor {...props} forwardedRef={ref} />
+const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => (
+  <DocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
 ));
 
 DocumentEditorWithRef.displayName = "DocumentEditorWithRef";

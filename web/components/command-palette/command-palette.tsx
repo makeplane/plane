@@ -5,28 +5,27 @@ import useSWR from "swr";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
 
-import { CommandModal, ShortcutsModal } from "components/command-palette";
+import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // ui
 // components
-import { BulkDeleteIssuesModal } from "components/core";
-import { CycleCreateUpdateModal } from "components/cycles";
-import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { CreateUpdateModuleModal } from "components/modules";
-import { CreateUpdatePageModal } from "components/pages";
-import { CreateProjectModal } from "components/project";
-import { CreateUpdateProjectViewModal } from "components/views";
+import { BulkDeleteIssuesModal } from "@/components/core";
+import { CycleCreateUpdateModal } from "@/components/cycles";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+import { CreateUpdateModuleModal } from "@/components/modules";
+import { CreatePageModal } from "@/components/pages";
+import { CreateProjectModal } from "@/components/project";
+import { CreateUpdateProjectViewModal } from "@/components/views";
 // helpers
 // services
 // fetch keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
-import { EIssuesStoreType } from "constants/issue";
-import { copyTextToClipboard } from "helpers/string.helper";
-import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
-import { IssueService } from "services/issue";
-// constants
 import { E_SHORTCUT_KEY } from "constants/event-tracker";
-import { EUserProjectRoles } from "constants/project";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { ISSUE_DETAILS } from "@/constants/fetch-keys";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+import { useApplication, useEventTracker, useIssues, useUser } from "@/hooks/store";
+import { IssueService } from "@/services/issue";
 
 // services
 const issueService = new IssueService();
@@ -115,8 +114,6 @@ export const CommandPalette: FC = observer(() => {
   const canPerformWorkspaceCreateActions = useCallback(
     (showToast: boolean = true) => {
       const isAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-      console.log("currentWorkspaceRole", currentWorkspaceRole);
-      console.log("isAllowed", isAllowed);
       if (!isAllowed && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -298,10 +295,12 @@ export const CommandPalette: FC = observer(() => {
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
           />
-          <CreateUpdatePageModal
-            isOpen={isCreatePageModalOpen}
-            handleClose={() => toggleCreatePageModal(false)}
+          <CreatePageModal
+            workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
+            isModalOpen={isCreatePageModalOpen}
+            handleModalClose={() => toggleCreatePageModal(false)}
+            redirectionEnabled
           />
         </>
       )}

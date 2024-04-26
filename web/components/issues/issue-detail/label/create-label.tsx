@@ -1,20 +1,21 @@
 import { FC, useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
-import { Popover, Transition } from "@headlessui/react";
+import { usePopper } from "react-popper";
 import { Plus, X, Loader } from "lucide-react";
+import { Popover } from "@headlessui/react";
+import { IIssueLabel } from "@plane/types";
 // hooks
 import { Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { useIssueDetail } from "hooks/store";
 // ui
 // types
-import { IIssueLabel } from "@plane/types";
 import { TLabelOperations } from "./root";
 
 type ILabelCreate = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  values: string[];
   labelOperations: TLabelOperations;
   disabled?: boolean;
 };
@@ -25,14 +26,12 @@ const defaultValues: Partial<IIssueLabel> = {
 };
 
 export const LabelCreate: FC<ILabelCreate> = (props) => {
-  const { workspaceSlug, projectId, issueId, labelOperations, disabled = false } = props;
-  // hooks
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
+  const { workspaceSlug, projectId, issueId, values, labelOperations, disabled = false } = props;
   // state
   const [isCreateToggle, setIsCreateToggle] = useState(false);
   const handleIsCreateToggle = () => setIsCreateToggle(!isCreateToggle);
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // react hook form
   const {
     handleSubmit,
@@ -42,6 +41,18 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
     setFocus,
   } = useForm<Partial<IIssueLabel>>({
     defaultValues,
+  });
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
   });
 
   useEffect(() => {
@@ -55,10 +66,10 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
     try {
-      const issue = getIssueById(issueId);
       const labelResponse = await labelOperations.createLabel(workspaceSlug, projectId, formData);
-      const currentLabels = [...(issue?.label_ids || []), labelResponse.id];
+      const currentLabels = [...(values || []), labelResponse.id];
       await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
+      handleIsCreateToggle();
       reset(defaultValues);
     } catch (error) {
       setToast({
@@ -82,38 +93,36 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
       </div>
 
       {isCreateToggle && (
-        <form className="flex items-center gap-x-2" onSubmit={handleSubmit(handleLabel)}>
+        <form className="relative flex items-center gap-x-2" onSubmit={handleSubmit(handleLabel)}>
           <div>
             <Controller
               name="color"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <Popover className="relative">
+                <Popover>
                   <>
-                    <Popover.Button className="grid place-items-center outline-none">
-                      {value && value?.trim() !== "" && (
-                        <span
-                          className="h-6 w-6 rounded"
-                          style={{
-                            backgroundColor: value ?? "black",
-                          }}
-                        />
-                      )}
+                    <Popover.Button as={Fragment}>
+                      <button type="button" ref={setReferenceElement} className="grid place-items-center outline-none">
+                        {value && value?.trim() !== "" && (
+                          <span
+                            className="h-6 w-6 rounded"
+                            style={{
+                              backgroundColor: value ?? "black",
+                            }}
+                          />
+                        )}
+                      </button>
                     </Popover.Button>
-
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute z-10 mt-1.5 max-w-xs px-2 sm:px-0">
-                        <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
-                      </Popover.Panel>
-                    </Transition>
+                    <Popover.Panel className="fixed z-10">
+                      <div
+                        className="p-2 max-w-xs sm:px-0"
+                        ref={setPopperElement}
+                        style={styles.popper}
+                        {...attributes.popper}
+                      >
+                        <TwitterPicker triangle={"hide"} color={value} onChange={(value) => onChange(value.hex)} />
+                      </div>
+                    </Popover.Panel>
                   </>
                 </Popover>
               )}

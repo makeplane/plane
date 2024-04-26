@@ -1,14 +1,13 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// types
-import { useEventTracker } from "hooks/store";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
+// types
+// constants
+import { E_SPREADSHEET_LAYOUT } from "@/constants/event-tracker";
+import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/spreadsheet";
+import { useEventTracker } from "@/hooks/store";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-// constants
-import { E_SPREADSHEET_LAYOUT } from "constants/event-tracker";
-import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
-// constants
 // components
 
 type Props = {

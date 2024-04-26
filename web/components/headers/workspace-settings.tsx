@@ -6,8 +6,8 @@ import { Settings } from "lucide-react";
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
 // hooks
 // components
-import { BreadcrumbLink } from "components/common";
-import { WORKSPACE_SETTINGS_LINKS } from "constants/workspace";
+import { BreadcrumbLink } from "@/components/common";
+import { WORKSPACE_SETTINGS_LINKS } from "@/constants/workspace";
 
 export interface IWorkspaceSettingHeader {
   title: string;

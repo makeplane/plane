@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { DateFilterModal } from "components/core";
-import { FilterHeader, FilterOption } from "components/issues";
+import { DateFilterModal } from "@/components/core";
+import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
-import { DATE_BEFORE_FILTER_OPTIONS } from "constants/filters";
+import { PROJECT_CREATED_AT_FILTER_OPTIONS } from "@/constants/filters";
+// helpers
+import { isInDateFormat } from "@/helpers/date-time.helper";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -14,15 +16,25 @@ type Props = {
 
 export const FilterCreatedDate: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
-
+  // state
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
-
+  // derived values
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-
-  const filteredOptions = DATE_BEFORE_FILTER_OPTIONS.filter((d) =>
+  const filteredOptions = PROJECT_CREATED_AT_FILTER_OPTIONS.filter((d) =>
     d.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const isCustomDateSelected = () => {
+    const isValidDateSelected = appliedFilters?.filter((f) => isInDateFormat(f.split(";")[0])) || [];
+    return isValidDateSelected.length > 0 ? true : false;
+  };
+  const handleCustomDate = () => {
+    if (isCustomDateSelected()) {
+      const updateAppliedFilters = appliedFilters?.filter((f) => f.includes("-")) || [];
+      handleUpdate(updateAppliedFilters);
+    } else setIsDateFilterModalOpen(true);
+  };
 
   return (
     <>
@@ -49,10 +61,15 @@ export const FilterCreatedDate: React.FC<Props> = observer((props) => {
                   isChecked={appliedFilters?.includes(option.value) ? true : false}
                   onClick={() => handleUpdate(option.value)}
                   title={option.name}
-                  multiple
+                  multiple={false}
                 />
               ))}
-              <FilterOption isChecked={false} onClick={() => setIsDateFilterModalOpen(true)} title="Custom" multiple />
+              <FilterOption
+                isChecked={isCustomDateSelected()}
+                onClick={handleCustomDate}
+                title="Custom"
+                multiple={false}
+              />
             </>
           ) : (
             <p className="text-xs italic text-custom-text-400">No matches found</p>

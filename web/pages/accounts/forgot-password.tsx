@@ -3,24 +3,24 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
-import { AuthService } from "services/auth.service";
-// hooks
-import useTimer from "hooks/use-timer";
-import { useEventTracker } from "hooks/store";
-// layouts
-import DefaultLayout from "layouts/default-layout";
-// components
-import { LatestFeatureBlock } from "components/common";
-import { PageHead } from "components/core";
-// ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { LatestFeatureBlock } from "@/components/common";
+import { PageHead } from "@/components/core";
+import { FORGOT_PASS_LINK } from "@/constants/event-tracker";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { useEventTracker } from "@/hooks/store";
+import useTimer from "@/hooks/use-timer";
+import DefaultLayout from "@/layouts/default-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { AuthService } from "@/services/auth.service";
+// hooks
+// layouts
+// components
+// ui
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // type
-import { NextPageWithLayout } from "lib/types";
-import { FORGOT_PASS_LINK } from "constants/event-tracker";
 
 type TForgotPasswordFormValues = {
   email: string;

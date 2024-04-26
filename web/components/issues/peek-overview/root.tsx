@@ -1,9 +1,10 @@
 import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { IIssueFilters, TIssue } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import { IssueView } from "components/issues";
+import { IssueView } from "@/components/issues";
 // ui
 // components
 import {
@@ -14,13 +15,12 @@ import {
   ISSUE_OPENED,
   elementFromPath,
   E_ISSUE_PEEK_VIEW,
-} from "constants/event-tracker";
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+} from "@/constants/event-tracker";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
 // components
 // types
-import { IIssueFilters, TIssue } from "@plane/types";
 // constants
 
 interface IIssuePeekOverview {
@@ -145,22 +145,12 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Issue archived successfully.",
-          });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_PEEK_VIEW },
             routePath: router.asPath,
           });
         } catch (error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be archived. Please try again.",
-          });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: E_ISSUE_PEEK_VIEW },
@@ -173,8 +163,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           await restoreIssue(workspaceSlug, projectId, issueId);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Issue restored successfully.",
+            title: "Restore success",
+            message: "Your issue can be found in project issues.",
           });
           captureIssueEvent({
             eventName: ISSUE_RESTORED,
@@ -405,7 +395,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const currentProjectRole = currentWorkspaceAllProjectsRole?.[peekIssue?.projectId];
   // Check if issue is editable, based on user role
-  const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const isLoading = !issue || loader ? true : false;
 
   return (
@@ -415,7 +405,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       issueId={peekIssue.issueId}
       isLoading={isLoading}
       is_archived={is_archived}
-      disabled={!is_editable}
+      disabled={!isEditable}
       issueOperations={issueOperations}
     />
   );

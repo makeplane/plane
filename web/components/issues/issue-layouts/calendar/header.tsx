@@ -2,20 +2,20 @@ import { observer } from "mobx-react-lite";
 
 // components
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "components/issues";
-// icons
-import { useCalendarView } from "hooks/store/use-calendar-view";
-import { ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssuesFilter } from "store/issue/project-views";
-import { EIssueFilterType } from "constants/issue";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
   TIssueKanbanFilters,
 } from "@plane/types";
+import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "@/components/issues";
+// icons
+import { EIssueFilterType } from "@/constants/issue";
+import { useCalendarView } from "@/hooks/store/use-calendar-view";
+import { ICycleIssuesFilter } from "@/store/issue/cycle";
+import { IModuleIssuesFilter } from "@/store/issue/module";
+import { IProjectIssuesFilter } from "@/store/issue/project";
+import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;

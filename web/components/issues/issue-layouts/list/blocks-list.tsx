@@ -1,9 +1,9 @@
 import { FC, MutableRefObject } from "react";
 // components
-import RenderIfVisible from "components/core/render-if-visible-HOC";
-import { IssueBlock } from "components/issues";
-// types
 import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { IssueBlock } from "@/components/issues";
+// types
 
 interface Props {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
@@ -28,7 +28,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
               key={`${issueId}`}
               defaultHeight="3rem"
               root={containerRef}
-              classNames={"relative border border-transparent border-b-custom-border-200 last:border-b-transparent"}
+              classNames="relative border-b border-b-custom-border-200 last:border-b-transparent"
               changingReference={issueIds}
             >
               <IssueBlock

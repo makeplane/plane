@@ -4,21 +4,21 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { useEventTracker } from "hooks/store";
+import { IApiToken } from "@plane/types";
 // services
 import { TOAST_TYPE, setToast } from "@plane/ui";
 
-import { CreateApiTokenForm, GeneratedTokenDetails } from "components/api-token";
-import { API_TOKENS_LIST } from "constants/fetch-keys";
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { csvDownload } from "helpers/download.helper";
-import { APITokenService } from "services/api_token.service";
+import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-token";
+// constants
+import { API_TOKEN_CREATED } from "constants/event-tracker";
+import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { csvDownload } from "@/helpers/download.helper";
+import { APITokenService } from "@/services/api_token.service";
 // ui
 // components
 // helpers
 // types
-import { IApiToken } from "@plane/types";
-// constants
-import { API_TOKEN_CREATED } from "constants/event-tracker";
 // fetch-keys
 
 type Props = {

@@ -2,11 +2,11 @@ import { observer } from "mobx-react-lite";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { GitHubSignInButton, GoogleSignInButton } from "components/account";
+import { GitHubSignInButton, GoogleSignInButton } from "@/components/account";
 // hooks
-import { useApplication } from "hooks/store";
+import { useApplication } from "@/hooks/store";
 // services
-import { AuthService } from "services/auth.service";
+import { AuthService } from "@/services/auth.service";
 
 type Props = {
   handleSignInRedirection: () => Promise<void>;
@@ -36,7 +36,7 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         const response = await authService.socialAuth(socialAuthPayload);
 
         if (response) handleSignInRedirection();
-      } else throw Error("Cant find credentials");
+      } else throw Error("Can't find credentials");
     } catch (err: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -57,7 +57,7 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         const response = await authService.socialAuth(socialAuthPayload);
 
         if (response) handleSignInRedirection();
-      } else throw Error("Cant find credentials");
+      } else throw Error("Can't find credentials");
     } catch (err: any) {
       setToast({
         type: TOAST_TYPE.ERROR,

@@ -2,17 +2,17 @@ import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { E_CREATE_WORKSPACE, WORKSPACE_CREATED } from "constants/event-tracker";
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
+import { WORKSPACE_CREATED, E_CREATE_WORKSPACE } from "@/constants/event-tracker";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useWorkspace } from "hooks/store";
+import { useEventTracker, useWorkspace } from "@/hooks/store";
 // ui
 // types
-import { IWorkspace } from "@plane/types";
-import { WorkspaceService } from "services/workspace.service";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -121,39 +121,48 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
     <form className="space-y-6 sm:space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
       <div className="space-y-6 sm:space-y-7">
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceName">Workspace Name</label>
-          <Controller
-            control={control}
-            name="name"
-            rules={{
-              required: "Workspace name is required",
-              validate: (value) =>
-                /^[\w\s-]*$/.test(value) || `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
-              maxLength: {
-                value: 80,
-                message: "Workspace name should not exceed 80 characters",
-              },
-            }}
-            render={({ field: { value, ref, onChange } }) => (
-              <Input
-                id="workspaceName"
-                type="text"
-                value={value}
-                onChange={(e) => {
-                  onChange(e.target.value);
-                  setValue("name", e.target.value);
-                  setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
-                }}
-                ref={ref}
-                hasError={Boolean(errors.name)}
-                placeholder="Enter workspace name..."
-                className="w-full"
-              />
-            )}
-          />
+          <label htmlFor="workspaceName">
+            Workspace Name
+            <span className="ml-0.5 text-red-500">*</span>
+          </label>
+          <div className="flex flex-col gap-1">
+            <Controller
+              control={control}
+              name="name"
+              rules={{
+                required: "Workspace name is required",
+                validate: (value) =>
+                  /^[\w\s-]*$/.test(value) || `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
+                maxLength: {
+                  value: 80,
+                  message: "Workspace name should not exceed 80 characters",
+                },
+              }}
+              render={({ field: { value, ref, onChange } }) => (
+                <Input
+                  id="workspaceName"
+                  type="text"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                    setValue("name", e.target.value);
+                    setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
+                  }}
+                  ref={ref}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Enter workspace name..."
+                  className="w-full"
+                />
+              )}
+            />
+            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+          </div>
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceUrl">Workspace URL</label>
+          <label htmlFor="workspaceUrl">
+            Workspace URL
+            <span className="ml-0.5 text-red-500">*</span>
+          </label>
           <div className="flex w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
             <span className="whitespace-nowrap text-sm text-custom-text-200">{window && window.location.host}/</span>
             <Controller
@@ -185,7 +194,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <span>What size is your organization?</span>
+          <span>
+            What size is your organization?<span className="ml-0.5 text-red-500">*</span>
+          </span>
           <div className="w-full">
             <Controller
               name="organization_size"

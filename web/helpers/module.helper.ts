@@ -1,8 +1,8 @@
 import sortBy from "lodash/sortBy";
-// helpers
-import { satisfiesDateFilter } from "helpers/filter.helper";
-// types
 import { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
+// helpers
+import { getDate } from "@/helpers/date-time.helper";
+import { satisfiesDateFilter } from "@/helpers/filter.helper";
 
 /**
  * @description orders modules based on their status
@@ -21,7 +21,7 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
       (m) => {
         let progress = (m.completed_issues + m.cancelled_issues) / m.total_issues;
         if (isNaN(progress)) progress = 0;
-        return orderByKey === "progress" ? progress : !progress;
+        return orderByKey === "progress" ? progress : -progress;
       },
       "name",
     ]);
@@ -54,7 +54,7 @@ export const shouldFilterModule = (
   Object.keys(filters).forEach((key) => {
     const filterKey = key as keyof TModuleFilters;
     if (filterKey === "status" && filters.status && filters.status.length > 0)
-      fallsInFilters = fallsInFilters && filters.status.includes(module.status.toLowerCase());
+      fallsInFilters = fallsInFilters && filters.status.includes(module.status?.toLowerCase() ?? "");
     if (filterKey === "lead" && filters.lead && filters.lead.length > 0)
       fallsInFilters = fallsInFilters && filters.lead.includes(`${module.lead_id}`);
     if (filterKey === "members" && filters.members && filters.members.length > 0) {
@@ -62,15 +62,15 @@ export const shouldFilterModule = (
       fallsInFilters = fallsInFilters && filters.members.some((memberId) => memberIds.includes(memberId));
     }
     if (filterKey === "start_date" && filters.start_date && filters.start_date.length > 0) {
+      const startDate = getDate(module.start_date);
       filters.start_date.forEach((dateFilter) => {
-        fallsInFilters =
-          fallsInFilters && !!module.start_date && satisfiesDateFilter(new Date(module.start_date), dateFilter);
+        fallsInFilters = fallsInFilters && !!startDate && satisfiesDateFilter(startDate, dateFilter);
       });
     }
     if (filterKey === "target_date" && filters.target_date && filters.target_date.length > 0) {
+      const endDate = getDate(module.target_date);
       filters.target_date.forEach((dateFilter) => {
-        fallsInFilters =
-          fallsInFilters && !!module.target_date && satisfiesDateFilter(new Date(module.target_date), dateFilter);
+        fallsInFilters = fallsInFilters && !!endDate && satisfiesDateFilter(endDate, dateFilter);
       });
     }
   });

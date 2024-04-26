@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "lib/types";
-import { AppInstallationService } from "services/app_installation.service";
+import { NextPageWithLayout } from "@/lib/types";
+import { AppInstallationService } from "@/services/app_installation.service";
 
 // services
 const appInstallationService = new AppInstallationService();
@@ -55,7 +55,7 @@ const AppPostInstallation: NextPageWithLayout = () => {
             window.close();
           })
           .catch((err) => {
-            throw err.response;
+            throw err?.response;
           });
       }
     }

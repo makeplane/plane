@@ -1,12 +1,12 @@
 import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
+import { TModuleOrderByOptions } from "@plane/types";
 // ui
 import { CustomMenu, getButtonStyling } from "@plane/ui";
 // helpers
-import { cn } from "helpers/common.helper";
+import { MODULE_ORDER_BY_OPTIONS } from "@/constants/module";
+import { cn } from "@/helpers/common.helper";
 // types
-import { TModuleOrderByOptions } from "@plane/types";
 // constants
-import { MODULE_ORDER_BY_OPTIONS } from "constants/module";
 
 type Props = {
   onChange: (value: TModuleOrderByOptions) => void;
@@ -46,7 +46,7 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
           {value?.includes(option.key) && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2" />
+      <hr className="my-2 border-custom-border-200" />
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {

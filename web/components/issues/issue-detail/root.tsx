@@ -1,16 +1,16 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+import { TIssue } from "@plane/types";
 // components
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import { EmptyState } from "components/common";
-import { IssuePeekOverview } from "components/issues";
+import { EmptyState } from "@/components/common";
+import { IssuePeekOverview } from "@/components/issues";
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, E_ISSUE_DETAILS } from "constants/event-tracker";
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
 import emptyIssue from "public/empty-state/issue.svg";
-import { TIssue } from "@plane/types";
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
 // ui
@@ -48,10 +48,11 @@ export type TIssueDetailRoot = {
   projectId: string;
   issueId: string;
   is_archived?: boolean;
+  swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, is_archived = false } = props;
+  const { workspaceSlug, projectId, issueId, swrIssueDetails, is_archived = false } = props;
   // router
   const router = useRouter();
   // hooks
@@ -144,22 +145,12 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Issue archived successfully.",
-          });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_DETAILS },
             routePath: router.asPath,
           });
         } catch (error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be archived. Please try again.",
-          });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: E_ISSUE_DETAILS },
@@ -352,7 +343,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   // issue details
   const issue = getIssueById(issueId);
   // checking if issue is editable, based on user role
-  const is_editable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -371,10 +362,12 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           <div className="max-w-2/3 h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
+              swrIssueDetails={swrIssueDetails}
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}
-              is_editable={!is_archived && is_editable}
+              isEditable={!is_archived && isEditable}
+              isArchived={is_archived}
             />
           </div>
           <div
@@ -387,7 +380,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               issueId={issueId}
               issueOperations={issueOperations}
               is_archived={is_archived}
-              is_editable={!is_archived && is_editable}
+              isEditable={!is_archived && isEditable}
             />
           </div>
         </div>

@@ -2,23 +2,23 @@ import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-import { usePlatformOS } from "hooks/use-platform-os";
-// components
-import { Info, Star } from "lucide-react";
-import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast } from "@plane/ui";
-import { CycleQuickActions } from "components/cycles";
+import { Info } from "lucide-react";
+// types
+import type { TCycleGroups } from "@plane/types";
 // ui
-// icons
-// helpers
-import { CYCLE_STATUS } from "constants/cycle";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, E_GRID_LAYOUT } from "constants/event-tracker";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
+import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast } from "@plane/ui";
+// components
+import { FavoriteStar } from "@/components/core";
+import { CycleQuickActions } from "@/components/cycles";
 // constants
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-//.types
-import { TCycleGroups } from "@plane/types";
+import { CYCLE_STATUS } from "@/constants/cycle";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, E_GRID_LAYOUT } from "constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
+import { findHowManyDaysLeft, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
+import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export interface ICyclesBoardCard {
   workspaceSlug: string;
@@ -44,9 +44,10 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
 
   if (!cycleDetails) return null;
 
-  const cycleStatus = cycleDetails.status.toLocaleLowerCase();
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
+  const cycleStatus = cycleDetails.status?.toLocaleLowerCase();
+  // const isCompleted = cycleStatus === "completed";
+  const endDate = getDate(cycleDetails.end_date);
+  const startDate = getDate(cycleDetails.start_date);
   const isDateValid = cycleDetails.start_date || cycleDetails.end_date;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
@@ -66,8 +67,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycleDetails.completed_issues
-      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
+        ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
+        : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
   const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
@@ -131,16 +132,24 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     e.preventDefault();
     e.stopPropagation();
 
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekCycle: cycleId },
-    });
+    if (query.peekCycle) {
+      delete query.peekCycle;
+      router.push({
+        pathname: router.pathname,
+        query: { ...query },
+      });
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekCycle: cycleId },
+      });
+    }
   };
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
   return (
-    <div>
+    <div className="relative">
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
         <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div className="flex items-center justify-between gap-2">
@@ -178,7 +187,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount}</span>
               </div>
-              {cycleDetails.assignee_ids.length > 0 && (
+              {cycleDetails.assignee_ids && cycleDetails.assignee_ids.length > 0 && (
                 <Tooltip tooltipContent={`${cycleDetails.assignee_ids.length} Members`} isMobile={isMobile}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
@@ -222,24 +231,23 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
               ) : (
                 <span className="text-xs text-custom-text-400">No due date</span>
               )}
-              <div className="z-[5] flex items-center gap-1.5">
-                {isEditingAllowed &&
-                  (cycleDetails.is_favorite ? (
-                    <button type="button" onClick={handleRemoveFromFavorites}>
-                      <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                    </button>
-                  ) : (
-                    <button type="button" onClick={handleAddToFavorites}>
-                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                    </button>
-                  ))}
-
-                <CycleQuickActions cycleId={cycleId} projectId={projectId} workspaceSlug={workspaceSlug} />
-              </div>
             </div>
           </div>
         </div>
       </Link>
+      <div className="absolute right-4 bottom-3.5 z-[5] flex items-center gap-1.5">
+        {isEditingAllowed && (
+          <FavoriteStar
+            onClick={(e) => {
+              if (cycleDetails.is_favorite) handleRemoveFromFavorites(e);
+              else handleAddToFavorites(e);
+            }}
+            selected={!!cycleDetails.is_favorite}
+          />
+        )}
+
+        <CycleQuickActions cycleId={cycleId} projectId={projectId} workspaceSlug={workspaceSlug} />
+      </div>
     </div>
   );
 });

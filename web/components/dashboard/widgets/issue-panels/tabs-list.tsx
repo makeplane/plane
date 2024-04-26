@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
-// helpers
-import { cn } from "helpers/common.helper";
-// types
 import { TIssuesListTypes } from "@plane/types";
+// helpers
+import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "@/constants/dashboard";
+import { cn } from "@/helpers/common.helper";
+// types
 // constants
-import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
 
 type Props = {
   durationFilter: EDurationFilters;

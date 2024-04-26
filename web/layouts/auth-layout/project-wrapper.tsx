@@ -5,8 +5,8 @@ import useSWR from "swr";
 // hooks
 // components
 import { Spinner } from "@plane/ui";
-import { JoinProject } from "components/auth-screens";
-import { EmptyState } from "components/common";
+import { JoinProject } from "@/components/auth-screens";
+import { EmptyState } from "@/components/common";
 import {
   useApplication,
   useEventTracker,
@@ -19,8 +19,8 @@ import {
   useProjectState,
   useProjectView,
   useUser,
-  useInbox,
-} from "hooks/store";
+  // useInbox,
+} from "@/hooks/store";
 // images
 import emptyProject from "public/empty-state/project.svg";
 // constants
@@ -33,7 +33,7 @@ interface IProjectAuthWrapper {
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const { fetchInboxes } = useInbox();
+  // const { fetchInboxes } = useInbox();
   const {
     commandPalette: { toggleCreateProjectModal },
   } = useApplication();
@@ -41,7 +41,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const {
     membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
   } = useUser();
-  const { getProjectById, fetchProjectDetails, currentProjectDetails } = useProject();
+  const { getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
   const { fetchModules } = useModule();
   const { fetchViews } = useProjectView();
@@ -107,20 +107,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
-  // fetching project inboxes if inbox is enabled in project settings
-  useSWR(
-    workspaceSlug && projectId && currentProjectDetails && currentProjectDetails.inbox_view
-      ? `PROJECT_INBOXES_${workspaceSlug}_${projectId}`
-      : null,
-    workspaceSlug && projectId && currentProjectDetails && currentProjectDetails.inbox_view
-      ? () => fetchInboxes(workspaceSlug.toString(), projectId.toString())
-      : null,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
-
   const projectExists = projectId ? getProjectById(projectId.toString()) : null;
 
   // check if the project member apis is loading

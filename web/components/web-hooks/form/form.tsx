@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+import { IWebhook, TWebhookEventTypes } from "@plane/types";
 // hooks
 import { Button } from "@plane/ui";
 import {
@@ -9,14 +10,13 @@ import {
   WebhookOptions,
   WebhookSecretKey,
   WebhookToggle,
-} from "components/web-hooks";
-import { useEventTracker, useWebhook } from "hooks/store";
+} from "@/components/web-hooks";
+// constants
+import { WEBHOOK_UPDATED } from "@/constants/event-tracker";
+import { useWebhook, useEventTracker } from "@/hooks/store";
 // components
 // ui
 // types
-import { IWebhook, TWebhookEventTypes } from "@plane/types";
-// constants
-import { WEBHOOK_UPDATED } from "constants/event-tracker";
 
 type Props = {
   data?: Partial<IWebhook>;

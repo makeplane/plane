@@ -2,14 +2,15 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { BreadcrumbLink } from "components/common";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import { ProjectLogo } from "@/components/project";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
 import {
   useApplication,
   useEventTracker,
@@ -18,13 +19,12 @@ import {
   useProjectState,
   useUser,
   useMember,
-} from "hooks/store";
-import { useIssues } from "hooks/store/use-issues";
+} from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 // components
 // ui
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-import { ProjectLogo } from "components/project";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 import {
   DP_APPLIED,
@@ -72,8 +72,10 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -246,6 +248,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                     },
                   })
                 }
+                cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
             <FiltersDropdown title="Display" placement="bottom-end">
@@ -257,6 +261,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 handleDisplayFiltersUpdate={handleDisplayFilters}
                 displayProperties={issueFilters?.displayProperties ?? {}}
                 handleDisplayPropertiesUpdate={handleDisplayProperties}
+                cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
           </div>

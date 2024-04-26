@@ -30,6 +30,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             .select_related("workspace")
             .select_related("lead")
             .prefetch_related("members")
+            .filter(archived_at__isnull=False)
             .prefetch_related(
                 Prefetch(
                     "link_module",
@@ -45,6 +46,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 ),
             )
             .annotate(
@@ -55,6 +57,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -65,6 +68,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -75,6 +79,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -85,6 +90,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -95,6 +101,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .order_by(self.kwargs.get("order_by", "-created_at"))

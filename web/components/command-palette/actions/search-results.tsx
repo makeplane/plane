@@ -1,9 +1,9 @@
 import { Command } from "cmdk";
 import { useRouter } from "next/router";
-// helpers
-import { commandGroups } from "components/command-palette";
-// types
 import { IWorkspaceSearchResults } from "@plane/types";
+// helpers
+import { commandGroups } from "@/components/command-palette";
+// types
 
 type Props = {
   closePalette: () => void;

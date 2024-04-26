@@ -4,9 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 // layouts
-import DefaultLayout from "layouts/default-layout";
+import DefaultLayout from "@/layouts/default-layout";
 // images
 import ProjectNotAuthorizedImg from "public/auth/project-not-authorized.svg";
 import WorkspaceNotAuthorizedImg from "public/auth/workspace-not-authorized.svg";

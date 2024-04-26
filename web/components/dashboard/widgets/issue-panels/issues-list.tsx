@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TAssignedIssuesWidgetResponse, TCreatedIssuesWidgetResponse, TIssue, TIssuesListTypes } from "@plane/types";
 // hooks
 // components
 import { Loader, getButtonStyling } from "@plane/ui";
@@ -12,16 +13,15 @@ import {
   CreatedOverdueIssueListItem,
   CreatedUpcomingIssueListItem,
   IssueListItemProps,
-} from "components/dashboard/widgets";
-// ui
-// helpers
-import { cn } from "helpers/common.helper";
-import { getRedirectionFilters } from "helpers/dashboard.helper";
-import { useEventTracker, useIssueDetail } from "hooks/store";
-// types
-import { TAssignedIssuesWidgetResponse, TCreatedIssuesWidgetResponse, TIssue, TIssuesListTypes } from "@plane/types";
+} from "@/components/dashboard/widgets";
 // constants
 import { E_DASHBOARD, ISSUE_OPENED } from "constants/event-tracker";
+// ui
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { getRedirectionFilters } from "@/helpers/dashboard.helper";
+import { useIssueDetail, useEventTracker } from "@/hooks/store";
+// types
 
 export type WidgetIssuesListProps = {
   isLoading: boolean;

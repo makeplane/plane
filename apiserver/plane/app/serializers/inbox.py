@@ -3,7 +3,11 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .issue import IssueFlatSerializer, LabelLiteSerializer
+from .issue import (
+    IssueInboxSerializer,
+    LabelLiteSerializer,
+    IssueDetailSerializer,
+)
 from .project import ProjectLiteSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
@@ -24,16 +28,61 @@ class InboxSerializer(BaseSerializer):
 
 
 class InboxIssueSerializer(BaseSerializer):
-    issue_detail = IssueFlatSerializer(source="issue", read_only=True)
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    issue = IssueInboxSerializer(read_only=True)
 
     class Meta:
         model = InboxIssue
-        fields = "__all__"
+        fields = [
+            "id",
+            "status",
+            "duplicate_to",
+            "snoozed_till",
+            "source",
+            "issue",
+            "created_by",
+        ]
         read_only_fields = [
             "project",
             "workspace",
         ]
+
+    def to_representation(self, instance):
+        # Pass the annotated fields to the Issue instance if they exist
+        if hasattr(instance, "label_ids"):
+            instance.issue.label_ids = instance.label_ids
+        return super().to_representation(instance)
+
+
+class InboxIssueDetailSerializer(BaseSerializer):
+    issue = IssueDetailSerializer(read_only=True)
+    duplicate_issue_detail = IssueInboxSerializer(
+        read_only=True, source="duplicate_to"
+    )
+
+    class Meta:
+        model = InboxIssue
+        fields = [
+            "id",
+            "status",
+            "duplicate_to",
+            "snoozed_till",
+            "duplicate_issue_detail",
+            "source",
+            "issue",
+        ]
+        read_only_fields = [
+            "project",
+            "workspace",
+        ]
+
+    def to_representation(self, instance):
+        # Pass the annotated fields to the Issue instance if they exist
+        if hasattr(instance, "assignee_ids"):
+            instance.issue.assignee_ids = instance.assignee_ids
+        if hasattr(instance, "label_ids"):
+            instance.issue.label_ids = instance.label_ids
+
+        return super().to_representation(instance)
 
 
 class InboxIssueLiteSerializer(BaseSerializer):

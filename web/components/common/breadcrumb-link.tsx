@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Tooltip } from "@plane/ui";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   label?: string;

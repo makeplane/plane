@@ -2,22 +2,27 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Menu } from "@headlessui/react";
-// icons
 import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
+import { Menu } from "@headlessui/react";
+// type
+import type { IUserNotification, NotificationType } from "@plane/types";
 // ui
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { E_Notifications, ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
-import { snoozeOptions } from "constants/notification";
+import {
+  E_Notifications,
+  ISSUE_OPENED,
+  NOTIFICATIONS_READ,
+  NOTIFICATION_ARCHIVED,
+  NOTIFICATION_SNOOZED,
+} from "@/constants/event-tracker";
+import { snoozeOptions } from "@/constants/notification";
 // helper
-import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
-import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
+import { calculateTimeAgo, renderFormattedTime, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
+import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
-// type
-import type { IUserNotification, NotificationType } from "@plane/types";
+import { useEventTracker } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type NotificationCardProps = {
   selectedTab: NotificationType;
@@ -121,7 +126,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const notificationField = notification.data.issue_activity.field;
   const notificationTriggeredBy = notification.triggered_by_details;
 
-  if (isSnoozedTabOpen && new Date(notification.snoozed_till!) < new Date()) return null;
+  const snoozedTillDate = getDate(notification?.snoozed_till);
+
+  if (snoozedTillDate && isSnoozedTabOpen && snoozedTillDate < new Date()) return null;
 
   return (
     <Link
@@ -133,16 +140,16 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           element_id: isArchivedTabOpen
             ? "archived"
             : isSnoozedTabOpen
-            ? "snoozed"
-            : isUnreadTabOpen
-            ? "unread"
-            : selectedTab,
+              ? "snoozed"
+              : isUnreadTabOpen
+                ? "unread"
+                : selectedTab,
         });
         closePopover();
       }}
       href={`/${workspaceSlug}/projects/${notification.project}/${
-        notificationField === "archived_at" ? "archived-issues" : "issues"
-      }/${notification.data.issue.id}`}
+        notificationField === "archived_at" ? "archives/" : ""
+      }issues/${notification.data.issue.id}`}
       className={`group relative flex w-full cursor-pointer items-center gap-4 p-3 pl-6 ${
         notification.read_at === null ? "bg-custom-primary-70/5" : "hover:bg-custom-background-200"
       }`}

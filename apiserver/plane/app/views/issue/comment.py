@@ -48,6 +48,7 @@ class IssueCommentViewSet(WebhookMixin, BaseViewSet):
             .filter(
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
             )
             .select_related("project")
             .select_related("workspace")
@@ -163,6 +164,7 @@ class CommentReactionViewSet(BaseViewSet):
             .filter(
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
             )
             .order_by("-created_at")
             .distinct()

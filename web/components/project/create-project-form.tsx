@@ -2,6 +2,7 @@ import { useState, FC, ChangeEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
 import { Info, X } from "lucide-react";
+import { IProject } from "@plane/types";
 // ui
 import {
   Button,
@@ -15,21 +16,20 @@ import {
   Tooltip,
 } from "@plane/ui";
 // components
-import { ImagePickerPopover } from "components/core";
-import { MemberDropdown } from "components/dropdowns";
-import { ProjectLogo } from "./project-logo";
+import { ImagePickerPopover } from "@/components/core";
+import { MemberDropdown } from "@/components/dropdowns";
 // constants
-import { PROJECT_CREATED } from "constants/event-tracker";
-import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+import { PROJECT_CREATED } from "@/constants/event-tracker";
+import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "@/constants/project";
 // helpers
-import { convertHexEmojiToDecimal, getRandomEmoji } from "helpers/emoji.helper";
-import { cn } from "helpers/common.helper";
-import { projectIdentifierSanitizer } from "helpers/project.helper";
+import { cn } from "@/helpers/common.helper";
+import { convertHexEmojiToDecimal, getRandomEmoji } from "@/helpers/emoji.helper";
+import { projectIdentifierSanitizer } from "@/helpers/project.helper";
 // hooks
-import { useEventTracker, useProject } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useEventTracker, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { IProject } from "@plane/types";
+import { ProjectLogo } from "./project-logo";
 
 type Props = {
   setToFavorite?: boolean;
@@ -197,20 +197,22 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                 onChange={(val: any) => {
                   let logoValue = {};
 
-                  if (val.type === "emoji")
+                  if (val?.type === "emoji")
                     logoValue = {
                       value: convertHexEmojiToDecimal(val.value.unified),
                       url: val.value.imageUrl,
                     };
-                  else if (val.type === "icon") logoValue = val.value;
+                  else if (val?.type === "icon") logoValue = val.value;
 
                   onChange({
-                    in_use: val.type,
-                    [val.type]: logoValue,
+                    in_use: val?.type,
+                    [val?.type]: logoValue,
                   });
                 }}
-                defaultIconColor={value.in_use === "icon" ? value.icon?.color : undefined}
-                defaultOpen={value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON}
+                defaultIconColor={value.in_use && value.in_use === "icon" ? value.icon?.color : undefined}
+                defaultOpen={
+                  value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
+                }
               />
             )}
           />
@@ -224,7 +226,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                 control={control}
                 name="name"
                 rules={{
-                  required: "Title is required",
+                  required: "Name is required",
                   maxLength: {
                     value: 255,
                     message: "Title should be less than 255 characters",
@@ -238,7 +240,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                     value={value}
                     onChange={handleNameChange(onChange)}
                     hasError={Boolean(errors.name)}
-                    placeholder="Project title"
+                    placeholder="Project name"
                     className="w-full focus:border-blue-400"
                     tabIndex={1}
                   />

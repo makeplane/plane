@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { FileText, Inbox } from "lucide-react";
+import { IProject } from "@plane/types";
 // ui
 import { ContrastIcon, DiceIcon, PhotoFilterIcon, ToggleSwitch, setPromiseToast } from "@plane/ui";
+import { E_FEATURES } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useProject, useUser } from "hooks/store";
+import { useEventTracker, useProject, useUser } from "@/hooks/store";
 // types
-import { IProject } from "@plane/types";
-import { E_FEATURES } from "constants/event-tracker";
 
 type Props = {
   workspaceSlug: string;

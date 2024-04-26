@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
+import { IUser, IImporterService } from "@plane/types";
 // hooks
 import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 
 import { useEventTracker, useProject } from "hooks/store";
 // services
-import { ProjectExportService } from "services/project";
+import { ProjectExportService } from "@/services/project";
 // ui
-// types
-import { IUser, IImporterService } from "@plane/types";
 // constants
 import { ISSUES_EXPORTED } from "constants/event-tracker";
 

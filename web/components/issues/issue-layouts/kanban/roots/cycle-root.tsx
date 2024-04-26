@@ -2,9 +2,9 @@ import React, { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { CycleIssueQuickActions } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
-import { useCycle, useIssues } from "hooks/store";
+import { CycleIssueQuickActions } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useCycle, useIssues } from "@/hooks/store";
 // ui
 // types
 // components

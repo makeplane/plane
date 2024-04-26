@@ -3,16 +3,6 @@ import React from "react";
 import Image from "next/image";
 // headless ui
 import { Tab } from "@headlessui/react";
-// hooks
-import { Avatar, StateGroupIcon } from "@plane/ui";
-import { SingleProgressStats } from "components/core";
-import useLocalStorage from "hooks/use-local-storage";
-// images
-import emptyLabel from "public/empty-state/empty_label.svg";
-import emptyMembers from "public/empty-state/empty_members.svg";
-// components
-// ui
-// types
 import {
   IModule,
   TAssigneesDistribution,
@@ -20,13 +10,25 @@ import {
   TLabelsDistribution,
   TStateGroups,
 } from "@plane/types";
+// hooks
+import { Avatar, StateGroupIcon } from "@plane/ui";
+import { SingleProgressStats } from "@/components/core";
+import useLocalStorage from "@/hooks/use-local-storage";
+// images
+import emptyLabel from "public/empty-state/empty_label.svg";
+import emptyMembers from "public/empty-state/empty_members.svg";
+// components
+// ui
+// types
 
 type Props = {
-  distribution: {
-    assignees: TAssigneesDistribution[];
-    completion_chart: TCompletionChartDistribution;
-    labels: TLabelsDistribution[];
-  };
+  distribution:
+    | {
+        assignees: TAssigneesDistribution[];
+        completion_chart: TCompletionChartDistribution;
+        labels: TLabelsDistribution[];
+      }
+    | undefined;
   groupedIssues: {
     [key: string]: number;
   };
@@ -129,7 +131,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
           as="div"
           className="flex w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
         >
-          {distribution?.assignees.length > 0 ? (
+          {distribution && distribution?.assignees.length > 0 ? (
             distribution.assignees.map((assignee, index) => {
               if (assignee.assignee_id)
                 return (
@@ -189,7 +191,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
           as="div"
           className="flex w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
         >
-          {distribution?.labels.length > 0 ? (
+          {distribution && distribution?.labels.length > 0 ? (
             distribution.labels.map((label, index) => (
               <SingleProgressStats
                 key={label.label_id ?? `no-label-${index}`}

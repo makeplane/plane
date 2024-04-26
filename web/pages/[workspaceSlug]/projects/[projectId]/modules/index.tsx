@@ -1,25 +1,27 @@
 import { ReactElement, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+import { TModuleFilters } from "@plane/types";
 // layouts
 // components
-import { PageHead } from "components/core";
-import { ModulesListHeader } from "components/headers";
-import { ModuleAppliedFiltersList, ModulesListView } from "components/modules";
+import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/empty-state";
+import { ModulesListHeader } from "@/components/headers";
+import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
 // types
 // hooks
-import { useModuleFilter, useProject } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
-import { calculateTotalFilters } from "helpers/filter.helper";
-import { TModuleFilters } from "@plane/types";
-import ModulesListMobileHeader from "components/modules/moduels-list-mobile-header";
+import ModulesListMobileHeader from "@/components/modules/moduels-list-mobile-header";
+import { EmptyStateType } from "@/constants/empty-state";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { useModuleFilter, useProject } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectModulesPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
-  const { projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // store
-  const { getProjectById } = useProject();
+  const { getProjectById, currentProjectDetails } = useProject();
   const { currentProjectFilters, clearAllFilters, updateFilters } = useModuleFilter();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
@@ -37,6 +39,19 @@ const ProjectModulesPage: NextPageWithLayout = observer(() => {
     },
     [currentProjectFilters, projectId, updateFilters]
   );
+
+  if (!workspaceSlug || !projectId) return <></>;
+
+  // No access to
+  if (currentProjectDetails?.module_view === false)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <EmptyState
+          type={EmptyStateType.DISABLED_PROJECT_MODULE}
+          primaryButtonLink={`/${workspaceSlug}/projects/${projectId}/settings/features`}
+        />
+      </div>
+    );
 
   return (
     <>
@@ -60,7 +75,7 @@ const ProjectModulesPage: NextPageWithLayout = observer(() => {
 
 ProjectModulesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ModulesListHeader />} mobileHeader={<ModulesListMobileHeader/>} withProjectWrapper>
+    <AppLayout header={<ModulesListHeader />} mobileHeader={<ModulesListMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

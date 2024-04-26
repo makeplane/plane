@@ -1,17 +1,17 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
+import { TIssue } from "@plane/types";
 // components
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
-import { useIssueDetail, useProject, useProjectState } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
-import { TIssue } from "@plane/types";
+import { cn } from "@/helpers/common.helper";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
 // types
 import { TSubIssueOperations } from "./root";
-import { cn } from "helpers/common.helper";
 // import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 
 export interface ISubIssues {
@@ -42,9 +42,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   } = props;
 
   const {
+    peekIssue,
     setPeekIssue,
     issue: { getIssueById },
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
+    toggleCreateIssueModal,
+    toggleDeleteIssueModal,
   } = useIssueDetail();
   const project = useProject();
   const { getProjectStates } = useProjectState();
@@ -62,6 +65,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     issue &&
     issue.project_id &&
     issue.id &&
+    peekIssue?.issueId !== issue.id &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   if (!issue) return <></>;
@@ -115,6 +119,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
             </div>
 
             <ControlLink
+              id={`issue-${issue.id}`}
               href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
               target="_blank"
               onClick={() => handleIssuePeekOverview(issue)}
@@ -139,7 +144,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
           <div className="flex-shrink-0 text-sm">
             <CustomMenu placement="bottom-end" ellipsis>
               {disabled && (
-                <CustomMenu.MenuItem onClick={() => handleIssueCrudState("update", parentIssueId, { ...issue })}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    handleIssueCrudState("update", parentIssueId, { ...issue });
+                    toggleCreateIssueModal(true);
+                  }}
+                >
                   <div className="flex items-center gap-2">
                     <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
                     <span>Edit issue</span>
@@ -148,7 +158,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
               )}
 
               {disabled && (
-                <CustomMenu.MenuItem onClick={() => handleIssueCrudState("delete", parentIssueId, issue)}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    handleIssueCrudState("delete", parentIssueId, issue);
+                    toggleDeleteIssueModal(issue.id);
+                  }}
+                >
                   <div className="flex items-center gap-2">
                     <Trash className="h-3.5 w-3.5" strokeWidth={2} />
                     <span>Delete issue</span>

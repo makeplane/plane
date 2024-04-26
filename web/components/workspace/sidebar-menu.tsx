@@ -6,16 +6,16 @@ import { Crown } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
 // components
-import { NotificationPopover } from "components/notifications";
+import { NotificationPopover } from "@/components/notifications";
 // constants
-import { SIDEBAR_MENU_ITEMS } from "constants/dashboard";
-import { SIDEBAR_CLICKED } from "constants/event-tracker";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { SIDEBAR_MENU_ITEMS } from "@/constants/dashboard";
+import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helper
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 // hooks
-import { useApplication, useEventTracker, useUser } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useApplication, useEventTracker, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const WorkspaceSidebarMenu = observer(() => {
   // store hooks

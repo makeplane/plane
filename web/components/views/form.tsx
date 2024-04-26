@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+import { IProjectView, IIssueFilterOptions } from "@plane/types";
 // hooks
 import { Button, Input, TextArea } from "@plane/ui";
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { useLabel, useMember, useProjectState } from "hooks/store";
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 // components
 // ui
 // types
-import { IProjectView, IIssueFilterOptions } from "@plane/types";
 // constants
 
 type Props = {
@@ -27,6 +27,7 @@ const defaultValues: Partial<IProjectView> = {
 export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
   // store hooks
+  const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
   const {
@@ -111,7 +112,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
       <div className="space-y-5">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
-          <div>
+          <div className="flex flex-col gap-1">
             <Controller
               control={control}
               name="name"
@@ -136,6 +137,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                 />
               )}
             />
+            <span className="text-xs text-red-500">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller
@@ -184,6 +186,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     labels={projectLabels ?? undefined}
                     memberIds={projectMemberIds ?? undefined}
                     states={projectStates}
+                    cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                    moduleViewDisabled={!currentProjectDetails?.module_view}
                   />
                 </FiltersDropdown>
               )}

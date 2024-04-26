@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import { mutate } from "swr";
-import { Dialog, Transition } from "@headlessui/react";
 import { Trash2 } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // hooks
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 
 type Props = {
   isOpen: boolean;

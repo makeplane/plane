@@ -3,19 +3,19 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
+import { IProject, TIssue } from "@plane/types";
 // hooks
 import { setPromiseToast } from "@plane/ui";
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { createIssuePayload } from "helpers/issue.helper";
-import { useEventTracker, useProject } from "hooks/store";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { E_Gantt_QUICK_ADD, ISSUE_CREATED } from "@/constants/event-tracker";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { createIssuePayload } from "@/helpers/issue.helper";
+import { useEventTracker, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
 // ui
 // types
-import { IProject, TIssue } from "@plane/types";
-import { E_Gantt_QUICK_ADD, ISSUE_CREATED } from "constants/event-tracker";
 // constants
 
 interface IInputProps {
@@ -163,7 +163,7 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
       ) : (
         <button
           type="button"
-          className="sticky bottom-0 z-[1] flex w-full cursor-pointer items-center gap-2 border-t-[1px] border-custom-border-200 bg-custom-background-100 p-3 py-3 text-custom-primary-100"
+          className="sticky bottom-0 z-[1] flex w-full cursor-pointer items-center gap-2 border-t-[1px] border-custom-border-200 bg-custom-background-100 px-3 pt-2 text-custom-primary-100"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-3.5 w-3.5 stroke-2" />

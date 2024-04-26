@@ -4,9 +4,9 @@ import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
-import { IssueFiltersService } from "services/issue_filter.service";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { IssueFiltersService } from "@/services/issue_filter.service";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -71,9 +71,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     const displayFilters = this.filters[projectId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
-    const _filters: IIssueFilters = this.computedIssueFilters(displayFilters);
-
-    return _filters;
+    return this.computedIssueFilters(displayFilters);
   }
 
   get appliedFilters() {

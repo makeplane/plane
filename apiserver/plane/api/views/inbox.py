@@ -2,27 +2,28 @@
 import json
 
 # Django improts
-from django.utils import timezone
-from django.db.models import Q
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Q
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseAPIView
-from plane.app.permissions import ProjectLitePermission
 from plane.api.serializers import InboxIssueSerializer, IssueSerializer
+from plane.app.permissions import ProjectLitePermission
+from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
+    Inbox,
     InboxIssue,
     Issue,
-    State,
-    ProjectMember,
     Project,
-    Inbox,
+    ProjectMember,
+    State,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+
+from .base import BaseAPIView
 
 
 class InboxIssueAPIEndpoint(BaseAPIView):
@@ -134,10 +135,11 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         # Create or get state
         state, _ = State.objects.get_or_create(
             name="Triage",
-            group="backlog",
+            group="triage",
             description="Default state for managing all Inbox Issues",
             project_id=project_id,
             color="#ff7700",
+            is_triage=True,
         )
 
         # create an issue
@@ -270,6 +272,9 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )
+            current_instance = json.dumps(
+                InboxIssueSerializer(inbox_issue).data, cls=DjangoJSONEncoder
+            )
 
             if serializer.is_valid():
                 serializer.save()
@@ -298,7 +303,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                     )
 
                     # Update the issue state only if it is in triage state
-                    if issue.state.name == "Triage":
+                    if issue.state.is_triage:
                         # Move to default state
                         state = State.objects.filter(
                             workspace__slug=slug,
@@ -308,6 +313,21 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                         if state is not None:
                             issue.state = state
                             issue.save()
+
+                # create a activity for status change
+                issue_activity.delay(
+                    type="inbox.activity.created",
+                    requested_data=json.dumps(
+                        request.data, cls=DjangoJSONEncoder
+                    ),
+                    actor_id=str(request.user.id),
+                    issue_id=str(issue_id),
+                    project_id=str(project_id),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=False,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(

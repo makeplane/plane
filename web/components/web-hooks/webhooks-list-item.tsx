@@ -1,14 +1,14 @@
 import { FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { IWebhook } from "@plane/types";
 // hooks
 import { ToggleSwitch } from "@plane/ui";
-import { useEventTracker, useWebhook } from "hooks/store";
+// constants
+import { WEBHOOK_DISABLED, WEBHOOK_ENABLED } from "@/constants/event-tracker";
+import { useWebhook, useEventTracker } from "@/hooks/store";
 // ui
 // types
-import { IWebhook } from "@plane/types";
-// constants
-import { WEBHOOK_DISABLED, WEBHOOK_ENABLED } from "constants/event-tracker";
 
 interface IWebhookListItem {
   webhook: IWebhook;

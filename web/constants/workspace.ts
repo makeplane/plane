@@ -1,6 +1,6 @@
 // services images
-import { SettingIcon } from "components/icons";
-import { Props } from "components/icons/types";
+import { SettingIcon } from "@/components/icons";
+import { Props } from "@/components/icons/types";
 import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";
 import GithubLogo from "public/services/github.png";
@@ -147,22 +147,6 @@ export const WORKSPACE_SETTINGS_LINKS: {
     href: `/settings/billing`,
     access: EUserWorkspaceRoles.ADMIN,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "integrations",
-    label: "Integrations",
-    href: `/settings/integrations`,
-    access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "import",
-    label: "Imports",
-    href: `/settings/imports`,
-    access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/imports`,
     Icon: SettingIcon,
   },
   {

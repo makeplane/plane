@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
-import { useProject } from "hooks/store";
+import { ProjectLogo } from "@/components/project";
+import { useProject } from "@/hooks/store";
 // components
-import { ProjectLogo } from "components/project";
 
 type Props = {
   handleRemove: (val: string) => void;

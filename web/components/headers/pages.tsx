@@ -5,13 +5,13 @@ import { FileText, Plus } from "lucide-react";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
-import { BreadcrumbLink } from "components/common";
-import { EUserProjectRoles } from "constants/project";
-// components
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
-import { ProjectLogo } from "components/project";
-// constants
+import { BreadcrumbLink } from "@/components/common";
 import { E_PAGES } from "constants/event-tracker";
+import { ProjectLogo } from "@/components/project";
+import { EUserProjectRoles } from "@/constants/project";
+// constants
+// components
+import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const PagesHeader = observer(() => {
   // router

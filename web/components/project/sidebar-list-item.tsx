@@ -3,8 +3,6 @@ import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Disclosure, Transition } from "@headlessui/react";
-// icons
 import {
   MoreVertical,
   PenSquare,
@@ -18,6 +16,8 @@ import {
   MoreHorizontal,
   Inbox,
 } from "lucide-react";
+import { Disclosure, Transition } from "@headlessui/react";
+// icons
 // ui
 import {
   CustomMenu,
@@ -29,16 +29,15 @@ import {
   LayersIcon,
   setPromiseToast,
 } from "@plane/ui";
-import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "components/project";
-import { EUserProjectRoles } from "constants/project";
-import { cn } from "helpers/common.helper";
-import { getNumberCount } from "helpers/string.helper";
-// hooks
-import { useApplication, useEventTracker, useInbox, useProject } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "@/components/project";
 // constants
 import { E_SIDEBAR } from "constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useApplication, useEventTracker, useProject } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // helpers
 
 // components
@@ -97,7 +96,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const { theme: themeStore } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
-  const { getInboxesByProjectId, getInboxById } = useInbox();
   const { isMobile } = usePlatformOS();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -111,8 +109,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // derived values
   const project = getProjectById(projectId);
   const isCollapsed = themeStore.sidebarCollapsed;
-  const inboxesMap = project?.inbox_view ? getInboxesByProjectId(projectId) : undefined;
-  const inboxDetails = inboxesMap && inboxesMap.length > 0 ? getInboxById(inboxesMap[0]) : undefined;
   // auth
   const isAdmin = project?.member_role === EUserProjectRoles.ADMIN;
   const isViewerOrGuest =
@@ -231,7 +227,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       "justify-center": isCollapsed,
                     })}
                   >
-                    <div className="h-7 w-7 grid place-items-center">
+                    <div className="h-7 w-7 grid place-items-center flex-shrink-0">
                       <ProjectLogo logo={project.logo_props} />
                     </div>
                     {!isCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
@@ -279,18 +275,11 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {project.is_favorite && (
                     <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <Star className="h-3.5 w-3.5 fill-orange-400 stroke-[1.5] text-orange-400" />
+                        <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
                         <span>Remove from favorites</span>
                       </span>
                     </CustomMenu.MenuItem>
                   )}
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                      <span>Copy project link</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-
                   {/* publish project settings */}
                   {isAdmin && (
                     <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
@@ -302,16 +291,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  {!isViewerOrGuest && (
-                    <CustomMenu.MenuItem>
-                      <Link href={`/${workspaceSlug}/projects/${project?.id}/archived-issues/`}>
-                        <div className="flex items-center justify-start gap-2">
-                          <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                          <span>Archived issues</span>
-                        </div>
-                      </Link>
-                    </CustomMenu.MenuItem>
-                  )}
                   <CustomMenu.MenuItem>
                     <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                       <div className="flex items-center justify-start gap-2">
@@ -320,6 +299,23 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </Link>
                   </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={handleCopyText}>
+                    <span className="flex items-center justify-start gap-2">
+                      <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                      <span>Copy link</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+
+                  {!isViewerOrGuest && (
+                    <CustomMenu.MenuItem>
+                      <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                          <span>Archives</span>
+                        </div>
+                      </Link>
+                    </CustomMenu.MenuItem>
+                  )}
                   <CustomMenu.MenuItem>
                     <Link href={`/${workspaceSlug}/projects/${project?.id}/settings`}>
                       <div className="flex items-center justify-start gap-2">
@@ -377,36 +373,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                                 : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                             } ${isCollapsed ? "justify-center" : ""}`}
                           >
-                            {item.name === "Inbox" && inboxDetails ? (
-                              <>
-                                <div className="flex items-center justify-center relative">
-                                  {inboxDetails?.pending_issue_count > 0 && (
-                                    <span
-                                      className={cn(
-                                        "absolute -right-1.5 -top-1 px-0.5 h-3.5 w-3.5 flex items-center tracking-tight justify-center rounded-full text-[0.5rem] border-[0.5px] border-custom-sidebar-border-200 bg-custom-background-80 text-custom-text-100",
-                                        {
-                                          "text-[0.375rem] leading-5": inboxDetails?.pending_issue_count >= 100,
-                                        },
-                                        {
-                                          "border-none bg-custom-primary-300 text-white": router.asPath.includes(
-                                            item.href
-                                          ),
-                                        }
-                                      )}
-                                    >
-                                      {getNumberCount(inboxDetails?.pending_issue_count)}
-                                    </span>
-                                  )}
-                                  <item.Icon className="h-4 w-4 stroke-[1.5]" />
-                                </div>
-                                {!isCollapsed && item.name}
-                              </>
-                            ) : (
-                              <>
-                                <item.Icon className="h-4 w-4 stroke-[1.5]" />
-                                {!isCollapsed && item.name}
-                              </>
-                            )}
+                            <item.Icon className="h-4 w-4 stroke-[1.5]" />
+                            {!isCollapsed && item.name}
                           </div>
                         </Tooltip>
                       </span>

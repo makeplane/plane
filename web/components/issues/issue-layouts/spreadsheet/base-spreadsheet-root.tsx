@@ -1,15 +1,15 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
 // hooks
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useIssues, useUser } from "hooks/store";
-import { useIssuesActions } from "hooks/use-issues-actions";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 // views
 // types
 // constants
-import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { SpreadsheetView } from "./spreadsheet-view";
 

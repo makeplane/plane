@@ -1,84 +1,59 @@
 # Python imports
 import json
-import random
-from itertools import chain
+
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import (
+    Case,
+    CharField,
+    Exists,
+    F,
+    Func,
+    Max,
+    OuterRef,
+    Prefetch,
+    Q,
+    UUIDField,
+    Value,
+    When,
+)
+from django.db.models.functions import Coalesce
 
 # Django imports
 from django.utils import timezone
-from django.db.models import (
-    Prefetch,
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Case,
-    Value,
-    CharField,
-    When,
-    Exists,
-    Max,
-)
-from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.db import IntegrityError
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
-from django.db.models.functions import Coalesce
+from rest_framework import status
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
 
-# Module imports
-from .. import BaseViewSet, BaseAPIView, WebhookMixin
-from plane.app.serializers import (
-    IssueActivitySerializer,
-    IssueCommentSerializer,
-    IssuePropertySerializer,
-    IssueSerializer,
-    IssueCreateSerializer,
-    LabelSerializer,
-    IssueFlatSerializer,
-    IssueLinkSerializer,
-    IssueLiteSerializer,
-    IssueAttachmentSerializer,
-    IssueSubscriberSerializer,
-    ProjectMemberLiteSerializer,
-    IssueReactionSerializer,
-    CommentReactionSerializer,
-    IssueRelationSerializer,
-    RelatedIssueSerializer,
-    IssueDetailSerializer,
-)
 from plane.app.permissions import (
     ProjectEntityPermission,
-    WorkSpaceAdminPermission,
-    ProjectMemberPermission,
     ProjectLitePermission,
 )
-from plane.db.models import (
-    Project,
-    Issue,
-    IssueActivity,
-    IssueComment,
-    IssueProperty,
-    Label,
-    IssueLink,
-    IssueAttachment,
-    IssueSubscriber,
-    ProjectMember,
-    IssueReaction,
-    CommentReaction,
-    IssueRelation,
+from plane.app.serializers import (
+    IssueCreateSerializer,
+    IssueDetailSerializer,
+    IssuePropertySerializer,
+    IssueSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.utils.grouper import group_results
+from plane.db.models import (
+    Issue,
+    IssueAttachment,
+    IssueLink,
+    IssueProperty,
+    IssueReaction,
+    IssueSubscriber,
+    Project,
+)
 from plane.utils.issue_filters import issue_filters
-from collections import defaultdict
-from plane.utils.cache import invalidate_cache
+
+# Module imports
+from .. import BaseAPIView, BaseViewSet, WebhookMixin
+
 
 class IssueListEndpoint(BaseAPIView):
 
@@ -142,7 +117,8 @@ class IssueListEndpoint(BaseAPIView):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -336,7 +312,8 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),

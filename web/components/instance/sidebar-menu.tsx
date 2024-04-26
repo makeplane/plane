@@ -2,9 +2,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 import { Tooltip } from "@plane/ui";
-import { useApplication } from "hooks/store";
+import { useApplication } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 
 const INSTANCE_ADMIN_LINKS = [
@@ -57,7 +57,13 @@ export const InstanceAdminSidebarMenu = () => {
         return (
           <Link key={index} href={item.href}>
             <div>
-              <Tooltip tooltipContent={item.name} position="right" className="ml-2" disabled={!sidebarCollapsed} isMobile={isMobile}>
+              <Tooltip
+                tooltipContent={item.name}
+                position="right"
+                className="ml-2"
+                disabled={!sidebarCollapsed}
+                isMobile={isMobile}
+              >
                 <div
                   className={`group flex w-full items-center gap-3 rounded-md px-3 py-2 outline-none ${
                     isActive

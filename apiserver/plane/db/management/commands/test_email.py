@@ -15,7 +15,7 @@ class Command(BaseCommand):
         receiver_email = options.get("to_email")
 
         if not receiver_email:
-            raise CommandError("Reciever email is required")
+            raise CommandError("Receiver email is required")
 
         (
             EMAIL_HOST,
@@ -23,6 +23,7 @@ class Command(BaseCommand):
             EMAIL_HOST_PASSWORD,
             EMAIL_PORT,
             EMAIL_USE_TLS,
+            EMAIL_USE_SSL,
             EMAIL_FROM,
         ) = get_email_configuration()
 
@@ -32,6 +33,7 @@ class Command(BaseCommand):
             username=EMAIL_HOST_USER,
             password=EMAIL_HOST_PASSWORD,
             use_tls=EMAIL_USE_TLS == "1",
+            use_ssl=EMAIL_USE_SSL == "1",
             timeout=30,
         )
         # Prepare email details
@@ -52,7 +54,7 @@ class Command(BaseCommand):
                 connection=connection,
             )
             msg.send()
-            self.stdout.write(self.style.SUCCESS("Email succesfully sent"))
+            self.stdout.write(self.style.SUCCESS("Email successfully sent"))
         except Exception as e:
             self.stdout.write(
                 self.style.ERROR(

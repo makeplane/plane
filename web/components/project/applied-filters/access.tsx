@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // constants
-import { NETWORK_CHOICES } from "constants/project";
+import { NETWORK_CHOICES } from "@/constants/project";
 
 type Props = {
   handleRemove: (val: string) => void;

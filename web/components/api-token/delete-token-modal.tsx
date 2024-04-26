@@ -4,15 +4,13 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { useEventTracker } from "hooks/store";
+import { IApiToken } from "@plane/types";
 // services
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { API_TOKENS_LIST } from "constants/fetch-keys";
-import { APITokenService } from "services/api_token.service";
+import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { APITokenService } from "@/services/api_token.service";
 // ui
 // types
-import { IApiToken } from "@plane/types";
-// constants
-import { API_TOKEN_DELETED } from "constants/event-tracker";
 // fetch-keys
 
 type Props = {

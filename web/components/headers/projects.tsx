@@ -1,21 +1,21 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
+import { TProjectFilters } from "@plane/types";
 // hooks
-import { useApplication, useEventTracker, useMember, useProject, useProjectFilter, useUser } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
+import { BreadcrumbLink } from "@/components/common";
 // helpers
-import { cn } from "helpers/common.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { FiltersDropdown } from "@/components/issues";
+import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
 import { E_PROJECTS } from "constants/event-tracker";
-import { FiltersDropdown } from "components/issues";
-import { ProjectFiltersSelection, ProjectOrderByDropdown } from "components/project";
-import { TProjectFilters } from "@plane/types";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ProjectsHeader = observer(() => {
   // states
@@ -31,7 +31,6 @@ export const ProjectsHeader = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { workspaceProjectIds } = useProject();
   const {
     currentWorkspaceDisplayFilters: displayFilters,
     currentWorkspaceFilters: filters,
@@ -53,15 +52,19 @@ export const ProjectsHeader = observer(() => {
   const handleFilters = useCallback(
     (key: keyof TProjectFilters, value: string | string[]) => {
       if (!workspaceSlug) return;
-      const newValues = filters?.[key] ?? [];
-
-      if (Array.isArray(value))
+      let newValues = filters?.[key] ?? [];
+      if (Array.isArray(value)) {
+        if (key === "created_at" && newValues.find((v) => v.includes("custom"))) newValues = [];
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
-      else {
+      } else {
         if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
+        else {
+          if (key === "created_at") newValues = [value];
+          else newValues.push(value);
+        }
       }
 
       updateFilters(workspaceSlug, { [key]: newValues });
@@ -89,52 +92,50 @@ export const ProjectsHeader = observer(() => {
         </div>
       </div>
       <div className="w-full flex items-center justify-end gap-3">
-        {workspaceProjectIds && workspaceProjectIds?.length > 0 && (
-          <div className="flex items-center">
-            {!isSearchOpen && (
-              <button
-                type="button"
-                className="-mr-1 p-2 hover:bg-custom-background-80 rounded text-custom-text-400 grid place-items-center"
-                onClick={() => {
-                  setIsSearchOpen(true);
-                  inputRef.current?.focus();
-                }}
-              >
-                <Search className="h-3.5 w-3.5" />
-              </button>
-            )}
-            <div
-              className={cn(
-                "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
-                {
-                  "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
-                }
-              )}
+        <div className="flex items-center">
+          {!isSearchOpen && (
+            <button
+              type="button"
+              className="-mr-1 p-2 hover:bg-custom-background-80 rounded text-custom-text-400 grid place-items-center"
+              onClick={() => {
+                setIsSearchOpen(true);
+                inputRef.current?.focus();
+              }}
             >
               <Search className="h-3.5 w-3.5" />
-              <input
-                ref={inputRef}
-                className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 focus:outline-none"
-                placeholder="Search"
-                value={searchQuery}
-                onChange={(e) => updateSearchQuery(e.target.value)}
-                onKeyDown={handleInputKeyDown}
-              />
-              {isSearchOpen && (
-                <button
-                  type="button"
-                  className="grid place-items-center"
-                  onClick={() => {
-                    updateSearchQuery("");
-                    setIsSearchOpen(false);
-                  }}
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              )}
-            </div>
+            </button>
+          )}
+          <div
+            className={cn(
+              "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+              {
+                "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+              }
+            )}
+          >
+            <Search className="h-3.5 w-3.5" />
+            <input
+              ref={inputRef}
+              className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => updateSearchQuery(e.target.value)}
+              onKeyDown={handleInputKeyDown}
+            />
+            {isSearchOpen && (
+              <button
+                type="button"
+                className="grid place-items-center"
+                onClick={() => {
+                  updateSearchQuery("");
+                  setIsSearchOpen(false);
+                }}
+              >
+                <X className="h-3 w-3" />
+              </button>
+            )}
           </div>
-        )}
+        </div>
         <ProjectOrderByDropdown
           value={displayFilters?.order_by}
           onChange={(val) => {

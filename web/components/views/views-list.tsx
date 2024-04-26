@@ -2,16 +2,16 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useProjectView } from "hooks/store";
 // components
-import { EmptyState } from "components/empty-state";
-import { ViewListLoader } from "components/ui";
-import { ProjectViewListItem } from "components/views";
-// ui
 import { Input } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { ViewListLoader } from "@/components/ui";
+import { ProjectViewListItem } from "@/components/views";
+// ui
 // constants
-import { EmptyStateType } from "constants/empty-state";
-import { E_VIEWS_EMPTY_STATE } from "constants/event-tracker";
+import { EmptyStateType } from "@/constants/empty-state";
+import { E_VIEWS_EMPTY_STATE } from "@/constants/event-tracker";
+import { useApplication, useProjectView, useEventTracker } from "@/hooks/store";
 
 export const ProjectViewsList = observer(() => {
   // states

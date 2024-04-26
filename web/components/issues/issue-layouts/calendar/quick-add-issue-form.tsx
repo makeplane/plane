@@ -3,23 +3,23 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 // components
-import { ExistingIssuesListModal } from "components/core";
-// hooks
-import { useEventTracker, useIssueDetail, useProject } from "hooks/store";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// helpers
-import { createIssuePayload } from "helpers/issue.helper";
-// icons
 import { PlusIcon } from "lucide-react";
-// ui
-import { TOAST_TYPE, setPromiseToast, setToast, CustomMenu } from "@plane/ui";
-// types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
-// constants
+import { TOAST_TYPE, setPromiseToast, setToast, CustomMenu } from "@plane/ui";
+import { ExistingIssuesListModal } from "@/components/core";
+// hooks
 import { E_CALENDAR_QUICK_ADD, ISSUE_CREATED } from "constants/event-tracker";
+import { cn } from "@/helpers/common.helper";
+import { createIssuePayload } from "@/helpers/issue.helper";
+import { useEventTracker, useIssueDetail, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// helpers
+// icons
+// ui
+// types
+// constants
 // helper
-import { cn } from "helpers/common.helper";
 
 type Props = {
   formKey: keyof TIssue;
@@ -82,9 +82,11 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
   const [isExistingIssueModalOpen, setIsExistingIssueModalOpen] = useState(false);
   // derived values
   const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
-  const ExistingIssuesListModalPayload = moduleId
-    ? { module: moduleId.toString(), target_date: "none" }
-    : { cycle: true, target_date: "none" };
+  const ExistingIssuesListModalPayload = addIssuesToView
+    ? moduleId
+      ? { module: moduleId.toString(), target_date: "none" }
+      : { cycle: true, target_date: "none" }
+    : { target_date: "none" };
 
   const {
     reset,
@@ -230,37 +232,26 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
 
       {!isOpen && (
         <div
-          className={cn("md:hidden rounded md:border-[0.5px] border-custom-border-200 md:group-hover:block", {
+          className={cn("md:opacity-0 rounded md:border-[0.5px] border-custom-border-200 md:group-hover:opacity-100", {
             block: isMenuOpen,
           })}
         >
-          {addIssuesToView ? (
-            <CustomMenu
-              placement="bottom-start"
-              menuButtonOnClick={() => setIsMenuOpen(true)}
-              onMenuClose={() => setIsMenuOpen(false)}
-              className="w-full"
-              customButtonClassName="w-full"
-              customButton={
-                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100">
-                  <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
-                  <span className="text-sm font-medium flex-shrink-0 text-custom-primary-100">New Issue</span>
-                </div>
-              }
-            >
-              <CustomMenu.MenuItem onClick={handleNewIssue}>New Issue</CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={handleExistingIssue}>Add existing issue</CustomMenu.MenuItem>
-            </CustomMenu>
-          ) : (
-            <button
-              type="button"
-              className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100"
-              onClick={handleNewIssue}
-            >
-              <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-              <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-            </button>
-          )}
+          <CustomMenu
+            placement="bottom-start"
+            menuButtonOnClick={() => setIsMenuOpen(true)}
+            onMenuClose={() => setIsMenuOpen(false)}
+            className="w-full"
+            customButtonClassName="w-full"
+            customButton={
+              <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100">
+                <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
+                <span className="text-sm font-medium flex-shrink-0 text-custom-primary-100">New Issue</span>
+              </div>
+            }
+          >
+            <CustomMenu.MenuItem onClick={handleNewIssue}>New Issue</CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleExistingIssue}>Add existing issue</CustomMenu.MenuItem>
+          </CustomMenu>
         </div>
       )}
     </>

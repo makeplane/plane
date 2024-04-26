@@ -1,4 +1,4 @@
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useApplication, useIssues } from "./store";
 import {
   IIssueDisplayFilterOptions,

@@ -2,14 +2,14 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
+import { IEmailCheckData } from "@plane/types";
 // services
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { checkEmailValidity } from "helpers/string.helper";
-import { AuthService } from "services/auth.service";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { AuthService } from "@/services/auth.service";
 // ui
 // helpers
 // types
-import { IEmailCheckData } from "@plane/types";
 
 type Props = {
   onSubmit: () => void;

@@ -18,7 +18,7 @@ interface ImageNode extends ProseMirrorNode {
 const deleteKey = new PluginKey("delete-image");
 const IMAGE_NODE_TYPE = "image";
 
-export const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreImage, cancelUploadImage?: () => any) =>
+export const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreImage, cancelUploadImage?: () => void) =>
   ImageExt.extend({
     addKeyboardShortcuts() {
       return {
@@ -28,7 +28,7 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreIma
     },
     addProseMirrorPlugins() {
       return [
-        UploadImagesPlugin(cancelUploadImage),
+        UploadImagesPlugin(this.editor, cancelUploadImage),
         new Plugin({
           key: deleteKey,
           appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
@@ -124,6 +124,7 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreIma
     addStorage() {
       return {
         images: new Map<string, boolean>(),
+        uploadInProgress: false,
       };
     },
 

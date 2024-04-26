@@ -1,13 +1,13 @@
 import React, { FC, useState } from "react";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-// hooks
-import { useEventTracker, useWebhook } from "hooks/store";
 // constants
-import { WEBHOOK_DELETED } from "constants/event-tracker";
+import { WEBHOOK_DELETED } from "@/constants/event-tracker";
+// hooks
+import { useWebhook } from "@/hooks/store";
 
 interface IDeleteWebhook {
   isOpen: boolean;

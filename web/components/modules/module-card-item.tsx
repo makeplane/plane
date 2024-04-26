@@ -1,22 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
-// hooks
-import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
-import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
-import { E_GRID_LAYOUT, E_MODULES_GRID_LAYOUT, MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
-import { MODULE_STATUS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useEventTracker, useMember, useModule, useUser } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
-// components
+import { Info } from "lucide-react";
 // ui
-// helpers
+import { Avatar, AvatarGroup, LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
+// components
+import { FavoriteStar } from "@/components/core";
+import { ModuleQuickActions } from "@/components/modules";
 // constants
+import { E_GRID_LAYOUT, E_MODULES_GRID_LAYOUT, MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
+import { MODULE_STATUS } from "@/constants/module";
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
+import { useEventTracker, useMember, useModule, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   moduleId: string;
@@ -24,9 +24,6 @@ type Props = {
 
 export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { moduleId } = props;
-  // states
-  const [editModal, setEditModal] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -36,7 +33,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   } = useUser();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
   const { getUserDetails } = useMember();
-  const { setTrackElement, captureEvent } = useEventTracker();
+  const { captureEvent } = useEventTracker();
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -99,41 +96,23 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     });
   };
 
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Module link copied to clipboard.",
-      });
-    });
-  };
-
-  const handleEditModule = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setTrackElement(E_MODULES_GRID_LAYOUT);
-    setEditModal(true);
-  };
-
-  const handleDeleteModule = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setTrackElement(E_MODULES_GRID_LAYOUT);
-    setDeleteModal(true);
-  };
-
   const openModuleOverview = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     const { query } = router;
 
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekModule: moduleId },
-    });
+    if (query.peekModule) {
+      delete query.peekModule;
+      router.push({
+        pathname: router.pathname,
+        query: { ...query },
+      });
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekModule: moduleId },
+      });
+    }
   };
 
   if (!moduleDetails) return null;
@@ -147,8 +126,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const completionPercentage = (moduleDetails.completed_issues / moduleTotalIssues) * 100;
 
-  const endDate = new Date(moduleDetails.target_date ?? "");
-  const startDate = new Date(moduleDetails.start_date ?? "");
+  const endDate = getDate(moduleDetails.target_date);
+  const startDate = getDate(moduleDetails.start_date);
 
   const isDateValid = moduleDetails.target_date || moduleDetails.start_date;
 
@@ -165,17 +144,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     : "0 Issue";
 
   return (
-    <>
-      {workspaceSlug && projectId && (
-        <CreateUpdateModuleModal
-          isOpen={editModal}
-          onClose={() => setEditModal(false)}
-          data={moduleDetails}
-          projectId={projectId.toString()}
-          workspaceSlug={workspaceSlug.toString()}
-        />
-      )}
-      <DeleteModuleModal data={moduleDetails} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
+    <div className="relative">
       <Link href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
         <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div>
@@ -244,7 +213,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               </div>
             </Tooltip>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-0.5">
               {isDateValid ? (
                 <>
                   <span className="text-xs text-custom-text-300">
@@ -254,48 +223,28 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               ) : (
                 <span className="text-xs text-custom-text-400">No due date</span>
               )}
-
-              <div className="z-[5] flex items-center gap-1.5">
-                {isEditingAllowed &&
-                  (moduleDetails.is_favorite ? (
-                    <button type="button" onClick={handleRemoveFromFavorites}>
-                      <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                    </button>
-                  ) : (
-                    <button type="button" onClick={handleAddToFavorites}>
-                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                    </button>
-                  ))}
-
-                <CustomMenu ellipsis className="z-10" placement="left-start">
-                  {isEditingAllowed && (
-                    <>
-                      <CustomMenu.MenuItem onClick={handleEditModule}>
-                        <span className="flex items-center justify-start gap-2">
-                          <Pencil className="h-3 w-3" />
-                          <span>Edit module</span>
-                        </span>
-                      </CustomMenu.MenuItem>
-                      <CustomMenu.MenuItem onClick={handleDeleteModule}>
-                        <span className="flex items-center justify-start gap-2">
-                          <Trash2 className="h-3 w-3" />
-                          <span>Delete module</span>
-                        </span>
-                      </CustomMenu.MenuItem>
-                    </>
-                  )}
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-3 w-3" />
-                      <span>Copy module link</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
-              </div>
             </div>
           </div>
         </div>
       </Link>
-    </>
+      <div className="absolute right-4 bottom-3.5 z-[5] flex items-center gap-1.5">
+        {isEditingAllowed && (
+          <FavoriteStar
+            onClick={(e) => {
+              if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);
+              else handleAddToFavorites(e);
+            }}
+            selected={!!moduleDetails.is_favorite}
+          />
+        )}
+        {workspaceSlug && projectId && (
+          <ModuleQuickActions
+            moduleId={moduleId}
+            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        )}
+      </div>
+    </div>
   );
 });

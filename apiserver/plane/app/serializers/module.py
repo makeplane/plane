@@ -39,6 +39,7 @@ class ModuleWriteSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "archived_at",
         ]
 
     def to_representation(self, instance):
@@ -209,6 +210,7 @@ class ModuleSerializer(DynamicBaseSerializer):
             "backlog_issues",
             "created_at",
             "updated_at",
+            "archived_at",
         ]
         read_only_fields = fields
 

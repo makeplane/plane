@@ -1,7 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import { autorun, makeObservable, observable } from "mobx";
 // root store
-import { IWorkspaceMembership } from "store/member/workspace-member.store";
+import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
 import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
 import { RootStore } from "../root.store";
 import { IStateStore, StateStore } from "../state.store";

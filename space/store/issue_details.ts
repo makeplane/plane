@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 // store
 import { RootStore } from "./root";
 // services
-import IssueService from "services/issue.service";
+import IssueService from "@/services/issue.service";
 import { IIssue, IVote } from "types/issue";
 
 export type IPeekMode = "side" | "modal" | "full";
@@ -54,7 +54,7 @@ export interface IIssueDetailStore {
   removeIssueVote: (workspaceId: string, projectId: string, issueId: string) => Promise<void>;
 }
 
-class IssueDetailStore implements IssueDetailStore {
+class IssueDetailStore implements IIssueDetailStore {
   loader: boolean = false;
   error: any = null;
   peekId: string | null = null;

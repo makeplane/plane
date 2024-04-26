@@ -1,13 +1,13 @@
 import React, { Fragment } from "react";
 import { Tab } from "@headlessui/react";
+import { ICycle } from "@plane/types";
 // hooks
 import { Avatar } from "@plane/ui";
-import { SingleProgressStats } from "components/core";
-import useLocalStorage from "hooks/use-local-storage";
+import { SingleProgressStats } from "@/components/core";
+import useLocalStorage from "@/hooks/use-local-storage";
 // components
 // ui
 // types
-import { ICycle } from "@plane/types";
 
 type Props = {
   cycle: ICycle;

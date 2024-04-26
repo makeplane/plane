@@ -8,11 +8,12 @@ import {
   SignInPasswordForm,
   OAuthOptions,
   SignInOptionalSetPasswordForm,
-} from "components/account";
-import { LatestFeatureBlock } from "components/common";
-import { NAVIGATE_TO_SIGNUP } from "constants/event-tracker";
-import { useApplication, useEventTracker } from "hooks/store";
-import useSignInRedirection from "hooks/use-sign-in-redirection";
+  TermsAndConditions,
+} from "@/components/account";
+import { LatestFeatureBlock } from "@/components/common";
+import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
+import { useApplication, useEventTracker } from "@/hooks/store";
+import useSignInRedirection from "@/hooks/use-sign-in-redirection";
 // components
 // constants
 
@@ -121,6 +122,7 @@ export const SignInRoot = observer(() => {
                 Sign up
               </Link>
             </p>
+            <TermsAndConditions />
           </>
         )}
       <LatestFeatureBlock />

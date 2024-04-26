@@ -5,6 +5,7 @@ from .project.base import (
     ProjectFavoritesViewSet,
     ProjectPublicCoverImagesEndpoint,
     ProjectDeployBoardViewSet,
+    ProjectArchiveUnarchiveEndpoint,
 )
 
 from .project.invite import (
@@ -37,7 +38,7 @@ from .workspace.base import (
     WorkSpaceAvailabilityCheckEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
-    ExportWorkspaceUserActivityEndpoint
+    ExportWorkspaceUserActivityEndpoint,
 )
 
 from .workspace.member import (
@@ -94,6 +95,9 @@ from .cycle.base import (
 )
 from .cycle.issue import (
     CycleIssueViewSet,
+)
+from .cycle.archive import (
+    CycleArchiveUnarchiveEndpoint,
 )
 
 from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
@@ -173,6 +177,10 @@ from .module.base import (
 
 from .module.issue import (
     ModuleIssueViewSet,
+)
+
+from .module.archive import (
+    ModuleArchiveUnarchiveEndpoint,
 )
 
 from .api import ApiTokenEndpoint

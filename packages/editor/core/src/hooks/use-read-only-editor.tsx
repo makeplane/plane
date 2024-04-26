@@ -1,53 +1,61 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject } from "react";
+import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
 import { CoreReadOnlyEditorExtensions } from "src/ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "src/ui/read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
-import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { EditorReadOnlyRefApi } from "src/types/editor-ref-api";
+import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
+import { IMentionHighlight } from "src/types/mention-suggestion";
 
 interface CustomReadOnlyEditorProps {
-  value: string;
-  forwardedRef?: any;
+  initialValue: string;
+  editorClassName: string;
+  forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
   extensions?: any;
   editorProps?: EditorProps;
-  rerenderOnPropsChange?: {
-    id: string;
-    description_html: string;
+  handleEditorReady?: (value: boolean) => void;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
   };
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
 }
 
 export const useReadOnlyEditor = ({
-  value,
+  initialValue,
+  editorClassName,
   forwardedRef,
   extensions = [],
   editorProps = {},
-  rerenderOnPropsChange,
-  mentionHighlights,
-  mentionSuggestions,
+  handleEditorReady,
+  mentionHandler,
 }: CustomReadOnlyEditorProps) => {
-  const editor = useCustomEditor(
-    {
-      editable: false,
-      content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-      editorProps: {
-        ...CoreReadOnlyEditorProps,
-        ...editorProps,
-      },
-      extensions: [
-        ...CoreReadOnlyEditorExtensions({
-          mentionSuggestions: mentionSuggestions ?? [],
-          mentionHighlights: mentionHighlights ?? [],
-        }),
-        ...extensions,
-      ],
+  const editor = useCustomEditor({
+    editable: false,
+    content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
+    editorProps: {
+      ...CoreReadOnlyEditorProps(editorClassName),
+      ...editorProps,
     },
-    [rerenderOnPropsChange]
-  );
+    onCreate: async () => {
+      handleEditorReady?.(true);
+    },
+    extensions: [
+      ...CoreReadOnlyEditorExtensions({
+        mentionHighlights: mentionHandler.highlights,
+      }),
+      ...extensions,
+    ],
+    onDestroy: () => {
+      handleEditorReady?.(false);
+    },
+  });
+
+  // for syncing swr data on tab refocus etc
+  useEffect(() => {
+    if (initialValue === null || initialValue === undefined) return;
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue);
+  }, [editor, initialValue]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
-  editorRef.current = editor;
 
   useImperativeHandle(forwardedRef, () => ({
     clearEditor: () => {
@@ -56,11 +64,20 @@ export const useReadOnlyEditor = ({
     setEditorValue: (content: string) => {
       editorRef.current?.commands.setContent(content);
     },
+    getMarkDown: (): string => {
+      const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
+      return markdownOutput;
+    },
+    scrollSummary: (marking: IMarking): void => {
+      if (!editorRef.current) return;
+      scrollSummary(editorRef.current, marking);
+    },
   }));
 
   if (!editor) {
     return null;
   }
 
+  editorRef.current = editor;
   return editor;
 };

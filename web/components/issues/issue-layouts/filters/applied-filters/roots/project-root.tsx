@@ -1,15 +1,15 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { IIssueFilterOptions } from "@plane/types";
 // hooks
 // components
-import { AppliedFiltersList, SaveFilterView } from "components/issues";
+import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useLabel, useProjectState, useUser } from "hooks/store";
-import { useIssues } from "hooks/store/use-issues";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useLabel, useProjectState, useUser } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 // types
-import { IIssueFilterOptions } from "@plane/types";
 
 export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   // router

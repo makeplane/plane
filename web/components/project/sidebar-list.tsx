@@ -2,22 +2,23 @@ import { useState, FC, useRef, useEffect } from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
+import { Disclosure, Transition } from "@headlessui/react";
+import { IProject } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { cn } from "helpers/common.helper";
-import { orderJoinedProjects } from "helpers/project.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+import { CreateProjectModal, ProjectSidebarListItem } from "@/components/project";
+// constants
+import { E_SIDEBAR } from "constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { cn } from "@/helpers/common.helper";
+import { orderJoinedProjects } from "@/helpers/project.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
 // ui
 // components
 // helpers
-import { IProject } from "@plane/types";
 // constants
-import { E_SIDEBAR } from "constants/event-tracker";
 
 export const ProjectSidebarList: FC = observer(() => {
   // states

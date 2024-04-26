@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { AlertCircle, Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 // ui
-import { AlertCircle, Search, X } from "lucide-react";
 //icons
 import { ContrastIcon, TransferIcon, TOAST_TYPE, setToast } from "@plane/ui";
-import { EIssuesStoreType } from "constants/issue";
-import { useCycle, useIssues } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useCycle, useIssues } from "@/hooks/store";
 //icons
 // constants
 
@@ -134,9 +134,11 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                               <ContrastIcon className="h-5 w-5" />
                               <div className="flex w-full justify-between">
                                 <span>{cycleDetails?.name}</span>
-                                <span className=" flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
-                                  {cycleDetails.status.toLocaleLowerCase()}
-                                </span>
+                                {cycleDetails.status && (
+                                  <span className=" flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
+                                    {cycleDetails.status.toLocaleLowerCase()}
+                                  </span>
+                                )}
                               </div>
                             </button>
                           );

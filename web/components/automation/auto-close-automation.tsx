@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { ArchiveX } from "lucide-react";
+import { IProject } from "@plane/types";
 import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon, Loader } from "@plane/ui";
-import { SelectMonthModal } from "components/automation";
-import { useEventTracker, useProject, useProjectState, useUser } from "hooks/store";
+import { SelectMonthModal } from "@/components/automation";
+// constants
+import { AUTO_CLOSE_Toggled, AUTO_CLOSE_UPDATED } from "constants/event-tracker";
+import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
+import { useEventTracker, useProject, useProjectState, useUser } from "@/hooks/store";
 // component
 // icons
 // types
-import { IProject } from "@plane/types";
-// constants
-import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
-import { AUTO_CLOSE_Toggled, AUTO_CLOSE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;

@@ -28,11 +28,22 @@ export const CustomHorizontalRule = Node.create<HorizontalRuleOptions>({
   group: "block",
 
   parseHTML() {
-    return [{ tag: "hr" }];
+    return [
+      {
+        tag: `div[data-type="${this.name}"]`,
+      },
+      { tag: "hr" },
+    ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["hr", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)];
+    return [
+      "div",
+      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
+        "data-type": this.name,
+      }),
+      ["div", {}],
+    ];
   },
 
   addCommands() {

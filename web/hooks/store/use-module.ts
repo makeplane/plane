@@ -1,8 +1,8 @@
 import { useContext } from "react";
 // mobx store
-import { StoreContext } from "contexts/store-context";
+import { StoreContext } from "@/contexts/store-context";
 // types
-import { IModuleStore } from "store/module.store";
+import { IModuleStore } from "@/store/module.store";
 
 export const useModule = (): IModuleStore => {
   const context = useContext(StoreContext);

@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { observer } from "mobx-react-lite";
 import sortBy from "lodash/sortBy";
+import { observer } from "mobx-react-lite";
 // hooks
 import { Avatar, Loader } from "@plane/ui";
-import { FilterHeader, FilterOption } from "components/issues";
-import { useMember } from "hooks/store";
+import { FilterHeader, FilterOption } from "@/components/issues";
+import { useMember, useUser } from "@/hooks/store";
 // components
 // ui
 
@@ -22,6 +22,7 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // store hooks
   const { getUserDetails } = useMember();
+  const { currentUser } = useUser();
 
   const sortedOptions = useMemo(() => {
     const filteredOptions = (memberIds || []).filter((memberId) =>
@@ -30,6 +31,7 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
 
     return sortBy(filteredOptions, [
       (memberId) => !(appliedFilters ?? []).includes(memberId),
+      (memberId) => memberId !== currentUser?.id,
       (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,7 +68,7 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
                       isChecked={appliedFilters?.includes(member.id) ? true : false}
                       onClick={() => handleUpdate(member.id)}
                       icon={<Avatar name={member.display_name} src={member.avatar} size="md" />}
-                      title={member.display_name}
+                      title={currentUser?.id === member.id ? "You" : member?.display_name}
                     />
                   );
                 })}

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useWebhook } from "hooks/store";
+import { useWebhook } from "@/hooks/store";
 // components
 import { WebhooksListItem } from "./webhooks-list-item";
 

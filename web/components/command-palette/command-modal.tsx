@@ -3,20 +3,12 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { FolderPlus, Search, Settings } from "lucide-react";
+import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
-import { useApplication, useEventTracker, useProject } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
-import useDebounce from "hooks/use-debounce";
-// services
-import { IssueService } from "services/issue";
-import { WorkspaceService } from "services/workspace.service";
-// ui
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-// components
-import { EmptyState } from "components/empty-state";
 import {
   CommandPaletteThemeActions,
   ChangeIssueAssignee,
@@ -27,22 +19,29 @@ import {
   CommandPaletteProjectActions,
   CommandPaletteWorkspaceSettingsActions,
   CommandPaletteSearchResults,
-} from "components/command-palette";
+} from "@/components/command-palette";
+import { EmptyState } from "@/components/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
+import { ISSUE_DETAILS } from "@/constants/fetch-keys";
+import { useApplication, useEventTracker, useProject } from "@/hooks/store";
+import useDebounce from "@/hooks/use-debounce";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// services
+import { IssueService } from "@/services/issue";
+import { WorkspaceService } from "@/services/workspace.service";
+// ui
+// components
 // types
-import { IWorkspaceSearchResults } from "@plane/types";
-// constants
-import { E_COMMAND_PALETTE } from "constants/event-tracker";
 // fetch-keys
 // constants
-import { EmptyStateType } from "constants/empty-state";
-import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { E_COMMAND_PALETTE } from "constants/event-tracker";
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
   // hooks
-  const { getProjectById } = useProject();
+  const { getProjectById, workspaceProjectIds } = useProject();
   const { isMobile } = usePlatformOS();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
@@ -284,22 +283,24 @@ export const CommandModal: React.FC = observer(() => {
                               setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
                             />
                           )}
-                          <Command.Group heading="Issue">
-                            <Command.Item
-                              onSelect={() => {
-                                closePalette();
-                                setTrackElement(E_COMMAND_PALETTE);
-                                toggleCreateIssueModal(true);
-                              }}
-                              className="focus:bg-custom-background-80"
-                            >
-                              <div className="flex items-center gap-2 text-custom-text-200">
-                                <LayersIcon className="h-3.5 w-3.5" />
-                                Create new issue
-                              </div>
-                              <kbd>C</kbd>
-                            </Command.Item>
-                          </Command.Group>
+                          {workspaceSlug && workspaceProjectIds && workspaceProjectIds.length > 0 && (
+                            <Command.Group heading="Issue">
+                              <Command.Item
+                                onSelect={() => {
+                                  closePalette();
+                                  setTrackElement(E_COMMAND_PALETTE);
+                                  toggleCreateIssueModal(true);
+                                }}
+                                className="focus:bg-custom-background-80"
+                              >
+                                <div className="flex items-center gap-2 text-custom-text-200">
+                                  <LayersIcon className="h-3.5 w-3.5" />
+                                  Create new issue
+                                </div>
+                                <kbd>C</kbd>
+                              </Command.Item>
+                            </Command.Group>
+                          )}
 
                           {workspaceSlug && (
                             <Command.Group heading="Project">

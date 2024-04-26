@@ -1,12 +1,12 @@
 // ui
+import { IUserProfileData } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { BarGraph, ProfileEmptyState } from "components/ui";
+import { BarGraph, ProfileEmptyState } from "@/components/ui";
 // image
-import { capitalizeFirstLetter } from "helpers/string.helper";
+import { capitalizeFirstLetter } from "@/helpers/string.helper";
 import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // helpers
 // types
-import { IUserProfileData } from "@plane/types";
 
 type Props = {
   userProfile: IUserProfileData | undefined;
@@ -34,7 +34,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
                 <span
                   className="h-3 w-3 rounded"
                   style={{
-                    backgroundColor: datum.color,
+                    backgroundColor: datum?.color ?? "rgb(var(--color-primary-100))",
                   }}
                 />
                 <span className="font-medium text-custom-text-200">{datum.data.priority}:</span>

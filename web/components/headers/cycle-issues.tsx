@@ -3,17 +3,18 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import { ArrowRight, Plus, PanelRight } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/ui";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { BreadcrumbLink } from "components/common";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { cn } from "helpers/common.helper";
-import { truncateText } from "helpers/string.helper";
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import { ProjectLogo } from "@/components/project";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { cn } from "@/helpers/common.helper";
+import { truncateText } from "@/helpers/string.helper";
 import {
   useApplication,
   useEventTracker,
@@ -24,14 +25,13 @@ import {
   useProjectState,
   useUser,
   useIssues,
-} from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
+} from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 // ui
 // icons
 // helpers
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-import { ProjectLogo } from "components/project";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 import {
   DP_APPLIED,
@@ -96,7 +96,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
-  const { isMobile } = usePlatformOS()
+  const { isMobile } = usePlatformOS();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -126,8 +126,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -187,11 +189,12 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
   // derived values
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
+  const isCompletedCycle = cycleDetails?.status?.toLocaleLowerCase() === "completed";
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const issueCount = cycleDetails
-    ? issueFilters?.displayFilters?.sub_issue
+    ? issueFilters?.displayFilters?.sub_issue && cycleDetails?.sub_issues
       ? cycleDetails.total_issues + cycleDetails?.sub_issues
       : cycleDetails.total_issues
     : undefined;
@@ -255,8 +258,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                           {issueCount && issueCount > 0 ? (
                             <Tooltip
                               isMobile={isMobile}
-                              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"
-                                } in this cycle`}
+                              tooltipContent={`There are ${issueCount} ${
+                                issueCount > 1 ? "issues" : "issue"
+                              } in this cycle`}
                               position="bottom"
                             >
                               <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
@@ -304,6 +308,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     },
                   })
                 }
+                cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
             <FiltersDropdown title="Display" placement="bottom-end">
@@ -316,6 +322,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 displayProperties={issueFilters?.displayProperties ?? {}}
                 handleDisplayPropertiesUpdate={handleDisplayProperties}
                 ignoreGroupedFilters={["cycle"]}
+                cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
 
@@ -324,16 +332,18 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
                   Analytics
                 </Button>
-                <Button
-                  onClick={() => {
-                    setTrackElement(E_CYCLE_ISSUES);
-                    toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
-                  }}
-                  size="sm"
-                  prependIcon={<Plus />}
-                >
-                  Add Issue
-                </Button>
+                {!isCompletedCycle && (
+                  <Button
+                    onClick={() => {
+                      setTrackElement(E_CYCLE_ISSUES);
+                      toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
+                    }}
+                    size="sm"
+                    prependIcon={<Plus />}
+                  >
+                    Add Issue
+                  </Button>
+                )}
               </>
             )}
             <button

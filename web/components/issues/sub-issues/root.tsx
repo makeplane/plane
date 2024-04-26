@@ -2,18 +2,17 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Plus, ChevronRight, Loader, Pencil } from "lucide-react";
+import { IUser, TIssue } from "@plane/types";
 // hooks
 import { CircularProgressIndicator, CustomMenu, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
-import { ExistingIssuesListModal } from "components/core";
-import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { copyTextToClipboard } from "helpers/string.helper";
-import { useEventTracker, useIssueDetail } from "hooks/store";
+import { ExistingIssuesListModal } from "@/components/core";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+import { E_ISSUE_DETAILS } from "@/constants/event-tracker";
+import { cn } from "@/helpers/common.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+import { useEventTracker, useIssueDetail } from "@/hooks/store";
 // components
-import { IUser, TIssue } from "@plane/types";
 import { IssueList } from "./issues-list";
-// constants
-import { E_ISSUE_DETAILS } from "constants/event-tracker";
-import { cn } from "helpers/common.helper";
 // ui
 // helpers
 // types
@@ -59,6 +58,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
     toggleCreateIssueModal,
     isSubIssuesModalOpen,
     toggleSubIssuesModal,
+    toggleDeleteIssueModal,
   } = useIssueDetail();
   const { setTrackElement, captureIssueEvent } = useEventTracker();
   // state
@@ -509,6 +509,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                 isOpen={issueCrudState?.update?.toggle}
                 onClose={() => {
                   handleIssueCrudState("update", null, null);
+                  toggleCreateIssueModal(false);
                 }}
                 data={issueCrudState?.update?.issue ?? undefined}
                 onSubmit={async (_issue: TIssue) => {
@@ -534,6 +535,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                 isOpen={issueCrudState?.delete?.toggle}
                 handleClose={() => {
                   handleIssueCrudState("delete", null, null);
+                  toggleDeleteIssueModal(null);
                 }}
                 data={issueCrudState?.delete?.issue as TIssue}
                 onSubmit={async () =>

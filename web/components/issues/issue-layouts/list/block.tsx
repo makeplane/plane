@@ -1,14 +1,14 @@
 import { observer } from "mobx-react-lite";
+import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // components
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // ui
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
 // helper
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { IssueProperties } from "../properties/all-properties";
 
 interface IssueBlockProps {
@@ -34,6 +34,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     issue &&
     issue.project_id &&
     issue.id &&
+    peekIssue?.issueId !== issue.id &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const issue = issuesMap[issueId];
@@ -53,8 +54,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         }
       )}
     >
-      <div className="flex">
-        <div className="flex flex-grow items-center gap-3">
+      <div className="flex w-full truncate">
+        <div className="flex flex-grow items-center gap-3 truncate">
           {displayProperties && displayProperties?.key && (
             <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
               {projectIdentifier}-{issue.sequence_id}
@@ -67,20 +68,21 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
 
           {issue?.is_draft ? (
             <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-              <span>{issue.name}</span>
+              <p className="truncate">{issue.name}</p>
             </Tooltip>
           ) : (
             <ControlLink
-              href={`/${workspaceSlug}/projects/${issue.project_id}/${
-                issue.archived_at ? "archived-issues" : "issues"
-              }/${issue.id}`}
+              id={`issue-${issue.id}`}
+              href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
+                issue.id
+              }`}
               target="_blank"
               onClick={() => handleIssuePeekOverview(issue)}
-              className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+              className="w-full truncate cursor-pointer text-sm text-custom-text-100"
               disabled={!!issue?.tempId}
             >
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span>{issue.name}</span>
+                <p className="truncate">{issue.name}</p>
               </Tooltip>
             </ControlLink>
           )}
@@ -89,7 +91,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           <div className="block md:hidden border border-custom-border-300 rounded ">{quickActions(issue)}</div>
         )}
       </div>
-      <div className="ml-0 md:ml-auto flex flex-wrap  md:flex-shrink-0 items-center gap-2">
+      <div className="flex flex-shrink-0 items-center gap-2">
         {!issue?.tempId ? (
           <>
             <IssueProperties

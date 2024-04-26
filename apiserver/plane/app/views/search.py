@@ -50,6 +50,7 @@ class GlobalSearchEndpoint(BaseAPIView):
                 q,
                 project_projectmember__member=self.request.user,
                 project_projectmember__is_active=True,
+                archived_at__isnull=True,
                 workspace__slug=slug,
             )
             .distinct()
@@ -72,6 +73,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             workspace__slug=slug,
         )
 
@@ -97,6 +99,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             workspace__slug=slug,
         )
 
@@ -121,6 +124,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             workspace__slug=slug,
         )
 
@@ -145,6 +149,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             workspace__slug=slug,
         )
 
@@ -169,6 +174,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             workspace__slug=slug,
         )
 
@@ -243,6 +249,7 @@ class IssueSearchEndpoint(BaseAPIView):
             workspace__slug=slug,
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True
         )
 
         if workspace_search == "false":

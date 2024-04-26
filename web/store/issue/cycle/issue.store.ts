@@ -6,8 +6,8 @@ import update from "lodash/update";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
 // services
-import { CycleService } from "services/cycle.service";
-import { IssueService } from "services/issue";
+import { CycleService } from "@/services/cycle.service";
+import { IssueService } from "@/services/issue";
 // types
 import { TIssue, TSubGroupedIssues, TGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
@@ -23,6 +23,7 @@ export interface ICycleIssues {
   // computed
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
+  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
@@ -142,6 +143,30 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     return issues;
   }
 
+  getIssueIds = (groupId?: string, subGroupId?: string) => {
+    const groupedIssueIds = this.groupedIssueIds;
+
+    const displayFilters = this.rootIssueStore?.cycleIssuesFilter?.issueFilters?.displayFilters;
+    if (!displayFilters || !groupedIssueIds) return undefined;
+
+    const subGroupBy = displayFilters?.sub_group_by;
+    const groupBy = displayFilters?.group_by;
+
+    if (!groupBy && !subGroupBy) {
+      return groupedIssueIds as string[];
+    }
+
+    if (groupBy && subGroupBy && groupId && subGroupId) {
+      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[];
+    }
+
+    if (groupBy && groupId) {
+      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[];
+    }
+
+    return undefined;
+  };
+
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
@@ -244,6 +269,10 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       });
 
       const response = await this.createIssue(workspaceSlug, projectId, data, cycleId);
+
+      if (data.module_ids && data.module_ids.length > 0)
+        await this.rootStore.moduleIssues.addModulesToIssue(workspaceSlug, projectId, response.id, data.module_ids);
+
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
 
       const quickAddIssueIndex = this.issues[cycleId].findIndex((_issueId) => _issueId === data.id);

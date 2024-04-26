@@ -1,12 +1,12 @@
 import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
+import { TProjectOrderByOptions } from "@plane/types";
 // ui
 import { CustomMenu, getButtonStyling } from "@plane/ui";
 // helpers
-import { cn } from "helpers/common.helper";
+import { PROJECT_ORDER_BY_OPTIONS } from "@/constants/project";
+import { cn } from "@/helpers/common.helper";
 // types
-import { TProjectOrderByOptions } from "@plane/types";
 // constants
-import { PROJECT_ORDER_BY_OPTIONS } from "constants/project";
 
 type Props = {
   onChange: (value: TProjectOrderByOptions) => void;
@@ -40,7 +40,8 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
           key={option.key}
           className="flex items-center justify-between gap-2"
           onClick={() => {
-            if (isDescending) onChange(`-${option.key}` as TProjectOrderByOptions);
+            if (isDescending)
+              onChange(option.key == "sort_order" ? option.key : (`-${option.key}` as TProjectOrderByOptions));
             else onChange(option.key);
           }}
         >
@@ -48,7 +49,7 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
           {value?.includes(option.key) && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2" />
+      <hr className="my-2 border-custom-border-200" />
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {

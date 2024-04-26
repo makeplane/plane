@@ -7,16 +7,15 @@ import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ConfirmProjectMemberRemove } from "components/project";
+import { ConfirmProjectMemberRemove } from "@/components/project";
 // constants
-import { E_PROJECT_MEMBERS, PM_ROLE_CHANGED, PROJECT_MEMBER_LEFT, PROJECT_MEMBER_REMOVED } from "constants/event-tracker";
-import { EUserProjectRoles } from "constants/project";
-import { ROLE } from "constants/workspace";
+import { E_PROJECT_MEMBERS, PM_ROLE_CHANGED, PROJECT_MEMBER_LEFT, PROJECT_MEMBER_REMOVED } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+import { ROLE } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
-// helpers
-import { getUserRole } from "helpers/user.helper";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useEventTracker, useMember, useProject, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { getUserRole } from "@/helpers/user.helper";
 
 type Props = {
   userId: string;
@@ -192,7 +191,10 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             })}
           </CustomSelect>
           {(isAdmin || userDetails.member?.id === currentUser?.id) && (
-            <Tooltip tooltipContent={userDetails.member?.id === currentUser?.id ? "Leave project" : "Remove member"} isMobile={isMobile}>
+            <Tooltip
+              tooltipContent={userDetails.member?.id === currentUser?.id ? "Leave project" : "Remove member"}
+              isMobile={isMobile}
+            >
               <button
                 type="button"
                 onClick={() => setRemoveMemberModal(true)}

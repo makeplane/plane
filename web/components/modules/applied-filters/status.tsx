@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 // ui
 import { ModuleStatusIcon } from "@plane/ui";
 // constants
-import { MODULE_STATUS } from "constants/module";
+import { MODULE_STATUS } from "@/constants/module";
 
 type Props = {
   handleRemove: (val: string) => void;

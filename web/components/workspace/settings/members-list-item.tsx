@@ -7,15 +7,14 @@ import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ConfirmWorkspaceMemberRemove } from "components/workspace";
-// helpers
-import { getUserRole } from "helpers/user.helper";
+import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
-import { WM_ROLE_CHANGED, WORKSPACE_MEMBER_REMOVED, WORKSPACE_MEMBER_LEFT, E_WORKSPACE_MEMBERS } from "constants/event-tracker";
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { WM_ROLE_CHANGED, WORKSPACE_MEMBER_REMOVED, WORKSPACE_MEMBER_LEFT, E_WORKSPACE_MEMBERS } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+import { getUserRole } from "@/helpers/user.helper";
 // hooks
-import { useEventTracker, useMember, useUser } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useEventTracker, useMember, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   memberId: string;

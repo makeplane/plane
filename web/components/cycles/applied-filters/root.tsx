@@ -1,15 +1,15 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
-// hooks
-import { useUser } from "hooks/store";
-// components
-import { AppliedDateFilters, AppliedStatusFilters } from "components/cycles";
-// helpers
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-// types
 import { TCycleFilters } from "@plane/types";
+// hooks
+import { AppliedDateFilters, AppliedStatusFilters } from "@/components/cycles";
+import { EUserProjectRoles } from "@/constants/project";
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+import { useUser } from "@/hooks/store";
+// components
+// helpers
+// types
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   appliedFilters: TCycleFilters;

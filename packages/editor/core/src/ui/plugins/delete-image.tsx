@@ -57,10 +57,7 @@ export const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
 export async function onNodeDeleted(src: string, deleteImage: DeleteImage): Promise<void> {
   try {
     const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
-    const resStatus = await deleteImage(assetUrlWithWorkspaceId);
-    if (resStatus === 204) {
-      console.log("Image deleted successfully");
-    }
+    await deleteImage(assetUrlWithWorkspaceId);
   } catch (error) {
     console.error("Error deleting image: ", error);
   }
@@ -69,10 +66,7 @@ export async function onNodeDeleted(src: string, deleteImage: DeleteImage): Prom
 export async function onNodeRestored(src: string, restoreImage: RestoreImage): Promise<void> {
   try {
     const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
-    const resStatus = await restoreImage(assetUrlWithWorkspaceId);
-    if (resStatus === 204) {
-      console.log("Image restored successfully");
-    }
+    await restoreImage(assetUrlWithWorkspaceId);
   } catch (error) {
     console.error("Error restoring image: ", error);
   }

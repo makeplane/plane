@@ -59,6 +59,7 @@ from .issue import (
     IssueFlatSerializer,
     IssueStateSerializer,
     IssueLinkSerializer,
+    IssueInboxSerializer,
     IssueLiteSerializer,
     IssueAttachmentSerializer,
     IssueSubscriberSerializer,
@@ -92,6 +93,7 @@ from .page import (
     PageSerializer,
     PageLogSerializer,
     SubPageSerializer,
+    PageDetailSerializer,
     PageFavoriteSerializer,
 )
 
@@ -107,6 +109,7 @@ from .inbox import (
     InboxIssueSerializer,
     IssueStateInboxSerializer,
     InboxIssueLiteSerializer,
+    InboxIssueDetailSerializer,
 )
 
 from .analytic import AnalyticViewSerializer

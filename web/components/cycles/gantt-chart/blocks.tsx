@@ -1,13 +1,13 @@
-import Link from "next/link";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip, ContrastIcon } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { useApplication, useCycle } from "hooks/store";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useApplication, useCycle } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   cycleId: string;
@@ -25,7 +25,7 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
   // derived values
   const cycleDetails = getCycleById(cycleId);
   const { isMobile } = usePlatformOS();
-  const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
+  const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
 
   return (
     <div
@@ -74,7 +74,7 @@ export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   // derived values
   const cycleDetails = getCycleById(cycleId);
 
-  const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
+  const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
 
   return (
     <Link

@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 // ui
 import { Crown } from "lucide-react";
 import { Breadcrumbs, ContrastIcon } from "@plane/ui";
-import { BreadcrumbLink } from "components/common";
+import { BreadcrumbLink } from "@/components/common";
 // icons
 
 export const WorkspaceActiveCycleHeader = observer(() => (

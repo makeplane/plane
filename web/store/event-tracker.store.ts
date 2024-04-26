@@ -24,7 +24,7 @@ import {
   WORKSPACE_CREATED,
   LABEL_REMOVED_G,
   LABEL_ADDED_G,
-} from "constants/event-tracker";
+} from "@/constants/event-tracker";
 import { IIssueLabelTree } from "@plane/types";
 
 export interface IEventTrackerStore {

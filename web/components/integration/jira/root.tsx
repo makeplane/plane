@@ -8,16 +8,16 @@ import { mutate } from "swr";
 import { useEventTracker } from "hooks/store";
 // icons
 import { ArrowLeft, Check, List, Settings } from "lucide-react";
+import { IJiraImporterForm } from "@plane/types";
 // services
 // fetch keys
 // components
 import { Button, UserGroupIcon } from "@plane/ui";
-import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
+import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // assets
+import { JiraImporterService } from "@/services/integrations";
 import JiraLogo from "public/services/jira.svg";
-import { JiraImporterService } from "services/integrations";
 // types
-import { IJiraImporterForm } from "@plane/types";
 import {
   JiraGetImportDetail,
   JiraProjectDetail,

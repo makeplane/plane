@@ -2,16 +2,16 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // hooks
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { useEventTracker, useMember, useUser } from "hooks/store";
-import { EUserProjectRoles } from "constants/project";
-import { E_PROJECT_MEMBERS, PROJECT_MEMBER_ADDED } from "constants/event-tracker";
-import { ROLE } from "constants/workspace";
+import { E_PROJECT_MEMBERS, PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+import { ROLE } from "@/constants/workspace";
+import { useEventTracker, useMember, useUser } from "@/hooks/store";
 // constants
 
 type Props = {
@@ -200,8 +200,11 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
 
                     <div className="mb-3 space-y-4">
                       {fields.map((field, index) => (
-                        <div key={field.id} className="group mb-1 grid grid-cols-12 items-start gap-x-4 text-sm">
-                          <div className="col-span-7 flex flex-col gap-1">
+                        <div
+                          key={field.id}
+                          className="group mb-1 grid grid-cols-6  sm:grid-cols-12 items-start gap-x-4 text-sm"
+                        >
+                          <div className="col-span-4 sm:col-span-10 flex flex-col gap-1">
                             <Controller
                               control={control}
                               name={`members.${index}.member_id`}
@@ -243,7 +246,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                             )}
                           </div>
 
-                          <div className="col-span-5 flex items-center justify-between gap-2">
+                          <div className="col-span-2 sm:col-span-2 flex items-center justify-between gap-2">
                             <div className="flex w-full flex-col gap-1">
                               <Controller
                                 name={`members.${index}.role`}
@@ -281,8 +284,9 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                 </span>
                               )}
                             </div>
-                            <div className="flex-item flex w-6">
-                              {fields.length > 1 && (
+
+                            {fields.length > 1 && (
+                              <div className="flex-item flex w-6">
                                 <button
                                   type="button"
                                   className="place-items-center self-center rounded"
@@ -290,8 +294,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                 >
                                   <X className="h-4 w-4 text-custom-text-200" />
                                 </button>
-                              )}
-                            </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}

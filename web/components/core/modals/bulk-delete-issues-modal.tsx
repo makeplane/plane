@@ -3,24 +3,24 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
+import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import { IssueService } from "services/issue";
-// ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-// icons
-import { Search } from "lucide-react";
-// types
 import { IUser, TIssue } from "@plane/types";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
+import { PROJECT_ISSUES_LIST } from "@/constants/fetch-keys";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues, useProject } from "@/hooks/store";
+import { IssueService } from "@/services/issue";
+// ui
+// icons
+// types
 // store hooks
-import { useIssues, useProject } from "hooks/store";
 // components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
-import { EmptyState } from "components/empty-state";
 // constants
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { EIssuesStoreType } from "constants/issue";
-import { EmptyStateType } from "constants/empty-state";
 
 type FormInput = {
   delete_issue_ids: string[];

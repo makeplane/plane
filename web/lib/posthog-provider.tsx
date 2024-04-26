@@ -2,10 +2,12 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
-// constants
-import { GROUP_WORKSPACE } from "constants/event-tracker";
-// types
 import { IUser } from "@plane/types";
+// constants
+import { GROUP_WORKSPACE } from "@/constants/event-tracker";
+// helpers
+import { getUserRole } from "@/helpers/user.helper";
+// types
 
 export interface IPosthogWrapper {
   children: ReactNode;
@@ -41,9 +43,13 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
   }, [user, workspaceIds, isCloud]);
 
   useEffect(() => {
-    if (posthogAPIKey && posthogHost && (isCloud || (!isCloud && telemetryEnabled))) {
+    if (
+      posthogAPIKey &&
+      (process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost) &&
+      (isCloud || (!isCloud && telemetryEnabled))
+    ) {
       posthog.init(posthogAPIKey, {
-        api_host: posthogHost || "https://app.posthog.com",
+        api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost || "https://app.posthog.com",
         debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1", // Debug mode based on the environment variable
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually

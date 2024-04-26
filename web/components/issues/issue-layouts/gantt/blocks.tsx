@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   issueId: string;
@@ -20,6 +20,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   const { getProjectStates } = useProjectState();
   const {
     issue: { getIssueById },
+    peekIssue,
     setPeekIssue,
   } = useIssueDetail();
   // derived values
@@ -31,11 +32,13 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     workspaceSlug &&
     issueDetails &&
     !issueDetails.tempId &&
+    peekIssue?.issueId !== issueDetails.id &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
   const { isMobile } = usePlatformOS();
 
   return (
     <div
+      id={`issue-${issueId}`}
       className="relative flex h-full w-full cursor-pointer items-center rounded"
       style={{
         backgroundColor: stateDetails?.color,

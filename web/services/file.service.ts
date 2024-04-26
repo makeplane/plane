@@ -1,7 +1,7 @@
 // services
 import axios from "axios";
-import { API_BASE_URL } from "helpers/common.helper";
-import { APIService } from "services/api.service";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "@/services/api.service";
 // helpers
 
 export interface UnSplashImage {
@@ -63,12 +63,19 @@ export class FileService extends APIService {
     this.cancelSource.cancel("Upload cancelled");
   }
 
-  getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
+  getUploadFileFunction(
+    workspaceSlug: string,
+    setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+  ): (file: File) => Promise<string> {
     return async (file: File) => {
       try {
         const formData = new FormData();
         formData.append("asset", file);
         formData.append("attributes", JSON.stringify({}));
+
+        // the submitted state will be resolved by the page rendering the editor
+        // once the patch request of saving the editor contents is resolved
+        setIsSubmitting?.("submitting");
 
         const data = await this.uploadFile(workspaceSlug, formData);
         return data.asset;

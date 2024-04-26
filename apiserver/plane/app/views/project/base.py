@@ -13,6 +13,7 @@ from django.db.models import (
     Subquery,
 )
 from django.conf import settings
+from django.utils import timezone
 
 # Third Party imports
 from rest_framework.response import Response
@@ -72,7 +73,10 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(
-                Q(project_projectmember__member=self.request.user)
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
                 | Q(network=2)
             )
             .select_related(
@@ -176,6 +180,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
+            .filter(archived_at__isnull=True)
             .filter(pk=pk)
             .annotate(
                 total_issues=Issue.issue_objects.filter(
@@ -346,12 +351,12 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Workspace.DoesNotExist as e:
+        except Workspace.DoesNotExist:
             return Response(
                 {"error": "Workspace does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        except serializers.ValidationError as e:
+        except serializers.ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
@@ -362,6 +367,12 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             workspace = Workspace.objects.get(slug=slug)
 
             project = Project.objects.get(pk=pk)
+
+            if project.archived_at:
+                return Response(
+                    {"error": "Archived projects cannot be updated"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             serializer = ProjectSerializer(
                 project,
@@ -382,10 +393,11 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     # Create the triage state in Backlog group
                     State.objects.get_or_create(
                         name="Triage",
-                        group="backlog",
+                        group="triage",
                         description="Default state for managing all Inbox Issues",
                         project_id=pk,
                         color="#ff7700",
+                        is_triage=True,
                     )
 
                 project = (
@@ -410,11 +422,33 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 {"error": "Project does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        except serializers.ValidationError as e:
+        except serializers.ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
             )
+
+
+class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+
+    def post(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.archived_at = timezone.now()
+        project.save()
+        return Response(
+            {"archived_at": str(project.archived_at)},
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.archived_at = None
+        project.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectIdentifierEndpoint(BaseAPIView):

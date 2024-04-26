@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
+import { TCycleGroups } from "@plane/types";
 // components
 import { Loader, CycleGroupIcon } from "@plane/ui";
-import { FilterHeader, FilterOption } from "components/issues";
-import { useApplication, useCycle } from "hooks/store";
+import { FilterHeader, FilterOption } from "@/components/issues";
+import { useApplication, useCycle } from "@/hooks/store";
 // ui
 // types
-import { TCycleGroups } from "@plane/types";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -51,7 +51,8 @@ export const FilterCycle: React.FC<Props> = observer((props) => {
     else setItemsToRender(sortedOptions.length);
   };
 
-  const cycleStatus = (status: TCycleGroups) => (status ? status.toLocaleLowerCase() : "draft") as TCycleGroups;
+  const cycleStatus = (status: TCycleGroups | undefined) =>
+    (status ? status.toLocaleLowerCase() : "draft") as TCycleGroups;
 
   return (
     <>

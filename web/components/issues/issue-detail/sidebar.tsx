@@ -13,9 +13,9 @@ import {
   CopyPlus,
   CalendarClock,
   CalendarCheck2,
+  UserCircle2,
 } from "lucide-react";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import {
   ArchiveIcon,
@@ -28,9 +28,16 @@ import {
   TOAST_TYPE,
   setToast,
 } from "@plane/ui";
-import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
+import {
+  DateDropdown,
+  EstimateDropdown,
+  PriorityDropdown,
+  MemberDropdown,
+  StateDropdown,
+} from "@/components/dropdowns";
 // ui
 // helpers
+import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import {
   DeleteIssueModal,
   IssueLinkRoot,
@@ -40,14 +47,17 @@ import {
   IssueParentSelect,
   IssueLabel,
   ArchiveIssueModal,
-} from "components/issues";
-import { STATE_GROUPS } from "constants/state";
+} from "@/components/issues";
+// helpers
 // types
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
-import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
+import { STATE_GROUPS } from "@/constants/state";
+import { cn } from "@/helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+// types
+import { useEstimate, useIssueDetail, useMember, useProject, useProjectState, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import type { TIssueOperations } from "./root";
 import { IssueSubscription } from "./subscription";
@@ -61,11 +71,11 @@ type Props = {
   issueId: string;
   issueOperations: TIssueOperations;
   is_archived: boolean;
-  is_editable: boolean;
+  isEditable: boolean;
 };
 
 export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, is_archived, is_editable } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, is_archived, isEditable } = props;
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
@@ -80,8 +90,11 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
+  const { getUserDetails } = useMember();
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
+
+  const createdByDetails = getUserDetails(issue.created_by);
 
   const handleCopyText = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -102,20 +115,20 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleArchiveIssue = async () => {
     if (!issueOperations.archive) return;
     await issueOperations.archive(workspaceSlug, projectId, issueId);
-    router.push(`/${workspaceSlug}/projects/${projectId}/archived-issues/${issue.id}`);
+    router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issue.id}`);
   };
   // derived values
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   // auth
-  const isArchivingAllowed = !is_archived && issueOperations.archive && is_editable;
+  const isArchivingAllowed = !is_archived && issueOperations.archive && isEditable;
   const isInArchivableGroup =
     !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
   return (
@@ -171,7 +184,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   </button>
                 </Tooltip>
               )}
-              {is_editable && (
+              {isEditable && (
                 <Tooltip tooltipContent="Delete" isMobile={isMobile}>
                   <button
                     type="button"
@@ -189,7 +202,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
         <div className="h-full w-full overflow-y-auto px-6">
           <h5 className="mt-6 text-sm font-medium">Properties</h5>
           {/* TODO: render properties using a common component */}
-          <div className={`mb-2 mt-3 space-y-2.5 ${!is_editable ? "opacity-60" : ""}`}>
+          <div className={`mb-2 mt-3 space-y-2.5 ${!isEditable ? "opacity-60" : ""}`}>
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
@@ -199,7 +212,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 value={issue?.state_id ?? undefined}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
                 projectId={projectId?.toString() ?? ""}
-                disabled={!is_editable}
+                disabled={!isEditable}
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
@@ -217,7 +230,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <MemberDropdown
                 value={issue?.assignee_ids ?? undefined}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
-                disabled={!is_editable}
+                disabled={!isEditable}
                 projectId={projectId?.toString() ?? ""}
                 placeholder="Add assignees"
                 multiple
@@ -241,13 +254,28 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <PriorityDropdown
                 value={issue?.priority || undefined}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
-                disabled={!is_editable}
+                disabled={!isEditable}
                 buttonVariant="border-with-text"
                 className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName="w-min h-auto whitespace-nowrap"
               />
             </div>
+
+            {createdByDetails && (
+              <div className="flex h-8 items-center gap-2">
+                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                  <UserCircle2 className="h-4 w-4 flex-shrink-0" />
+                  <span>Created by</span>
+                </div>
+                <Tooltip tooltipContent={createdByDetails?.display_name} isMobile={isMobile}>
+                  <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
+                    <ButtonAvatars showTooltip={false} userIds={createdByDetails.id} />
+                    <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
+                  </div>
+                </Tooltip>
+              </div>
+            )}
 
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
@@ -263,7 +291,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   })
                 }
                 maxDate={maxDate ?? undefined}
-                disabled={!is_editable}
+                disabled={!isEditable}
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
@@ -289,7 +317,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   })
                 }
                 minDate={minDate ?? undefined}
-                disabled={!is_editable}
+                disabled={!isEditable}
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
@@ -314,7 +342,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   value={issue?.estimate_point !== null ? issue.estimate_point : null}
                   onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
                   projectId={projectId}
-                  disabled={!is_editable}
+                  disabled={!isEditable}
                   buttonVariant="transparent-with-text"
                   className="group w-3/5 flex-grow"
                   buttonContainerClassName="w-full text-left"
@@ -339,7 +367,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   projectId={projectId}
                   issueId={issueId}
                   issueOperations={issueOperations}
-                  disabled={!is_editable}
+                  disabled={!isEditable}
                 />
               </div>
             )}
@@ -356,7 +384,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   projectId={projectId}
                   issueId={issueId}
                   issueOperations={issueOperations}
-                  disabled={!is_editable}
+                  disabled={!isEditable}
                 />
               </div>
             )}
@@ -372,7 +400,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 projectId={projectId}
                 issueId={issueId}
                 issueOperations={issueOperations}
-                disabled={!is_editable}
+                disabled={!isEditable}
               />
             </div>
 
@@ -387,7 +415,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 projectId={projectId}
                 issueId={issueId}
                 relationKey="relates_to"
-                disabled={!is_editable}
+                disabled={!isEditable}
               />
             </div>
 
@@ -402,7 +430,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 projectId={projectId}
                 issueId={issueId}
                 relationKey="blocking"
-                disabled={!is_editable}
+                disabled={!isEditable}
               />
             </div>
 
@@ -417,7 +445,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 projectId={projectId}
                 issueId={issueId}
                 relationKey="blocked_by"
-                disabled={!is_editable}
+                disabled={!isEditable}
               />
             </div>
 
@@ -432,7 +460,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 projectId={projectId}
                 issueId={issueId}
                 relationKey="duplicate"
-                disabled={!is_editable}
+                disabled={!isEditable}
               />
             </div>
 
@@ -446,18 +474,13 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
                   issueId={issueId}
-                  disabled={!is_editable}
+                  disabled={!isEditable}
                 />
               </div>
             </div>
           </div>
 
-          <IssueLinkRoot
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            disabled={!is_editable}
-          />
+          <IssueLinkRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!isEditable} />
         </div>
       </div>
     </>

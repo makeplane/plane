@@ -6,10 +6,10 @@ import { FileText, Plus } from "lucide-react";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
-import { BreadcrumbLink } from "components/common";
+import { BreadcrumbLink } from "@/components/common";
 // components
-import { useApplication, usePage, useProject } from "hooks/store";
-import { ProjectLogo } from "components/project";
+import { ProjectLogo } from "@/components/project";
+import { useApplication, usePage, useProject } from "@/hooks/store";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -24,7 +24,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const { currentProjectDetails } = useProject();
 
-  const pageDetails = usePage(pageId as string);
+  const { name } = usePage(pageId?.toString() ?? "");
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -71,10 +71,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <BreadcrumbLink
-                  label={pageDetails?.name ?? "Page"}
-                  icon={<FileText className="h-4 w-4 text-custom-text-300" />}
-                />
+                <BreadcrumbLink label={name ?? "Page"} icon={<FileText className="h-4 w-4 text-custom-text-300" />} />
               }
             />
           </Breadcrumbs>

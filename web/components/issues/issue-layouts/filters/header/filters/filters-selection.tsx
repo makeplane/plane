@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
+import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // hooks
 import useDebounce from "hooks/use-debounce";
 import {
@@ -16,13 +17,11 @@ import {
   FilterTargetDate,
   FilterCycle,
   FilterModule,
-} from "components/issues";
-import { ILayoutDisplayFiltersOptions } from "constants/issue";
-import { useApplication } from "hooks/store";
+} from "@/components/issues";
+import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
+import { useApplication } from "@/hooks/store";
 // components
 // types
-import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
-
 // constants
 
 type Props = {
@@ -32,12 +31,23 @@ type Props = {
   labels?: IIssueLabel[] | undefined;
   memberIds?: string[] | undefined;
   states?: IState[] | undefined;
+  cycleViewDisabled?: boolean;
+  moduleViewDisabled?: boolean;
   onSearchCapture?: () => void;
 };
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, memberIds, states, onSearchCapture } =
-    props;
+  const {
+    filters,
+    handleFiltersUpdate,
+    layoutDisplayFiltersOptions,
+    labels,
+    memberIds,
+    states,
+    cycleViewDisabled = false,
+    moduleViewDisabled = false,
+    onSearchCapture
+  } = props;
   // hooks
   const {
     router: { moduleId, cycleId },
@@ -120,7 +130,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         )}
 
         {/* cycle */}
-        {isFilterEnabled("cycle") && !cycleId && (
+        {isFilterEnabled("cycle") && !cycleId && !cycleViewDisabled && (
           <div className="py-2">
             <FilterCycle
               appliedFilters={filters.cycle ?? null}
@@ -131,7 +141,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         )}
 
         {/* module */}
-        {isFilterEnabled("module") && !moduleId && (
+        {isFilterEnabled("module") && !moduleId && !moduleViewDisabled && (
           <div className="py-2">
             <FilterModule
               appliedFilters={filters.module ?? null}

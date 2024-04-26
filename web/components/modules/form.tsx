@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-// components
-import { Button, Input, TextArea } from "@plane/ui";
-import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "components/dropdowns";
-import { ModuleStatusSelect } from "components/modules";
-// ui
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldRenderProject } from "helpers/project.helper";
-// types
 import { IModule } from "@plane/types";
+// ui
+import { Button, Input, TextArea } from "@plane/ui";
+// components
+import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "@/components/dropdowns";
+import { ModuleStatusSelect } from "@/components/modules";
+// helpers
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldRenderProject } from "@/helpers/project.helper";
+// types
 
 type Props = {
   handleFormSubmit: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;
@@ -90,7 +90,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
         </div>
 
         <div className="space-y-3">
-          <div>
+          <div className="flex flex-col gap-1">
             <Controller
               control={control}
               name="name"
@@ -109,13 +109,14 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   ref={ref}
-                  hasError={Boolean(errors.name)}
+                  hasError={Boolean(errors?.name)}
                   placeholder="Module Title"
                   className="w-full resize-none placeholder:text-sm placeholder:font-medium focus:border-blue-400"
                   tabIndex={1}
                 />
               )}
             />
+            <span className="text-xs text-red-500">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller
@@ -128,7 +129,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   placeholder="Description..."
-                  className="h-24 w-full resize-none text-sm"
+                  className="w-full text-sm resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   tabIndex={2}
                 />
@@ -149,8 +150,8 @@ export const ModuleForm: React.FC<Props> = (props) => {
                       className="h-7"
                       minDate={new Date()}
                       value={{
-                        from: startDateValue ? new Date(startDateValue) : undefined,
-                        to: endDateValue ? new Date(endDateValue) : undefined,
+                        from: getDate(startDateValue),
+                        to: getDate(endDateValue),
                       }}
                       onSelect={(val) => {
                         onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);

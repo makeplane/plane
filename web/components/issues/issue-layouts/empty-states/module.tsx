@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
+import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
 // hooks
-import { useApplication, useEventTracker, useIssues } from "hooks/store";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // ui
 // components
-import { ExistingIssuesListModal } from "components/core";
-import { EmptyState } from "components/empty-state";
+import { ExistingIssuesListModal } from "@/components/core";
+import { EmptyState } from "@/components/empty-state";
 // types
-import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
-import { EmptyStateType } from "constants/empty-state";
-import { E_MODULES_ISSUES_EMPTY_STATE } from "constants/event-tracker";
+import { EmptyStateType } from "@/constants/empty-state";
+import { E_MODULES_ISSUES_EMPTY_STATE } from "@/constants/event-tracker";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useApplication, useEventTracker, useIssues } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string | undefined;

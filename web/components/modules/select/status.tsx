@@ -2,11 +2,11 @@ import React from "react";
 
 // react hook form
 import { Controller, FieldError, Control } from "react-hook-form";
+import type { IModule } from "@plane/types";
 // ui
 import { CustomSelect, DoubleCircleIcon, ModuleStatusIcon } from "@plane/ui";
 // types
-import { MODULE_STATUS } from "constants/module";
-import type { IModule } from "@plane/types";
+import { MODULE_STATUS } from "@/constants/module";
 // constants
 
 type Props = {
@@ -24,7 +24,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
       <CustomSelect
         value={value}
         label={
-          <div className={`flex items-center justify-center gap-2 text-xs ${error ? "text-red-500" : ""}`}>
+          <div className={`flex items-center justify-center gap-2 text-xs py-0.5 ${error ? "text-red-500" : ""}`}>
             {value ? (
               <ModuleStatusIcon status={value} />
             ) : (

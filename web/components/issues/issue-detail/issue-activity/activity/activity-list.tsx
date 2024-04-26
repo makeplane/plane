@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 // components
 import {
   IssueDefaultActivity,
@@ -21,6 +21,7 @@ import {
   IssueLinkActivity,
   IssueAttachmentActivity,
   IssueArchivedAtActivity,
+  IssueInboxActivity,
 } from "./actions";
 
 type TIssueActivityList = {
@@ -74,6 +75,8 @@ export const IssueActivityList: FC<TIssueActivityList> = observer((props) => {
       return <IssueAttachmentActivity {...componentDefaultProps} showIssue={false} />;
     case "archived_at":
       return <IssueArchivedAtActivity {...componentDefaultProps} />;
+    case "inbox":
+      return <IssueInboxActivity {...componentDefaultProps} />;
     default:
       return <></>;
   }

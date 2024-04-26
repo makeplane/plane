@@ -125,7 +125,8 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -282,6 +283,7 @@ class IssueViewViewSet(BaseViewSet):
             .filter(
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
             )
             .select_related("project")
             .select_related("workspace")
@@ -324,11 +326,11 @@ class IssueViewFavoriteViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, view_id):
-        view_favourite = IssueViewFavorite.objects.get(
+        view_favorite = IssueViewFavorite.objects.get(
             project=project_id,
             user=request.user,
             workspace__slug=slug,
             view_id=view_id,
         )
-        view_favourite.delete()
+        view_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

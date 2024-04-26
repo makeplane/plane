@@ -4,21 +4,21 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { CheckCircle } from "lucide-react";
+import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
 import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-import useIntegrationPopup from "hooks/use-integration-popup";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useApplication, useUser } from "@/hooks/store";
+import useIntegrationPopup from "@/hooks/use-integration-popup";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { IntegrationService } from "services/integrations";
+import { IntegrationService } from "@/services/integrations";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
 // types
-import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // fetch-keys
 
 type Props = {

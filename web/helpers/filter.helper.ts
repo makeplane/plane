@@ -1,7 +1,11 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+// helpers
+import { getDate } from "./date-time.helper";
+// types
+// import { IIssueFilterOptions } from "@plane/types";
 
 type TFilters = {
-  [key: string]: string[] | null;
+  [key: string]: boolean | string[] | null;
 };
 
 /**
@@ -12,13 +16,13 @@ type TFilters = {
 export const calculateTotalFilters = (filters: TFilters): number =>
   filters && Object.keys(filters).length > 0
     ? Object.keys(filters)
-        .map((key) =>
-          filters[key as keyof TFilters] !== null
-            ? isNaN((filters[key as keyof TFilters] as string[]).length)
-              ? 0
-              : (filters[key as keyof TFilters] as string[]).length
-            : 0
-        )
+        .map((key) => {
+          const value = filters[key as keyof TFilters];
+          if (value === null) return 0;
+          if (Array.isArray(value)) return value.length;
+          if (typeof value === "boolean") return value ? 1 : 0;
+          return 0;
+        })
         .reduce((curr, prev) => curr + prev, 0)
     : 0;
 
@@ -31,9 +35,18 @@ export const calculateTotalFilters = (filters: TFilters): number =>
 export const satisfiesDateFilter = (date: Date, filter: string): boolean => {
   const [value, operator, from] = filter.split(";");
 
-  if (!from) {
-    if (operator === "after") return date >= new Date(value);
-    if (operator === "before") return date <= new Date(value);
+  const dateValue = getDate(value);
+
+  if (operator === "custom" && from === "custom") {
+    if (value === "today") return differenceInCalendarDays(date, new Date()) === 0;
+    if (value === "yesterday") return differenceInCalendarDays(date, new Date()) === -1;
+    if (value === "last_7_days") return differenceInCalendarDays(date, new Date()) >= -7;
+    if (value === "last_30_days") return differenceInCalendarDays(date, new Date()) >= -30;
+  }
+
+  if (!from && dateValue) {
+    if (operator === "after") return date >= dateValue;
+    if (operator === "before") return date <= dateValue;
   }
 
   if (from === "fromnow") {

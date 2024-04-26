@@ -69,6 +69,7 @@ class Cycle(ProjectBaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
     progress_snapshot = models.JSONField(default=dict)
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Cycle"

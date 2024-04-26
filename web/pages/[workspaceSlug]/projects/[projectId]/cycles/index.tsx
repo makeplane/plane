@@ -2,33 +2,33 @@ import { Fragment, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Tab } from "@headlessui/react";
+import { TCycleFilters } from "@plane/types";
 // hooks
-import { useEventTracker, useCycle, useProject, useCycleFilter } from "hooks/store";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-// components
-import { PageHead } from "components/core";
-import { CyclesHeader } from "components/headers";
+import { PageHead } from "@/components/core";
 import {
   CyclesView,
   CycleCreateUpdateModal,
   CyclesViewHeader,
   CycleAppliedFiltersList,
   ActiveCycleRoot,
-} from "components/cycles";
-import { EmptyState } from "components/empty-state";
+} from "@/components/cycles";
+import CyclesListMobileHeader from "@/components/cycles/cycles-list-mobile-header";
+import { EmptyState } from "@/components/empty-state";
+import { CyclesHeader } from "@/components/headers";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
+import { E_CYCLES_EMPTY_STATE } from "@/constants/event-tracker";
+import { CYCLE_TABS_LIST } from "@/constants/cycle";
+import { EmptyStateType } from "@/constants/empty-state";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { useEventTracker, useCycle, useProject, useCycleFilter } from "@/hooks/store";
+// layouts
+import { AppLayout } from "@/layouts/app-layout";
+// components
 // ui
-import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
 // helpers
-import { calculateTotalFilters } from "helpers/filter.helper";
 // types
-import { NextPageWithLayout } from "lib/types";
-import { TCycleFilters } from "@plane/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
-import { CYCLE_TABS_LIST } from "constants/cycle";
-import { EmptyStateType } from "constants/empty-state";
-import { E_CYCLES_EMPTY_STATE } from "constants/event-tracker";
-import CyclesListMobileHeader from "components/cycles/cycles-list-mobile-header";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // states
@@ -36,7 +36,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { currentProjectCycleIds, loader } = useCycle();
-  const { getProjectById } = useProject();
+  const { getProjectById, currentProjectDetails } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
@@ -61,7 +61,18 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
     updateFilters(projectId.toString(), { [key]: newValues });
   };
 
-  if (!workspaceSlug || !projectId) return null;
+  if (!workspaceSlug || !projectId) return <></>;
+
+  // No access to cycle
+  if (currentProjectDetails?.cycle_view === false)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <EmptyState
+          type={EmptyStateType.DISABLED_PROJECT_CYCLE}
+          primaryButtonLink={`/${workspaceSlug}/projects/${projectId}/settings/features`}
+        />
+      </div>
+    );
 
   if (loader)
     return (

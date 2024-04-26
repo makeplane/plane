@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
-import { DateDropdown } from "components/dropdowns";
 import { Calendar } from "lucide-react";
+import { IApiToken } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { DateDropdown } from "@/components/dropdowns";
 // helpers
-import { renderFormattedDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { renderFormattedDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
-import { IApiToken } from "@plane/types";
 
 type Props = {
   handleClose: () => void;
@@ -90,12 +90,12 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
     // if never expires is toggled on, set expired_at to null
     if (neverExpires) payload.expired_at = null;
     // if never expires is toggled off, and the user has selected a custom date, set expired_at to the custom date
-    else if (data.expired_at === "custom") payload.expired_at = renderFormattedPayloadDate(customDate ?? new Date());
+    else if (data.expired_at === "custom") payload.expired_at = renderFormattedPayloadDate(customDate);
     // if never expires is toggled off, and the user has selected a predefined date, set expired_at to the predefined date
     else {
       const expiryDate = getExpiryDate(data.expired_at ?? "");
 
-      if (expiryDate) payload.expired_at = renderFormattedPayloadDate(expiryDate);
+      if (expiryDate) payload.expired_at = renderFormattedPayloadDate(new Date(expiryDate));
     }
 
     await onSubmit(payload).then(() => {
@@ -170,8 +170,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                           {value === "custom"
                             ? "Custom date"
                             : selectedOption
-                              ? selectedOption.label
-                              : "Set expiration date"}
+                            ? selectedOption.label
+                            : "Set expiration date"}
                         </div>
                       }
                       value={value}
@@ -207,8 +207,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     ? `Expires ${renderFormattedDate(customDate)}`
                     : null
                   : watch("expired_at")
-                    ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
-                    : null}
+                  ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
+                  : null}
               </span>
             )}
           </div>

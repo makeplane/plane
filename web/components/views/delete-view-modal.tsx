@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { IProjectView } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-// hooks
-import { useEventTracker, useProjectView } from "hooks/store";
-// types
-import { IProjectView } from "@plane/types";
 import { E_VIEWS, VIEW_DELETED } from "constants/event-tracker";
+// hooks
+import { useProjectView, useEventTracker } from "@/hooks/store";
+// types
 
 type Props = {
   data: IProjectView;

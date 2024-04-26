@@ -3,14 +3,14 @@ import { observer } from "mobx-react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 // components
-import { PageHead } from "components/core";
-import { ProjectIssuesHeader } from "components/headers";
-import { ProjectLayoutRoot } from "components/issues";
+import { PageHead } from "@/components/core";
+import { ProjectIssuesHeader } from "@/components/headers";
+import { ProjectLayoutRoot } from "@/components/issues";
 // types
-import { useProject } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
-import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
+import { IssuesMobileHeader } from "@/components/issues/issues-mobile-header";
+import { useProject } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
 // layouts
 // hooks
 
@@ -43,7 +43,7 @@ const ProjectIssuesPage: NextPageWithLayout = observer(() => {
 
 ProjectIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ProjectIssuesHeader />} mobileHeader={<IssuesMobileHeader/>} withProjectWrapper>
+    <AppLayout header={<ProjectIssuesHeader />} mobileHeader={<IssuesMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

@@ -1,10 +1,10 @@
 // helpers
 import { Tooltip } from "@plane/ui";
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 // types
+import { usePlatformOS } from "@/hooks/use-platform-os";
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS } from "./constants";
 import { TButtonVariants } from "./types";
-import { usePlatformOS } from "hooks/use-platform-os";
 
 export type DropdownButtonProps = {
   children: React.ReactNode;
@@ -51,7 +51,12 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
   const { isMobile } = usePlatformOS();
 
   return (
-    <Tooltip tooltipHeading={tooltipHeading} tooltipContent={tooltipContent} disabled={!showTooltip} isMobile={isMobile}>
+    <Tooltip
+      tooltipHeading={tooltipHeading}
+      tooltipContent={tooltipContent}
+      disabled={!showTooltip}
+      isMobile={isMobile}
+    >
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
@@ -69,7 +74,12 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
   const { children, className, tooltipContent, tooltipHeading, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
-    <Tooltip tooltipHeading={tooltipHeading} tooltipContent={tooltipContent} disabled={!showTooltip} isMobile={isMobile}>
+    <Tooltip
+      tooltipHeading={tooltipHeading}
+      tooltipContent={tooltipContent}
+      disabled={!showTooltip}
+      isMobile={isMobile}
+    >
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
@@ -86,7 +96,12 @@ const TransparentButton: React.FC<ButtonProps> = (props) => {
   const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
-    <Tooltip tooltipHeading={tooltipHeading} tooltipContent={tooltipContent} disabled={!showTooltip} isMobile={isMobile}>
+    <Tooltip
+      tooltipHeading={tooltipHeading}
+      tooltipContent={tooltipContent}
+      disabled={!showTooltip}
+      isMobile={isMobile}
+    >
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
