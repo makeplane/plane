@@ -122,7 +122,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const stateDetails = getStateById(issue.state_id);
   // auth
   const isArchivingAllowed = !is_archived && issueOperations.archive && isEditable;
-  const isInArchivableGroup =
+  const isInArchiveGroup =
     !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
@@ -164,19 +164,19 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               {isArchivingAllowed && (
                 <Tooltip
                   isMobile={isMobile}
-                  tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
+                  tooltipContent={isInArchiveGroup ? "Archive" : "Only completed or canceled issues can be archived"}
                 >
                   <button
                     type="button"
                     className={cn(
                       "grid h-5 w-5 place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary",
                       {
-                        "hover:text-custom-text-200": isInArchivableGroup,
-                        "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
+                        "hover:text-custom-text-200": isInArchiveGroup,
+                        "cursor-not-allowed text-custom-text-400": !isInArchiveGroup,
                       }
                     )}
                     onClick={() => {
-                      if (!isInArchivableGroup) return;
+                      if (!isInArchiveGroup) return;
                       setArchiveIssueModal(true);
                     }}
                   >

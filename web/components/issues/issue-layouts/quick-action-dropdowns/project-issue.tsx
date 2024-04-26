@@ -51,7 +51,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   // auth
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER && !readOnly;
   const isArchivingAllowed = handleArchive && isEditingAllowed;
-  const isInArchivableGroup =
+  const isInArchiveGroup =
     !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
   const isDeletingAllowed = isEditingAllowed;
 
@@ -155,8 +155,8 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
           </CustomMenu.MenuItem>
         )}
         {isArchivingAllowed && (
-          <CustomMenu.MenuItem onClick={() => setArchiveIssueModal(true)} disabled={!isInArchivableGroup}>
-            {isInArchivableGroup ? (
+          <CustomMenu.MenuItem onClick={() => setArchiveIssueModal(true)} disabled={!isInArchiveGroup}>
+            {isInArchiveGroup ? (
               <div className="flex items-center gap-2">
                 <ArchiveIcon className="h-3 w-3" />
                 Archive

@@ -52,7 +52,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
 
   return (
     <>
-      <PageHead title="Profile - Theme Prefrence" />
+      <PageHead title="Profile - Theme Preference" />
       {currentUser ? (
         <div className="mx-auto mt-10 h-full w-full overflow-y-auto px-6 pb-8 md:mt-14 lg:px-20 vertical-scrollbar scrollbar-md">
           <div className="flex items-center border-b border-custom-border-100 pb-3.5">

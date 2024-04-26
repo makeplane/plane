@@ -89,7 +89,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const moduleDetails = getModuleById(moduleId);
 
   const moduleState = moduleDetails?.status?.toLocaleLowerCase();
-  const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
+  const isInArchiveGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
 
   const { reset, control } = useForm({
     defaultValues,
@@ -354,8 +354,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             {isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
                 {!isArchived && (
-                  <CustomMenu.MenuItem onClick={() => setArchiveModuleModal(true)} disabled={!isInArchivableGroup}>
-                    {isInArchivableGroup ? (
+                  <CustomMenu.MenuItem onClick={() => setArchiveModuleModal(true)} disabled={!isInArchiveGroup}>
+                    {isInArchiveGroup ? (
                       <div className="flex items-center gap-2">
                         <ArchiveIcon className="h-3 w-3" />
                         Archive module

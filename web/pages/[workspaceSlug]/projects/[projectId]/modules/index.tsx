@@ -10,7 +10,7 @@ import { ModulesListHeader } from "@/components/headers";
 import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
 // types
 // hooks
-import ModulesListMobileHeader from "@/components/modules/moduels-list-mobile-header";
+import ModulesListMobileHeader from "@/components/modules/modules-list-mobile-header";
 import { EmptyStateType } from "@/constants/empty-state";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { useModuleFilter, useProject } from "@/hooks/store";

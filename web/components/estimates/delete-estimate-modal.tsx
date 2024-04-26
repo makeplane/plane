@@ -98,7 +98,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
                     <p className="break-words text-sm leading-7 text-custom-text-200">
                       Are you sure you want to delete estimate-{" "}
                       <span className="break-words font-medium text-custom-text-100">{data?.name}</span>
-                      {""}? All of the data related to the estiamte will be permanently removed. This action cannot be
+                      {""}? All of the data related to the estimate will be permanently removed. This action cannot be
                       undone.
                     </p>
                   </span>

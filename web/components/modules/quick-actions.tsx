@@ -42,7 +42,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
     !!currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId] >= EUserProjectRoles.MEMBER;
 
   const moduleState = moduleDetails?.status?.toLocaleLowerCase();
-  const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
+  const isInArchiveGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -128,8 +128,8 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
           </CustomMenu.MenuItem>
         )}
         {isEditingAllowed && !isArchived && (
-          <CustomMenu.MenuItem onClick={handleArchiveModule} disabled={!isInArchivableGroup}>
-            {isInArchivableGroup ? (
+          <CustomMenu.MenuItem onClick={handleArchiveModule} disabled={!isInArchiveGroup}>
+            {isInArchiveGroup ? (
               <div className="flex items-center gap-2">
                 <ArchiveIcon className="h-3 w-3" />
                 Archive module

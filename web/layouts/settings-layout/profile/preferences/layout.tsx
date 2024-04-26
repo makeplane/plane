@@ -19,26 +19,25 @@ export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayou
   const router = useRouter();
   const { theme: themeStore } = useApplication();
 
-  const showMenuItem = () => {
-    const item = router.asPath.split("/");
-    let splittedItem = item[item.length - 1];
-    splittedItem = splittedItem.replace(splittedItem[0], splittedItem[0].toUpperCase());
-    return splittedItem;
+  const showMenuLabel = () => {
+    const path = router.asPath.split("/");
+    const menuLabel = path[path.length - 1];
+    return menuLabel;
   };
 
   const profilePreferenceLinks: Array<{
     label: string;
     href: string;
   }> = [
-    {
-      label: "Theme",
-      href: `/profile/preferences/theme`,
-    },
-    {
-      label: "Email",
-      href: `/profile/preferences/email`,
-    },
-  ];
+      {
+        label: "Theme",
+        href: `/profile/preferences/theme`,
+      },
+      {
+        label: "Email",
+        href: `/profile/preferences/email`,
+      },
+    ];
 
   return (
     <ProfileSettingsLayout
@@ -51,15 +50,15 @@ export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayou
             placement="bottom-start"
             customButton={
               <div className="flex gap-2 items-center px-2 py-1.5 border rounded-md border-custom-border-400">
-                <span className="flex flex-grow justify-center text-custom-text-200 text-sm">{showMenuItem()}</span>
+                <span className="flex flex-grow justify-center text-custom-text-200 text-sm capitalize">{showMenuLabel()}</span>
                 <ChevronDown className="w-4 h-4 text-custom-text-400" />
               </div>
             }
             customButtonClassName="flex flex-grow justify-start text-custom-text-200 text-sm"
           >
             <></>
-            {profilePreferenceLinks.map((link) => (
-              <CustomMenu.MenuItem className="flex items-center gap-2">
+            {profilePreferenceLinks.map((link, index) => (
+              <CustomMenu.MenuItem className="flex items-center gap-2" key={index}>
                 <Link key={link.href} href={link.href} className="text-custom-text-300 w-full">
                   {link.label}
                 </Link>

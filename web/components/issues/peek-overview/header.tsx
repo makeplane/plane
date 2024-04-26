@@ -101,7 +101,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   };
   // auth
   const isArchivingAllowed = !isArchived && !disabled;
-  const isInArchivableGroup =
+  const isInArchiveGroup =
     !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
   const isRestoringAllowed = isArchived && !disabled;
 
@@ -168,16 +168,16 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           {isArchivingAllowed && (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
+              tooltipContent={isInArchiveGroup ? "Archive" : "Only completed or canceled issues can be archived"}
             >
               <button
                 type="button"
                 className={cn("text-custom-text-300", {
-                  "hover:text-custom-text-200": isInArchivableGroup,
-                  "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
+                  "hover:text-custom-text-200": isInArchiveGroup,
+                  "cursor-not-allowed text-custom-text-400": !isInArchiveGroup,
                 })}
                 onClick={() => {
-                  if (!isInArchivableGroup) return;
+                  if (!isInArchiveGroup) return;
                   toggleArchiveIssueModal(true);
                 }}
               >

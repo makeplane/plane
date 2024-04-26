@@ -29,7 +29,7 @@ const PROJECT_FEATURES_LIST = [
   },
   {
     title: "Views",
-    description: "Apply filters to issues and save them to analyse and investigate work.",
+    description: "Apply filters to issues and save them to analyze and investigate work.",
     icon: <PhotoFilterIcon className="h-4 w-4 flex-shrink-0 text-cyan-500" />,
     property: "issue_views_view",
   },

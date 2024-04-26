@@ -47,7 +47,7 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
       </div>
       <div className="flex items-center gap-4">
         <div className="rounded-sm text-sm">
-          <div className="flex gap-2 divide-x spac divide-x-border-300 text-sm whitespace-nowrap text-custom-text-300 font-medium">
+          <div className="flex gap-2 divide-x divide-x-border-300 text-sm whitespace-nowrap text-custom-text-300 font-medium">
             <Avatar name={cycleOwnerDetails?.display_name} src={cycleOwnerDetails?.avatar} />
             {cycleAssignee.length > 0 && (
               <span className="pl-2">
