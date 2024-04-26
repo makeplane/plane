@@ -10,7 +10,6 @@ import { USER_ROLES } from "@/constants/workspace";
 import { useMobxStore } from "@/lib/mobx/store-provider";
 // constants
 // hooks
-import { UserService } from "@/services/user.service";
 import useToast from "hooks/use-toast";
 // services
 // ui
@@ -52,10 +51,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
       },
     };
 
-    const userService = new UserService();
-
-    await userService.updateMe(payload).then((response) => {
-      userStore.setCurrentUser(response);
+    await userStore.updateCurrentUser(payload).then(() => {
       router.push(next_path?.toString() || "/");
       setToastAlert({
         type: "success",

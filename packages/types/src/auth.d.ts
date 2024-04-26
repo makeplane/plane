@@ -7,6 +7,7 @@ export interface IEmailCheckData {
 export interface IEmailCheckResponse {
   is_password_autoset: boolean;
   status: boolean;
+  existing: boolean;
 }
 
 export interface ILoginTokenResponse {

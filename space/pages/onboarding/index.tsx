@@ -20,6 +20,8 @@ const OnBoardingPage = () => {
     }
   }, [userStore]);
 
+  if (!user) return <></>;
+
   return (
     <div className="h-screen w-full overflow-hidden bg-custom-background-100">
       <div className="flex h-full w-full flex-col gap-y-2 overflow-hidden sm:flex-row sm:gap-y-0">
