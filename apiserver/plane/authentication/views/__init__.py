@@ -29,7 +29,7 @@ from .app.magic import (
 from .app.signout import SignOutAuthEndpoint
 
 
-from .space.email import SignInAuthSpaceEndpoint
+from .space.email import SignInAuthSpaceEndpoint, SignUpAuthSpaceEndpoint
 
 from .space.github import (
     GitHubCallbackSpaceEndpoint,

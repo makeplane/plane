@@ -110,7 +110,7 @@ class SignInAuthSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
 
-class SignUpAuthEndpoint(View):
+class SignUpAuthSpaceEndpoint(View):
 
     def post(self, request):
         next_path = request.POST.get("next_path")

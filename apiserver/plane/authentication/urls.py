@@ -28,6 +28,7 @@ from .views import (
     MagicSignInSpaceEndpoint,
     MagicSignUpSpaceEndpoint,
     SignInAuthSpaceEndpoint,
+    SignUpAuthSpaceEndpoint,
     SignOutAuthSpaceEndpoint,
 )
 
@@ -46,6 +47,11 @@ urlpatterns = [
     path(
         "spaces/sign-in/",
         SignInAuthSpaceEndpoint.as_view(),
+        name="sign-in",
+    ),
+    path(
+        "spaces/sign-up/",
+        SignUpAuthSpaceEndpoint.as_view(),
         name="sign-in",
     ),
     # signout
