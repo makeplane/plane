@@ -4,7 +4,7 @@ import Link from "next/link";
 // icons
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // components
 import { EAuthModes, EAuthSteps, ForgotPasswordPopover, PasswordStrengthMeter } from "@/components/account";
 // constants
@@ -12,7 +12,6 @@ import { FORGOT_PASSWORD } from "@/constants/event-tracker";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
-import { checkEmailValidity } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useInstance } from "@/hooks/store";
 // services
@@ -42,7 +41,6 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   const { email, handleStepChange, handleEmailClear, mode } = props;
   // states
   const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
-  const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
@@ -200,9 +198,8 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
                   variant="outline-primary"
                   className="w-full"
                   size="lg"
-                  loading={isSendingUniqueCode}
                 >
-                  {isSendingUniqueCode ? "Sending code" : "Sign in with unique code"}
+                  Sign in with unique code
                 </Button>
               )}
             </>
