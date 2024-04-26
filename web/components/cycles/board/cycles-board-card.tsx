@@ -235,7 +235,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
           </div>
         </div>
       </Link>
-      <div className="absolute right-4 bottom-3.5 z-[5] flex items-center gap-1.5">
+      <div className="absolute right-4 bottom-3.5 flex items-center gap-1.5">
         {isEditingAllowed && (
           <FavoriteStar
             onClick={(e) => {
