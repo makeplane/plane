@@ -160,7 +160,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
       extra_options: {
         access: true,
-        values: ["show_empty_groups"],
+        values: ["show_empty_groups", "sub_issue"],
       },
     },
     kanban: {
