@@ -6,10 +6,11 @@ export type TControlLink = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   children: React.ReactNode;
   target?: string;
   disabled?: boolean;
+  className?: string;
 };
 
-export const ControlLink: React.FC<TControlLink> = (props) => {
-  const { href, onClick, children, target = "_self", disabled = false, ...rest } = props;
+export const ControlLink = React.forwardRef<HTMLAnchorElement, TControlLink>((props, ref) => {
+  const { href, onClick, children, target = "_self", disabled = false, className, ...rest } = props;
   const LEFT_CLICK_EVENT_CODE = 0;
 
   const handleOnClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -23,8 +24,8 @@ export const ControlLink: React.FC<TControlLink> = (props) => {
   if (disabled) return <>{children}</>;
 
   return (
-    <a href={href} target={target} onClick={handleOnClick} {...rest}>
+    <a href={href} target={target} onClick={handleOnClick} {...rest} ref={ref} className={className}>
       {children}
     </a>
   );
-};
+});
