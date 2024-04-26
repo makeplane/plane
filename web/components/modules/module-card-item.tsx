@@ -144,106 +144,107 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     : "0 Issue";
 
   return (
-    <Link href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
-      <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
-        <div>
-          <div className="flex items-center justify-between gap-2">
-            <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
-              <span className="truncate text-base font-medium">{moduleDetails.name}</span>
-            </Tooltip>
-            <div className="flex items-center gap-2">
-              {moduleStatus && (
-                <span
-                  className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
-                  style={{
-                    color: moduleStatus.color,
-                    backgroundColor: `${moduleStatus.color}20`,
-                  }}
-                >
-                  {moduleStatus.label}
-                </span>
-              )}
-              <button onClick={openModuleOverview}>
-                <Info className="h-4 w-4 text-custom-text-400" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-custom-text-200">
-              <LayersIcon className="h-4 w-4 text-custom-text-300" />
-              <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
-            </div>
-            {moduleDetails.member_ids?.length > 0 && (
-              <Tooltip tooltipContent={`${moduleDetails.member_ids.length} Members`} isMobile={isMobile}>
-                <div className="flex cursor-default items-center gap-1">
-                  <AvatarGroup showTooltip={false}>
-                    {moduleDetails.member_ids.map((member_id) => {
-                      const member = getUserDetails(member_id);
-                      return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
-                    })}
-                  </AvatarGroup>
-                </div>
+    <div className="relative">
+      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
+        <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
+          <div>
+            <div className="flex items-center justify-between gap-2">
+              <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
+                <span className="truncate text-base font-medium">{moduleDetails.name}</span>
               </Tooltip>
-            )}
-          </div>
-
-          <Tooltip
-            isMobile={isMobile}
-            tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
-            position="top-left"
-          >
-            <div className="flex w-full items-center">
-              <div
-                className="bar relative h-1.5 w-full rounded bg-custom-background-90"
-                style={{
-                  boxShadow: "1px 1px 4px 0px rgba(161, 169, 191, 0.35) inset",
-                }}
-              >
-                <div
-                  className="absolute left-0 top-0 h-1.5 rounded bg-blue-600 duration-300"
-                  style={{
-                    width: `${isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%`,
-                  }}
-                />
+              <div className="flex items-center gap-2">
+                {moduleStatus && (
+                  <span
+                    className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
+                    style={{
+                      color: moduleStatus.color,
+                      backgroundColor: `${moduleStatus.color}20`,
+                    }}
+                  >
+                    {moduleStatus.label}
+                  </span>
+                )}
+                <button onClick={openModuleOverview}>
+                  <Info className="h-4 w-4 text-custom-text-400" />
+                </button>
               </div>
             </div>
-          </Tooltip>
+          </div>
 
-          <div className="flex items-center justify-between">
-            {isDateValid ? (
-              <>
-                <span className="text-xs text-custom-text-300">
-                  {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
-                </span>
-              </>
-            ) : (
-              <span className="text-xs text-custom-text-400">No due date</span>
-            )}
-
-            <div className="z-[5] flex items-center gap-1.5">
-              {isEditingAllowed && (
-                <FavoriteStar
-                  onClick={(e) => {
-                    if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);
-                    else handleAddToFavorites(e);
-                  }}
-                  selected={!!moduleDetails.is_favorite}
-                />
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-custom-text-200">
+                <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
+              </div>
+              {moduleDetails.member_ids?.length > 0 && (
+                <Tooltip tooltipContent={`${moduleDetails.member_ids.length} Members`} isMobile={isMobile}>
+                  <div className="flex cursor-default items-center gap-1">
+                    <AvatarGroup showTooltip={false}>
+                      {moduleDetails.member_ids.map((member_id) => {
+                        const member = getUserDetails(member_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
+                    </AvatarGroup>
+                  </div>
+                </Tooltip>
               )}
-              {workspaceSlug && projectId && (
-                <ModuleQuickActions
-                  moduleId={moduleId}
-                  projectId={projectId.toString()}
-                  workspaceSlug={workspaceSlug.toString()}
-                />
+            </div>
+
+            <Tooltip
+              isMobile={isMobile}
+              tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
+              position="top-left"
+            >
+              <div className="flex w-full items-center">
+                <div
+                  className="bar relative h-1.5 w-full rounded bg-custom-background-90"
+                  style={{
+                    boxShadow: "1px 1px 4px 0px rgba(161, 169, 191, 0.35) inset",
+                  }}
+                >
+                  <div
+                    className="absolute left-0 top-0 h-1.5 rounded bg-blue-600 duration-300"
+                    style={{
+                      width: `${isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </Tooltip>
+
+            <div className="flex items-center justify-between py-0.5">
+              {isDateValid ? (
+                <>
+                  <span className="text-xs text-custom-text-300">
+                    {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
+                  </span>
+                </>
+              ) : (
+                <span className="text-xs text-custom-text-400">No due date</span>
               )}
             </div>
           </div>
         </div>
+      </Link>
+      <div className="absolute right-4 bottom-3.5 z-[5] flex items-center gap-1.5">
+        {isEditingAllowed && (
+          <FavoriteStar
+            onClick={(e) => {
+              if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);
+              else handleAddToFavorites(e);
+            }}
+            selected={!!moduleDetails.is_favorite}
+          />
+        )}
+        {workspaceSlug && projectId && (
+          <ModuleQuickActions
+            moduleId={moduleId}
+            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        )}
       </div>
-    </Link>
+    </div>
   );
 });
