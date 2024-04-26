@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
@@ -15,7 +15,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
+import { IIssueFilterOptions, ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // ui
 import {
   CustomMenu,
@@ -41,13 +41,14 @@ import {
   MODULE_LINK_UPDATED,
   MODULE_UPDATED,
 } from "@/constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useModule, useUser, useEventTracker } from "@/hooks/store";
+import { useModule, useUser, useEventTracker, useIssues } from "@/hooks/store";
 // types
 
 const defaultValues: Partial<IModule> = {
@@ -82,6 +83,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
     useModule();
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
+  const {
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.MODULE);
   const moduleDetails = getModuleById(moduleId);
 
   const moduleState = moduleDetails?.status?.toLocaleLowerCase();
@@ -244,6 +248,33 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         ...moduleDetails,
       });
   }, [moduleDetails, reset]);
+
+  const handleFiltersUpdate = useCallback(
+    (key: keyof IIssueFilterOptions, value: string | string[]) => {
+      if (!workspaceSlug || !projectId) return;
+      const newValues = issueFilters?.filters?.[key] ?? [];
+
+      if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
+        value.forEach((val) => {
+          if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
+        });
+      } else {
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        else newValues.push(value);
+      }
+
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        moduleId
+      );
+    },
+    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
+  );
 
   const startDate = getDate(moduleDetails?.start_date);
   const endDate = getDate(moduleDetails?.target_date);
@@ -599,6 +630,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               totalIssues={moduleDetails.total_issues}
                               module={moduleDetails}
                               isPeekView={Boolean(peekModule)}
+                              filters={issueFilters}
+                              handleFiltersUpdate={handleFiltersUpdate}
                             />
                           </div>
                         )}
