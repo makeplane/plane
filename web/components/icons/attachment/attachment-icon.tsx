@@ -14,7 +14,7 @@ import {
   SvgIcon,
   TxtIcon,
   VideoIcon,
-} from "@/components/icons";
+} from "@/components/icons/attachment";
 
 export const getFileIcon = (fileType: string) => {
   switch (fileType) {

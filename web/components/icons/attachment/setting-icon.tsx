@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { Props } from "./types";
+import type { Props } from "../types";
 
 export const SettingIcon: React.FC<Props> = ({
   width = "24",
