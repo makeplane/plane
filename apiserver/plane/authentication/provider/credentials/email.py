@@ -50,14 +50,14 @@ class EmailProvider(CredentialAdapter):
             if not user:
                 raise AuthenticationException(
                     error_message="Sorry, we could not find a user with the provided credentials. Please try again.",
-                    error_code="USER_DOES_NOT_EXIST",
+                    error_code="AUTHENTICATION_FAILED",
                 )
 
             # Check user password
             if not user.check_password(self.code):
                 raise AuthenticationException(
                     error_message="Sorry, we could not find a user with the provided credentials. Please try again.",
-                    error_code="USER_DOES_NOT_EXIST",
+                    error_code="AUTHENTICATION_FAILED",
                 )
 
             super().set_user_data(

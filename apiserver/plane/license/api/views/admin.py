@@ -66,7 +66,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         serializer = InstanceAdminSerializer(instance_admin)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @cache_response(60 * 60 * 2)
+    @cache_response(60 * 60 * 2, user=False)
     def get(self, request):
         instance = Instance.objects.first()
         if instance is None:
@@ -97,7 +97,7 @@ class InstanceAdminSignUpEndpoint(View):
         if instance is None:
             url = urljoin(
                 base_host(request=request),
-                "setup/?"
+                "god-mode/setup?"
                 + urlencode(
                     {
                         "error_code": "INSTANCE_NOT_CONFIGURED",
@@ -111,7 +111,7 @@ class InstanceAdminSignUpEndpoint(View):
         if InstanceAdmin.objects.first():
             url = urljoin(
                 base_host(request=request),
-                "setup/?"
+                "god-mode/setup?"
                 + urlencode(
                     {
                         "error_code": "ADMIN_ALREADY_EXIST",
@@ -133,7 +133,7 @@ class InstanceAdminSignUpEndpoint(View):
         if not email or not password or not first_name:
             url = urljoin(
                 base_host(request=request),
-                "setup/?"
+                "god-mode/setup?"
                 + urlencode(
                     {
                         "email": email,
@@ -155,7 +155,7 @@ class InstanceAdminSignUpEndpoint(View):
         except ValidationError:
             url = urljoin(
                 base_host(request=request),
-                "setup/?"
+                "god-mode/setup?"
                 + urlencode(
                     {
                         "email": email,
@@ -175,7 +175,7 @@ class InstanceAdminSignUpEndpoint(View):
         if User.objects.filter(email=email).exists():
             url = urljoin(
                 base_host(request=request),
-                "setup/?"
+                "god-mode/setup?"
                 + urlencode(
                     {
                         "email": email,
@@ -195,7 +195,7 @@ class InstanceAdminSignUpEndpoint(View):
             if results["score"] < 3:
                 url = urljoin(
                     base_host(request=request),
-                    "setup/?"
+                    "god-mode/setup?"
                     + urlencode(
                         {
                             "email": email,
@@ -256,7 +256,7 @@ class InstanceAdminSignInEndpoint(View):
         if instance is None:
             url = urljoin(
                 base_host(request=request),
-                "login/?"
+                "god-mode/login?"
                 + urlencode(
                     {
                         "error_code": "INSTANCE_NOT_CONFIGURED",
@@ -274,7 +274,7 @@ class InstanceAdminSignInEndpoint(View):
         if not email or not password:
             url = urljoin(
                 base_host(request=request),
-                "login/?"
+                "god-mode/login?"
                 + urlencode(
                     {
                         "email": email,
@@ -292,7 +292,7 @@ class InstanceAdminSignInEndpoint(View):
         except ValidationError:
             url = urljoin(
                 base_host(request=request),
-                "login/?"
+                "god-mode/login?"
                 + urlencode(
                     {
                         "email": email,
@@ -310,7 +310,7 @@ class InstanceAdminSignInEndpoint(View):
         if not user:
             url = urljoin(
                 base_host(request=request),
-                "login/?"
+                "god-mode/login?"
                 + urlencode(
                     {
                         "email": email,
@@ -325,7 +325,7 @@ class InstanceAdminSignInEndpoint(View):
         if not user.check_password(password):
             url = urljoin(
                 base_host(request=request),
-                "login/?"
+                "god-mode/login?"
                 + urlencode(
                     {
                         "email": email,
@@ -340,7 +340,7 @@ class InstanceAdminSignInEndpoint(View):
         if not InstanceAdmin.objects.filter(instance=instance, user=user):
             url = urljoin(
                 base_host(request=request),
-                "login/?"
+                "god-mode/login?"
                 + urlencode(
                     {
                         "email": email,
@@ -389,6 +389,6 @@ class InstanceAdminSignOutEndpoint(View):
         logout(request)
         url = urljoin(
             base_host(request=request),
-            "?" + urlencode({"success": "true"}),
+            "god-mode/login?" + urlencode({"success": "true"}),
         )
         return HttpResponseRedirect(url)
