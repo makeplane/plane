@@ -240,7 +240,7 @@ class InstanceAdminSignUpEndpoint(View):
 
             # get tokens for user
             user_login(request=request, user=user)
-            url = urljoin(base_host(request=request), "general")
+            url = urljoin(base_host(request=request), "god-mode/general")
             return HttpResponseRedirect(url)
 
 
@@ -361,7 +361,7 @@ class InstanceAdminSignInEndpoint(View):
 
         # get tokens for user
         user_login(request=request, user=user)
-        url = urljoin(base_host(request=request), "general")
+        url = urljoin(base_host(request=request), "god-mode/general")
         return HttpResponseRedirect(url)
 
 
