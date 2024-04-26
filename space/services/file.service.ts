@@ -1,8 +1,8 @@
-// services
-import APIService from "@/services/api.service";
+import axios from "axios";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-import axios from "axios";
+// services
+import APIService from "@/services/api.service";
 
 interface UnSplashImage {
   id: string;
@@ -131,13 +131,6 @@ class FileService extends APIService {
     const assetId = assetUrl.substring(lastIndex + 1);
 
     return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-  async uploadUserFile(file: FormData): Promise<any> {
-    return this.mediaUpload(`/api/users/file-assets/`, file)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

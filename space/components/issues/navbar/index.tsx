@@ -142,7 +142,7 @@ const IssueNavbar = observer(() => {
 
       {user ? (
         <div className="flex items-center gap-2 rounded border border-custom-border-200 p-2">
-          <Avatar name={user?.display_name} src={user?.avatar} shape="square" size="sm" />
+          <Avatar name={user?.display_name} src={user?.avatar ?? undefined} shape="square" size="sm" />
           <h6 className="text-xs font-medium">{user.display_name}</h6>
         </div>
       ) : (
