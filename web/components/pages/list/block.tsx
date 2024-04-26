@@ -51,7 +51,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
     >
       {/* page title */}
       <Tooltip tooltipHeading="Title" tooltipContent={name}>
-        <h5 className="text-base font-semibold truncate">{name}</h5>
+        <h5 className="text-base font-medium truncate">{name}</h5>
       </Tooltip>
 
       {/* page properties */}
