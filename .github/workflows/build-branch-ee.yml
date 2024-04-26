@@ -90,19 +90,19 @@ jobs:
             proxy:
               - nginx/**
 
-  branch_build_push_frontend:
+  branch_build_push_web:
     if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/web-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      WEB_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/web-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
       BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
       BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
     steps:
-      - name: Set Frontend Docker Tag
+      - name: Set Web Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/web-enterprise:stable
@@ -113,10 +113,10 @@ jobs:
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/web-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/web-enterprise:latest
           else
-            TAG=${{ env.FRONTEND_TAG }}
+            TAG=${{ env.WEB_TAG }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/web-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
           fi
-          echo "FRONTEND_TAG=${TAG}" >> $GITHUB_ENV
+          echo "WEB_TAG=${TAG}" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -141,13 +141,13 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Build and Push Frontend to Docker Container Registry
+      - name: Build and Push Web to Docker Container Registry
         uses: docker/build-push-action@v5.1.0
         with:
           context: .
           file: ./web/Dockerfile.web
           platforms: ${{ env.BUILDX_PLATFORMS }}
-          tags: ${{ env.FRONTEND_TAG }}
+          tags: ${{ env.WEB_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -346,14 +346,14 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  upload_assets_s3:
+  upload_artifacts_s3:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
-    name: Convert Docker TAR to S3 Bucket
+    name: Upload artifacts to S3 Bucket
     runs-on: ubuntu-latest
     needs:
       [
         branch_build_setup,
-        branch_build_push_frontend,
+        branch_build_push_web,
         branch_build_push_space,
         branch_build_push_backend,
         branch_build_push_proxy,
@@ -364,27 +364,27 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     env:
-      TAR_SUFFIX: ${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.PLANE_DOCKER_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.PLANE_DOCKER_SECRET_ACCESS_KEY }}
+      ARTIFACT_SUFFIX: ${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.SELF_HOST_BUCKET_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.SELF_HOST_BUCKET_SECRET_KEY }}
       TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
     steps:
       - id: checkout_files
         name: Checkout Files
         uses: actions/checkout@v4
 
-      - name: Save Image as Tar
+      - name: Upload artifacts
         run: |
           apk update
           apk add --no-cache aws-cli
 
-          mkdir -p ~/${{ env.TAR_SUFFIX }}
+          mkdir -p ~/${{ env.ARTIFACT_SUFFIX }}
 
-          cp deploy/cli-install/variables.env ~/${{ env.TAR_SUFFIX }}/variables.env
-          cp deploy/cli-install/Caddyfile ~/${{ env.TAR_SUFFIX }}/Caddyfile
-          sed -e 's@${APP_RELEASE_VERSION}@'${{ env.TAR_SUFFIX }}'@' deploy/cli-install/docker-compose.yml > ~/${{ env.TAR_SUFFIX }}/docker-compose.yml
-          sed -e 's@${APP_RELEASE_VERSION}@'${{ env.TAR_SUFFIX }}'@' deploy/cli-install/docker-compose-caddy.yml > ~/${{ env.TAR_SUFFIX }}/docker-compose-caddy.yml
+          cp deploy/cli-install/variables.env ~/${{ env.ARTIFACT_SUFFIX }}/variables.env
+          cp deploy/cli-install/Caddyfile ~/${{ env.ARTIFACT_SUFFIX }}/Caddyfile
+          sed -e 's@${APP_RELEASE_VERSION}@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose.yml > ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
+          sed -e 's@${APP_RELEASE_VERSION}@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose-caddy.yml > ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-caddy.yml
 
-          aws s3 cp ~/${{ env.TAR_SUFFIX }} s3://${{ secrets.PLANE_DOCKER_BUCKET }}/plane-enterprise/${{ env.TAR_SUFFIX }} --recursive
+          aws s3 cp ~/${{ env.ARTIFACT_SUFFIX }} s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ env.ARTIFACT_SUFFIX }} --recursive
 
-          rm -rf ~/${{ env.TAR_SUFFIX }}
+          rm -rf ~/${{ env.ARTIFACT_SUFFIX }}
