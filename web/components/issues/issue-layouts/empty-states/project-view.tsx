@@ -1,10 +1,12 @@
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
-// hooks
-import { EmptyState } from "@/components/common";
-import { EIssuesStoreType } from "@/constants/issue";
-import { useApplication, useEventTracker } from "@/hooks/store";
 // components
+import { EmptyState } from "@/components/common";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
+import { useApplication, useEventTracker, useUser } from "@/hooks/store";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
 
@@ -12,6 +14,11 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  // auth
+  const isCreatingIssueAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <div className="grid h-full w-full place-items-center">
@@ -19,14 +26,18 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
         title="View issues will appear here"
         description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
         image={emptyIssue}
-        primaryButton={{
-          text: "New issue",
-          icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-          onClick: () => {
-            setTrackElement("View issue empty state");
-            commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
-          },
-        }}
+        primaryButton={
+          isCreatingIssueAllowed
+            ? {
+                text: "New issue",
+                icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
+                onClick: () => {
+                  setTrackElement("View issue empty state");
+                  commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
+                },
+              }
+            : undefined
+        }
       />
     </div>
   );
