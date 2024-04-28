@@ -1,9 +1,7 @@
 import { observer } from "mobx-react";
 import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
 // components
-import { PageEditorMobileHeaderRoot, PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -21,7 +19,7 @@ type Props = {
   readOnlyEditorReady: boolean;
 };
 
-export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
+export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
   const {
     editorRef,
     readOnlyEditorRef,
@@ -43,13 +41,8 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="hidden md:flex items-center border-b border-custom-border-200 px-3 py-2 md:px-5">
-        <div
-          className={cn("flex-shrink-0", {
-            "w-56 lg:w-72": !isFullWidth,
-            "w-[10%]": isFullWidth,
-          })}
-        >
+      <div className="flex items-center border-b border-custom-border-200 px-2 py-1">
+        <div className="flex-shrink-0">
           <PageSummaryPopover
             editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
             isFullWidth={isFullWidth}
@@ -58,9 +51,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
             setSidePeekVisible={setSidePeekVisible}
           />
         </div>
-        {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
-          <PageToolbar editorRef={editorRef?.current} />
-        )}
         <PageExtraOptions
           editorRef={editorRef}
           handleDuplicatePage={handleDuplicatePage}
@@ -70,20 +60,10 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           readOnlyEditorRef={readOnlyEditorRef}
         />
       </div>
-      <div className="md:hidden">
-        <PageEditorMobileHeaderRoot
-          editorRef={editorRef}
-          readOnlyEditorRef={readOnlyEditorRef}
-          editorReady={editorReady}
-          readOnlyEditorReady={readOnlyEditorReady}
-          markings={markings}
-          handleDuplicatePage={handleDuplicatePage}
-          isSyncing={isSyncing}
-          pageStore={pageStore}
-          projectId={projectId}
-          sidePeekVisible={sidePeekVisible}
-          setSidePeekVisible={setSidePeekVisible}
-        />
+      <div className="border-b border-custom-border-200 py-1 px-2">
+        {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
+          <PageToolbar editorRef={editorRef?.current} />
+        )}
       </div>
     </>
   );
