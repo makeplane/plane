@@ -1,6 +1,8 @@
 import React from "react";
 // ui
 import { Tooltip } from "../tooltip";
+// helpers
+import { cn } from "../../helpers";
 
 export type TAvatarSize = "sm" | "md" | "base" | "lg" | number;
 
@@ -130,9 +132,9 @@ export const Avatar: React.FC<Props> = (props) => {
   return (
     <Tooltip tooltipContent={fallbackText ?? name ?? "?"} disabled={!showTooltip}>
       <div
-        className={`${
-          !isAValidNumber(size) ? sizeInfo.avatarSize : ""
-        } grid place-items-center overflow-hidden ${getBorderRadius(shape)}`}
+        className={cn("grid place-items-center overflow-hidden", getBorderRadius(shape), {
+          [sizeInfo.avatarSize]: !isAValidNumber(size),
+        })}
         style={
           isAValidNumber(size)
             ? {
@@ -144,12 +146,15 @@ export const Avatar: React.FC<Props> = (props) => {
         tabIndex={-1}
       >
         {src ? (
-          <img src={src} className={`h-full w-full ${getBorderRadius(shape)} ${className}`} alt={name} />
+          <img src={src} className={cn("h-full w-full", getBorderRadius(shape), className)} alt={name} />
         ) : (
           <div
-            className={`${sizeInfo.fontSize} grid h-full w-full place-items-center ${getBorderRadius(
-              shape
-            )} ${className}`}
+            className={cn(
+              sizeInfo.fontSize,
+              "grid h-full w-full place-items-center",
+              getBorderRadius(shape),
+              className
+            )}
             style={{
               backgroundColor: fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",
               color: fallbackTextColor ?? "#ffffff",

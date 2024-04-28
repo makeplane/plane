@@ -1,7 +1,7 @@
 // icons
 import { Globe2, Lock, LucideIcon } from "lucide-react";
 import { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
-import { SettingIcon } from "@/components/icons";
+import { SettingIcon } from "@/components/icons/attachment";
 // types
 import { Props } from "@/components/icons/types";
 

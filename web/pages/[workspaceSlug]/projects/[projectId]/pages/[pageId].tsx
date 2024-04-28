@@ -26,7 +26,7 @@ import { NextPageWithLayout } from "@/lib/types";
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
-  const [sidePeekVisible, setSidePeekVisible] = useState(true);
+  const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768 ? true : false);
   const [editorReady, setEditorReady] = useState(false);
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
   // refs

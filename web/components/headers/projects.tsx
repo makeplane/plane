@@ -108,7 +108,7 @@ export const ProjectsHeader = observer(() => {
             className={cn(
               "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
               {
-                "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+                "w-30 md:w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
               }
             )}
           >
@@ -135,27 +135,29 @@ export const ProjectsHeader = observer(() => {
             )}
           </div>
         </div>
-        <ProjectOrderByDropdown
-          value={displayFilters?.order_by}
-          onChange={(val) => {
-            if (!workspaceSlug || val === displayFilters?.order_by) return;
-            updateDisplayFilters(workspaceSlug, {
-              order_by: val,
-            });
-          }}
-        />
-        <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
-          <ProjectFiltersSelection
-            displayFilters={displayFilters ?? {}}
-            filters={filters ?? {}}
-            handleFiltersUpdate={handleFilters}
-            handleDisplayFiltersUpdate={(val) => {
-              if (!workspaceSlug) return;
-              updateDisplayFilters(workspaceSlug, val);
+        <div className="hidden md:flex gap-3">
+          <ProjectOrderByDropdown
+            value={displayFilters?.order_by}
+            onChange={(val) => {
+              if (!workspaceSlug || val === displayFilters?.order_by) return;
+              updateDisplayFilters(workspaceSlug, {
+                order_by: val,
+              });
             }}
-            memberIds={workspaceMemberIds ?? undefined}
           />
-        </FiltersDropdown>
+          <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+            <ProjectFiltersSelection
+              displayFilters={displayFilters ?? {}}
+              filters={filters ?? {}}
+              handleFiltersUpdate={handleFilters}
+              handleDisplayFiltersUpdate={(val) => {
+                if (!workspaceSlug) return;
+                updateDisplayFilters(workspaceSlug, val);
+              }}
+              memberIds={workspaceMemberIds ?? undefined}
+            />
+          </FiltersDropdown>
+        </div>
         {isAuthorizedUser && (
           <Button
             prependIcon={<Plus />}

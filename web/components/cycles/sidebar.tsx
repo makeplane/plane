@@ -416,7 +416,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           to: "End date",
                         }}
                         required={cycleDetails.status !== "draft"}
-                        disabled={isArchived}
+                        disabled={!isEditingAllowed || isArchived}
                       />
                     )}
                   />

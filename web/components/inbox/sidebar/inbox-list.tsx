@@ -10,16 +10,18 @@ export type InboxIssueListProps = {
   projectId: string;
   projectIdentifier?: string;
   inboxIssues: IInboxIssueStore[];
+  setToggleMobileSidebar: (value: boolean) => void;
 };
 
 export const InboxIssueList: FC<InboxIssueListProps> = observer((props) => {
-  const { workspaceSlug, projectId, projectIdentifier, inboxIssues } = props;
+  const { workspaceSlug, projectId, projectIdentifier, inboxIssues, setToggleMobileSidebar } = props;
 
   return (
     <>
       {inboxIssues.map((inboxIssue) => (
         <Fragment key={inboxIssue.id}>
           <InboxIssueListItem
+            setToggleMobileSidebar={setToggleMobileSidebar}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             projectIdentifier={projectIdentifier}
