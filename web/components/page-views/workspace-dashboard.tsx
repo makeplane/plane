@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { observer } from "mobx-react";
-// ui
+import { observer } from "mobx-react-lite";
+// components
 import { Spinner } from "@plane/ui";
 // components
 import { DashboardWidgets } from "@/components/dashboard";
@@ -11,16 +11,11 @@ import { UserGreetingsView } from "@/components/user";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
-import {
-  useAppRouter,
-  useCommandPalette,
-  useDashboard,
-  useEventTracker,
-  useProject,
-  useUser,
-  useUserProfile,
-} from "@/hooks/store";
+import { useCommandPalette, useAppRouter, useUserProfile,  useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
+import useSize from "@/hooks/use-window-size";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
@@ -35,6 +30,8 @@ export const WorkspaceDashboardView = observer(() => {
   const { captureEvent } = useEventTracker();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds } = useProject();
+
+  const [windowWidth] = useSize();
 
   const handleTourCompleted = () => {
     updateTourCompleted()
@@ -68,7 +65,14 @@ export const WorkspaceDashboardView = observer(() => {
           {joinedProjectIds.length > 0 ? (
             <>
               <IssuePeekOverview />
-              <div className="vertical-scrollbar scrollbar-lg flex h-full w-full flex-col space-y-7 overflow-y-auto bg-custom-background-90 p-7">
+              <div
+                className={cn(
+                  "space-y-7 md:p-7 p-3 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto",
+                  {
+                    "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
+                  }
+                )}
+              >
                 {currentUser && <UserGreetingsView user={currentUser} />}
 
                 <DashboardWidgets />

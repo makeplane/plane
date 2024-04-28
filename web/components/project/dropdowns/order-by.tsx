@@ -11,12 +11,13 @@ import { cn } from "@/helpers/common.helper";
 type Props = {
   onChange: (value: TProjectOrderByOptions) => void;
   value: TProjectOrderByOptions | undefined;
+  isMobile?: boolean;
 };
 
 const DISABLED_ORDERING_OPTIONS = ["sort_order"];
 
 export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
-  const { onChange, value } = props;
+  const { onChange, value, isMobile = false } = props;
 
   const orderByDetails = PROJECT_ORDER_BY_OPTIONS.find((option) => value?.includes(option.key));
 
@@ -25,12 +26,23 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
 
   return (
     <CustomMenu
+      className={`${isMobile ? "flex w-full justify-center" : ""}`}
       customButton={
-        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
-          <ArrowDownWideNarrow className="h-3 w-3" />
-          {orderByDetails?.label}
-          <ChevronDown className="h-3 w-3" strokeWidth={2} />
-        </div>
+        <>
+          {isMobile ? (
+            <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
+              <ArrowDownWideNarrow className="h-3 w-3" />
+              {orderByDetails?.label}
+              <ChevronDown className="h-3 w-3" strokeWidth={2} />
+            </div>
+          ) : (
+            <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-200")}>
+              <ArrowDownWideNarrow className="h-3 w-3" />
+              {orderByDetails?.label}
+              <ChevronDown className="h-3 w-3" strokeWidth={2} />
+            </div>
+          )}
+        </>
       }
       placement="bottom-end"
       closeOnSelect

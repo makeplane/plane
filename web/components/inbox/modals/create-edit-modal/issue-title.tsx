@@ -6,10 +6,11 @@ import { Input } from "@plane/ui";
 type TInboxIssueTitle = {
   data: Partial<TIssue>;
   handleData: (issueKey: keyof Partial<TIssue>, issueValue: Partial<TIssue>[keyof Partial<TIssue>]) => void;
+  isTitleLengthMoreThan255Character?: boolean;
 };
 
 export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
-  const { data, handleData } = props;
+  const { data, handleData, isTitleLengthMoreThan255Character } = props;
 
   return (
     <div className="relative flex flex-wrap gap-2 items-center">
@@ -21,9 +22,11 @@ export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
         onChange={(e) => handleData("name", e.target.value)}
         placeholder="Title"
         className="w-full resize-none text-xl"
-        maxLength={255}
         required
       />
+      {isTitleLengthMoreThan255Character && (
+        <span className="text-xs text-red-500">Title should be less than 255 characters</span>
+      )}
     </div>
   );
 });

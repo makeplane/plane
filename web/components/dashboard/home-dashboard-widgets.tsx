@@ -40,7 +40,7 @@ export const DashboardWidgets = observer(() => {
   if (!workspaceSlug || !homeDashboardId) return null;
 
   return (
-    <div className="grid gap-7 lg:grid-cols-2">
+    <div className="relative flex flex-col lg:grid lg:grid-cols-2 gap-7">
       {Object.entries(WIDGETS_LIST).map(([key, widget]) => {
         const WidgetComponent = widget.component;
         // if the widget doesn't exist, return null

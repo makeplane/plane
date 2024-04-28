@@ -135,56 +135,60 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const completedModuleCheck = moduleDetails.status === "completed";
 
   return (
-    <Link
-      href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
-      onClick={(e) => {
-        if (isArchived) {
-          openModuleOverview(e);
-        }
-      }}
-    >
-      <div className="group flex w-full flex-col items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90 sm:flex-row">
-        <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
-          <div className="relative flex w-full items-center gap-3 overflow-hidden">
-            <div className="flex items-center gap-4 truncate">
-              <span className="flex-shrink-0">
-                <CircularProgressIndicator size={38} percentage={progress}>
-                  {completedModuleCheck ? (
-                    progress === 100 ? (
+    <div className="relative">
+      <Link
+        href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
+        onClick={(e) => {
+          if (isArchived) {
+            openModuleOverview(e);
+          }
+        }}
+      >
+        <div className="group flex w-full flex-col items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90 sm:flex-row">
+          <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
+            <div className="relative flex w-full items-center gap-3 overflow-hidden">
+              <div className="flex items-center gap-4 truncate">
+                <span className="flex-shrink-0">
+                  <CircularProgressIndicator size={38} percentage={progress}>
+                    {completedModuleCheck ? (
+                      progress === 100 ? (
+                        <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
+                      ) : (
+                        <span className="text-sm text-custom-primary-100">{`!`}</span>
+                      )
+                    ) : progress === 100 ? (
                       <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
                     ) : (
-                      <span className="text-sm text-custom-primary-100">{`!`}</span>
-                    )
-                  ) : progress === 100 ? (
-                    <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
-                  ) : (
-                    <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
-                  )}
-                </CircularProgressIndicator>
-              </span>
-              <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
-                <span className="truncate text-base font-medium">{moduleDetails.name}</span>
-              </Tooltip>
+                      <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
+                    )}
+                  </CircularProgressIndicator>
+                </span>
+                <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
+                  <span className="truncate text-base font-medium">{moduleDetails.name}</span>
+                </Tooltip>
+              </div>
+              <button onClick={openModuleOverview} className="z-[5] hidden flex-shrink-0 group-hover:flex">
+                <Info className="h-4 w-4 text-custom-text-400" />
+              </button>
             </div>
-            <button onClick={openModuleOverview} className="z-[5] hidden flex-shrink-0 group-hover:flex">
-              <Info className="h-4 w-4 text-custom-text-400" />
-            </button>
           </div>
-          <div className="flex flex-shrink-0 items-center justify-center">
-            {moduleStatus && (
-              <span
-                className="flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
-                style={{
-                  color: moduleStatus.color,
-                  backgroundColor: `${moduleStatus.color}20`,
-                }}
-              >
-                {moduleStatus.label}
-              </span>
-            )}
-          </div>
+          <span className="h-6 w-52 flex-shrink-0" />
         </div>
-
+      </Link>
+      <div className="absolute right-5 bottom-8 flex items-center gap-1.5">
+        <div className="flex flex-shrink-0 items-center justify-center">
+          {moduleStatus && (
+            <span
+              className="flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
+              style={{
+                color: moduleStatus.color,
+                backgroundColor: `${moduleStatus.color}20`,
+              }}
+            >
+              {moduleStatus.label}
+            </span>
+          )}
+        </div>
         <div className="relative flex w-full items-center justify-between gap-2.5 sm:w-auto sm:flex-shrink-0 sm:justify-end ">
           <div className="text-xs text-custom-text-300">
             {renderDate && (
@@ -232,6 +236,6 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 });

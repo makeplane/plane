@@ -112,7 +112,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
       <div className="space-y-5">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
-          <div>
+          <div className="flex flex-col gap-1">
             <Controller
               control={control}
               name="name"
@@ -137,6 +137,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                 />
               )}
             />
+            <span className="text-xs text-red-500">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller
@@ -215,8 +216,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-            ? "Creating View..."
-            : "Create View"}
+              ? "Creating View..."
+              : "Create View"}
         </Button>
       </div>
     </form>

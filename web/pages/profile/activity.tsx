@@ -46,8 +46,8 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title="Profile - Activity" />
-      <section className="mx-auto flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
-        <div className="mt-5 flex items-center gap-4 border-b border-custom-border-100 pb-3.5 md:mt-16">
+      <section className="mx-auto mt-5 md:mt-16 h-full w-full flex flex-col overflow-hidden px-5 md:px-8 pb-8 lg:w-3/5">
+        <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
           <SidebarHamburgerToggle onClick={() => toggleSidebar()} />
           <h3 className="text-xl font-medium">Activity</h3>
         </div>

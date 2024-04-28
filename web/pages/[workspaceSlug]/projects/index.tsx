@@ -6,6 +6,7 @@ import { PageHead } from "@/components/core";
 import { ProjectsHeader } from "@/components/headers";
 import { ProjectAppliedFiltersList, ProjectCardList } from "@/components/project";
 // layouts
+import ProjectsMobileHeader from "@/components/project/projects-mobile-header";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { useAppRouter, useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
 import { AppLayout } from "@/layouts/app-layout";
@@ -82,7 +83,7 @@ const ProjectsPage: NextPageWithLayout = observer(() => {
 });
 
 ProjectsPage.getLayout = function getLayout(page: ReactElement) {
-  return <AppLayout header={<ProjectsHeader />}>{page}</AppLayout>;
+  return <AppLayout header={<ProjectsHeader />} mobileHeader={<ProjectsMobileHeader/>}>{page}</AppLayout>;
 };
 
 export default ProjectsPage;

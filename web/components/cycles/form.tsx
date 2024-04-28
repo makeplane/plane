@@ -77,7 +77,7 @@ export const CycleForm: React.FC<Props> = (props) => {
         </div>
         <div className="space-y-3">
           <div className="mt-2 space-y-3">
-            <div>
+            <div className="flex flex-col gap-1">
               <Controller
                 name="name"
                 control={control}
@@ -85,7 +85,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                   required: "Name is required",
                   maxLength: {
                     value: 255,
-                    message: "Name should be less than 255 characters",
+                    message: "Title should be less than 255 characters",
                   },
                 }}
                 render={({ field: { value, onChange } }) => (
@@ -103,6 +103,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                   />
                 )}
               />
+              <span className="text-xs text-red-500">{errors?.name?.message}</span>
             </div>
             <div>
               <Controller

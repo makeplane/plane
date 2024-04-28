@@ -20,8 +20,8 @@ import { useLabel, useMember, useUser, useIssues } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const GLOBAL_VIEW_LAYOUTS = [
-  { key: "list", title: "List", link: "/workspace-views", icon: List },
-  { key: "spreadsheet", title: "Spreadsheet", link: "/workspace-views/all-issues", icon: Sheet },
+  { key: "list", title: "List", link: "workspace-views", icon: List },
+  { key: "spreadsheet", title: "Spreadsheet", link: "workspace-views/all-issues", icon: Sheet },
 ];
 
 type Props = {
