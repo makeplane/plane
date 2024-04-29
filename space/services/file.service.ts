@@ -137,6 +137,19 @@ class FileService extends APIService {
       });
   }
 
+  async uploadUserFile(file: FormData): Promise<any> {
+    return this.post(`/api/users/file-assets/`, file, {
+      headers: {
+        ...this.getHeaders(),
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async deleteUserFile(assetUrl: string): Promise<any> {
     const lastIndex = assetUrl.lastIndexOf("/");
     const assetId = assetUrl.substring(lastIndex + 1);
