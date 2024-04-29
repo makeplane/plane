@@ -1,4 +1,4 @@
-name: Auto Merge or Create PR on Push
+name: Create PR on Sync
 
 on:
   workflow_dispatch:
@@ -56,29 +56,7 @@ jobs:
           sudo apt update
           sudo apt install gh -y
 
-      - name: Check for merge conflicts
-        id: conflicts
-        run: |
-          git fetch origin $TARGET_BRANCH
-          git checkout $TARGET_BRANCH
-          # Attempt to merge the main branch into the current branch
-          if $(git merge --no-commit --no-ff $SOURCE_BRANCH); then
-            echo "No merge conflicts detected."
-            echo "HAS_CONFLICTS=false" >> $GITHUB_ENV
-          else
-            echo "Merge conflicts detected."
-            echo "HAS_CONFLICTS=true" >> $GITHUB_ENV
-            git merge --abort
-          fi
-
-      - name: Merge Change to Target Branch
-        if: env.HAS_CONFLICTS == 'false'
-        run: |
-          git commit -m "Merge branch '$SOURCE_BRANCH' into $TARGET_BRANCH"
-          git push origin HEAD:$TARGET_BRANCH
-
       - name: Create PR to Target Branch
-        if: env.HAS_CONFLICTS == 'true'
         run: |
           # get all pull requests and check if there is already a PR
           PR_EXISTS=$(gh pr list --base $TARGET_BRANCH --head $SOURCE_BRANCH --json number | jq '.[] | .number')
