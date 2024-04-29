@@ -1,3 +1,4 @@
+import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
@@ -80,7 +81,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
 
   const areFiltersEqual = isEqual(appliedFilters, viewDetails?.filters);
   // return if no filters are applied
-  if ((!appliedFilters && areFiltersEqual) || Object.keys(appliedFilters ?? {}).length === 0) return null;
+  if ((!appliedFilters && areFiltersEqual) || isEmpty(appliedFilters)) return null;
 
   const handleUpdateView = () => {
     if (!workspaceSlug || !projectId || !viewId || !viewDetails) return;

@@ -1,3 +1,4 @@
+import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
@@ -111,7 +112,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => view.key).includes(globalViewId as TStaticViewTypes);
 
   // return if no filters are applied
-  if ((!appliedFilters && areFiltersEqual) || Object.keys(appliedFilters ?? {}).length === 0) return null;
+  if ((!appliedFilters && areFiltersEqual) || isEmpty(appliedFilters)) return null;
 
   return (
     <div className="flex items-start justify-between gap-4 p-4">
