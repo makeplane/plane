@@ -44,7 +44,7 @@ export const SignUpView = observer(() => {
     <div className="relative">
       <PageHead title="Sign Up" />
       <div className="absolute inset-0 z-0">
-      <Image
+        <Image
           src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
           className="w-screen min-h-screen object-cover"
           alt="Plane background pattern"
