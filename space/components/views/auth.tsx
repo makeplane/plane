@@ -23,7 +23,7 @@ export const AuthView = observer(() => {
     user: { currentUser, fetchCurrentUser, loader },
   } = useMobxStore();
   // sign in redirection hook
-  const { handleRedirection } = useAuthRedirection();
+  const { isRedirecting, handleRedirection } = useAuthRedirection();
 
   // fetching user information
   useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
@@ -33,12 +33,11 @@ export const AuthView = observer(() => {
 
   useEffect(() => {
     handleRedirection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handleRedirection]);
 
   return (
     <>
-      {loader ? (
+      {loader || isRedirecting ? (
         <div className="relative flex h-screen w-screen items-center justify-center">
           <Spinner />
         </div>

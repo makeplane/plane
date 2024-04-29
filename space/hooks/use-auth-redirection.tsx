@@ -70,10 +70,8 @@ const useAuthRedirection = (): UseAuthRedirectionProps => {
             .then((url: string | undefined) => {
               if (url) {
                 router.push(url);
-                return;
               }
-
-              setIsRedirecting(false);
+              if (!url || url === "/") setIsRedirecting(false);
             })
             .catch((err) => {
               setError(err);

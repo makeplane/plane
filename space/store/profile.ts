@@ -96,6 +96,7 @@ class ProfileStore implements IProfileStore {
           message: "Failed to fetch instance info",
         };
       });
+      throw error;
     }
   };
 
