@@ -8,10 +8,12 @@ on:
 
 env:
   CURRENT_BRANCH: ${{ github.ref_name }}
-  SOURCE_BRANCH: ${{ secrets.SYNC_SOURCE_BRANCH_NAME }} # The sync branch such as "sync/ce"
-  TARGET_BRANCH: ${{ secrets.SYNC_TARGET_BRANCH_NAME }} # The target branch that you would like to merge changes like develop
+  SOURCE_BRANCH: ${{ vars.SYNC_SOURCE_BRANCH_NAME }} # The sync branch such as "sync/ce"
+  TARGET_BRANCH: ${{ vars.SYNC_TARGET_BRANCH_NAME }} # The target branch that you would like to merge changes like develop
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }} # Personal access token required to modify contents and workflows
-  REVIEWER: ${{ secrets.SYNC_PR_REVIEWER }}
+  REVIEWER: ${{ vars.SYNC_PR_REVIEWER }}
+  ACCOUNT_USER_NAME: ${{ vars.ACCOUNT_USER_NAME }}
+  ACCOUNT_USER_EMAIL: ${{ vars.ACCOUNT_USER_EMAIL }}
 
 jobs:
   Check_Branch:
@@ -27,7 +29,6 @@ jobs:
           else
             echo "MATCH=false" >> $GITHUB_OUTPUT
           fi
-
   Auto_Merge:
     if: ${{ needs.Check_Branch.outputs.BRANCH_MATCH == 'true' }}
     needs: [Check_Branch]
@@ -43,8 +44,8 @@ jobs:
 
       - name: Setup Git
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          git config user.name "$ACCOUNT_USER_NAME"
+          git config user.email "$ACCOUNT_USER_EMAIL"
 
       - name: Setup GH CLI and Git Config
         run: |
