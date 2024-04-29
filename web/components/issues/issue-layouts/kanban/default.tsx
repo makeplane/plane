@@ -14,16 +14,7 @@ import {
 } from "@plane/types";
 // constants
 // hooks
-import {
-  useCycle,
-  useIssueDetail,
-  useKanbanView,
-  useLabel,
-  useMember,
-  useModule,
-  useProject,
-  useProjectState,
-} from "@/hooks/store";
+import { useCycle, useKanbanView, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 // types
 // parent components
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
@@ -95,7 +86,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const cycle = useCycle();
   const moduleInfo = useModule();
   const projectState = useProjectState();
-  const { peekIssue } = useIssueDetail();
 
   const list = getGroupByColumns(
     group_by as GroupByColumnTypes,
@@ -176,7 +166,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   groupId={subList.id}
                   issuesMap={issuesMap}
                   issueIds={issueIds}
-                  peekIssueId={peekIssue?.issueId ?? ""}
                   displayProperties={displayProperties}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
