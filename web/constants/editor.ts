@@ -1,9 +1,13 @@
 import {
   Bold,
+  CaseSensitive,
   Code2,
   Heading1,
   Heading2,
   Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
   Image,
   Italic,
   List,
@@ -28,15 +32,22 @@ export type ToolbarMenuItem = {
   editors: TEditorTypes[];
 };
 
-export const BASIC_MARK_ITEMS: ToolbarMenuItem[] = [
-  { key: "H1", name: "Heading 1", icon: Heading1, editors: ["document"] },
-  { key: "H2", name: "Heading 2", icon: Heading2, editors: ["document"] },
-  { key: "H3", name: "Heading 3", icon: Heading3, editors: ["document"] },
+export const TYPOGRAPHY_ITEMS: ToolbarMenuItem[] = [
+  { key: "text", name: "Text", icon: CaseSensitive, editors: ["document"] },
+  { key: "h1", name: "Heading 1", icon: Heading1, editors: ["document"] },
+  { key: "h2", name: "Heading 2", icon: Heading2, editors: ["document"] },
+  { key: "h3", name: "Heading 3", icon: Heading3, editors: ["document"] },
+  { key: "h4", name: "Heading 4", icon: Heading4, editors: ["document"] },
+  { key: "h5", name: "Heading 5", icon: Heading5, editors: ["document"] },
+  { key: "h6", name: "Heading 6", icon: Heading6, editors: ["document"] },
+];
+
+const BASIC_MARK_ITEMS: ToolbarMenuItem[] = [
   { key: "bold", name: "Bold", icon: Bold, shortcut: ["Cmd", "B"], editors: ["lite", "document"] },
   { key: "italic", name: "Italic", icon: Italic, shortcut: ["Cmd", "I"], editors: ["lite", "document"] },
   { key: "underline", name: "Underline", icon: Underline, shortcut: ["Cmd", "U"], editors: ["lite", "document"] },
   {
-    key: "strike",
+    key: "strikethrough",
     name: "Strikethrough",
     icon: Strikethrough,
     shortcut: ["Cmd", "Shift", "S"],
@@ -44,23 +55,23 @@ export const BASIC_MARK_ITEMS: ToolbarMenuItem[] = [
   },
 ];
 
-export const LIST_ITEMS: ToolbarMenuItem[] = [
+const LIST_ITEMS: ToolbarMenuItem[] = [
   {
-    key: "bullet-list",
+    key: "bulleted-list",
     name: "Bulleted list",
     icon: List,
     shortcut: ["Cmd", "Shift", "7"],
     editors: ["lite", "document"],
   },
   {
-    key: "ordered-list",
+    key: "numbered-list",
     name: "Numbered list",
     icon: ListOrdered,
     shortcut: ["Cmd", "Shift", "8"],
     editors: ["lite", "document"],
   },
   {
-    key: "To-do List",
+    key: "to-do-list",
     name: "To-do list",
     icon: ListTodo,
     shortcut: ["Cmd", "Shift", "9"],
@@ -68,12 +79,12 @@ export const LIST_ITEMS: ToolbarMenuItem[] = [
   },
 ];
 
-export const USER_ACTION_ITEMS: ToolbarMenuItem[] = [
+const USER_ACTION_ITEMS: ToolbarMenuItem[] = [
   { key: "quote", name: "Quote", icon: Quote, editors: ["lite", "document"] },
   { key: "code", name: "Code", icon: Code2, editors: ["lite", "document"] },
 ];
 
-export const COMPLEX_ITEMS: ToolbarMenuItem[] = [
+const COMPLEX_ITEMS: ToolbarMenuItem[] = [
   { key: "table", name: "Table", icon: Table, editors: ["document"] },
   { key: "image", name: "Image", icon: Image, editors: ["lite", "document"] },
 ];

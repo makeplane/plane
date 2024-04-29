@@ -180,7 +180,7 @@ services:
 
   plane-redis:
     container_name: plane-redis
-    image: redis:6.2.7-alpine
+    image: redis:7.2.4-alpine
     restart: always
     volumes:
       - redisdata:/data
