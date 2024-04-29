@@ -29,8 +29,8 @@ const GlobalViewIssuesPage: NextPageWithLayout = observer(() => {
     currentWorkspace?.name && defaultView?.label
       ? `${currentWorkspace?.name} - ${defaultView?.label}`
       : currentWorkspace?.name && globalViewDetails?.name
-      ? `${currentWorkspace?.name} - ${globalViewDetails?.name}`
-      : undefined;
+        ? `${currentWorkspace?.name} - ${globalViewDetails?.name}`
+        : undefined;
 
   return (
     <>
@@ -46,7 +46,7 @@ const GlobalViewIssuesPage: NextPageWithLayout = observer(() => {
 });
 
 GlobalViewIssuesPage.getLayout = function getLayout(page: ReactElement) {
-  return <AppLayout header={<GlobalIssuesHeader activeLayout="spreadsheet" />}>{page}</AppLayout>;
+  return <AppLayout header={<GlobalIssuesHeader />}>{page}</AppLayout>;
 };
 
 export default GlobalViewIssuesPage;

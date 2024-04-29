@@ -39,12 +39,12 @@ type TInboxIssueActionsHeader = {
   projectId: string;
   inboxIssue: IInboxIssueStore | undefined;
   isSubmitting: "submitting" | "submitted" | "saved";
-  toggleMobileSidebar: boolean;
-  setToggleMobileSidebar: (value: boolean) => void;
+  isMobileSidebar: boolean;
+  setIsMobileSidebar: (value: boolean) => void;
 };
 
 export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssue, isSubmitting, toggleMobileSidebar, setToggleMobileSidebar } = props;
+  const { workspaceSlug, projectId, inboxIssue, isSubmitting, isMobileSidebar, setIsMobileSidebar } = props;
   // states
   const [isSnoozeDateModalOpen, setIsSnoozeDateModalOpen] = useState(false);
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
@@ -340,8 +340,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           isAcceptedOrDeclined={isAcceptedOrDeclined}
           handleInboxIssueNavigation={handleInboxIssueNavigation}
           workspaceSlug={workspaceSlug}
-          toggleMobileSidebar={toggleMobileSidebar}
-          setToggleMobileSidebar={setToggleMobileSidebar}
+          isMobileSidebar={isMobileSidebar}
+          setIsMobileSidebar={setIsMobileSidebar}
         />
       </div>
     </>
