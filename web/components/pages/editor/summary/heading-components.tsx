@@ -10,7 +10,7 @@ export const OutlineHeading1 = ({ marking, onClick }: HeadingProps) => (
   <button
     type="button"
     onClick={onClick}
-    className="ml-4 cursor-pointer text-sm font-medium text-custom-text-400 hover:text-custom-primary-100 max-md:ml-2.5"
+    className="text-sm text-left font-medium text-custom-text-300 hover:text-custom-primary-100"
   >
     {marking.text}
   </button>
@@ -20,7 +20,7 @@ export const OutlineHeading2 = ({ marking, onClick }: HeadingProps) => (
   <button
     type="button"
     onClick={onClick}
-    className="ml-6 cursor-pointer text-xs font-medium text-custom-text-400 hover:text-custom-primary-100"
+    className="ml-2 text-xs text-left font-medium text-custom-text-300 hover:text-custom-primary-100"
   >
     {marking.text}
   </button>
@@ -30,7 +30,7 @@ export const OutlineHeading3 = ({ marking, onClick }: HeadingProps) => (
   <button
     type="button"
     onClick={onClick}
-    className="ml-8 cursor-pointer text-xs font-medium text-custom-text-400 hover:text-custom-primary-100"
+    className="ml-4 text-xs text-left font-medium text-custom-text-300 hover:text-custom-primary-100"
   >
     {marking.text}
   </button>

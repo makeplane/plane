@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // icons
@@ -416,7 +416,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           to: "End date",
                         }}
                         required={cycleDetails.status !== "draft"}
-                        disabled={isArchived}
+                        disabled={!isEditingAllowed || isArchived}
                       />
                     )}
                   />

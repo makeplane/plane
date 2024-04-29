@@ -3,10 +3,15 @@ import { FC, ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChevronDown } from "lucide-react";
+// ui
 import { CustomMenu } from "@plane/ui";
-import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { useApplication } from "@/hooks/store";
+// components
+import { SidebarHamburgerToggle } from "@/components/core/sidebar";
+// hooks
+import { useAppTheme } from "@/hooks/store";
+// layouts
 import { ProfileSettingsLayout } from "@/layouts/settings-layout";
+// local components
 import { ProfilePreferenceSettingsSidebar } from "./sidebar";
 
 interface IProfilePreferenceSettingsLayout {
@@ -16,8 +21,10 @@ interface IProfilePreferenceSettingsLayout {
 
 export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayout> = (props) => {
   const { children, header } = props;
+  // router
   const router = useRouter();
-  const { theme: themeStore } = useApplication();
+  // store hooks
+  const { toggleSidebar } = useAppTheme();
 
   const showMenuItem = () => {
     const item = router.asPath.split("/");
@@ -26,7 +33,7 @@ export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayou
     return splittedItem;
   };
 
-  const profilePreferenceLinks: Array<{
+  const PROFILE_PREFERENCES_LINKS: Array<{
     label: string;
     href: string;
   }> = [
@@ -43,24 +50,23 @@ export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayou
   return (
     <ProfileSettingsLayout
       header={
-        <div className="md:hidden flex flex-shrink-0 gap-4 items-center justify-start border-b border-custom-border-200 p-4">
-          <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
+        <div className="flex flex-shrink-0 items-center justify-start gap-4 border-b border-custom-border-200 p-4 md:hidden">
+          <SidebarHamburgerToggle onClick={() => toggleSidebar()} />
           <CustomMenu
             maxHeight={"md"}
-            className="flex flex-grow justify-center text-custom-text-200 text-sm"
+            className="flex flex-grow justify-center text-sm text-custom-text-200"
             placement="bottom-start"
             customButton={
-              <div className="flex gap-2 items-center px-2 py-1.5 border rounded-md border-custom-border-400">
-                <span className="flex flex-grow justify-center text-custom-text-200 text-sm">{showMenuItem()}</span>
-                <ChevronDown className="w-4 h-4 text-custom-text-400" />
+              <div className="flex items-center gap-2 rounded-md border border-custom-border-400 px-2 py-1.5">
+                <span className="flex flex-grow justify-center text-sm text-custom-text-200">{showMenuItem()}</span>
+                <ChevronDown className="h-4 w-4 text-custom-text-400" />
               </div>
             }
             customButtonClassName="flex flex-grow justify-start text-custom-text-200 text-sm"
           >
-            <></>
-            {profilePreferenceLinks.map((link) => (
-              <CustomMenu.MenuItem className="flex items-center gap-2">
-                <Link key={link.href} href={link.href} className="text-custom-text-300 w-full">
+            {PROFILE_PREFERENCES_LINKS.map((link) => (
+              <CustomMenu.MenuItem className="flex items-center gap-2" key={link.href}>
+                <Link key={link.href} href={link.href} className="w-full text-custom-text-300">
                   {link.label}
                 </Link>
               </CustomMenu.MenuItem>

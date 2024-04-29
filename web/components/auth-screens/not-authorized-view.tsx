@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -18,9 +18,11 @@ type Props = {
 
 export const NotAuthorizedView: React.FC<Props> = observer((props) => {
   const { actionButton, type } = props;
-  const { currentUser } = useUser();
+  // router
   const { query } = useRouter();
   const { next_path } = query;
+  // hooks
+  const { data: currentUser } = useUser();
 
   return (
     <DefaultLayout>

@@ -1,19 +1,17 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
-// hooks
-import { Button } from "@plane/ui";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
-import { useApplication, useEventTracker, useUser } from "@/hooks/store";
 // ui
+import { Button } from "@plane/ui";
+// constants
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+// hooks
+import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
 import ProjectEmptyStateImage from "public/empty-state/dashboard/project.svg";
-// constants
 
 export const DashboardProjectEmptyState = observer(() => {
   // store hooks
-  const {
-    commandPalette: { toggleCreateProjectModal },
-  } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
@@ -22,7 +20,7 @@ export const DashboardProjectEmptyState = observer(() => {
   const canCreateProject = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   return (
-    <div className="h-full flex flex-col justify-center lg:w-3/5 mx-auto space-y-4">
+    <div className="mx-auto flex h-full flex-col justify-center space-y-4 lg:w-3/5">
       <h4 className="text-xl font-semibold">Overview of your projects, activity, and metrics</h4>
       <p className="text-custom-text-300">
         Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this

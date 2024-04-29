@@ -90,7 +90,7 @@ export const IssueCommentReaction: FC<TIssueCommentReaction> = observer((props) 
   };
 
   return (
-    <div className="mt-4 relative flex items-center gap-1.5">
+    <div className="relative mt-4 flex items-center gap-1.5">
       {!disabled && (
         <ReactionSelector
           size="md"

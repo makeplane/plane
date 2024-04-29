@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
 // helpers

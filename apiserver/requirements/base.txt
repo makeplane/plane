@@ -34,4 +34,4 @@ posthog==3.0.2
 cryptography==42.0.4
 lxml==4.9.3
 boto3==1.28.40
-
+zxcvbn==4.4.28

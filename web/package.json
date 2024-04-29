@@ -61,7 +61,8 @@
     "swr": "^2.1.3",
     "tailwind-merge": "^2.0.0",
     "use-debounce": "^9.0.4",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.5",
@@ -73,6 +74,7 @@
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^18.2.17",
     "@types/uuid": "^8.3.4",
+    "@types/zxcvbn": "^4.4.4",
     "eslint-config-custom": "*",
     "prettier": "^3.2.5",
     "tailwind-config-custom": "*",

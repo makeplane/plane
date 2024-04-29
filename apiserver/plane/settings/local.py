@@ -35,7 +35,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:4000",
     "http://127.0.0.1:4000",
+    "http://localhost:3333",
+    "http://127.0.0.1:3333",
 ]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+CORS_ALLOW_ALL_ORIGINS = True
 
 LOG_DIR = os.path.join(BASE_DIR, "logs")  # noqa
 

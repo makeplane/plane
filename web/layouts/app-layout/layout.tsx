@@ -2,7 +2,7 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { CommandPalette } from "@/components/command-palette";
-import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar";
 // layouts
 import { UserAuthWrapper, WorkspaceAuthWrapper, ProjectAuthWrapper } from "@/layouts/auth-layout";
 import { AppSidebar } from "./sidebar";
@@ -26,8 +26,8 @@ export const AppLayout: FC<IAppLayout> = observer((props) => {
             <AppSidebar />
             <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
               <div className="z-[15]">
-                <div className="flex items-center w-full border-b border-custom-border-200 z-10">
-                  <div className="pl-5 py-4  bg-custom-sidebar-background-100 block md:hidden">
+                <div className="z-10 flex w-full items-center border-b border-custom-border-200">
+                  <div className="block bg-custom-sidebar-background-100  py-4 pl-5 md:hidden">
                     <SidebarHamburgerToggle />
                   </div>
                   <div className="w-full">{header}</div>

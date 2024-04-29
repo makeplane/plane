@@ -2,7 +2,7 @@ import { Command } from "cmdk";
 import { ContrastIcon, FileText } from "lucide-react";
 // hooks
 import { DiceIcon, PhotoFilterIcon } from "@plane/ui";
-import { useApplication, useEventTracker } from "@/hooks/store";
+import { useCommandPalette, useEventTracker } from "@/hooks/store";
 // ui
 
 type Props = {
@@ -11,10 +11,9 @@ type Props = {
 
 export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
   const { closePalette } = props;
-
-  const {
-    commandPalette: { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal },
-  } = useApplication();
+  // store hooks
+  const { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal } =
+    useCommandPalette();
   const { setTrackElement } = useEventTracker();
 
   return (

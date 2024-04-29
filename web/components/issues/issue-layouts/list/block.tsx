@@ -6,7 +6,7 @@ import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
 // helper
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { IssueProperties } from "../properties/all-properties";
@@ -23,9 +23,7 @@ interface IssueBlockProps {
 export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlockProps) => {
   const { issuesMap, issueId, updateIssue, quickActions, displayProperties, canEditProperties } = props;
   // hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
 
@@ -47,7 +45,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   return (
     <div
       className={cn(
-        "min-h-12 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 text-sm",
+        "relative flex min-h-12 flex-col gap-3 bg-custom-background-100 p-3 text-sm md:flex-row md:items-center",
         {
           "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue && peekIssue.issueId === issue.id,
           "last:border-b-transparent": peekIssue?.issueId !== issue.id,
@@ -88,14 +86,14 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           )}
         </div>
         {!issue?.tempId && (
-          <div className="block md:hidden border border-custom-border-300 rounded ">{quickActions(issue)}</div>
+          <div className="block rounded border border-custom-border-300 md:hidden ">{quickActions(issue)}</div>
         )}
       </div>
       <div className="flex flex-shrink-0 items-center gap-2">
         {!issue?.tempId ? (
           <>
             <IssueProperties
-              className="relative flex flex-wrap md:flex-grow md:flex-shrink-0 items-center gap-2 whitespace-nowrap"
+              className="relative flex flex-wrap items-center gap-2 whitespace-nowrap md:flex-shrink-0 md:flex-grow"
               issue={issue}
               isReadOnly={!canEditIssueProperties}
               updateIssue={updateIssue}

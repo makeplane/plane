@@ -2,6 +2,7 @@ import { Fragment, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+// icons
 import { Sparkle } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 import { EditorRefApi } from "@plane/rich-text-editor";
@@ -14,7 +15,8 @@ import { GptAssistantPopover } from "@/components/core";
 import { PriorityDropdown } from "@/components/dropdowns";
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
 import { ISSUE_CREATED } from "@/constants/event-tracker";
-import { useApplication, useEventTracker, useWorkspace, useProjectInbox } from "@/hooks/store";
+// hooks
+import { useEventTracker, useWorkspace, useInstance, useProjectInbox } from "@/hooks/store";
 // services
 import { AIService } from "@/services/ai.service";
 // components
@@ -54,9 +56,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
 
   // store hooks
   const { createInboxIssue } = useProjectInbox();
-  const {
-    config: { envConfig },
-  } = useApplication();
+  const { instance } = useInstance();
   const { captureIssueEvent } = useEventTracker();
   // form info
   const {
@@ -234,7 +234,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                               </button>
                             )}
 
-                            {envConfig?.has_openai_configured && (
+                            {instance?.config?.has_openai_configured && (
                               <GptAssistantPopover
                                 isOpen={gptAssistantModal}
                                 projectId={projectId.toString()}

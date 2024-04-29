@@ -42,7 +42,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
   const {
     comment: { getCommentById },
   } = useIssueDetail();
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const showEditorRef = useRef<EditorReadOnlyRefApi>(null);
