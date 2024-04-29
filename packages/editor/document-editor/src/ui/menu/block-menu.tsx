@@ -67,11 +67,13 @@ export default function BlockMenu(props: BlockMenuProps) {
       popup.current?.hide();
     };
     document.addEventListener("click", handleClickDragHandle);
+    document.addEventListener("contextmenu", handleClickDragHandle);
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("scroll", handleScroll, true); // Using capture phase
 
     return () => {
       document.removeEventListener("click", handleClickDragHandle);
+      document.removeEventListener("contextmenu", handleClickDragHandle);
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("scroll", handleScroll, true);
     };
