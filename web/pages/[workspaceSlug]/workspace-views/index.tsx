@@ -52,7 +52,7 @@ const WorkspaceViewsPage: NextPageWithLayout = observer(() => {
 });
 
 WorkspaceViewsPage.getLayout = function getLayout(page: ReactElement) {
-  return <AppLayout header={<GlobalIssuesHeader activeLayout="list" />}>{page}</AppLayout>;
+  return <AppLayout header={<GlobalIssuesHeader />}>{page}</AppLayout>;
 };
 
 export default WorkspaceViewsPage;
