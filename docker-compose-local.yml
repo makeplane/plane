@@ -10,7 +10,7 @@ volumes:
 
 services:
   plane-redis:
-    image: redis:6.2.7-alpine
+    image: redis:7.2.4-alpine
     restart: unless-stopped
     networks:
       - dev_env
