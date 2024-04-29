@@ -20,7 +20,7 @@ def migrate_user_profile(apps, schema_editor):
                 user_id=user.get("id"),
                 theme=user.get("theme"),
                 is_tour_completed=user.get("is_tour_completed"),
-                use_case=user.get("use_case"),
+                domain=user.get("use_case"),
                 is_onboarded=user.get("is_onboarded"),
                 last_workspace_id=user.get("last_workspace_id"),
                 billing_address_country=user.get("billing_address_country"),
@@ -123,7 +123,7 @@ class Migration(migrations.Migration):
                         default=plane.db.models.user.get_default_onboarding
                     ),
                 ),
-                ("use_case", models.TextField(blank=True, null=True)),
+                ("domain", models.TextField(blank=True, null=True)),
                 (
                     "role",
                     models.CharField(blank=True, max_length=300, null=True),
