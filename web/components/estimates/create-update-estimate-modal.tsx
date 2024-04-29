@@ -256,7 +256,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                               value={value}
                               placeholder="Description"
                               onChange={onChange}
-                              className="mt-3 h-32 resize-none text-sm"
+                              className="mt-3 min-h-32 resize-none text-sm"
                               hasError={Boolean(errors?.description)}
                             />
                           )}
