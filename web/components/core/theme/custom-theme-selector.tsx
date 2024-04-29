@@ -1,12 +1,12 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
-import { IUserTheme } from "@plane/types";
-// hooks
-import { Button, InputColorPicker } from "@plane/ui";
-import { useUser } from "@/hooks/store";
-// ui
 // types
+import { IUserTheme } from "@plane/types";
+// ui
+import { Button, InputColorPicker } from "@plane/ui";
+// hooks
+import { useUser } from "@/hooks/store";
 
 const inputRules = {
   required: "Background color is required",
@@ -25,8 +25,11 @@ const inputRules = {
 };
 
 export const CustomThemeSelector: React.FC = observer(() => {
-  const { currentUser, updateCurrentUser } = useUser();
-  const userTheme = currentUser?.theme;
+  const {
+    profile: { data: userProfile },
+  } = useUser();
+
+  const userTheme: any = userProfile?.theme;
   // hooks
   const { setTheme } = useTheme();
 
@@ -61,7 +64,9 @@ export const CustomThemeSelector: React.FC = observer(() => {
 
     setTheme("custom");
 
-    return updateCurrentUser({ theme: payload });
+    console.log(payload);
+
+    // return updateUserProfile({ theme: payload });
   };
 
   const handleValueChange = (val: string | undefined, onChange: any) => {

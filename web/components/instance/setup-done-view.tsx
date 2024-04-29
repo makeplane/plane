@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 // hooks
 import { UserCog2 } from "lucide-react";
 import { Button } from "@plane/ui";
-import { useApplication } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 // ui
 // images
 import instanceSetupDone from "public/instance-setup-done.webp";
@@ -17,9 +17,7 @@ export const InstanceSetupDone = () => {
   // next-themes
   const { resolvedTheme } = useTheme();
   // store hooks
-  const {
-    instance: { fetchInstanceInfo },
-  } = useApplication();
+  const { fetchInstanceInfo } = useInstance();
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
 

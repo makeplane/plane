@@ -1,26 +1,34 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
-// services
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { LatestFeatureBlock } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { FORGOT_PASS_LINK } from "@/constants/event-tracker";
-import { checkEmailValidity } from "@/helpers/string.helper";
-import { useEventTracker } from "@/hooks/store";
-import useTimer from "@/hooks/use-timer";
-import DefaultLayout from "@/layouts/default-layout";
-import { NextPageWithLayout } from "@/lib/types";
-import { AuthService } from "@/services/auth.service";
-// hooks
-// layouts
-// components
+// icons
+import { CircleCheck } from "lucide-react";
 // ui
-// images
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import { Button, Input, Spinner, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+// components
+import { PageHead } from "@/components/core";
+// constants
+import { FORGOT_PASS_LINK, NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // helpers
-// type
+import { cn } from "@/helpers/common.helper";
+import { checkEmailValidity } from "@/helpers/string.helper";
+// hooks
+import { useEventTracker } from "@/hooks/store";
+import useAuthRedirection from "@/hooks/use-auth-redirection";
+import useTimer from "@/hooks/use-timer";
+// layouts
+import DefaultLayout from "@/layouts/default-layout";
+// lib
+import { NextPageWithLayout } from "@/lib/types";
+// services
+import { AuthService } from "@/services/auth.service";
+// images
+import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 type TForgotPasswordFormValues = {
   email: string;
@@ -39,8 +47,15 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
   const { email } = router.query;
   // store hooks
   const { captureEvent } = useEventTracker();
+    // hooks
+    const { resolvedTheme } = useTheme();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(0);
+  const { isRedirecting, handleRedirection } = useAuthRedirection();
+
+  useEffect(() => {
+    handleRedirection();
+  }, [handleRedirection]);
   // form info
   const {
     control,
@@ -82,63 +97,104 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
       });
   };
 
+  if (isRedirecting)
+    return (
+      <div className="grid h-screen place-items-center">
+        <Spinner />
+      </div>
+    );
+
   return (
-    <>
+    <div className="relative">
       <PageHead title="Forgot Password" />
-      <div className="h-full w-full bg-onboarding-gradient-100">
-        <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28 ">
+      <div className="absolute inset-0 z-0">
+      <Image
+          src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
+          className="w-screen min-h-screen object-cover"
+          alt="Plane background pattern"
+        />
+      </div>
+      <div className="relative z-10">
+        <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28">
           <div className="flex items-center gap-x-2 py-10">
             <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-2" />
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
+          <div className="text-center text-sm font-medium text-onboarding-text-300">
+            New to Plane?{" "}
+            <Link
+              href="/accounts/sign-up"
+              onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
+              className="font-semibold text-custom-primary-100 hover:underline"
+            >
+              Create an account
+            </Link>
+          </div>
         </div>
-
-        <div className="mx-auto h-full rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3 ">
-          <div className="h-full overflow-auto rounded-t-md bg-onboarding-gradient-200 px-7 pb-56 pt-24 sm:px-0">
-            <div className="mx-auto flex flex-col divide-y divide-custom-border-200 sm:w-96">
-              <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
-                Get on your flight deck
-              </h1>
-              <p className="mt-2.5 text-center text-sm text-onboarding-text-200">Get a link to reset your password</p>
-              <form onSubmit={handleSubmit(handleForgotPassword)} className="mx-auto mt-5 space-y-4 sm:w-96">
-                <Controller
-                  control={control}
-                  name="email"
-                  rules={{
-                    required: "Email is required",
-                    validate: (value) => checkEmailValidity(value) || "Email is invalid",
-                  }}
-                  render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors.email)}
-                      placeholder="name@company.com"
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-                    />
+        <div className="mx-auto h-full">
+          <div className="h-full overflow-auto px-7 pb-56 pt-4 sm:px-0">
+            <div className="mx-auto flex flex-col">
+              <div className="text-center space-y-1 py-4 mx-auto sm:w-96">
+                <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
+                  Reset your password
+                </h3>
+                <p className="font-medium text-onboarding-text-400">
+                  Enter your user account{"'"}s verified email address and we will send you a password reset link.
+                </p>
+              </div>
+              <form onSubmit={handleSubmit(handleForgotPassword)} className="mx-auto mt-5 space-y-4 w-5/6 sm:w-96">
+                <div className="space-y-1">
+                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+                    Email
+                  </label>
+                  <Controller
+                    control={control}
+                    name="email"
+                    rules={{
+                      required: "Email is required",
+                      validate: (value) => checkEmailValidity(value) || "Email is invalid",
+                    }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.email)}
+                        placeholder="name@company.com"
+                        className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                        disabled={resendTimerCode > 0}
+                      />
+                    )}
+                  />
+                  {resendTimerCode > 0 && (
+                    <p className="flex w-full items-start px-1 gap-1 text-xs font-medium text-green-700">
+                      <CircleCheck height={12} width={12} className="mt-0.5" />
+                      We sent the reset link to your email address
+                    </p>
                   )}
-                />
+                </div>
                 <Button
                   type="submit"
                   variant="primary"
                   className="w-full"
-                  size="xl"
+                  size="lg"
                   disabled={!isValid}
                   loading={isSubmitting || resendTimerCode > 0}
                 >
-                  {resendTimerCode > 0 ? `Request new link in ${resendTimerCode}s` : "Get link"}
+                  {resendTimerCode > 0 ? `Resend in ${resendTimerCode} seconds` : "Send reset link"}
                 </Button>
+                <Link href="/" className={cn("w-full", getButtonStyling("link-neutral", "lg"))}>
+                  Back to sign in
+                </Link>
               </form>
             </div>
-            <LatestFeatureBlock />
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";

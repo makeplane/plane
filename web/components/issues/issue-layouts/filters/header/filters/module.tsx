@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 // components
 import { Loader, DiceIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
-import { useApplication, useModule } from "@/hooks/store";
+import { useAppRouter, useModule } from "@/hooks/store";
 // ui
 
 type Props = {
@@ -15,13 +15,9 @@ type Props = {
 
 export const FilterModule: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
-
   // hooks
-  const {
-    router: { projectId },
-  } = useApplication();
+  const { projectId } = useAppRouter();
   const { getModuleById, getProjectModuleIds } = useModule();
-
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);

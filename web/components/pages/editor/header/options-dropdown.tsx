@@ -10,7 +10,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { cn } from "@/helpers/common.helper";
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useApplication, useUser } from "@/hooks/store";
+import { useAppRouter , useUser} from "@/hooks/store";
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -38,9 +38,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     updateViewProps,
   } = pageStore;
   // store hooks
-  const {
-    router: { workspaceSlug, projectId },
-  } = useApplication();
+  const { workspaceSlug, projectId } = useAppRouter();
   const {
     membership: { currentProjectRole },
   } = useUser();

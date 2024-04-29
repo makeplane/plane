@@ -4,6 +4,7 @@ import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-h
 import { PreferencesMobileHeader } from "@/components/profile/preferences/preferences-mobile-header";
 import { useApplication } from "@/hooks/store";
 import { ProfileSettingsLayout } from "@/layouts/settings-layout";
+// local components
 import { ProfilePreferenceSettingsSidebar } from "./sidebar";
 
 interface IProfilePreferenceSettingsLayout {
@@ -14,7 +15,6 @@ interface IProfilePreferenceSettingsLayout {
 export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayout> = (props) => {
   const { children, header } = props;
   const { theme: themeStore } = useApplication();
-
 
   return (
     <ProfileSettingsLayout

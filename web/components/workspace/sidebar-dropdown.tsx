@@ -1,19 +1,19 @@
 import { Fragment, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
-import { mutate } from "swr";
-// ui
-import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
-import { Menu, Transition } from "@headlessui/react";
 // icons
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
+// ui
+import { Menu, Transition } from "@headlessui/react";
+// types
 import { IWorkspace } from "@plane/types";
 // plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useApplication, useUser, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
+import { WorkspaceLogo } from "./logo";
 // types
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
@@ -53,12 +53,15 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { data: currentUser } = useUser();
   const {
-    theme: { sidebarCollapsed, toggleSidebar },
-  } = useApplication();
-  const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
+    updateCurrentUser,
+    // isUserInstanceAdmin,
+    signOut,
+  } = useUser();
+  const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
-  const { setTheme } = useTheme();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -79,19 +82,13 @@ export const WorkspaceSidebarDropdown = observer(() => {
       last_workspace_id: workspace?.id,
     });
   const handleSignOut = async () => {
-    await signOut()
-      .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
-        setTheme("system");
-        router.push("/");
+    await signOut().catch(() =>
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
       })
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to sign out. Please try again.",
-        })
-      );
+    );
   };
   const handleItemClick = () => {
     if (window.innerWidth < 768) {
@@ -112,21 +109,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 }`}
               >
                 <div className="flex items-center gap-2 truncate">
-                  <div
-                    className={`relative grid h-6 w-6 flex-shrink-0 place-items-center uppercase ${
-                      !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
-                    }`}
-                  >
-                    {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                      <img
-                        src={activeWorkspace.logo}
-                        className="absolute left-0 top-0 h-full w-full rounded object-cover"
-                        alt="Workspace Logo"
-                      />
-                    ) : (
-                      activeWorkspace?.name?.charAt(0) ?? "..."
-                    )}
-                  </div>
+                  <WorkspaceLogo logo={activeWorkspace?.logo} name={activeWorkspace?.name} />
                   {!sidebarCollapsed && (
                     <h4 className="truncate text-base font-medium text-custom-text-100">
                       {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
@@ -152,9 +135,9 @@ export const WorkspaceSidebarDropdown = observer(() => {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items as={Fragment}>
-                <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg divide-y divide-custom-border-100 outline-none">
-                  <div className="flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll mb-2 px-4 vertical-scrollbar scrollbar-sm">
-                    <h6 className="sticky top-0 z-10 h-full w-full pt-3 pb-1 text-sm font-medium text-custom-sidebar-text-400 bg-custom-sidebar-background-100">
+                <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
+                  <div className="vertical-scrollbar scrollbar-sm mb-2 flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll px-4">
+                    <h6 className="sticky top-0 z-10 h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-sidebar-text-400">
                       {currentUser?.email}
                     </h6>
                     {workspacesList ? (
@@ -220,7 +203,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     <Link href="/create-workspace" className="w-full">
                       <Menu.Item
                         as="div"
-                        className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80 font-medium"
+                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
                       >
                         <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
                         Create workspace
@@ -237,7 +220,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                       >
                         <Menu.Item
                           as="div"
-                          className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 font-medium"
+                          className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                         >
                           <link.icon className="h-4 w-4 flex-shrink-0" />
                           {link.name}
@@ -249,7 +232,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     <Menu.Item
                       as="button"
                       type="button"
-                      className="w-full flex items-center gap-2 rounded px-2 py-1 text-sm text-red-600 hover:bg-custom-sidebar-background-80 font-medium"
+                      className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm font-medium text-red-600 hover:bg-custom-sidebar-background-80"
                       onClick={handleSignOut}
                     >
                       <LogOut className="h-4 w-4 flex-shrink-0" />
@@ -267,7 +250,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
           <Menu.Button className="grid place-items-center outline-none" ref={setReferenceElement}>
             <Avatar
               name={currentUser?.display_name}
-              src={currentUser?.avatar}
+              src={currentUser?.avatar || undefined}
               size={24}
               shape="square"
               className="!text-base"
@@ -308,7 +291,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   </Link>
                 ))}
               </div>
-              <div className={`pt-2 ${isUserInstanceAdmin ? "pb-2" : ""}`}>
+              <div className={`pt-2 ${isUserInstanceAdmin || false ? "pb-2" : ""}`}>
                 <Menu.Item
                   as="button"
                   type="button"

@@ -3,11 +3,10 @@ import useSWR from "swr";
 import { COMMENT_REACTION_LIST } from "@/constants/fetch-keys";
 // services
 import { groupReactions } from "@/helpers/emoji.helper";
+import { useUser } from "@/hooks/store";
 import { IssueReactionService } from "@/services/issue";
 // helpers
-import { useUser } from "./store";
 // hooks
-
 // services
 const issueReactionService = new IssueReactionService();
 
@@ -34,7 +33,7 @@ const useCommentReaction = (
       : null
   );
 
-  const user = useUser();
+  const { data: currentUser } = useUser();
 
   const groupedReactions = groupReactions(commentReactions || [], "reaction");
 
@@ -67,8 +66,7 @@ const useCommentReaction = (
     if (!workspaceSlug || !projectId || !commendId) return;
 
     mutateCommentReactions(
-      (prevData: any) =>
-        prevData?.filter((r: any) => r.actor !== user?.currentUser?.id || r.reaction !== reaction) || [],
+      (prevData: any) => prevData?.filter((r: any) => r.actor !== currentUser?.id || r.reaction !== reaction) || [],
       false
     );
 

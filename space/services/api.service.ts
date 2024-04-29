@@ -1,38 +1,44 @@
-// axios
 import axios from "axios";
-// js cookie
 import Cookies from "js-cookie";
 
 abstract class APIService {
   protected baseURL: string;
   protected headers: any = {};
 
-  constructor(_baseURL: string) {
-    this.baseURL = _baseURL;
+  constructor(baseURL: string) {
+    this.baseURL = baseURL;
+  }
+
+  setCSRFToken(token: string) {
+    Cookies.set("csrf_token", token, { expires: 30 });
+  }
+
+  getCSRFToken() {
+    return Cookies.get("csrf_token");
   }
 
   setRefreshToken(token: string) {
-    Cookies.set("refreshToken", token);
+    Cookies.set("refresh_token", token, { expires: 30 });
   }
 
   getRefreshToken() {
-    return Cookies.get("refreshToken");
+    return Cookies.get("refresh_token");
   }
 
   purgeRefreshToken() {
-    Cookies.remove("refreshToken", { path: "/" });
+    Cookies.remove("refresh_token", { path: "/" });
   }
 
   setAccessToken(token: string) {
-    Cookies.set("accessToken", token);
+    Cookies.set("access_token", token, { expires: 30 });
   }
 
   getAccessToken() {
-    return Cookies.get("accessToken");
+    return Cookies.get("access_token");
   }
 
   purgeAccessToken() {
-    Cookies.remove("accessToken", { path: "/" });
+    Cookies.remove("access_token", { path: "/" });
   }
 
   getHeaders() {
@@ -47,6 +53,7 @@ abstract class APIService {
       url: this.baseURL + url,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
+      withCredentials: true,
     });
   }
 
@@ -57,6 +64,7 @@ abstract class APIService {
       data,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
+      withCredentials: true,
     });
   }
 
@@ -67,6 +75,7 @@ abstract class APIService {
       data,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
+      withCredentials: true,
     });
   }
 
@@ -77,6 +86,7 @@ abstract class APIService {
       data,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
+      withCredentials: true,
     });
   }
 
@@ -87,16 +97,7 @@ abstract class APIService {
       data: data,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
-    });
-  }
-
-  mediaUpload(url: string, data = {}, config = {}): Promise<any> {
-    return axios({
-      method: "post",
-      url: this.baseURL + url,
-      data,
-      headers: this.getAccessToken() ? { ...this.getHeaders(), "Content-Type": "multipart/form-data" } : {},
-      ...config,
+      withCredentials: true,
     });
   }
 

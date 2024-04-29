@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
@@ -312,8 +312,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                            ? "Creating Estimate..."
-                            : "Create Estimate"}
+                          ? "Creating Estimate..."
+                          : "Create Estimate"}
                       </Button>
                     </div>
                   </form>

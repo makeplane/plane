@@ -1,11 +1,12 @@
 import { FC, useState, useRef } from "react";
 import Link from "next/link";
-import { FileText, HelpCircle, MessagesSquare, MoveLeft } from "lucide-react";
-import { Transition } from "@headlessui/react";
-// hooks
-import { DiscordIcon, GithubIcon } from "@plane/ui";
-import { useApplication } from "@/hooks/store";
 // icons
+import { FileText, HelpCircle, MessagesSquare, MoveLeft } from "lucide-react";
+// ui
+import { Transition } from "@headlessui/react";
+import { DiscordIcon, GithubIcon } from "@plane/ui";
+// hooks
+import { useAppTheme } from "@/hooks/store";
 // assets
 import packageJson from "package.json";
 
@@ -37,9 +38,7 @@ export const InstanceHelpSection: FC = () => {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store
-  const {
-    theme: { sidebarCollapsed, toggleSidebar },
-  } = useApplication();
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
