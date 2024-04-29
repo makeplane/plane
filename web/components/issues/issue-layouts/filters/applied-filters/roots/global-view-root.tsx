@@ -105,14 +105,15 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
     });
   };
 
-  const areFiltersEqual = isEqual(appliedFilters, viewDetails?.filters);
+  const areFiltersEqual = isEqual(appliedFilters ?? {}, viewDetails?.filters ?? {});
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => view.key).includes(globalViewId as TStaticViewTypes);
 
   // return if no filters are applied
-  if ((!appliedFilters && areFiltersEqual) || isEmpty(appliedFilters)) return null;
+
+  if (isEmpty(appliedFilters) && areFiltersEqual) return null;
 
   return (
     <div className="flex items-start justify-between gap-4 p-4">

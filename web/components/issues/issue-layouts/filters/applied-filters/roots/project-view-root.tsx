@@ -79,9 +79,10 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     );
   };
 
-  const areFiltersEqual = isEqual(appliedFilters, viewDetails?.filters);
+  const areFiltersEqual = isEqual(appliedFilters ?? {}, viewDetails?.filters ?? {});
+
   // return if no filters are applied
-  if ((!appliedFilters && areFiltersEqual) || isEmpty(appliedFilters)) return null;
+  if (isEmpty(appliedFilters) && areFiltersEqual) return null;
 
   const handleUpdateView = () => {
     if (!workspaceSlug || !projectId || !viewId || !viewDetails) return;
