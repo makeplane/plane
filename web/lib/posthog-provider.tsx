@@ -9,12 +9,11 @@ import { GROUP_WORKSPACE } from "@/constants/event-tracker";
 
 export interface IPosthogWrapper {
   children: ReactNode;
-
   user: IUser | undefined;
   workspaceIds: string[];
   currentWorkspaceId: string | undefined;
   posthogAPIKey: string | undefined;
-  posthogHost: string | undefined; 
+  posthogHost: string | undefined;
   isCloud: boolean;
   telemetryEnabled: boolean;
 }
