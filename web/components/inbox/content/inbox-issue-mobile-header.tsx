@@ -38,8 +38,8 @@ type Props = {
   setIsSnoozeDateModalOpen: (value: boolean) => void;
   setSelectDuplicateIssue: (value: boolean) => void;
   handleCopyIssueLink: () => void;
-  toggleMobileSidebar: boolean;
-  setToggleMobileSidebar: (value: boolean) => void;
+  isMobileSidebar: boolean;
+  setIsMobileSidebar: (value: boolean) => void;
 };
 
 export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) => {
@@ -59,8 +59,8 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     setIsSnoozeDateModalOpen,
     setSelectDuplicateIssue,
     handleCopyIssueLink,
-    toggleMobileSidebar,
-    setToggleMobileSidebar,
+    isMobileSidebar,
+    setIsMobileSidebar,
   } = props;
   const router = useRouter();
   const issue = inboxIssue?.issue;
@@ -71,10 +71,10 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
   return (
     <div className="h-12 relative flex border-custom-border-200 w-full items-center gap-2 px-4">
       <PanelLeft
-        onClick={() => setToggleMobileSidebar(!toggleMobileSidebar)}
+        onClick={() => setIsMobileSidebar(!isMobileSidebar)}
         className={cn(
           "w-4 h-4 flex-shrink-0 mr-2",
-          toggleMobileSidebar ? "text-custom-primary-100" : "text-custom-text-200"
+          isMobileSidebar ? "text-custom-primary-100" : "text-custom-text-200"
         )}
       />
       <div className="flex items-center gap-2 w-full">
