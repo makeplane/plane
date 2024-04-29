@@ -80,6 +80,5 @@ jobs:
       - name: Create PR to Target Branch
         if: env.HAS_CONFLICTS == 'true'
         run: |
-          # Replace 'username' with the actual GitHub username of the reviewer.
           PR_URL=$(gh pr create --base $TARGET_BRANCH --head $SOURCE_BRANCH --title "sync: merge conflicts need to be resolved" --body "")
           echo "Pull Request created: $PR_URL"
