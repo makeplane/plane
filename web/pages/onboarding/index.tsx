@@ -1,80 +1,74 @@
-import { useEffect, useState, ReactElement } from "react";
-import { observer } from "mobx-react-lite";
-import Image from "next/image";
+import { ReactElement, useEffect, useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
-import { ChevronDown } from "lucide-react";
-import { Menu, Transition } from "@headlessui/react";
-import { IUser, TOnboardingSteps } from "@plane/types";
-// hooks
-import { Avatar, Spinner } from "@plane/ui";
+// types
+import { TOnboardingSteps, TUserProfile } from "@plane/types";
+// ui
+import { Spinner } from "@plane/ui";
+// components
 import { PageHead } from "@/components/core";
-import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "@/components/onboarding";
+import { InviteMembers, CreateOrJoinWorkspaces, ProfileSetup } from "@/components/onboarding";
+// hooks
 import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
-import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
 import useUserAuth from "@/hooks/use-user-auth";
-// services
+// layouts
 import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
+// lib types
 import { NextPageWithLayout } from "@/lib/types";
-import { WorkspaceService } from "@/services/workspace.service";
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-// layouts
-// components
-// ui
-// images
-// types
-// constants
-
 // services
+import { WorkspaceService } from "@/services/workspace.service";
+
+export enum EOnboardingSteps {
+  PROFILE_SETUP = "PROFILE_SETUP",
+  WORKSPACE_CREATE_OR_JOIN = "WORKSPACE_CREATE_OR_JOIN",
+  WORKSPACE_INVITE = "WORKSPACE_INVITE",
+}
+
 const workspaceService = new WorkspaceService();
 
 const OnboardingPage: NextPageWithLayout = observer(() => {
   // states
-  const [step, setStep] = useState<number | null>(null);
-  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
+  const [step, setStep] = useState<EOnboardingSteps | null>(null);
+  const [totalSteps, setTotalSteps] = useState<number | null>(null);
   // router
   const router = useRouter();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { currentUser, currentUserLoader, updateCurrentUser, updateUserOnBoard } = useUser();
+  const { data: user, isLoading: currentUserLoader, updateCurrentUser } = useUser();
+  const { data: profile, updateUserOnBoard, updateUserProfile } = useUserProfile();
   const { workspaces, fetchWorkspaces } = useWorkspace();
   // custom hooks
-  const {} = useUserAuth({ routeAuth: "onboarding", user: currentUser, isLoading: currentUserLoader });
-
-  const user = currentUser ?? undefined;
-  const workspacesList = Object.values(workspaces ?? {});
-
-  const { setTheme } = useTheme();
-
-  const { control, setValue } = useForm<{ full_name: string }>({
-    defaultValues: {
-      full_name: "",
-    },
+  const {} = useUserAuth({
+    routeAuth: "onboarding",
+    user: user || null,
+    userProfile: profile,
+    isLoading: currentUserLoader,
   });
-
+  // computed values
+  const workspacesList = Object.values(workspaces ?? {});
+  // fetching workspaces list
   useSWR(`USER_WORKSPACES_LIST`, () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
-
+  // fetching user workspace invitations
   const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () =>
     workspaceService.userWorkspaceInvitations()
   );
-
   // handle step change
   const stepChange = async (steps: Partial<TOnboardingSteps>) => {
     if (!user) return;
 
-    const payload: Partial<IUser> = {
+    const payload: Partial<TUserProfile> = {
       onboarding_step: {
-        ...user.onboarding_step,
+        ...profile.onboarding_step,
         ...steps,
       },
     };
 
-    await updateCurrentUser(payload);
+    await updateUserProfile(payload);
   };
   // complete onboarding
   const finishOnboarding = async () => {
@@ -83,28 +77,32 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
     await updateUserOnBoard()
       .then(() => {
         captureEvent(USER_ONBOARDING_COMPLETED, {
-          user_role: user.role,
+          // user_role: user.role,
           email: user.email,
           user_id: user.id,
           status: "SUCCESS",
         });
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        console.log("Failed to update onboarding status");
       });
 
     router.replace(`/${workspacesList[0]?.slug}`);
   };
 
   useEffect(() => {
-    setTheme("system");
-  }, [setTheme]);
+    if (workspacesList && workspacesList?.length > 0) setTotalSteps(1);
+    else setTotalSteps(3);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleStepChange = async () => {
-      if (!user || !invitations) return;
+      if (!user) return;
 
-      const onboardingStep = user.onboarding_step;
+      const onboardingStep = profile.onboarding_step;
+
+      if (!onboardingStep.profile_complete) setStep(EOnboardingSteps.PROFILE_SETUP);
 
       if (
         !onboardingStep.workspace_join &&
@@ -112,137 +110,63 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         workspacesList &&
         workspacesList?.length > 0
       ) {
-        await updateCurrentUser({
+        await updateUserProfile({
           onboarding_step: {
-            ...user.onboarding_step,
+            ...profile.onboarding_step,
             workspace_join: true,
             workspace_create: true,
           },
           last_workspace_id: workspacesList[0]?.id,
         });
-        setStep(2);
         return;
       }
 
-      if (!onboardingStep.workspace_join && !onboardingStep.workspace_create && step !== 1) setStep(1);
+      // For Invited Users, they will skip all other steps.
+      if (totalSteps && totalSteps === 1) return;
 
-      if (onboardingStep.workspace_join || onboardingStep.workspace_create) {
-        if (!onboardingStep.profile_complete && step !== 2) setStep(2);
+      if (onboardingStep.profile_complete && !(onboardingStep.workspace_join || onboardingStep.workspace_create)) {
+        setStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
       }
+
       if (
         onboardingStep.profile_complete &&
         (onboardingStep.workspace_join || onboardingStep.workspace_create) &&
-        !onboardingStep.workspace_invite &&
-        step !== 3
+        !onboardingStep.workspace_invite
       )
-        setStep(3);
+        setStep(EOnboardingSteps.WORKSPACE_INVITE);
     };
 
     handleStepChange();
-  }, [user, invitations, step, updateCurrentUser, workspacesList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, step, updateCurrentUser, workspacesList]);
 
   return (
     <>
       <PageHead title="Onboarding" />
-      <SwitchOrDeleteAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
-      {user && step !== null ? (
-        <div className={`fixed flex h-full w-full flex-col bg-onboarding-gradient-100`}>
-          <div className="flex items-center px-4 py-10 sm:px-7 sm:pb-8 sm:pt-14 md:px-14 lg:pl-28 lg:pr-24">
-            <div className="flex w-full items-center justify-between font-semibold ">
-              <div className="flex items-center gap-x-1 text-3xl">
-                <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" height={30} width={30} />
-                Plane
-              </div>
-
-              <div>
-                <Controller
-                  control={control}
-                  name="full_name"
-                  render={({ field: { value } }) => (
-                    <div className="flex items-center gap-x-2 pr-4">
-                      {step != 1 && (
-                        <Avatar
-                          name={
-                            currentUser?.first_name
-                              ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
-                              : value.length > 0
-                                ? value
-                                : currentUser?.email
-                          }
-                          src={currentUser?.avatar}
-                          size={35}
-                          shape="square"
-                          fallbackBackgroundColor="#FCBE1D"
-                          className="!text-base capitalize"
-                        />
-                      )}
-                      <div>
-                        {step != 1 && (
-                          <p className="text-sm font-medium text-custom-text-200">
-                            {currentUser?.first_name
-                              ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
-                              : value.length > 0
-                                ? value
-                                : null}
-                          </p>
-                        )}
-
-                        <Menu>
-                          <Menu.Button className={"flex items-center gap-x-2"}>
-                            <span className="text-base font-medium">{user.email}</span>
-                            <ChevronDown className="h-4 w-4 text-custom-text-300" />
-                          </Menu.Button>
-                          <Transition
-                            enter="transition duration-100 ease-out"
-                            enterFrom="transform scale-95 opacity-0"
-                            enterTo="transform scale-100 opacity-100"
-                            leave="transition duration-75 ease-out"
-                            leaveFrom="transform scale-100 opacity-100"
-                            leaveTo="transform scale-95 opacity-0"
-                          >
-                            <Menu.Items className={"absolute min-w-full"}>
-                              <Menu.Item as="div">
-                                <div
-                                  className="mr-auto mt-2 rounded-md border border-red-400 bg-onboarding-background-200 p-3 text-base font-normal text-red-400 shadow-sm hover:cursor-pointer"
-                                  onClick={() => {
-                                    setShowDeleteAccountModal(true);
-                                  }}
-                                >
-                                  Wrong e-mail address?
-                                </div>
-                              </Menu.Item>
-                            </Menu.Items>
-                          </Transition>
-                        </Menu>
-                      </div>
-                    </div>
-                  )}
-                />
-              </div>
+      {user && totalSteps && step !== null ? (
+        <div className={`flex h-full w-full flex-col`}>
+          {step === EOnboardingSteps.PROFILE_SETUP ? (
+            <ProfileSetup
+              user={user}
+              totalSteps={totalSteps}
+              stepChange={stepChange}
+              finishOnboarding={finishOnboarding}
+            />
+          ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN && invitations ? (
+            <CreateOrJoinWorkspaces invitations={invitations} totalSteps={totalSteps} stepChange={stepChange} />
+          ) : step === EOnboardingSteps.WORKSPACE_INVITE ? (
+            <InviteMembers
+              finishOnboarding={finishOnboarding}
+              totalSteps={totalSteps}
+              stepChange={stepChange}
+              user={user}
+              workspace={workspacesList?.[0]}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center">
+              Something Went wrong. Please try again.
             </div>
-          </div>
-          <div className="mx-auto h-full w-full overflow-auto rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 lg:w-4/5 xl:w-3/4">
-            <div className={`h-full w-full overflow-auto rounded-t-md bg-onboarding-gradient-200`}>
-              {step === 1 ? (
-                <JoinWorkspaces
-                  setTryDiffAccount={() => {
-                    setShowDeleteAccountModal(true);
-                  }}
-                  finishOnboarding={finishOnboarding}
-                  stepChange={stepChange}
-                />
-              ) : step === 2 ? (
-                <UserDetails setUserName={(value) => setValue("full_name", value)} user={user} />
-              ) : (
-                <InviteMembers
-                  finishOnboarding={finishOnboarding}
-                  stepChange={stepChange}
-                  user={user}
-                  workspace={workspacesList?.[0]}
-                />
-              )}
-            </div>
-          </div>
+          )}
         </div>
       ) : (
         <div className="grid h-screen w-full place-items-center">

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 // hooks
 import { Tooltip } from "@plane/ui";
-import { useApplication } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 
@@ -42,9 +42,7 @@ const INSTANCE_ADMIN_LINKS = [
 
 export const InstanceAdminSidebarMenu = () => {
   // store hooks
-  const {
-    theme: { sidebarCollapsed },
-  } = useApplication();
+  const { sidebarCollapsed } = useAppTheme();
   // router
   const router = useRouter();
   const { isMobile } = usePlatformOS();

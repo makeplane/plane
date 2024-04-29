@@ -22,7 +22,7 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
   // router
   const router = useRouter();
   // store hooks
-  const { deactivateAccount, signOut } = useUser();
+  const { signOut, deactivateAccount } = useUser();
 
   const { resolvedTheme, setTheme } = useTheme();
 
@@ -37,7 +37,6 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
 
     await signOut()
       .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");
         router.push("/");
         handleClose();
@@ -67,7 +66,7 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
         router.push("/");
         handleClose();
       })
-      .catch((err) =>
+      .catch((err: any) =>
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

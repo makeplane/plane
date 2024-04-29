@@ -4,8 +4,8 @@ import uuid
 from django.db import models
 
 # Module imports
-from . import BaseModel
 from ..mixins import TimeAuditModel
+from .base import BaseModel
 
 
 class Dashboard(BaseModel):

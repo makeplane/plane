@@ -8,7 +8,8 @@ export type TButtonVariant =
   | "accent-danger"
   | "outline-danger"
   | "link-danger"
-  | "tertiary-danger";
+  | "tertiary-danger"
+  | "link-neutral";
 
 export type TButtonSizes = "sm" | "md" | "lg" | "xl";
 
@@ -96,6 +97,12 @@ export const buttonStyling: IButtonStyling = {
     hover: `hover:bg-red-50 hover:border-red-300`,
     pressed: `focus:text-red-400`,
     disabled: `cursor-not-allowed !text-red-300`,
+  },
+  "link-neutral": {
+    default: `text-custom-text-300`,
+    hover: `hover:text-custom-text-200`,
+    pressed: `focus:text-custom-text-100`,
+    disabled: `cursor-not-allowed !text-custom-text-400`,
   },
 };
 

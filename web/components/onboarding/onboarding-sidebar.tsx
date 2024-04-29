@@ -4,17 +4,17 @@ import { useTheme } from "next-themes";
 import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import {
   BarChart2,
+  Bell,
   Briefcase,
   CheckCircle,
   ChevronDown,
   ContrastIcon,
   FileText,
+  Home,
   LayersIcon,
   PenSquare,
   Search,
   Settings,
-  Bell,
-  Home,
 } from "lucide-react";
 import { IWorkspace } from "@plane/types";
 import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
@@ -93,7 +93,7 @@ let lastWorkspaceName: string = "";
 export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { workspaceName, showProject, control, setValue, watch, userFullName } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { workspaces } = useWorkspace();
   const workspaceDetails = Object.values(workspaces ?? {})?.[0];
 
@@ -183,7 +183,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
                   <div className="flex flex-shrink-0">
                     <Avatar
                       name={currentUser?.email}
-                      src={currentUser?.avatar}
+                      src={currentUser?.avatar || undefined}
                       size={24}
                       shape="square"
                       fallbackBackgroundColor="#FCBE1D"
@@ -213,7 +213,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
             <div className="flex flex-shrink-0">
               <Avatar
                 name={userFullName ?? currentUser?.email}
-                src={currentUser?.avatar}
+                src={currentUser?.avatar || undefined}
                 size={24}
                 shape="square"
                 fallbackBackgroundColor="#FCBE1D"

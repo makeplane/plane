@@ -1,6 +1,6 @@
 import { useState, FC, useRef, useEffect } from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -12,7 +12,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
 import { orderJoinedProjects } from "@/helpers/project.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
-import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 // ui
 // components
 // helpers
@@ -25,11 +25,9 @@ export const ProjectSidebarList: FC = observer(() => {
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
-
-  const {
-    theme: { sidebarCollapsed },
-    commandPalette: { toggleCreateProjectModal },
-  } = useApplication();
+  // store hooks
+  const { toggleCreateProjectModal } = useCommandPalette();
+  const { sidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
@@ -117,7 +115,7 @@ export const ProjectSidebarList: FC = observer(() => {
       <div
         ref={containerRef}
         className={cn(
-          "h-full space-y-2 !overflow-y-scroll pl-4 vertical-scrollbar",
+          "vertical-scrollbar h-full space-y-2 !overflow-y-scroll pl-4",
           isCollapsed ? "scrollbar-sm" : "scrollbar-md",
           {
             "border-t border-custom-sidebar-border-300": isScrolled,

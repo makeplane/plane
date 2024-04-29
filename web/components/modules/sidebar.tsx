@@ -480,7 +480,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                           from: "Start date",
                           to: "Target date",
                         }}
-                        disabled={isArchived}
+                        disabled={!isEditingAllowed || isArchived}
                       />
                     );
                   }}
@@ -510,7 +510,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     multiple={false}
                     buttonVariant="background-with-text"
                     placeholder="Lead"
-                    disabled={isArchived}
+                    disabled={!isEditingAllowed || isArchived}
                   />
                 </div>
               )}

@@ -1,5 +1,5 @@
-import React, { useState, ReactElement } from "react";
-import { observer } from "mobx-react-lite";
+import { ReactElement, useState } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -23,7 +23,8 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   // store hooks
-  const { currentUser, updateCurrentUser } = useUser();
+  const { data: currentUser } = useUser();
+  const { updateCurrentUser } = useUser();
   // states
   const [defaultValues, setDefaultValues] = useState({
     name: "",

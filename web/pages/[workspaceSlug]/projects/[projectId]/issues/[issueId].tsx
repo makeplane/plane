@@ -1,18 +1,18 @@
 import React, { ReactElement, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// layouts
+// ui
 import { Loader } from "@plane/ui";
-import { PageHead } from "@/components/core";
 // components
+import { PageHead } from "@/components/core";
 import { ProjectIssueDetailsHeader } from "@/components/headers";
 import { IssueDetailRoot } from "@/components/issues";
-// ui
-// types
 // store hooks
-import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
+// layouts
 import { AppLayout } from "@/layouts/app-layout";
+// types
 import { NextPageWithLayout } from "@/lib/types";
 
 const IssueDetailsPage: NextPageWithLayout = observer(() => {
@@ -25,7 +25,7 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getProjectById } = useProject();
-  const { theme: themeStore } = useApplication();
+  const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
   // fetching issue details
   const { isLoading, data: swrIssueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? `ISSUE_DETAIL_${workspaceSlug}_${projectId}_${issueId}` : null,
@@ -42,17 +42,16 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
   useEffect(() => {
     const handleToggleIssueDetailSidebar = () => {
       if (window && window.innerWidth < 768) {
-        themeStore.toggleIssueDetailSidebar(true);
+        toggleIssueDetailSidebar(true);
       }
-      if (window && themeStore.issueDetailSidebarCollapsed && window.innerWidth >= 768) {
-        themeStore.toggleIssueDetailSidebar(false);
+      if (window && issueDetailSidebarCollapsed && window.innerWidth >= 768) {
+        toggleIssueDetailSidebar(false);
       }
     };
-
     window.addEventListener("resize", handleToggleIssueDetailSidebar);
     handleToggleIssueDetailSidebar();
     return () => window.removeEventListener("resize", handleToggleIssueDetailSidebar);
-  }, [themeStore]);
+  }, [issueDetailSidebarCollapsed, toggleIssueDetailSidebar]);
 
   return (
     <>

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";

@@ -3,7 +3,7 @@ import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } 
 import type { NotificationType, NotificationCount } from "@plane/types";
 // components
 import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
-import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar";
 // ui
 // hooks
 import {
@@ -181,8 +181,8 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 {snoozed
                   ? "Snoozed Notifications"
                   : readNotification
-                    ? "Unread Notifications"
-                    : "Archived Notifications"}
+                  ? "Unread Notifications"
+                  : "Archived Notifications"}
               </span>
             </h4>
           </button>

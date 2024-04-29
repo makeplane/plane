@@ -1,18 +1,15 @@
 import { Fragment } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-import { mutate } from "swr";
-// components
-import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
-import { Menu, Transition } from "@headlessui/react";
 // icons
-// hooks
-import { Avatar, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
-import { useApplication, useUser } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
+// headless ui
+import { Menu, Transition } from "@headlessui/react";
 // ui
+import { Avatar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+// hooks
+import { useAppRouter, useAppTheme, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 // Static Data
 const PROFILE_LINKS = [
@@ -25,38 +22,29 @@ const PROFILE_LINKS = [
 ];
 
 export const InstanceSidebarDropdown = observer(() => {
-  // router
-  const router = useRouter();
   // store hooks
-  const {
-    theme: { sidebarCollapsed },
-    router: { workspaceSlug },
-  } = useApplication();
-  const { signOut, currentUser, currentUserSettings } = useUser();
+  const { sidebarCollapsed } = useAppTheme();
+  const { workspaceSlug } = useAppRouter();
+  const { data: currentUser } = useUser();
+  const { signOut } = useUser();
   // hooks
-  const { setTheme } = useTheme();
+  // const { setTheme } = useTheme();
   const { isMobile } = usePlatformOS();
   // redirect url for normal mode
   const redirectWorkspaceSlug =
     workspaceSlug ||
-    currentUserSettings?.workspace?.last_workspace_slug ||
-    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    // currentUserSettings?.workspace?.last_workspace_slug ||
+    // currentUserSettings?.workspace?.fallback_workspace_slug ||
     "";
 
   const handleSignOut = async () => {
-    await signOut()
-      .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
-        setTheme("system");
-        router.push("/");
+    await signOut().catch(() =>
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
       })
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to sign out. Please try again.",
-        })
-      );
+    );
   };
 
   return (
@@ -93,7 +81,7 @@ export const InstanceSidebarDropdown = observer(() => {
           <Menu.Button className="grid place-items-center outline-none">
             <Avatar
               name={currentUser?.display_name}
-              src={currentUser?.avatar}
+              src={currentUser?.avatar || undefined}
               size={24}
               shape="square"
               className="!text-base"
