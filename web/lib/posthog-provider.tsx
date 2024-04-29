@@ -2,7 +2,7 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
-import { IUser } from "@plane/types";
+import { IUser, TUserProfile } from "@plane/types";
 // constants
 import { GROUP_WORKSPACE } from "@/constants/event-tracker";
 // types
@@ -10,6 +10,7 @@ import { GROUP_WORKSPACE } from "@/constants/event-tracker";
 export interface IPosthogWrapper {
   children: ReactNode;
   user: IUser | undefined;
+  profile: TUserProfile | undefined;
   workspaceIds: string[];
   currentWorkspaceId: string | undefined;
   posthogAPIKey: string | undefined;
@@ -19,8 +20,17 @@ export interface IPosthogWrapper {
 }
 
 const PostHogProvider: FC<IPosthogWrapper> = (props) => {
-  const { children, user, workspaceIds, currentWorkspaceId, posthogAPIKey, posthogHost, isCloud, telemetryEnabled } =
-    props;
+  const {
+    children,
+    user,
+    profile,
+    workspaceIds,
+    currentWorkspaceId,
+    posthogAPIKey,
+    posthogHost,
+    isCloud,
+    telemetryEnabled,
+  } = props;
   // states
   const [lastWorkspaceId, setLastWorkspaceId] = useState(currentWorkspaceId);
   // router
@@ -34,11 +44,11 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
         first_name: isCloud ? user.first_name : undefined,
         last_name: isCloud ? user.last_name : undefined,
         email: isCloud ? user.email : undefined,
-        use_case: user?.use_case,
+        use_case: profile?.use_case,
         workspaces: workspaceIds,
       });
     }
-  }, [user, workspaceIds, isCloud]);
+  }, [user, workspaceIds, isCloud, profile]);
 
   useEffect(() => {
     if (

@@ -33,7 +33,10 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
   // store hooks
   const { instance } = useInstance();
-  const { data: currentUser } = useUser();
+  const {
+    data: currentUser,
+    profile: { data: profile },
+  } = useUser();
   const { currentWorkspace, workspaces } = useWorkspace();
   // themes
   const { resolvedTheme } = useTheme();
@@ -47,10 +50,11 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
           <CrispWrapper user={currentUser}>
             <PostHogProvider
               user={currentUser}
+              profile={profile}
               currentWorkspaceId={currentWorkspace?.id}
               workspaceIds={Object.keys(workspaces)}
-              isCloud={!instance?.is_telemetry_anonymous || false}
-              telemetryEnabled={instance?.is_telemetry_enabled || false}
+              isCloud={!instance?.instance?.is_telemetry_anonymous || false}
+              telemetryEnabled={instance?.instance?.is_telemetry_enabled || false}
               posthogAPIKey={instance?.config?.posthog_api_key || undefined}
               posthogHost={instance?.config.posthog_host || undefined}
             >

@@ -20,6 +20,7 @@ export interface IInstance {
     last_checked_at: string | undefined;
     namespace: string | undefined;
     is_telemetry_enabled: boolean;
+    is_telemetry_anonymous: boolean;
     is_support_required: boolean;
     is_activated: boolean;
     is_setup_done: boolean;

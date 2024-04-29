@@ -25,7 +25,7 @@ import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 // helpers
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
-import { useEventTracker, useApplication } from "@/hooks/store";
+import { useEventTracker, useInstance } from "@/hooks/store";
 import useDynamicDropdownPosition from "@/hooks/use-dynamic-dropdown";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
@@ -273,9 +273,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
   const { resolvedTheme } = useTheme();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const {
-    instance: { instance },
-  } = useApplication();
+  const { instance } = useInstance();
 
   const {
     control,
@@ -315,7 +313,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
       })
       .then(async () => {
         captureEvent(MEMBER_INVITED, {
-          emails: !instance?.is_telemetry_anonymous
+          emails: !instance?.instance?.is_telemetry_anonymous
             ? [
                 ...payload.emails.map((email) => ({
                   email: email.email,
