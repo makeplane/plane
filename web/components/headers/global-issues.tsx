@@ -131,7 +131,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
           </Breadcrumbs>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
+          {/* <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
             {GLOBAL_VIEW_LAYOUTS.map((layout) => (
               <Link key={layout.key} href={`/${workspaceSlug}/${layout.link}`}>
                 <span>
@@ -151,7 +151,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                 </span>
               </Link>
             ))}
-          </div>
+          </div> */}
 
           {activeLayout === "spreadsheet" && (
             <>
