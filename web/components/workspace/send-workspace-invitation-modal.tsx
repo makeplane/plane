@@ -104,7 +104,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative translate-y-0 transform rounded-lg bg-custom-background-100 p-5 text-left opacity-100 shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl sm:scale-100">
+              <Dialog.Panel className="relative translate-y-0 transform rounded-lg bg-custom-background-100 p-5 text-left opacity-100 shadow-custom-shadow-md transition-all w-full sm:max-w-2xl sm:scale-100">
                 <form
                   onSubmit={handleSubmit(onSubmitForm)}
                   onKeyDown={(e) => {
@@ -121,8 +121,8 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
 
                     <div className="mb-3 space-y-4">
                       {fields.map((field, index) => (
-                        <div key={field.id} className="group relative grid grid-cols-12 items-start gap-4">
-                          <div className="col-span-9">
+                        <div key={field.id} className="group relative flex items-start gap-4">
+                          <div className="w-full">
                             <Controller
                               control={control}
                               name={`emails.${index}.email`}
@@ -155,7 +155,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                               )}
                             />
                           </div>
-                          <div className="col-span-3 flex items-center gap-2">
+                          <div className="flex items-center gap-2">
                             <Controller
                               control={control}
                               name={`emails.${index}.role`}
