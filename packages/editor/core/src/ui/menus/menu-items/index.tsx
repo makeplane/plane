@@ -13,16 +13,24 @@ import {
   UnderlineIcon,
   StrikethroughIcon,
   CodeIcon,
+  Heading4,
+  Heading5,
+  Heading6,
+  CaseSensitive,
 } from "lucide-react";
 import { Editor } from "@tiptap/react";
 import {
   insertImageCommand,
   insertTableCommand,
+  setText,
   toggleBlockquote,
   toggleBold,
   toggleBulletList,
   toggleCodeBlock,
+  toggleHeadingFive,
+  toggleHeadingFour,
   toggleHeadingOne,
+  toggleHeadingSix,
   toggleHeadingThree,
   toggleHeadingTwo,
   toggleItalic,
@@ -36,15 +44,26 @@ import { UploadImage } from "src/types/upload-image";
 import { Selection } from "@tiptap/pm/state";
 
 export interface EditorMenuItem {
+  key: string;
   name: string;
   isActive: () => boolean;
   command: () => void;
   icon: LucideIconType;
 }
 
+export const TextItem = (editor: Editor) =>
+  ({
+    key: "text",
+    name: "Text",
+    isActive: () => editor.isActive("paragraph"),
+    command: () => setText(editor),
+    icon: CaseSensitive,
+  }) as const satisfies EditorMenuItem;
+
 export const HeadingOneItem = (editor: Editor) =>
   ({
-    name: "H1",
+    key: "h1",
+    name: "Heading 1",
     isActive: () => editor.isActive("heading", { level: 1 }),
     command: () => toggleHeadingOne(editor),
     icon: Heading1,
@@ -52,7 +71,8 @@ export const HeadingOneItem = (editor: Editor) =>
 
 export const HeadingTwoItem = (editor: Editor) =>
   ({
-    name: "H2",
+    key: "h2",
+    name: "Heading 2",
     isActive: () => editor.isActive("heading", { level: 2 }),
     command: () => toggleHeadingTwo(editor),
     icon: Heading2,
@@ -60,15 +80,44 @@ export const HeadingTwoItem = (editor: Editor) =>
 
 export const HeadingThreeItem = (editor: Editor) =>
   ({
-    name: "H3",
+    key: "h3",
+    name: "Heading 3",
     isActive: () => editor.isActive("heading", { level: 3 }),
     command: () => toggleHeadingThree(editor),
     icon: Heading3,
   }) as const satisfies EditorMenuItem;
 
+export const HeadingFourItem = (editor: Editor) =>
+  ({
+    key: "h4",
+    name: "Heading 4",
+    isActive: () => editor.isActive("heading", { level: 4 }),
+    command: () => toggleHeadingFour(editor),
+    icon: Heading4,
+  }) as const satisfies EditorMenuItem;
+
+export const HeadingFiveItem = (editor: Editor) =>
+  ({
+    key: "h5",
+    name: "Heading 5",
+    isActive: () => editor.isActive("heading", { level: 5 }),
+    command: () => toggleHeadingFive(editor),
+    icon: Heading5,
+  }) as const satisfies EditorMenuItem;
+
+export const HeadingSixItem = (editor: Editor) =>
+  ({
+    key: "h6",
+    name: "Heading 6",
+    isActive: () => editor.isActive("heading", { level: 6 }),
+    command: () => toggleHeadingSix(editor),
+    icon: Heading6,
+  }) as const satisfies EditorMenuItem;
+
 export const BoldItem = (editor: Editor) =>
   ({
-    name: "bold",
+    key: "bold",
+    name: "Bold",
     isActive: () => editor?.isActive("bold"),
     command: () => toggleBold(editor),
     icon: BoldIcon,
@@ -76,7 +125,8 @@ export const BoldItem = (editor: Editor) =>
 
 export const ItalicItem = (editor: Editor) =>
   ({
-    name: "italic",
+    key: "italic",
+    name: "Italic",
     isActive: () => editor?.isActive("italic"),
     command: () => toggleItalic(editor),
     icon: ItalicIcon,
@@ -84,7 +134,8 @@ export const ItalicItem = (editor: Editor) =>
 
 export const UnderLineItem = (editor: Editor) =>
   ({
-    name: "underline",
+    key: "underline",
+    name: "Underline",
     isActive: () => editor?.isActive("underline"),
     command: () => toggleUnderline(editor),
     icon: UnderlineIcon,
@@ -92,7 +143,8 @@ export const UnderLineItem = (editor: Editor) =>
 
 export const StrikeThroughItem = (editor: Editor) =>
   ({
-    name: "strike",
+    key: "strikethrough",
+    name: "Strikethrough",
     isActive: () => editor?.isActive("strike"),
     command: () => toggleStrike(editor),
     icon: StrikethroughIcon,
@@ -100,47 +152,53 @@ export const StrikeThroughItem = (editor: Editor) =>
 
 export const BulletListItem = (editor: Editor) =>
   ({
-    name: "bullet-list",
+    key: "bulleted-list",
+    name: "Bulleted list",
     isActive: () => editor?.isActive("bulletList"),
     command: () => toggleBulletList(editor),
     icon: ListIcon,
   }) as const satisfies EditorMenuItem;
 
-export const TodoListItem = (editor: Editor) =>
-  ({
-    name: "To-do List",
-    isActive: () => editor.isActive("taskItem"),
-    command: () => toggleTaskList(editor),
-    icon: CheckSquare,
-  }) as const satisfies EditorMenuItem;
-
-export const CodeItem = (editor: Editor) =>
-  ({
-    name: "code",
-    isActive: () => editor?.isActive("code") || editor?.isActive("codeBlock"),
-    command: () => toggleCodeBlock(editor),
-    icon: CodeIcon,
-  }) as const satisfies EditorMenuItem;
-
 export const NumberedListItem = (editor: Editor) =>
   ({
-    name: "ordered-list",
+    key: "numbered-list",
+    name: "Numbered list",
     isActive: () => editor?.isActive("orderedList"),
     command: () => toggleOrderedList(editor),
     icon: ListOrderedIcon,
   }) as const satisfies EditorMenuItem;
 
+export const TodoListItem = (editor: Editor) =>
+  ({
+    key: "to-do-list",
+    name: "To-do list",
+    isActive: () => editor.isActive("taskItem"),
+    command: () => toggleTaskList(editor),
+    icon: CheckSquare,
+  }) as const satisfies EditorMenuItem;
+
 export const QuoteItem = (editor: Editor) =>
   ({
-    name: "quote",
+    key: "quote",
+    name: "Quote",
     isActive: () => editor?.isActive("blockquote"),
     command: () => toggleBlockquote(editor),
     icon: QuoteIcon,
   }) as const satisfies EditorMenuItem;
 
+export const CodeItem = (editor: Editor) =>
+  ({
+    key: "code",
+    name: "Code",
+    isActive: () => editor?.isActive("code") || editor?.isActive("codeBlock"),
+    command: () => toggleCodeBlock(editor),
+    icon: CodeIcon,
+  }) as const satisfies EditorMenuItem;
+
 export const TableItem = (editor: Editor) =>
   ({
-    name: "table",
+    key: "table",
+    name: "Table",
     isActive: () => editor?.isActive("table"),
     command: () => insertTableCommand(editor),
     icon: TableIcon,
@@ -148,7 +206,8 @@ export const TableItem = (editor: Editor) =>
 
 export const ImageItem = (editor: Editor, uploadFile: UploadImage) =>
   ({
-    name: "image",
+    key: "image",
+    name: "Image",
     isActive: () => editor?.isActive("image"),
     command: (savedSelection: Selection | null) => insertImageCommand(editor, uploadFile, savedSelection),
     icon: ImageIcon,
@@ -159,9 +218,13 @@ export function getEditorMenuItems(editor: Editor | null, uploadFile: UploadImag
     return [];
   }
   return [
+    TextItem(editor),
     HeadingOneItem(editor),
     HeadingTwoItem(editor),
     HeadingThreeItem(editor),
+    HeadingFourItem(editor),
+    HeadingFiveItem(editor),
+    HeadingSixItem(editor),
     BoldItem(editor),
     ItalicItem(editor),
     UnderLineItem(editor),
@@ -177,7 +240,7 @@ export function getEditorMenuItems(editor: Editor | null, uploadFile: UploadImag
 }
 
 export type EditorMenuItemNames = ReturnType<typeof getEditorMenuItems> extends (infer U)[]
-  ? U extends { name: infer N }
+  ? U extends { key: infer N }
     ? N
     : never
   : never;

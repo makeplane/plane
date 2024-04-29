@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { Check, ChevronDown } from "lucide-react";
 // editor
 import { EditorMenuItemNames, EditorRefApi } from "@plane/document-editor";
 // ui
-import { Tooltip } from "@plane/ui";
+import { CustomMenu, Tooltip } from "@plane/ui";
 // constants
-import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
+import { TOOLBAR_ITEMS, TYPOGRAPHY_ITEMS, ToolbarMenuItem } from "@/constants/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
@@ -34,12 +35,12 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
         key={item.key}
         type="button"
         onClick={() => executeCommand(item.key)}
-        className={cn("grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80", {
+        className={cn("grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80", {
           "bg-custom-background-80 text-custom-text-100": isActive,
         })}
       >
         <item.icon
-          className={cn("h-4 w-4", {
+          className={cn("size-4", {
             "text-custom-text-100": isActive,
           })}
         />
@@ -71,8 +72,36 @@ export const PageToolbar: React.FC<Props> = ({ editorRef }) => {
     return () => unsubscribe();
   }, [editorRef, updateActiveStates]);
 
+  const activeTypography = TYPOGRAPHY_ITEMS.find((item) => editorRef.isMenuItemActive(item.key));
+
   return (
     <div className="flex flex-wrap items-center divide-x divide-custom-border-200">
+      <CustomMenu
+        customButton={
+          <span className="text-custom-text-300 text-sm border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
+            {activeTypography?.name || "Text"}
+            <ChevronDown className="flex-shrink-0 size-3" />
+          </span>
+        }
+        className="pr-2"
+        placement="bottom-start"
+        closeOnSelect
+        maxHeight="lg"
+      >
+        {TYPOGRAPHY_ITEMS.map((item) => (
+          <CustomMenu.MenuItem
+            key={item.key}
+            className="flex items-center justify-between gap-2"
+            onClick={() => editorRef.executeMenuItemCommand(item.key)}
+          >
+            <span className="flex items-center gap-2">
+              <item.icon className="size-3" />
+              {item.name}
+            </span>
+            {activeTypography?.key === item.key && <Check className="size-3 text-custom-text-300 flex-shrink-0" />}
+          </CustomMenu.MenuItem>
+        ))}
+      </CustomMenu>
       {Object.keys(toolbarItems).map((key) => (
         <div key={key} className="flex items-center gap-0.5 px-2 first:pl-0 last:pr-0">
           {toolbarItems[key].map((item) => (
