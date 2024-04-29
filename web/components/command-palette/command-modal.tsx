@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Command } from "cmdk";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { FolderPlus, Search, Settings } from "lucide-react";
@@ -25,7 +25,7 @@ import { EmptyState } from "@/components/empty-state";
 import { EmptyStateType } from "@/constants/empty-state";
 import { E_COMMAND_PALETTE } from "@/constants/event-tracker";
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
-import { useApplication, useEventTracker, useProject } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
@@ -62,15 +62,8 @@ export const CommandModal: React.FC = observer(() => {
   });
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
-
-  const {
-    commandPalette: {
-      isCommandPaletteOpen,
-      toggleCommandPaletteModal,
-      toggleCreateIssueModal,
-      toggleCreateProjectModal,
-    },
-  } = useApplication();
+  const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
+    useCommandPalette();
   const { setTrackElement } = useEventTracker();
 
   // router
@@ -171,7 +164,7 @@ export const CommandModal: React.FC = observer(() => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative flex w-full max-w-2xl items-center justify-center transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <Dialog.Panel className="relative flex w-full max-w-2xl transform items-center justify-center divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <div className="w-full max-w-2xl">
                   <Command
                     filter={(value, search) => {
@@ -179,7 +172,9 @@ export const CommandModal: React.FC = observer(() => {
                       return 0;
                     }}
                     onKeyDown={(e) => {
-                      // when search is empty and page is undefined
+                      // when search term is not empty, esc should clear the search term
+                      if (e.key === "Escape" && searchTerm) setSearchTerm("");
+
                       // when user tries to close the modal with esc
                       if (e.key === "Escape" && !page && !searchTerm) closePalette();
 
@@ -236,7 +231,7 @@ export const CommandModal: React.FC = observer(() => {
                       />
                     </div>
 
-                    <Command.List className="max-h-96 overflow-scroll p-2 vertical-scrollbar scrollbar-sm">
+                    <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll p-2">
                       {searchTerm !== "" && (
                         <h5 className="mx-[3px] my-4 text-xs text-custom-text-100">
                           Search results for{" "}

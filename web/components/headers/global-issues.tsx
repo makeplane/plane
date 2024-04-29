@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
@@ -28,8 +28,8 @@ import { useLabel, useMember, useUser, useIssues, useEventTracker } from "@/hook
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const GLOBAL_VIEW_LAYOUTS = [
-  { key: "list", title: "List", link: "/workspace-views", icon: List },
-  { key: "spreadsheet", title: "Spreadsheet", link: "/workspace-views/all-issues", icon: Sheet },
+  { key: "list", title: "List", link: "workspace-views", icon: List },
+  { key: "spreadsheet", title: "Spreadsheet", link: "workspace-views/all-issues", icon: Sheet },
 ];
 
 type Props = {

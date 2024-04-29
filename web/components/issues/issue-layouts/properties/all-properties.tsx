@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import xor from "lodash/xor";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";

@@ -1,12 +1,13 @@
 import { FC, ReactNode } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import useSWRImmutable from "swr/immutable";
-// hooks
-import { Spinner } from "@plane/ui";
-import { useUser, useWorkspace } from "@/hooks/store";
+// import useSWRImmutable from "swr/immutable";
 // ui
+import { Spinner } from "@plane/ui";
+// hooks
+import { useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useCurrentUserSettings } from "@/hooks/store/use-current-user-settings";
 
 export interface IUserAuthWrapper {
   children: ReactNode;
@@ -15,25 +16,20 @@ export interface IUserAuthWrapper {
 export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   const { children } = props;
   // store hooks
-  const {
-    currentUser,
-    currentUserError,
-    fetchCurrentUser,
-    fetchCurrentUserInstanceAdminStatus,
-    fetchCurrentUserSettings,
-  } = useUser();
+  const { fetchCurrentUser, data: currentUser, error: currentUserError } = useUser();
+  const { fetchUserProfile } = useUserProfile();
+  const { fetchCurrentUserSettings } = useCurrentUserSettings();
   const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
   // fetching user information
-  useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
+  const { error } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
     shouldRetryOnError: false,
   });
-  // fetching current user instance admin status
-  useSWRImmutable("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
+  useSWR("CURRENT_USER_PROFILE_DETAILS", () => fetchUserProfile(), {
     shouldRetryOnError: false,
   });
-  // fetching user settings
+  //fetching user settings
   const { isLoading: userSettingsLoader } = useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
     shouldRetryOnError: false,
   });
@@ -42,7 +38,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     shouldRetryOnError: false,
   });
 
-  if ((!currentUser && !currentUserError) || userSettingsLoader || workspaceLoader) {
+  if ((!currentUser && !currentUserError) || workspaceLoader) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -52,7 +48,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     );
   }
 
-  if (currentUserError) {
+  if (error) {
     const redirectTo = router.asPath;
     router.push(`/?next_path=${redirectTo}`);
     return null;
@@ -60,3 +56,5 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
 
   return <>{children}</>;
 });
+
+

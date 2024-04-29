@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useFormContext, Controller } from "react-hook-form";
 import { Plus } from "lucide-react";
@@ -11,12 +11,12 @@ import { CustomSelect, Input } from "@plane/ui";
 import { E_JIRA_IMPORT } from "@/constants/event-tracker";
 // helpers
 import { checkEmailValidity } from "@/helpers/string.helper";
-import { useApplication, useEventTracker, useProject } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
 // types
 
 export const JiraGetImportDetail: React.FC = observer(() => {
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds, getProjectById } = useProject();
   // form info
@@ -59,7 +59,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
               />
             )}
           />
-          {errors.metadata?.api_token && <p className="text-red-500 text-xs">{errors.metadata.api_token.message}</p>}
+          {errors.metadata?.api_token && <p className="text-xs text-red-500">{errors.metadata.api_token.message}</p>}
         </div>
       </div>
 
@@ -89,7 +89,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             )}
           />
           {errors.metadata?.project_key && (
-            <p className="text-red-500 text-xs">{errors.metadata.project_key.message}</p>
+            <p className="text-xs text-red-500">{errors.metadata.project_key.message}</p>
           )}
         </div>
       </div>
@@ -120,7 +120,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
               />
             )}
           />
-          {errors.metadata?.email && <p className="text-red-500 text-xs">{errors.metadata.email.message}</p>}
+          {errors.metadata?.email && <p className="text-xs text-red-500">{errors.metadata.email.message}</p>}
         </div>
       </div>
 
@@ -150,7 +150,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             )}
           />
           {errors.metadata?.cloud_hostname && (
-            <p className="text-red-500 text-xs">{errors.metadata.cloud_hostname.message}</p>
+            <p className="text-xs text-red-500">{errors.metadata.cloud_hostname.message}</p>
           )}
         </div>
       </div>
@@ -203,7 +203,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     type="button"
                     onClick={() => {
                       setTrackElement(E_JIRA_IMPORT);
-                      commandPaletteStore.toggleCreateProjectModal(true);
+                      toggleCreateProjectModal(true);
                     }}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
@@ -28,7 +28,6 @@ import { EUserProjectRoles } from "@/constants/project";
 import { cn } from "@/helpers/common.helper";
 import { truncateText } from "@/helpers/string.helper";
 import {
-  useApplication,
   useEventTracker,
   useCycle,
   useLabel,
@@ -37,6 +36,7 @@ import {
   useProjectState,
   useUser,
   useIssues,
+  useCommandPalette,
 } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // ui
@@ -82,11 +82,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.CYCLE);
   const { currentProjectCycleIds, getCycleById } = useCycle();
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
-  const { setTrackElement, captureEvent, captureIssuesFilterEvent, captureIssuesDisplayFilterEvent } =
-    useEventTracker();
+  const { toggleCreateIssueModal } = useCommandPalette();
+  const { setTrackElement, captureEvent, captureIssuesFilterEvent, captureIssuesDisplayFilterEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -220,7 +217,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                         href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                         icon={
                           currentProjectDetails && (
-                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                            <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                               <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
@@ -229,7 +226,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     </span>
                     <Link
                       href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                      className="block md:hidden pl-2 text-custom-text-300"
+                      className="block pl-2 text-custom-text-300 md:hidden"
                     >
                       ...
                     </Link>
@@ -253,7 +250,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     label={
                       <>
                         <ContrastIcon className="h-3 w-3" />
-                        <div className="flex items-center gap-2 w-auto max-w-[70px] sm:max-w-[200px] truncate">
+                        <div className="flex w-auto max-w-[70px] items-center gap-2 truncate sm:max-w-[200px]">
                           <p className="truncate">{cycleDetails?.name && cycleDetails.name}</p>
                           {issueCount && issueCount > 0 ? (
                             <Tooltip
@@ -263,7 +260,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                               } in this cycle`}
                               position="bottom"
                             >
-                              <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                              <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
                                 {issueCount}
                               </span>
                             </Tooltip>
@@ -280,7 +277,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               />
             </Breadcrumbs>
           </div>
-          <div className="hidden md:flex items-center gap-2 ">
+          <div className="hidden items-center gap-2 md:flex ">
             <LayoutSelection
               layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
               onChange={(layout) => handleLayoutChange(layout)}
@@ -354,10 +351,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           </div>
           <button
             type="button"
-            className="grid md:hidden h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+            className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 md:hidden"
             onClick={toggleSidebar}
           >
-            <PanelRight className={cn("w-4 h-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
+            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
         </div>
       </div>

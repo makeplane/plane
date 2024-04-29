@@ -202,7 +202,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
           <span className="h-6 w-52 flex-shrink-0" />
         </div>
       </Link>
-      <div className="absolute right-5 bottom-8 z-[5] flex items-center gap-1.5">
+      <div className="absolute right-5 bottom-8 flex items-center gap-1.5">
         <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 md:w-auto md:flex-shrink-0 md:justify-end">
           {currentCycle && (
             <div

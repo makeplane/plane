@@ -4,7 +4,7 @@ import { DiceIcon, PhotoFilterIcon } from "@plane/ui";
 // constants
 import { E_COMMAND_PALETTE } from "@/constants/event-tracker";
 // hooks
-import { useApplication, useEventTracker } from "@/hooks/store";
+import { useCommandPalette, useEventTracker } from "@/hooks/store";
 // ui
 
 type Props = {
@@ -13,10 +13,9 @@ type Props = {
 
 export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
   const { closePalette } = props;
-
-  const {
-    commandPalette: { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal },
-  } = useApplication();
+  // store hooks
+  const { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal } =
+    useCommandPalette();
   const { setTrackElement } = useEventTracker();
 
   return (

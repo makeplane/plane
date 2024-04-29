@@ -2,15 +2,16 @@ import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// services
-import { EUserWorkspaceRoles } from "@/constants/workspace";
-import { WorkspaceService } from "@/services/workspace.service";
 // types
-import { IRouterStore } from "@/store/application/router.store";
-import { RootStore } from "@/store/root.store";
-import { IUserRootStore } from "@/store/user";
 import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // constants
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+// services
+import { WorkspaceService } from "@/services/workspace.service";
+// types
+import { RootStore } from "@/store/root.store";
+import { IRouterStore } from "@/store/router.store";
+import { IUserStore } from "@/store/user";
 import { IMemberRootStore } from ".";
 
 export interface IWorkspaceMembership {
@@ -56,7 +57,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]> = {}; // { workspaceSlug: [invitations] }
   // stores
   routerStore: IRouterStore;
-  userStore: IUserRootStore;
+  userStore: IUserStore;
   memberRoot: IMemberRootStore;
   // services
   workspaceService;
@@ -80,7 +81,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     });
 
     // root store
-    this.routerStore = _rootStore.app.router;
+    this.routerStore = _rootStore.router;
     this.userStore = _rootStore.user;
     this.memberRoot = _memberRoot;
     // services
@@ -95,7 +96,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     if (!workspaceSlug) return null;
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
     members = sortBy(members, [
-      (m) => m.member !== this.userStore.currentUser?.id,
+      (m) => m.member !== this.userStore?.data?.id,
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
     ]);
     //filter out bots
@@ -127,8 +128,9 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     const searchedWorkspaceMemberIds = workspaceMemberIds?.filter((userId) => {
       const memberDetails = this.getWorkspaceMemberDetails(userId);
       if (!memberDetails) return false;
-      const memberSearchQuery = `${memberDetails.member.first_name} ${memberDetails.member.last_name} ${memberDetails
-        .member?.display_name} ${memberDetails.member.email ?? ""}`;
+      const memberSearchQuery = `${memberDetails.member.first_name} ${memberDetails.member.last_name} ${
+        memberDetails.member?.display_name
+      } ${memberDetails.member.email ?? ""}`;
       return memberSearchQuery.toLowerCase()?.includes(searchQuery.toLowerCase());
     });
     return searchedWorkspaceMemberIds;

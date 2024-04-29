@@ -1,9 +1,11 @@
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 # Module import
-from . import ProjectBaseModel, BaseModel, WorkspaceBaseModel
+from .base import BaseModel
+from .project import ProjectBaseModel
+from .workspace import WorkspaceBaseModel
 
 
 def get_default_filters():

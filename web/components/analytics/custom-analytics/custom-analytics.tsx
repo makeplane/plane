@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
@@ -10,7 +10,7 @@ import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSi
 // fetch-keys
 import { ANALYTICS } from "@/constants/fetch-keys";
 import { cn } from "@/helpers/common.helper";
-import { useApplication } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store";
 import { AnalyticsService } from "@/services/analytics.service";
 
 type Props = {
@@ -48,13 +48,13 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
     workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
   );
 
-  const { theme: themeStore } = useApplication();
+  const { workspaceAnalyticsSidebarCollapsed } = useAppTheme();
 
   const isProjectLevel = projectId ? true : false;
 
   return (
-    <div className={cn("relative w-full h-full flex overflow-hidden", isProjectLevel ? "flex-col-reverse" : "")}>
-      <div className="w-full flex h-full flex-col overflow-hidden">
+    <div className={cn("relative flex h-full w-full overflow-hidden", isProjectLevel ? "flex-col-reverse" : "")}>
+      <div className="flex h-full w-full flex-col overflow-hidden">
         <CustomAnalyticsSelectBar
           control={control}
           setValue={setValue}
@@ -74,10 +74,10 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
         className={cn(
           "border-l border-custom-border-200 transition-all",
           !isProjectLevel
-            ? "absolute right-0 top-0 bottom-0 md:relative flex-shrink-0 h-full max-w-[250px] sm:max-w-full"
+            ? "absolute bottom-0 right-0 top-0 h-full max-w-[250px] flex-shrink-0 sm:max-w-full md:relative"
             : ""
         )}
-        style={themeStore.workspaceAnalyticsSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
+        style={workspaceAnalyticsSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
       >
         <CustomAnalyticsSidebar analytics={analytics} params={params} isProjectLevel={isProjectLevel} />
       </div>

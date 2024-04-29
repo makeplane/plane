@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 
@@ -19,7 +19,7 @@ import {
 } from "@/components/issues";
 import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 // hooks
-import { useApplication } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";
 // components
 // types
@@ -50,9 +50,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     onSearchCapture
   } = props;
   // hooks
-  const {
-    router: { moduleId, cycleId },
-  } = useApplication();
+  const { moduleId, cycleId } = useAppRouter();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -83,7 +81,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           )}
         </div>
       </div>
-      <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
+      <div className="vertical-scrollbar scrollbar-sm h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">

@@ -1,22 +1,22 @@
 import { ReactElement, useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-// hooks
+// ui
 import { Button, Input, Spinner, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import { PageHead } from "@/components/core";
-import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { useApplication, useUser } from "@/hooks/store";
-// services
 // components
+import { PageHead } from "@/components/core";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar";
+// hooks
+import { useAppTheme, useUser } from "@/hooks/store";
 // layout
 import { ProfileSettingsLayout } from "@/layouts/settings-layout";
-// ui
 // types
 import { NextPageWithLayout } from "@/lib/types";
+// services
 import { UserService } from "@/services/user.service";
 
-interface FormValues {
+export interface FormValues {
   old_password: string;
   new_password: string;
   confirm_password: string;
@@ -28,15 +28,15 @@ const defaultValues: FormValues = {
   confirm_password: "",
 };
 
-const userService = new UserService();
+export const userService = new UserService();
 
 const ChangePasswordPage: NextPageWithLayout = observer(() => {
   const [isPageLoading, setIsPageLoading] = useState(true);
-  // hooks
-  const { theme: themeStore } = useApplication();
-  const { currentUser } = useUser();
-
+  // router
   const router = useRouter();
+  // store hooks
+  const { toggleSidebar } = useAppTheme();
+  const { data: currentUser } = useUser();
 
   // use form
   const {
@@ -87,11 +87,11 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
       <PageHead title="Profile - Change Password" />
       <div className="flex h-full flex-col">
         <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
-          <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
+          <SidebarHamburgerToggle onClick={() => toggleSidebar()} />
         </div>
         <form
           onSubmit={handleSubmit(handleChangePassword)}
-          className="mx-auto mt-16 flex h-full w-full flex-col gap-8 px-8 pb-8 lg:w-3/5"
+          className="mx-auto md:mt-16 mt-10 flex h-full w-full flex-col gap-8 px-4 md:px-8 pb-8 lg:w-3/5"
         >
           <h3 className="text-xl font-medium">Change password</h3>
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">

@@ -1,5 +1,4 @@
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useApplication, useIssues } from "./store";
+import { useCallback, useMemo } from "react";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -8,7 +7,8 @@ import {
   TIssueKanbanFilters,
   TLoader,
 } from "@plane/types";
-import { useCallback, useMemo } from "react";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { useAppRouter, useIssues } from "./store";
 
 interface IssueActions {
   fetchIssues?: (projectId: string, loadType: TLoader) => Promise<TIssue[] | undefined>;
@@ -59,9 +59,7 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
 const useProjectIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (projectId: string, loadType: TLoader) => {
@@ -126,10 +124,7 @@ const useProjectIssueActions = () => {
 
 const useCycleIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
-
-  const {
-    router: { workspaceSlug, cycleId },
-  } = useApplication();
+  const { workspaceSlug, cycleId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (projectId: string, loadType: TLoader) => {
@@ -203,9 +198,7 @@ const useCycleIssueActions = () => {
 const useModuleIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
 
-  const {
-    router: { workspaceSlug, moduleId },
-  } = useApplication();
+  const { workspaceSlug, moduleId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (projectId: string, loadType: TLoader) => {
@@ -279,9 +272,7 @@ const useModuleIssueActions = () => {
 const useProfileIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROFILE);
 
-  const {
-    router: { workspaceSlug, userId },
-  } = useApplication();
+  const { workspaceSlug, userId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (projectId: string, loadType: TLoader) => {
@@ -347,9 +338,7 @@ const useProfileIssueActions = () => {
 const useProjectViewIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
-  const {
-    router: { workspaceSlug, viewId },
-  } = useApplication();
+  const { workspaceSlug, viewId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (projectId: string, loadType: TLoader) => {
@@ -415,9 +404,7 @@ const useProjectViewIssueActions = () => {
 const useDraftIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
 
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (projectId: string, loadType: TLoader) => {
@@ -475,9 +462,7 @@ const useDraftIssueActions = () => {
 const useArchivedIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
 
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (projectId: string, loadType: TLoader) => {
@@ -527,9 +512,8 @@ const useArchivedIssueActions = () => {
 const useGlobalIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.GLOBAL);
 
-  const {
-    router: { workspaceSlug, globalViewId },
-  } = useApplication();
+  const { workspaceSlug, globalViewId } = useAppRouter();
+
   const createIssue = useCallback(
     async (projectId: string, data: Partial<TIssue>) => {
       if (!globalViewId || !workspaceSlug) return;

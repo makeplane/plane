@@ -14,17 +14,17 @@ export * from "./estimate";
 export * from "./importer";
 export * from "./inbox";
 export * from "./analytics";
+export * from "./api_token";
+export * from "./app";
+export * from "./auth";
 export * from "./calendar";
+export * from "./instance";
+export * from "./issues/base"; // TODO: Remove this after development and the refactor/mobx-store-issue branch is stable
 export * from "./notifications";
-export * from "./waitlist";
 export * from "./reaction";
 export * from "./view-props";
-export * from "./workspace-views";
+export * from "./waitlist";
 export * from "./webhook";
-export * from "./issues/base"; // TODO: Remove this after development and the refactor/mobx-store-issue branch is stable
-export * from "./auth";
-export * from "./api_token";
-export * from "./instance";
-export * from "./app";
+export * from "./workspace-views";
 export * from "./common";
 export * from "./pragmatic";

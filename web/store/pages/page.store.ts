@@ -153,7 +153,7 @@ export class PageStore implements IPageStore {
     const titleDisposer = reaction(
       () => this.name,
       (name) => {
-        const { workspaceSlug, projectId } = this.store.app.router;
+        const { workspaceSlug, projectId } = this.store.router;
         if (!workspaceSlug || !projectId || !this.id) return;
         this.isSubmitting = "submitting";
         this.pageService
@@ -178,7 +178,7 @@ export class PageStore implements IPageStore {
       () => this.description_html,
       (description_html) => {
         //TODO: Fix reaction to only run when the data is changed, not when the page is loaded
-        const { workspaceSlug, projectId } = this.store.app.router;
+        const { workspaceSlug, projectId } = this.store.router;
         if (!workspaceSlug || !projectId || !this.id) return;
         this.isSubmitting = "submitting";
         this.pageService
@@ -221,7 +221,7 @@ export class PageStore implements IPageStore {
   }
 
   get isCurrentUserOwner() {
-    const currentUserId = this.store.user.currentUser?.id;
+    const currentUserId = this.store.user.data?.id;
     if (!currentUserId) return false;
     return this.owned_by === currentUserId;
   }
@@ -314,7 +314,7 @@ export class PageStore implements IPageStore {
    * @param {Partial<TPage>} pageData
    */
   update = async (pageData: Partial<TPage>) => {
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const currentPage = this.asJSON;
@@ -343,7 +343,7 @@ export class PageStore implements IPageStore {
    * @param {Partial<TPageViewProps>} updatedProps
    */
   updateViewProps = async (updatedProps: Partial<TPageViewProps>) => {
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const currentViewProps = { ...this.view_props };
@@ -374,7 +374,7 @@ export class PageStore implements IPageStore {
    * @description make the page public
    */
   makePublic = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageAccess = this.access;
@@ -396,7 +396,7 @@ export class PageStore implements IPageStore {
    * @description make the page private
    */
   makePrivate = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageAccess = this.access;
@@ -418,7 +418,7 @@ export class PageStore implements IPageStore {
    * @description lock the page
    */
   lock = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageIsLocked = this.is_locked;
@@ -436,7 +436,7 @@ export class PageStore implements IPageStore {
    * @description unlock the page
    */
   unlock = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageIsLocked = this.is_locked;
@@ -454,7 +454,7 @@ export class PageStore implements IPageStore {
    * @description archive the page
    */
   archive = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     try {
@@ -471,7 +471,7 @@ export class PageStore implements IPageStore {
    * @description restore the page
    */
   restore = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     try {
@@ -488,7 +488,7 @@ export class PageStore implements IPageStore {
    * @description add the page to favorites
    */
   addToFavorites = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageIsFavorite = this.is_favorite;
@@ -508,7 +508,7 @@ export class PageStore implements IPageStore {
    * @description remove the page from favorites
    */
   removeFromFavorites = async () => {
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageIsFavorite = this.is_favorite;

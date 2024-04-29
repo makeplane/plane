@@ -175,7 +175,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
           <span className="h-6 w-52 flex-shrink-0" />
         </div>
       </Link>
-      <div className="absolute right-5 bottom-8 z-[5] flex items-center gap-1.5">
+      <div className="absolute right-5 bottom-8 flex items-center gap-1.5">
         <div className="flex flex-shrink-0 items-center justify-center">
           {moduleStatus && (
             <span

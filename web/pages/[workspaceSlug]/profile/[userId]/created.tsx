@@ -1,13 +1,14 @@
 import { ReactElement } from "react";
 // store
 import { observer } from "mobx-react-lite";
-// layouts
+// components
 import { PageHead } from "@/components/core";
 import { UserProfileHeader } from "@/components/headers";
 import { ProfileIssuesPage } from "@/components/profile/profile-issues";
+import ProfileIssuesMobileHeader from "@/components/profile/profile-issues-mobile-header";
+// layouts
 import { AppLayout } from "@/layouts/app-layout";
 import { ProfileAuthWrapper } from "@/layouts/user-profile-layout";
-// components
 // types
 import { NextPageWithLayout } from "@/lib/types";
 
@@ -20,7 +21,7 @@ const ProfileCreatedIssuesPage: NextPageWithLayout = () => (
 
 ProfileCreatedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<UserProfileHeader type="Created" />}>
+    <AppLayout header={<UserProfileHeader type="Created" />} mobileHeader={<ProfileIssuesMobileHeader />}>
       <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
     </AppLayout>
   );

@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback } from "react";
 import isEmpty from "lodash/isEmpty";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
@@ -17,7 +17,7 @@ import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
 import { E_GLOBAL_ISSUES_EMPTY_STATE } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
-import { useApplication, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
@@ -28,7 +28,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
   // store
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateProjectModal, toggleCreateIssueModal } = useCommandPalette();
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },
     issues: { loader, groupedIssueIds, fetchIssues },
@@ -156,7 +156,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      <div className="relative h-full w-full flex flex-col">
+      <div className="relative flex h-full w-full flex-col">
         <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId} />
         {issueIds.length === 0 ? (
           <EmptyState
@@ -167,12 +167,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
                 ? currentView !== "custom-view" && currentView !== "subscribed"
                   ? () => {
                       setTrackElement(E_GLOBAL_ISSUES_EMPTY_STATE);
-                      commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+                      toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
                     }
                   : undefined
                 : () => {
                     setTrackElement(E_GLOBAL_ISSUES_EMPTY_STATE);
-                    commandPaletteStore.toggleCreateProjectModal(true);
+                    toggleCreateProjectModal(true);
                   }
             }
           />

@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
@@ -26,7 +26,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { invitation_id, email, slug } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
 
   const { data: invitationDetail, error } = useSWR(
     invitation_id && slug && WORKSPACE_INVITATION(invitation_id.toString()),
@@ -46,7 +46,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
         if (email === currentUser?.email) {
           router.push("/invitations");
         } else {
-          router.push("/");
+          router.push({ pathname: "/", query: router.query });
         }
       })
       .catch((err) => console.error(err));

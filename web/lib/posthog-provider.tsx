@@ -9,11 +9,12 @@ import { GROUP_WORKSPACE } from "@/constants/event-tracker";
 
 export interface IPosthogWrapper {
   children: ReactNode;
-  user: IUser | null;
+
+  user: IUser | undefined;
   workspaceIds: string[];
   currentWorkspaceId: string | undefined;
-  posthogAPIKey: string | null;
-  posthogHost: string | null;
+  posthogAPIKey: string | undefined;
+  posthogHost: string | undefined; 
   isCloud: boolean;
   telemetryEnabled: boolean;
 }
@@ -34,7 +35,7 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
         first_name: isCloud ? user.first_name : undefined,
         last_name: isCloud ? user.last_name : undefined,
         email: isCloud ? user.email : undefined,
-        use_case: user.use_case,
+        use_case: user?.use_case,
         workspaces: workspaceIds,
       });
     }

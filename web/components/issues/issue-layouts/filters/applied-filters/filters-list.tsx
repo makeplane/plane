@@ -1,7 +1,8 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { X } from "lucide-react";
+// types
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
-// hooks
+// components
 import {
   AppliedCycleFilters,
   AppliedDateFilters,
@@ -13,13 +14,12 @@ import {
   AppliedStateFilters,
   AppliedStateGroupFilters,
 } from "@/components/issues";
-import { EUserProjectRoles } from "@/constants/project";
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
-import { useApplication, useUser } from "@/hooks/store";
-// components
-// helpers
-// types
 // constants
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+// hooks
+import { useAppRouter, useUser } from "@/hooks/store";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -36,9 +36,7 @@ const dateFilters = ["start_date", "target_date"];
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, states, alwaysAllowEditing } = props;
   // store hooks
-  const {
-    router: { moduleId, cycleId },
-  } = useApplication();
+  const { moduleId, cycleId } = useAppRouter();
   const {
     membership: { currentProjectRole },
   } = useUser();

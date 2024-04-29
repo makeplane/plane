@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import Router from "next/router";
 import { useTheme } from "next-themes";
@@ -12,7 +12,7 @@ import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers
 import { resolveGeneralTheme } from "@/helpers/theme.helper";
 // hooks
-import { useApplication, useUser, useWorkspace } from "@/hooks/store";
+import { useInstance, useWorkspace, useUser } from "@/hooks/store";
 // layouts
 import InstanceLayout from "@/layouts/instance-layout";
 // dynamic imports
@@ -32,12 +32,9 @@ export interface IAppProvider {
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { instance } = useInstance();
+  const { data: currentUser } = useUser();
   const { currentWorkspace, workspaces } = useWorkspace();
-  const {
-    config: { envConfig },
-    instance: { instance },
-  } = useApplication();
   // themes
   const { resolvedTheme } = useTheme();
 
@@ -54,8 +51,8 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
               workspaceIds={Object.keys(workspaces)}
               isCloud={!instance?.is_telemetry_anonymous || false}
               telemetryEnabled={instance?.is_telemetry_enabled || false}
-              posthogAPIKey={envConfig?.posthog_api_key || null}
-              posthogHost={envConfig?.posthog_host || null}
+              posthogAPIKey={instance?.config?.posthog_api_key || undefined}
+              posthogHost={instance?.config.posthog_host || undefined}
             >
               <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
             </PostHogProvider>

@@ -1,27 +1,26 @@
 import { useCallback, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { ListFilter, Plus, Search, X } from "lucide-react";
+// types
 import { TModuleFilters } from "@plane/types";
-// hooks
+// ui
 import { Breadcrumbs, Button, Tooltip, DiceIcon } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
 import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
 import { ProjectLogo } from "@/components/project";
+// constants
 import { E_MODULES } from "@/constants/event-tracker";
 import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
-import { cn } from "@/helpers/common.helper";
-import { useApplication, useEventTracker, useMember, useModuleFilter, useProject, useUser } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-// components
-// constants
-// hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
-// ui
 // helpers
-// types
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useEventTracker, useMember, useModuleFilter, useProject, useUser, useCommandPalette } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // refs
@@ -30,7 +29,7 @@ export const ModulesListHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateModuleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
@@ -102,7 +101,7 @@ export const ModulesListHeader: React.FC = observer(() => {
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
                     currentProjectDetails && (
-                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                      <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                         <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                       </span>
                     )
@@ -122,7 +121,7 @@ export const ModulesListHeader: React.FC = observer(() => {
           {!isSearchOpen && (
             <button
               type="button"
-              className="-mr-1 p-2 hover:bg-custom-background-80 rounded text-custom-text-400 grid place-items-center"
+              className="-mr-1 grid place-items-center rounded p-2 text-custom-text-400 hover:bg-custom-background-80"
               onClick={() => {
                 setIsSearchOpen(true);
                 inputRef.current?.focus();
@@ -133,9 +132,9 @@ export const ModulesListHeader: React.FC = observer(() => {
           )}
           <div
             className={cn(
-              "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+              "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 opacity-0 transition-[width] ease-linear",
               {
-                "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+                "w-64 border-custom-border-200 px-2.5 py-1.5 opacity-100": isSearchOpen,
               }
             )}
           >
@@ -162,7 +161,7 @@ export const ModulesListHeader: React.FC = observer(() => {
             )}
           </div>
         </div>
-        <div className="hidden md:flex items-center gap-1 rounded bg-custom-background-80 p-1">
+        <div className="hidden items-center gap-1 rounded bg-custom-background-80 p-1 md:flex">
           {MODULE_VIEW_LAYOUTS.map((layout) => (
             <Tooltip key={layout.key} tooltipContent={layout.title} isMobile={isMobile}>
               <button
@@ -216,7 +215,7 @@ export const ModulesListHeader: React.FC = observer(() => {
             prependIcon={<Plus />}
             onClick={() => {
               setTrackElement(E_MODULES);
-              commandPaletteStore.toggleCreateModuleModal(true);
+              toggleCreateModuleModal(true);
             }}
           >
             <div className="hidden sm:block">Add</div> Module

@@ -1,8 +1,8 @@
 import { FC, useState } from "react";
 // hooks
 // ui
-import { Pencil, Trash2, LinkIcon } from "lucide-react";
-import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
+import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // types
 // helpers
@@ -94,7 +94,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center p-1 hover:bg-custom-background-80"
               >
-                <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                <ExternalLink className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
               </a>
               <button
                 type="button"

@@ -1,5 +1,5 @@
 // services images
-import { SettingIcon } from "@/components/icons";
+import { SettingIcon } from "@/components/icons/attachment";
 import { Props } from "@/components/icons/types";
 import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";

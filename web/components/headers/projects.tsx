@@ -1,20 +1,19 @@
 import { useCallback, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
 import { TProjectFilters } from "@plane/types";
-// hooks
-// components
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
-// helpers
-// constants
 import { FiltersDropdown } from "@/components/issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
+// constants
 import { E_PROJECTS } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
+import { useAppRouter, useCommandPalette, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ProjectsHeader = observer(() => {
@@ -23,10 +22,8 @@ export const ProjectsHeader = observer(() => {
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    router: { workspaceSlug },
-  } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
+  const { workspaceSlug } = useAppRouter();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
@@ -109,7 +106,7 @@ export const ProjectsHeader = observer(() => {
             className={cn(
               "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
               {
-                "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+                "w-30 md:w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
               }
             )}
           >
@@ -136,34 +133,36 @@ export const ProjectsHeader = observer(() => {
             )}
           </div>
         </div>
-        <ProjectOrderByDropdown
-          value={displayFilters?.order_by}
-          onChange={(val) => {
-            if (!workspaceSlug || val === displayFilters?.order_by) return;
-            updateDisplayFilters(workspaceSlug, {
-              order_by: val,
-            });
-          }}
-        />
-        <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
-          <ProjectFiltersSelection
-            displayFilters={displayFilters ?? {}}
-            filters={filters ?? {}}
-            handleFiltersUpdate={handleFilters}
-            handleDisplayFiltersUpdate={(val) => {
-              if (!workspaceSlug) return;
-              updateDisplayFilters(workspaceSlug, val);
+        <div className="hidden md:flex gap-3">
+          <ProjectOrderByDropdown
+            value={displayFilters?.order_by}
+            onChange={(val) => {
+              if (!workspaceSlug || val === displayFilters?.order_by) return;
+              updateDisplayFilters(workspaceSlug, {
+                order_by: val,
+              });
             }}
-            memberIds={workspaceMemberIds ?? undefined}
           />
-        </FiltersDropdown>
+          <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+            <ProjectFiltersSelection
+              displayFilters={displayFilters ?? {}}
+              filters={filters ?? {}}
+              handleFiltersUpdate={handleFilters}
+              handleDisplayFiltersUpdate={(val) => {
+                if (!workspaceSlug) return;
+                updateDisplayFilters(workspaceSlug, val);
+              }}
+              memberIds={workspaceMemberIds ?? undefined}
+            />
+          </FiltersDropdown>
+        </div>
         {isAuthorizedUser && (
           <Button
             prependIcon={<Plus />}
             size="sm"
             onClick={() => {
               setTrackElement(E_PROJECTS);
-              commandPaletteStore.toggleCreateProjectModal(true);
+              toggleCreateProjectModal(true);
             }}
             className="items-center gap-1"
           >

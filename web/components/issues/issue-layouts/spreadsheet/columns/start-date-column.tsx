@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { CalendarClock } from "lucide-react";
 import { TIssue } from "@plane/types";
 // components
