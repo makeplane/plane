@@ -64,18 +64,24 @@
   box-shadow: none;
 }
 
-.ProseMirror:not(.dragging) .ProseMirror-selectednode::after {
+.ProseMirror:not(.dragging) .ProseMirror-selectednode {
   --horizontal-offset: 5px;
 
-  content: "";
-  position: absolute;
-  top: 0;
-  left: calc(-1 * var(--horizontal-offset));
-  height: 100%;
-  width: calc(100% + (var(--horizontal-offset) * 2));
-  background-color: rgba(var(--color-primary-100), 0.2);
-  border-radius: 4px;
-  pointer-events: none;
+  &:has(.issue-embed) {
+    --horizontal-offset: 0px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(-1 * var(--horizontal-offset));
+    height: 100%;
+    width: calc(100% + (var(--horizontal-offset) * 2));
+    background-color: rgba(var(--color-primary-100), 0.2);
+    border-radius: 4px;
+    pointer-events: none;
+  }
 }
 
 .ProseMirror img {
