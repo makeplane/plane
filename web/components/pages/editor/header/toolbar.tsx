@@ -86,6 +86,7 @@ export const PageToolbar: React.FC<Props> = ({ editorRef }) => {
         className="pr-2"
         placement="bottom-start"
         closeOnSelect
+        maxHeight="lg"
       >
         {TYPOGRAPHY_ITEMS.map((item) => (
           <CustomMenu.MenuItem
