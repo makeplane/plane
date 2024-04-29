@@ -4,6 +4,11 @@ import { findTableAncestor } from "src/lib/utils";
 import { Selection } from "@tiptap/pm/state";
 import { UploadImage } from "src/types/upload-image";
 
+export const setText = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().run();
+  else editor.chain().focus().clearNodes().run();
+};
+
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
   else editor.chain().focus().toggleHeading({ level: 1 }).run();
@@ -17,6 +22,21 @@ export const toggleHeadingTwo = (editor: Editor, range?: Range) => {
 export const toggleHeadingThree = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
   else editor.chain().focus().toggleHeading({ level: 3 }).run();
+};
+
+export const toggleHeadingFour = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 4 }).run();
+  else editor.chain().focus().toggleHeading({ level: 4 }).run();
+};
+
+export const toggleHeadingFive = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 5 }).run();
+  else editor.chain().focus().toggleHeading({ level: 5 }).run();
+};
+
+export const toggleHeadingSix = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 6 }).run();
+  else editor.chain().focus().toggleHeading({ level: 6 }).run();
 };
 
 export const toggleBold = (editor: Editor, range?: Range) => {
