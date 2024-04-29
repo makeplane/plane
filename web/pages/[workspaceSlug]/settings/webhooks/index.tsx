@@ -62,7 +62,7 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="w-full overflow-y-auto py-8 pr-9">
+      <div className="w-full overflow-y-auto md:pr-9 pr-4">
         <CreateWebhookModal
           createWebhook={createWebhook}
           clearSecretKey={clearSecretKey}
@@ -74,7 +74,7 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
         />
         {Object.keys(webhooks).length > 0 ? (
           <div className="flex h-full w-full flex-col">
-            <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
+            <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 py-3.5">
               <div className="text-xl font-medium">Webhooks</div>
               <Button variant="primary" size="sm" onClick={() => setShowCreateWebhookModal(true)}>
                 Add webhook

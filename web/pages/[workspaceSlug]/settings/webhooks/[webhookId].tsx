@@ -95,7 +95,7 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
-      <div className="w-full space-y-8 overflow-y-auto py-8 pr-9">
+      <div className="w-full space-y-8 overflow-y-auto md:py-8 py-4 md:pr-9 pr-4">
         <WebhookForm onSubmit={async (data) => await handleUpdateWebhook(data)} data={currentWebhook} />
         {currentWebhook && <WebhookDeleteSection openDeleteModal={() => setDeleteWebhookModal(true)} />}
       </div>

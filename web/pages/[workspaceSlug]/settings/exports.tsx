@@ -38,7 +38,7 @@ const ExportsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="w-full overflow-y-auto py-8 pr-9">
+      <div className="w-full overflow-y-auto md:pr-9 pr-4">
         <div className="flex items-center border-b border-custom-border-100 py-3.5">
           <h3 className="text-xl font-medium">Exports</h3>
         </div>
