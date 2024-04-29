@@ -80,5 +80,12 @@ jobs:
       - name: Create PR to Target Branch
         if: env.HAS_CONFLICTS == 'true'
         run: |
-          PR_URL=$(gh pr create --base $TARGET_BRANCH --head $SOURCE_BRANCH --title "sync: merge conflicts need to be resolved" --body "")
-          echo "Pull Request created: $PR_URL"
+          # get all pull requests and check if there is already a PR
+          PR_EXISTS=$(gh pr list --base $TARGET_BRANCH --head $SOURCE_BRANCH --json number | jq '.[] | .number')
+          if [ -n "$PR_EXISTS" ]; then
+            echo "Pull Request already exists: $PR_EXISTS"
+          else
+            echo "Creating new pull request"
+            PR_URL=$(gh pr create --base $TARGET_BRANCH --head $SOURCE_BRANCH --title "sync: merge conflicts need to be resolved" --body "")
+            echo "Pull Request created: $PR_URL"
+          fi
