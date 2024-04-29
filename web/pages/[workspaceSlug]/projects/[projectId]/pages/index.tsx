@@ -7,7 +7,7 @@ import { TPageNavigationTabs } from "@plane/types";
 import { PagesHeader } from "@/components/headers";
 import { PagesListRoot, PagesListView } from "@/components/pages";
 // hooks
-import { useApplication } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // lib
@@ -18,9 +18,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { type } = router.query;
   // store hooks
-  const {
-    router: { workspaceSlug, projectId },
-  } = useApplication();
+  const { workspaceSlug, projectId } = useAppRouter();
 
   const currentPageType = (): TPageNavigationTabs => {
     const pageType = type?.toString();

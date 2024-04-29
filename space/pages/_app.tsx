@@ -7,7 +7,7 @@ import "@/styles/globals.css";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, TWITTER_USER_NAME, SITE_KEYWORDS, SITE_TITLE } from "@/constants/seo";
 import { ToastContextProvider } from "@/contexts/toast.context";
 // mobx store provider
-import MobxStoreInit from "@/lib/mobx/store-init";
+import InstanceLayout from "@/layouts/instance-layout";
 import { MobxStoreProvider } from "@/lib/mobx/store-provider";
 // constants
 
@@ -16,7 +16,6 @@ const prefix = parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0") === 0 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <MobxStoreProvider>
-      <MobxStoreInit />
       <Head>
         <title>{SITE_TITLE}</title>
         <meta property="og:site_name" content={SITE_NAME} />
@@ -34,7 +33,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <ToastContextProvider>
         <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-          <Component {...pageProps} />
+          <InstanceLayout>
+            <Component {...pageProps} />
+          </InstanceLayout>
         </ThemeProvider>
       </ToastContextProvider>
     </MobxStoreProvider>

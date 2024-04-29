@@ -5,7 +5,7 @@ import useSWR from "swr";
 
 /// layouts
 // components
-import { ProjectDetailsView } from "@/components/views/project-details";
+import { ProjectDetailsView } from "@/components/views";
 // lib
 import { useMobxStore } from "@/lib/mobx/store-provider";
 import ProjectLayout from "layouts/project-layout";

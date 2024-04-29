@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { CalendarCheck2 } from "lucide-react";
 import { TIssue } from "@plane/types";
 // hooks

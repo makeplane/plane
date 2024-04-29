@@ -1,5 +1,5 @@
 import { useState, FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";

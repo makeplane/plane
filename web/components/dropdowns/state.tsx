@@ -1,12 +1,12 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
 import { Spinner, StateGroupIcon } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useProjectState } from "@/hooks/store";
+import { useAppRouter, useProjectState } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // components
@@ -70,9 +70,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     ],
   });
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { fetchProjectStates, getProjectStates, getStateById } = useProjectState();
   const statesList = getProjectStates(projectId);
   const defaultStateList = statesList?.find((state) => state.default);
@@ -190,7 +188,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
               variant={buttonVariant}
             >
               {stateLoader ? (
-                <Spinner className="w-3.5 h-3.5" />
+                <Spinner className="h-3.5 w-3.5" />
               ) : (
                 <>
                   {!hideIcon && (
@@ -244,7 +242,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                       key={option.value}
                       value={option.value}
                       className={({ active, selected }) =>
-                        `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
+                        `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
@@ -258,10 +256,10 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                     </Combobox.Option>
                   ))
                 ) : (
-                  <p className="text-custom-text-400 italic py-1 px-1.5">No matches found</p>
+                  <p className="px-1.5 py-1 italic text-custom-text-400">No matches found</p>
                 )
               ) : (
-                <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+                <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
               )}
             </div>
           </div>

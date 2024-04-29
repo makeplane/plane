@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
+// types
 import { TIssue } from "@plane/types";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
@@ -8,19 +9,16 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useAppRouter, useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
-// types
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
-
-  const {
-    router: { workspaceSlug },
-    theme: themeStore,
-    commandPalette: commandPaletteStore,
-  } = useApplication();
+  // store hooks
+  const { toggleCreateIssueModal, toggleCommandPaletteModal } = useCommandPalette();
+  const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
+  const { workspaceSlug } = useAppRouter();
   const { setTrackElement } = useEventTracker();
   const { joinedProjectIds } = useProject();
   const {
@@ -34,8 +32,6 @@ export const WorkspaceSidebarQuickAction = observer(() => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const timeoutRef = useRef<any>();
-
-  const isSidebarCollapsed = themeStore.sidebarCollapsed;
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -94,7 +90,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
               } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
               onClick={() => {
                 setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
-                commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+                toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
               disabled={disabled}
             >
@@ -142,14 +138,14 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         )}
 
         <button
-          className={`flex flex-shrink-0 items-center rounded p-2 gap-2 outline-none ${
+          className={`flex flex-shrink-0 items-center gap-2 rounded p-2 outline-none ${
             isAuthorizedUser ? "justify-center" : "w-full"
           } ${
             isSidebarCollapsed
               ? "hover:bg-custom-sidebar-background-80"
               : "border-[0.5px] border-custom-border-200 shadow-custom-sidebar-shadow-2xs"
           }`}
-          onClick={() => commandPaletteStore.toggleCommandPaletteModal(true)}
+          onClick={() => toggleCommandPaletteModal(true)}
         >
           <Search className="h-4 w-4 text-custom-sidebar-text-300" />
           {!isAuthorizedUser && !isSidebarCollapsed && <span className="text-xs font-medium">Open command menu</span>}

@@ -1,19 +1,18 @@
 import { useCallback, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
 import { TProjectFilters } from "@plane/types";
-// hooks
-// components
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
-// helpers
-// constants
 import { FiltersDropdown } from "@/components/issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
+// constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
+import { useAppRouter, useCommandPalette, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ProjectsHeader = observer(() => {
@@ -22,10 +21,8 @@ export const ProjectsHeader = observer(() => {
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    router: { workspaceSlug },
-  } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
+  const { workspaceSlug } = useAppRouter();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
@@ -164,7 +161,7 @@ export const ProjectsHeader = observer(() => {
             size="sm"
             onClick={() => {
               setTrackElement("Projects page");
-              commandPaletteStore.toggleCreateProjectModal(true);
+              toggleCreateProjectModal(true);
             }}
             className="items-center gap-1"
           >

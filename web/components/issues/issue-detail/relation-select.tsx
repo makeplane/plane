@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
 import { TIssueRelationTypes, ISearchIssueResponse } from "@plane/types";

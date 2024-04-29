@@ -7,7 +7,8 @@ import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { ControlLink, DropIndicator, Tooltip } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
+import { useAppRouter, useIssueDetail, useProject, useKanbanView } from "@/hooks/store";
+
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { IssueProperties } from "../properties/all-properties";
@@ -103,11 +104,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
     issueIds,
   } = props;
 
-  const cardRef = useRef<HTMLAnchorElement | null>(null);
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { peekIssue, setPeekIssue } = useIssueDetail();
+
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
