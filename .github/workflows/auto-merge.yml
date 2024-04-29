@@ -12,8 +12,6 @@ env:
   TARGET_BRANCH: ${{ vars.SYNC_TARGET_BRANCH_NAME }} # The target branch that you would like to merge changes like develop
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }} # Personal access token required to modify contents and workflows
   REVIEWER: ${{ vars.SYNC_PR_REVIEWER }}
-  ACCOUNT_USER_NAME: ${{ vars.ACCOUNT_USER_NAME }}
-  ACCOUNT_USER_EMAIL: ${{ vars.ACCOUNT_USER_EMAIL }}
 
 jobs:
   Check_Branch:
@@ -41,11 +39,6 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags
-
-      - name: Setup Git
-        run: |
-          git config user.name "$ACCOUNT_USER_NAME"
-          git config user.email "$ACCOUNT_USER_EMAIL"
 
       - name: Setup GH CLI and Git Config
         run: |
