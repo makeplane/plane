@@ -9,13 +9,9 @@ import { Mails, KeyRound } from "lucide-react";
 import { Loader, setPromiseToast } from "@plane/ui";
 import { TInstanceConfigurationKeys } from "@plane/types";
 // components
-import {
-  AuthenticationMethodCard,
-  EmailCodesConfiguration,
-  PasswordLoginConfiguration,
-  GoogleConfiguration,
-  GithubConfiguration,
-} from "components/authentication";
+import { AuthenticationMethodCard, EmailCodesConfiguration, PasswordLoginConfiguration } from "./components";
+import { GoogleConfiguration } from "./google/components";
+import { GithubConfiguration } from "./github/components";
 import { PageHeader } from "@/components/core";
 // hooks
 import { useInstance } from "@/hooks";

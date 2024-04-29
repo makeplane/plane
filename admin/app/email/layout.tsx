@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 // layouts
-import { AuthLayout } from "@/layouts";
+import { AdminLayout } from "@/layouts";
 // lib
 import { AuthWrapper, InstanceWrapper } from "@/lib/wrappers";
 
@@ -13,7 +13,7 @@ interface EmailLayoutProps {
 const EmailLayout = ({ children }: EmailLayoutProps) => (
   <InstanceWrapper>
     <AuthWrapper>
-      <AuthLayout>{children}</AuthLayout>
+      <AdminLayout>{children}</AdminLayout>
     </AuthWrapper>
   </InstanceWrapper>
 );

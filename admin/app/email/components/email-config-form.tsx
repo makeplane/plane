@@ -6,7 +6,7 @@ import { useInstance } from "@/hooks";
 import { Button, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ControllerInput, TControllerInputFormField } from "components/common";
-import { SendTestEmailModal } from "./send-test-email-modal";
+import { SendTestEmailModal } from "./test-email-modal";
 // types
 import { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
 

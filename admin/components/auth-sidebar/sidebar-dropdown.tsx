@@ -1,19 +1,15 @@
 "use client";
 
 import { Fragment } from "react";
-// import { useRouter } from "next/navigation";
 import { useTheme as useNextTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
-// import { mutate } from "swr";
-// components
-import { Menu, Transition } from "@headlessui/react";
-// icons
 import { LogOut, UserCog2, Palette } from "lucide-react";
+import { Menu, Transition } from "@headlessui/react";
+import { Avatar, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useTheme, useUser } from "@/hooks";
-
-// ui
-import { Avatar, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
 
 export const SidebarDropdown = observer(() => {
   // store hooks
@@ -97,15 +93,17 @@ export const SidebarDropdown = observer(() => {
                 </Menu.Item>
               </div>
               <div className="py-2">
-                <Menu.Item
-                  as="button"
-                  type="button"
-                  className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
-                  onClick={handleSignOut}
-                >
-                  <LogOut className="h-4 w-4 stroke-[1.5]" />
-                  Sign out
-                </Menu.Item>
+                <form method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-out/`}>
+                  <Menu.Item
+                    as="button"
+                    type="button"
+                    className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
+                    onClick={handleSignOut}
+                  >
+                    <LogOut className="h-4 w-4 stroke-[1.5]" />
+                    Sign out
+                  </Menu.Item>
+                </form>
               </div>
             </Menu.Items>
           </Transition>

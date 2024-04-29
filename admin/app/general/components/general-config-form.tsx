@@ -8,12 +8,12 @@ import { ControllerInput } from "components/common";
 // hooks
 import { useInstance } from "@/hooks";
 
-export interface IInstanceGeneralForm {
+export interface IGeneralConfigurationForm {
   instance: IInstance["instance"];
   instanceAdmins: IInstanceAdmin[];
 }
 
-export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
+export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = (props) => {
   const { instance, instanceAdmins } = props;
   // hooks
   const { updateInstanceInfo } = useInstance();

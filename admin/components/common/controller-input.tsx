@@ -29,16 +29,7 @@ export type TControllerInputFormField = {
 };
 
 export const ControllerInput: React.FC<Props> = (props) => {
-  const {
-    name,
-    control,
-    type,
-    label,
-    description,
-    placeholder,
-    error,
-    required,
-  } = props;
+  const { name, control, type, label, description, placeholder, error, required } = props;
   // states
   const [showPassword, setShowPassword] = useState(false);
 
@@ -81,9 +72,7 @@ export const ControllerInput: React.FC<Props> = (props) => {
             </button>
           ))}
       </div>
-      {description && (
-        <p className="text-xs text-custom-text-400">{description}</p>
-      )}
+      {description && <p className="text-xs text-custom-text-400">{description}</p>}
     </div>
   );
 };

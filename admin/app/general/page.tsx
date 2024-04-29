@@ -3,7 +3,7 @@
 import { observer } from "mobx-react-lite";
 // components
 import { PageHeader } from "@/components/core";
-import { InstanceGeneralForm } from "@/components/general";
+import { GeneralConfigurationForm } from "./components";
 // hooks
 import { useInstance } from "@/hooks";
 
@@ -23,7 +23,7 @@ const GeneralPage = observer(() => {
         </div>
         <div className="flex-grow overflow-hidden overflow-y-auto">
           {instance?.instance && instanceAdmins && instanceAdmins?.length > 0 && (
-            <InstanceGeneralForm instance={instance?.instance} instanceAdmins={instanceAdmins} />
+            <GeneralConfigurationForm instance={instance?.instance} instanceAdmins={instanceAdmins} />
           )}
         </div>
       </div>

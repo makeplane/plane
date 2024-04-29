@@ -2,11 +2,11 @@ import { FC, ReactNode } from "react";
 import { InstanceSidebar } from "@/components/auth-sidebar";
 import { InstanceHeader } from "@/components/auth-header";
 
-type TAuthLayout = {
+type TAdminLayout = {
   children: ReactNode;
 };
 
-export const AuthLayout: FC<TAuthLayout> = (props) => {
+export const AdminLayout: FC<TAdminLayout> = (props) => {
   const { children } = props;
 
   return (

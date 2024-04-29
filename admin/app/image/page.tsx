@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { Loader } from "@plane/ui";
 // components
 import { PageHeader } from "@/components/core";
-import { InstanceImageConfigForm } from "components/image";
+import { InstanceImageConfigForm } from "./components";
 // hooks
 import { useInstance } from "@/hooks";
 

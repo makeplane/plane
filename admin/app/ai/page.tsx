@@ -4,8 +4,8 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import { Loader } from "@plane/ui";
 // components
-import { InstanceAIForm } from "components/ai";
 import { PageHeader } from "@/components/core";
+import { InstanceAIForm } from "./components";
 // hooks
 import { useInstance } from "@/hooks";
 

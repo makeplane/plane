@@ -69,12 +69,12 @@ export const SidebarMenu = observer(() => {
                     isActive
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80",
-                    isSidebarCollapsed ? "justify-center" : ""
+                    isSidebarCollapsed ? "justify-center" : "w-[260px]"
                   )}
                 >
                   {<item.Icon className="h-4 w-4 flex-shrink-0" />}
                   {!isSidebarCollapsed && (
-                    <div className="w-full">
+                    <div className="w-full ">
                       <div
                         className={cn(
                           `text-sm font-medium transition-colors`,

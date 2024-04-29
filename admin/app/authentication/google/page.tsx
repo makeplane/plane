@@ -6,8 +6,9 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { AuthenticationMethodCard, InstanceGoogleConfigForm } from "components/authentication";
 import { PageHeader } from "@/components/core";
+import { AuthenticationMethodCard } from "../components";
+import { InstanceGoogleConfigForm } from "./components";
 // hooks
 import { useInstance } from "@/hooks";
 // icons

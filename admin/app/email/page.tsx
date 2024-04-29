@@ -4,8 +4,8 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import { Loader } from "@plane/ui";
 // components
-import { InstanceEmailForm } from "components/email";
 import { PageHeader } from "@/components/core";
+import { InstanceEmailForm } from "./components";
 // hooks
 import { useInstance } from "@/hooks";
 

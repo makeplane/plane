@@ -2,7 +2,7 @@
 import { DefaultLayout } from "@/layouts";
 // components
 import { PageHeader } from "@/components/core";
-import { InstanceSignUpForm } from "@/components/user-authentication-forms";
+import { InstanceSignUpForm } from "./components";
 
 const SetupPage = () => (
   <>

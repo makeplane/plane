@@ -4,7 +4,7 @@
 import { DefaultLayout } from "@/layouts";
 // components
 import { PageHeader } from "@/components/core";
-import { InstanceSignInForm } from "@/components/user-authentication-forms";
+import { InstanceSignInForm } from "./components";
 
 const LoginPage = () => (
   <>

@@ -42,14 +42,15 @@ const nextConfig = {
       },
       {
         source: "/god-mode/:path*",
-        destination: (process.env.GOD_MODE_URL || "") + "/:path*",
-      }
-    ]
-  }
+        destination: (process.env.NEXT_PUBLIC_GOD_MODE || "") + "/:path*",
+      },
+    ];
+  },
 };
 
 if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0", 10)) {
-  module.exports = withSentryConfig(nextConfig,
+  module.exports = withSentryConfig(
+    nextConfig,
     { silent: true, authToken: process.env.SENTRY_AUTH_TOKEN },
     { hideSourceMaps: true }
   );
