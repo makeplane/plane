@@ -1,6 +1,6 @@
 import { FC, Fragment } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { IProjectView } from "@plane/types";
 // ui

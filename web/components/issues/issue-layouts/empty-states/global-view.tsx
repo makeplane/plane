@@ -2,13 +2,13 @@ import { observer } from "mobx-react-lite";
 import { Plus, PlusIcon } from "lucide-react";
 // hooks
 import { EmptyState } from "@/components/common";
+// constants
+import { E_GLOBAL_ISSUES_EMPTY_STATE } from "@/constants/event-tracker";
 import { useApplication, useEventTracker, useProject } from "@/hooks/store";
 // components
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
 import emptyProject from "public/empty-state/project.svg";
-// constants
-import { E_GLOBAL_ISSUES_EMPTY_STATE } from "constants/event-tracker";
 
 export const GlobalViewEmptyState: React.FC = observer(() => {
   // store hooks

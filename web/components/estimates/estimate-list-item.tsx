@@ -6,7 +6,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { IEstimate } from "@plane/types";
 import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ESTIMATE_USED } from "constants/event-tracker";
+import { ESTIMATE_USED } from "@/constants/event-tracker";
 import { orderArrayBy } from "@/helpers/array.helper";
 import { useProject, useEventTracker } from "@/hooks/store";
 // ui

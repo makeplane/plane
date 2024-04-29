@@ -5,13 +5,12 @@ import { Dialog, Transition } from "@headlessui/react";
 import { IUser, IImporterService } from "@plane/types";
 // hooks
 import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
-
-import { useEventTracker, useProject } from "hooks/store";
+// constants
+import { ISSUES_EXPORTED } from "@/constants/event-tracker";
+import { useEventTracker, useProject } from "@/hooks/store";
 // services
 import { ProjectExportService } from "@/services/project";
 // ui
-// constants
-import { ISSUES_EXPORTED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;

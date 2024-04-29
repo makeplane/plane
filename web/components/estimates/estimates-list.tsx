@@ -7,14 +7,14 @@ import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";
 import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "@/components/estimates";
 import { EmptyStateType } from "@/constants/empty-state";
+// constants
+import { ESTIMATE_DISABLED } from "@/constants/event-tracker";
 import { orderArrayBy } from "@/helpers/array.helper";
 import { useEstimate, useProject, useEventTracker } from "@/hooks/store";
 // components
 // ui
 // types
 // helpers
-// constants
-import { ESTIMATE_DISABLED } from "constants/event-tracker";
 
 export const EstimatesList: React.FC = observer(() => {
   // states

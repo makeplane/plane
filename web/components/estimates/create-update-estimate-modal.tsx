@@ -7,7 +7,7 @@ import { IEstimate, IEstimateFormData } from "@plane/types";
 // store hooks
 import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ESTIMATE_CREATED, ESTIMATE_UPDATED } from "constants/event-tracker";
+import { ESTIMATE_CREATED, ESTIMATE_UPDATED } from "@/constants/event-tracker";
 import { checkDuplicates } from "@/helpers/array.helper";
 import { useEstimate, useEventTracker } from "@/hooks/store";
 // ui

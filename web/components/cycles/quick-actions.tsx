@@ -8,7 +8,7 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveCycleModal, CycleCreateUpdateModal, CycleDeleteModal } from "@/components/cycles";
 // constants
-import { E_CYCLES_LIST_LAYOUT } from "constants/event-tracker";
+import { E_CYCLES_LIST_LAYOUT } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";

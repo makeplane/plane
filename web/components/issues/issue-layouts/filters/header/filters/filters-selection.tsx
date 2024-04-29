@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
-// hooks
-import useDebounce from "hooks/use-debounce";
+
 import {
   FilterAssignees,
   FilterMentions,
@@ -19,7 +18,9 @@ import {
   FilterModule,
 } from "@/components/issues";
 import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
+// hooks
 import { useApplication } from "@/hooks/store";
+import useDebounce from "@/hooks/use-debounce";
 // components
 // types
 // constants

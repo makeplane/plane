@@ -16,9 +16,9 @@ import CyclesListMobileHeader from "@/components/cycles/cycles-list-mobile-heade
 import { EmptyState } from "@/components/empty-state";
 import { CyclesHeader } from "@/components/headers";
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
-import { E_CYCLES_EMPTY_STATE } from "@/constants/event-tracker";
 import { CYCLE_TABS_LIST } from "@/constants/cycle";
 import { EmptyStateType } from "@/constants/empty-state";
+import { E_CYCLES_EMPTY_STATE } from "@/constants/event-tracker";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { useEventTracker, useCycle, useProject, useCycleFilter } from "@/hooks/store";
 // layouts

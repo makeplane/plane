@@ -18,7 +18,7 @@ import { CreateUpdateProjectViewModal } from "@/components/views";
 // helpers
 // services
 // fetch keys
-import { E_SHORTCUT_KEY } from "constants/event-tracker";
+import { E_SHORTCUT_KEY } from "@/constants/event-tracker";
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";

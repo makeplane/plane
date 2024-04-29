@@ -13,7 +13,7 @@ import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover } from "@/components/core";
 import { PriorityDropdown } from "@/components/dropdowns";
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
-import { E_INBOX, ISSUE_CREATED } from "constants/event-tracker";
+import { E_INBOX, ISSUE_CREATED } from "@/constants/event-tracker";
 import { useApplication, useEventTracker, useWorkspace, useProjectInbox } from "@/hooks/store";
 // services
 import { AIService } from "@/services/ai.service";

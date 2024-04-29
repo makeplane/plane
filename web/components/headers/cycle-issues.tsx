@@ -11,6 +11,18 @@ import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 import { ProjectLogo } from "@/components/project";
+// constants
+import {
+  DP_APPLIED,
+  DP_REMOVED,
+  E_CYCLE_ISSUES,
+  elementFromPath,
+  FILTER_APPLIED,
+  FILTER_REMOVED,
+  FILTER_SEARCHED,
+  LAYOUT_CHANGED,
+  LP_UPDATED,
+} from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { cn } from "@/helpers/common.helper";
@@ -32,18 +44,6 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // helpers
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// constants
-import {
-  DP_APPLIED,
-  DP_REMOVED,
-  E_CYCLE_ISSUES,
-  elementFromPath,
-  FILTER_APPLIED,
-  FILTER_REMOVED,
-  FILTER_SEARCHED,
-  LAYOUT_CHANGED,
-  LP_UPDATED,
-} from "constants/event-tracker";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
@@ -274,9 +274,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     className="ml-1.5 flex-shrink-0 truncate"
                     placement="bottom-start"
                   >
-                    {currentProjectCycleIds?.map((cycleId) => (
-                      <CycleDropdownOption key={cycleId} cycleId={cycleId} />
-                    ))}
+                    {currentProjectCycleIds?.map((cycleId) => <CycleDropdownOption key={cycleId} cycleId={cycleId} />)}
                   </CustomMenu>
                 }
               />

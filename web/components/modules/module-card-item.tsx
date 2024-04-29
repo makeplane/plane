@@ -9,7 +9,7 @@ import { Avatar, AvatarGroup, LayersIcon, Tooltip, setPromiseToast } from "@plan
 import { FavoriteStar } from "@/components/core";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
-import { E_GRID_LAYOUT, E_MODULES_GRID_LAYOUT, MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
+import { E_GRID_LAYOUT, MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
@@ -139,8 +139,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === moduleDetails.completed_issues
-      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-      : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
+        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   return (

@@ -7,15 +7,15 @@ import { TRecentProjectsWidgetResponse } from "@plane/types";
 import { Avatar, AvatarGroup } from "@plane/ui";
 import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 import { ProjectLogo } from "@/components/project";
+// constants
 import { PROJECT_BACKGROUND_COLORS } from "@/constants/dashboard";
+import { E_SIDEBAR } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
 // components
 // ui
 // helpers
 // types
-// constants
-import { E_SIDEBAR } from "constants/event-tracker";
 
 const WIDGET_KEY = "recent_projects";
 

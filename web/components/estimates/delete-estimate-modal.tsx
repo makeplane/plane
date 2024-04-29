@@ -6,11 +6,11 @@ import { Dialog, Transition } from "@headlessui/react";
 import { IEstimate } from "@plane/types";
 // store hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { useEstimate, useEventTracker } from "hooks/store";
+// constants
+import { ESTIMATE_DELETED } from "@/constants/event-tracker";
+import { useEstimate, useEventTracker } from "@/hooks/store";
 // types
 // ui
-// constants
-import { ESTIMATE_DELETED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;

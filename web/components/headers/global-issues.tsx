@@ -21,7 +21,7 @@ import {
   FILTER_REMOVED,
   FILTER_SEARCHED,
   LP_UPDATED,
-} from "constants/event-tracker";
+} from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { useLabel, useMember, useUser, useIssues, useEventTracker } from "@/hooks/store";

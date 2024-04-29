@@ -22,12 +22,12 @@ import {
 } from "@/components/integration";
 // icons
 // images
-import { GITHUB_ISSUES_IMPORTED } from "constants/event-tracker";
+import { GITHUB_ISSUES_IMPORTED } from "@/constants/event-tracker";
 import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
+// hooks
+import { useEventTracker } from "@/hooks/store";
 import { IntegrationService, GithubIntegrationService } from "@/services/integrations";
 import GithubLogo from "public/services/github.png";
-// hooks
-import { useEventTracker } from "hooks/store";
 // components
 // icons
 // images

@@ -7,7 +7,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { WEBHOOK_DELETED } from "@/constants/event-tracker";
 // hooks
-import { useWebhook } from "@/hooks/store";
+import { useWebhook, useEventTracker } from "@/hooks/store";
 
 interface IDeleteWebhook {
   isOpen: boolean;

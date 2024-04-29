@@ -19,10 +19,10 @@ import {
   UsersIcon,
   Inbox,
 } from "lucide-react";
-// constants
-import { ISSUE_OPENED, elementFromPath } from "constants/event-tracker";
 import { IIssueActivity } from "@plane/types";
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
+// constants
+import { ISSUE_OPENED, elementFromPath } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";

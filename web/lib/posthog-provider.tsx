@@ -5,8 +5,6 @@ import { PostHogProvider as PHProvider } from "posthog-js/react";
 import { IUser } from "@plane/types";
 // constants
 import { GROUP_WORKSPACE } from "@/constants/event-tracker";
-// helpers
-import { getUserRole } from "@/helpers/user.helper";
 // types
 
 export interface IPosthogWrapper {

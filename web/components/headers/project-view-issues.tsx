@@ -24,7 +24,7 @@ import {
   FILTER_SEARCHED,
   LAYOUT_CHANGED,
   LP_UPDATED,
-} from "constants/event-tracker";
+} from "@/constants/event-tracker";
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { truncateText } from "@/helpers/string.helper";

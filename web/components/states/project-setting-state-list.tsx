@@ -7,7 +7,7 @@ import { Plus } from "lucide-react";
 import { Loader } from "@plane/ui";
 import { CreateUpdateStateInline, DeleteStateModal, StateGroup, StatesListItem } from "@/components/states";
 // constants
-import { E_STATES } from "constants/event-tracker";
+import { E_STATES } from "@/constants/event-tracker";
 import { STATES_LIST } from "@/constants/fetch-keys";
 import { sortByField } from "@/helpers/array.helper";
 import { orderStateGroups } from "@/helpers/state.helper";

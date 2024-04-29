@@ -10,12 +10,11 @@ import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
+import { E_KANBAN_LAYOUT } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // types
 import { KanbanStoreType } from "../base-kanban-root";
-// constants
-import { E_KANBAN_LAYOUT } from "constants/event-tracker";
 
 interface IHeaderGroupByCard {
   sub_group_by: TIssueGroupByOptions | undefined;

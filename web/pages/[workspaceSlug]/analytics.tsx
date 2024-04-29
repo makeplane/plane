@@ -12,8 +12,8 @@ import { WorkspaceAnalyticsHeader } from "@/components/headers";
 // type
 // constants
 import { ANALYTICS_TABS } from "@/constants/analytics";
-import { E_ANALYTICS_EMPTY_STATE } from "@/constants/event-tracker";
 import { EmptyStateType } from "@/constants/empty-state"
+import { E_ANALYTICS_EMPTY_STATE } from "@/constants/event-tracker";
 import { useApplication, useEventTracker, useProject, useWorkspace } from "@/hooks/store";
 import { AppLayout } from "@/layouts/app-layout";
 import { NextPageWithLayout } from "@/lib/types";

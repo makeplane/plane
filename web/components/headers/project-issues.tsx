@@ -9,6 +9,18 @@ import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 import { ProjectLogo } from "@/components/project";
+// constants
+import {
+  DP_APPLIED,
+  DP_REMOVED,
+  E_PROJECT_ISSUES,
+  elementFromPath,
+  FILTER_APPLIED,
+  FILTER_REMOVED,
+  FILTER_SEARCHED,
+  LAYOUT_CHANGED,
+  LP_UPDATED,
+} from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import {
@@ -25,18 +37,6 @@ import { useIssues } from "@/hooks/store/use-issues";
 // ui
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// constants
-import {
-  DP_APPLIED,
-  DP_REMOVED,
-  E_PROJECT_ISSUES,
-  elementFromPath,
-  FILTER_APPLIED,
-  FILTER_REMOVED,
-  FILTER_SEARCHED,
-  LAYOUT_CHANGED,
-  LP_UPDATED,
-} from "constants/event-tracker";
 // helper
 
 export const ProjectIssuesHeader: React.FC = observer(() => {

@@ -1,13 +1,13 @@
 import { FC, useMemo } from "react";
 // hooks
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+// constants
+import { E_ISSUE_DETAILS } from "@/constants/event-tracker";
 import { useEventTracker, useIssueDetail } from "@/hooks/store";
 // ui
 // components
 import { IssueAttachmentUpload } from "./attachment-upload";
 import { IssueAttachmentsList } from "./attachments-list";
-// constants
-import { E_ISSUE_DETAILS } from "constants/event-tracker";
 
 export type TIssueAttachmentRoot = {
   workspaceSlug: string;

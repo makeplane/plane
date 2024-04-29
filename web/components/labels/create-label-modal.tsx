@@ -8,14 +8,14 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 import type { IIssueLabel, IState } from "@plane/types";
 // hooks
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { E_LABELS, LABEL_CREATED } from "@/constants/event-tracker";
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@/constants/label";
 import { useLabel, useEventTracker } from "@/hooks/store";
 // ui
 // types
-// constants
-import { E_LABELS, LABEL_CREATED } from "constants/event-tracker";
-
 // types
+
 type Props = {
   isOpen: boolean;
   projectId: string;

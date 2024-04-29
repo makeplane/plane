@@ -20,7 +20,7 @@ import {
 } from "@/components/issues";
 import { ActiveLoader } from "@/components/ui";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useEventTracker, useIssues } from "hooks/store";
 // types
 

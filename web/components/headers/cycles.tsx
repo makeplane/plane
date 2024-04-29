@@ -10,7 +10,7 @@ import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 import { ProjectLogo } from "@/components/project";
 // constants
-import { E_CYCLES } from "constants/event-tracker";
+import { E_CYCLES } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
 

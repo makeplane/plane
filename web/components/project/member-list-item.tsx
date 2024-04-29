@@ -12,10 +12,10 @@ import { ConfirmProjectMemberRemove } from "@/components/project";
 import { E_PROJECT_MEMBERS, PM_ROLE_CHANGED, PROJECT_MEMBER_LEFT, PROJECT_MEMBER_REMOVED } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 import { ROLE } from "@/constants/workspace";
+import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useProject, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { getUserRole } from "@/helpers/user.helper";
 
 type Props = {
   userId: string;

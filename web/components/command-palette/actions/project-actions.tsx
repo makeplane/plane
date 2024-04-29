@@ -1,9 +1,9 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText } from "lucide-react";
-// constants
-import { E_COMMAND_PALETTE } from "constants/event-tracker";
-// hooks
 import { DiceIcon, PhotoFilterIcon } from "@plane/ui";
+// constants
+import { E_COMMAND_PALETTE } from "@/constants/event-tracker";
+// hooks
 import { useApplication, useEventTracker } from "@/hooks/store";
 // ui
 

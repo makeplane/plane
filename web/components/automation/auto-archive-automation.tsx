@@ -8,7 +8,7 @@ import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 import { SelectMonthModal } from "@/components/automation";
 // icon
 // constants
-import { AUTO_ARCHIVE_TOGGLED, AUTO_ARCHIVE_UPDATED } from "constants/event-tracker";
+import { AUTO_ARCHIVE_TOGGLED, AUTO_ARCHIVE_UPDATED } from "@/constants/event-tracker";
 import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
 import { useEventTracker, useProject, useUser } from "@/hooks/store";
 // types

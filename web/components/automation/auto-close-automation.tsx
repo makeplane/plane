@@ -6,7 +6,7 @@ import { IProject } from "@plane/types";
 import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon, Loader } from "@plane/ui";
 import { SelectMonthModal } from "@/components/automation";
 // constants
-import { AUTO_CLOSE_Toggled, AUTO_CLOSE_UPDATED } from "constants/event-tracker";
+import { AUTO_CLOSE_Toggled, AUTO_CLOSE_UPDATED } from "@/constants/event-tracker";
 import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
 import { useEventTracker, useProject, useProjectState, useUser } from "@/hooks/store";
 // component

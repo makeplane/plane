@@ -6,7 +6,7 @@ import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { EmptyState } from "@/components/common";
 import { IssuePeekOverview } from "@/components/issues";
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, E_ISSUE_DETAILS } from "constants/event-tracker";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, E_ISSUE_DETAILS } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";

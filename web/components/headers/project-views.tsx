@@ -7,7 +7,7 @@ import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // helpers
 import { ProjectLogo } from "@/components/project";
-import { E_VIEWS } from "constants/event-tracker";
+import { E_VIEWS } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // constants
 import { useApplication, useProject, useUser, useEventTracker } from "@/hooks/store";

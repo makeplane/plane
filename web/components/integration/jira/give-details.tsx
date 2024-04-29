@@ -8,7 +8,7 @@ import { IJiraImporterForm } from "@plane/types";
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // constants
-import { E_JIRA_IMPORT } from "constants/event-tracker";
+import { E_JIRA_IMPORT } from "@/constants/event-tracker";
 // helpers
 import { checkEmailValidity } from "@/helpers/string.helper";
 import { useApplication, useEventTracker, useProject } from "@/hooks/store";

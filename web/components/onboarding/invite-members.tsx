@@ -26,7 +26,7 @@ import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 // helpers
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { useEventTracker, useApplication } from "@/hooks/store";
 import useDynamicDropdownPosition from "@/hooks/use-dynamic-dropdown";
 // assets
 import { WorkspaceService } from "@/services/workspace.service";

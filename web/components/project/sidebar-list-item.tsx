@@ -31,7 +31,7 @@ import {
 } from "@plane/ui";
 import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "@/components/project";
 // constants
-import { E_SIDEBAR } from "constants/event-tracker";
+import { E_SIDEBAR } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 import { cn } from "@/helpers/common.helper";
 // hooks

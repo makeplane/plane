@@ -11,7 +11,7 @@ import { BreadcrumbLink } from "@/components/common";
 // constants
 import { FiltersDropdown } from "@/components/issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
-import { E_PROJECTS } from "constants/event-tracker";
+import { E_PROJECTS } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
 import { useApplication, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";

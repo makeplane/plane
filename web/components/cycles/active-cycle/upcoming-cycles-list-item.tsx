@@ -8,7 +8,7 @@ import { Avatar, AvatarGroup, setPromiseToast } from "@plane/ui";
 import { FavoriteStar } from "@/components/core";
 import { CycleQuickActions } from "@/components/cycles";
 // constants
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, E_LIST_LAYOUT } from "constants/event-tracker";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, E_LIST_LAYOUT } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks

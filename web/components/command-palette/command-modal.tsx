@@ -21,7 +21,9 @@ import {
   CommandPaletteSearchResults,
 } from "@/components/command-palette";
 import { EmptyState } from "@/components/empty-state";
+// constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { E_COMMAND_PALETTE } from "@/constants/event-tracker";
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 import { useApplication, useEventTracker, useProject } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";
@@ -33,8 +35,6 @@ import { WorkspaceService } from "@/services/workspace.service";
 // components
 // types
 // fetch-keys
-// constants
-import { E_COMMAND_PALETTE } from "constants/event-tracker";
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();

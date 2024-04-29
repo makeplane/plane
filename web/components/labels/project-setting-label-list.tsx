@@ -12,7 +12,7 @@ import {
   ProjectSettingLabelItem,
 } from "@/components/labels";
 import { EmptyStateType } from "@/constants/empty-state";
-import { useLabel, useEventTracker } from "@/hooks/store";
+import { useLabel } from "@/hooks/store";
 // components
 // ui
 // types
@@ -29,8 +29,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { projectLabels, updateLabelPosition, projectLabelsTree, getLabelById } = useLabel();
-  const { captureLabelDragNDropEvent } = useEventTracker();
+  const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
 
   const newLabel = () => {
     setIsUpdating(false);

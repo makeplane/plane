@@ -8,7 +8,7 @@ import { ISearchIssueResponse, TIssue } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast, CustomMenu } from "@plane/ui";
 import { ExistingIssuesListModal } from "@/components/core";
 // hooks
-import { E_CALENDAR_QUICK_ADD, ISSUE_CREATED } from "constants/event-tracker";
+import { E_CALENDAR_QUICK_ADD, ISSUE_CREATED } from "@/constants/event-tracker";
 import { cn } from "@/helpers/common.helper";
 import { createIssuePayload } from "@/helpers/issue.helper";
 import { useEventTracker, useIssueDetail, useProject } from "@/hooks/store";

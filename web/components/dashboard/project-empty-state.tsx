@@ -2,13 +2,13 @@ import { observer } from "mobx-react-lite";
 import Image from "next/image";
 // hooks
 import { Button } from "@plane/ui";
+// constants
+import { E_PROJECT_EMPTY_STATE } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { useApplication, useEventTracker, useUser } from "@/hooks/store";
 // ui
 // assets
 import ProjectEmptyStateImage from "public/empty-state/dashboard/project.svg";
-// constants
-import { E_PROJECT_EMPTY_STATE } from "constants/event-tracker";
 
 export const DashboardProjectEmptyState = observer(() => {
   // store hooks

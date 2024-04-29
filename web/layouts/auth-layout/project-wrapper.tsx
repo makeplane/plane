@@ -24,7 +24,7 @@ import {
 // images
 import emptyProject from "public/empty-state/project.svg";
 // constants
-import { E_PAGES_EMPTY_STATE } from "constants/event-tracker";
+import { E_PAGES_EMPTY_STATE } from "@/constants/event-tracker";
 
 interface IProjectAuthWrapper {
   children: ReactNode;

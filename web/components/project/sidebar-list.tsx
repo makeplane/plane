@@ -9,7 +9,7 @@ import { IProject } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CreateProjectModal, ProjectSidebarListItem } from "@/components/project";
 // constants
-import { E_SIDEBAR } from "constants/event-tracker";
+import { E_SIDEBAR } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
 import { orderJoinedProjects } from "@/helpers/project.helper";

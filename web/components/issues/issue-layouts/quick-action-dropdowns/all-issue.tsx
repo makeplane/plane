@@ -9,6 +9,8 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // ui
 // components
+// constants
+import { E_GLOBAL_ISSUES } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
@@ -17,8 +19,6 @@ import { useEventTracker, useProjectState } from "@/hooks/store";
 // helpers
 // types
 import { IQuickActionProps } from "../list/list-view-types";
-// constants
-import { E_GLOBAL_ISSUES } from "constants/event-tracker";
 
 export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {

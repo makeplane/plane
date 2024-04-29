@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { History, LucideIcon, MessageCircle } from "lucide-react";
 // types
 import { TIssueComment } from "@plane/types";
@@ -9,7 +9,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { IssueActivityCommentRoot, IssueCommentRoot, IssueCommentCreate } from "@/components/issues";
 // constants
-import { COMMENT_CREATED, COMMENT_DELETED, COMMENT_UPDATED } from "constants/event-tracker";
+import { COMMENT_CREATED, COMMENT_DELETED, COMMENT_UPDATED } from "@/constants/event-tracker";
 // hooks
 import { useIssueDetail, useProject, useEventTracker } from "@/hooks/store";
 

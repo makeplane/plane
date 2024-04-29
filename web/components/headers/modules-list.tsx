@@ -9,7 +9,7 @@ import { BreadcrumbLink } from "@/components/common";
 import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
 import { ProjectLogo } from "@/components/project";
-import { E_MODULES } from "constants/event-tracker";
+import { E_MODULES } from "@/constants/event-tracker";
 import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 import { cn } from "@/helpers/common.helper";

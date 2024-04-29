@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
 // hooks
 import { CycleDropdown } from "@/components/dropdowns";
+// constants
+import { E_SPREADSHEET_LAYOUT } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 import { useEventTracker, useIssues } from "@/hooks/store";
 // components
 // types
-// constants
-import { E_SPREADSHEET_LAYOUT } from "constants/event-tracker";
 
 type Props = {
   issue: TIssue;

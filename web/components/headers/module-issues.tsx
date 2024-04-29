@@ -10,6 +10,18 @@ import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 import { ProjectLogo } from "@/components/project";
+// constants
+import {
+  DP_APPLIED,
+  DP_REMOVED,
+  E_MODULE_ISSUES,
+  elementFromPath,
+  FILTER_APPLIED,
+  FILTER_REMOVED,
+  FILTER_SEARCHED,
+  LAYOUT_CHANGED,
+  LP_UPDATED,
+} from "@/constants/event-tracker";
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { cn } from "@/helpers/common.helper";
@@ -33,18 +45,6 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // helpers
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// constants
-import {
-  DP_APPLIED,
-  DP_REMOVED,
-  E_MODULE_ISSUES,
-  elementFromPath,
-  FILTER_APPLIED,
-  FILTER_REMOVED,
-  FILTER_SEARCHED,
-  LAYOUT_CHANGED,
-  LP_UPDATED,
-} from "constants/event-tracker";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -273,9 +273,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     className="ml-1.5 flex-shrink-0"
                     placement="bottom-start"
                   >
-                    {projectModuleIds?.map((moduleId) => (
-                      <ModuleDropdownOption key={moduleId} moduleId={moduleId} />
-                    ))}
+                    {projectModuleIds?.map((moduleId) => <ModuleDropdownOption key={moduleId} moduleId={moduleId} />)}
                   </CustomMenu>
                 }
               />

@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { IProjectView } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { E_VIEWS, VIEW_DELETED } from "constants/event-tracker";
+import { E_VIEWS, VIEW_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useProjectView, useEventTracker } from "@/hooks/store";
 // types

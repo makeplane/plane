@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
-// hooks
-import { useEventTracker } from "hooks/store";
 // icons
 import { ArrowLeft, Check, List, Settings } from "lucide-react";
 import { IJiraImporterForm } from "@plane/types";
@@ -13,7 +11,11 @@ import { IJiraImporterForm } from "@plane/types";
 // fetch keys
 // components
 import { Button, UserGroupIcon } from "@plane/ui";
+// constants
+import { JIRA_ISSUES_IMPORTED } from "@/constants/event-tracker";
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+// hooks
+import { useEventTracker } from "@/hooks/store";
 // assets
 import { JiraImporterService } from "@/services/integrations";
 import JiraLogo from "public/services/jira.svg";
@@ -27,8 +29,6 @@ import {
   TJiraIntegrationSteps,
   IJiraIntegrationData,
 } from ".";
-// constants
-import { JIRA_ISSUES_IMPORTED } from "constants/event-tracker";
 
 const integrationWorkflowData: Array<{
   title: string;

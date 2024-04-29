@@ -6,8 +6,8 @@ import { FileText, Plus } from "lucide-react";
 import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
 import { BreadcrumbLink } from "@/components/common";
-import { E_PAGES } from "constants/event-tracker";
 import { ProjectLogo } from "@/components/project";
+import { E_PAGES } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // constants
 // components

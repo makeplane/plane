@@ -13,7 +13,7 @@ import { FavoriteStar } from "@/components/core";
 import { CycleQuickActions } from "@/components/cycles";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, E_LIST_LAYOUT } from "constants/event-tracker";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, E_LIST_LAYOUT } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { findHowManyDaysLeft, getDate, renderFormattedDate } from "@/helpers/date-time.helper";

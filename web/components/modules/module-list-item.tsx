@@ -9,7 +9,7 @@ import { Avatar, AvatarGroup, CircularProgressIndicator, Tooltip, setPromiseToas
 import { FavoriteStar } from "@/components/core";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
-import { E_GRID_LAYOUT, E_MODULES_LIST_LAYOUT, MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
+import { E_GRID_LAYOUT, MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers

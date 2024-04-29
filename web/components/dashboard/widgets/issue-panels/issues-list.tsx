@@ -15,7 +15,7 @@ import {
   IssueListItemProps,
 } from "@/components/dashboard/widgets";
 // constants
-import { E_DASHBOARD, ISSUE_OPENED } from "constants/event-tracker";
+import { E_DASHBOARD, ISSUE_OPENED } from "@/constants/event-tracker";
 // ui
 // helpers
 import { cn } from "@/helpers/common.helper";

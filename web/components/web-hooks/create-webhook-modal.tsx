@@ -4,18 +4,18 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// hooks
-import { useEventTracker } from "hooks/store";
-// components
+// constants
+import { WEBHOOK_CREATED } from "@/constants/event-tracker";
 // helpers
 import { csvDownload } from "@/helpers/download.helper";
+// hooks
+import { useEventTracker } from "@/hooks/store";
+// components
 // types
 import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
 // utils
 import { getCurrentHookAsCSV } from "./utils";
-// constants
-import { WEBHOOK_CREATED } from "constants/event-tracker";
 // ui
 
 interface ICreateWebhookModal {
