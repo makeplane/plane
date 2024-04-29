@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { InstanceSidebar } from "@/components/auth-sidebar";
+import { InstanceSidebar } from "@/components/admin-sidebar";
 import { InstanceHeader } from "@/components/auth-header";
 
 type TAdminLayout = {
