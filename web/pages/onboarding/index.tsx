@@ -143,7 +143,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title="Onboarding" />
-      {user && totalSteps && step !== null ? (
+      {user && totalSteps && step !== null && invitations ? (
         <div className={`flex h-full w-full flex-col`}>
           {step === EOnboardingSteps.PROFILE_SETUP ? (
             <ProfileSetup
@@ -152,7 +152,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
               stepChange={stepChange}
               finishOnboarding={finishOnboarding}
             />
-          ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN && invitations ? (
+          ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN ? (
             <CreateOrJoinWorkspaces invitations={invitations} totalSteps={totalSteps} stepChange={stepChange} />
           ) : step === EOnboardingSteps.WORKSPACE_INVITE ? (
             <InviteMembers

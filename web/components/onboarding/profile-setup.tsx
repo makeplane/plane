@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
-import { Eye, EyeOff, Sparkles } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 // types
 import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
@@ -21,7 +22,8 @@ import { useEventTracker, useUser, useUserProfile } from "@/hooks/store";
 import { AuthService } from "@/services/auth.service";
 import { FileService } from "@/services/file.service";
 // assets
-import profileSetup from "public/onboarding/profile-setup.png";
+import ProfileSetupDark from "public/onboarding/profile-setup-dark.svg";
+import ProfileSetupLight from "public/onboarding/profile-setup-light.svg";
 
 type TProfileSetupFormValues = {
   first_name: string;
@@ -69,6 +71,8 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  // hooks
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { updateCurrentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
@@ -185,7 +189,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
 
   return (
     <div className="flex h-full w-full">
-      <div className="w-full lg:w-3/5 h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
+      <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="flex items-center justify-between">
           <OnboardingHeader currentStep={1} totalSteps={totalSteps} />
           <div className="shrink-0 lg:hidden">
@@ -432,14 +436,14 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
           </form>
         </div>
       </div>
-      <div className="hidden lg:block relative w-2/5 px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28 bg-onboarding-gradient-100">
+      <div className="hidden lg:block relative w-2/5 h-screen overflow-hidden px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <SwitchOrDeleteAccountDropdown fullName={`${watch("first_name")} ${watch("last_name")}`} />
-        <div className="absolute right-0 bottom-0 flex flex-col items-start justify-end w-3/4 ">
-          <div className="flex gap-2 pb-1 pr-2 text-base text-custom-primary-300 font-medium w-3/4 self-end">
-            <Sparkles className="h-6 w-6" />
-            Let your team assign, mention and discuss how your work is progressing.
-          </div>
-          <Image src={profileSetup} alt="profile-setup" />
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={resolvedTheme === "dark" ? ProfileSetupDark : ProfileSetupLight}
+            className="h-screen w-auto float-end object-cover"
+            alt="Profile setup"
+          />
         </div>
       </div>
     </div>

@@ -4,7 +4,6 @@ export * from "./create-or-join-workspaces";
 export * from "./profile-setup";
 export * from "./create-workspace";
 export * from "./invitations";
-export * from "./onboarding-sidebar";
 export * from "./step-indicator";
 export * from "./switch-or-delete-account-dropdown";
 export * from "./switch-delete-account-modal";
