@@ -74,10 +74,8 @@ jobs:
       - name: Merge Change to Target Branch
         if: env.HAS_CONFLICTS == 'false'
         run: |
-          git config user.name "$ACCOUNT_USER_NAME"
-          git config user.email "$ACCOUNT_USER_EMAIL"
           git commit -m "Merge branch '$SOURCE_BRANCH' into $TARGET_BRANCH"
-          git push origin $TARGET_BRANCH
+          git push origin HEAD:$TARGET_BRANCH
 
       - name: Create PR to Target Branch
         if: env.HAS_CONFLICTS == 'true'
