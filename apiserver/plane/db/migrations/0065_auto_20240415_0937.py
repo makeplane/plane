@@ -257,4 +257,87 @@ class Migration(migrations.Migration):
             model_name="user",
             name="use_case",
         ),
+        migrations.CreateModel(
+            name="Site",
+            fields=[
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("name", models.CharField(max_length=80)),
+                ("description", models.TextField(blank=True)),
+                ("use_case", models.TextField(blank=True)),
+                ("domain", models.TextField(blank=True)),
+                ("user_count", models.IntegerField(default=1)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="sites",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+            ],
+            options={
+                "abstract": False,
+                "verbose_name": "Site",
+                "verbose_name_plural": "Sites",
+                "db_table": "sites",
+                "ordering": ("-created_at",),
+            },
+        ),
+        migrations.AddField(
+            model_name="workspace",
+            name="site",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="workspaces",
+                to="db.site",
+            ),
+        ),
+        migrations.AddField(
+            model_name="workspace",
+            name="is_primary",
+            field=models.BooleanField(default=False),
+        ),
     ]

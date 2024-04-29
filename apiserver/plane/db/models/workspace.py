@@ -144,6 +144,12 @@ class Site(BaseModel):
         """Return name of site"""
         return self.name
 
+    class Meta:
+        verbose_name = "Site"
+        verbose_name_plural = "Sites"
+        db_table = "sites"
+        ordering = ("-created_at",)
+
 
 class Workspace(BaseModel):
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
@@ -163,12 +169,23 @@ class Workspace(BaseModel):
     )
     organization_size = models.CharField(max_length=20, blank=True, null=True)
     site = models.ForeignKey(
-        "db.Site", on_delete=models.CASCADE, related_name="workspaces"
+        "db.Site",
+        on_delete=models.CASCADE,
+        related_name="workspaces",
+        null=True,
     )
+    is_primary = models.BooleanField(default=False)
 
     def __str__(self):
         """Return name of the Workspace"""
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.is_primary:
+            Workspace.objects.filter(site_id=self.site_id).update(
+                is_primary=False
+            )
+        super(Workspace, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Workspace"

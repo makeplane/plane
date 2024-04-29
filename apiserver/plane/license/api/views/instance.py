@@ -155,6 +155,9 @@ class InstanceEndpoint(BaseAPIView):
         )
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() > 1
+        instance_data["primary_workspace"] = Workspace.objects.filter(
+            is_primary=True
+        ).exists()
 
         response_data = {"config": data, "instance": instance_data}
         return Response(response_data, status=status.HTTP_200_OK)

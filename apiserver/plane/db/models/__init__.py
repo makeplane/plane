@@ -75,6 +75,7 @@ from .workspace import (
     WorkspaceMemberInvite,
     WorkspaceTheme,
     WorkspaceUserProperties,
+    Site,
 )
 
 from .importer import Importer

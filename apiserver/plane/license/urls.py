@@ -10,6 +10,8 @@ from plane.license.api.views import (
     SignUpScreenVisitedEndpoint,
     InstanceAdminUserMeEndpoint,
     InstanceAdminSignOutEndpoint,
+    InstanceWorkspacesEndpoint,
+    PrimaryWorkspaceEndpoint,
 )
 
 urlpatterns = [
@@ -62,5 +64,15 @@ urlpatterns = [
         "email-credentials-check/",
         EmailCredentialCheckEndpoint.as_view(),
         name="email-credential-check",
+    ),
+    path(
+        "workspaces/",
+        InstanceWorkspacesEndpoint.as_view(),
+        name="instance-workspaces",
+    ),
+    path(
+        "primary-workspace/",
+        PrimaryWorkspaceEndpoint.as_view(),
+        name="primary-workspace",
     ),
 ]

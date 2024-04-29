@@ -25,7 +25,7 @@ from plane.license.api.serializers import (
     InstanceAdminSerializer,
 )
 from plane.license.models import Instance, InstanceAdmin
-from plane.db.models import User, Profile
+from plane.db.models import User, Profile, Workspace, Site
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.authentication.utils.login import user_login
 from plane.authentication.utils.host import base_host
@@ -392,3 +392,58 @@ class InstanceAdminSignOutEndpoint(View):
             "god-mode/login?" + urlencode({"success": "true"}),
         )
         return HttpResponseRedirect(url)
+
+
+class InstanceWorkspacesEndpoint(BaseAPIView):
+    permission_classes = [
+        InstanceAdminPermission,
+    ]
+
+    def get(self, request):
+        workspace = Workspace.objects.values()
+        return Response(workspace, status=status.HTTP_200_OK)
+
+
+class PrimaryWorkspaceEndpoint(BaseAPIView):
+
+    permission_classes = [
+        InstanceAdminPermission,
+    ]
+
+    def post(self, request):
+        # Get the id of the primary workspace
+        primary_workspace_id = request.data.get("primary_workspace_id", False)
+
+        # Throw error is the primary workspace is not specified
+        if not primary_workspace_id:
+            return Response(
+                {"error": "Primary workspace id is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the primary workspace
+        primary_workspace = Workspace.objects.get(pk=primary_workspace_id)
+
+        # Check if the site exists or not
+        site = Site.objects.first()
+        if not site:
+            # Create a Site
+            site = Site.objects.create(
+                name=primary_workspace.name,
+                owner=primary_workspace.owner,
+                domain=f"{request.get_host()}",
+                user_count=User.objects.count(),
+            )
+
+        # Attach this site to all workspaces
+        Workspace.objects.update(site=site, is_primary=False)
+
+        # Update the primary workspace
+        primary_workspace.is_primary = True
+        primary_workspace.site = site
+        primary_workspace.save()
+
+        return Response(
+            {"message": "Primary workspace created succesfully"},
+            status=status.HTTP_200_OK,
+        )

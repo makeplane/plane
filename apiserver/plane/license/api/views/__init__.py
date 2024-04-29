@@ -16,4 +16,6 @@ from .admin import (
     InstanceAdminSignUpEndpoint,
     InstanceAdminUserMeEndpoint,
     InstanceAdminSignOutEndpoint,
+    InstanceWorkspacesEndpoint,
+    PrimaryWorkspaceEndpoint,
 )
