@@ -31,7 +31,7 @@ interface IDocumentEditor {
     suggestions: () => Promise<IMentionSuggestion[]>;
   };
   tabIndex?: number;
-  placeholder?: string | ((isFocused: boolean) => string);
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
 }
 
 const DocumentEditor = (props: IDocumentEditor) => {
