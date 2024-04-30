@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -32,7 +31,6 @@ type Props = {
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
-  const router = useRouter();
   const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting, swrIssueDescription } =
     props;
   // hooks

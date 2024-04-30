@@ -8,8 +8,6 @@ import { DateFilterModal } from "@/components/core";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
 import { PAST_DURATION_FILTER_OPTIONS } from "@/helpers/inbox.helper";
-// hooks
-import { useEventTracker } from "@/hooks/store";
 
 type Props = {
   filterKey: TInboxIssueFilterDateKeys;

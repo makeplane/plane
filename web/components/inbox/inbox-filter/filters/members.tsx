@@ -6,7 +6,7 @@ import { Avatar, Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // hooks
-import { useEventTracker, useMember, useUser } from "@/hooks/store";
+import { useMember, useUser } from "@/hooks/store";
 
 type Props = {
   filterKey: TInboxIssueFilterMemberKeys;
