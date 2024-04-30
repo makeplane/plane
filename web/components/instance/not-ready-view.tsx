@@ -1,6 +1,5 @@
 import { FC } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Button } from "@plane/ui";
 // images
@@ -10,8 +9,9 @@ import PlaneTakeOffImage from "@/public/plane-takeoff.png";
 
 export const InstanceNotReady: FC = () => {
   const { resolvedTheme } = useTheme();
-
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
+
+  const planeGodModeUrl = `${process.env.NEXT_PUBLIC_GOD_MODE_URL}/spaces?setup/?auth_enabled=0`;
 
   return (
     <div className="relative h-screen max-h-max w-full overflow-hidden overflow-y-auto flex flex-col">
@@ -33,11 +33,11 @@ export const InstanceNotReady: FC = () => {
               </p>
             </div>
             <div>
-              <Link href={"/god-mode/"}>
+              <a href={planeGodModeUrl}>
                 <Button size="lg" className="w-full">
                   Get started
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
         </div>
