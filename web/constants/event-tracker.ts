@@ -98,7 +98,8 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
     module_id: payload.module_id,
     archived_at: payload.archived_at,
     state: payload.state,
-    view_id: routePath?.includes("workspace-views") || routePath?.includes("views") ? routePath.split("/").pop() : "",
+    view_id:
+      routePath?.includes("workspace-views") || routePath?.includes("views") ? routePath.split("/").pop() : undefined,
   };
 
   if (eventName === ISSUE_UPDATED) {
@@ -214,6 +215,15 @@ export const ISSUE_UPDATED = "Issue updated";
 export const ISSUE_DELETED = "Issue deleted";
 export const ISSUE_ARCHIVED = "Issue archived";
 export const ISSUE_RESTORED = "Issue restored";
+// Inbox Events
+export const INBOX_ISSUE_CREATED = "Inbox issue created";
+export const INBOX_ISSUE_UPDATED = "Inbox issue updated";
+export const INBOX_ISSUE_DELETED = "Inbox issue deleted";
+export const INBOX_FILTERS_APPLIED = "Inbox filters applied";
+export const INBOX_FILTERS_REMOVED = "Inbox filters removed";
+export const INBOX_SORT_UPDATED= "Inbox sort updated";
+export const INBOX_ISSUE_OPENED = "Inbox issue opened";
+export const INBOX_TAB_CHANGED = "Inbox tab changed";
 // Comment Events
 export const COMMENT_CREATED = "Comment created";
 export const COMMENT_UPDATED = "Comment updated";

@@ -9,11 +9,12 @@ import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/compone
 import { InboxSidebarLoader } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { INBOX_TAB_CHANGED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
-import { useProject, useProjectInbox } from "@/hooks/store";
+import { useEventTracker, useProject, useProjectInbox } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
 type IInboxSidebarProps = {
@@ -49,6 +50,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     fetchInboxPaginationIssues,
     getAppliedFiltersCount,
   } = useProjectInbox();
+  const {captureEvent} = useEventTracker();
 
   const router = useRouter();
 
@@ -78,6 +80,9 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               onClick={() => {
                 if (currentTab != option?.key) handleCurrentTab(option?.key);
                 router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${option?.key}`);
+                captureEvent(INBOX_TAB_CHANGED, {
+                  tab: option?.key,
+                });
               }}
             >
               <div>{option?.label}</div>

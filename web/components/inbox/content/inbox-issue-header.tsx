@@ -25,12 +25,13 @@ import {
 } from "@/components/inbox";
 import { IssueUpdateStatus } from "@/components/issues";
 // constants
+import { INBOX_ISSUE_DELETED, INBOX_ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useUser, useProjectInbox, useProject } from "@/hooks/store";
+import { useUser, useProjectInbox, useProject, useEventTracker } from "@/hooks/store";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
@@ -60,6 +61,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const router = useRouter();
   const { getProjectById } = useProject();
+  const { captureEvent } = useEventTracker();
 
   const issue = inboxIssue?.issue;
   // derived values
@@ -98,6 +100,10 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.ACCEPTED);
     setAcceptIssueModal(false);
     handleRedirection(nextOrPreviousIssueId);
+    captureEvent(INBOX_ISSUE_UPDATED, {
+      issue_status: "accepted",
+      issue_id: currentInboxIssueId,
+    });
   };
 
   const handleInboxIssueDecline = async () => {
@@ -105,6 +111,10 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.DECLINED);
     setDeclineIssueModal(false);
     handleRedirection(nextOrPreviousIssueId);
+    captureEvent(INBOX_ISSUE_UPDATED, {
+      issue_status: "declined",
+      issue_id: currentInboxIssueId,
+    });
   };
 
   const handleInboxSIssueSnooze = async (date: Date) => {
@@ -112,14 +122,25 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     await inboxIssue?.updateInboxIssueSnoozeTill(date);
     setIsSnoozeDateModalOpen(false);
     handleRedirection(nextOrPreviousIssueId);
+    captureEvent(INBOX_ISSUE_UPDATED, {
+      issue_status: "snoozed",
+      issue_id: currentInboxIssueId,
+    });
   };
 
   const handleInboxIssueDuplicate = async (issueId: string) => {
     await inboxIssue?.updateInboxIssueDuplicateTo(issueId);
+    captureEvent(INBOX_ISSUE_UPDATED, {
+      issue_status: "mark as duplicate",
+      issue_id: currentInboxIssueId,
+    });
   };
 
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
+    captureEvent(INBOX_ISSUE_DELETED, {
+      issue_id: currentInboxIssueId,
+    });
     await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).finally(() => {
       router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
     });

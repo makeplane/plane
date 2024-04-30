@@ -5,11 +5,13 @@ import { useRouter } from "next/router";
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
+// constants
+import { INBOX_ISSUE_OPENED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useLabel, useProjectInbox } from "@/hooks/store";
+import { useEventTracker, useLabel, useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // store
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
@@ -23,7 +25,7 @@ type InboxIssueListItemProps = {
 };
 
 export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssue, projectIdentifier,setToggleMobileSidebar } = props;
+  const { workspaceSlug, projectId, inboxIssue, projectIdentifier, setToggleMobileSidebar } = props;
   // router
   const router = useRouter();
   const { inboxIssueId } = router.query;
@@ -31,6 +33,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
   const { currentTab } = useProjectInbox();
   const { projectLabels } = useLabel();
   const { isMobile } = usePlatformOS();
+  const { captureEvent } = useEventTracker();
   const issue = inboxIssue.issue;
 
   const handleIssueRedirection = (event: MouseEvent, currentIssueId: string | undefined) => {
@@ -45,7 +48,12 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
         id={`inbox-issue-list-item-${issue.id}`}
         key={`${projectId}_${issue.id}`}
         href={`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${issue.id}`}
-        onClick={(e) => handleIssueRedirection(e, issue.id)}
+        onClick={(e) => {
+          handleIssueRedirection(e, issue.id);
+          captureEvent(INBOX_ISSUE_OPENED, {
+            issueId: issue.id,
+          });
+        }}
       >
         <div
           className={cn(

@@ -2,19 +2,26 @@ import { FC, useState } from "react";
 import concat from "lodash/concat";
 import uniq from "lodash/uniq";
 import { observer } from "mobx-react";
-import { TInboxIssueFilterDateKeys } from "@plane/types";
+import { TInboxIssueFilter, TInboxIssueFilterDateKeys } from "@plane/types";
 // components
 import { DateFilterModal } from "@/components/core";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
 import { PAST_DURATION_FILTER_OPTIONS } from "@/helpers/inbox.helper";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useEventTracker } from "@/hooks/store";
 
 type Props = {
   filterKey: TInboxIssueFilterDateKeys;
   label?: string;
   searchQuery: string;
+  inboxFilters: Partial<TInboxIssueFilter>;
+  handleFilterUpdate: (
+    filterKey: keyof TInboxIssueFilter,
+    filterValue: TInboxIssueFilter[keyof TInboxIssueFilter],
+    isSelected: boolean,
+    interactedValue: string
+  ) => void;
 };
 
 const isDate = (date: string) => {
@@ -23,9 +30,7 @@ const isDate = (date: string) => {
 };
 
 export const FilterDate: FC<Props> = observer((props) => {
-  const { filterKey, label, searchQuery } = props;
-  // hooks
-  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+  const { filterKey, label, searchQuery, inboxFilters, handleFilterUpdate } = props;
   // state
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
@@ -46,7 +51,7 @@ export const FilterDate: FC<Props> = observer((props) => {
   const handleCustomDate = () => {
     if (isCustomDateSelected()) {
       const updateAppliedFilters = filterValue?.filter((f) => !isDate(f.split(";")[0])) || [];
-      handleInboxIssueFilters(filterKey, updateAppliedFilters);
+      handleFilterUpdate(filterKey, updateAppliedFilters, true, "Custom");
     } else {
       setIsDateFilterModalOpen(true);
     }
@@ -58,7 +63,7 @@ export const FilterDate: FC<Props> = observer((props) => {
         <DateFilterModal
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
-          onSelect={(val) => handleInboxIssueFilters(filterKey, val)}
+          onSelect={(val) => handleFilterUpdate(filterKey, val, false, "Custom")}
           title="Created date"
         />
       )}
@@ -75,7 +80,14 @@ export const FilterDate: FC<Props> = observer((props) => {
                 <FilterOption
                   key={option.value}
                   isChecked={filterValue?.includes(option.value) ? true : false}
-                  onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(option.value))}
+                  onClick={() =>
+                    handleFilterUpdate(
+                      filterKey,
+                      handleFilterValue(option.value),
+                      filterValue?.includes(option.value),
+                      option.name
+                    )
+                  }
                   title={option.name}
                   multiple={false}
                 />

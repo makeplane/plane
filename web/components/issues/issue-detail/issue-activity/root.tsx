@@ -9,7 +9,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { IssueActivityCommentRoot, IssueCommentRoot, IssueCommentCreate } from "@/components/issues";
 // constants
-import { COMMENT_CREATED, COMMENT_DELETED, COMMENT_UPDATED } from "@/constants/event-tracker";
+import { COMMENT_CREATED, COMMENT_DELETED, COMMENT_UPDATED, E_INBOX, E_ISSUE_DETAILS } from "@/constants/event-tracker";
 // hooks
 import { useIssueDetail, useProject, useEventTracker } from "@/hooks/store";
 
@@ -45,7 +45,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // router
   const router = useRouter();
-  const { inboxId } = router.query;
+  const { inboxIssueId } = router.query;
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { captureEvent } = useEventTracker();
@@ -59,11 +59,12 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       createComment: async (data: Partial<TIssueComment>) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
-          await createComment(workspaceSlug, projectId, issueId, data);
+          const res = await createComment(workspaceSlug, projectId, issueId, data);
           captureEvent(COMMENT_CREATED, {
             issue_id: issueId,
+            comment_id: res?.id,
             is_public: data.access === "EXTERNAL",
-            element: peekIssue ? "Peek issue" : inboxId ? "Inbox issue" : "Issue detail",
+            element: peekIssue ? "Peek issue" : inboxIssueId ? E_INBOX : E_ISSUE_DETAILS,
           });
           setToast({
             title: "Comment created successfully.",
@@ -84,8 +85,9 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           await updateComment(workspaceSlug, projectId, issueId, commentId, data);
           captureEvent(COMMENT_UPDATED, {
             issue_id: issueId,
+            comment_id: commentId,
             is_public: data.access === "EXTERNAL",
-            element: peekIssue ? "Peek issue" : inboxId ? "Inbox issue" : "Issue detail",
+            element: peekIssue ? "Peek issue" : inboxIssueId ? E_INBOX : E_ISSUE_DETAILS,
           });
           setToast({
             title: "Comment updated successfully.",
@@ -106,7 +108,8 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           await removeComment(workspaceSlug, projectId, issueId, commentId);
           captureEvent(COMMENT_DELETED, {
             issue_id: issueId,
-            element: peekIssue ? "Peek issue" : inboxId ? "Inbox issue" : "Issue detail",
+            comment_id: commentId,
+            element: peekIssue ? "Peek issue" : inboxIssueId ? E_INBOX : E_ISSUE_DETAILS,
           });
           setToast({
             title: "Comment removed successfully.",

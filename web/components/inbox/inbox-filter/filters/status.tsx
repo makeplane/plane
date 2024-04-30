@@ -1,22 +1,29 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // types
-import { TInboxIssueStatus } from "@plane/types";
+import { TInboxIssueFilter, TInboxIssueFilterMemberKeys, TInboxIssueStatus } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
 import { INBOX_STATUS } from "@/constants/inbox";
 // hooks
-import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { useProjectInbox } from "@/hooks/store";
 
 type Props = {
   searchQuery: string;
+  inboxFilters: Partial<TInboxIssueFilter>;
+  handleFilterUpdate: (
+    filterKey: keyof TInboxIssueFilter,
+    filterValue: TInboxIssueFilter[keyof TInboxIssueFilter],
+    isSelected: boolean,
+    interactedValue: string
+  ) => void;
 };
 
 export const FilterStatus: FC<Props> = observer((props) => {
-  const { searchQuery } = props;
+  const { searchQuery, inboxFilters, handleFilterUpdate } = props;
   // hooks
-  const { currentTab, inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+  const { currentTab } = useProjectInbox();
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // derived values
@@ -34,7 +41,13 @@ export const FilterStatus: FC<Props> = observer((props) => {
 
   const handleStatusFilterSelect = (status: TInboxIssueStatus) => {
     const selectedStatus = handleFilterValue(status);
-    if (selectedStatus.length >= 1) handleInboxIssueFilters("status", selectedStatus);
+    if (selectedStatus.length >= 1)
+      handleFilterUpdate(
+        "status",
+        selectedStatus,
+        filterValue?.includes(status),
+        INBOX_STATUS.find((s) => s.status === status)?.title ?? ""
+      );
   };
 
   return (

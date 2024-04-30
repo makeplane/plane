@@ -1,6 +1,7 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
+import { TInboxIssueFilter } from "@plane/types";
 // components
 import {
   FilterStatus,
@@ -10,8 +11,11 @@ import {
   FilterLabels,
   FilterState,
 } from "@/components/inbox/inbox-filter/filters";
+// constants
+import { INBOX_FILTERS_APPLIED, INBOX_FILTERS_REMOVED } from "@/constants/event-tracker";
+import { INBOX_STATUS } from "@/constants/inbox";
 // hooks
-import { useMember, useLabel, useProjectState } from "@/hooks/store";
+import { useMember, useLabel, useProjectState, useProjectInbox, useEventTracker } from "@/hooks/store";
 
 export const InboxIssueFilterSelection: FC = observer(() => {
   // hooks
@@ -20,8 +24,30 @@ export const InboxIssueFilterSelection: FC = observer(() => {
   } = useMember();
   const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
+  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+  const { captureEvent } = useEventTracker();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+
+  const handleFilterUpdate = useCallback(
+    (
+      filterKey: keyof TInboxIssueFilter,
+      filterValue: TInboxIssueFilter[keyof TInboxIssueFilter],
+      isSelected: boolean,
+      interactedValue: string
+    ) => {
+      captureEvent(isSelected ? INBOX_FILTERS_REMOVED : INBOX_FILTERS_APPLIED, {
+        filter_type: filterKey,
+        filter_property: interactedValue,
+        current_filters: {
+          ...inboxFilters,
+          status: inboxFilters?.status?.map((status) => INBOX_STATUS.find((s) => s.status === status)?.title),
+        },
+      });
+      handleInboxIssueFilters(filterKey, filterValue);
+    },
+    [captureEvent, inboxFilters, handleInboxIssueFilters]
+  );
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -47,21 +73,36 @@ export const InboxIssueFilterSelection: FC = observer(() => {
       <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
         {/* status */}
         <div className="py-2">
-          <FilterStatus searchQuery={filtersSearchQuery} />
+          <FilterStatus
+            inboxFilters={inboxFilters}
+            handleFilterUpdate={handleFilterUpdate}
+            searchQuery={filtersSearchQuery}
+          />
         </div>
         {/* state */}
         <div className="py-2">
-          <FilterState states={projectStates} searchQuery={filtersSearchQuery} />
+          <FilterState
+            inboxFilters={inboxFilters}
+            handleFilterUpdate={handleFilterUpdate}
+            states={projectStates}
+            searchQuery={filtersSearchQuery}
+          />
         </div>
         {/* Priority */}
         <div className="py-2">
-          <FilterPriority searchQuery={filtersSearchQuery} />
+          <FilterPriority
+            inboxFilters={inboxFilters}
+            handleFilterUpdate={handleFilterUpdate}
+            searchQuery={filtersSearchQuery}
+          />
         </div>
         {/* assignees */}
         <div className="py-2">
           <FilterMember
             filterKey="assignee"
             label="Assignee"
+            inboxFilters={inboxFilters}
+            handleFilterUpdate={handleFilterUpdate}
             searchQuery={filtersSearchQuery}
             memberIds={projectMemberIds ?? []}
           />
@@ -71,21 +112,40 @@ export const InboxIssueFilterSelection: FC = observer(() => {
           <FilterMember
             filterKey="created_by"
             label="Created By"
+            inboxFilters={inboxFilters}
+            handleFilterUpdate={handleFilterUpdate}
             searchQuery={filtersSearchQuery}
             memberIds={projectMemberIds ?? []}
           />
         </div>
         {/* Labels */}
         <div className="py-2">
-          <FilterLabels searchQuery={filtersSearchQuery} labels={projectLabels ?? []} />
+          <FilterLabels
+            inboxFilters={inboxFilters}
+            handleFilterUpdate={handleFilterUpdate}
+            searchQuery={filtersSearchQuery}
+            labels={projectLabels ?? []}
+          />
         </div>
         {/* Created at */}
         <div className="py-2">
-          <FilterDate filterKey="created_at" label="Created date" searchQuery={filtersSearchQuery} />
+          <FilterDate
+            inboxFilters={inboxFilters}
+            handleFilterUpdate={handleFilterUpdate}
+            filterKey="created_at"
+            label="Created date"
+            searchQuery={filtersSearchQuery}
+          />
         </div>
         {/* Updated at */}
         <div className="py-2">
-          <FilterDate filterKey="updated_at" label="Last updated date" searchQuery={filtersSearchQuery} />
+          <FilterDate
+            inboxFilters={inboxFilters}
+            handleFilterUpdate={handleFilterUpdate}
+            filterKey="updated_at"
+            label="Last updated date"
+            searchQuery={filtersSearchQuery}
+          />
         </div>
       </div>
     </div>

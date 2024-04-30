@@ -1,22 +1,25 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { TIssuePriorities } from "@plane/types";
+import { TInboxIssueFilter, TIssuePriorities } from "@plane/types";
 import { PriorityIcon } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
 import { ISSUE_PRIORITIES } from "@/constants/issue";
-// hooks
-import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type Props = {
   searchQuery: string;
+  inboxFilters: Partial<TInboxIssueFilter>;
+  handleFilterUpdate: (
+    filterKey: keyof TInboxIssueFilter,
+    filterValue: TInboxIssueFilter[keyof TInboxIssueFilter],
+    isSelected: boolean,
+    interactedValue: string
+  ) => void;
 };
 
 export const FilterPriority: FC<Props> = observer((props) => {
-  const { searchQuery } = props;
-  // hooks
-  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+  const { searchQuery, inboxFilters, handleFilterUpdate } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // derived values
@@ -41,7 +44,14 @@ export const FilterPriority: FC<Props> = observer((props) => {
               <FilterOption
                 key={priority.key}
                 isChecked={filterValue?.includes(priority.key) ? true : false}
-                onClick={() => handleInboxIssueFilters("priority", handleFilterValue(priority.key))}
+                onClick={() =>
+                  handleFilterUpdate(
+                    "priority",
+                    handleFilterValue(priority.key),
+                    filterValue?.includes(priority.key),
+                    priority.title
+                  )
+                }
                 icon={<PriorityIcon priority={priority.key} className="h-3.5 w-3.5" />}
                 title={priority.title}
               />

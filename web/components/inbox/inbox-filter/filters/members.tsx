@@ -1,24 +1,29 @@
 import { FC, useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
-import { TInboxIssueFilterMemberKeys } from "@plane/types";
+import { TInboxIssueFilter, TInboxIssueFilterMemberKeys } from "@plane/types";
 import { Avatar, Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // hooks
-import { useMember, useProjectInbox, useUser } from "@/hooks/store";
+import { useEventTracker, useMember, useUser } from "@/hooks/store";
 
 type Props = {
   filterKey: TInboxIssueFilterMemberKeys;
   label?: string;
   memberIds: string[] | undefined;
   searchQuery: string;
+  inboxFilters: Partial<TInboxIssueFilter>;
+  handleFilterUpdate: (
+    filterKey: keyof TInboxIssueFilter,
+    filterValue: TInboxIssueFilter[keyof TInboxIssueFilter],
+    isSelected: boolean,
+    interactedValue: string
+  ) => void;
 };
 
 export const FilterMember: FC<Props> = observer((props: Props) => {
-  const { filterKey, label = "Members", memberIds, searchQuery } = props;
-  // hooks
-  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+  const { filterKey, label = "Members", memberIds, searchQuery, inboxFilters, handleFilterUpdate } = props;
   const { getUserDetails } = useMember();
   const { currentUser } = useUser();
   // states
@@ -71,7 +76,14 @@ export const FilterMember: FC<Props> = observer((props: Props) => {
                     <FilterOption
                       key={`members-${member.id}`}
                       isChecked={filterValue?.includes(member.id) ? true : false}
-                      onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(member.id))}
+                      onClick={() =>
+                        handleFilterUpdate(
+                          filterKey,
+                          handleFilterValue(member.id),
+                          filterValue?.includes(member.id),
+                          member.id
+                        )
+                      }
                       icon={<Avatar name={member.display_name} src={member.avatar} showTooltip={false} size="md" />}
                       title={currentUser?.id === member.id ? "You" : member?.display_name}
                     />

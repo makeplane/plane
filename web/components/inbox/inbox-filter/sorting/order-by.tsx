@@ -1,19 +1,34 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import { observer } from "mobx-react";
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
+import { TInboxIssueSorting } from "@plane/types";
 import { CustomMenu, getButtonStyling } from "@plane/ui";
 // constants
+import { INBOX_SORT_UPDATED } from "@/constants/event-tracker";
 import { INBOX_ISSUE_ORDER_BY_OPTIONS, INBOX_ISSUE_SORT_BY_OPTIONS } from "@/constants/inbox";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox, useEventTracker } from "@/hooks/store";
 
 export const InboxIssueOrderByDropdown: FC = observer(() => {
   // hooks
   const { inboxSorting, handleInboxIssueSorting } = useProjectInbox();
+  const { captureEvent } = useEventTracker();
   const orderByDetails =
     INBOX_ISSUE_ORDER_BY_OPTIONS.find((option) => inboxSorting?.order_by?.includes(option.key)) || undefined;
+
+  const handleIssueSorting = useCallback(
+    (filterKey: keyof TInboxIssueSorting, filterValue: TInboxIssueSorting[keyof TInboxIssueSorting]) => {
+      captureEvent(INBOX_SORT_UPDATED, {
+        changed_property: filterKey,
+        changed_details: filterValue,
+        current_sort: inboxSorting,
+      });
+      handleInboxIssueSorting(filterKey, filterValue);
+    },
+    [handleInboxIssueSorting, captureEvent, inboxSorting]
+  );
 
   return (
     <CustomMenu
@@ -36,7 +51,7 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
         <CustomMenu.MenuItem
           key={option.key}
           className="flex items-center justify-between gap-2"
-          onClick={() => handleInboxIssueSorting("order_by", option.key)}
+          onClick={() => handleIssueSorting("order_by", option.key)}
         >
           {option.label}
           {inboxSorting?.order_by?.includes(option.key) && <Check className="h-3 w-3" />}
@@ -47,7 +62,7 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
         <CustomMenu.MenuItem
           key={option.key}
           className="flex items-center justify-between gap-2"
-          onClick={() => handleInboxIssueSorting("sort_by", option.key)}
+          onClick={() => handleIssueSorting("sort_by", option.key)}
         >
           {option.label}
           {inboxSorting?.sort_by?.includes(option.key) && <Check className="h-3 w-3" />}

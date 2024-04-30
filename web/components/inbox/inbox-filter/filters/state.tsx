@@ -1,24 +1,27 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { IState } from "@plane/types";
+import { IState, TInboxIssueFilter } from "@plane/types";
 import { Loader, StateGroupIcon } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
-// hooks
-import { useProjectInbox } from "@/hooks/store";
 
 type Props = {
   states: IState[] | undefined;
   searchQuery: string;
+  inboxFilters: Partial<TInboxIssueFilter>;
+  handleFilterUpdate: (
+    filterKey: keyof TInboxIssueFilter,
+    filterValue: TInboxIssueFilter[keyof TInboxIssueFilter],
+    isSelected: boolean,
+    interactedValue: string
+  ) => void;
 };
 
 export const FilterState: FC<Props> = observer((props) => {
-  const { states, searchQuery } = props;
+  const { states, inboxFilters, searchQuery, handleFilterUpdate } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
-
-  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
 
   const filterValue = inboxFilters?.state || [];
 
@@ -52,7 +55,14 @@ export const FilterState: FC<Props> = observer((props) => {
                   <FilterOption
                     key={state?.id}
                     isChecked={filterValue?.includes(state?.id) ? true : false}
-                    onClick={() => handleInboxIssueFilters("state", handleFilterValue(state.id))}
+                    onClick={() =>
+                      handleFilterUpdate(
+                        "state",
+                        handleFilterValue(state.id),
+                        filterValue?.includes(state.id),
+                        state.id
+                      )
+                    }
                     icon={<StateGroupIcon color={state.color} stateGroup={state.group} height="12px" width="12px" />}
                     title={state.name}
                   />

@@ -1,11 +1,9 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { IIssueLabel } from "@plane/types";
+import { IIssueLabel, TInboxIssueFilter } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
-// hooks
-import { useProjectInbox } from "@/hooks/store";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
@@ -14,15 +12,20 @@ const LabelIcons = ({ color }: { color: string }) => (
 type Props = {
   labels: IIssueLabel[] | undefined;
   searchQuery: string;
+  inboxFilters: Partial<TInboxIssueFilter>;
+  handleFilterUpdate: (
+    filterKey: keyof TInboxIssueFilter,
+    filterValue: TInboxIssueFilter[keyof TInboxIssueFilter],
+    isSelected: boolean,
+    interactedValue: string
+  ) => void;
 };
 
 export const FilterLabels: FC<Props> = observer((props) => {
-  const { labels, searchQuery } = props;
+  const { labels, searchQuery, inboxFilters, handleFilterUpdate } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
-
-  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
 
   const filterValue = inboxFilters?.labels || [];
 
@@ -56,7 +59,14 @@ export const FilterLabels: FC<Props> = observer((props) => {
                   <FilterOption
                     key={label?.id}
                     isChecked={filterValue?.includes(label?.id) ? true : false}
-                    onClick={() => handleInboxIssueFilters("labels", handleFilterValue(label.id))}
+                    onClick={() =>
+                      handleFilterUpdate(
+                        "labels",
+                        handleFilterValue(label?.id),
+                        filterValue?.includes(label?.id),
+                        label?.id
+                      )
+                    }
                     icon={<LabelIcons color={label.color} />}
                     title={label.name}
                   />
