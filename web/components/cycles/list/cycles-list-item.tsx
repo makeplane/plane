@@ -79,7 +79,11 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
     <ListItem
       title={cycleDetails?.name ?? ""}
       itemLink={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
-      onItemClick={openCycleOverview}
+      onItemClick={(e) => {
+        if (isArchived) {
+          openCycleOverview(e);
+        }
+      }}
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
           {isCompleted ? (
@@ -96,7 +100,10 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
         </CircularProgressIndicator>
       }
       appendTitleElement={
-        <button onClick={openCycleOverview} className="invisible z-[5] flex-shrink-0 group-hover:visible">
+        <button
+          onClick={openCycleOverview}
+          className={`z-[5] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
+        >
           <Info className="h-4 w-4 text-custom-text-400" />
         </button>
       }

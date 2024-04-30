@@ -62,6 +62,11 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     <ListItem
       title={moduleDetails?.name ?? ""}
       itemLink={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
+      onItemClick={(e) => {
+        if (isArchived) {
+          openModuleOverview(e);
+        }
+      }}
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
           {completedModuleCheck ? (
@@ -78,7 +83,10 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
         </CircularProgressIndicator>
       }
       appendTitleElement={
-        <button onClick={openModuleOverview} className="z-[5] hidden flex-shrink-0 group-hover:flex">
+        <button
+          onClick={openModuleOverview}
+          className={`z-[5] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
+        >
           <Info className="h-4 w-4 text-custom-text-400" />
         </button>
       }

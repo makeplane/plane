@@ -26,18 +26,19 @@ export const ListItem: FC<IListItemProps> = (props) => {
   return (
     <div className="relative">
       <Link href={itemLink} onClick={onItemClick}>
-        <div className="group h-[52px] flex w-full flex-col items-center justify-between gap-5 p-6 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 sm:flex-row">
+        <div className="group h-24 sm:h-[52px] flex w-full flex-col items-center justify-between gap-3 sm:gap-5 px-6 py-4 sm:py-0 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 sm:flex-row">
           <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
             <div className="relative flex w-full items-center gap-3 overflow-hidden">
               <div className="flex items-center gap-4 truncate">
-                {prependTitleElement && <span className="flex-shrink-0">{prependTitleElement}</span>}
+                {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}
                 <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
                   <span className="truncate text-sm">{title}</span>
                 </Tooltip>
               </div>
-              {appendTitleElement && <span className="flex-shrink-0">{appendTitleElement}</span>}
+              {appendTitleElement && <span className="flex items-center flex-shrink-0">{appendTitleElement}</span>}
             </div>
           </div>
+          <span className="h-6 w-96 flex-shrink-0" />
         </div>
       </Link>
       {actionableItems && (
