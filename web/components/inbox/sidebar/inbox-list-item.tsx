@@ -19,10 +19,11 @@ type InboxIssueListItemProps = {
   projectId: string;
   projectIdentifier?: string;
   inboxIssue: IInboxIssueStore;
+  setIsMobileSidebar: (value: boolean) => void;
 };
 
 export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssue, projectIdentifier } = props;
+  const { workspaceSlug, projectId, inboxIssue, projectIdentifier, setIsMobileSidebar } = props;
   // router
   const router = useRouter();
   const { inboxIssueId } = router.query;
@@ -34,6 +35,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
 
   const handleIssueRedirection = (event: MouseEvent, currentIssueId: string | undefined) => {
     if (inboxIssueId === currentIssueId) event.preventDefault();
+    setIsMobileSidebar(false);
   };
 
   if (!issue) return <></>;

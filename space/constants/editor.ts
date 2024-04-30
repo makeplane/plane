@@ -4,6 +4,9 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
   Image,
   Italic,
   List,
@@ -29,14 +32,17 @@ export type ToolbarMenuItem = {
 };
 
 export const BASIC_MARK_ITEMS: ToolbarMenuItem[] = [
-  { key: "H1", name: "Heading 1", icon: Heading1, editors: ["document"] },
-  { key: "H2", name: "Heading 2", icon: Heading2, editors: ["document"] },
-  { key: "H3", name: "Heading 3", icon: Heading3, editors: ["document"] },
+  { key: "h1", name: "Heading 1", icon: Heading1, editors: ["document"] },
+  { key: "h2", name: "Heading 2", icon: Heading2, editors: ["document"] },
+  { key: "h3", name: "Heading 3", icon: Heading3, editors: ["document"] },
+  { key: "h4", name: "Heading 4", icon: Heading4, editors: ["document"] },
+  { key: "h5", name: "Heading 5", icon: Heading5, editors: ["document"] },
+  { key: "h6", name: "Heading 6", icon: Heading6, editors: ["document"] },
   { key: "bold", name: "Bold", icon: Bold, shortcut: ["Cmd", "B"], editors: ["lite", "document"] },
   { key: "italic", name: "Italic", icon: Italic, shortcut: ["Cmd", "I"], editors: ["lite", "document"] },
   { key: "underline", name: "Underline", icon: Underline, shortcut: ["Cmd", "U"], editors: ["lite", "document"] },
   {
-    key: "strike",
+    key: "strikethrough",
     name: "Strikethrough",
     icon: Strikethrough,
     shortcut: ["Cmd", "Shift", "S"],
@@ -46,21 +52,21 @@ export const BASIC_MARK_ITEMS: ToolbarMenuItem[] = [
 
 export const LIST_ITEMS: ToolbarMenuItem[] = [
   {
-    key: "bullet-list",
+    key: "bulleted-list",
     name: "Bulleted list",
     icon: List,
     shortcut: ["Cmd", "Shift", "7"],
     editors: ["lite", "document"],
   },
   {
-    key: "ordered-list",
+    key: "numbered-list",
     name: "Numbered list",
     icon: ListOrdered,
     shortcut: ["Cmd", "Shift", "8"],
     editors: ["lite", "document"],
   },
   {
-    key: "To-do List",
+    key: "to-do-list",
     name: "To-do list",
     icon: ListTodo,
     shortcut: ["Cmd", "Shift", "9"],

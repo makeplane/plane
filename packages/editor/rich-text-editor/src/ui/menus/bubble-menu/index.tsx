@@ -15,6 +15,7 @@ import {
 } from "@plane/editor-core";
 
 export interface BubbleMenuItem {
+  key: string;
   name: string;
   isActive: () => boolean;
   command: () => void;

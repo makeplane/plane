@@ -9,10 +9,12 @@ type TInboxContentRoot = {
   workspaceSlug: string;
   projectId: string;
   inboxIssueId: string;
+  isMobileSidebar: boolean;
+  setIsMobileSidebar: (value: boolean) => void;
 };
 
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssueId } = props;
+  const { workspaceSlug, projectId, inboxIssueId, isMobileSidebar, setIsMobileSidebar } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
@@ -43,6 +45,8 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
       <div className="w-full h-full overflow-hidden relative flex flex-col">
         <div className="flex-shrink-0 min-h-[50px] border-b border-custom-border-300">
           <InboxIssueActionsHeader
+            setIsMobileSidebar={setIsMobileSidebar}
+            isMobileSidebar={isMobileSidebar}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             inboxIssue={inboxIssue}

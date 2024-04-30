@@ -8,9 +8,13 @@ import {
   QuoteItem,
   CodeItem,
   TodoListItem,
+  TextItem,
+  HeadingFourItem,
+  HeadingFiveItem,
+  HeadingSixItem,
 } from "@plane/editor-core";
 import { Editor } from "@tiptap/react";
-import { Check, ChevronDown, TextIcon } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
 
 import { BubbleMenuItem } from ".";
@@ -23,18 +27,16 @@ interface NodeSelectorProps {
 
 export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen }) => {
   const items: BubbleMenuItem[] = [
-    {
-      name: "Text",
-      icon: TextIcon,
-      command: () => editor.chain().focus().clearNodes().run(),
-      isActive: () => editor.isActive("paragraph") && !editor.isActive("bulletList") && !editor.isActive("orderedList"),
-    },
+    TextItem(editor),
     HeadingOneItem(editor),
     HeadingTwoItem(editor),
     HeadingThreeItem(editor),
-    TodoListItem(editor),
+    HeadingFourItem(editor),
+    HeadingFiveItem(editor),
+    HeadingSixItem(editor),
     BulletListItem(editor),
     NumberedListItem(editor),
+    TodoListItem(editor),
     QuoteItem(editor),
     CodeItem(editor),
   ];
@@ -58,7 +60,7 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
       </button>
 
       {isOpen && (
-        <section className="fixed top-full z-[99999] mt-1 flex w-48 flex-col overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 p-1 shadow-xl animate-in fade-in slide-in-from-top-1">
+        <section className="fixed top-full z-[99999] mt-1 flex w-48 flex-col overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg animate-in fade-in slide-in-from-top-1">
           {items.map((item) => (
             <button
               key={item.name}
@@ -69,19 +71,17 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
                 e.stopPropagation();
               }}
               className={cn(
-                "flex items-center justify-between rounded-sm px-2 py-1 text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100",
+                "flex items-center justify-between rounded px-1 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80",
                 {
-                  "bg-custom-primary-100/5 text-custom-text-100": activeItem.name === item.name,
+                  "bg-custom-background-80": activeItem.name === item.name,
                 }
               )}
             >
               <div className="flex items-center space-x-2">
-                <div className="rounded-sm border border-custom-border-300 p-1">
-                  <item.icon className="h-3 w-3" />
-                </div>
+                <item.icon className="size-3 flex-shrink-0" />
                 <span>{item.name}</span>
               </div>
-              {activeItem.name === item.name && <Check className="h-4 w-4" />}
+              {activeItem.name === item.name && <Check className="size-3 text-custom-text-300 flex-shrink-0" />}
             </button>
           ))}
         </section>

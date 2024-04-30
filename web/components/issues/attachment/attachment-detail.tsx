@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
 import { Tooltip } from "@plane/ui";
-import { getFileIcon } from "@/components/icons";
+import { getFileIcon } from "@/components/icons/attachment";
 import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/attachment.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { truncateText } from "@/helpers/string.helper";

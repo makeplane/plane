@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
-import { ICycle } from "@plane/types";
+import { ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Avatar, ArchiveIcon, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
 // components
@@ -27,12 +27,13 @@ import { DateRangeDropdown } from "@/components/dropdowns";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_UPDATED } from "@/constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
+import { useEventTracker, useCycle, useUser, useMember, useIssues } from "@/hooks/store";
 // services
 import { CycleService } from "@/services/cycle.service";
 
@@ -191,25 +192,36 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     }
   };
 
-  // TODO: refactor this
-  // const handleFiltersUpdate = useCallback(
-  //   (key: keyof IIssueFilterOptions, value: string | string[]) => {
-  //     if (!workspaceSlug || !projectId) return;
-  //     const newValues = issueFilters?.filters?.[key] ?? [];
+  const {
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.CYCLE);
 
-  //     if (Array.isArray(value)) {
-  //       value.forEach((val) => {
-  //         if (!newValues.includes(val)) newValues.push(val);
-  //       });
-  //     } else {
-  //       if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-  //       else newValues.push(value);
-  //     }
+  const handleFiltersUpdate = useCallback(
+    (key: keyof IIssueFilterOptions, value: string | string[]) => {
+      if (!workspaceSlug || !projectId) return;
+      const newValues = issueFilters?.filters?.[key] ?? [];
 
-  //     updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, cycleId);
-  //   },
-  //   [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
-  // );
+      if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
+        value.forEach((val) => {
+          if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
+        });
+      } else {
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        else newValues.push(value);
+      }
+
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        cycleId
+      );
+    },
+    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
+  );
 
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
@@ -251,8 +263,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         ? "0 Issue"
         : `${cycleDetails.progress_snapshot.completed_issues}/${cycleDetails.progress_snapshot.total_issues}`
       : cycleDetails.total_issues === 0
-      ? "0 Issue"
-      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+        ? "0 Issue"
+        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 
@@ -404,7 +416,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           to: "End date",
                         }}
                         required={cycleDetails.status !== "draft"}
-                        disabled={isArchived}
+                        disabled={!isEditingAllowed || isArchived}
                       />
                     )}
                   />
@@ -551,6 +563,9 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                                     }}
                                     totalIssues={cycleDetails.progress_snapshot.total_issues}
                                     isPeekView={Boolean(peekCycle)}
+                                    isCompleted={isCompleted}
+                                    filters={issueFilters}
+                                    handleFiltersUpdate={handleFiltersUpdate}
                                   />
                                 </div>
                               )}
@@ -570,6 +585,9 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                                   }}
                                   totalIssues={cycleDetails.total_issues}
                                   isPeekView={Boolean(peekCycle)}
+                                  isCompleted={isCompleted}
+                                  filters={issueFilters}
+                                  handleFiltersUpdate={handleFiltersUpdate}
                                 />
                               </div>
                             )}

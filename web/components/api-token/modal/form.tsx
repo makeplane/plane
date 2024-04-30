@@ -146,7 +146,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.description)}
                 placeholder="Token description"
-                className="h-24 w-full text-sm"
+                className="min-h-24 w-full text-sm"
               />
             )}
           />
@@ -170,8 +170,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                           {value === "custom"
                             ? "Custom date"
                             : selectedOption
-                            ? selectedOption.label
-                            : "Set expiration date"}
+                              ? selectedOption.label
+                              : "Set expiration date"}
                         </div>
                       }
                       value={value}
@@ -207,8 +207,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     ? `Expires ${renderFormattedDate(customDate)}`
                     : null
                   : watch("expired_at")
-                  ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
-                  : null}
+                    ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
+                    : null}
               </span>
             )}
           </div>
