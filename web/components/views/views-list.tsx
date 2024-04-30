@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 // hooks
 // components
 import { Input } from "@plane/ui";
+import { ListLayout } from "@/components/core/list";
 import { EmptyState } from "@/components/empty-state";
 import { ViewListLoader } from "@/components/ui";
 import { ProjectViewListItem } from "@/components/views";
@@ -43,13 +44,13 @@ export const ProjectViewsList = observer(() => {
               />
             </div>
           </div>
-          <div className="flex flex-col h-full w-full vertical-scrollbar scrollbar-lg">
+          <ListLayout>
             {filteredViewsList.length > 0 ? (
               filteredViewsList.map((view) => <ProjectViewListItem key={view.id} view={view} />)
             ) : (
               <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
             )}
-          </div>
+          </ListLayout>
         </div>
       ) : (
         <EmptyState type={EmptyStateType.PROJECT_VIEW} primaryButtonOnClick={() => toggleCreateViewModal(true)} />
