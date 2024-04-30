@@ -154,7 +154,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
           </div>
           {passwordSupport}
         </div>
-        {mode === EAuthModes.SIGN_UP && getPasswordStrength(passwordFormData.password) >= 3 && (
+        {mode === EAuthModes.SIGN_UP && (
           <div className="space-y-1">
             <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
               Confirm password

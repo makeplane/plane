@@ -22,7 +22,7 @@ from plane.authentication.utils.login import user_login
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
-from plane.db.models import User
+from plane.db.models import User, Profile
 
 
 class MagicGenerateSpaceEndpoint(APIView):

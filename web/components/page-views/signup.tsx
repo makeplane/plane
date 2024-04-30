@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Spinner } from "@plane/ui";
 // components
-import { AuthRoot, EAuthModes } from "@/components/account";
+import { SignUpAuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
 import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
@@ -69,7 +69,7 @@ export const SignUpView = observer(() => {
         </div>
         <div className="mx-auto h-full">
           <div className="h-full overflow-auto px-7 pb-56 pt-4 sm:px-0">
-            <AuthRoot mode={EAuthModes.SIGN_UP} />
+            <SignUpAuthRoot />
           </div>
         </div>
       </div>

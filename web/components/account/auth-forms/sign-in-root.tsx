@@ -23,16 +23,15 @@ import { WorkspaceService } from "@/services/workspace.service";
 const authService = new AuthService();
 const workSpaceService = new WorkspaceService();
 
+export enum EAuthModes {
+  SIGN_IN = "SIGN_IN",
+  SIGN_UP = "SIGN_UP",
+}
+
 export enum EAuthSteps {
   EMAIL = "EMAIL",
   PASSWORD = "PASSWORD",
   UNIQUE_CODE = "UNIQUE_CODE",
-  OPTIONAL_SET_PASSWORD = "OPTIONAL_SET_PASSWORD",
-}
-
-export enum EAuthModes {
-  SIGN_IN = "SIGN_IN",
-  SIGN_UP = "SIGN_UP",
 }
 
 type Props = {
@@ -53,10 +52,6 @@ const Titles = {
       header: "Sign in to Plane",
       subHeader: "Get back to your projects and make progress",
     },
-    [EAuthSteps.OPTIONAL_SET_PASSWORD]: {
-      header: "",
-      subHeader: "",
-    },
   },
   [EAuthModes.SIGN_UP]: {
     [EAuthSteps.EMAIL]: {
@@ -70,10 +65,6 @@ const Titles = {
     [EAuthSteps.UNIQUE_CODE]: {
       header: "Create your account",
       subHeader: "Progress, visualize, and measure work how it works best for you.",
-    },
-    [EAuthSteps.OPTIONAL_SET_PASSWORD]: {
-      header: "",
-      subHeader: "",
     },
   },
 };
@@ -101,11 +92,11 @@ const getHeaderSubHeader = (
   return Titles[mode][step];
 };
 
-export const AuthRoot = observer((props: Props) => {
+export const SignInAuthRoot = observer((props: Props) => {
   const { mode } = props;
   //router
   const router = useRouter();
-  const { email: emailParam, invitation_id, slug } = router.query;
+  const { email: emailParam, invitation_id, slug: workspaceSlug } = router.query;
   // states
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
@@ -127,10 +118,10 @@ export const AuthRoot = observer((props: Props) => {
   };
 
   useEffect(() => {
-    if (invitation_id && slug) {
+    if (invitation_id && workspaceSlug) {
       setIsLoading(true);
       workSpaceService
-        .getWorkspaceInvitation(slug.toString(), invitation_id.toString())
+        .getWorkspaceInvitation(workspaceSlug.toString(), invitation_id.toString())
         .then((res) => {
           setInvitation(res);
         })
@@ -141,7 +132,7 @@ export const AuthRoot = observer((props: Props) => {
     } else {
       setInvitation(undefined);
     }
-  }, [invitation_id, slug]);
+  }, [invitation_id, workspaceSlug]);
 
   const { header, subHeader } = getHeaderSubHeader(authStep, mode, invitation, email);
 
@@ -205,6 +196,7 @@ export const AuthRoot = observer((props: Props) => {
           <p className="font-medium text-onboarding-text-400">{subHeader}</p>
         </div>
         {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
+
         {authStep === EAuthSteps.UNIQUE_CODE && (
           <UniqueCodeForm
             email={email}
@@ -216,6 +208,7 @@ export const AuthRoot = observer((props: Props) => {
             mode={mode}
           />
         )}
+
         {authStep === EAuthSteps.PASSWORD && (
           <AuthPasswordForm
             email={email}
@@ -228,8 +221,7 @@ export const AuthRoot = observer((props: Props) => {
           />
         )}
       </div>
-      {isOAuthEnabled && authStep !== EAuthSteps.OPTIONAL_SET_PASSWORD && <OAuthOptions />}
-
+      {isOAuthEnabled && <OAuthOptions />}
       <TermsAndConditions isSignUp={mode === EAuthModes.SIGN_UP} />
     </>
   );

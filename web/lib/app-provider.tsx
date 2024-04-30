@@ -14,7 +14,7 @@ import { resolveGeneralTheme } from "@/helpers/theme.helper";
 // hooks
 import { useInstance, useWorkspace, useUser } from "@/hooks/store";
 // layouts
-import InstanceLayout from "@/layouts/instance-layout";
+import InstanceLayout from "@/lib/wrappers/instance-wrapper";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });

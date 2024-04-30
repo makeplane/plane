@@ -26,7 +26,7 @@ from plane.authentication.utils.workspace_project_join import (
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
-from plane.db.models import User
+from plane.db.models import User, Profile
 
 
 class MagicGenerateEndpoint(APIView):
@@ -123,11 +123,12 @@ class MagicSignInEndpoint(View):
                 request=request, key=f"magic_{email}", code=code
             )
             user = provider.authenticate()
+            profile = Profile.objects.get(user=user)
             # Login the user and record his device info
             user_login(request=request, user=user)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
-            if user.is_password_autoset:
+            if user.is_password_autoset and profile.is_onboarded:
                 path = "accounts/set-password"
             else:
                 # Get the redirection path

@@ -11,7 +11,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 import useTimer from "@/hooks/use-timer";
 // services
 import { AuthService } from "@/services/auth.service";
-import { EAuthModes } from "./root";
+import { EAuthModes } from "./sign-up-root";
 
 type Props = {
   email: string;

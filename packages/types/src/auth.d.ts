@@ -26,6 +26,6 @@ export interface IPasswordSignInData {
   password: string;
 }
 
-export interface ICsrfTokenData  {
+export interface ICsrfTokenData {
   csrf_token: string;
-};
+}
