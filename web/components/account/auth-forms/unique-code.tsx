@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
-// types
 import { IEmailCheckData } from "@plane/types";
-// ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
 // helpers
+import { EAuthModes } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import useTimer from "@/hooks/use-timer";
 // services
 import { AuthService } from "@/services/auth.service";
-import { EAuthModes } from "./sign-up-root";
 
 type Props = {
   email: string;

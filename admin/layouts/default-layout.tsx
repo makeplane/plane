@@ -2,7 +2,6 @@
 
 import { FC, ReactNode } from "react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 // logo
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
@@ -12,9 +11,6 @@ type TDefaultLayout = {
 
 export const DefaultLayout: FC<TDefaultLayout> = (props) => {
   const { children } = props;
-  const pathname = usePathname();
-
-  console.log("pathname", pathname);
 
   return (
     <div className="relative h-screen max-h-max w-full overflow-hidden overflow-y-auto flex flex-col">

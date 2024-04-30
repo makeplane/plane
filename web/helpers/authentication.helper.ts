@@ -46,7 +46,10 @@ export enum EErrorAlertType {
 
 export type TAuthErrorInfo = { type: EErrorAlertType; message: string };
 
-export const errorHandler = (errorType: EAuthenticationErrorCodes, errorMessage: string | undefined) => {
+export const authErrorHandler = (
+  errorCode: EAuthenticationErrorCodes,
+  errorMessage: string | undefined
+): TAuthErrorInfo | undefined => {
   const toastAlertErrorCodes = [
     EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED,
@@ -66,43 +69,41 @@ export const errorHandler = (errorType: EAuthenticationErrorCodes, errorMessage:
   const inlineEmailCodeErrorCodes = [EAuthenticationErrorCodes.INLINE_EMAIL_CODE];
   const inlinePasswordErrorCodes = [EAuthenticationErrorCodes.INLINE_PASSWORD];
 
-  let errorPayload: TAuthErrorInfo | undefined = undefined;
-
-  if (toastAlertErrorCodes.includes(errorType))
-    errorPayload = {
+  if (toastAlertErrorCodes.includes(errorCode))
+    return {
       type: EErrorAlertType.TOAST_ALERT,
-      message: errorMessage || "Something went wrong",
+      message: errorMessage || "Something went wrong. Please try again.",
     };
 
-  if (bannerAlertErrorCodes.includes(errorType))
-    errorPayload = {
+  if (bannerAlertErrorCodes.includes(errorCode))
+    return {
       type: EErrorAlertType.BANNER_ALERT,
-      message: errorMessage || "Something went wrong",
+      message: errorMessage || "Something went wrong. Please try again.",
     };
 
-  if (inlineFirstNameErrorCodes.includes(errorType))
-    errorPayload = {
+  if (inlineFirstNameErrorCodes.includes(errorCode))
+    return {
       type: EErrorAlertType.INLINE_FIRST_NAME,
-      message: errorMessage || "Something went wrong",
+      message: errorMessage || "Something went wrong. Please try again.",
     };
 
-  if (inlineEmailErrorCodes.includes(errorType))
-    errorPayload = {
+  if (inlineEmailErrorCodes.includes(errorCode))
+    return {
       type: EErrorAlertType.INLINE_EMAIL,
-      message: errorMessage || "Something went wrong",
+      message: errorMessage || "Something went wrong. Please try again.",
     };
 
-  if (inlinePasswordErrorCodes.includes(errorType))
-    errorPayload = {
+  if (inlinePasswordErrorCodes.includes(errorCode))
+    return {
       type: EErrorAlertType.INLINE_PASSWORD,
-      message: errorMessage || "Something went wrong",
+      message: errorMessage || "Something went wrong. Please try again.",
     };
 
-  if (inlineEmailCodeErrorCodes.includes(errorType))
-    errorPayload = {
+  if (inlineEmailCodeErrorCodes.includes(errorCode))
+    return {
       type: EErrorAlertType.INLINE_EMAIL_CODE,
-      message: errorMessage || "Something went wrong",
+      message: errorMessage || "Something went wrong. Please try again.",
     };
 
-  return errorPayload;
+  return undefined;
 };

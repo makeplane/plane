@@ -1,175 +1,68 @@
 import React, { useEffect, useState } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// types
-import { IEmailCheckData, IWorkspaceMemberInvitation } from "@plane/types";
-// ui
+import { IEmailCheckData } from "@plane/types";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
+  AuthHeader,
+  AuthBanner,
   AuthEmailForm,
   AuthPasswordForm,
   OAuthOptions,
   TermsAndConditions,
   UniqueCodeForm,
 } from "@/components/account";
-import { WorkspaceLogo } from "@/components/workspace/logo";
+// helpers
+import {
+  EAuthModes,
+  EAuthSteps,
+  EAuthenticationErrorCodes,
+  EErrorAlertType,
+  TAuthErrorInfo,
+  authErrorHandler,
+} from "@/helpers/authentication.helper";
+// hooks
 import { useInstance } from "@/hooks/store";
 // services
 import { AuthService } from "@/services/auth.service";
-import { WorkspaceService } from "@/services/workspace.service";
 
 const authService = new AuthService();
-const workSpaceService = new WorkspaceService();
 
-export enum EAuthModes {
-  SIGN_IN = "SIGN_IN",
-  SIGN_UP = "SIGN_UP",
-}
-
-export enum EAuthSteps {
-  EMAIL = "EMAIL",
-  PASSWORD = "PASSWORD",
-  UNIQUE_CODE = "UNIQUE_CODE",
-}
-
-type Props = {
-  mode: EAuthModes;
-};
-
-const Titles = {
-  [EAuthModes.SIGN_IN]: {
-    [EAuthSteps.EMAIL]: {
-      header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
-    },
-    [EAuthSteps.PASSWORD]: {
-      header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
-    },
-    [EAuthSteps.UNIQUE_CODE]: {
-      header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
-    },
-  },
-  [EAuthModes.SIGN_UP]: {
-    [EAuthSteps.EMAIL]: {
-      header: "Create your account",
-      subHeader: "Start tracking your projects with Plane",
-    },
-    [EAuthSteps.PASSWORD]: {
-      header: "Create your account",
-      subHeader: "Progress, visualize, and measure work how it works best for you.",
-    },
-    [EAuthSteps.UNIQUE_CODE]: {
-      header: "Create your account",
-      subHeader: "Progress, visualize, and measure work how it works best for you.",
-    },
-  },
-};
-
-const getHeaderSubHeader = (
-  step: EAuthSteps,
-  mode: EAuthModes,
-  invitation?: IWorkspaceMemberInvitation | undefined,
-  email?: string
-) => {
-  if (invitation && email && invitation.email === email && invitation.workspace) {
-    const workspace = invitation.workspace;
-    return {
-      header: (
-        <>
-          Join <WorkspaceLogo logo={workspace?.logo} name={workspace?.name} classNames="w-8 h-9" /> {workspace.name}
-        </>
-      ),
-      subHeader: `${
-        mode == EAuthModes.SIGN_UP ? "Create an account" : "Sign in"
-      } to start managing work with your team.`,
-    };
-  }
-
-  return Titles[mode][step];
-};
-
-export const SignInAuthRoot = observer((props: Props) => {
-  const { mode } = props;
+export const SignInAuthRoot = observer(() => {
   //router
   const router = useRouter();
-  const { email: emailParam, invitation_id, slug: workspaceSlug } = router.query;
+  const { email: emailParam, invitation_id, slug: workspaceSlug, error_code, error_message } = router.query;
   // states
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
-  const [invitation, setInvitation] = useState<IWorkspaceMemberInvitation | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   // hooks
   const { instance } = useInstance();
   // derived values
-  const isSmtpConfigured = instance?.config?.is_smtp_configured;
-
-  const redirectToSignUp = (email: string) => {
-    if (isEmpty(email)) router.push({ pathname: "/", query: router.query });
-    else router.push({ pathname: "/", query: { ...router.query, email: email } });
-  };
-
-  const redirectToSignIn = (email: string) => {
-    if (isEmpty(email)) router.push({ pathname: "/accounts/sign-in", query: router.query });
-    else router.push({ pathname: "/accounts/sign-in", query: { ...router.query, email: email } });
-  };
+  const authMode = EAuthModes.SIGN_IN;
 
   useEffect(() => {
-    if (invitation_id && workspaceSlug) {
-      setIsLoading(true);
-      workSpaceService
-        .getWorkspaceInvitation(workspaceSlug.toString(), invitation_id.toString())
-        .then((res) => {
-          setInvitation(res);
-        })
-        .catch(() => {
-          setInvitation(undefined);
-        })
-        .finally(() => setIsLoading(false));
-    } else {
-      setInvitation(undefined);
+    if (error_code && error_message) {
+      const errorhandler = authErrorHandler(
+        error_code?.toString() as EAuthenticationErrorCodes,
+        error_message?.toString()
+      );
+      if (errorhandler) setErrorInfo(errorhandler);
     }
-  }, [invitation_id, workspaceSlug]);
-
-  const { header, subHeader } = getHeaderSubHeader(authStep, mode, invitation, email);
+  }, [error_code, error_message]);
 
   // step 1 submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
 
-    const emailCheck = mode === EAuthModes.SIGN_UP ? authService.signUpEmailCheck : authService.signInEmailCheck;
-
-    await emailCheck(data)
-      .then((res) => {
-        if (mode === EAuthModes.SIGN_IN && !res.is_password_autoset) {
-          setAuthStep(EAuthSteps.PASSWORD);
-        } else {
-          if (isSmtpConfigured) {
-            setAuthStep(EAuthSteps.UNIQUE_CODE);
-          } else {
-            if (mode === EAuthModes.SIGN_IN) {
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Error!",
-                message: "Unable to process request please contact Administrator to reset password",
-              });
-            } else {
-              setAuthStep(EAuthSteps.PASSWORD);
-            }
-          }
-        }
+    await authService
+      .signInEmailCheck(data)
+      .then(() => {
+        setAuthStep(EAuthSteps.PASSWORD);
       })
       .catch((err) => {
-        if (err?.error_code === "USER_DOES_NOT_EXIST") {
-          redirectToSignUp(data.email);
-          return;
-        } else if (err?.error_code === "USER_ALREADY_EXIST") {
-          redirectToSignIn(data.email);
-          return;
-        }
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -190,13 +83,19 @@ export const SignInAuthRoot = observer((props: Props) => {
 
   return (
     <>
-      <div className="mx-auto flex flex-col">
-        <div className="text-center space-y-1 py-4 mx-auto sm:w-96">
-          <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">{header}</h3>
-          <p className="font-medium text-onboarding-text-400">{subHeader}</p>
-        </div>
+      <div className="relative max-w-lg mx-auto flex flex-col space-y-6">
+        <AuthHeader
+          workspaceSlug={workspaceSlug?.toString() || undefined}
+          invitationId={invitation_id?.toString() || undefined}
+          invitationEmail={email || undefined}
+          authMode={EAuthModes.SIGN_IN}
+          currentAuthStep={authStep}
+          handleLoader={setIsLoading}
+        />
+        {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
+          <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
+        )}
         {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
-
         {authStep === EAuthSteps.UNIQUE_CODE && (
           <UniqueCodeForm
             email={email}
@@ -205,10 +104,9 @@ export const SignInAuthRoot = observer((props: Props) => {
               setAuthStep(EAuthSteps.EMAIL);
             }}
             submitButtonText="Continue"
-            mode={mode}
+            mode={authMode}
           />
         )}
-
         {authStep === EAuthSteps.PASSWORD && (
           <AuthPasswordForm
             email={email}
@@ -217,12 +115,12 @@ export const SignInAuthRoot = observer((props: Props) => {
               setAuthStep(EAuthSteps.EMAIL);
             }}
             handleStepChange={(step) => setAuthStep(step)}
-            mode={mode}
+            mode={authMode}
           />
         )}
+        {isOAuthEnabled && <OAuthOptions />}
+        <TermsAndConditions isSignUp={false} />
       </div>
-      {isOAuthEnabled && <OAuthOptions />}
-      <TermsAndConditions isSignUp={mode === EAuthModes.SIGN_UP} />
     </>
   );
 });

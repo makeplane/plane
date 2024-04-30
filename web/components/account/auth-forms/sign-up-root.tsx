@@ -1,5 +1,4 @@
-import { FC, useState } from "react";
-import isEmpty from "lodash/isEmpty";
+import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // types
@@ -17,7 +16,14 @@ import {
   UniqueCodeForm,
 } from "@/components/account";
 // helpers
-import { EAuthModes, EAuthSteps, EErrorAlertType, TAuthErrorInfo } from "@/helpers/authentication.helper";
+import {
+  EAuthModes,
+  EAuthSteps,
+  EAuthenticationErrorCodes,
+  EErrorAlertType,
+  TAuthErrorInfo,
+  authErrorHandler,
+} from "@/helpers/authentication.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 // services
@@ -29,7 +35,7 @@ const authService = new AuthService();
 export const SignUpAuthRoot: FC = observer(() => {
   //router
   const router = useRouter();
-  const { email: emailParam, invitation_id, slug: workspaceSlug } = router.query;
+  const { email: emailParam, invitation_id, slug: workspaceSlug, error_code, error_message } = router.query;
   // states
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
@@ -41,12 +47,17 @@ export const SignUpAuthRoot: FC = observer(() => {
   const authMode = EAuthModes.SIGN_UP;
   const isSmtpConfigured = instance?.config?.is_smtp_configured;
 
-  // const redirectToSignUp = (email: string) => {
-  //   if (isEmpty(email)) router.push({ pathname: "/", query: router.query });
-  //   else router.push({ pathname: "/", query: { ...router.query, email: email } });
-  // };
+  useEffect(() => {
+    if (error_code && error_message) {
+      const errorhandler = authErrorHandler(
+        error_code?.toString() as EAuthenticationErrorCodes,
+        error_message?.toString()
+      );
+      if (errorhandler) setErrorInfo(errorhandler);
+    }
+  }, [error_code, error_message]);
 
-  // step 1 - email verification
+  // email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
     await authService
@@ -55,12 +66,16 @@ export const SignUpAuthRoot: FC = observer(() => {
         if (isSmtpConfigured) setAuthStep(EAuthSteps.UNIQUE_CODE);
         else setAuthStep(EAuthSteps.PASSWORD);
       })
-      .catch((err) => {
-        console.log("error", err);
+      .catch((error) => {
+        const errorhandler = authErrorHandler(error?.error_code, error?.error_message);
+        if (errorhandler) {
+          setErrorInfo(errorhandler);
+          return;
+        }
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err?.error_message ?? "Something went wrong. Please try again.",
+          message: error?.error_message ?? "Something went wrong. Please try again.",
         });
       });
   };
@@ -76,50 +91,43 @@ export const SignUpAuthRoot: FC = observer(() => {
     );
 
   return (
-    <>
-      <div className="relative max-w-lg mx-auto flex flex-col space-y-6">
-        <AuthHeader
-          workspaceSlug={workspaceSlug?.toString() || undefined}
-          invitationId={invitation_id?.toString() || undefined}
-          invitationEmail={emailParam?.toString() || undefined}
-          authMode={EAuthModes.SIGN_UP}
-          currentAuthStep={authStep}
-          handleLoader={setIsLoading}
+    <div className="relative max-w-lg mx-auto flex flex-col space-y-6">
+      <AuthHeader
+        workspaceSlug={workspaceSlug?.toString() || undefined}
+        invitationId={invitation_id?.toString() || undefined}
+        invitationEmail={email || undefined}
+        authMode={EAuthModes.SIGN_UP}
+        currentAuthStep={authStep}
+        handleLoader={setIsLoading}
+      />
+      {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
+        <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
+      )}
+      {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
+      {authStep === EAuthSteps.UNIQUE_CODE && (
+        <UniqueCodeForm
+          email={email}
+          handleEmailClear={() => {
+            setEmail("");
+            setAuthStep(EAuthSteps.EMAIL);
+          }}
+          submitButtonText="Continue"
+          mode={authMode}
         />
-
-        {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-          <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
-        )}
-
-        {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
-
-        {authStep === EAuthSteps.UNIQUE_CODE && (
-          <UniqueCodeForm
-            email={email}
-            handleEmailClear={() => {
-              setEmail("");
-              setAuthStep(EAuthSteps.EMAIL);
-            }}
-            submitButtonText="Continue"
-            mode={authMode}
-          />
-        )}
-
-        {authStep === EAuthSteps.PASSWORD && (
-          <AuthPasswordForm
-            email={email}
-            handleEmailClear={() => {
-              setEmail("");
-              setAuthStep(EAuthSteps.EMAIL);
-            }}
-            handleStepChange={(step) => setAuthStep(step)}
-            mode={authMode}
-          />
-        )}
-
-        {isOAuthEnabled && <OAuthOptions />}
-        <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP} />
-      </div>
-    </>
+      )}
+      {authStep === EAuthSteps.PASSWORD && (
+        <AuthPasswordForm
+          email={email}
+          handleEmailClear={() => {
+            setEmail("");
+            setAuthStep(EAuthSteps.EMAIL);
+          }}
+          handleStepChange={(step) => setAuthStep(step)}
+          mode={authMode}
+        />
+      )}
+      {isOAuthEnabled && <OAuthOptions />}
+      <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP} />
+    </div>
   );
 });

@@ -37,11 +37,8 @@ const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
       </div>
     );
 
-  // checking if the instance is activated or not
-  if (error && !error?.data?.is_activated) return <InstanceNotReady isGodModeEnabled={false} />;
-
   // instance is not ready and setup is not done
-  if (instance?.instance?.is_setup_done === false) return <InstanceNotReady isGodModeEnabled />;
+  if (instance?.instance?.is_setup_done === false) return <InstanceNotReady />;
 
   return <>{children}</>;
 });

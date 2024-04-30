@@ -240,13 +240,15 @@ export const InstanceSignUpForm: FC = (props) => {
           </div>
 
           <div className="relative flex items-center pt-2 gap-2">
-            <Checkbox
-              id="is_telemetry_enabled"
-              name="is_telemetry_enabled"
-              value={formData.is_telemetry_enabled ? "True" : "False"}
-              onChange={() => handleFormChange("is_telemetry_enabled", !formData.is_telemetry_enabled)}
-              checked={formData.is_telemetry_enabled}
-            />
+            <div>
+              <Checkbox
+                id="is_telemetry_enabled"
+                name="is_telemetry_enabled"
+                value={formData.is_telemetry_enabled ? "True" : "False"}
+                onChange={() => handleFormChange("is_telemetry_enabled", !formData.is_telemetry_enabled)}
+                checked={formData.is_telemetry_enabled}
+              />
+            </div>
             <label className="text-sm text-custom-text-300 font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
               Allow Plane to anonymously collect usage events.
             </label>
