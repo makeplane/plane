@@ -69,12 +69,7 @@ export const ModulesListView: React.FC = observer(() => {
     <>
       {displayFilters?.layout === "list" && (
         <div className="h-full overflow-y-auto">
-          <div className="flex h-full w-full flex-col">
-            <div className="h-[50px] flex-shrink-0 w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
-              <div className="flex items-center">
-                <span className="block text-sm font-medium">Module name</span>
-              </div>
-            </div>
+          <div className="flex h-full w-full justify-between">
             <ListLayout>
               {filteredModuleIds.map((moduleId) => (
                 <ModuleListItem key={moduleId} moduleId={moduleId} />

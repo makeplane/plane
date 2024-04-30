@@ -48,7 +48,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="flex-shrink-0 h-[50px] w-full border-b border-custom-border-200 px-3 relative flex items-center gap-4 justify-between">
+      <div className="flex-shrink-0 h-[50px] w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
         <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
         <div className="h-full flex items-center gap-2 self-end">
           <PageSearchInput projectId={projectId} />

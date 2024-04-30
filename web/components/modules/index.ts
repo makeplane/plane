@@ -13,6 +13,7 @@ export * from "./module-list-item";
 export * from "./module-peek-overview";
 export * from "./quick-actions";
 export * from "./module-list-item-action";
+export * from "./module-view-header";
 
 // archived modules
 export * from "./archived-modules";
