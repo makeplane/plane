@@ -1,37 +1,44 @@
 import { useState } from "react";
-import Link from "next/link";
+import { observer } from "mobx-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
-// services
-import { IntegrationService } from "services/integrations";
-// components
-import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
-// ui
-import { Button, Loader } from "@plane/ui";
 // icons
 import { RefreshCw } from "lucide-react";
 // types
-import { IImporterService } from "types";
-// fetch-keys
-import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
+import { IImporterService } from "@plane/types";
+// ui
+import { Button } from "@plane/ui";
+// components
+import { EmptyState } from "@/components/empty-state";
+import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
+import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
-import { IMPORTERS_LIST } from "constants/workspace";
+import { EmptyStateType } from "@/constants/empty-state";
+import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+import { IMPORTERS_LIST } from "@/constants/workspace";
+// hooks
+import { useUser } from "@/hooks/store";
+import useUserAuth from "@/hooks/use-user-auth";
+// services
+import { IntegrationService } from "@/services/integrations";
 
 // services
 const integrationService = new IntegrationService();
 
-const IntegrationGuide = () => {
+const IntegrationGuide = observer(() => {
+  // states
   const [refreshing, setRefreshing] = useState(false);
   const [deleteImportModal, setDeleteImportModal] = useState(false);
   const [importToDelete, setImportToDelete] = useState<IImporterService | null>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
-
-  const { user } = useUserAuth();
+  // store hooks
+  const { data: currentUser, isLoading: currentUserLoader, profile } = useUser();
+  // custom hooks
+  const {} = useUserAuth({ user: currentUser || null, userProfile: profile?.data, isLoading: currentUserLoader });
 
   const { data: importerServices } = useSWR(
     workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
@@ -49,7 +56,7 @@ const IntegrationGuide = () => {
         isOpen={deleteImportModal}
         handleClose={() => setDeleteImportModal(false)}
         data={importToDelete}
-        user={user}
+        user={currentUser || null}
       />
       <div className="h-full">
         {(!provider || provider === "csv") && (
@@ -129,26 +136,23 @@ const IntegrationGuide = () => {
                       </div>
                     </div>
                   ) : (
-                    <p className="px-4 py-6 text-sm text-custom-text-200">No previous imports available.</p>
+                    <div className="flex h-full w-full items-center justify-center">
+                      <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" />
+                    </div>
                   )
                 ) : (
-                  <Loader className="mt-6 grid grid-cols-1 gap-3">
-                    <Loader.Item height="40px" width="100%" />
-                    <Loader.Item height="40px" width="100%" />
-                    <Loader.Item height="40px" width="100%" />
-                    <Loader.Item height="40px" width="100%" />
-                  </Loader>
+                  <ImportExportSettingsLoader />
                 )}
               </div>
             </div>
           </>
         )}
 
-        {provider && provider === "github" && <GithubImporterRoot user={user} />}
-        {provider && provider === "jira" && <JiraImporterRoot user={user} />}
+        {provider && provider === "github" && <GithubImporterRoot />}
+        {provider && provider === "jira" && <JiraImporterRoot />}
       </div>
     </>
   );
-};
+});
 
 export default IntegrationGuide;

@@ -1,85 +1,113 @@
-import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // components
-import { ListProperties } from "./properties";
+// hooks
 // ui
-import { Spinner, Tooltip } from "@plane/ui";
+import { Spinner, Tooltip, ControlLink } from "@plane/ui";
+// helper
+import { cn } from "@/helpers/common.helper";
+import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { IIssue, IIssueDisplayProperties } from "types";
-import { EIssueActions } from "../types";
+import { IssueProperties } from "../properties/all-properties";
 
 interface IssueBlockProps {
-  columnId: string;
-
-  issue: IIssue;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
+  issueId: string;
+  issuesMap: TIssueMap;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 
-export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, displayProperties, canEditProperties } = props;
-  // router
-  const router = useRouter();
-  const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
-    handleIssues(issueToUpdate, EIssueActions.UPDATE);
-  };
+export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlockProps) => {
+  const { issuesMap, issueId, updateIssue, quickActions, displayProperties, canEditProperties } = props;
+  // hooks
+  const { workspaceSlug } = useAppRouter();
+  const { getProjectIdentifierById } = useProject();
+  const { peekIssue, setPeekIssue } = useIssueDetail();
 
-  const handleIssuePeekOverview = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const { query } = router;
-    if (event.ctrlKey || event.metaKey) {
-      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
-      window.open(issueUrl, "_blank"); // Open link in a new tab
-    } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
-      });
-    }
-  };
+  const handleIssuePeekOverview = (issue: TIssue) =>
+    workspaceSlug &&
+    issue &&
+    issue.project_id &&
+    issue.id &&
+    peekIssue?.issueId !== issue.id &&
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
-  const canEditIssueProperties = canEditProperties(issue.project);
+  const issue = issuesMap[issueId];
+  const { isMobile } = usePlatformOS();
+  if (!issue) return null;
+
+  const canEditIssueProperties = canEditProperties(issue.project_id);
+  const projectIdentifier = getProjectIdentifierById(issue.project_id);
 
   return (
-    <>
-      <button
-        className="relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm w-full"
-        onClick={handleIssuePeekOverview}
-      >
-        {displayProperties && displayProperties?.key && (
-          <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-            {issue?.project_detail?.identifier}-{issue.sequence_id}
-          </div>
-        )}
-
-        {issue?.tempId !== undefined && (
-          <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
-        )}
-        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-          <div className="line-clamp-1 w-full cursor-pointer text-sm font-medium text-custom-text-100 text-left">
-            {issue.name}
-          </div>
-        </Tooltip>
-
-        <div className="ml-auto flex flex-shrink-0 items-center gap-2">
-          {!issue?.tempId ? (
-            <>
-              <ListProperties
-                columnId={columnId}
-                issue={issue}
-                isReadonly={!canEditIssueProperties}
-                handleIssues={updateIssue}
-                displayProperties={displayProperties}
-              />
-              {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
-            </>
-          ) : (
-            <div className="h-4 w-4">
-              <Spinner className="h-4 w-4" />
+    <div
+      className={cn(
+        "relative flex min-h-12 flex-col gap-3 bg-custom-background-100 p-3 text-sm md:flex-row md:items-center",
+        {
+          "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue && peekIssue.issueId === issue.id,
+          "last:border-b-transparent": peekIssue?.issueId !== issue.id,
+        }
+      )}
+    >
+      <div className="flex w-full truncate">
+        <div className="flex flex-grow items-center gap-3 truncate">
+          {displayProperties && displayProperties?.key && (
+            <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+              {projectIdentifier}-{issue.sequence_id}
             </div>
           )}
+
+          {issue?.tempId !== undefined && (
+            <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+          )}
+
+          {issue?.is_draft ? (
+            <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+              <p className="truncate">{issue.name}</p>
+            </Tooltip>
+          ) : (
+            <ControlLink
+              id={`issue-${issue.id}`}
+              href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
+                issue.id
+              }`}
+              target="_blank"
+              onClick={() => handleIssuePeekOverview(issue)}
+              className="w-full truncate cursor-pointer text-sm text-custom-text-100"
+              disabled={!!issue?.tempId}
+            >
+              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+                <p className="truncate">{issue.name}</p>
+              </Tooltip>
+            </ControlLink>
+          )}
         </div>
-      </button>
-    </>
+        {!issue?.tempId && (
+          <div className="block rounded border border-custom-border-300 md:hidden ">{quickActions(issue)}</div>
+        )}
+      </div>
+      <div className="flex flex-shrink-0 items-center gap-2">
+        {!issue?.tempId ? (
+          <>
+            <IssueProperties
+              className="relative flex flex-wrap items-center gap-2 whitespace-nowrap md:flex-shrink-0 md:flex-grow"
+              issue={issue}
+              isReadOnly={!canEditIssueProperties}
+              updateIssue={updateIssue}
+              displayProperties={displayProperties}
+              activeLayout="List"
+            />
+            <div className="hidden md:block">{quickActions(issue)}</div>
+          </>
+        ) : (
+          <div className="h-4 w-4">
+            <Spinner className="h-4 w-4" />
+          </div>
+        )}
+      </div>
+    </div>
   );
-};
+});

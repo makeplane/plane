@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 
 // mobx
-import { observer } from "mobx-react-lite";
 // lib
-import { useMobxStore } from "lib/mobx/store-provider";
-// ui
 import { Tooltip } from "@plane/ui";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+// ui
 
 export const IssueVotes: React.FC = observer(() => {
   const [isSubmitting, setIsSubmitting] = useState(false);

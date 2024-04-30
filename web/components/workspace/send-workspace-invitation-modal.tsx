@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { Plus, X } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Dialog, Transition } from "@headlessui/react";
+import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
-// types
-import { IWorkspaceBulkInviteFormData, TUserWorkspaceRole } from "types";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+// hooks
+import { useUser } from "@/hooks/store";
+// types
 
 type Props = {
   isOpen: boolean;
@@ -20,7 +20,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: TUserWorkspaceRole;
+  role: EUserWorkspaceRoles;
 };
 
 type FormValues = {
@@ -40,8 +40,8 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
   const { isOpen, onClose, onSubmit } = props;
   // mobx store
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
   // form info
   const {
     control,
@@ -66,6 +66,12 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
 
   const appendField = () => {
     append({ email: "", role: 15 });
+  };
+
+  const onSubmitForm = async (data: FormValues) => {
+    await onSubmit(data)?.then(() => {
+      reset(defaultValues);
+    });
   };
 
   useEffect(() => {
@@ -98,9 +104,9 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative translate-y-0 transform rounded-lg bg-custom-background-100 p-5 text-left opacity-100 shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl sm:scale-100">
+              <Dialog.Panel className="relative translate-y-0 transform rounded-lg bg-custom-background-100 p-5 text-left opacity-100 shadow-custom-shadow-md transition-all w-full sm:max-w-2xl sm:scale-100">
                 <form
-                  onSubmit={handleSubmit(onSubmit)}
+                  onSubmit={handleSubmit(onSubmitForm)}
                   onKeyDown={(e) => {
                     if (e.code === "Enter") e.preventDefault();
                   }}
@@ -115,8 +121,8 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
 
                     <div className="mb-3 space-y-4">
                       {fields.map((field, index) => (
-                        <div key={field.id} className="group relative grid grid-cols-11 gap-4">
-                          <div className="col-span-7">
+                        <div key={field.id} className="group relative flex items-start gap-4">
+                          <div className="w-full">
                             <Controller
                               control={control}
                               name={`emails.${index}.email`}
@@ -149,7 +155,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                               )}
                             />
                           </div>
-                          <div className="col-span-3">
+                          <div className="flex items-center gap-2">
                             <Controller
                               control={control}
                               name={`emails.${index}.role`}
@@ -159,7 +165,8 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                                   value={value}
                                   label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
                                   onChange={onChange}
-                                  width="w-full"
+                                  optionsClassName="w-full"
+                                  className="flex-grow"
                                   input
                                 >
                                   {Object.entries(ROLE).map(([key, value]) => {
@@ -173,16 +180,16 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                                 </CustomSelect>
                               )}
                             />
+                            {fields.length > 1 && (
+                              <button
+                                type="button"
+                                className="grid place-items-center self-center rounded flex-shrink-0"
+                                onClick={() => remove(index)}
+                              >
+                                <X className="h-3.5 w-3.5 text-custom-text-200" />
+                              </button>
+                            )}
                           </div>
-                          {fields.length > 1 && (
-                            <button
-                              type="button"
-                              className="-ml-3 place-items-center self-center rounded"
-                              onClick={() => remove(index)}
-                            >
-                              <X className="h-3.5 w-3.5 text-custom-text-200" />
-                            </button>
-                          )}
                         </div>
                       ))}
                     </div>
@@ -202,7 +209,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                         Cancel
                       </Button>
                       <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-                        {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
+                        {isSubmitting ? "Sending invitation" : "Send invitation"}
                       </Button>
                     </div>
                   </div>

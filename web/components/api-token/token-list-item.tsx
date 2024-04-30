@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { XCircle } from "lucide-react";
+import { IApiToken } from "@plane/types";
 // components
-import { DeleteApiTokenModal } from "components/api-token";
-// ui
 import { Tooltip } from "@plane/ui";
+import { DeleteApiTokenModal } from "@/components/api-token";
+import { renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// ui
 // helpers
-import { renderFormattedDate, timeAgo } from "helpers/date-time.helper";
 // types
-import { IApiToken } from "types/api_token";
 
 type Props = {
   token: IApiToken;
@@ -17,12 +18,14 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
   const { token } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   return (
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
       <div className="group relative flex flex-col justify-center border-b border-custom-border-200 px-4 py-3">
-        <Tooltip tooltipContent="Delete token">
+        <Tooltip tooltipContent="Delete token" isMobile={isMobile}>
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"
@@ -49,7 +52,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
               ? token.expired_at
                 ? `Expires ${renderFormattedDate(token.expired_at!)}`
                 : "Never expires"
-              : `Expired ${timeAgo(token.expired_at)}`}
+              : `Expired ${calculateTimeAgo(token.expired_at)}`}
           </p>
         </div>
       </div>

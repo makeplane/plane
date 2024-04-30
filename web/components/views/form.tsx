@@ -1,17 +1,16 @@
 import { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// components
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
-// ui
+import { IProjectView, IIssueFilterOptions } from "@plane/types";
+// hooks
 import { Button, Input, TextArea } from "@plane/ui";
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+// components
+// ui
 // types
-import { IProjectView, IIssueFilterOptions } from "types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 type Props = {
   data?: IProjectView | null;
@@ -25,13 +24,16 @@ const defaultValues: Partial<IProjectView> = {
   description: "",
 };
 
-export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, handleClose, data, preLoadedData }) => {
+export const ProjectViewForm: React.FC<Props> = observer((props) => {
+  const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  // store hooks
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const { projectLabels } = useLabel();
   const {
-    projectLabel: { projectLabels },
-    projectState: projectStateStore,
-    projectMember: { projectMembers },
-  } = useMobxStore();
-
+    project: { projectMemberIds },
+  } = useMember();
+  // form info
   const {
     control,
     formState: { errors, isSubmitting },
@@ -44,7 +46,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
   });
 
   const selectedFilters: IIssueFilterOptions = {};
-  Object.entries(watch("query_data") ?? {}).forEach(([key, value]) => {
+  Object.entries(watch("filters") ?? {}).forEach(([key, value]) => {
     if (!value) return;
 
     if (Array.isArray(value) && value.length === 0) return;
@@ -56,7 +58,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     // If value is null then remove all the filters of that key
     if (!value) {
-      setValue("query_data", {
+      setValue("filters", {
         ...selectedFilters,
         [key]: null,
       });
@@ -73,14 +75,18 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
       if (selectedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
     }
 
-    setValue("query_data", {
+    setValue("filters", {
       ...selectedFilters,
       [key]: newValues,
     });
   };
 
   const handleCreateUpdateView = async (formData: IProjectView) => {
-    await handleFormSubmit(formData);
+    await handleFormSubmit({
+      name: formData.name,
+      description: formData.description,
+      filters: formData.filters,
+    } as IProjectView);
 
     reset({
       ...defaultValues,
@@ -90,7 +96,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
   const clearAllFilters = () => {
     if (!selectedFilters) return;
 
-    setValue("query_data", {});
+    setValue("filters", {});
   };
 
   useEffect(() => {
@@ -106,7 +112,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
       <div className="space-y-5">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
-          <div>
+          <div className="flex flex-col gap-1">
             <Controller
               control={control}
               name="name"
@@ -127,9 +133,11 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                   hasError={Boolean(errors.name)}
                   placeholder="Title"
                   className="w-full resize-none text-xl focus:border-blue-400"
+                  tabIndex={1}
                 />
               )}
             />
+            <span className="text-xs text-red-500">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller
@@ -140,10 +148,11 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                   id="description"
                   name="description"
                   placeholder="Description"
-                  className="h-24 w-full resize-none text-sm"
+                  className="min-h-24 w-full resize-none text-sm"
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
+                  tabIndex={2}
                 />
               )}
             />
@@ -151,9 +160,9 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
           <div>
             <Controller
               control={control}
-              name="query_data"
+              name="filters"
               render={({ field: { onChange, value: filters } }) => (
-                <FiltersDropdown title="Filters">
+                <FiltersDropdown title="Filters" tabIndex={3}>
                   <FilterSelection
                     filters={filters ?? {}}
                     handleFiltersUpdate={(key, value) => {
@@ -175,8 +184,10 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                     }}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
                     labels={projectLabels ?? undefined}
-                    members={projectMembers?.map((m) => m.member) ?? undefined}
-                    states={projectStateStore.projectStates ?? undefined}
+                    memberIds={projectMemberIds ?? undefined}
+                    states={projectStates}
+                    cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                    moduleViewDisabled={!currentProjectDetails?.module_view}
                   />
                 </FiltersDropdown>
               )}
@@ -189,18 +200,17 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                 handleClearAllFilters={clearAllFilters}
                 handleRemoveFilter={handleRemoveFilter}
                 labels={projectLabels ?? []}
-                members={projectMembers?.map((m) => m.member) ?? []}
-                states={projectStateStore.projectStates ?? []}
+                states={projectStates}
               />
             </div>
           )}
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit">
+        <Button variant="primary" size="sm" type="submit" tabIndex={5} disabled={isSubmitting}>
           {data
             ? isSubmitting
               ? "Updating View..."

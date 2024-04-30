@@ -1,9 +1,9 @@
 // nivo
 import { ResponsiveScatterPlot, ScatterPlotSvgProps } from "@nivo/scatterplot";
 // types
+import { CHARTS_THEME, DEFAULT_MARGIN } from "@/constants/graph";
 import { TGraph } from "./types";
 // constants
-import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
 
 export const ScatterPlotGraph: React.FC<TGraph & Omit<ScatterPlotSvgProps<any>, "height" | "width">> = ({
   height = "400px",

@@ -10,7 +10,15 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import Workspace, Project, Issue, Cycle, Module, Page, IssueView
+from plane.db.models import (
+    Workspace,
+    Project,
+    Issue,
+    Cycle,
+    Module,
+    Page,
+    IssueView,
+)
 from plane.utils.issue_search import search_issues
 
 
@@ -25,7 +33,9 @@ class GlobalSearchEndpoint(BaseAPIView):
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
         return (
-            Workspace.objects.filter(q, workspace_member__member=self.request.user)
+            Workspace.objects.filter(
+                q, workspace_member__member=self.request.user
+            )
             .distinct()
             .values("name", "id", "slug")
         )
@@ -38,7 +48,9 @@ class GlobalSearchEndpoint(BaseAPIView):
         return (
             Project.objects.filter(
                 q,
-                Q(project_projectmember__member=self.request.user) | Q(network=2),
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+                archived_at__isnull=True,
                 workspace__slug=slug,
             )
             .distinct()
@@ -50,7 +62,8 @@ class GlobalSearchEndpoint(BaseAPIView):
         q = Q()
         for field in fields:
             if field == "sequence_id":
-                sequences = re.findall(r"\d+\.\d+|\d+", query)
+                # Match whole integers only (exclude decimal numbers)
+                sequences = re.findall(r"\b\d+\b", query)
                 for sequence_id in sequences:
                     q |= Q(**{"sequence_id": sequence_id})
             else:
@@ -59,6 +72,8 @@ class GlobalSearchEndpoint(BaseAPIView):
         issues = Issue.issue_objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             workspace__slug=slug,
         )
 
@@ -83,6 +98,8 @@ class GlobalSearchEndpoint(BaseAPIView):
         cycles = Cycle.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             workspace__slug=slug,
         )
 
@@ -106,6 +123,8 @@ class GlobalSearchEndpoint(BaseAPIView):
         modules = Module.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             workspace__slug=slug,
         )
 
@@ -129,6 +148,8 @@ class GlobalSearchEndpoint(BaseAPIView):
         pages = Page.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             workspace__slug=slug,
         )
 
@@ -152,6 +173,8 @@ class GlobalSearchEndpoint(BaseAPIView):
         issue_views = IssueView.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             workspace__slug=slug,
         )
 
@@ -168,7 +191,9 @@ class GlobalSearchEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         query = request.query_params.get("search", False)
-        workspace_search = request.query_params.get("workspace_search", "false")
+        workspace_search = request.query_params.get(
+            "workspace_search", "false"
+        )
         project_id = request.query_params.get("project_id", False)
 
         if not query:
@@ -208,18 +233,23 @@ class GlobalSearchEndpoint(BaseAPIView):
 class IssueSearchEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         query = request.query_params.get("search", False)
-        workspace_search = request.query_params.get("workspace_search", "false")
+        workspace_search = request.query_params.get(
+            "workspace_search", "false"
+        )
         parent = request.query_params.get("parent", "false")
         issue_relation = request.query_params.get("issue_relation", "false")
         cycle = request.query_params.get("cycle", "false")
-        module = request.query_params.get("module", "false")
+        module = request.query_params.get("module", False)
         sub_issue = request.query_params.get("sub_issue", "false")
+        target_date = request.query_params.get("target_date", True)
 
         issue_id = request.query_params.get("issue_id", False)
 
         issues = Issue.issue_objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True
         )
 
         if workspace_search == "false":
@@ -231,11 +261,7 @@ class IssueSearchEndpoint(BaseAPIView):
         if parent == "true" and issue_id:
             issue = Issue.issue_objects.get(pk=issue_id)
             issues = issues.filter(
-                ~Q(pk=issue_id), ~Q(pk=issue.parent_id), parent__isnull=True
-            ).exclude(
-                pk__in=Issue.issue_objects.filter(parent__isnull=False).values_list(
-                    "parent_id", flat=True
-                )
+                ~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id)
             )
         if issue_relation == "true" and issue_id:
             issue = Issue.issue_objects.get(pk=issue_id)
@@ -253,8 +279,11 @@ class IssueSearchEndpoint(BaseAPIView):
         if cycle == "true":
             issues = issues.exclude(issue_cycle__isnull=False)
 
-        if module == "true":
-            issues = issues.exclude(issue_module__isnull=False)
+        if module:
+            issues = issues.exclude(issue_module__module=module)
+
+        if target_date == "none":
+            issues = issues.filter(target_date__isnull=True)
 
         return Response(
             issues.values(

@@ -1,33 +1,33 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// cmdk
 import { Command } from "cmdk";
-// ui
-import { Spinner, StateGroupIcon } from "@plane/ui";
-// icons
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
+// hooks
 import { Check } from "lucide-react";
+import { TIssue } from "@plane/types";
+import { Spinner, StateGroupIcon } from "@plane/ui";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useProjectState, useIssues } from "@/hooks/store";
+// ui
+// icons
 // types
-import { IIssue } from "types";
 
 type Props = {
   closePalette: () => void;
-  issue: IIssue;
+  issue: TIssue;
 };
 
 export const ChangeIssueState: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // store hooks
   const {
-    projectState: { projectStates },
-    projectIssues: { updateIssue },
-  } = useMobxStore();
+    issues: { updateIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const { projectStates } = useProjectState();
 
-  const submitChanges = async (formData: Partial<IIssue>) => {
+  const submitChanges = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issue) return;
 
     const payload = { ...formData };
@@ -37,7 +37,7 @@ export const ChangeIssueState: React.FC<Props> = observer((props) => {
   };
 
   const handleIssueState = (stateId: string) => {
-    submitChanges({ state: stateId });
+    submitChanges({ state_id: stateId });
     closePalette();
   };
 
@@ -51,7 +51,7 @@ export const ChangeIssueState: React.FC<Props> = observer((props) => {
                 <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
                 <p>{state.name}</p>
               </div>
-              <div>{state.id === issue.state && <Check className="h-3 w-3" />}</div>
+              <div>{state.id === issue.state_id && <Check className="h-3 w-3" />}</div>
             </Command.Item>
           ))
         ) : (

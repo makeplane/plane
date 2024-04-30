@@ -1,20 +1,17 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { useDropzone } from "react-dropzone";
-import { Transition, Dialog } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { FileService } from "services/file.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button } from "@plane/ui";
-// icons
 import { UserCircle2 } from "lucide-react";
+import { Transition, Dialog } from "@headlessui/react";
+// hooks
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
+import { MAX_FILE_SIZE } from "@/constants/common";
+// hooks
+import { useWorkspace, useInstance } from "@/hooks/store";
+// services
+import { FileService } from "@/services/file.service";
 
 type Props = {
   handleRemove?: () => void;
@@ -36,13 +33,9 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
-
-  const {
-    workspace: { currentWorkspace },
-    appConfig: { envConfig },
-  } = useMobxStore();
+  // store hooks
+  const { instance } = useInstance();
+  const { currentWorkspace } = useWorkspace();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 
@@ -51,7 +44,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: instance?.config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
   });
 
@@ -83,8 +76,8 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
         if (value && currentWorkspace) fileService.deleteFile(currentWorkspace.id, value);
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

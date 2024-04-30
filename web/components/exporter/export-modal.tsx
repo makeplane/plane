@@ -1,23 +1,22 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { ProjectExportService } from "services/project";
+import { IUser, IImporterService } from "@plane/types";
 // hooks
-import useToast from "hooks/use-toast";
+import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
+
+import { useProject } from "@/hooks/store";
+// services
+import { ProjectExportService } from "@/services/project";
 // ui
-import { Button, CustomSearchSelect } from "@plane/ui";
 // types
-import { IUser, IImporterService } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
-  user: IUser | undefined;
+  user: IUser | null;
   provider: string | string[];
   mutateServices: () => void;
 };
@@ -26,28 +25,29 @@ const projectExportService = new ProjectExportService();
 
 export const Exporter: React.FC<Props> = observer((props) => {
   const { isOpen, handleClose, user, provider, mutateServices } = props;
-
+  // states
   const [exportLoading, setExportLoading] = useState(false);
-
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
+  const { workspaceProjectIds, getProjectById } = useProject();
 
-  const { project: projectStore } = useMobxStore();
+  const options = workspaceProjectIds?.map((projectId) => {
+    const projectDetails = getProjectById(projectId);
 
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
-
-  const { setToastAlert } = useToast();
-
-  const options = projects?.map((project) => ({
-    value: project.id,
-    query: project.name + project.identifier,
-    content: (
-      <div className="flex items-center gap-2">
-        <span className="text-[0.65rem] text-custom-text-200">{project.identifier}</span>
-        {project.name}
-      </div>
-    ),
-  }));
+    return {
+      value: projectDetails?.id,
+      query: `${projectDetails?.name} ${projectDetails?.identifier}`,
+      content: (
+        <div className="flex items-center gap-2">
+          <span className="text-[0.65rem] text-custom-text-200">{projectDetails?.identifier}</span>
+          {projectDetails?.name}
+        </div>
+      ),
+    };
+  });
 
   const [value, setValue] = React.useState<string[]>([]);
   const [multiple, setMultiple] = React.useState<boolean>(false);
@@ -68,8 +68,8 @@ export const Exporter: React.FC<Props> = observer((props) => {
           mutateServices();
           router.push(`/${workspaceSlug}/settings/exports`);
           setExportLoading(false);
-          setToastAlert({
-            type: "success",
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
             title: "Export Successful",
             message: `You will be able to download the exported ${
               provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""
@@ -78,8 +78,8 @@ export const Exporter: React.FC<Props> = observer((props) => {
         })
         .catch(() => {
           setExportLoading(false);
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Export was unsuccessful. Please try again.",
           });
@@ -89,7 +89,13 @@ export const Exporter: React.FC<Props> = observer((props) => {
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+      <Dialog
+        as="div"
+        className="relative z-20"
+        onClose={() => {
+          if (!isSelectOpen) handleClose();
+        }}
+      >
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -131,13 +137,17 @@ export const Exporter: React.FC<Props> = observer((props) => {
                       input
                       label={
                         value && value.length > 0
-                          ? projects &&
-                            projects
-                              .filter((p) => value.includes(p.id))
-                              .map((p) => p.identifier)
+                          ? value
+                              .map((projectId) => {
+                                const projectDetails = getProjectById(projectId);
+
+                                return projectDetails?.identifier;
+                              })
                               .join(", ")
                           : "All projects"
                       }
+                      onOpen={() => setIsSelectOpen(true)}
+                      onClose={() => setIsSelectOpen(false)}
                       optionsClassName="min-w-full"
                       multiple
                     />

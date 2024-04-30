@@ -35,9 +35,9 @@ export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (
             width="45.2227"
             height="45.2227"
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feGaussianBlur in="BackgroundImageFix" stdDeviation="2" />
             <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_377_19141" />
             <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_377_19141" result="shape" />

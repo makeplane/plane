@@ -2,21 +2,22 @@
 import csv
 import io
 import json
-import boto3
 import zipfile
+
+import boto3
+from botocore.client import Config
+
+# Third party imports
+from celery import shared_task
 
 # Django imports
 from django.conf import settings
 from django.utils import timezone
-
-# Third party imports
-from celery import shared_task
-from sentry_sdk import capture_exception
-from botocore.client import Config
 from openpyxl import Workbook
 
 # Module imports
-from plane.db.models import Issue, ExporterHistory
+from plane.db.models import ExporterHistory, Issue
+from plane.utils.exception_logger import log_exception
 
 
 def dateTimeConverter(time):
@@ -68,7 +69,9 @@ def create_zip_file(files):
 
 
 def upload_to_s3(zip_file, workspace_id, token_id, slug):
-    file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{timezone.now()}.zip"
+    file_name = (
+        f"{workspace_id}/export-{slug}-{token_id[:6]}-{timezone.now()}.zip"
+    )
     expires_in = 7 * 24 * 60 * 60
 
     if settings.USE_MINIO:
@@ -87,12 +90,15 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
         )
         presigned_url = s3.generate_presigned_url(
             "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
+            Params={
+                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
+                "Key": file_name,
+            },
             ExpiresIn=expires_in,
         )
         # Create the new url with updated domain and protocol
         presigned_url = presigned_url.replace(
-            "http://plane-minio:9000/uploads/",
+            f"{settings.AWS_S3_ENDPOINT_URL}/{settings.AWS_STORAGE_BUCKET_NAME}/",
             f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/",
         )
     else:
@@ -112,7 +118,10 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
 
         presigned_url = s3.generate_presigned_url(
             "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
+            Params={
+                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
+                "Key": file_name,
+            },
             ExpiresIn=expires_in,
         )
 
@@ -136,12 +145,17 @@ def generate_table_row(issue):
         issue["description_stripped"],
         issue["state__name"],
         issue["priority"],
-        f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-        if issue["created_by__first_name"] and issue["created_by__last_name"]
-        else "",
-        f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
-        if issue["assignees__first_name"] and issue["assignees__last_name"]
-        else "",
+        (
+            f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
+            if issue["created_by__first_name"]
+            and issue["created_by__last_name"]
+            else ""
+        ),
+        (
+            f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
+            if issue["assignees__first_name"] and issue["assignees__last_name"]
+            else ""
+        ),
         issue["labels__name"],
         issue["issue_cycle__cycle__name"],
         dateConverter(issue["issue_cycle__cycle__start_date"]),
@@ -164,19 +178,30 @@ def generate_json_row(issue):
         "Description": issue["description_stripped"],
         "State": issue["state__name"],
         "Priority": issue["priority"],
-        "Created By": f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-        if issue["created_by__first_name"] and issue["created_by__last_name"]
-        else "",
-        "Assignee": f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
-        if issue["assignees__first_name"] and issue["assignees__last_name"]
-        else "",
+        "Created By": (
+            f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
+            if issue["created_by__first_name"]
+            and issue["created_by__last_name"]
+            else ""
+        ),
+        "Assignee": (
+            f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
+            if issue["assignees__first_name"] and issue["assignees__last_name"]
+            else ""
+        ),
         "Labels": issue["labels__name"],
         "Cycle Name": issue["issue_cycle__cycle__name"],
-        "Cycle Start Date": dateConverter(issue["issue_cycle__cycle__start_date"]),
+        "Cycle Start Date": dateConverter(
+            issue["issue_cycle__cycle__start_date"]
+        ),
         "Cycle End Date": dateConverter(issue["issue_cycle__cycle__end_date"]),
         "Module Name": issue["issue_module__module__name"],
-        "Module Start Date": dateConverter(issue["issue_module__module__start_date"]),
-        "Module Target Date": dateConverter(issue["issue_module__module__target_date"]),
+        "Module Start Date": dateConverter(
+            issue["issue_module__module__start_date"]
+        ),
+        "Module Target Date": dateConverter(
+            issue["issue_module__module__target_date"]
+        ),
         "Created At": dateTimeConverter(issue["created_at"]),
         "Updated At": dateTimeConverter(issue["updated_at"]),
         "Completed At": dateTimeConverter(issue["completed_at"]),
@@ -211,7 +236,11 @@ def update_json_row(rows, row):
 
 def update_table_row(rows, row):
     matched_index = next(
-        (index for index, existing_row in enumerate(rows) if existing_row[0] == row[0]),
+        (
+            index
+            for index, existing_row in enumerate(rows)
+            if existing_row[0] == row[0]
+        ),
         None,
     )
 
@@ -260,7 +289,9 @@ def generate_xlsx(header, project_id, issues, files):
 
 
 @shared_task
-def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, slug):
+def issue_export_task(
+    provider, workspace_id, project_ids, token_id, multiple, slug
+):
     try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "processing"
@@ -272,10 +303,17 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     workspace__id=workspace_id,
                     project_id__in=project_ids,
                     project__project_projectmember__member=exporter_instance.initiated_by_id,
+                    project__project_projectmember__is_active=True,
+                    project__archived_at__isnull=True,
                 )
-                .select_related("project", "workspace", "state", "parent", "created_by")
+                .select_related(
+                    "project", "workspace", "state", "parent", "created_by"
+                )
                 .prefetch_related(
-                    "assignees", "labels", "issue_cycle__cycle", "issue_module__module"
+                    "assignees",
+                    "labels",
+                    "issue_cycle__cycle",
+                    "issue_module__module",
                 )
                 .values(
                     "id",
@@ -367,8 +405,5 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
         exporter_instance.status = "failed"
         exporter_instance.reason = str(e)
         exporter_instance.save(update_fields=["status", "reason"])
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
+        log_exception(e)
         return

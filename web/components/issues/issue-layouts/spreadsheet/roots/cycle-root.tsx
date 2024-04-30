@@ -1,50 +1,43 @@
-import React from "react";
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// components
-import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
+import React, { useCallback } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { EIssueActions } from "../../types";
-import { IIssue } from "types";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
+import { useCycle, useUser } from "@/hooks/store";
+// components
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
+import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 
 export const CycleSpreadsheetLayout: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
-
+  const { cycleId } = router.query;
+  // store hooks
+  const { currentProjectCompletedCycleIds } = useCycle();
   const {
-    cycleIssues: cycleIssueStore,
-    cycleIssuesFilter: cycleIssueFilterStore,
-    cycle: { fetchCycleWithId },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
+  // auth
+  const isCompletedCycle =
+    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+  const canEditIssueProperties = useCallback(
+    () => !isCompletedCycle && isEditingAllowed,
+    [isCompletedCycle, isEditingAllowed]
+  );
 
-      await cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
-      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
-      await cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
-      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
-    },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
-      await cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
-      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
-    },
-  };
+  if (!cycleId) return null;
 
   return (
     <BaseSpreadsheetRoot
-      issueStore={cycleIssueStore}
-      issueFiltersStore={cycleIssueFilterStore}
-      viewId={cycleId}
-      issueActions={issueActions}
+      viewId={cycleId?.toString()}
       QuickActions={CycleIssueQuickActions}
+      canEditPropertiesBasedOnProject={canEditIssueProperties}
+      isCompletedCycle={isCompletedCycle}
+      storeType={EIssuesStoreType.CYCLE}
     />
   );
 });

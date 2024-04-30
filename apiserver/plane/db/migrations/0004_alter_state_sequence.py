@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0003_auto_20221109_2320'),
+        ("db", "0003_auto_20221109_2320"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='state',
-            name='sequence',
+            model_name="state",
+            name="sequence",
             field=models.FloatField(default=65535),
         ),
     ]

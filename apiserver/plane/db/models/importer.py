@@ -1,9 +1,9 @@
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 # Module imports
-from . import ProjectBaseModel
+from .project import ProjectBaseModel
 
 
 class Importer(ProjectBaseModel):
@@ -25,7 +25,9 @@ class Importer(ProjectBaseModel):
         default="queued",
     )
     initiated_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="imports"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="imports",
     )
     metadata = models.JSONField(default=dict)
     config = models.JSONField(default=dict)

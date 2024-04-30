@@ -1,42 +1,47 @@
-import { FC } from "react";
+import { FC, MutableRefObject } from "react";
 // components
-import { IssueBlock } from "components/issues";
+import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { IssueBlock } from "@/components/issues";
 // types
-import { IIssue, IIssueDisplayProperties } from "types";
-import { IIssueResponse, IGroupedIssues, TUnGroupedIssues } from "store/issues/types";
-import { EIssueActions } from "../types";
 
 interface Props {
-  columnId: string;
-  issueIds: IGroupedIssues | TUnGroupedIssues | any;
-  issues: IIssueResponse;
+  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issuesMap: TIssueMap;
   canEditProperties: (projectId: string | undefined) => boolean;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
-  quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
+  containerRef: MutableRefObject<HTMLDivElement | null>;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { columnId, issueIds, issues, handleIssues, quickActions, displayProperties, canEditProperties } = props;
+  const { issueIds, issuesMap, updateIssue, quickActions, displayProperties, canEditProperties, containerRef } = props;
 
   return (
-    <div className="relative h-full w-full divide-y-[0.5px] divide-custom-border-200">
+    <div className="relative h-full w-full">
       {issueIds && issueIds.length > 0 ? (
-        issueIds.map(
-          (issueId: string) =>
-            issueId != undefined &&
-            issues[issueId] && (
+        issueIds.map((issueId: string) => {
+          if (!issueId) return null;
+          return (
+            <RenderIfVisible
+              key={`${issueId}`}
+              defaultHeight="3rem"
+              root={containerRef}
+              classNames="relative border-b border-b-custom-border-200 last:border-b-transparent"
+              changingReference={issueIds}
+            >
               <IssueBlock
-                key={issues[issueId].id}
-                columnId={columnId}
-                issue={issues[issueId]}
-                handleIssues={handleIssues}
+                issueId={issueId}
+                issuesMap={issuesMap}
+                updateIssue={updateIssue}
                 quickActions={quickActions}
                 canEditProperties={canEditProperties}
                 displayProperties={displayProperties}
               />
-            )
-        )
+            </RenderIfVisible>
+          );
+        })
       ) : (
         <div className="bg-custom-background-100 p-3 text-sm text-custom-text-400">No issues</div>
       )}

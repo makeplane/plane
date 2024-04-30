@@ -7,55 +7,125 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0024_auto_20230322_0138'),
+        ("db", "0024_auto_20230322_0138"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='page',
-            name='color',
+            model_name="page",
+            name="color",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AddField(
-            model_name='pageblock',
-            name='sort_order',
+            model_name="pageblock",
+            name="sort_order",
             field=models.FloatField(default=65535),
         ),
         migrations.AddField(
-            model_name='pageblock',
-            name='sync',
+            model_name="pageblock",
+            name="sync",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='project',
-            name='page_view',
+            model_name="project",
+            name="page_view",
             field=models.BooleanField(default=True),
         ),
         migrations.CreateModel(
-            name='PageLabel',
+            name="PageLabel",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='pagelabel_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('label', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_labels', to='db.label')),
-                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_labels', to='db.page')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_pagelabel', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='pagelabel_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_pagelabel', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="pagelabel_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "label",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="page_labels",
+                        to="db.label",
+                    ),
+                ),
+                (
+                    "page",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="page_labels",
+                        to="db.page",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_pagelabel",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="pagelabel_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_pagelabel",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Page Label',
-                'verbose_name_plural': 'Page Labels',
-                'db_table': 'page_labels',
-                'ordering': ('-created_at',),
+                "verbose_name": "Page Label",
+                "verbose_name_plural": "Page Labels",
+                "db_table": "page_labels",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AddField(
-            model_name='page',
-            name='labels',
-            field=models.ManyToManyField(blank=True, related_name='pages', through='db.PageLabel', to='db.Label'),
+            model_name="page",
+            name="labels",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="pages",
+                through="db.PageLabel",
+                to="db.Label",
+            ),
         ),
     ]

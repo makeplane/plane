@@ -1,14 +1,16 @@
 # Django imports
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Module imports
-from . import ProjectBaseModel
+from .project import ProjectBaseModel
 
 
 class Estimate(ProjectBaseModel):
     name = models.CharField(max_length=255)
-    description = models.TextField(verbose_name="Estimate Description", blank=True)
+    description = models.TextField(
+        verbose_name="Estimate Description", blank=True
+    )
 
     def __str__(self):
         """Return name of the estimate"""

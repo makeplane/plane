@@ -1,58 +1,66 @@
-import React from "react";
+import { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
+import { TIssue, ISearchIssueResponse } from "@plane/types";
 // components
-import { CreateUpdateDraftIssueModal } from "components/issues/draft-issue-modal";
-import { CreateUpdateIssueModal } from "components/issues/modal";
-import { ExistingIssuesListModal } from "components/core";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { ExistingIssuesListModal } from "@/components/core";
+import { CreateUpdateIssueModal } from "@/components/issues";
+// ui
 // mobx
-import { observer } from "mobx-react-lite";
+// hooks
+import { EIssuesStoreType } from "@/constants/issue";
+import { useEventTracker } from "@/hooks/store";
 // types
-import { IIssue, ISearchIssueResponse } from "types";
-import { EProjectStore } from "store/command-palette.store";
-import useToast from "hooks/use-toast";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
   title: string;
   count: number;
-  issuePayload: Partial<IIssue>;
+  issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  currentStore: EProjectStore;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  storeType: EIssuesStoreType;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
 export const HeaderGroupByCard = observer(
-  ({ icon, title, count, issuePayload, disableIssueCreation, currentStore, addIssuesToView }: IHeaderGroupByCard) => {
+  ({ icon, title, count, issuePayload, disableIssueCreation, storeType, addIssuesToView }: IHeaderGroupByCard) => {
     const router = useRouter();
     const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
+    // hooks
+    const { setTrackElement } = useEventTracker();
 
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
-    const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
+    const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
 
     const isDraftIssue = router.pathname.includes("draft-issue");
 
-    const { setToastAlert } = useToast();
-
     const renderExistingIssueModal = moduleId || cycleId;
-    const ExistingIssuesListModalPayload = moduleId ? { module: true } : { cycle: true };
+    const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
 
     const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
       if (!workspaceSlug || !projectId) return;
 
       const issues = data.map((i) => i.id);
 
-      addIssuesToView &&
-        addIssuesToView(issues)?.catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Selected issues could not be added to the cycle. Please try again.",
-          });
+      try {
+        await addIssuesToView?.(issues);
+
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Issues added to the cycle successfully.",
         });
+      } catch (error) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Selected issues could not be added to the cycle. Please try again.",
+        });
+      }
     };
 
     return (
@@ -62,55 +70,61 @@ export const HeaderGroupByCard = observer(
             {icon ? icon : <CircleDashed className="h-3.5 w-3.5" strokeWidth={2} />}
           </div>
 
-          <div className="flex w-full flex-row items-center gap-1">
-            <div className="line-clamp-1 font-medium text-custom-text-100">{title}</div>
+          <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
+            <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
             <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
           </div>
 
           {!disableIssueCreation &&
             (renderExistingIssueModal ? (
               <CustomMenu
-                width="auto"
                 customButton={
                   <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
                     <Plus className="h-3.5 w-3.5" strokeWidth={2} />
                   </span>
                 }
               >
-                <CustomMenu.MenuItem onClick={() => setIsOpen(true)}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    setTrackElement("List layout");
+                    setIsOpen(true);
+                  }}
+                >
                   <span className="flex items-center justify-start gap-2">Create issue</span>
                 </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={() => setOpenExistingIssueListModal(true)}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    setTrackElement("List layout");
+                    setOpenExistingIssueListModal(true);
+                  }}
+                >
                   <span className="flex items-center justify-start gap-2">Add an existing issue</span>
                 </CustomMenu.MenuItem>
               </CustomMenu>
             ) : (
               <div
                 className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
-                onClick={() => setIsOpen(true)}
+                onClick={() => {
+                  setTrackElement("List layout");
+                  setIsOpen(true);
+                }}
               >
                 <Plus width={14} strokeWidth={2} />
               </div>
             ))}
 
-          {isDraftIssue ? (
-            <CreateUpdateDraftIssueModal
-              isOpen={isOpen}
-              handleClose={() => setIsOpen(false)}
-              prePopulateData={issuePayload}
-              fieldsToShow={["all"]}
-            />
-          ) : (
-            <CreateUpdateIssueModal
-              isOpen={isOpen}
-              handleClose={() => setIsOpen(false)}
-              currentStore={currentStore}
-              prePopulateData={issuePayload}
-            />
-          )}
+          <CreateUpdateIssueModal
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+            data={issuePayload}
+            storeType={storeType}
+            isDraft={isDraftIssue}
+          />
 
           {renderExistingIssueModal && (
             <ExistingIssuesListModal
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
               isOpen={openExistingIssueListModal}
               handleClose={() => setOpenExistingIssueListModal(false)}
               searchParams={ExistingIssuesListModalPayload}

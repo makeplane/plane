@@ -1,38 +1,45 @@
-import requests
-import uuid
 import hashlib
-import json
 import hmac
+import json
+import logging
+import uuid
 
-# Django imports
-from django.conf import settings
-from django.core.serializers.json import DjangoJSONEncoder
+import requests
 
 # Third party imports
 from celery import shared_task
-from sentry_sdk import capture_exception
 
-from plane.db.models import (
-    Webhook,
-    WebhookLog,
-    Project,
-    Issue,
-    Cycle,
-    Module,
-    ModuleIssue,
-    CycleIssue,
-    IssueComment,
-)
+# Django imports
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.core.serializers.json import DjangoJSONEncoder
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+# Module imports
 from plane.api.serializers import (
-    ProjectSerializer,
-    IssueSerializer,
-    CycleSerializer,
-    ModuleSerializer,
     CycleIssueSerializer,
-    ModuleIssueSerializer,
+    CycleSerializer,
     IssueCommentSerializer,
     IssueExpandSerializer,
+    ModuleIssueSerializer,
+    ModuleSerializer,
+    ProjectSerializer,
 )
+from plane.db.models import (
+    Cycle,
+    CycleIssue,
+    Issue,
+    IssueComment,
+    Module,
+    ModuleIssue,
+    Project,
+    User,
+    Webhook,
+    WebhookLog,
+)
+from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.exception_logger import log_exception
 
 SERIALIZER_MAPPER = {
     "project": ProjectSerializer,
@@ -72,7 +79,7 @@ def get_model_data(event, event_id, many=False):
     max_retries=5,
     retry_jitter=True,
 )
-def webhook_task(self, webhook, slug, event, event_data, action):
+def webhook_task(self, webhook, slug, event, event_data, action, current_site):
     try:
         webhook = Webhook.objects.get(id=webhook, workspace__slug=slug)
 
@@ -151,18 +158,29 @@ def webhook_task(self, webhook, slug, event, event_data, action):
             response_body=str(e),
             retry_count=str(self.request.retries),
         )
-
+        # Retry logic
+        if self.request.retries >= self.max_retries:
+            Webhook.objects.filter(pk=webhook.id).update(is_active=False)
+            if webhook:
+                # send email for the deactivation of the webhook
+                send_webhook_deactivation_email(
+                    webhook_id=webhook.id,
+                    receiver_id=webhook.created_by_id,
+                    reason=str(e),
+                    current_site=current_site,
+                )
+            return
         raise requests.RequestException()
 
     except Exception as e:
         if settings.DEBUG:
             print(e)
-        capture_exception(e)
+        log_exception(e)
         return
 
 
 @shared_task()
-def send_webhook(event, payload, kw, action, slug, bulk):
+def send_webhook(event, payload, kw, action, slug, bulk, current_site):
     try:
         webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
 
@@ -184,20 +202,16 @@ def send_webhook(event, payload, kw, action, slug, bulk):
         if webhooks:
             if action in ["POST", "PATCH"]:
                 if bulk and event in ["cycle_issue", "module_issue"]:
-                    event_data = IssueExpandSerializer(
-                        Issue.objects.filter(
-                            pk__in=[
-                                str(event.get("issue")) for event in payload
-                            ]
-                        ).prefetch_related("issue_cycle", "issue_module"), many=True
-                    ).data
-                    event = "issue"
-                    action = "PATCH"
+                    return
                 else:
                     event_data = [
                         get_model_data(
                             event=event,
-                            event_id=payload.get("id") if isinstance(payload, dict) else None,
+                            event_id=(
+                                payload.get("id")
+                                if isinstance(payload, dict)
+                                else kw.get("pk")
+                            ),
                             many=False,
                         )
                     ]
@@ -213,10 +227,70 @@ def send_webhook(event, payload, kw, action, slug, bulk):
                         event=event,
                         event_data=data,
                         action=action,
+                        current_site=current_site,
                     )
 
     except Exception as e:
         if settings.DEBUG:
             print(e)
-        capture_exception(e)
+        log_exception(e)
+        return
+
+
+@shared_task
+def send_webhook_deactivation_email(
+    webhook_id, receiver_id, current_site, reason
+):
+    # Get email configurations
+    (
+        EMAIL_HOST,
+        EMAIL_HOST_USER,
+        EMAIL_HOST_PASSWORD,
+        EMAIL_PORT,
+        EMAIL_USE_TLS,
+        EMAIL_USE_SSL,
+        EMAIL_FROM,
+    ) = get_email_configuration()
+
+    receiver = User.objects.get(pk=receiver_id)
+    webhook = Webhook.objects.get(pk=webhook_id)
+    subject = "Webhook Deactivated"
+    message = (
+        f"Webhook {webhook.url} has been deactivated due to failed requests."
+    )
+
+    # Send the mail
+    context = {
+        "email": receiver.email,
+        "message": message,
+        "webhook_url": f"{current_site}/{str(webhook.workspace.slug)}/settings/webhooks/{str(webhook.id)}",
+    }
+    html_content = render_to_string(
+        "emails/notifications/webhook-deactivate.html", context
+    )
+    text_content = strip_tags(html_content)
+
+    try:
+        connection = get_connection(
+            host=EMAIL_HOST,
+            port=int(EMAIL_PORT),
+            username=EMAIL_HOST_USER,
+            password=EMAIL_HOST_PASSWORD,
+            use_tls=EMAIL_USE_TLS == "1",
+            use_ssl=EMAIL_USE_SSL == "1",
+        )
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
+            from_email=EMAIL_FROM,
+            to=[receiver.email],
+            connection=connection,
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+        logging.getLogger("plane").info("Email sent successfully.")
+        return
+    except Exception as e:
+        log_exception(e)
         return

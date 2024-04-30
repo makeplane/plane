@@ -1,13 +1,11 @@
 import React, { FC, useState } from "react";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
+import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useWebhook } from "@/hooks/store";
 
 interface IDeleteWebhook {
   isOpen: boolean;
@@ -20,12 +18,8 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   const [isDeleting, setIsDeleting] = useState(false);
   // router
   const router = useRouter();
-  // toast
-  const { setToastAlert } = useToast();
-  // mobx store
-  const {
-    webhook: { removeWebhook },
-  } = useMobxStore();
+  // store hooks
+  const { removeWebhook } = useWebhook();
 
   const { workspaceSlug, webhookId } = router.query;
 
@@ -40,16 +34,16 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
 
     removeWebhook(workspaceSlug.toString(), webhookId.toString())
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Webhook deleted successfully.",
         });
         router.replace(`/${workspaceSlug}/settings/webhooks/`);
       })
       .catch((error) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Something went wrong. Please try again.",
         })

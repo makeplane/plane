@@ -1,8 +1,8 @@
 // components
+import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 import { Button } from "@plane/ui";
-import { GithubAuth, TIntegrationSteps } from "components/integration";
+import { GithubAuth, TIntegrationSteps } from "@/components/integration";
 // types
-import { IAppIntegration, IWorkspaceIntegration } from "types";
 
 type Props = {
   provider: string | undefined;

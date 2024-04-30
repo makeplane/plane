@@ -1,15 +1,16 @@
 // mobx
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
-// service
-import { UserService } from "services/user.service";
 // types
-import { IUser } from "types/user";
+import { IUser } from "@plane/types";
+// service
+import { UserService } from "@/services/user.service";
 
 export interface IUserStore {
   loader: boolean;
   error: any | null;
   currentUser: any | null;
   fetchCurrentUser: () => Promise<IUser | undefined>;
+  updateCurrentUser: (data: Partial<IUser>) => Promise<IUser>;
   currentActor: () => any;
 }
 
@@ -94,6 +95,23 @@ class UserStore implements IUserStore {
       console.error("Failed to fetch current user", error);
       this.loader = false;
       this.error = error;
+    }
+  };
+
+  /**
+   * Updates the current user
+   * @param data
+   * @returns Promise<IUser>
+   */
+  updateCurrentUser = async (data: Partial<IUser>) => {
+    try {
+      const user = await this.userService.updateUser(data);
+      runInAction(() => {
+        this.currentUser = user;
+      });
+      return user;
+    } catch (error) {
+      throw error;
     }
   };
 }

@@ -1,18 +1,16 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
-
-// store
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// icons
 import { AlertTriangle } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
+import { Dialog, Transition } from "@headlessui/react";
+import type { IState } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { STATE_DELETED } from "@/constants/event-tracker";
+// hooks
+import { useEventTracker, useProjectState } from "@/hooks/store";
 // types
-import type { IState } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -22,21 +20,14 @@ type Props = {
 
 export const DeleteStateModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, data } = props;
-
+  // states
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  // store
-  const {
-    projectState: projectStateStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
-  // states
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  const { setToastAlert } = useToast();
+  // store hooks
+  const { captureProjectStateEvent } = useEventTracker();
+  const { deleteState } = useProjectState();
 
   const handleClose = () => {
     onClose();
@@ -48,30 +39,37 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await projectStateStore
-      .deleteState(workspaceSlug.toString(), data.project, data.id)
+    await deleteState(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
-        postHogEventTracker("STATE_DELETE", {
-          state: "SUCCESS",
+        captureProjectStateEvent({
+          eventName: STATE_DELETED,
+          payload: {
+            ...data,
+            state: "SUCCESS",
+          },
         });
         handleClose();
       })
       .catch((err) => {
         if (err.status === 400)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "This state contains some issues within it, please move them to some other state to delete this state.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });
-        postHogEventTracker("STATE_DELETE", {
-          state: "FAILED",
+        captureProjectStateEvent({
+          eventName: STATE_DELETED,
+          payload: {
+            ...data,
+            state: "FAILED",
+          },
         });
       })
       .finally(() => {

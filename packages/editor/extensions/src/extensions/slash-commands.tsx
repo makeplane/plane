@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect } from "react";
 import { Editor, Range, Extension } from "@tiptap/core";
-import Suggestion from "@tiptap/suggestion";
+import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
-import type { UploadImage, ISlashCommandItem, CommandProps } from "@plane/editor-types";
 import {
   CaseSensitive,
   Code2,
@@ -19,6 +18,9 @@ import {
   Table,
 } from "lucide-react";
 import {
+  UploadImage,
+  ISlashCommandItem,
+  CommandProps,
   cn,
   insertTableCommand,
   toggleBlockquote,
@@ -38,7 +40,11 @@ interface CommandItemProps {
   icon: ReactNode;
 }
 
-const Command = Extension.create({
+export type SlashCommandOptions = {
+  suggestion: Omit<SuggestionOptions, "editor">;
+};
+
+const Command = Extension.create<SlashCommandOptions>({
   name: "slash-command",
   addOptions() {
     return {
@@ -47,6 +53,23 @@ const Command = Extension.create({
         command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
           props.command({ editor, range });
         },
+        allow({ editor }: { editor: Editor }) {
+          const { selection } = editor.state;
+
+          const parentNode = selection.$from.node(selection.$from.depth);
+          const blockType = parentNode.type.name;
+
+          if (blockType === "codeBlock") {
+            return false;
+          }
+
+          if (editor.isActive("table")) {
+            return false;
+          }
+
+          return true;
+        },
+        allowSpaces: true,
       },
     };
   },
@@ -54,9 +77,6 @@ const Command = Extension.create({
     return [
       Suggestion({
         editor: this.editor,
-        allow({ editor }) {
-          return !editor.isActive("table");
-        },
         ...this.options.suggestion,
       }),
     ];
@@ -64,11 +84,7 @@ const Command = Extension.create({
 });
 
 const getSuggestionItems =
-  (
-    uploadFile: UploadImage,
-    setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-    additionalOptions?: Array<ISlashCommandItem>
-  ) =>
+  (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
   ({ query }: { query: string }) => {
     let slashCommands: ISlashCommandItem[] = [
       {
@@ -78,7 +94,10 @@ const getSuggestionItems =
         searchTerms: ["p", "paragraph"],
         icon: <CaseSensitive className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").run();
+          if (range) {
+            editor.chain().focus().deleteRange(range).clearNodes().run();
+          }
+          editor.chain().focus().clearNodes().run();
         },
       },
       {
@@ -173,10 +192,10 @@ const getSuggestionItems =
         key: "image",
         title: "Image",
         description: "Upload an image from your computer.",
-        searchTerms: ["photo", "picture", "media"],
+        searchTerms: ["img", "photo", "picture", "media"],
         icon: <ImageIcon className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          insertImageCommand(editor, uploadFile, setIsSubmitting, range);
+          insertImageCommand(editor, uploadFile, null, range);
         },
       },
       {
@@ -228,14 +247,15 @@ export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
 };
 
 const CommandList = ({ items, command }: { items: CommandItemProps[]; command: any; editor: any; range: any }) => {
+  // states
   const [selectedIndex, setSelectedIndex] = useState(0);
+  // refs
+  const commandListContainer = useRef<HTMLDivElement>(null);
 
   const selectItem = useCallback(
     (index: number) => {
       const item = items[index];
-      if (item) {
-        command(item);
-      }
+      if (item) command(item);
     },
     [command, items]
   );
@@ -270,8 +290,6 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
     setSelectedIndex(0);
   }, [items]);
 
-  const commandListContainer = useRef<HTMLDivElement>(null);
-
   useLayoutEffect(() => {
     const container = commandListContainer?.current;
 
@@ -280,47 +298,53 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
     if (item && container) updateScrollView(container, item);
   }, [selectedIndex]);
 
-  return items.length > 0 ? (
+  if (items.length <= 0) return null;
+
+  return (
     <div
       id="slash-command"
       ref={commandListContainer}
-      className="fixed z-50 h-auto max-h-[330px] w-52 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
+      className="z-10 max-h-80 min-w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
     >
       {items.map((item, index) => (
         <button
           key={item.key}
           className={cn(
-            `flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-custom-text-100 hover:bg-custom-primary-100/5`,
+            "flex items-center gap-2 w-full rounded px-1 py-1.5 text-sm text-left truncate text-custom-text-200 hover:bg-custom-background-80",
             {
-              "bg-custom-primary-100/5": index === selectedIndex,
+              "bg-custom-background-80": index === selectedIndex,
             }
           )}
           onClick={() => selectItem(index)}
         >
-          <div className="grid flex-shrink-0 place-items-center">{item.icon}</div>
-          <p>{item.title}</p>
+          <span className="grid place-items-center flex-shrink-0">{item.icon}</span>
+          <p className="flex-grow truncate">{item.title}</p>
         </button>
       ))}
     </div>
-  ) : null;
+  );
 };
 
-const renderItems = () => {
-  let component: ReactRenderer | null = null;
-  let popup: any | null = null;
+interface CommandListInstance {
+  onKeyDown: (props: { event: KeyboardEvent }) => boolean;
+}
 
+const renderItems = () => {
+  let component: ReactRenderer<CommandListInstance, typeof CommandList> | null = null;
+  let popup: any | null = null;
   return {
-    onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
+    onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component = new ReactRenderer(CommandList, {
         props,
-        // @ts-ignore
         editor: props.editor,
       });
 
-      // @ts-ignore
+      const tippyContainer = document.querySelector(".active-editor") ?? document.querySelector("#editor-container");
+
+      // @ts-expect-error Tippy overloads are messed up
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.querySelector("#editor-container"),
+        appendTo: tippyContainer,
         content: component.element,
         showOnCreate: true,
         interactive: true,
@@ -328,7 +352,7 @@ const renderItems = () => {
         placement: "bottom-start",
       });
     },
-    onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
+    onUpdate: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component?.updateProps(props);
 
       popup &&
@@ -343,8 +367,10 @@ const renderItems = () => {
         return true;
       }
 
-      // @ts-ignore
-      return component?.ref?.onKeyDown(props);
+      if (component?.ref?.onKeyDown(props)) {
+        return true;
+      }
+      return false;
     },
     onExit: () => {
       popup?.[0].destroy();
@@ -353,14 +379,10 @@ const renderItems = () => {
   };
 };
 
-export const SlashCommand = (
-  uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-  additionalOptions?: Array<ISlashCommandItem>
-) =>
+export const SlashCommand = (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(uploadFile, setIsSubmitting, additionalOptions),
+      items: getSuggestionItems(uploadFile, additionalOptions),
       render: renderItems,
     },
   });

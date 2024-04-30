@@ -1,18 +1,15 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
-
-// store
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// icons
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import useToast from "hooks/use-toast";
+import type { IIssueLabel } from "@plane/types";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { useLabel } from "@/hooks/store";
+// icons
 // ui
-import { Button } from "@plane/ui";
 // types
-import type { IIssueLabel } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -22,19 +19,13 @@ type Props = {
 
 export const DeleteLabelModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, data } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const { projectLabel: projectLabelStore } = useMobxStore();
-
+  // store hooks
+  const { deleteLabel } = useLabel();
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  // hooks
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -46,8 +37,7 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await projectLabelStore
-      .deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id)
+    await deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
         handleClose();
       })
@@ -55,8 +45,8 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
         setIsDeleteLoading(false);
 
         const error = err?.error || "Label could not be deleted. Please try again.";
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error,
         });
@@ -101,9 +91,9 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to delete label-{" "}
-                          <span className="font-medium text-custom-text-100">{data?.name}</span>? The label will be
-                          removed from all the issues.
+                          Are you sure you wish to delete{" "}
+                          <span className="font-medium text-custom-text-100">{data?.name}</span>? This will remove the
+                          label from all the issue and from any views where the label is being filtered upon.
                         </p>
                       </div>
                     </div>

@@ -1,34 +1,33 @@
 import React, { useEffect } from "react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import {
   BarChart2,
+  Bell,
   Briefcase,
   CheckCircle,
   ChevronDown,
   ContrastIcon,
   FileText,
+  Home,
   LayersIcon,
-  LayoutGrid,
   PenSquare,
   Search,
   Settings,
-  Bell,
 } from "lucide-react";
+import { IWorkspace } from "@plane/types";
 import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-
+// hooks
+import { useUser, useWorkspace } from "@/hooks/store";
 // types
-import { IWorkspace } from "types";
-// assets
 import projectEmoji from "public/emoji/project-emoji.svg";
+// assets
 
 const workspaceLinks = [
   {
-    Icon: LayoutGrid,
-    name: "Dashboard",
+    Icon: Home,
+    name: "Home",
   },
   {
     Icon: BarChart2,
@@ -87,21 +86,20 @@ type Props = {
   watch?: UseFormWatch<IWorkspace>;
   userFullName?: string;
 };
-var timer: number = 0;
-var lastWorkspaceName: string = "";
+
+let timer: number = 0;
+let lastWorkspaceName: string = "";
 
 export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { workspaceName, showProject, control, setValue, watch, userFullName } = props;
-  const {
-    workspace: workspaceStore,
-    user: { currentUser },
-  } = useMobxStore();
-  const workspace = workspaceStore.workspaces ? workspaceStore.workspaces[0] : null;
+  // store hooks
+  const { data: currentUser } = useUser();
+  const { workspaces } = useWorkspace();
+  const workspaceDetails = Object.values(workspaces ?? {})?.[0];
 
   const { resolvedTheme } = useTheme();
 
   const handleZoomWorkspace = (value: string) => {
-    // console.log(lastWorkspaceName,value);
     if (lastWorkspaceName === value) return;
     lastWorkspaceName = value;
     if (timer > 0) {
@@ -170,7 +168,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
                 <div className="flex w-full items-center gap-y-2 truncate border border-transparent px-4 pt-6 transition-all">
                   <div className="flex flex-shrink-0">
                     <Avatar
-                      name={value.length > 0 ? value : workspace ? workspace.name : "New Workspace"}
+                      name={value.length > 0 ? value : workspaceDetails ? workspaceDetails.name : "New Workspace"}
                       src={""}
                       size={24}
                       shape="square"
@@ -185,7 +183,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
                   <div className="flex flex-shrink-0">
                     <Avatar
                       name={currentUser?.email}
-                      src={currentUser?.avatar}
+                      src={currentUser?.avatar || undefined}
                       size={24}
                       shape="square"
                       fallbackBackgroundColor="#FCBE1D"
@@ -200,7 +198,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
           <div className="flex w-full items-center gap-y-2 truncate px-4 pt-6 transition-all">
             <div className="flex flex-shrink-0">
               <Avatar
-                name={workspace ? workspace.name : "New Workspace"}
+                name={workspaceDetails ? workspaceDetails.name : "New Workspace"}
                 src={""}
                 size={24}
                 shape="square"
@@ -215,7 +213,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
             <div className="flex flex-shrink-0">
               <Avatar
                 name={userFullName ?? currentUser?.email}
-                src={currentUser?.avatar}
+                src={currentUser?.avatar || undefined}
                 size={24}
                 shape="square"
                 fallbackBackgroundColor="#FCBE1D"
@@ -246,7 +244,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
           </div>
         </div>
         {workspaceLinks.map((link) => (
-          <a className="block w-full">
+          <a className="block w-full" key={link.name}>
             <div
               className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium text-onboarding-text-200 
                 outline-none  focus:bg-custom-sidebar-background-80
@@ -274,7 +272,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
               <ChevronDown className="h-4 w-4" />
             </div>
             {projectLinks.map((link) => (
-              <a className="ml-6 block w-full">
+              <a className="ml-6 block w-full" key={link.name}>
                 <div
                   className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium text-custom-sidebar-text-200 
                     outline-none  focus:bg-custom-sidebar-background-80

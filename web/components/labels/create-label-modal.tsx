@@ -1,21 +1,18 @@
 import React, { useEffect } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
-import { Dialog, Popover, Transition } from "@headlessui/react";
-
-// store
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// ui
-import { Button, Input } from "@plane/ui";
-// icons
+import { Controller, useForm } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
+import { Dialog, Popover, Transition } from "@headlessui/react";
+import type { IIssueLabel, IState } from "@plane/types";
+// hooks
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@/constants/label";
+import { useLabel } from "@/hooks/store";
+// ui
 // types
-import type { IIssueLabel, IState } from "types";
 // constants
-import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
-import useToast from "hooks/use-toast";
 
 // types
 type Props = {
@@ -32,13 +29,12 @@ const defaultValues: Partial<IState> = {
 
 export const CreateLabelModal: React.FC<Props> = observer((props) => {
   const { isOpen, projectId, handleClose, onSuccess } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  // store
-  const { projectLabel: projectLabelStore } = useMobxStore();
-
+  // store hooks
+  const { createLabel } = useLabel();
+  // form info
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -67,21 +63,18 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
     reset(defaultValues);
   };
 
-  const { setToastAlert } = useToast();
-
   const onSubmit = async (formData: IIssueLabel) => {
     if (!workspaceSlug) return;
 
-    await projectLabelStore
-      .createLabel(workspaceSlug.toString(), projectId.toString(), formData)
+    await createLabel(workspaceSlug.toString(), projectId.toString(), formData)
       .then((res) => {
         onClose();
         if (onSuccess) onSuccess(res);
       })
       .catch((error) => {
-        setToastAlert({
+        setToast({
           title: "Oops!",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
           message: error?.error ?? "Error while adding the label",
         });
         reset(formData);

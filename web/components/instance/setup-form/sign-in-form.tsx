@@ -1,18 +1,15 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Eye, EyeOff, XCircle } from "lucide-react";
 // ui
-import { Input, Button } from "@plane/ui";
-// icons
-import { XCircle } from "lucide-react";
-// services
-import { AuthService } from "services/auth.service";
-const authService = new AuthService();
-// hooks
-import useToast from "hooks/use-toast";
+import { Input, Button, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
+import { checkEmailValidity } from "@/helpers/string.helper";
+// hooks
+import { useUser } from "@/hooks/store";
+// services
+import { AuthService } from "@/services/auth.service";
+const authService = new AuthService();
 
 interface InstanceSetupEmailFormValues {
   email: string;
@@ -25,9 +22,10 @@ export interface IInstanceSetupEmailForm {
 
 export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
   const { handleNextStep } = props;
-  const {
-    user: { fetchCurrentUser },
-  } = useMobxStore();
+  // states
+  const [showPassword, setShowPassword] = useState(false);
+  // store hooks
+  const { fetchCurrentUser } = useUser();
   // form info
   const {
     control,
@@ -40,8 +38,6 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
       password: "",
     },
   });
-  // hooks
-  const { setToastAlert } = useToast();
 
   const handleFormSubmit = async (formValues: InstanceSetupEmailFormValues) => {
     const payload = {
@@ -56,8 +52,8 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
         handleNextStep(formValues.email);
       })
       .catch((err) => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });
@@ -90,7 +86,7 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
                 type="email"
                 value={value}
                 onChange={onChange}
-                placeholder="orville.wright@firstflight.com"
+                placeholder="name@company.com"
                 className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
               />
               {value.length > 0 && (
@@ -109,14 +105,27 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
             required: "Password is required",
           }}
           render={({ field: { value, onChange } }) => (
-            <Input
-              type="password"
-              value={value}
-              onChange={onChange}
-              hasError={Boolean(errors.password)}
-              placeholder="Enter password"
-              className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-            />
+            <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={value}
+                onChange={onChange}
+                hasError={Boolean(errors.password)}
+                placeholder="Enter password"
+                className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              />
+              {showPassword ? (
+                <EyeOff
+                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <Eye
+                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  onClick={() => setShowPassword(true)}
+                />
+              )}
+            </div>
           )}
         />
         <p className="pb-2 text-xs text-custom-text-200">

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
 import { useTheme } from "next-themes";
-import { Dialog, Transition } from "@headlessui/react";
+import { mutate } from "swr";
 import { Trash2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { useUser } from "@/hooks/store";
+// ui
 
 type Props = {
   isOpen: boolean;
@@ -16,20 +16,15 @@ type Props = {
 
 export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
   const { isOpen, onClose } = props;
-
   // states
   const [switchingAccount, setSwitchingAccount] = useState(false);
   const [isDeactivating, setIsDeactivating] = useState(false);
-
-  const {
-    user: { deactivateAccount, signOut },
-  } = useMobxStore();
-
+  // router
   const router = useRouter();
+  // store hooks
+  const { signOut, deactivateAccount } = useUser();
 
   const { resolvedTheme, setTheme } = useTheme();
-
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     setSwitchingAccount(false);
@@ -42,14 +37,13 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
 
     await signOut()
       .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");
         router.push("/");
         handleClose();
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })
@@ -62,8 +56,8 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
 
     await deactivateAccount()
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Account deleted successfully.",
         });
@@ -72,9 +66,9 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
         router.push("/");
         handleClose();
       })
-      .catch((err) =>
-        setToastAlert({
-          type: "error",
+      .catch((err: any) =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error,
         })

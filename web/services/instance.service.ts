@@ -1,58 +1,48 @@
-import { APIService } from "services/api.service";
-// helpers
-import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type {
-  IFormattedInstanceConfiguration,
-  IInstance,
-  IInstanceAdmin,
-  IInstanceConfiguration,
-} from "types/instance";
+import type { IInstance } from "@plane/types";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
+// services
+import { APIService } from "@/services/api.service";
 
 export class InstanceService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
+  async requestCSRFToken(): Promise<{ csrf_token: string }> {
+    return this.get("/auth/get-csrf-token/")
+      .then((response) => {
+        this.setCSRFToken(response.data.csrf_token);
+        return response.data;
+      })
+      .catch((error) => {
+        throw error;
+      });
+  }
+
   async getInstanceInfo(): Promise<IInstance> {
-    return this.get("/api/licenses/instances/", { headers: {} })
+    return this.get("/api/instances/")
       .then((response) => response.data)
       .catch((error) => {
         throw error;
       });
   }
 
-  async getInstanceAdmins(): Promise<IInstanceAdmin[]> {
-    return this.get("/api/licenses/instances/admins/")
-      .then((response) => response.data)
+  async createInstanceAdmin(data: FormData): Promise<void> {
+    return this.post("/api/instances/admins/sign-in/", {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "X-CSRFToken": this.getCSRFToken(),
+      },
+      data,
+    })
+      .then((response) => {
+        console.log("response.data", response.data);
+        response.data;
+      })
       .catch((error) => {
         throw error;
-      });
-  }
-
-  async updateInstanceInfo(data: Partial<IInstance>): Promise<IInstance> {
-    return this.patch("/api/licenses/instances/", data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getInstanceConfigurations() {
-    return this.get("/api/licenses/instances/configurations/")
-      .then((response) => response.data)
-      .catch((error) => {
-        throw error;
-      });
-  }
-
-  async updateInstanceConfigurations(
-    data: Partial<IFormattedInstanceConfiguration>
-  ): Promise<IInstanceConfiguration[]> {
-    return this.patch("/api/licenses/instances/configurations/", data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
       });
   }
 }

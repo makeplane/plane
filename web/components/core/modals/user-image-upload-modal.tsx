@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-import { Transition, Dialog } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { FileService } from "services/file.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button } from "@plane/ui";
-// icons
 import { UserCircle2 } from "lucide-react";
+import { Transition, Dialog } from "@headlessui/react";
+// hooks
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
+import { MAX_FILE_SIZE } from "@/constants/common";
+// hooks
+import { useInstance } from "@/hooks/store";
+// services
+import { FileService } from "@/services/file.service";
 
 type Props = {
   handleDelete?: () => void;
@@ -32,12 +29,8 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
-
-  const { setToastAlert } = useToast();
-
-  const {
-    appConfig: { envConfig },
-  } = useMobxStore();
+  // store hooks
+  const { instance } = useInstance();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 
@@ -46,7 +39,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: instance?.config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
   });
 
@@ -76,8 +69,8 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
         if (value) fileService.deleteUserFile(value);
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

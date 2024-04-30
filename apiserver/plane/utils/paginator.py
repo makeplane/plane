@@ -31,8 +31,10 @@ class Cursor:
         try:
             bits = value.split(":")
             if len(bits) != 3:
-                raise ValueError("Cursor must be in the format 'value:offset:is_prev'")
-            
+                raise ValueError(
+                    "Cursor must be in the format 'value:offset:is_prev'"
+                )
+
             value = float(bits[0]) if "." in bits[0] else int(bits[0])
             return cls(value, int(bits[1]), bool(int(bits[2])))
         except (TypeError, ValueError) as e:
@@ -132,7 +134,7 @@ class OffsetPaginator:
             results=results,
             next=next_cursor,
             prev=prev_cursor,
-            hits=None,
+            hits=count,
             max_hits=max_hits,
         )
 
@@ -178,7 +180,9 @@ class BasePaginator:
         input_cursor = None
         if request.GET.get(self.cursor_name):
             try:
-                input_cursor = cursor_cls.from_string(request.GET.get(self.cursor_name))
+                input_cursor = cursor_cls.from_string(
+                    request.GET.get(self.cursor_name)
+                )
             except ValueError:
                 raise ParseError(detail="Invalid cursor parameter.")
 
@@ -186,9 +190,11 @@ class BasePaginator:
             paginator = paginator_cls(**paginator_kwargs)
 
         try:
-            cursor_result = paginator.get_result(limit=per_page, cursor=input_cursor)
-        except BadPaginationError as e:
-            raise ParseError(detail=str(e))
+            cursor_result = paginator.get_result(
+                limit=per_page, cursor=input_cursor
+            )
+        except BadPaginationError:
+            raise ParseError(detail="Error in parsing")
 
         # Serialize result according to the on_result function
         if on_results:
@@ -211,6 +217,7 @@ class BasePaginator:
                 "prev_page_results": cursor_result.prev.has_results,
                 "count": cursor_result.__len__(),
                 "total_pages": cursor_result.max_hits,
+                "total_results": cursor_result.hits,
                 "extra_stats": extra_stats,
                 "results": results,
             }

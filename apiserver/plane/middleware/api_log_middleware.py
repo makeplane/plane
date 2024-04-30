@@ -1,4 +1,4 @@
-from plane.db.models import APIToken, APIActivityLog
+from plane.db.models import APIActivityLog
 
 
 class APITokenLogMiddleware:
@@ -23,9 +23,13 @@ class APITokenLogMiddleware:
                     method=request.method,
                     query_params=request.META.get("QUERY_STRING", ""),
                     headers=str(request.headers),
-                    body=(request_body.decode('utf-8') if request_body else None),
+                    body=(
+                        request_body.decode("utf-8") if request_body else None
+                    ),
                     response_body=(
-                        response.content.decode("utf-8") if response.content else None
+                        response.content.decode("utf-8")
+                        if response.content
+                        else None
                     ),
                     response_code=response.status_code,
                     ip_address=request.META.get("REMOTE_ADDR", None),
@@ -35,6 +39,5 @@ class APITokenLogMiddleware:
             except Exception as e:
                 print(e)
                 # If the token does not exist, you can decide whether to log this as an invalid attempt
-                pass
 
         return None

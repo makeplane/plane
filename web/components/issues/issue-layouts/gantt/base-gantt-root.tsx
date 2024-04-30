@@ -1,86 +1,60 @@
-import React, { useCallback } from "react";
+import React from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { TIssue, TUnGroupedIssues } from "@plane/types";
+// hooks
+import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
+import { GanttQuickAddIssueForm, IssueGanttBlock } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { renderIssueBlocksStructure } from "@/helpers/issue.helper";
+import { useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
-import { IssueGanttBlock, IssuePeekOverview } from "components/issues";
-import {
-  GanttChartRoot,
-  IBlockUpdateData,
-  renderIssueBlocksStructure,
-  IssueGanttSidebar,
-} from "components/gantt-chart";
+// helpers
 // types
-import { IIssueUnGroupedStructure } from "store/issue";
-import { IIssue } from "types";
-import {
-  ICycleIssuesFilterStore,
-  ICycleIssuesStore,
-  IModuleIssuesFilterStore,
-  IModuleIssuesStore,
-  IProjectIssuesFilterStore,
-  IProjectIssuesStore,
-  IViewIssuesFilterStore,
-  IViewIssuesStore,
-} from "store/issues";
-import { TUnGroupedIssues } from "store/issues/types";
-import { EIssueActions } from "../types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 
+type GanttStoreType =
+  | EIssuesStoreType.PROJECT
+  | EIssuesStoreType.MODULE
+  | EIssuesStoreType.CYCLE
+  | EIssuesStoreType.PROJECT_VIEW;
 interface IBaseGanttRoot {
-  issueFiltersStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
-  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
   viewId?: string;
-  issueActions: {
-    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
-  };
+  storeType: GanttStoreType;
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { issueFiltersStore, issueStore, viewId, issueActions } = props;
-
+  const { viewId, storeType } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
+  const { workspaceSlug } = router.query;
 
+  const { issues, issuesFilter } = useIssues(storeType);
+  const { updateIssue } = useIssuesActions(storeType);
+  // store hooks
   const {
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
+  const { issueMap } = useIssues();
+  const appliedDisplayFilters = issuesFilter.issueFilters?.displayFilters;
 
-  const appliedDisplayFilters = issueFiltersStore.issueFilters?.displayFilters;
+  const issueIds = (issues.groupedIssueIds ?? []) as TUnGroupedIssues;
+  const { enableIssueCreation } = issues?.viewFlags || {};
 
-  const issuesResponse = issueStore.getIssues;
-  const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
-  const { enableIssueCreation } = issueStore?.viewFlags || {};
+  const issuesArray = issueIds.map((id) => issueMap?.[id]);
 
-  const issues = issueIds.map((id) => issuesResponse?.[id]);
-
-  const updateIssueBlockStructure = async (issue: IIssue, data: IBlockUpdateData) => {
+  const updateIssueBlockStructure = async (issue: TIssue, data: IBlockUpdateData) => {
     if (!workspaceSlug) return;
 
     const payload: any = { ...data };
     if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-    await issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, payload, viewId);
+    updateIssue && (await updateIssue(issue.project_id, issue.id, payload));
   };
 
-  const handleIssues = useCallback(
-    async (issue: IIssue, action: EIssueActions) => {
-      if (issueActions[action]) {
-        await issueActions[action]!(issue);
-      }
-    },
-    [issueActions]
-  );
-
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -89,34 +63,23 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           border={false}
           title="Issues"
           loaderTitle="Issues"
-          blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
+          blocks={issues ? renderIssueBlocksStructure(issuesArray) : null}
           blockUpdateHandler={updateIssueBlockStructure}
-          blockToRender={(data: IIssue) => <IssueGanttBlock data={data} />}
-          sidebarToRender={(props) => (
-            <IssueGanttSidebar
-              {...props}
-              quickAddCallback={issueStore.quickAddIssue}
-              viewId={viewId}
-              enableQuickIssueCreate
-              disableIssueCreation={!enableIssueCreation || !isAllowed}
-            />
-          )}
+          blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
+          sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
+          enableAddBlock={isAllowed}
+          quickAdd={
+            enableIssueCreation && isAllowed ? (
+              <GanttQuickAddIssueForm quickAddCallback={issues.quickAddIssue} viewId={viewId} />
+            ) : undefined
+          }
+          showAllBlocks
         />
       </div>
-      {workspaceSlug && peekIssueId && peekProjectId && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate, action) => {
-            await handleIssues(issueToUpdate as IIssue, action);
-          }}
-        />
-      )}
     </>
   );
 });

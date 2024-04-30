@@ -1,74 +1,101 @@
 import { useState, ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // hooks
-import useToast from "hooks/use-toast";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { PageHead } from "@/components/core";
+import { WorkspaceSettingHeader } from "@/components/headers";
+import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components/workspace";
+import { MEMBER_INVITED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { getUserRole } from "@/helpers/user.helper";
+import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { AppLayout } from "@/layouts/app-layout";
+import { WorkspaceSettingLayout } from "@/layouts/settings-layout";
 // components
-import { WorkspaceSettingHeader } from "components/headers";
-import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/workspace";
 // ui
-import { Button } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IWorkspaceBulkInviteFormData } from "types";
+import { NextPageWithLayout } from "@/lib/types";
+// helpers
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 
 const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-  // store
-  const {
-    user: { currentWorkspaceRole },
-    workspaceMember: { inviteMembersToWorkspace },
-    trackEvent: { postHogEventTracker, setTrackElement },
-  } = useMobxStore();
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  // hooks
-  const { setToastAlert } = useToast();
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+  // store hooks
+  const { captureEvent } = useEventTracker();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const {
+    workspace: { inviteMembersToWorkspace },
+  } = useMember();
+  const { currentWorkspace } = useWorkspace();
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
 
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
-      .then(async (res) => {
+      .then(() => {
         setInviteModal(false);
-        postHogEventTracker("MEMBER_INVITED", { ...res, state: "SUCCESS" });
-        setToastAlert({
-          type: "success",
+        captureEvent(MEMBER_INVITED, {
+          emails: [
+            ...data.emails.map((email) => ({
+              email: email.email,
+              role: getUserRole(email.role),
+            })),
+          ],
+          project_id: undefined,
+          state: "SUCCESS",
+          element: "Workspace settings member page",
+        });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Invitations sent successfully.",
         });
       })
       .catch((err) => {
-        postHogEventTracker("MEMBER_INVITED", { state: "FAILED" });
-        setToastAlert({
-          type: "error",
+        captureEvent(MEMBER_INVITED, {
+          emails: [
+            ...data.emails.map((email) => ({
+              email: email.email,
+              role: getUserRole(email.role),
+            })),
+          ],
+          project_id: undefined,
+          state: "FAILED",
+          element: "Workspace settings member page",
+        });
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: `${err.error ?? "Something went wrong. Please try again."}`,
         });
       });
   };
 
+  // derived values
   const hasAddMemberPermission =
     currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentWorkspaceRole);
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
 
   return (
     <>
+      <PageHead title={pageTitle} />
       <SendWorkspaceInvitationModal
         isOpen={inviteModal}
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
       />
-      <section className="w-full overflow-y-auto py-8 pr-9">
+      <section className="w-full overflow-y-auto md:pr-9 pr-4">
         <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 py-3.5">
           <h4 className="text-xl font-medium">Members</h4>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
@@ -82,14 +109,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
             />
           </div>
           {hasAddMemberPermission && (
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                setTrackElement("WORKSPACE_SETTINGS_MEMBERS_PAGE_HEADER");
-                setInviteModal(true);
-              }}
-            >
+            <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
               Add member
             </Button>
           )}

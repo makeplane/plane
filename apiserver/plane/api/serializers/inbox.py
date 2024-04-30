@@ -2,8 +2,8 @@
 from .base import BaseSerializer
 from plane.db.models import InboxIssue
 
-class InboxIssueSerializer(BaseSerializer):
 
+class InboxIssueSerializer(BaseSerializer):
     class Meta:
         model = InboxIssue
         fields = "__all__"

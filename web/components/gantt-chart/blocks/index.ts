@@ -1,1 +1,1 @@
-export * from "./blocks-display";
+export * from "./blocks-list";

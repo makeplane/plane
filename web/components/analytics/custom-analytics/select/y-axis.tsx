@@ -1,9 +1,9 @@
 // ui
+import { TYAxisValues } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // types
-import { TYAxisValues } from "types";
+import { ANALYTICS_Y_AXIS_VALUES } from "@/constants/analytics";
 // constants
-import { ANALYTICS_Y_AXIS_VALUES } from "constants/analytics";
 
 type Props = {
   value: TYAxisValues;
@@ -15,7 +15,7 @@ export const SelectYAxis: React.FC<Props> = ({ value, onChange }) => (
     value={value}
     label={<span>{ANALYTICS_Y_AXIS_VALUES.find((v) => v.value === value)?.label ?? "None"}</span>}
     onChange={onChange}
-    width="w-full"
+    maxHeight="lg"
   >
     {ANALYTICS_Y_AXIS_VALUES.map((item) => (
       <CustomSelect.Option key={item.value} value={item.value}>

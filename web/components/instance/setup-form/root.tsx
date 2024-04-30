@@ -1,7 +1,7 @@
 import { useState } from "react";
 // components
-import { LatestFeatureBlock } from "components/common";
-import { InstanceSetupDone, InstanceSetupSignInForm } from "components/instance";
+import { LatestFeatureBlock } from "@/components/common";
+import { InstanceSetupDone, InstanceSetupSignInForm } from "@/components/instance";
 
 export enum EInstanceSetupSteps {
   SIGN_IN = "SIGN_IN",

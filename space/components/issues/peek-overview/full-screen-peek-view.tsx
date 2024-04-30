@@ -1,18 +1,19 @@
 import { observer } from "mobx-react-lite";
 // components
+import { Loader } from "@plane/ui";
 import {
   PeekOverviewHeader,
   PeekOverviewIssueActivity,
   PeekOverviewIssueDetails,
   PeekOverviewIssueProperties,
-} from "components/issues/peek-overview";
+} from "@/components/issues/peek-overview";
 // types
-import { Loader } from "@plane/ui";
-import { IIssue } from "types/issue";
+import { IIssue } from "@/types/issue";
 
 type Props = {
   handleClose: () => void;
   issueDetails: IIssue | undefined;
+  workspace_slug: string;
 };
 
 export const FullScreenPeekView: React.FC<Props> = observer((props) => {

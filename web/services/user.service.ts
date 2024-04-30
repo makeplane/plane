@@ -1,19 +1,19 @@
 // services
-import { APIService } from "services/api.service";
-// types
 import type {
-  IIssue,
+  TIssue,
   IUser,
   IUserActivityResponse,
   IInstanceAdminStatus,
   IUserProfileData,
   IUserProfileProjectSegregation,
   IUserSettings,
-  IUserWorkspaceDashboard,
-} from "types";
+  IUserEmailNotificationSettings,
+  TUserProfile,
+} from "@plane/types";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "@/services/api.service";
+// types
 // helpers
-import { API_BASE_URL } from "helpers/common.helper";
-import { IIssueResponse } from "store/issues/types";
 
 export class UserService extends APIService {
   constructor() {
@@ -32,9 +32,9 @@ export class UserService extends APIService {
     params: any
   ): Promise<
     | {
-        [key: string]: IIssue[];
+        [key: string]: TIssue[];
       }
-    | IIssue[]
+    | TIssue[]
   > {
     return this.get(`/api/workspaces/${workspaceSlug}/my-issues/`, {
       params,
@@ -53,9 +53,32 @@ export class UserService extends APIService {
       });
   }
 
+  async getCurrentUserProfile(): Promise<TUserProfile> {
+    return this.get("/api/users/me/profile/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+  async updateCurrentUserProfile(data: any): Promise<any> {
+    return this.patch("/api/users/me/profile/", data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async getCurrentUserAccounts(): Promise<any> {
+    return this.get("/api/users/me/accounts/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async currentUserInstanceAdminStatus(): Promise<IInstanceAdminStatus> {
     return this.get("/api/users/me/instance-admin/")
-      .then((respone) => respone?.data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
@@ -63,6 +86,14 @@ export class UserService extends APIService {
 
   async currentUserSettings(): Promise<IUserSettings> {
     return this.get("/api/users/me/settings/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async currentUserEmailNotificationSettings(): Promise<IUserEmailNotificationSettings> {
+    return this.get("/api/users/me/notification-preferences/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -97,20 +128,16 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserActivity(): Promise<IUserActivityResponse> {
-    return this.get(`/api/users/me/activities/`)
+  async updateCurrentUserEmailNotificationSettings(data: Partial<IUserEmailNotificationSettings>): Promise<any> {
+    return this.patch("/api/users/me/notification-preferences/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async userWorkspaceDashboard(workspaceSlug: string, month: number): Promise<IUserWorkspaceDashboard> {
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/dashboard/`, {
-      params: {
-        month: month,
-      },
-    })
+  async getUserActivity(params: { per_page: number; cursor?: string }): Promise<IUserActivityResponse> {
+    return this.get("/api/users/me/activities/", { params })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -144,15 +171,38 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserProfileActivity(workspaceSlug: string, userId: string): Promise<IUserActivityResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/?per_page=15`)
+  async getUserProfileActivity(
+    workspaceSlug: string,
+    userId: string,
+    params: {
+      per_page: number;
+      cursor?: string;
+    }
+  ): Promise<IUserActivityResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getUserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<IIssueResponse> {
+  async downloadProfileActivity(
+    workspaceSlug: string,
+    userId: string,
+    data: {
+      date: string;
+    }
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/export/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getUserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<TIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
       params,
     })

@@ -1,44 +1,51 @@
 import React, { useCallback, useEffect, useState } from "react";
+import isEmpty from "lodash/isEmpty";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import { useForm } from "react-hook-form";
-import { Disclosure, Popover, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { CycleService } from "services/cycle.service";
-// hooks
-import useToast from "hooks/use-toast";
-// components
-import { SidebarProgressStats } from "components/core";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { CycleDeleteModal } from "components/cycles/delete-modal";
-// ui
-import { CustomRangeDatePicker } from "components/ui";
-import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
+import { Controller, useForm } from "react-hook-form";
 // icons
-import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, MoveRight } from "lucide-react";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
 import {
-  findHowManyDaysLeft,
-  getDateRangeStatus,
-  isDateGreaterThanToday,
-  renderDateFormat,
-  renderShortDate,
-  renderShortMonthDate,
-} from "helpers/date-time.helper";
+  ArchiveRestoreIcon,
+  ChevronDown,
+  LinkIcon,
+  Trash2,
+  UserCircle2,
+  AlertCircle,
+  ChevronRight,
+  CalendarClock,
+} from "lucide-react";
+import { Disclosure, Transition } from "@headlessui/react";
 // types
-import { ICycle, IIssueFilterOptions } from "types";
-import { EFilterType } from "store/issues/types";
+import { ICycle, IIssueFilterOptions } from "@plane/types";
+// ui
+import { Avatar, ArchiveIcon, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
+// components
+import { SidebarProgressStats } from "@/components/core";
+import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { ArchiveCycleModal, CycleDeleteModal } from "@/components/cycles";
+import { DateRangeDropdown } from "@/components/dropdowns";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-// fetch-keys
-import { CYCLE_STATUS } from "constants/cycle";
+import { CYCLE_STATUS } from "@/constants/cycle";
+import { CYCLE_UPDATED } from "@/constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
+import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useEventTracker, useCycle, useUser, useMember, useIssues } from "@/hooks/store";
+// services
+import { CycleService } from "@/services/cycle.service";
 
 type Props = {
   cycleId: string;
   handleClose: () => void;
+  isArchived?: boolean;
+};
+
+const defaultValues: Partial<ICycle> = {
+  start_date: null,
+  end_date: null,
 };
 
 // services
@@ -46,54 +53,92 @@ const cycleService = new CycleService();
 
 // TODO: refactor the whole component
 export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
-  const { cycleId, handleClose } = props;
-
+  const { cycleId, handleClose, isArchived } = props;
+  // states
+  const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
-
+  // store hooks
+  const { setTrackElement, captureCycleEvent } = useEventTracker();
   const {
-    cycle: cycleDetailsStore,
-    cycleIssuesFilter: { issueFilters, updateFilters },
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
-  } = useMobxStore();
-
-  const cycleDetails = cycleDetailsStore.cycle_details[cycleId] ?? undefined;
-
-  const { setToastAlert } = useToast();
-
-  const defaultValues: Partial<ICycle> = {
-    start_date: new Date().toString(),
-    end_date: new Date().toString(),
-  };
-
-  const { setValue, reset, watch } = useForm({
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getCycleById, updateCycleDetails, restoreCycle } = useCycle();
+  const { getUserDetails } = useMember();
+  // derived values
+  const cycleDetails = getCycleById(cycleId);
+  const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
+  // form info
+  const { control, reset } = useForm({
     defaultValues,
   });
 
-  const submitChanges = (data: Partial<ICycle>) => {
+  const submitChanges = (data: Partial<ICycle>, changedProperty: string) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
-    cycleDetailsStore.patchCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
+    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data)
+      .then((res) => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: {
+            ...res,
+            changed_properties: [changedProperty],
+            element: "Right side-peek",
+            state: "SUCCESS",
+          },
+        });
+      })
+
+      .catch(() => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: {
+            ...data,
+            element: "Right side-peek",
+            state: "FAILED",
+          },
+        });
+      });
   };
 
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Link Copied!",
           message: "Cycle link copied to clipboard.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Some error occurred",
         });
       });
+  };
+
+  const handleRestoreCycle = async () => {
+    if (!workspaceSlug || !projectId) return;
+
+    await restoreCycle(workspaceSlug.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Restore success",
+          message: "Your cycle can be found in project cycles.",
+        });
+        router.push(`/${workspaceSlug.toString()}/projects/${projectId.toString()}/archives/cycles`);
+      })
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Cycle could not be restored. Please try again.",
+        })
+      );
   };
 
   useEffect(() => {
@@ -112,140 +157,44 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     }
   };
 
-  const handleStartDateChange = async (date: string) => {
-    setValue("start_date", date);
-    if (watch("start_date") && watch("end_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      if (!isDateGreaterThanToday(`${watch("end_date")}`)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create cycle in past date. Please enter a valid date.",
-        });
-        return;
-      }
+  const handleDateChange = async (startDate: Date | undefined, endDate: Date | undefined) => {
+    if (!startDate || !endDate) return;
 
-      if (cycleDetails?.start_date && cycleDetails?.end_date) {
-        const isDateValidForExistingCycle = await dateChecker({
-          start_date: `${watch("start_date")}`,
-          end_date: `${watch("end_date")}`,
-          cycle_id: cycleDetails.id,
-        });
+    let isDateValid = false;
 
-        if (isDateValidForExistingCycle) {
-          submitChanges({
-            start_date: renderDateFormat(`${watch("start_date")}`),
-            end_date: renderDateFormat(`${watch("end_date")}`),
-          });
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "Cycle updated successfully.",
-          });
-          return;
-        } else {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message:
-              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-          });
-          return;
-        }
-      }
+    const payload = {
+      start_date: renderFormattedPayloadDate(startDate),
+      end_date: renderFormattedPayloadDate(endDate),
+    };
 
-      const isDateValid = await dateChecker({
-        start_date: `${watch("start_date")}`,
-        end_date: `${watch("end_date")}`,
+    if (cycleDetails && cycleDetails.start_date && cycleDetails.end_date)
+      isDateValid = await dateChecker({
+        ...payload,
+        cycle_id: cycleDetails.id,
       });
+    else isDateValid = await dateChecker(payload);
 
-      if (isDateValid) {
-        submitChanges({
-          start_date: renderDateFormat(`${watch("start_date")}`),
-          end_date: renderDateFormat(`${watch("end_date")}`),
-        });
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Cycle updated successfully.",
-        });
-      } else {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message:
-            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-        });
-      }
+    if (isDateValid) {
+      submitChanges(payload, "date_range");
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Cycle updated successfully.",
+      });
+    } else {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message:
+          "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
+      });
+      reset({ ...cycleDetails });
     }
   };
 
-  const handleEndDateChange = async (date: string) => {
-    setValue("end_date", date);
-
-    if (watch("start_date") && watch("end_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      if (!isDateGreaterThanToday(`${watch("end_date")}`)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create cycle in past date. Please enter a valid date.",
-        });
-        return;
-      }
-
-      if (cycleDetails?.start_date && cycleDetails?.end_date) {
-        const isDateValidForExistingCycle = await dateChecker({
-          start_date: `${watch("start_date")}`,
-          end_date: `${watch("end_date")}`,
-          cycle_id: cycleDetails.id,
-        });
-
-        if (isDateValidForExistingCycle) {
-          submitChanges({
-            start_date: renderDateFormat(`${watch("start_date")}`),
-            end_date: renderDateFormat(`${watch("end_date")}`),
-          });
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "Cycle updated successfully.",
-          });
-          return;
-        } else {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message:
-              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-          });
-          return;
-        }
-      }
-
-      const isDateValid = await dateChecker({
-        start_date: `${watch("start_date")}`,
-        end_date: `${watch("end_date")}`,
-      });
-
-      if (isDateValid) {
-        submitChanges({
-          start_date: renderDateFormat(`${watch("start_date")}`),
-          end_date: renderDateFormat(`${watch("end_date")}`),
-        });
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Cycle updated successfully.",
-        });
-      } else {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message:
-            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-        });
-      }
-    }
-  };
+  const {
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.CYCLE);
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -253,30 +202,42 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, cycleId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        cycleId
+      );
     },
     [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
 
-  const cycleStatus =
-    cycleDetails?.start_date && cycleDetails?.end_date
-      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
-      : "draft";
+  const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
 
-  const isStartValid = new Date(`${cycleDetails?.start_date}`) <= new Date();
-  const isEndValid = new Date(`${cycleDetails?.end_date}`) >= new Date(`${cycleDetails?.start_date}`);
+  const startDate = getDate(cycleDetails?.start_date);
+  const endDate = getDate(cycleDetails?.end_date);
+
+  const isStartValid = startDate && startDate <= new Date();
+  const isEndValid = endDate && startDate && endDate >= startDate;
 
   const progressPercentage = cycleDetails
-    ? Math.round((cycleDetails.completed_issues / cycleDetails.total_issues) * 100)
+    ? isCompleted && cycleDetails?.progress_snapshot
+      ? Math.round(
+          (cycleDetails.progress_snapshot.completed_issues / cycleDetails.progress_snapshot.total_issues) * 100
+        )
+      : Math.round((cycleDetails.completed_issues / cycleDetails.total_issues) * 100)
     : null;
 
   if (!cycleDetails)
@@ -294,39 +255,44 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       </Loader>
     );
 
-  const endDate = new Date(watch("end_date") ?? cycleDetails.end_date ?? "");
-  const startDate = new Date(watch("start_date") ?? cycleDetails.start_date ?? "");
-
-  const areYearsEqual =
-    startDate.getFullYear() === endDate.getFullYear() || isNaN(startDate.getFullYear()) || isNaN(endDate.getFullYear());
-
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
   const issueCount =
-    cycleDetails.total_issues === 0
-      ? "0 Issue"
-      : cycleDetails.total_issues === cycleDetails.completed_issues
-      ? cycleDetails.total_issues > 1
-        ? `${cycleDetails.total_issues}`
-        : `${cycleDetails.total_issues}`
-      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+    isCompleted && !isEmpty(cycleDetails.progress_snapshot)
+      ? cycleDetails.progress_snapshot.total_issues === 0
+        ? "0 Issue"
+        : `${cycleDetails.progress_snapshot.completed_issues}/${cycleDetails.progress_snapshot.total_issues}`
+      : cycleDetails.total_issues === 0
+        ? "0 Issue"
+        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+
+  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <>
+    <div className="relative">
       {cycleDetails && workspaceSlug && projectId && (
-        <CycleDeleteModal
-          cycle={cycleDetails}
-          isOpen={cycleDeleteModal}
-          handleClose={() => setCycleDeleteModal(false)}
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-        />
+        <>
+          <ArchiveCycleModal
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            cycleId={cycleId}
+            isOpen={archiveCycleModal}
+            handleClose={() => setArchiveCycleModal(false)}
+          />
+          <CycleDeleteModal
+            cycle={cycleDetails}
+            isOpen={cycleDeleteModal}
+            handleClose={() => setCycleDeleteModal(false)}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+          />
+        </>
       )}
 
       <>
-        <div className="flex w-full items-center justify-between">
+        <div className="sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 py-5">
           <div>
             <button
               className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
@@ -336,29 +302,60 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             </button>
           </div>
           <div className="flex items-center gap-3.5">
-            <button onClick={handleCopyText}>
-              <LinkIcon className="h-3 w-3 text-custom-text-300" />
-            </button>
-            {!isCompleted && isEditingAllowed && (
-              <CustomMenu width="lg" placement="bottom-end" ellipsis>
-                <CustomMenu.MenuItem
-                  onClick={() => {
-                    setTrackElement("CYCLE_PAGE_SIDEBAR");
-                    setCycleDeleteModal(true);
-                  }}
-                >
-                  <span className="flex items-center justify-start gap-2">
-                    <Trash2 className="h-3 w-3" />
-                    <span>Delete cycle</span>
-                  </span>
-                </CustomMenu.MenuItem>
+            {!isArchived && (
+              <button onClick={handleCopyText}>
+                <LinkIcon className="h-3 w-3 text-custom-text-300" />
+              </button>
+            )}
+            {isEditingAllowed && (
+              <CustomMenu placement="bottom-end" ellipsis>
+                {!isArchived && (
+                  <CustomMenu.MenuItem onClick={() => setArchiveCycleModal(true)} disabled={!isCompleted}>
+                    {isCompleted ? (
+                      <div className="flex items-center gap-2">
+                        <ArchiveIcon className="h-3 w-3" />
+                        Archive cycle
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2">
+                        <ArchiveIcon className="h-3 w-3" />
+                        <div className="-mt-1">
+                          <p>Archive cycle</p>
+                          <p className="text-xs text-custom-text-400">
+                            Only completed cycle <br /> can be archived.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CustomMenu.MenuItem>
+                )}
+                {isArchived && (
+                  <CustomMenu.MenuItem onClick={handleRestoreCycle}>
+                    <span className="flex items-center justify-start gap-2">
+                      <ArchiveRestoreIcon className="h-3 w-3" />
+                      <span>Restore cycle</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )}
+                {!isCompleted && (
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      setTrackElement("CYCLE_PAGE_SIDEBAR");
+                      setCycleDeleteModal(true);
+                    }}
+                  >
+                    <span className="flex items-center justify-start gap-2">
+                      <Trash2 className="h-3 w-3" />
+                      <span>Delete cycle</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )}
               </CustomMenu>
             )}
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{cycleDetails.name}</h4>
+        <div className="flex flex-col gap-3 pt-2">
           <div className="flex items-center gap-5">
             {currentCycle && (
               <span
@@ -368,117 +365,85 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   backgroundColor: `${currentCycle.color}20`,
                 }}
               >
-                {currentCycle.value === "current"
-                  ? `${findHowManyDaysLeft(cycleDetails.end_date ?? new Date())} ${currentCycle.label}`
+                {currentCycle.value === "current" && daysLeft !== undefined
+                  ? `${daysLeft} ${currentCycle.label}`
                   : `${currentCycle.label}`}
               </span>
             )}
-            <div className="relative flex h-full w-52 items-center gap-2.5">
-              <Popover className="flex h-full items-center justify-center rounded-lg">
-                <Popover.Button
-                  className={`text-sm font-medium text-custom-text-300 ${
-                    isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                  }`}
-                  disabled={isCompleted || !isEditingAllowed}
-                >
-                  {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
-                </Popover.Button>
-
-                <Transition
-                  as={React.Fragment}
-                  enter="transition ease-out duration-200"
-                  enterFrom="opacity-0 translate-y-1"
-                  enterTo="opacity-100 translate-y-0"
-                  leave="transition ease-in duration-150"
-                  leaveFrom="opacity-100 translate-y-0"
-                  leaveTo="opacity-0 translate-y-1"
-                >
-                  <Popover.Panel className="absolute -right-5 top-10 z-20  transform overflow-hidden">
-                    <CustomRangeDatePicker
-                      value={watch("start_date") ? watch("start_date") : cycleDetails?.start_date}
-                      onChange={(val) => {
-                        if (val) {
-                          setTrackElement("CYCLE_PAGE_SIDEBAR_START_DATE_BUTTON");
-                          handleStartDateChange(val);
-                        }
-                      }}
-                      startDate={watch("start_date") ?? watch("end_date") ?? null}
-                      endDate={watch("end_date") ?? watch("start_date") ?? null}
-                      maxDate={new Date(`${watch("end_date")}`)}
-                      selectsStart={watch("end_date") ? true : false}
-                    />
-                  </Popover.Panel>
-                </Transition>
-              </Popover>
-              <MoveRight className="h-4 w-4 text-custom-text-300" />
-              <Popover className="flex h-full items-center justify-center rounded-lg">
-                <>
-                  <Popover.Button
-                    className={`text-sm font-medium text-custom-text-300 ${
-                      isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                    }`}
-                    disabled={isCompleted || !isEditingAllowed}
-                  >
-                    {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
-                  </Popover.Button>
-
-                  <Transition
-                    as={React.Fragment}
-                    enter="transition ease-out duration-200"
-                    enterFrom="opacity-0 translate-y-1"
-                    enterTo="opacity-100 translate-y-0"
-                    leave="transition ease-in duration-150"
-                    leaveFrom="opacity-100 translate-y-0"
-                    leaveTo="opacity-0 translate-y-1"
-                  >
-                    <Popover.Panel className="absolute -right-5 top-10 z-20 transform overflow-hidden">
-                      <CustomRangeDatePicker
-                        value={watch("end_date") ? watch("end_date") : cycleDetails?.end_date}
-                        onChange={(val) => {
-                          if (val) {
-                            setTrackElement("CYCLE_PAGE_SIDEBAR_END_DATE_BUTTON");
-                            handleEndDateChange(val);
-                          }
-                        }}
-                        startDate={watch("start_date") ?? watch("end_date") ?? null}
-                        endDate={watch("end_date") ?? watch("start_date") ?? null}
-                        minDate={new Date(`${watch("start_date")}`)}
-                        selectsEnd={watch("start_date") ? true : false}
-                      />
-                    </Popover.Panel>
-                  </Transition>
-                </>
-              </Popover>
-            </div>
           </div>
+          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{cycleDetails.name}</h4>
         </div>
 
         {cycleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {cycleDetails.description}
-          </span>
+          <TextArea
+            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-custom-text-200"
+            value={cycleDetails.description}
+            disabled
+          />
         )}
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+              <CalendarClock className="h-4 w-4" />
+              <span className="text-base">Date range</span>
+            </div>
+            <div className="h-7 w-3/5">
+              <Controller
+                control={control}
+                name="start_date"
+                render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                  <Controller
+                    control={control}
+                    name="end_date"
+                    render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                      <DateRangeDropdown
+                        className="h-7"
+                        buttonContainerClassName="w-full"
+                        buttonVariant="background-with-text"
+                        minDate={new Date()}
+                        value={{
+                          from: getDate(startDateValue),
+                          to: getDate(endDateValue),
+                        }}
+                        onSelect={(val) => {
+                          onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                          onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                          handleDateChange(val?.from, val?.to);
+                        }}
+                        placeholder={{
+                          from: "Start date",
+                          to: "End date",
+                        }}
+                        required={cycleDetails.status !== "draft"}
+                        disabled={!isEditingAllowed || isArchived}
+                      />
+                    )}
+                  />
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <UserCircle2 className="h-4 w-4" />
               <span className="text-base">Lead</span>
             </div>
-            <div className="flex w-1/2 items-center rounded-sm">
+            <div className="flex w-3/5 items-center rounded-sm">
               <div className="flex items-center gap-2.5">
-                <Avatar name={cycleDetails.owned_by.display_name} src={cycleDetails.owned_by.avatar} />
-                <span className="text-sm text-custom-text-200">{cycleDetails.owned_by.display_name}</span>
+                <Avatar name={cycleOwnerDetails?.display_name} src={cycleOwnerDetails?.avatar} />
+                <span className="text-sm text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <LayersIcon className="h-4 w-4" />
               <span className="text-base">Issues</span>
             </div>
-            <div className="flex w-1/2 items-center">
+            <div className="flex w-3/5 items-center">
               <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
             </div>
           </div>
@@ -511,7 +476,9 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                         <div className="flex items-center gap-1">
                           <AlertCircle height={14} width={14} className="text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
-                            Invalid date. Please enter valid date.
+                            {cycleDetails?.start_date && cycleDetails?.end_date
+                              ? "This cycle isn't active yet."
+                              : "Invalid date. Please enter valid date."}
                           </span>
                         </div>
                       )}
@@ -520,50 +487,111 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-3">
-                        {isStartValid && isEndValid ? (
-                          <div className="h-full w-full pt-4">
-                            <div className="flex  items-start  gap-4 py-2 text-xs">
-                              <div className="flex items-center gap-3 text-custom-text-100">
-                                <div className="flex items-center justify-center gap-1">
-                                  <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-                                  <span>Ideal</span>
+                        {isCompleted && !isEmpty(cycleDetails.progress_snapshot) ? (
+                          <>
+                            {cycleDetails.progress_snapshot.distribution?.completion_chart &&
+                              cycleDetails.start_date &&
+                              cycleDetails.end_date && (
+                                <div className="h-full w-full pt-4">
+                                  <div className="flex  items-start  gap-4 py-2 text-xs">
+                                    <div className="flex items-center gap-3 text-custom-text-100">
+                                      <div className="flex items-center justify-center gap-1">
+                                        <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
+                                        <span>Ideal</span>
+                                      </div>
+                                      <div className="flex items-center justify-center gap-1">
+                                        <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
+                                        <span>Current</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="relative h-40 w-80">
+                                    <ProgressChart
+                                      distribution={cycleDetails.progress_snapshot.distribution?.completion_chart}
+                                      startDate={cycleDetails.start_date}
+                                      endDate={cycleDetails.end_date}
+                                      totalIssues={cycleDetails.progress_snapshot.total_issues}
+                                    />
+                                  </div>
                                 </div>
-                                <div className="flex items-center justify-center gap-1">
-                                  <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-                                  <span>Current</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="relative h-40 w-80">
-                              <ProgressChart
-                                distribution={cycleDetails.distribution?.completion_chart ?? {}}
-                                startDate={cycleDetails.start_date ?? ""}
-                                endDate={cycleDetails.end_date ?? ""}
-                                totalIssues={cycleDetails.total_issues}
-                              />
-                            </div>
-                          </div>
+                              )}
+                          </>
                         ) : (
-                          ""
+                          <>
+                            {cycleDetails.distribution?.completion_chart &&
+                              cycleDetails.start_date &&
+                              cycleDetails.end_date && (
+                                <div className="h-full w-full pt-4">
+                                  <div className="flex  items-start  gap-4 py-2 text-xs">
+                                    <div className="flex items-center gap-3 text-custom-text-100">
+                                      <div className="flex items-center justify-center gap-1">
+                                        <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
+                                        <span>Ideal</span>
+                                      </div>
+                                      <div className="flex items-center justify-center gap-1">
+                                        <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
+                                        <span>Current</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="relative h-40 w-80">
+                                    <ProgressChart
+                                      distribution={cycleDetails.distribution?.completion_chart}
+                                      startDate={cycleDetails.start_date}
+                                      endDate={cycleDetails.end_date}
+                                      totalIssues={cycleDetails.total_issues}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                          </>
                         )}
-                        {cycleDetails.total_issues > 0 && cycleDetails.distribution && (
-                          <div className="h-full w-full border-t border-custom-border-200 pt-5">
-                            <SidebarProgressStats
-                              distribution={cycleDetails.distribution}
-                              groupedIssues={{
-                                backlog: cycleDetails.backlog_issues,
-                                unstarted: cycleDetails.unstarted_issues,
-                                started: cycleDetails.started_issues,
-                                completed: cycleDetails.completed_issues,
-                                cancelled: cycleDetails.cancelled_issues,
-                              }}
-                              totalIssues={cycleDetails.total_issues}
-                              isPeekView={Boolean(peekCycle)}
-                              isCompleted={isCompleted}
-                              filters={issueFilters?.filters}
-                              handleFiltersUpdate={handleFiltersUpdate}
-                            />
-                          </div>
+                        {/* stats */}
+                        {isCompleted && !isEmpty(cycleDetails.progress_snapshot) ? (
+                          <>
+                            {cycleDetails.progress_snapshot.total_issues > 0 &&
+                              cycleDetails.progress_snapshot.distribution && (
+                                <div className="h-full w-full border-t border-custom-border-200 pt-5">
+                                  <SidebarProgressStats
+                                    distribution={cycleDetails.progress_snapshot.distribution}
+                                    groupedIssues={{
+                                      backlog: cycleDetails.progress_snapshot.backlog_issues,
+                                      unstarted: cycleDetails.progress_snapshot.unstarted_issues,
+                                      started: cycleDetails.progress_snapshot.started_issues,
+                                      completed: cycleDetails.progress_snapshot.completed_issues,
+                                      cancelled: cycleDetails.progress_snapshot.cancelled_issues,
+                                    }}
+                                    totalIssues={cycleDetails.progress_snapshot.total_issues}
+                                    isPeekView={Boolean(peekCycle)}
+                                    isCompleted={isCompleted}
+                                    filters={issueFilters}
+                                    handleFiltersUpdate={handleFiltersUpdate}
+                                  />
+                                </div>
+                              )}
+                          </>
+                        ) : (
+                          <>
+                            {cycleDetails.total_issues > 0 && cycleDetails.distribution && (
+                              <div className="h-full w-full border-t border-custom-border-200 pt-5">
+                                <SidebarProgressStats
+                                  distribution={cycleDetails.distribution}
+                                  groupedIssues={{
+                                    backlog: cycleDetails.backlog_issues,
+                                    unstarted: cycleDetails.unstarted_issues,
+                                    started: cycleDetails.started_issues,
+                                    completed: cycleDetails.completed_issues,
+                                    cancelled: cycleDetails.cancelled_issues,
+                                  }}
+                                  totalIssues={cycleDetails.total_issues}
+                                  isPeekView={Boolean(peekCycle)}
+                                  isCompleted={isCompleted}
+                                  filters={issueFilters}
+                                  handleFiltersUpdate={handleFiltersUpdate}
+                                />
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
                     </Disclosure.Panel>
@@ -574,6 +602,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </>
-    </>
+    </div>
   );
 });

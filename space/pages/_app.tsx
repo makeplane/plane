@@ -1,24 +1,21 @@
-import Head from "next/head";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import { ThemeProvider } from "next-themes";
 // styles
-import "styles/globals.css";
-import "styles/editor.css";
-import "styles/table.css";
+import "@/styles/globals.css";
 // contexts
-import { ToastContextProvider } from "contexts/toast.context";
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, TWITTER_USER_NAME, SITE_KEYWORDS, SITE_TITLE } from "@/constants/seo";
+import { ToastContextProvider } from "@/contexts/toast.context";
 // mobx store provider
-import { MobxStoreProvider } from "lib/mobx/store-provider";
-import MobxStoreInit from "lib/mobx/store-init";
+import InstanceLayout from "@/layouts/instance-layout";
+import { MobxStoreProvider } from "@/lib/mobx/store-provider";
 // constants
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, TWITTER_USER_NAME, SITE_KEYWORDS, SITE_TITLE } from "constants/seo";
 
 const prefix = parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0") === 0 ? "/" : "/spaces/";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <MobxStoreProvider>
-      <MobxStoreInit />
       <Head>
         <title>{SITE_TITLE}</title>
         <meta property="og:site_name" content={SITE_NAME} />
@@ -36,7 +33,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <ToastContextProvider>
         <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-          <Component {...pageProps} />
+          <InstanceLayout>
+            <Component {...pageProps} />
+          </InstanceLayout>
         </ThemeProvider>
       </ToastContextProvider>
     </MobxStoreProvider>

@@ -1,17 +1,18 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import { Check } from "lucide-react";
+import { TIssue } from "@plane/types";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// ui
 import { Avatar } from "@plane/ui";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues, useMember } from "@/hooks/store";
+// ui
 // types
-import { IIssue } from "types";
 
 type Props = {
   closePalette: () => void;
-  issue: IIssue;
+  issue: TIssue;
 };
 
 export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
@@ -21,30 +22,40 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store
   const {
-    projectIssues: { updateIssue },
-    projectMember: { projectMembers },
-  } = useMobxStore();
+    issues: { updateIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const {
+    project: { projectMemberIds, getProjectMemberDetails },
+  } = useMember();
 
   const options =
-    projectMembers?.map(({ member }) => ({
-      value: member.id,
-      query: member.display_name,
-      content: (
-        <>
-          <div className="flex items-center gap-2">
-            <Avatar name={member.display_name} src={member.avatar} showTooltip={false} />
-            {member.display_name}
-          </div>
-          {issue.assignees.includes(member.id) && (
-            <div>
-              <Check className="h-3 w-3" />
-            </div>
-          )}
-        </>
-      ),
-    })) ?? [];
+    projectMemberIds?.map((userId) => {
+      const memberDetails = getProjectMemberDetails(userId);
 
-  const handleUpdateIssue = async (formData: Partial<IIssue>) => {
+      return {
+        value: `${memberDetails?.member?.id}`,
+        query: `${memberDetails?.member?.display_name}`,
+        content: (
+          <>
+            <div className="flex items-center gap-2">
+              <Avatar
+                name={memberDetails?.member?.display_name}
+                src={memberDetails?.member?.avatar}
+                showTooltip={false}
+              />
+              {memberDetails?.member?.display_name}
+            </div>
+            {issue.assignee_ids.includes(memberDetails?.member?.id ?? "") && (
+              <div>
+                <Check className="h-3 w-3" />
+              </div>
+            )}
+          </>
+        ),
+      };
+    }) ?? [];
+
+  const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issue) return;
 
     const payload = { ...formData };
@@ -54,18 +65,18 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
   };
 
   const handleIssueAssignees = (assignee: string) => {
-    const updatedAssignees = issue.assignees ?? [];
+    const updatedAssignees = issue.assignee_ids ?? [];
 
     if (updatedAssignees.includes(assignee)) updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);
     else updatedAssignees.push(assignee);
 
-    handleUpdateIssue({ assignees: updatedAssignees });
+    handleUpdateIssue({ assignee_ids: updatedAssignees });
     closePalette();
   };
 
   return (
     <>
-      {options.map((option: any) => (
+      {options.map((option) => (
         <Command.Item
           key={option.value}
           onSelect={() => handleIssueAssignees(option.value)}

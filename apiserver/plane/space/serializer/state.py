@@ -6,7 +6,6 @@ from plane.db.models import (
 
 
 class StateSerializer(BaseSerializer):
-
     class Meta:
         model = State
         fields = "__all__"

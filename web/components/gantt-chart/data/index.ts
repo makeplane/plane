@@ -1,5 +1,5 @@
 // types
-import { WeekMonthDataType, ChartDataType } from "../types";
+import { WeekMonthDataType, ChartDataType, TGanttViews } from "../types";
 
 // constants
 export const weeks: WeekMonthDataType[] = [
@@ -53,7 +53,7 @@ export const datePreview = (date: Date, includeTime: boolean = false) => {
 };
 
 // context data
-export const allViewsWithData: ChartDataType[] = [
+export const VIEWS_LIST: ChartDataType[] = [
   // {
   //   key: "hours",
   //   title: "Hours",
@@ -133,7 +133,5 @@ export const allViewsWithData: ChartDataType[] = [
   // },
 ];
 
-export const currentViewDataWithView = (view: string = "month") => {
-  const currentView: ChartDataType | undefined = allViewsWithData.find((_viewData) => _viewData.key === view);
-  return currentView;
-};
+export const currentViewDataWithView = (view: TGanttViews = "month") =>
+  VIEWS_LIST.find((_viewData) => _viewData.key === view);

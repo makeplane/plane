@@ -1,31 +1,27 @@
 import React, { useEffect } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// ui
-import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
-// services
-import { ProjectMemberService } from "services/project";
+import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import useToast from "hooks/use-toast";
-// types
-import { IProjectMember, TUserProjectRole } from "types";
+// ui
+import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+import { ROLE } from "@/constants/workspace";
+import { useEventTracker, useMember, useUser } from "@/hooks/store";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 
 type Props = {
   isOpen: boolean;
-  members: IProjectMember[];
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 };
 
 type member = {
-  role: TUserProjectRole;
+  role: EUserProjectRoles;
   member_id: string;
 };
 
@@ -42,24 +38,21 @@ const defaultValues: FormValues = {
   ],
 };
 
-// services
-const projectMemberService = new ProjectMemberService();
-
 export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
-  const { isOpen, members, onClose, onSuccess } = props;
-
+  const { isOpen, onClose, onSuccess } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { setToastAlert } = useToast();
-
+  // store hooks
+  const { captureEvent } = useEventTracker();
   const {
-    user: { currentProjectRole },
-    workspaceMember: { workspaceMembers },
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
-
+    membership: { currentProjectRole },
+  } = useUser();
+  const {
+    project: { projectMemberIds, bulkAddMembersToProject },
+    workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
+  } = useMember();
+  // form info
   const {
     formState: { errors, isSubmitting },
     reset,
@@ -72,8 +65,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     name: "members",
   });
 
-  const uninvitedPeople = workspaceMembers?.filter((person) => {
-    const isInvited = members?.find((member) => member.member.id === person.member.id);
+  const uninvitedPeople = workspaceMemberIds?.filter((userId) => {
+    const isInvited = projectMemberIds?.find((u) => u === userId);
 
     return !isInvited;
   });
@@ -83,42 +76,32 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
 
     const payload = { ...formData };
 
-    await projectMemberService
-      .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
-      .then((res) => {
-        onSuccess();
+    await bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
+      .then(() => {
+        if (onSuccess) onSuccess();
         onClose();
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
-          message: "Member added successfully",
+          type: TOAST_TYPE.SUCCESS,
+          message: "Members added successfully.",
         });
-        postHogEventTracker(
-          "MEMBER_ADDED",
-          {
-            ...res,
-            state: "SUCCESS",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
-          }
-        );
+        captureEvent(PROJECT_MEMBER_ADDED, {
+          members: [
+            ...payload.members.map((member) => ({
+              member_id: member.member_id,
+              role: ROLE[member.role],
+            })),
+          ],
+          state: "SUCCESS",
+          element: "Project settings members page",
+        });
       })
       .catch((error) => {
-        console.log(error);
-        postHogEventTracker(
-          "MEMBER_ADDED",
-          {
-            state: "FAILED",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
-          }
-        );
+        console.error(error);
+        captureEvent(PROJECT_MEMBER_ADDED, {
+          state: "FAILED",
+          element: "Project settings members page",
+        });
       })
       .finally(() => {
         reset(defaultValues);
@@ -152,16 +135,36 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     }
   }, [fields, append]);
 
-  const options = uninvitedPeople?.map((person) => ({
-    value: person.member.id,
-    query: person.member.display_name,
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar name={person.member?.display_name} src={person.member?.avatar} />
-        {person.member.display_name} ({person.member.first_name + " " + person.member.last_name})
-      </div>
-    ),
-  }));
+  const options = uninvitedPeople
+    ?.map((userId) => {
+      const memberDetails = getWorkspaceMemberDetails(userId);
+
+      if (!memberDetails?.member) return;
+      return {
+        value: `${memberDetails?.member.id}`,
+        query: `${memberDetails?.member.first_name} ${
+          memberDetails?.member.last_name
+        } ${memberDetails?.member.display_name.toLowerCase()}`,
+        content: (
+          <div className="flex w-full items-center gap-2">
+            <div className="flex-shrink-0 pt-0.5">
+              <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+            </div>
+            <div className="truncate">
+              {memberDetails?.member.display_name} (
+              {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
+            </div>
+          </div>
+        ),
+      };
+    })
+    .filter((option) => !!option) as
+    | {
+        value: string;
+        query: string;
+        content: React.JSX.Element;
+      }[]
+    | undefined;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -201,15 +204,17 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
 
                     <div className="mb-3 space-y-4">
                       {fields.map((field, index) => (
-                        <div key={field.id} className="group mb-1 grid grid-cols-12 items-start gap-x-4 text-sm">
-                          <div className="col-span-7 flex flex-col gap-1">
+                        <div
+                          key={field.id}
+                          className="group mb-1 grid grid-cols-6  sm:grid-cols-12 items-start gap-x-4 text-sm"
+                        >
+                          <div className="col-span-4 sm:col-span-10 flex flex-col gap-1">
                             <Controller
                               control={control}
                               name={`members.${index}.member_id`}
                               rules={{ required: "Please select a member" }}
                               render={({ field: { value, onChange } }) => {
-                                const selectedMember = workspaceMembers?.find((p) => p.member.id === value)?.member;
-
+                                const selectedMember = getWorkspaceMemberDetails(value);
                                 return (
                                   <CustomSearchSelect
                                     value={value}
@@ -217,8 +222,11 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                       <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 px-3 py-2 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
                                         {value && value !== "" ? (
                                           <div className="flex items-center gap-2">
-                                            <Avatar name={selectedMember?.display_name} src={selectedMember?.avatar} />
-                                            {selectedMember?.display_name}
+                                            <Avatar
+                                              name={selectedMember?.member.display_name}
+                                              src={selectedMember?.member.avatar}
+                                            />
+                                            {selectedMember?.member.display_name}
                                           </div>
                                         ) : (
                                           <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
@@ -230,7 +238,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                       onChange(val);
                                     }}
                                     options={options}
-                                    width="w-full min-w-[12rem]"
+                                    optionsClassName="w-full"
                                   />
                                 );
                               }}
@@ -242,7 +250,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                             )}
                           </div>
 
-                          <div className="col-span-5 flex items-center justify-between gap-2">
+                          <div className="col-span-2 sm:col-span-2 flex items-center justify-between gap-2">
                             <div className="flex w-full flex-col gap-1">
                               <Controller
                                 name={`members.${index}.role`}
@@ -260,11 +268,10 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                       </div>
                                     }
                                     input
-                                    width="w-full"
+                                    optionsClassName="w-full"
                                   >
                                     {Object.entries(ROLE).map(([key, label]) => {
-                                      if (parseInt(key) > (currentProjectRole ?? EUserWorkspaceRoles.GUEST))
-                                        return null;
+                                      if (parseInt(key) > (currentProjectRole ?? EUserProjectRoles.GUEST)) return null;
 
                                       return (
                                         <CustomSelect.Option key={key} value={key}>
@@ -281,8 +288,9 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                 </span>
                               )}
                             </div>
-                            <div className="flex-item flex w-6">
-                              {fields.length > 1 && (
+
+                            {fields.length > 1 && (
+                              <div className="flex-item flex w-6">
                                 <button
                                   type="button"
                                   className="place-items-center self-center rounded"
@@ -290,8 +298,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                 >
                                   <X className="h-4 w-4 text-custom-text-200" />
                                 </button>
-                              )}
-                            </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}

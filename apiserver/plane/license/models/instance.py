@@ -5,9 +5,7 @@ from django.conf import settings
 # Module imports
 from plane.db.models import BaseModel
 
-ROLE_CHOICES = (
-    (20, "Admin"),
-)
+ROLE_CHOICES = ((20, "Admin"),)
 
 
 class Instance(BaseModel):
@@ -46,7 +44,9 @@ class InstanceAdmin(BaseModel):
         null=True,
         related_name="instance_owner",
     )
-    instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="admins")
+    instance = models.ForeignKey(
+        Instance, on_delete=models.CASCADE, related_name="admins"
+    )
     role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=20)
     is_verified = models.BooleanField(default=False)
 
@@ -70,4 +70,3 @@ class InstanceConfiguration(BaseModel):
         verbose_name_plural = "Instance Configurations"
         db_table = "instance_configurations"
         ordering = ("-created_at",)
-

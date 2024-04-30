@@ -43,7 +43,7 @@ class ApiTokenEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, pk=None):
-        if pk == None:
+        if pk is None:
             api_tokens = APIToken.objects.filter(
                 user=request.user, workspace__slug=slug
             )
@@ -71,7 +71,9 @@ class ApiTokenEndpoint(BaseAPIView):
             user=request.user,
             pk=pk,
         )
-        serializer = APITokenSerializer(api_token, data=request.data, partial=True)
+        serializer = APITokenSerializer(
+            api_token, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

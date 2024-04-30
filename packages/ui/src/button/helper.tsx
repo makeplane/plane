@@ -8,7 +8,8 @@ export type TButtonVariant =
   | "accent-danger"
   | "outline-danger"
   | "link-danger"
-  | "tertiary-danger";
+  | "tertiary-danger"
+  | "link-neutral";
 
 export type TButtonSizes = "sm" | "md" | "lg" | "xl";
 
@@ -22,10 +23,10 @@ export interface IButtonStyling {
 }
 
 enum buttonSizeStyling {
-  sm = `px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  md = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  lg = `px-5 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  xl = `px-5 py-3.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  sm = `px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  md = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  lg = `px-5 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  xl = `px-5 py-3.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
 }
 
 enum buttonIconStyling {
@@ -97,19 +98,25 @@ export const buttonStyling: IButtonStyling = {
     pressed: `focus:text-red-400`,
     disabled: `cursor-not-allowed !text-red-300`,
   },
+  "link-neutral": {
+    default: `text-custom-text-300`,
+    hover: `hover:text-custom-text-200`,
+    pressed: `focus:text-custom-text-100`,
+    disabled: `cursor-not-allowed !text-custom-text-400`,
+  },
 };
 
 export const getButtonStyling = (variant: TButtonVariant, size: TButtonSizes, disabled: boolean = false): string => {
-  let _variant: string = ``;
+  let tempVariant: string = ``;
   const currentVariant = buttonStyling[variant];
 
-  _variant = `${currentVariant.default} ${disabled ? currentVariant.disabled : currentVariant.hover} ${
+  tempVariant = `${currentVariant.default} ${disabled ? currentVariant.disabled : currentVariant.hover} ${
     currentVariant.pressed
   }`;
 
-  let _size: string = ``;
-  if (size) _size = buttonSizeStyling[size];
-  return `${_variant} ${_size}`;
+  let tempSize: string = ``;
+  if (size) tempSize = buttonSizeStyling[size];
+  return `${tempVariant} ${tempSize}`;
 };
 
 export const getIconStyling = (size: TButtonSizes): string => {

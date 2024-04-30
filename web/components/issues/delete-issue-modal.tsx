@@ -1,56 +1,59 @@
 import { useEffect, useState, Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { TIssue } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
-// hooks
-import useToast from "hooks/use-toast";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import type { IIssue } from "types";
+import { useIssues, useProject } from "@/hooks/store";
+// hooks
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data: IIssue;
+  dataId?: string | null | undefined;
+  data?: TIssue;
   onSubmit?: () => Promise<void>;
 };
 
 export const DeleteIssueModal: React.FC<Props> = (props) => {
-  const { data, isOpen, handleClose, onSubmit } = props;
+  const { dataId, data, isOpen, handleClose, onSubmit } = props;
 
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const { issueMap } = useIssues();
 
-  const { setToastAlert } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // hooks
+  const { getProjectById } = useProject();
 
   useEffect(() => {
-    setIsDeleteLoading(false);
+    setIsDeleting(false);
   }, [isOpen]);
 
+  if (!dataId && !data) return null;
+
+  const issue = data ? data : issueMap[dataId!];
+
   const onClose = () => {
-    setIsDeleteLoading(false);
+    setIsDeleting(false);
     handleClose();
   };
 
   const handleIssueDelete = async () => {
-    setIsDeleteLoading(true);
+    setIsDeleting(true);
     if (onSubmit)
       await onSubmit()
         .then(() => {
-          setToastAlert({
-            title: "Success",
-            type: "success",
-            message: "Issue deleted successfully",
-          });
           onClose();
         })
         .catch(() => {
-          setToastAlert({
+          setToast({
             title: "Error",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Failed to delete issue",
           });
         })
-        .finally(() => setIsDeleteLoading(false));
+        .finally(() => setIsDeleting(false));
   };
 
   return (
@@ -93,7 +96,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail?.identifier}-{data?.sequence_id}
+                        {getProjectById(issue?.project_id)?.identifier}-{issue?.sequence_id}
                       </span>
                       {""}? All of the data related to the issue will be permanently removed. This action cannot be
                       undone.
@@ -103,14 +106,8 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
                     <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      tabIndex={1}
-                      onClick={handleIssueDelete}
-                      loading={isDeleteLoading}
-                    >
-                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                    <Button variant="danger" size="sm" tabIndex={1} onClick={handleIssueDelete} loading={isDeleting}>
+                      {isDeleting ? "Deleting" : "Delete"}
                     </Button>
                   </div>
                 </div>

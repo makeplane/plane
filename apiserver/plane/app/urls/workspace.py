@@ -18,6 +18,13 @@ from plane.app.views import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
+    WorkspaceProjectMemberEndpoint,
+    WorkspaceUserPropertiesEndpoint,
+    WorkspaceStatesEndpoint,
+    WorkspaceEstimatesEndpoint,
+    ExportWorkspaceUserActivityEndpoint,
+    WorkspaceModulesEndpoint,
+    WorkspaceCyclesEndpoint,
 )
 
 
@@ -91,6 +98,11 @@ urlpatterns = [
         "workspaces/<str:slug>/members/",
         WorkSpaceMemberViewSet.as_view({"get": "list"}),
         name="workspace-member",
+    ),
+    path(
+        "workspaces/<str:slug>/project-members/",
+        WorkspaceProjectMemberEndpoint.as_view(),
+        name="workspace-member-roles",
     ),
     path(
         "workspaces/<str:slug>/members/<uuid:pk>/",
@@ -181,6 +193,11 @@ urlpatterns = [
         name="workspace-user-activity",
     ),
     path(
+        "workspaces/<str:slug>/user-activity/<uuid:user_id>/export/",
+        ExportWorkspaceUserActivityEndpoint.as_view(),
+        name="export-workspace-user-activity",
+    ),
+    path(
         "workspaces/<str:slug>/user-profile/<uuid:user_id>/",
         WorkspaceUserProfileEndpoint.as_view(),
         name="workspace-user-profile-page",
@@ -194,5 +211,30 @@ urlpatterns = [
         "workspaces/<str:slug>/labels/",
         WorkspaceLabelsEndpoint.as_view(),
         name="workspace-labels",
+    ),
+    path(
+        "workspaces/<str:slug>/user-properties/",
+        WorkspaceUserPropertiesEndpoint.as_view(),
+        name="workspace-user-filters",
+    ),
+    path(
+        "workspaces/<str:slug>/states/",
+        WorkspaceStatesEndpoint.as_view(),
+        name="workspace-state",
+    ),
+    path(
+        "workspaces/<str:slug>/estimates/",
+        WorkspaceEstimatesEndpoint.as_view(),
+        name="workspace-estimate",
+    ),
+    path(
+        "workspaces/<str:slug>/modules/",
+        WorkspaceModulesEndpoint.as_view(),
+        name="workspace-modules",
+    ),
+    path(
+        "workspaces/<str:slug>/cycles/",
+        WorkspaceCyclesEndpoint.as_view(),
+        name="workspace-cycles",
     ),
 ]

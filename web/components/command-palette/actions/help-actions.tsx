@@ -1,9 +1,9 @@
 import { Command } from "cmdk";
 import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { DiscordIcon } from "@plane/ui";
+// hooks
+import { useCommandPalette } from "@/hooks/store";
 
 type Props = {
   closePalette: () => void;
@@ -11,10 +11,8 @@ type Props = {
 
 export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
   const { closePalette } = props;
-
-  const {
-    commandPalette: { toggleShortcutModal },
-  } = useMobxStore();
+  // hooks
+  const { toggleShortcutModal } = useCommandPalette();
 
   return (
     <Command.Group heading="Help">
@@ -69,7 +67,9 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
       <Command.Item
         onSelect={() => {
           closePalette();
-          (window as any)?.$crisp.push(["do", "chat:open"]);
+          if (window) {
+            window.$crisp.push(["do", "chat:show"]);
+          }
         }}
         className="focus:outline-none"
       >

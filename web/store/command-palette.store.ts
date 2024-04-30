@@ -1,24 +1,15 @@
 import { observable, action, makeObservable, computed } from "mobx";
-// types
-import { RootStore } from "./root";
 // services
-import { ProjectService } from "services/project";
-import { PageService } from "services/page.service";
-
-export enum EProjectStore {
-  PROJECT = "ProjectStore",
-  PROJECT_VIEW = "ProjectViewStore",
-  PROFILE = "ProfileStore",
-  MODULE = "ModuleStore",
-  CYCLE = "CycleStore",
-}
+import { EIssuesStoreType, TCreateModalStoreTypes } from "@/constants/issue";
 
 export interface ModalData {
-  store: EProjectStore;
+  store: EIssuesStoreType;
   viewId: string;
 }
 
 export interface ICommandPaletteStore {
+  // observables
+
   isCommandPaletteOpen: boolean;
   isShortcutModalOpen: boolean;
   isCreateProjectModalOpen: boolean;
@@ -29,25 +20,25 @@ export interface ICommandPaletteStore {
   isCreateIssueModalOpen: boolean;
   isDeleteIssueModalOpen: boolean;
   isBulkDeleteIssueModalOpen: boolean;
-
   // computed
   isAnyModalOpen: boolean;
-
+  // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
   toggleCreateProjectModal: (value?: boolean) => void;
   toggleCreateCycleModal: (value?: boolean) => void;
   toggleCreateViewModal: (value?: boolean) => void;
   toggleCreatePageModal: (value?: boolean) => void;
-  toggleCreateIssueModal: (value?: boolean, storeType?: EProjectStore) => void;
+  toggleCreateIssueModal: (value?: boolean, storeType?: TCreateModalStoreTypes) => void;
   toggleCreateModuleModal: (value?: boolean) => void;
   toggleDeleteIssueModal: (value?: boolean) => void;
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
 
-  createIssueStoreType: EProjectStore;
+  createIssueStoreType: TCreateModalStoreTypes;
 }
 
-class CommandPaletteStore implements ICommandPaletteStore {
+export class CommandPaletteStore implements ICommandPaletteStore {
+  // observables
   isCommandPaletteOpen: boolean = false;
   isShortcutModalOpen: boolean = false;
   isCreateProjectModalOpen: boolean = false;
@@ -58,15 +49,10 @@ class CommandPaletteStore implements ICommandPaletteStore {
   isCreateIssueModalOpen: boolean = false;
   isDeleteIssueModalOpen: boolean = false;
   isBulkDeleteIssueModalOpen: boolean = false;
-  // root store
-  rootStore;
-  // service
-  projectService;
-  pageService;
 
-  createIssueStoreType: EProjectStore = EProjectStore.PROJECT;
+  createIssueStoreType: TCreateModalStoreTypes = EIssuesStoreType.PROJECT;
 
-  constructor(_rootStore: RootStore) {
+  constructor() {
     makeObservable(this, {
       // observable
       isCommandPaletteOpen: observable.ref,
@@ -82,7 +68,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
       // computed
       isAnyModalOpen: computed,
       // projectPages: computed,
-      // action
+      // toggle actions
       toggleCommandPaletteModal: action,
       toggleShortcutModal: action,
       toggleCreateProjectModal: action,
@@ -94,12 +80,12 @@ class CommandPaletteStore implements ICommandPaletteStore {
       toggleDeleteIssueModal: action,
       toggleBulkDeleteIssueModal: action,
     });
-
-    this.rootStore = _rootStore;
-    this.projectService = new ProjectService();
-    this.pageService = new PageService();
   }
 
+  /**
+   * Checks whether any modal is open or not.
+   * @returns boolean
+   */
   get isAnyModalOpen() {
     return Boolean(
       this.isCreateIssueModalOpen ||
@@ -114,6 +100,11 @@ class CommandPaletteStore implements ICommandPaletteStore {
     );
   }
 
+  /**
+   * Toggles the command palette modal
+   * @param value
+   * @returns
+   */
   toggleCommandPaletteModal = (value?: boolean) => {
     if (value !== undefined) {
       this.isCommandPaletteOpen = value;
@@ -122,6 +113,11 @@ class CommandPaletteStore implements ICommandPaletteStore {
     }
   };
 
+  /**
+   * Toggles the shortcut modal
+   * @param value
+   * @returns
+   */
   toggleShortcutModal = (value?: boolean) => {
     if (value !== undefined) {
       this.isShortcutModalOpen = value;
@@ -130,6 +126,11 @@ class CommandPaletteStore implements ICommandPaletteStore {
     }
   };
 
+  /**
+   * Toggles the create project modal
+   * @param value
+   * @returns
+   */
   toggleCreateProjectModal = (value?: boolean) => {
     if (value !== undefined) {
       this.isCreateProjectModalOpen = value;
@@ -138,6 +139,11 @@ class CommandPaletteStore implements ICommandPaletteStore {
     }
   };
 
+  /**
+   * Toggles the create cycle modal
+   * @param value
+   * @returns
+   */
   toggleCreateCycleModal = (value?: boolean) => {
     if (value !== undefined) {
       this.isCreateCycleModalOpen = value;
@@ -146,6 +152,11 @@ class CommandPaletteStore implements ICommandPaletteStore {
     }
   };
 
+  /**
+   * Toggles the create view modal
+   * @param value
+   * @returns
+   */
   toggleCreateViewModal = (value?: boolean) => {
     if (value !== undefined) {
       this.isCreateViewModalOpen = value;
@@ -154,6 +165,11 @@ class CommandPaletteStore implements ICommandPaletteStore {
     }
   };
 
+  /**
+   * Toggles the create page modal
+   * @param value
+   * @returns
+   */
   toggleCreatePageModal = (value?: boolean) => {
     if (value !== undefined) {
       this.isCreatePageModalOpen = value;
@@ -162,16 +178,27 @@ class CommandPaletteStore implements ICommandPaletteStore {
     }
   };
 
-  toggleCreateIssueModal = (value?: boolean, storeType?: EProjectStore) => {
+  /**
+   * Toggles the create issue modal
+   * @param value
+   * @param storeType
+   * @returns
+   */
+  toggleCreateIssueModal = (value?: boolean, storeType?: TCreateModalStoreTypes) => {
     if (value !== undefined) {
       this.isCreateIssueModalOpen = value;
-      this.createIssueStoreType = storeType || EProjectStore.PROJECT;
+      this.createIssueStoreType = storeType || EIssuesStoreType.PROJECT;
     } else {
       this.isCreateIssueModalOpen = !this.isCreateIssueModalOpen;
-      this.createIssueStoreType = EProjectStore.PROJECT;
+      this.createIssueStoreType = EIssuesStoreType.PROJECT;
     }
   };
 
+  /**
+   * Toggles the delete issue modal
+   * @param value
+   * @returns
+   */
   toggleDeleteIssueModal = (value?: boolean) => {
     if (value !== undefined) {
       this.isDeleteIssueModalOpen = value;
@@ -180,6 +207,11 @@ class CommandPaletteStore implements ICommandPaletteStore {
     }
   };
 
+  /**
+   * Toggles the create module modal
+   * @param value
+   * @returns
+   */
   toggleCreateModuleModal = (value?: boolean) => {
     if (value !== undefined) {
       this.isCreateModuleModalOpen = value;
@@ -188,6 +220,11 @@ class CommandPaletteStore implements ICommandPaletteStore {
     }
   };
 
+  /**
+   * Toggles the bulk delete issue modal
+   * @param value
+   * @returns
+   */
   toggleBulkDeleteIssueModal = (value?: boolean) => {
     if (value !== undefined) {
       this.isBulkDeleteIssueModalOpen = value;
@@ -196,5 +233,3 @@ class CommandPaletteStore implements ICommandPaletteStore {
     }
   };
 }
-
-export default CommandPaletteStore;

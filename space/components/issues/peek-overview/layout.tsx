@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 
 // mobx
-import { observer } from "mobx-react-lite";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // components
-import { FullScreenPeekView, SidePeekView } from "components/issues/peek-overview";
+import { FullScreenPeekView, SidePeekView } from "@/components/issues/peek-overview";
 // lib
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useMobxStore } from "@/lib/mobx/store-provider";
 
-type Props = {};
-
-export const IssuePeekOverview: React.FC<Props> = observer(() => {
+export const IssuePeekOverview: React.FC = observer(() => {
   // states
   const [isSidePeekOpen, setIsSidePeekOpen] = useState(false);
   const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
@@ -119,7 +117,11 @@ export const IssuePeekOverview: React.FC<Props> = observer(() => {
                   <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
                 )}
                 {issueDetailStore.peekMode === "full" && (
-                  <FullScreenPeekView handleClose={handleClose} issueDetails={issueDetails} />
+                  <FullScreenPeekView
+                    workspace_slug={workspace_slug}
+                    handleClose={handleClose}
+                    issueDetails={issueDetails}
+                  />
                 )}
               </div>
             </Dialog.Panel>

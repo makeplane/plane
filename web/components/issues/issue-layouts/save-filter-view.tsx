@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@plane/ui";
 // components
-import { CreateUpdateProjectViewModal } from "components/views";
+import { CreateUpdateProjectViewModal } from "@/components/views";
 
 interface ISaveFilterView {
   workspaceSlug: string;
@@ -20,7 +20,7 @@ export const SaveFilterView: FC<ISaveFilterView> = (props) => {
       <CreateUpdateProjectViewModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
-        preLoadedData={{ query_data: { ...filterParams } }}
+        preLoadedData={{ filters: { ...filterParams } }}
         isOpen={viewModal}
         onClose={() => setViewModal(false)}
       />

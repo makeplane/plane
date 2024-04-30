@@ -5,28 +5,37 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0009_auto_20221208_0310'),
+        ("db", "0009_auto_20221208_0310"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='projectidentifier',
-            name='workspace',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='project_identifiers', to='db.workspace'),
+            model_name="projectidentifier",
+            name="workspace",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="project_identifiers",
+                to="db.workspace",
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='identifier',
-            field=models.CharField(max_length=5, verbose_name='Project Identifier'),
+            model_name="project",
+            name="identifier",
+            field=models.CharField(
+                max_length=5, verbose_name="Project Identifier"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='project',
-            unique_together={('name', 'workspace'), ('identifier', 'workspace')},
+            name="project",
+            unique_together={
+                ("name", "workspace"),
+                ("identifier", "workspace"),
+            },
         ),
         migrations.AlterUniqueTogether(
-            name='projectidentifier',
-            unique_together={('name', 'workspace')},
+            name="projectidentifier",
+            unique_together={("name", "workspace")},
         ),
     ]

@@ -1,74 +1,42 @@
+import { useCallback } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+//hooks
+import { CycleIssueQuickActions } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useCycle, useIssues } from "@/hooks/store";
 // components
-import { CycleIssueQuickActions } from "components/issues";
-// types
-import { IIssue } from "types";
-import { EIssueActions } from "../../types";
 import { BaseCalendarRoot } from "../base-calendar-root";
+// types
+// constants
 
 export const CycleCalendarLayout: React.FC = observer(() => {
-  const {
-    cycleIssues: cycleIssueStore,
-    cycleIssuesFilter: cycleIssueFilterStore,
-    calendarHelpers: { handleDragDrop: handleCalenderDragDrop },
-    cycle: { fetchCycleWithId },
-  } = useMobxStore();
-
+  const { currentProjectCompletedCycleIds } = useCycle();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
-
-      await cycleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, cycleId.toString());
-      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
-      await cycleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
-      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
-    },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !projectId || !issue.bridge_id) return;
-      await cycleIssueStore.removeIssueFromCycle(
-        workspaceSlug.toString(),
-        issue.project,
-        cycleId.toString(),
-        issue.id,
-        issue.bridge_id
-      );
-      fetchCycleWithId(workspaceSlug.toString(), issue.project, cycleId.toString());
-    },
-  };
-
-  const handleDragDrop = async (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
-    if (workspaceSlug && projectId && cycleId)
-      await handleCalenderDragDrop(
-        source,
-        destination,
-        workspaceSlug.toString(),
-        projectId.toString(),
-        cycleIssueStore,
-        issues,
-        issueWithIds,
-        cycleId.toString()
-      );
-  };
+  const { issues } = useIssues(EIssuesStoreType.CYCLE);
 
   if (!cycleId) return null;
 
+  const isCompletedCycle =
+    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
+
+  const addIssuesToView = useCallback(
+    (issueIds: string[]) => {
+      if (!workspaceSlug || !projectId || !cycleId) throw new Error();
+      return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
+    },
+    [issues?.addIssueToCycle, workspaceSlug, projectId, cycleId]
+  );
+
   return (
     <BaseCalendarRoot
-      issueStore={cycleIssueStore}
-      issuesFilterStore={cycleIssueFilterStore}
       QuickActions={CycleIssueQuickActions}
-      issueActions={issueActions}
+      addIssuesToView={addIssuesToView}
       viewId={cycleId.toString()}
-      handleDragDrop={handleDragDrop}
+      isCompletedCycle={isCompletedCycle}
+      storeType={EIssuesStoreType.CYCLE}
     />
   );
 });

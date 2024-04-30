@@ -7,9 +7,9 @@ class StateSerializer(BaseSerializer):
     def validate(self, data):
         # If the default is being provided then make all other states default False
         if data.get("default", False):
-            State.objects.filter(project_id=self.context.get("project_id")).update(
-                default=False
-            )
+            State.objects.filter(
+                project_id=self.context.get("project_id")
+            ).update(default=False)
         return data
 
     class Meta:

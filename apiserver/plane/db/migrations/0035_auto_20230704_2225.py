@@ -10,7 +10,9 @@ def update_company_organization_size(apps, schema_editor):
         obj.organization_size = str(obj.company_size)
         updated_size.append(obj)
 
-    Model.objects.bulk_update(updated_size, ["organization_size"], batch_size=100)
+    Model.objects.bulk_update(
+        updated_size, ["organization_size"], batch_size=100
+    )
 
 
 class Migration(migrations.Migration):
@@ -28,7 +30,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="workspace",
             name="name",
-            field=models.CharField(max_length=80, verbose_name="Workspace Name"),
+            field=models.CharField(
+                max_length=80, verbose_name="Workspace Name"
+            ),
         ),
         migrations.AlterField(
             model_name="workspace",

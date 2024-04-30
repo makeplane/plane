@@ -1,49 +1,66 @@
-import React from "react";
+import React, { Fragment } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
+  IssuePeekOverview,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
+  ProjectViewEmptyState,
   ProjectViewGanttLayout,
   ProjectViewKanBanLayout,
   ProjectViewListLayout,
   ProjectViewSpreadsheetLayout,
-} from "components/issues";
-import { Spinner } from "@plane/ui";
+} from "@/components/issues";
+import { ActiveLoader } from "@/components/ui";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
+// types
 
 export const ProjectViewLayoutRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
+  // hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
-  const {
-    viewIssues: { loader, getIssues, fetchIssues },
-    viewIssuesFilter: { issueFilters, fetchFilters },
-  } = useMobxStore();
+  useSWR(
+    workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
+    async () => {
+      if (workspaceSlug && projectId && viewId) {
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), viewId.toString());
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader",
+          viewId.toString()
+        );
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
-  useSWR(workspaceSlug && projectId && viewId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId && viewId) {
-      await fetchFilters(workspaceSlug.toString(), projectId.toString(), viewId.toString());
-      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
-    }
-  });
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
-  const activeLayout = issueFilters?.displayFilters?.layout;
+  if (!workspaceSlug || !projectId || !viewId) return <></>;
+
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
+  }
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectViewAppliedFiltersRoot />
 
-      {loader === "init-loader" ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ProjectViewEmptyState />
         </div>
       ) : (
-        <>
+        <Fragment>
           <div className="relative h-full w-full overflow-auto">
             {activeLayout === "list" ? (
               <ProjectViewListLayout />
@@ -57,7 +74,10 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
               <ProjectViewSpreadsheetLayout />
             ) : null}
           </div>
-        </>
+
+          {/* peek overview */}
+          <IssuePeekOverview />
+        </Fragment>
       )}
     </div>
   );

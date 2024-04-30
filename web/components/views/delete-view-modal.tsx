@@ -1,18 +1,14 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import { Dialog, Transition } from "@headlessui/react";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button } from "@plane/ui";
-// icons
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { IProjectView } from "@plane/types";
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useProjectView } from "@/hooks/store";
 // types
-import { IProjectView } from "types";
 
 type Props = {
   data: IProjectView;
@@ -22,15 +18,13 @@ type Props = {
 
 export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
   const { data, isOpen, onClose } = props;
-
+  // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { projectViews: projectViewsStore } = useMobxStore();
-
-  const { setToastAlert } = useToast();
+  // store hooks
+  const { deleteView } = useProjectView();
 
   const handleClose = () => {
     onClose();
@@ -42,20 +36,19 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await projectViewsStore
-      .deleteView(workspaceSlug.toString(), projectId.toString(), data.id)
+    await deleteView(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
         handleClose();
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "View deleted successfully.",
         });
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "View could not be deleted. Please try again.",
         })

@@ -1,2 +1,3 @@
-export { SlashCommand } from "./extensions/slash-commands";
-export { DragAndDrop } from "./extensions/drag-drop";
+import "src/styles/drag-drop.css";
+
+export { DragAndDrop, SlashCommand } from "src/extensions";

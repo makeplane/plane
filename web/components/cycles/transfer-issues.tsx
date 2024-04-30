@@ -1,26 +1,28 @@
 import React from "react";
 
+import isEmpty from "lodash/isEmpty";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
 // component
+import { AlertCircle } from "lucide-react";
 import { Button, TransferIcon } from "@plane/ui";
 // icon
-import { AlertCircle } from "lucide-react";
 // services
-import { CycleService } from "services/cycle.service";
+import { CYCLE_DETAILS } from "@/constants/fetch-keys";
+import { CycleService } from "@/services/cycle.service";
 // fetch-key
-import { CYCLE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   handleClick: () => void;
+  disabled?: boolean;
 };
 
 const cycleService = new CycleService();
 
 export const TransferIssues: React.FC<Props> = (props) => {
-  const { handleClick } = props;
+  const { handleClick, disabled = false } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -43,9 +45,14 @@ export const TransferIssues: React.FC<Props> = (props) => {
         <span>Completed cycles are not editable.</span>
       </div>
 
-      {transferableIssuesCount > 0 && (
+      {isEmpty(cycleDetails?.progress_snapshot) && transferableIssuesCount > 0 && (
         <div>
-          <Button variant="primary" prependIcon={<TransferIcon color="white" />} onClick={handleClick}>
+          <Button
+            variant="primary"
+            prependIcon={<TransferIcon color="white" />}
+            onClick={handleClick}
+            disabled={disabled}
+          >
             Transfer Issues
           </Button>
         </div>

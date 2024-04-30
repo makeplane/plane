@@ -1,126 +1,109 @@
-import { useState, useRef } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
+import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
-import { MoreHorizontal } from "lucide-react";
-// components
-import { Tooltip } from "@plane/ui";
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { Placement } from "@popperjs/core";
+import { observer } from "mobx-react-lite";
 // types
-import { IIssue } from "types";
-import { IIssueResponse } from "store/issues/types";
-import { useMobxStore } from "lib/mobx/store-provider";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { TIssue, TIssueMap } from "@plane/types";
+// components
+import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/issues";
+// helpers
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 
 type Props = {
-  issues: IIssueResponse | undefined;
+  date: Date;
+  issues: TIssueMap | undefined;
   issueIdList: string[] | null;
-  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  showAllIssues?: boolean;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
+  isDragDisabled?: boolean;
+  enableQuickIssueCreate?: boolean;
+  disableIssueCreation?: boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: TIssue,
+    viewId?: string
+  ) => Promise<TIssue | undefined>;
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
+  viewId?: string;
+  readOnly?: boolean;
+  isMobileView?: boolean;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
-  const { issues, issueIdList, quickActions, showAllIssues = false } = props;
-  // router
-  const router = useRouter();
-
-  // states
-  const [isMenuActive, setIsMenuActive] = useState(false);
-
-  // mobx store
   const {
-    user: { currentProjectRole },
-  } = useMobxStore();
+    date,
+    issues,
+    issueIdList,
+    quickActions,
+    isDragDisabled = false,
+    enableQuickIssueCreate,
+    disableIssueCreation,
+    quickAddCallback,
+    addIssuesToView,
+    viewId,
+    readOnly,
+    isMobileView = false,
+  } = props;
+  // states
+  const [showAllIssues, setShowAllIssues] = useState(false);
 
-  const menuActionRef = useRef<HTMLDivElement | null>(null);
+  const formattedDatePayload = renderFormattedPayloadDate(date);
+  const totalIssues = issueIdList?.length ?? 0;
 
-  const handleIssuePeekOverview = (issue: IIssue, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const { query } = router;
-    if (event.ctrlKey || event.metaKey) {
-      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
-      window.open(issueUrl, "_blank"); // Open link in a new tab
-    } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
-      });
-    }
-  };
-
-  useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
-
-  const customActionButton = (
-    <div
-      ref={menuActionRef}
-      className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
-        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
-      }`}
-      onClick={() => setIsMenuActive(!isMenuActive)}
-    >
-      <MoreHorizontal className="h-3.5 w-3.5" />
-    </div>
-  );
-
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  if (!formattedDatePayload) return null;
 
   return (
     <>
-      {issueIdList?.slice(0, showAllIssues ? issueIdList.length : 4).map((issueId, index) => {
-        if (!issues?.[issueId]) return null;
-
-        const issue = issues?.[issueId];
-        return (
-          <Draggable key={issue.id} draggableId={issue.id} index={index} isDragDisabled={!isEditable}>
+      {issueIdList?.slice(0, showAllIssues || isMobileView ? issueIdList.length : 4).map((issueId, index) =>
+        !isMobileView ? (
+          <Draggable key={issueId} draggableId={issueId} index={index} isDragDisabled={isDragDisabled}>
             {(provided, snapshot) => (
               <div
                 className="relative cursor-pointer p-1 px-2"
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
-                onClick={(e) => handleIssuePeekOverview(issue, e)}
               >
-                {issue?.tempId !== undefined && (
-                  <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
-                )}
-
-                <div
-                  className={`group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-custom-border-100 px-1 py-1.5 shadow-custom-shadow-2xs ${
-                    snapshot.isDragging
-                      ? "bg-custom-background-90 shadow-custom-shadow-rg"
-                      : "bg-custom-background-100 hover:bg-custom-background-90"
-                  }`}
-                >
-                  <div className="flex h-full items-center gap-1.5">
-                    <span
-                      className="h-full w-0.5 flex-shrink-0 rounded"
-                      style={{
-                        backgroundColor: issue.state_detail.color,
-                      }}
-                    />
-                    <div className="flex-shrink-0 text-xs text-custom-text-300">
-                      {issue.project_detail.identifier}-{issue.sequence_id}
-                    </div>
-                    <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-                      <div className="truncate text-xs">{issue.name}</div>
-                    </Tooltip>
-                  </div>
-                  <div
-                    className={`hidden h-5 w-5 group-hover/calendar-block:block ${isMenuActive ? "!block" : ""}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    {quickActions(issue, customActionButton)}
-                  </div>
-                </div>
+                <CalendarIssueBlockRoot
+                  issues={issues}
+                  issueId={issueId}
+                  quickActions={quickActions}
+                  isDragging={snapshot.isDragging}
+                />
               </div>
             )}
           </Draggable>
-        );
-      })}
+        ) : (
+          <CalendarIssueBlockRoot key={issueId} issues={issues} issueId={issueId} quickActions={quickActions} />
+        )
+      )}
+
+      {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
+        <div className="border-b border-custom-border-200 px-1 py-1 md:border-none md:px-2">
+          <CalendarQuickAddIssueForm
+            formKey="target_date"
+            groupId={formattedDatePayload}
+            prePopulatedData={{
+              target_date: formattedDatePayload,
+            }}
+            quickAddCallback={quickAddCallback}
+            addIssuesToView={addIssuesToView}
+            viewId={viewId}
+            onOpen={() => setShowAllIssues(true)}
+          />
+        </div>
+      )}
+      {totalIssues > 4 && (
+        <div className="hidden items-center px-2.5 py-1 md:flex">
+          <button
+            type="button"
+            className="w-min whitespace-nowrap rounded px-1.5 py-1 text-xs font-medium text-custom-text-400  hover:bg-custom-background-80 hover:text-custom-text-300"
+            onClick={() => setShowAllIssues(!showAllIssues)}
+          >
+            {showAllIssues ? "Hide" : totalIssues - 4 + " more"}
+          </button>
+        </div>
+      )}
     </>
   );
 });

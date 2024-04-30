@@ -1,10 +1,10 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 
 // icons
-import { PriorityIcon } from "@plane/ui";
 import { X } from "lucide-react";
+import { TIssuePriorities } from "@plane/types";
+import { PriorityIcon } from "@plane/ui";
 // types
-import { TIssuePriorities } from "types";
 
 type Props = {
   handleRemove: (val: string) => void;

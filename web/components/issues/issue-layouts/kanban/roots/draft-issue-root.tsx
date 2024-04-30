@@ -1,48 +1,11 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react";
 // components
-import { ProjectIssueQuickActions } from "components/issues";
-// types
-import { IIssue } from "types";
-// constants
-import { EIssueActions } from "../../types";
+import { DraftIssueQuickActions } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
 import { BaseKanBanRoot } from "../base-kanban-root";
 
 export interface IKanBanLayout {}
 
-export const DraftKanBanLayout: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const {
-    projectDraftIssues: issueStore,
-    projectDraftIssuesFilter: projectIssuesFilterStore,
-    issueKanBanView: issueKanBanViewStore,
-  } = useMobxStore();
-
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
-
-      await issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
-
-      await issueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
-    },
-  };
-
-  return (
-    <BaseKanBanRoot
-      issueActions={issueActions}
-      issuesFilterStore={projectIssuesFilterStore}
-      issueStore={issueStore}
-      kanbanViewStore={issueKanBanViewStore}
-      showLoader={true}
-      QuickActions={ProjectIssueQuickActions}
-    />
-  );
-});
+export const DraftKanBanLayout: React.FC = observer(() => (
+  <BaseKanBanRoot showLoader QuickActions={DraftIssueQuickActions} storeType={EIssuesStoreType.DRAFT} />
+));

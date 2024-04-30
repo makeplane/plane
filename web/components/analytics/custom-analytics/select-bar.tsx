@@ -1,13 +1,12 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { IAnalyticsParams } from "@plane/types";
+// hooks
+import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "@/components/analytics";
+import { ANALYTICS_X_AXIS_VALUES } from "@/constants/analytics";
+import { useProject } from "@/hooks/store";
 // components
-import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "components/analytics";
 // types
-import { IAnalyticsParams } from "types";
 
 type Props = {
   control: Control<IAnalyticsParams, any>;
@@ -20,18 +19,21 @@ type Props = {
 export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
   const { control, setValue, params, fullScreen, isProjectLevel } = props;
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceProjectIds: workspaceProjectIds, currentProjectDetails } = useProject();
 
-  const { project: projectStore } = useMobxStore();
-
-  const projectsList = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
+  const analyticsOptions = isProjectLevel
+    ? ANALYTICS_X_AXIS_VALUES.filter((v) => {
+        if (v.value === "issue_cycle__cycle_id" && !currentProjectDetails?.cycle_view) return false;
+        if (v.value === "issue_module__module_id" && !currentProjectDetails?.module_view) return false;
+        return true;
+      })
+    : ANALYTICS_X_AXIS_VALUES;
 
   return (
     <div
-      className={`grid items-center gap-4 px-5 py-2.5 ${isProjectLevel ? "grid-cols-3" : "grid-cols-2"} ${
-        fullScreen ? "md:py-5 lg:grid-cols-4" : ""
-      }`}
+      className={`grid items-center gap-4 px-5 py-2.5 ${
+        isProjectLevel ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-2"
+      } ${fullScreen ? "md:py-5 lg:grid-cols-4" : ""}`}
     >
       {!isProjectLevel && (
         <div>
@@ -40,7 +42,11 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
             name="project"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <SelectProject value={value ?? undefined} onChange={onChange} projects={projectsList ?? undefined} />
+              <SelectProject
+                value={value ?? undefined}
+                onChange={onChange}
+                projectIds={workspaceProjectIds ?? undefined}
+              />
             )}
           />
         </div>
@@ -67,6 +73,7 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
                 onChange(val);
               }}
               params={params}
+              analyticsOptions={analyticsOptions}
             />
           )}
         />
@@ -77,7 +84,7 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
           name="segment"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <SelectSegment value={value} onChange={onChange} params={params} />
+            <SelectSegment value={value} onChange={onChange} params={params} analyticsOptions={analyticsOptions} />
           )}
         />
       </div>

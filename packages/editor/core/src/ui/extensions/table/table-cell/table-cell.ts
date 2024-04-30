@@ -4,7 +4,7 @@ export interface TableCellOptions {
   HTMLAttributes: Record<string, any>;
 }
 
-export default Node.create<TableCellOptions>({
+export const TableCell = Node.create<TableCellOptions>({
   name: "tableCell",
 
   addOptions() {
@@ -13,7 +13,7 @@ export default Node.create<TableCellOptions>({
     };
   },
 
-  content: "paragraph+",
+  content: "block+",
 
   addAttributes() {
     return {
@@ -33,7 +33,10 @@ export default Node.create<TableCellOptions>({
         },
       },
       background: {
-        default: "none",
+        default: null,
+      },
+      textColor: {
+        default: null,
       },
     };
   },
@@ -50,7 +53,7 @@ export default Node.create<TableCellOptions>({
     return [
       "td",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        style: `background-color: ${node.attrs.background}`,
+        style: `background-color: ${node.attrs.background}; color: ${node.attrs.textColor}`,
       }),
       0,
     ];

@@ -1,18 +1,19 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
-import { Button } from "@plane/ui";
-// icons
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+// icons
+import { IWorkspaceView } from "@plane/types";
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { GLOBAL_VIEW_DELETED } from "@/constants/event-tracker";
+// store hooks
+import { useGlobalView, useEventTracker } from "@/hooks/store";
+// ui
 // types
-import { IWorkspaceView } from "types/workspace-views";
 
 type Props = {
   data: IWorkspaceView;
@@ -22,15 +23,14 @@ type Props = {
 
 export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   const { data, isOpen, onClose } = props;
-
+  // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { globalViews: globalViewsStore } = useMobxStore();
-
-  const { setToastAlert } = useToast();
+  // store hooks
+  const { deleteGlobalView } = useGlobalView();
+  const { captureEvent } = useEventTracker();
 
   const handleClose = () => {
     onClose();
@@ -41,15 +41,24 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await globalViewsStore
-      .deleteGlobalView(workspaceSlug.toString(), data.id)
-      .catch(() =>
-        setToastAlert({
-          type: "error",
+    await deleteGlobalView(workspaceSlug.toString(), data.id)
+      .then(() => {
+        captureEvent(GLOBAL_VIEW_DELETED, {
+          view_id: data.id,
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        captureEvent(GLOBAL_VIEW_DELETED, {
+          view_id: data.id,
+          state: "FAILED",
+        });
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong while deleting the view. Please try again.",
-        })
-      )
+        });
+      })
       .finally(() => {
         setIsDeleteLoading(false);
         handleClose();

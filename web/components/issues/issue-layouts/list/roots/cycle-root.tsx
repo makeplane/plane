@@ -1,65 +1,53 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CycleIssueQuickActions } from "components/issues";
-// types
-import { IIssue } from "types";
+import { CycleIssueQuickActions } from "@/components/issues";
 // constants
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
+import { useCycle, useIssues, useUser } from "@/hooks/store";
+// types
 import { BaseListRoot } from "../base-list-root";
-import { IProjectStore } from "store/project";
-import { EIssueActions } from "../../types";
-import { EProjectStore } from "store/command-palette.store";
 
 export interface ICycleListLayout {}
 
 export const CycleListLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
+  const { workspaceSlug, projectId, cycleId } = router.query;
   // store
+  const { issues } = useIssues(EIssuesStoreType.CYCLE);
+  const { currentProjectCompletedCycleIds } = useCycle(); // mobx store
   const {
-    cycleIssues: cycleIssueStore,
-    cycleIssuesFilter: cycleIssueFilterStore,
-    cycle: { fetchCycleWithId },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+  const isCompletedCycle =
+    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-      await cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
-      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
+  const canEditIssueProperties = useCallback(
+    () => !isCompletedCycle && isEditingAllowed,
+    [isCompletedCycle, isEditingAllowed]
+  );
+
+  const addIssuesToView = useCallback(
+    (issueIds: string[]) => {
+      if (!workspaceSlug || !projectId || !cycleId) throw new Error();
+      return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
     },
-    [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
-
-      await cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
-      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
-    },
-    [EIssueActions.REMOVE]: async (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
-
-      await cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
-      fetchCycleWithId(workspaceSlug, issue.project, cycleId);
-    },
-  };
-  const getProjects = (projectStore: IProjectStore) => {
-    if (!workspaceSlug) return null;
-    return projectStore?.projects[workspaceSlug] || null;
-  };
+    [issues?.addIssueToCycle, workspaceSlug, projectId, cycleId]
+  );
 
   return (
     <BaseListRoot
-      issueFilterStore={cycleIssueFilterStore}
-      issueStore={cycleIssueStore}
       QuickActions={CycleIssueQuickActions}
-      issueActions={issueActions}
-      getProjects={getProjects}
-      viewId={cycleId}
-      currentStore={EProjectStore.CYCLE}
-      addIssuesToView={(issues: string[]) => cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, issues)}
+      viewId={cycleId?.toString()}
+      storeType={EIssuesStoreType.CYCLE}
+      addIssuesToView={addIssuesToView}
+      canEditPropertiesBasedOnProject={canEditIssueProperties}
+      isCompletedCycle={isCompletedCycle}
     />
   );
 });

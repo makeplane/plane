@@ -5,25 +5,23 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // headless ui
+import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import { IntegrationService } from "services/integrations/integration.service";
-// hooks
-import useToast from "hooks/use-toast";
+import { IUser, IImporterService } from "@plane/types";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+import { IntegrationService } from "@/services/integrations/integration.service";
 // ui
-import { Button, Input } from "@plane/ui";
 // icons
-import { AlertTriangle } from "lucide-react";
 // types
-import { IUser, IImporterService } from "types";
 // fetch-keys
-import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
-  user: IUser | undefined;
+  user: IUser | null;
 };
 
 // services
@@ -35,8 +33,6 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
 
   const handleDeletion = () => {
     if (!workspaceSlug || !data) return;
@@ -52,8 +48,8 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
     integrationService
       .deleteImporterService(workspaceSlug as string, data.service, data.id)
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         })
@@ -117,7 +113,6 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
                       id="typeDelete"
                       type="text"
                       name="typeDelete"
-                      value=""
                       onChange={(e) => {
                         if (e.target.value === "delete import") setConfirmDeleteImport(true);
                         else setConfirmDeleteImport(false);

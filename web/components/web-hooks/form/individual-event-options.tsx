@@ -1,5 +1,5 @@
 import { Control, Controller } from "react-hook-form";
-import { IWebhook } from "types/webhook";
+import { IWebhook } from "@plane/types";
 
 export const INDIVIDUAL_WEBHOOK_OPTIONS: {
   key: keyof IWebhook;

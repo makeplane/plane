@@ -1,24 +1,22 @@
-import React, { useState, FC, useRef, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useState, FC, useRef, useEffect } from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
-import { Disclosure, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
-// hooks
-import useToast from "hooks/use-toast";
-// components
-import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
-
-// icons
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
+import { Disclosure, Transition } from "@headlessui/react";
+import { IProject } from "@plane/types";
+// hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { CreateProjectModal, ProjectSidebarListItem } from "@/components/project";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { cn } from "@/helpers/common.helper";
+import { orderJoinedProjects } from "@/helpers/project.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+// ui
+// components
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { orderArrayBy } from "helpers/array.helper";
-// types
-import { IProject } from "types";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectSidebarList: FC = observer(() => {
   // states
@@ -27,57 +25,56 @@ export const ProjectSidebarList: FC = observer(() => {
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
-
+  // store hooks
+  const { toggleCreateProjectModal } = useCommandPalette();
+  const { sidebarCollapsed } = useAppTheme();
+  const { setTrackElement } = useEventTracker();
   const {
-    theme: { sidebarCollapsed },
-    project: { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView },
-    commandPalette: { toggleCreateProjectModal },
-    trackEvent: { setTrackElement },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const {
+    getProjectById,
+    joinedProjectIds: joinedProjects,
+    favoriteProjectIds: favoriteProjects,
+    updateProjectView,
+  } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // toast
-  const { setToastAlert } = useToast();
-
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-
-  const orderedJoinedProjects: IProject[] | undefined = joinedProjects
-    ? orderArrayBy(joinedProjects, "sort_order", "ascending")
-    : undefined;
-
-  const orderedFavProjects: IProject[] | undefined = favoriteProjects
-    ? orderArrayBy(favoriteProjects, "sort_order", "ascending")
-    : undefined;
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
       });
     });
   };
 
-  const onDragEnd = async (result: DropResult) => {
+  const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
-
     if (!destination || !workspaceSlug) return;
-
     if (source.index === destination.index) return;
 
-    const updatedSortOrder = orderProjectsWithSortOrder(source.index, destination.index, draggableId);
-
-    updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Something went wrong. Please try again.",
-      });
+    const joinedProjectsList: IProject[] = [];
+    joinedProjects.map((projectId) => {
+      const projectDetails = getProjectById(projectId);
+      if (projectDetails) joinedProjectsList.push(projectDetails);
     });
+    if (joinedProjectsList.length <= 0) return;
+
+    const updatedSortOrder = orderJoinedProjects(source.index, destination.index, draggableId, joinedProjectsList);
+    if (updatedSortOrder != undefined)
+      updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
+      });
   };
 
   const isCollapsed = sidebarCollapsed || false;
@@ -117,15 +114,20 @@ export const ProjectSidebarList: FC = observer(() => {
       )}
       <div
         ref={containerRef}
-        className={`h-full space-y-2 overflow-y-auto px-4 ${
-          isScrolled ? "border-t border-custom-sidebar-border-300" : ""
-        }`}
+        className={cn(
+          "vertical-scrollbar h-full space-y-2 !overflow-y-scroll pl-4",
+          isCollapsed ? "scrollbar-sm" : "scrollbar-md",
+          {
+            "border-t border-custom-sidebar-border-300": isScrolled,
+            "pr-1": !isCollapsed,
+          }
+        )}
       >
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
-                {orderedFavProjects && orderedFavProjects.length > 0 && (
+                {favoriteProjects && favoriteProjects.length > 0 && (
                   <Disclosure as="div" className="flex flex-col" defaultOpen>
                     {({ open }) => (
                       <>
@@ -138,9 +140,9 @@ export const ProjectSidebarList: FC = observer(() => {
                             >
                               Favorites
                               {open ? (
-                                <ChevronDown className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                                <ChevronDown className="h-3.5 w-3.5" />
                               ) : (
-                                <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                                <ChevronRight className="h-3.5 w-3.5" />
                               )}
                             </Disclosure.Button>
                             {isAuthorizedUser && (
@@ -166,22 +168,24 @@ export const ProjectSidebarList: FC = observer(() => {
                           leaveTo="transform scale-95 opacity-0"
                         >
                           <Disclosure.Panel as="div" className="space-y-2">
-                            {orderedFavProjects.map((project, index) => (
+                            {favoriteProjects.map((projectId, index) => (
                               <Draggable
-                                key={project.id}
-                                draggableId={project.id}
+                                key={projectId}
+                                draggableId={projectId}
                                 index={index}
-                                isDragDisabled={!project.is_member}
+                                // FIXME refactor the Draggable to a different component
+                                //isDragDisabled={!project.is_member}
                               >
                                 {(provided, snapshot) => (
                                   <div ref={provided.innerRef} {...provided.draggableProps}>
                                     <ProjectSidebarListItem
-                                      key={project.id}
-                                      project={project}
+                                      key={projectId}
+                                      projectId={projectId}
                                       provided={provided}
                                       snapshot={snapshot}
-                                      handleCopyText={() => handleCopyText(project.id)}
+                                      handleCopyText={() => handleCopyText(projectId)}
                                       shortContextMenu
+                                      disableDrag
                                     />
                                   </div>
                                 )}
@@ -202,7 +206,7 @@ export const ProjectSidebarList: FC = observer(() => {
           <Droppable droppableId="joined-projects">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
-                {orderedJoinedProjects && orderedJoinedProjects.length > 0 && (
+                {joinedProjects && joinedProjects.length > 0 && (
                   <Disclosure as="div" className="flex flex-col" defaultOpen>
                     {({ open }) => (
                       <>
@@ -213,17 +217,18 @@ export const ProjectSidebarList: FC = observer(() => {
                               type="button"
                               className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
                             >
-                              Projects
+                              Your projects
                               {open ? (
-                                <ChevronDown className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                                <ChevronDown className="h-3.5 w-3.5" />
                               ) : (
-                                <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                                <ChevronRight className="h-3.5 w-3.5" />
                               )}
                             </Disclosure.Button>
                             {isAuthorizedUser && (
                               <button
                                 className="opacity-0 group-hover:opacity-100"
                                 onClick={() => {
+                                  setTrackElement("Sidebar");
                                   setIsFavoriteProjectCreate(false);
                                   setIsProjectModalOpen(true);
                                 }}
@@ -242,16 +247,16 @@ export const ProjectSidebarList: FC = observer(() => {
                           leaveTo="transform scale-95 opacity-0"
                         >
                           <Disclosure.Panel as="div" className="space-y-2">
-                            {orderedJoinedProjects.map((project, index) => (
-                              <Draggable key={project.id} draggableId={project.id} index={index}>
+                            {joinedProjects.map((projectId, index) => (
+                              <Draggable key={projectId} draggableId={projectId} index={index}>
                                 {(provided, snapshot) => (
                                   <div ref={provided.innerRef} {...provided.draggableProps}>
                                     <ProjectSidebarListItem
-                                      key={project.id}
-                                      project={project}
+                                      key={projectId}
+                                      projectId={projectId}
                                       provided={provided}
                                       snapshot={snapshot}
-                                      handleCopyText={() => handleCopyText(project.id)}
+                                      handleCopyText={() => handleCopyText(projectId)}
                                     />
                                   </div>
                                 )}
@@ -274,7 +279,7 @@ export const ProjectSidebarList: FC = observer(() => {
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
             onClick={() => {
-              setTrackElement("APP_SIDEBAR");
+              setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >

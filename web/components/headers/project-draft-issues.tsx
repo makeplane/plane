@@ -1,30 +1,35 @@
 import { FC, useCallback } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
+import { BreadcrumbLink } from "@/components/common";
+
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // ui
-import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // helper
-import { renderEmoji } from "helpers/emoji.helper";
-import { EFilterType } from "store/issues/types";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { ProjectLogo } from "@/components/project";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
+  // store hooks
   const {
-    project: { currentProjectDetails },
-    projectLabel: { projectLabels },
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-    projectDraftIssuesFilter: { issueFilters, updateFilters },
-  } = useMobxStore();
-
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.DRAFT);
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const { projectLabels } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
+  const { isMobile } = usePlatformOS();
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleFiltersUpdate = useCallback(
@@ -33,15 +38,17 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues });
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues });
     },
     [workspaceSlug, projectId, issueFilters, updateFilters]
   );
@@ -49,7 +56,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout });
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
     [workspaceSlug, projectId, updateFilters]
   );
@@ -57,7 +64,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
     [workspaceSlug, projectId, updateFilters]
   );
@@ -65,38 +72,57 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
     [workspaceSlug, projectId, updateFilters]
   );
+
+  const issueCount = currentProjectDetails
+    ? issueFilters?.displayFilters?.sub_issue
+      ? currentProjectDetails.draft_issues + currentProjectDetails.draft_sub_issues
+      : currentProjectDetails.draft_issues
+    : undefined;
+
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <div>
+        <div className="flex items-center gap-2.5">
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={
-                currentProjectDetails?.emoji ? (
-                  renderEmoji(currentProjectDetails.emoji)
-                ) : currentProjectDetails?.icon_prop ? (
-                  renderEmoji(currentProjectDetails.icon_prop)
-                ) : (
-                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                    {currentProjectDetails?.name.charAt(0)}
-                  </span>
-                )
+              link={
+                <BreadcrumbLink
+                  href={`/${workspaceSlug}/projects`}
+                  label={currentProjectDetails?.name ?? "Project"}
+                  icon={
+                    currentProjectDetails && (
+                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                      </span>
+                    )
+                  }
+                />
               }
-              label={currentProjectDetails?.name ?? "Project"}
-              link={`/${workspaceSlug}/projects`}
             />
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
-              label="Draft Issues"
+              link={
+                <BreadcrumbLink label="Draft Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
+              }
             />
           </Breadcrumbs>
+          {issueCount && issueCount > 0 ? (
+            <Tooltip
+              isMobile={isMobile}
+              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in project's draft`}
+              position="bottom"
+            >
+              <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                {issueCount}
+              </span>
+            </Tooltip>
+          ) : null}
         </div>
 
         <div className="ml-auto flex items-center gap-2">
@@ -112,9 +138,11 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectLabels ?? undefined}
-              members={projectMembers?.map((m) => m.member)}
-              states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
+              labels={projectLabels}
+              memberIds={projectMemberIds ?? undefined}
+              states={projectStates}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
@@ -126,6 +154,8 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
               handleDisplayFiltersUpdate={handleDisplayFilters}
               displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
         </div>

@@ -1,19 +1,15 @@
 import { Fragment } from "react";
-import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
-import { mutate } from "swr";
-// components
-import { Menu, Transition } from "@headlessui/react";
 // icons
 import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
+// headless ui
+import { Menu, Transition } from "@headlessui/react";
 // ui
-import { Avatar, Tooltip } from "@plane/ui";
+import { Avatar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+// hooks
+import { useAppRouter, useAppTheme, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 // Static Data
 const PROFILE_LINKS = [
@@ -26,38 +22,29 @@ const PROFILE_LINKS = [
 ];
 
 export const InstanceSidebarDropdown = observer(() => {
-  const router = useRouter();
-  // store
-  const {
-    theme: { sidebarCollapsed },
-    workspace: { workspaceSlug },
-    user: { signOut, currentUser, currentUserSettings },
-  } = useMobxStore();
+  // store hooks
+  const { sidebarCollapsed } = useAppTheme();
+  const { workspaceSlug } = useAppRouter();
+  const { data: currentUser } = useUser();
+  const { signOut } = useUser();
   // hooks
-  const { setToastAlert } = useToast();
-  const { setTheme } = useTheme();
-
+  // const { setTheme } = useTheme();
+  const { isMobile } = usePlatformOS();
   // redirect url for normal mode
   const redirectWorkspaceSlug =
     workspaceSlug ||
-    currentUserSettings?.workspace?.last_workspace_slug ||
-    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    // currentUserSettings?.workspace?.last_workspace_slug ||
+    // currentUserSettings?.workspace?.fallback_workspace_slug ||
     "";
 
   const handleSignOut = async () => {
-    await signOut()
-      .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
-        setTheme("system");
-        router.push("/");
+    await signOut().catch(() =>
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
       })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Failed to sign out. Please try again.",
-        })
-      );
+    );
   };
 
   return (
@@ -75,7 +62,7 @@ export const InstanceSidebarDropdown = observer(() => {
           {!sidebarCollapsed && (
             <div className="flex w-full gap-2">
               <h4 className="grow truncate text-base font-medium text-custom-text-200">Instance admin</h4>
-              <Tooltip position="bottom-left" tooltipContent="Exit God Mode">
+              <Tooltip position="bottom-left" tooltipContent="Exit God Mode" isMobile={isMobile}>
                 <div className="flex-shrink-0">
                   <Link href={`/${redirectWorkspaceSlug}`}>
                     <span>
@@ -94,7 +81,7 @@ export const InstanceSidebarDropdown = observer(() => {
           <Menu.Button className="grid place-items-center outline-none">
             <Avatar
               name={currentUser?.display_name}
-              src={currentUser?.avatar}
+              src={currentUser?.avatar || undefined}
               size={24}
               shape="square"
               className="!text-base"

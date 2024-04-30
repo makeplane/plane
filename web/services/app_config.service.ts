@@ -1,20 +1,19 @@
 // services
-import { APIService } from "services/api.service";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "@/services/api.service";
 // helper
-import { API_BASE_URL } from "helpers/common.helper";
 // types
-import { IAppConfig } from "types/app";
+// FIXME:
+// import { TAppConfig } from "@plane/types";
 
 export class AppConfigService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async envConfig(): Promise<IAppConfig> {
+  async envConfig(): Promise<any> {
     return this.get("/api/configs/", {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     })
       .then((response) => response.data)
       .catch((error) => {

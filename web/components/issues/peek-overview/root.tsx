@@ -1,184 +1,389 @@
-import { FC, Fragment, ReactNode, useCallback, useEffect } from "react";
+import { FC, useEffect, useState, useMemo } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { TIssue } from "@plane/types";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { IssueView } from "@/components/issues";
+// ui
 // components
-import { IssueView } from "components/issues";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
+// components
 // types
-import { IIssue, IIssueLink } from "types";
-import { EIssueActions } from "../issue-layouts/types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IIssuePeekOverview {
-  workspaceSlug: string;
-  projectId: string;
-  issueId: string;
-  handleIssue: (issue: Partial<IIssue>, action: EIssueActions) => Promise<void>;
-  isArchived?: boolean;
-  children?: ReactNode;
+  is_archived?: boolean;
+  is_draft?: boolean;
 }
 
+export type TIssuePeekOperations = {
+  fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  archive: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  restore: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
+  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
+  addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
+  removeIssueFromModule?: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueId: string
+  ) => Promise<void>;
+  removeModulesFromIssue?: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    moduleIds: string[]
+  ) => Promise<void>;
+};
+
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, handleIssue, children, isArchived = false } = props;
-
+  const { is_archived = false, is_draft = false } = props;
+  // router
   const router = useRouter();
-  const { peekIssueId } = router.query;
-
   const {
-    issueDetail: {
-      createIssueComment,
-      updateIssueComment,
-      removeIssueComment,
-      creationIssueCommentReaction,
-      removeIssueCommentReaction,
-      createIssueReaction,
-      removeIssueReaction,
-      createIssueSubscription,
-      removeIssueSubscription,
-      createIssueLink,
-      updateIssueLink,
-      deleteIssueLink,
-      getIssue,
-      loader,
-      fetchPeekIssueDetails,
-      setPeekId,
-      fetchIssueActivity,
-    },
-    archivedIssueDetail: {
-      getIssue: getArchivedIssue,
-      loader: archivedIssueLoader,
-      fetchPeekIssueDetails: fetchArchivedPeekIssueDetails,
-    },
-    archivedIssues: { deleteArchivedIssue },
-    project: { currentProjectDetails },
-    workspaceMember: { currentWorkspaceUserProjectsRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceAllProjectsRole },
+  } = useUser();
+  const {
+    issues: { restoreIssue },
+  } = useIssues(EIssuesStoreType.ARCHIVED);
+  const {
+    peekIssue,
+    updateIssue,
+    removeIssue,
+    archiveIssue,
+    issue: { getIssueById, fetchIssue },
+  } = useIssueDetail();
+  const { addIssueToCycle, removeIssueFromCycle, addModulesToIssue, removeIssueFromModule, removeModulesFromIssue } =
+    useIssueDetail();
+  const { captureIssueEvent } = useEventTracker();
+  // state
+  const [loader, setLoader] = useState(false);
 
-  const { setToastAlert } = useToast();
-
-  const fetchIssueDetail = useCallback(async () => {
-    if (workspaceSlug && projectId && peekIssueId) {
-      if (isArchived) await fetchArchivedPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
-      else await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
-    }
-  }, [fetchArchivedPeekIssueDetails, fetchPeekIssueDetails, workspaceSlug, projectId, peekIssueId, isArchived]);
+  const issueOperations: TIssuePeekOperations = useMemo(
+    () => ({
+      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await fetchIssue(
+            workspaceSlug,
+            projectId,
+            issueId,
+            is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
+          );
+        } catch (error) {
+          console.error("Error fetching the parent issue");
+        }
+      },
+      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+        await updateIssue(workspaceSlug, projectId, issueId, data)
+          .then(() => {
+            captureIssueEvent({
+              eventName: ISSUE_UPDATED,
+              payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
+              updates: {
+                changed_property: Object.keys(data).join(","),
+                change_details: Object.values(data).join(","),
+              },
+              path: router.asPath,
+            });
+          })
+          .catch(() => {
+            captureIssueEvent({
+              eventName: ISSUE_UPDATED,
+              payload: { state: "FAILED", element: "Issue peek-overview" },
+              path: router.asPath,
+            });
+            setToast({
+              title: "Issue update failed",
+              type: TOAST_TYPE.ERROR,
+              message: "Issue update failed",
+            });
+          });
+      },
+      remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          removeIssue(workspaceSlug, projectId, issueId);
+          setToast({
+            title: "Issue deleted successfully",
+            type: TOAST_TYPE.SUCCESS,
+            message: "Issue deleted successfully",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_DELETED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        } catch (error) {
+          setToast({
+            title: "Issue delete failed",
+            type: TOAST_TYPE.ERROR,
+            message: "Issue delete failed",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_DELETED,
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        }
+      },
+      archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await archiveIssue(workspaceSlug, projectId, issueId);
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        } catch (error) {
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        }
+      },
+      restore: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await restoreIssue(workspaceSlug, projectId, issueId);
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Restore success",
+            message: "Your issue can be found in project issues.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_RESTORED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be restored. Please try again.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_RESTORED,
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        }
+      },
+      addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
+        try {
+          const addToCyclePromise = addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          setPromiseToast(addToCyclePromise, {
+            loading: "Adding cycle to issue...",
+            success: {
+              title: "Success!",
+              message: () => "Cycle added to issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Cycle add to issue failed",
+            },
+          });
+          await addToCyclePromise;
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { ...issueIds, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
+            path: router.asPath,
+          });
+        } catch (error) {
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { state: "FAILED", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
+            path: router.asPath,
+          });
+        }
+      },
+      removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+        try {
+          const removeFromCyclePromise = removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+          setPromiseToast(removeFromCyclePromise, {
+            loading: "Removing cycle from issue...",
+            success: {
+              title: "Success!",
+              message: () => "Cycle removed from issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Cycle remove from issue failed",
+            },
+          });
+          await removeFromCyclePromise;
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: "",
+            },
+            path: router.asPath,
+          });
+        } catch (error) {
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { state: "FAILED", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: "",
+            },
+            path: router.asPath,
+          });
+        }
+      },
+      addModulesToIssue: async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
+        try {
+          const addToModulePromise = addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
+          setPromiseToast(addToModulePromise, {
+            loading: "Adding module to issue...",
+            success: {
+              title: "Success!",
+              message: () => "Module added to issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Module add to issue failed",
+            },
+          });
+          const response = await addToModulePromise;
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "module_id",
+              change_details: moduleIds,
+            },
+            path: router.asPath,
+          });
+        } catch (error) {
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "module_id",
+              change_details: moduleIds,
+            },
+            path: router.asPath,
+          });
+        }
+      },
+      removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
+        try {
+          const removeFromModulePromise = removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+          setPromiseToast(removeFromModulePromise, {
+            loading: "Removing module from issue...",
+            success: {
+              title: "Success!",
+              message: () => "Module removed from issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Module remove from issue failed",
+            },
+          });
+          await removeFromModulePromise;
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "module_id",
+              change_details: "",
+            },
+            path: router.asPath,
+          });
+        } catch (error) {
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "module_id",
+              change_details: "",
+            },
+            path: router.asPath,
+          });
+        }
+      },
+      removeModulesFromIssue: async (
+        workspaceSlug: string,
+        projectId: string,
+        issueId: string,
+        moduleIds: string[]
+      ) => {
+        const removeModulesFromIssuePromise = removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
+        setPromiseToast(removeModulesFromIssuePromise, {
+          loading: "Removing module from issue...",
+          success: {
+            title: "Success!",
+            message: () => "Module removed from issue successfully",
+          },
+          error: {
+            title: "Error!",
+            message: () => "Module remove from issue failed",
+          },
+        });
+        await removeModulesFromIssuePromise;
+      },
+    }),
+    [
+      is_archived,
+      is_draft,
+      fetchIssue,
+      updateIssue,
+      removeIssue,
+      archiveIssue,
+      restoreIssue,
+      addIssueToCycle,
+      removeIssueFromCycle,
+      addModulesToIssue,
+      removeIssueFromModule,
+      removeModulesFromIssue,
+      captureIssueEvent,
+      router.asPath,
+    ]
+  );
 
   useEffect(() => {
-    fetchIssueDetail();
-  }, [workspaceSlug, projectId, peekIssueId, fetchIssueDetail]);
-
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(
-      `${workspaceSlug}/projects/${projectId}/${isArchived ? "archived-issues" : "issues"}/${peekIssueId}`
-    ).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
-
-  const redirectToIssueDetail = () => {
-    router.push({
-      pathname: `/${workspaceSlug}/projects/${projectId}/${isArchived ? "archived-issues" : "issues"}/${issueId}`,
-    });
-  };
-
-  const issue = isArchived ? getArchivedIssue : getIssue;
-  const isLoading = isArchived ? archivedIssueLoader : loader;
-
-  const issueUpdate = async (_data: Partial<IIssue>) => {
-    if (handleIssue) {
-      await handleIssue(_data, EIssueActions.UPDATE);
-      fetchIssueActivity(workspaceSlug, projectId, issueId);
-    }
-  };
-
-  const issueReactionCreate = (reaction: string) => createIssueReaction(workspaceSlug, projectId, issueId, reaction);
-
-  const issueReactionRemove = (reaction: string) => removeIssueReaction(workspaceSlug, projectId, issueId, reaction);
-
-  const issueCommentCreate = (comment: any) => createIssueComment(workspaceSlug, projectId, issueId, comment);
-
-  const issueCommentUpdate = (comment: any) =>
-    updateIssueComment(workspaceSlug, projectId, issueId, comment?.id, comment);
-
-  const issueCommentRemove = (commentId: string) => removeIssueComment(workspaceSlug, projectId, issueId, commentId);
-
-  const issueCommentReactionCreate = (commentId: string, reaction: string) =>
-    creationIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
-
-  const issueCommentReactionRemove = (commentId: string, reaction: string) =>
-    removeIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
-
-  const issueSubscriptionCreate = () => createIssueSubscription(workspaceSlug, projectId, issueId);
-
-  const issueSubscriptionRemove = () => removeIssueSubscription(workspaceSlug, projectId, issueId);
-
-  const issueLinkCreate = (formData: IIssueLink) => createIssueLink(workspaceSlug, projectId, issueId, formData);
-
-  const issueLinkUpdate = (formData: IIssueLink, linkId: string) =>
-    updateIssueLink(workspaceSlug, projectId, issueId, linkId, formData);
-
-  const issueLinkDelete = (linkId: string) => deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
-
-  const handleDeleteIssue = async () => {
-    if (isArchived) await deleteArchivedIssue(workspaceSlug, projectId, issue!);
-    else await handleIssue(issue!, EIssueActions.DELETE);
-    const { query } = router;
-    if (query.peekIssueId) {
-      setPeekId(null);
-      delete query.peekIssueId;
-      delete query.peekProjectId;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query },
+    if (peekIssue) {
+      setLoader(true);
+      issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId).finally(() => {
+        setLoader(false);
       });
     }
-  };
+  }, [peekIssue, issueOperations]);
 
-  const userRole =
-    (currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId]) ?? EUserWorkspaceRoles.GUEST;
+  if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
+
+  const issue = getIssueById(peekIssue.issueId) || undefined;
+
+  const currentProjectRole = currentWorkspaceAllProjectsRole?.[peekIssue?.projectId];
+  // Check if issue is editable, based on user role
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isLoading = !issue || loader ? true : false;
 
   return (
-    <Fragment>
-      <IssueView
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
-        issue={issue}
-        isLoading={isLoading}
-        isArchived={isArchived}
-        handleCopyText={handleCopyText}
-        redirectToIssueDetail={redirectToIssueDetail}
-        issueUpdate={issueUpdate}
-        issueReactionCreate={issueReactionCreate}
-        issueReactionRemove={issueReactionRemove}
-        issueCommentCreate={issueCommentCreate}
-        issueCommentUpdate={issueCommentUpdate}
-        issueCommentRemove={issueCommentRemove}
-        issueCommentReactionCreate={issueCommentReactionCreate}
-        issueCommentReactionRemove={issueCommentReactionRemove}
-        issueSubscriptionCreate={issueSubscriptionCreate}
-        issueSubscriptionRemove={issueSubscriptionRemove}
-        issueLinkCreate={issueLinkCreate}
-        issueLinkUpdate={issueLinkUpdate}
-        issueLinkDelete={issueLinkDelete}
-        handleDeleteIssue={handleDeleteIssue}
-        disableUserActions={[5, 10].includes(userRole)}
-        showCommentAccessSpecifier={currentProjectDetails?.is_deployed}
-      >
-        {children}
-      </IssueView>
-    </Fragment>
+    <IssueView
+      workspaceSlug={peekIssue.workspaceSlug}
+      projectId={peekIssue.projectId}
+      issueId={peekIssue.issueId}
+      isLoading={isLoading}
+      is_archived={is_archived}
+      disabled={!isEditable}
+      issueOperations={issueOperations}
+    />
   );
 });

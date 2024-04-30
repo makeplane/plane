@@ -3,7 +3,6 @@ from plane.db.models import APIToken, APIActivityLog
 
 
 class APITokenSerializer(BaseSerializer):
-    
     class Meta:
         model = APIToken
         fields = "__all__"
@@ -18,14 +17,12 @@ class APITokenSerializer(BaseSerializer):
 
 
 class APITokenReadSerializer(BaseSerializer):
-
     class Meta:
         model = APIToken
-        exclude = ('token',)
+        exclude = ("token",)
 
 
 class APIActivityLogSerializer(BaseSerializer):
-
     class Meta:
         model = APIActivityLog
         fields = "__all__"

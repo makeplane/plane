@@ -4,12 +4,23 @@ export interface TableRowOptions {
   HTMLAttributes: Record<string, any>;
 }
 
-export default Node.create<TableRowOptions>({
+export const TableRow = Node.create<TableRowOptions>({
   name: "tableRow",
 
   addOptions() {
     return {
       HTMLAttributes: {},
+    };
+  },
+
+  addAttributes() {
+    return {
+      background: {
+        default: null,
+      },
+      textColor: {
+        default: null,
+      },
     };
   },
 
@@ -22,6 +33,12 @@ export default Node.create<TableRowOptions>({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["tr", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
+    const style = HTMLAttributes.background
+      ? `background-color: ${HTMLAttributes.background}; color: ${HTMLAttributes.textColor}`
+      : "";
+
+    const attributes = mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { style });
+
+    return ["tr", attributes, 0];
   },
 });

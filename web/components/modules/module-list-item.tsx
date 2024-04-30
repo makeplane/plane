@@ -1,73 +1,69 @@
-import React, { useState } from "react";
+import React from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
-// components
-import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
+import { Check, Info, User2 } from "lucide-react";
 // ui
-import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
-// icons
-import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
-// types
-import { IModule } from "types";
+import { Avatar, AvatarGroup, CircularProgressIndicator, Tooltip, setPromiseToast } from "@plane/ui";
+// components
+import { FavoriteStar } from "@/components/core";
+import { ModuleQuickActions } from "@/components/modules";
 // constants
-import { MODULE_STATUS } from "constants/module";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
+import { MODULE_STATUS } from "@/constants/module";
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
+import { useModule, useUser, useEventTracker, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
-  module: IModule;
+  moduleId: string;
+  isArchived?: boolean;
 };
 
 export const ModuleListItem: React.FC<Props> = observer((props) => {
-  const { module } = props;
-
-  const [editModal, setEditModal] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(false);
-
+  const { moduleId, isArchived = false } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { setToastAlert } = useToast();
-
-  const { module: moduleStore, user: userStore } = useMobxStore();
-
-  const { currentProjectRole } = userStore;
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
-  const completionPercentage = ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
-
-  const endDate = new Date(module.target_date ?? "");
-  const startDate = new Date(module.start_date ?? "");
-
-  const renderDate = module.start_date || module.target_date;
-
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
-
-  const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
-
-  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
-
-  const completedModuleCheck = module.status === "completed";
-
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
+  const { getUserDetails } = useMember();
+  const { captureEvent } = useEventTracker();
+  // derived values
+  const moduleDetails = getModuleById(moduleId);
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const { isMobile } = usePlatformOS();
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    moduleStore.addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), module.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
+      () => {
+        captureEvent(MODULE_FAVORITED, {
+          module_id: moduleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      }
+    );
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding module to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Module added to favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't add the module to favorites. Please try again.",
-      });
+        message: () => "Couldn't add the module to favorites. Please try again.",
+      },
     });
   };
 
@@ -76,120 +72,141 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    moduleStore.removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), module.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const removeFromFavoritePromise = removeModuleFromFavorites(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      moduleId
+    ).then(() => {
+      captureEvent(MODULE_UNFAVORITED, {
+        module_id: moduleId,
+        element: "Grid layout",
+        state: "SUCCESS",
+      });
+    });
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing module from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Module removed from favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't remove the module from favorites. Please try again.",
-      });
+        message: () => "Couldn't remove the module from favorites. Please try again.",
+      },
     });
   };
 
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module.id}`).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Module link copied to clipboard.",
-      });
-    });
-  };
-
-  const handleEditModule = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setEditModal(true);
-  };
-
-  const handleDeleteModule = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDeleteModal(true);
-  };
-
-  const openModuleOverview = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const openModuleOverview = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.stopPropagation();
     e.preventDefault();
     const { query } = router;
 
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekModule: module.id },
-    });
+    if (query.peekModule) {
+      delete query.peekModule;
+      router.push({
+        pathname: router.pathname,
+        query: { ...query },
+      });
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekModule: moduleId },
+      });
+    }
   };
 
+  if (!moduleDetails) return null;
+
+  const completionPercentage =
+    ((moduleDetails.completed_issues + moduleDetails.cancelled_issues) / moduleDetails.total_issues) * 100;
+
+  const endDate = getDate(moduleDetails.target_date);
+  const startDate = getDate(moduleDetails.start_date);
+
+  const renderDate = moduleDetails.start_date || moduleDetails.target_date;
+
+  // const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+
+  const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
+
+  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
+
+  const completedModuleCheck = moduleDetails.status === "completed";
+
   return (
-    <>
-      {workspaceSlug && projectId && (
-        <CreateUpdateModuleModal
-          isOpen={editModal}
-          onClose={() => setEditModal(false)}
-          data={module}
-          projectId={projectId.toString()}
-          workspaceSlug={workspaceSlug.toString()}
-        />
-      )}
-      <DeleteModuleModal data={module} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
-      <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-        <div className="group flex h-16 w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90">
-          <div className="flex w-full items-center gap-3 truncate">
-            <div className="flex items-center gap-4 truncate">
-              <span className="flex-shrink-0">
-                <CircularProgressIndicator size={38} percentage={progress}>
-                  {completedModuleCheck ? (
-                    progress === 100 ? (
+    <div className="relative">
+      <Link
+        href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
+        onClick={(e) => {
+          if (isArchived) {
+            openModuleOverview(e);
+          }
+        }}
+      >
+        <div className="group flex w-full flex-col items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90 sm:flex-row">
+          <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
+            <div className="relative flex w-full items-center gap-3 overflow-hidden">
+              <div className="flex items-center gap-4 truncate">
+                <span className="flex-shrink-0">
+                  <CircularProgressIndicator size={38} percentage={progress}>
+                    {completedModuleCheck ? (
+                      progress === 100 ? (
+                        <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
+                      ) : (
+                        <span className="text-sm text-custom-primary-100">{`!`}</span>
+                      )
+                    ) : progress === 100 ? (
                       <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
                     ) : (
-                      <span className="text-sm text-custom-primary-100">{`!`}</span>
-                    )
-                  ) : progress === 100 ? (
-                    <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
-                  ) : (
-                    <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
-                  )}
-                </CircularProgressIndicator>
-              </span>
-              <Tooltip tooltipContent={module.name} position="top">
-                <span className="truncate text-base font-medium">{module.name}</span>
-              </Tooltip>
-            </div>
-            <button onClick={openModuleOverview} className="z-10 hidden flex-shrink-0 group-hover:flex">
-              <Info className="h-4 w-4 text-custom-text-400" />
-            </button>
-          </div>
-
-          <div className="flex w-full items-center justify-end gap-2.5 md:w-auto md:flex-shrink-0 ">
-            <div className="flex items-center justify-center">
-              {moduleStatus && (
-                <span
-                  className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
-                  style={{
-                    color: moduleStatus.color,
-                    backgroundColor: `${moduleStatus.color}20`,
-                  }}
-                >
-                  {moduleStatus.label}
+                      <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
+                    )}
+                  </CircularProgressIndicator>
                 </span>
-              )}
+                <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
+                  <span className="truncate text-base font-medium">{moduleDetails.name}</span>
+                </Tooltip>
+              </div>
+              <button onClick={openModuleOverview} className="z-[5] hidden flex-shrink-0 group-hover:flex">
+                <Info className="h-4 w-4 text-custom-text-400" />
+              </button>
             </div>
-
+          </div>
+          <span className="h-6 w-52 flex-shrink-0" />
+        </div>
+      </Link>
+      <div className="absolute right-5 bottom-8 flex items-center gap-1.5">
+        <div className="flex flex-shrink-0 items-center justify-center">
+          {moduleStatus && (
+            <span
+              className="flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
+              style={{
+                color: moduleStatus.color,
+                backgroundColor: `${moduleStatus.color}20`,
+              }}
+            >
+              {moduleStatus.label}
+            </span>
+          )}
+        </div>
+        <div className="relative flex w-full items-center justify-between gap-2.5 sm:w-auto sm:flex-shrink-0 sm:justify-end ">
+          <div className="text-xs text-custom-text-300">
             {renderDate && (
-              <span className="flex w-28 items-center justify-center gap-2 text-xs text-custom-text-300">
-                {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
-                {" - "}
-                {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+              <span className=" text-xs text-custom-text-300">
+                {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
               </span>
             )}
+          </div>
 
-            <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
-              <div className="flex w-16 cursor-default items-center justify-center gap-1">
-                {module.members_detail.length > 0 ? (
+          <div className="relative flex flex-shrink-0 items-center gap-3">
+            <Tooltip tooltipContent={`${moduleDetails?.member_ids?.length || 0} Members`} isMobile={isMobile}>
+              <div className="flex w-10 cursor-default items-center justify-center gap-1">
+                {moduleDetails.member_ids.length > 0 ? (
                   <AvatarGroup showTooltip={false}>
-                    {module.members_detail.map((member) => (
-                      <Avatar key={member.id} name={member.display_name} src={member.avatar} />
-                    ))}
+                    {moduleDetails.member_ids.map((member_id) => {
+                      const member = getUserDetails(member_id);
+                      return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                    })}
                   </AvatarGroup>
                 ) : (
                   <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
@@ -199,44 +216,26 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
               </div>
             </Tooltip>
 
-            {isEditingAllowed &&
-              (module.is_favorite ? (
-                <button type="button" onClick={handleRemoveFromFavorites} className="z-[1]">
-                  <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                </button>
-              ) : (
-                <button type="button" onClick={handleAddToFavorites} className="z-[1]">
-                  <Star className="h-3.5 w-3.5 text-custom-text-300" />
-                </button>
-              ))}
-
-            <CustomMenu width="auto" verticalEllipsis buttonClassName="z-[1]">
-              {isEditingAllowed && (
-                <>
-                  <CustomMenu.MenuItem onClick={handleEditModule}>
-                    <span className="flex items-center justify-start gap-2">
-                      <Pencil className="h-3 w-3" />
-                      <span>Edit module</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleDeleteModule}>
-                    <span className="flex items-center justify-start gap-2">
-                      <Trash2 className="h-3 w-3" />
-                      <span>Delete module</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                </>
-              )}
-              <CustomMenu.MenuItem onClick={handleCopyText}>
-                <span className="flex items-center justify-start gap-2">
-                  <LinkIcon className="h-3 w-3" />
-                  <span>Copy module link</span>
-                </span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+            {isEditingAllowed && !isArchived && (
+              <FavoriteStar
+                onClick={(e) => {
+                  if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);
+                  else handleAddToFavorites(e);
+                }}
+                selected={moduleDetails.is_favorite}
+              />
+            )}
+            {workspaceSlug && projectId && (
+              <ModuleQuickActions
+                moduleId={moduleId}
+                projectId={projectId.toString()}
+                workspaceSlug={workspaceSlug.toString()}
+                isArchived={isArchived}
+              />
+            )}
           </div>
         </div>
-      </Link>
-    </>
+      </div>
+    </div>
   );
 });

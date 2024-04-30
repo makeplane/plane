@@ -1,69 +1,71 @@
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react";
+import { X } from "lucide-react";
+// types
+import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // components
 import {
+  AppliedCycleFilters,
   AppliedDateFilters,
   AppliedLabelsFilters,
   AppliedMembersFilters,
+  AppliedModuleFilters,
   AppliedPriorityFilters,
   AppliedProjectFilters,
   AppliedStateFilters,
   AppliedStateGroupFilters,
-} from "components/issues";
-// icons
-import { X } from "lucide-react";
-// helpers
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-// types
-import { IIssueFilterOptions, IIssueLabel, IProject, IState, IUserLite } from "types";
+} from "@/components/issues";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+// hooks
+import { useAppRouter, useUser } from "@/hooks/store";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
   handleClearAllFilters: () => void;
   handleRemoveFilter: (key: keyof IIssueFilterOptions, value: string | null) => void;
   labels?: IIssueLabel[] | undefined;
-  members?: IUserLite[] | undefined;
-  projects?: IProject[] | undefined;
   states?: IState[] | undefined;
+  alwaysAllowEditing?: boolean;
 };
 
 const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
 const dateFilters = ["start_date", "target_date"];
 
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, members, projects, states } = props;
-
+  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, states, alwaysAllowEditing } = props;
+  // store hooks
+  const { moduleId, cycleId } = useAppRouter();
   const {
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
 
   if (!appliedFilters) return null;
 
   if (Object.keys(appliedFilters).length === 0) return null;
 
-  const isEditingAllowed = currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = alwaysAllowEditing || (currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER);
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100 truncate">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof IIssueFilterOptions;
 
         if (!value) return;
+        if (Array.isArray(value) && value.length === 0) return;
 
         return (
           <div
             key={filterKey}
-            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
+            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize truncate"
           >
-            <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
-            <div className="flex flex-wrap items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1.5 truncate">
+              <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {membersFilters.includes(filterKey) && (
                 <AppliedMembersFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                  members={members}
                   values={value}
                 />
               )}
@@ -103,7 +105,20 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 <AppliedProjectFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("project", val)}
-                  projects={projects}
+                  values={value}
+                />
+              )}
+              {filterKey === "cycle" && !cycleId && (
+                <AppliedCycleFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter("cycle", val)}
+                  values={value}
+                />
+              )}
+              {filterKey === "module" && !moduleId && (
+                <AppliedModuleFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter("module", val)}
                   values={value}
                 />
               )}
@@ -124,7 +139,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
         <button
           type="button"
           onClick={handleClearAllFilters}
-          className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
+          className="flex items-center gap-2 flex-shrink-0 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
         >
           Clear all
           <X size={12} strokeWidth={2} />

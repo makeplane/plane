@@ -7,52 +7,110 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0028_auto_20230414_1703'),
+        ("db", "0028_auto_20230414_1703"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cycle',
-            name='view_props',
+            model_name="cycle",
+            name="view_props",
             field=models.JSONField(default=dict),
         ),
         migrations.AddField(
-            model_name='importer',
-            name='imported_data',
+            model_name="importer",
+            name="imported_data",
             field=models.JSONField(null=True),
         ),
         migrations.AddField(
-            model_name='module',
-            name='view_props',
+            model_name="module",
+            name="view_props",
             field=models.JSONField(default=dict),
         ),
         migrations.CreateModel(
-            name='SlackProjectSync',
+            name="SlackProjectSync",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('access_token', models.CharField(max_length=300)),
-                ('scopes', models.TextField()),
-                ('bot_user_id', models.CharField(max_length=50)),
-                ('webhook_url', models.URLField(max_length=1000)),
-                ('data', models.JSONField(default=dict)),
-                ('team_id', models.CharField(max_length=30)),
-                ('team_name', models.CharField(max_length=300)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='slackprojectsync_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_slackprojectsync', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='slackprojectsync_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_slackprojectsync', to='db.workspace')),
-                ('workspace_integration', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='slack_syncs', to='db.workspaceintegration')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("access_token", models.CharField(max_length=300)),
+                ("scopes", models.TextField()),
+                ("bot_user_id", models.CharField(max_length=50)),
+                ("webhook_url", models.URLField(max_length=1000)),
+                ("data", models.JSONField(default=dict)),
+                ("team_id", models.CharField(max_length=30)),
+                ("team_name", models.CharField(max_length=300)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="slackprojectsync_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_slackprojectsync",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="slackprojectsync_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_slackprojectsync",
+                        to="db.workspace",
+                    ),
+                ),
+                (
+                    "workspace_integration",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="slack_syncs",
+                        to="db.workspaceintegration",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Slack Project Sync',
-                'verbose_name_plural': 'Slack Project Syncs',
-                'db_table': 'slack_project_syncs',
-                'ordering': ('-created_at',),
-                'unique_together': {('team_id', 'project')},
+                "verbose_name": "Slack Project Sync",
+                "verbose_name_plural": "Slack Project Syncs",
+                "db_table": "slack_project_syncs",
+                "ordering": ("-created_at",),
+                "unique_together": {("team_id", "project")},
             },
         ),
     ]

@@ -1,6 +1,6 @@
-import { API_BASE_URL } from "helpers/common.helper";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { IApiToken } from "@plane/types";
 import { APIService } from "./api.service";
-import { IApiToken } from "types/api_token";
 
 export class APITokenService extends APIService {
   constructor() {

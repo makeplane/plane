@@ -1,8 +1,8 @@
 // services
-import { APIService } from "services/api.service";
-// helpers
-import { API_BASE_URL } from "helpers/common.helper";
 import axios from "axios";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "@/services/api.service";
+// helpers
 
 export interface UnSplashImage {
   id: string;
@@ -63,15 +63,59 @@ export class FileService extends APIService {
     this.cancelSource.cancel("Upload cancelled");
   }
 
-  getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
+  getUploadFileFunction(
+    workspaceSlug: string,
+    setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+  ): (file: File) => Promise<string> {
     return async (file: File) => {
-      const formData = new FormData();
-      formData.append("asset", file);
-      formData.append("attributes", JSON.stringify({}));
+      try {
+        const formData = new FormData();
+        formData.append("asset", file);
+        formData.append("attributes", JSON.stringify({}));
 
-      const data = await this.uploadFile(workspaceSlug, formData);
-      return data.asset;
+        // the submitted state will be resolved by the page rendering the editor
+        // once the patch request of saving the editor contents is resolved
+        setIsSubmitting?.("submitting");
+
+        const data = await this.uploadFile(workspaceSlug, formData);
+        return data.asset;
+      } catch (e) {
+        console.error(e);
+      }
     };
+  }
+
+  getDeleteImageFunction(workspaceId: string) {
+    return async (src: string) => {
+      try {
+        const assetUrlWithWorkspaceId = `${workspaceId}/${this.extractAssetIdFromUrl(src, workspaceId)}`;
+        const data = await this.deleteImage(assetUrlWithWorkspaceId);
+        return data;
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }
+
+  getRestoreImageFunction(workspaceId: string) {
+    return async (src: string) => {
+      try {
+        const assetUrlWithWorkspaceId = `${workspaceId}/${this.extractAssetIdFromUrl(src, workspaceId)}`;
+        const data = await this.restoreImage(assetUrlWithWorkspaceId);
+        return data;
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }
+
+  extractAssetIdFromUrl(src: string, workspaceId: string): string {
+    const indexWhereAssetIdStarts = src.indexOf(workspaceId) + workspaceId.length + 1;
+    if (indexWhereAssetIdStarts === -1) {
+      throw new Error("Workspace ID not found in source string");
+    }
+    const assetUrl = src.substring(indexWhereAssetIdStarts);
+    return assetUrl;
   }
 
   async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {

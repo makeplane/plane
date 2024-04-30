@@ -1,19 +1,18 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// hooks
-import useToast from "hooks/use-toast";
+import { IWorkspace } from "@plane/types";
 // ui
-import { Button, CustomSelect, Input } from "@plane/ui";
-// types
-import { IWorkspace } from "types";
+import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
+import { WORKSPACE_CREATED } from "@/constants/event-tracker";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
+// hooks
+import { useEventTracker, useWorkspace } from "@/hooks/store";
+// ui
+// types
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -22,7 +21,7 @@ type Props = {
     slug: string;
     organization_size: string;
   };
-  setDefaultValues: Dispatch<SetStateAction<any>>;
+  setDefaultValues: Dispatch<SetStateAction<IWorkspace>>;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;
@@ -43,19 +42,15 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
       default: "Create Workspace",
     },
   } = props;
-
+  // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
-
+  // router
   const router = useRouter();
-
-  const {
-    workspace: workspaceStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
-  const { setToastAlert } = useToast();
-
+  // store hooks
+  const { captureWorkspaceEvent } = useEventTracker();
+  const { createWorkspace } = useWorkspace();
+  // form info
   const {
     handleSubmit,
     control,
@@ -71,15 +66,18 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
         if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
           setSlugError(false);
 
-          await workspaceStore
-            .createWorkspace(formData)
+          await createWorkspace(formData)
             .then(async (res) => {
-              postHogEventTracker("WORKSPACE_CREATED", {
-                ...res,
-                state: "SUCCESS",
+              captureWorkspaceEvent({
+                eventName: WORKSPACE_CREATED,
+                payload: {
+                  ...res,
+                  state: "SUCCESS",
+                  element: "Create workspace page",
+                },
               });
-              setToastAlert({
-                type: "success",
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
@@ -87,25 +85,26 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               if (onSubmit) await onSubmit(res);
             })
             .catch(() => {
-              setToastAlert({
-                type: "error",
+              captureWorkspaceEvent({
+                eventName: WORKSPACE_CREATED,
+                payload: {
+                  state: "FAILED",
+                  element: "Create workspace page",
+                },
+              });
+              setToast({
+                type: TOAST_TYPE.ERROR,
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
-              });
-              postHogEventTracker("WORKSPACE_CREATED", {
-                state: "FAILED",
               });
             });
         } else setSlugError(true);
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
-        });
-        postHogEventTracker("WORKSPACE_CREATED", {
-          state: "FAILED",
         });
       });
   };
@@ -122,39 +121,48 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
     <form className="space-y-6 sm:space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
       <div className="space-y-6 sm:space-y-7">
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceName">Workspace Name</label>
-          <Controller
-            control={control}
-            name="name"
-            rules={{
-              required: "Workspace name is required",
-              validate: (value) =>
-                /^[\w\s-]*$/.test(value) || `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
-              maxLength: {
-                value: 80,
-                message: "Workspace name should not exceed 80 characters",
-              },
-            }}
-            render={({ field: { value, ref, onChange } }) => (
-              <Input
-                id="workspaceName"
-                type="text"
-                value={value}
-                onChange={(e) => {
-                  onChange(e.target.value);
-                  setValue("name", e.target.value);
-                  setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
-                }}
-                ref={ref}
-                hasError={Boolean(errors.name)}
-                placeholder="Enter workspace name..."
-                className="w-full"
-              />
-            )}
-          />
+          <label htmlFor="workspaceName">
+            Workspace Name
+            <span className="ml-0.5 text-red-500">*</span>
+          </label>
+          <div className="flex flex-col gap-1">
+            <Controller
+              control={control}
+              name="name"
+              rules={{
+                required: "Workspace name is required",
+                validate: (value) =>
+                  /^[\w\s-]*$/.test(value) || `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
+                maxLength: {
+                  value: 80,
+                  message: "Workspace name should not exceed 80 characters",
+                },
+              }}
+              render={({ field: { value, ref, onChange } }) => (
+                <Input
+                  id="workspaceName"
+                  type="text"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                    setValue("name", e.target.value);
+                    setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
+                  }}
+                  ref={ref}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Enter workspace name..."
+                  className="w-full"
+                />
+              )}
+            />
+            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+          </div>
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceUrl">Workspace URL</label>
+          <label htmlFor="workspaceUrl">
+            Workspace URL
+            <span className="ml-0.5 text-red-500">*</span>
+          </label>
           <div className="flex w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
             <span className="whitespace-nowrap text-sm text-custom-text-200">{window && window.location.host}/</span>
             <Controller
@@ -186,7 +194,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <span>What size is your organization?</span>
+          <span>
+            What size is your organization?<span className="ml-0.5 text-red-500">*</span>
+          </span>
           <div className="w-full">
             <Controller
               name="organization_size"
@@ -203,7 +213,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   }
                   buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                   input
-                  width="w-full"
+                  optionsClassName="w-full"
                 >
                   {ORGANIZATION_SIZE.map((item) => (
                     <CustomSelect.Option key={item} value={item}>

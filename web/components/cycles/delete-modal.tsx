@@ -1,17 +1,16 @@
 import { Fragment, useState } from "react";
-// next
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
-// components
-import { Button } from "@plane/ui";
+import { Dialog, Transition } from "@headlessui/react";
+import { ICycle } from "@plane/types";
 // hooks
-import useToast from "hooks/use-toast";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { CYCLE_DELETED } from "@/constants/event-tracker";
+import { useEventTracker, useCycle } from "@/hooks/store";
+// components
 // types
-import { ICycle } from "types";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// constants
 
 interface ICycleDelete {
   cycle: ICycle;
@@ -23,56 +22,49 @@ interface ICycleDelete {
 
 export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   const { isOpen, handleClose, cycle, workspaceSlug, projectId } = props;
-  // store
-  const {
-    cycle: cycleStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-  // toast
-  const { setToastAlert } = useToast();
   // states
   const [loader, setLoader] = useState(false);
+  // router
   const router = useRouter();
   const { cycleId, peekCycle } = router.query;
+  // store hooks
+  const { captureCycleEvent } = useEventTracker();
+  const { deleteCycle } = useCycle();
 
   const formSubmit = async () => {
+    if (!cycle) return;
+
     setLoader(true);
-    if (cycle?.id)
-      try {
-        await cycleStore
-          .removeCycle(workspaceSlug, projectId, cycle?.id)
-          .then(() => {
-            setToastAlert({
-              type: "success",
-              title: "Success!",
-              message: "Cycle deleted successfully.",
-            });
-            postHogEventTracker("CYCLE_DELETE", {
-              state: "SUCCESS",
-            });
-          })
-          .catch(() => {
-            postHogEventTracker("CYCLE_DELETE", {
-              state: "FAILED",
-            });
+    try {
+      await deleteCycle(workspaceSlug, projectId, cycle.id)
+        .then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: "Cycle deleted successfully.",
           });
-
-        if (cycleId || peekCycle) router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
-
-        handleClose();
-      } catch (error) {
-        setToastAlert({
-          type: "error",
-          title: "Warning!",
-          message: "Something went wrong please try again later.",
+          captureCycleEvent({
+            eventName: CYCLE_DELETED,
+            payload: { ...cycle, state: "SUCCESS" },
+          });
+        })
+        .catch(() => {
+          captureCycleEvent({
+            eventName: CYCLE_DELETED,
+            payload: { ...cycle, state: "FAILED" },
+          });
         });
-      }
-    else
-      setToastAlert({
-        type: "error",
+
+      if (cycleId || peekCycle) router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
+
+      handleClose();
+    } catch (error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Warning!",
         message: "Something went wrong please try again later.",
       });
+    }
 
     setLoader(false);
   };
@@ -111,7 +103,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                         <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-500/20">
                           <AlertTriangle width={16} strokeWidth={2} className="text-red-600" />
                         </div>
-                        <div className="text-xl font-medium 2xl:text-2xl">Delete Cycle</div>
+                        <div className="text-xl font-medium 2xl:text-2xl">Delete cycle</div>
                       </div>
                       <span>
                         <p className="text-sm text-custom-text-200">
@@ -126,8 +118,8 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                           Cancel
                         </Button>
 
-                        <Button variant="danger" size="sm" tabIndex={1} onClick={formSubmit}>
-                          {loader ? "Deleting..." : "Delete Cycle"}
+                        <Button variant="danger" size="sm" tabIndex={1} onClick={formSubmit} loading={loader}>
+                          {loader ? "Deleting" : "Delete"}
                         </Button>
                       </div>
                     </div>

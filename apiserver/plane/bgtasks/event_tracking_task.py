@@ -1,13 +1,13 @@
-import uuid
 import os
+import uuid
 
 # third party imports
 from celery import shared_task
-from sentry_sdk import capture_exception
 from posthog import Posthog
 
 # module imports
 from plane.license.utils.instance_value import get_configuration_value
+from plane.utils.exception_logger import log_exception
 
 
 def posthogConfiguration():
@@ -40,22 +40,25 @@ def auth_events(user, email, user_agent, ip, event_name, medium, first_time):
                 email,
                 event=event_name,
                 properties={
-                        "event_id": uuid.uuid4().hex,
-                        "user": {"email": email, "id": str(user)},
-                        "device_ctx": {
-                            "ip": ip,
-                            "user_agent": user_agent,
-                        },
-                        "medium": medium,
-                        "first_time": first_time
-                }
+                    "event_id": uuid.uuid4().hex,
+                    "user": {"email": email, "id": str(user)},
+                    "device_ctx": {
+                        "ip": ip,
+                        "user_agent": user_agent,
+                    },
+                    "medium": medium,
+                    "first_time": first_time,
+                },
             )
     except Exception as e:
-        capture_exception(e)
- 
+        log_exception(e)
+        return
+
 
 @shared_task
-def workspace_invite_event(user, email, user_agent, ip, event_name, accepted_from):
+def workspace_invite_event(
+    user, email, user_agent, ip, event_name, accepted_from
+):
     try:
         POSTHOG_API_KEY, POSTHOG_HOST = posthogConfiguration()
 
@@ -65,14 +68,15 @@ def workspace_invite_event(user, email, user_agent, ip, event_name, accepted_fro
                 email,
                 event=event_name,
                 properties={
-                        "event_id": uuid.uuid4().hex,
-                        "user": {"email": email, "id": str(user)},
-                        "device_ctx": {
-                            "ip": ip,
-                            "user_agent": user_agent,
-                        },
-                        "accepted_from": accepted_from
-                }
+                    "event_id": uuid.uuid4().hex,
+                    "user": {"email": email, "id": str(user)},
+                    "device_ctx": {
+                        "ip": ip,
+                        "user_agent": user_agent,
+                    },
+                    "accepted_from": accepted_from,
+                },
             )
     except Exception as e:
-        capture_exception(e)
+        log_exception(e)
+        return

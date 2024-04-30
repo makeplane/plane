@@ -1,19 +1,30 @@
 // mobx
 import { action, observable, makeObservable } from "mobx";
 // helper
-import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
+import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 
 export interface IThemeStore {
+  // observables
   theme: string | null;
   sidebarCollapsed: boolean | undefined;
-
+  profileSidebarCollapsed: boolean | undefined;
+  workspaceAnalyticsSidebarCollapsed: boolean | undefined;
+  issueDetailSidebarCollapsed: boolean | undefined;
+  // actions
   toggleSidebar: (collapsed?: boolean) => void;
   setTheme: (theme: any) => void;
+  toggleProfileSidebar: (collapsed?: boolean) => void;
+  toggleWorkspaceAnalyticsSidebar: (collapsed?: boolean) => void;
+  toggleIssueDetailSidebar: (collapsed?: boolean) => void;
 }
 
-class ThemeStore implements IThemeStore {
+export class ThemeStore implements IThemeStore {
+  // observables
   sidebarCollapsed: boolean | undefined = undefined;
   theme: string | null = null;
+  profileSidebarCollapsed: boolean | undefined = undefined;
+  workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
+  issueDetailSidebarCollapsed: boolean | undefined = undefined;
   // root store
   rootStore;
 
@@ -22,15 +33,25 @@ class ThemeStore implements IThemeStore {
       // observable
       sidebarCollapsed: observable.ref,
       theme: observable.ref,
+      profileSidebarCollapsed: observable.ref,
+      workspaceAnalyticsSidebarCollapsed: observable.ref,
+      issueDetailSidebarCollapsed: observable.ref,
       // action
       toggleSidebar: action,
       setTheme: action,
+      toggleProfileSidebar: action,
+      toggleWorkspaceAnalyticsSidebar: action,
+      toggleIssueDetailSidebar: action,
       // computed
     });
-
+    // root store
     this.rootStore = _rootStore;
-    this.initialLoad();
   }
+
+  /**
+   * Toggle the sidebar collapsed state
+   * @param collapsed
+   */
   toggleSidebar = (collapsed?: boolean) => {
     if (collapsed === undefined) {
       this.sidebarCollapsed = !this.sidebarCollapsed;
@@ -40,15 +61,52 @@ class ThemeStore implements IThemeStore {
     localStorage.setItem("app_sidebar_collapsed", this.sidebarCollapsed.toString());
   };
 
+  /**
+   * Toggle the profile sidebar collapsed state
+   * @param collapsed
+   */
+  toggleProfileSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.profileSidebarCollapsed = !this.profileSidebarCollapsed;
+    } else {
+      this.profileSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("profile_sidebar_collapsed", this.profileSidebarCollapsed.toString());
+  };
+
+  /**
+   * Toggle the profile sidebar collapsed state
+   * @param collapsed
+   */
+  toggleWorkspaceAnalyticsSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.workspaceAnalyticsSidebarCollapsed = !this.workspaceAnalyticsSidebarCollapsed;
+    } else {
+      this.workspaceAnalyticsSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("workspace_analytics_sidebar_collapsed", this.workspaceAnalyticsSidebarCollapsed.toString());
+  };
+
+  toggleIssueDetailSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.issueDetailSidebarCollapsed = !this.issueDetailSidebarCollapsed;
+    } else {
+      this.issueDetailSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("issue_detail_sidebar_collapsed", this.issueDetailSidebarCollapsed.toString());
+  };
+
+  /**
+   * Sets the user theme and applies it to the platform
+   * @param _theme
+   */
   setTheme = async (_theme: { theme: any }) => {
     try {
       const currentTheme: string = _theme?.theme?.theme?.toString();
-
       // updating the local storage theme value
       localStorage.setItem("theme", currentTheme);
       // updating the mobx theme value
       this.theme = currentTheme;
-
       // applying the theme to platform if the selected theme is custom
       if (currentTheme === "custom") {
         const themeSettings = this.rootStore.user.currentUserSettings || null;
@@ -63,9 +121,4 @@ class ThemeStore implements IThemeStore {
       console.error("setting user theme error", error);
     }
   };
-
-  // init load
-  initialLoad() {}
 }
-
-export default ThemeStore;

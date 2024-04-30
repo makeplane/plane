@@ -1,5 +1,3 @@
-version: "3.8"
-
 networks:
   dev_env:
     driver: bridge
@@ -12,7 +10,7 @@ volumes:
 
 services:
   plane-redis:
-    image: redis:6.2.7-alpine
+    image: redis:7.2.4-alpine
     restart: unless-stopped
     networks:
       - dev_env
@@ -44,9 +42,6 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${PGUSER}
-      POSTGRES_DB: ${PGDATABASE}
-      POSTGRES_PASSWORD: ${PGPASSWORD}
       PGDATA: /var/lib/postgresql/data
 
   web:
@@ -89,7 +84,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    # command: /bin/sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000 --settings=plane.settings.local"
+    command: ./bin/takeoff.local
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -107,7 +102,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: /bin/sh -c "celery -A plane worker -l info"
+    command: ./bin/worker
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -126,11 +121,31 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: /bin/sh -c "celery -A plane beat -l info"
+    command: ./bin/beat
     env_file:
       - ./apiserver/.env
     depends_on:
       - api
+      - plane-db
+      - plane-redis
+
+  migrator:
+    build:
+      context: ./apiserver
+      dockerfile: Dockerfile.dev
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: "no"
+    networks:
+      - dev_env
+    volumes:
+      - ./apiserver:/code
+    command: >
+        sh -c "python manage.py wait_for_db --settings=plane.settings.local &&
+             python manage.py migrate --settings=plane.settings.local"
+    env_file:
+      - ./apiserver/.env
+    depends_on:
       - plane-db
       - plane-redis
 

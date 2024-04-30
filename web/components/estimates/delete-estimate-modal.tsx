@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
-// store
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
-// types
-import { IEstimate } from "types";
-// icons
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { IEstimate } from "@plane/types";
+// store hooks
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { useEstimate } from "@/hooks/store";
+// types
 // ui
-import { Button } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -21,27 +18,21 @@ type Props = {
 
 export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
   const { isOpen, handleClose, data } = props;
-
+  // states
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const { projectEstimates: projectEstimatesStore } = useMobxStore();
-
-  // states
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  // hooks
-  const { setToastAlert } = useToast();
+  // store hooks
+  const { deleteEstimate } = useEstimate();
 
   const handleEstimateDelete = () => {
     if (!workspaceSlug || !projectId) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     const estimateId = data?.id!;
 
-    projectEstimatesStore
-      .deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)
+    deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)
       .then(() => {
         setIsDeleteLoading(false);
         handleClose();
@@ -50,8 +41,8 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
         const error = err?.error;
         const errorString = Array.isArray(error) ? error[0] : error;
 
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: errorString ?? "Estimate could not be deleted. Please try again",
         });

@@ -1,12 +1,12 @@
 import { ReactElement } from "react";
 // layouts
-import DefaultLayout from "layouts/default-layout";
+import { SignUpView } from "@/components/page-views";
+import DefaultLayout from "@/layouts/default-layout";
 // components
-import { SignInView } from "components/page-views";
 // type
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "@/lib/types";
 
-const HomePage: NextPageWithLayout = () => <SignInView />;
+const HomePage: NextPageWithLayout = () => <SignUpView />;
 
 HomePage.getLayout = function getLayout(page: ReactElement) {
   return <DefaultLayout>{page}</DefaultLayout>;

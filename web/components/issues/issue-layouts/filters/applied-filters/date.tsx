@@ -1,12 +1,11 @@
-import { observer } from "mobx-react-lite";
-
+import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
 // helpers
-import { renderLongDateFormat } from "helpers/date-time.helper";
-import { capitalizeFirstLetter } from "helpers/string.helper";
+import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { capitalizeFirstLetter } from "@/helpers/string.helper";
 // constants
-import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -19,7 +18,7 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
   const getDateLabel = (value: string): string => {
     let dateLabel = "";
 
-    const dateDetails = DATE_FILTER_OPTIONS.find((d) => d.value === value);
+    const dateDetails = DATE_AFTER_FILTER_OPTIONS.find((d) => d.value === value);
 
     if (dateDetails) dateLabel = dateDetails.name;
     else {
@@ -28,7 +27,7 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
       if (dateParts.length === 2) {
         const [date, time] = dateParts;
 
-        dateLabel = `${capitalizeFirstLetter(time)} ${renderLongDateFormat(date)}`;
+        dateLabel = `${capitalizeFirstLetter(time)} ${renderFormattedDate(date)}`;
       }
     }
 

@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// ui components
-import { Button, Loader, ToggleSwitch } from "@plane/ui";
+// ui
 import { Check, CircleDot, Globe2 } from "lucide-react";
-import { CustomPopover } from "./popover";
-import { IProjectPublishSettings, TProjectPublishViews } from "store/project";
+import { Dialog, Transition } from "@headlessui/react";
+// icons
+import { IProject } from "@plane/types";
+// ui
+import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import useToast from "hooks/use-toast";
+import { useProjectPublish } from "@/hooks/store";
+// store
+import { IProjectPublishSettings, TProjectPublishViews } from "@/store/project/project-publish.store";
 // types
-import { IProject } from "types";
+// local components
+import { CustomPopover } from "./popover";
 
 type Props = {
   isOpen: boolean;
@@ -52,22 +54,27 @@ const viewOptions: {
 
 export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const { isOpen, project, onClose } = props;
-
-  const [isUnpublishing, setIsUnpublishing] = useState(false);
+  // states
+  const [isUnPublishing, setIsUnPublishing] = useState(false);
   const [isUpdateRequired, setIsUpdateRequired] = useState(false);
 
   let plane_deploy_url = process.env.NEXT_PUBLIC_DEPLOY_URL;
 
   if (typeof window !== "undefined" && !plane_deploy_url)
     plane_deploy_url = window.location.protocol + "//" + window.location.host + "/spaces";
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { projectPublish: projectPublishStore } = useMobxStore();
-
-  const { setToastAlert } = useToast();
-
+  // store hooks
+  const {
+    projectPublishSettings,
+    getProjectSettingsAsync,
+    publishProject,
+    updateProjectSettingsAsync,
+    unPublishProject,
+    fetchSettingsLoader,
+  } = useProjectPublish();
+  // form info
   const {
     control,
     formState: { isSubmitting },
@@ -88,14 +95,11 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
   // prefill form with the saved settings if the project is already published
   useEffect(() => {
-    if (
-      projectPublishStore.projectPublishSettings &&
-      projectPublishStore.projectPublishSettings !== "not-initialized"
-    ) {
+    if (projectPublishSettings && projectPublishSettings !== "not-initialized") {
       let userBoards: TProjectPublishViews[] = [];
 
-      if (projectPublishStore.projectPublishSettings?.views) {
-        const savedViews = projectPublishStore.projectPublishSettings?.views;
+      if (projectPublishSettings?.views) {
+        const savedViews = projectPublishSettings?.views;
 
         if (!savedViews) return;
 
@@ -109,32 +113,31 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
       }
 
       const updatedData = {
-        id: projectPublishStore.projectPublishSettings?.id || null,
-        comments: projectPublishStore.projectPublishSettings?.comments || false,
-        reactions: projectPublishStore.projectPublishSettings?.reactions || false,
-        votes: projectPublishStore.projectPublishSettings?.votes || false,
-        inbox: projectPublishStore.projectPublishSettings?.inbox || null,
+        id: projectPublishSettings?.id || null,
+        comments: projectPublishSettings?.comments || false,
+        reactions: projectPublishSettings?.reactions || false,
+        votes: projectPublishSettings?.votes || false,
+        inbox: projectPublishSettings?.inbox || null,
         views: userBoards,
       };
 
       reset({ ...updatedData });
     }
-  }, [reset, projectPublishStore.projectPublishSettings, isOpen]);
+  }, [reset, projectPublishSettings, isOpen]);
 
   // fetch publish settings
   useEffect(() => {
     if (!workspaceSlug || !isOpen) return;
 
-    if (projectPublishStore.projectPublishSettings === "not-initialized") {
-      projectPublishStore.getProjectSettingsAsync(workspaceSlug.toString(), project.id);
+    if (projectPublishSettings === "not-initialized") {
+      getProjectSettingsAsync(workspaceSlug.toString(), project.id);
     }
-  }, [isOpen, workspaceSlug, project, projectPublishStore]);
+  }, [isOpen, workspaceSlug, project, projectPublishSettings, getProjectSettingsAsync]);
 
   const handlePublishProject = async (payload: IProjectPublishSettings) => {
     if (!workspaceSlug) return;
 
-    return projectPublishStore
-      .publishProject(workspaceSlug.toString(), project.id, payload)
+    return publishProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
         handleClose();
         // window.open(`${plane_deploy_url}/${workspaceSlug}/${project.id}`, "_blank");
@@ -146,11 +149,10 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const handleUpdatePublishSettings = async (payload: IProjectPublishSettings) => {
     if (!workspaceSlug) return;
 
-    await projectPublishStore
-      .updateProjectSettingsAsync(workspaceSlug.toString(), project.id, payload.id ?? "", payload)
+    await updateProjectSettingsAsync(workspaceSlug.toString(), project.id, payload.id ?? "", payload)
       .then((res) => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Publish settings updated successfully!",
         });
@@ -159,30 +161,29 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
         return res;
       })
       .catch((error) => {
-        console.log("error", error);
+        console.error("error", error);
         return error;
       });
   };
 
-  const handleUnpublishProject = async (publishId: string) => {
+  const handleUnPublishProject = async (publishId: string) => {
     if (!workspaceSlug || !publishId) return;
 
-    setIsUnpublishing(true);
+    setIsUnPublishing(true);
 
-    await projectPublishStore
-      .unPublishProject(workspaceSlug.toString(), project.id, publishId)
+    await unPublishProject(workspaceSlug.toString(), project.id, publishId)
       .then((res) => {
         handleClose();
         return res;
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Something went wrong while unpublishing the project.",
+          message: "Something went wrong while un-publishing the project.",
         })
       )
-      .finally(() => setIsUnpublishing(false));
+      .finally(() => setIsUnPublishing(false));
   };
 
   const CopyLinkToClipboard = ({ copy_link }: { copy_link: string }) => {
@@ -208,8 +209,8 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
   const handleFormSubmit = async (formData: FormData) => {
     if (!formData.views || formData.views.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one view layout to publish the project.",
       });
@@ -236,10 +237,9 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
   // check if an update is required or not
   const checkIfUpdateIsRequired = () => {
-    if (!projectPublishStore.projectPublishSettings || projectPublishStore.projectPublishSettings === "not-initialized")
-      return;
+    if (!projectPublishSettings || projectPublishSettings === "not-initialized") return;
 
-    const currentSettings = projectPublishStore.projectPublishSettings as IProjectPublishSettings;
+    const currentSettings = projectPublishSettings;
     const newSettings = getValues();
 
     if (
@@ -265,10 +265,10 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-200"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -282,7 +282,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-200"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -298,16 +298,16 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                     {project.is_deployed && (
                       <Button
                         variant="danger"
-                        onClick={() => handleUnpublishProject(watch("id") ?? "")}
-                        loading={isUnpublishing}
+                        onClick={() => handleUnPublishProject(watch("id") ?? "")}
+                        loading={isUnPublishing}
                       >
-                        {isUnpublishing ? "Unpublishing..." : "Unpublish"}
+                        {isUnPublishing ? "Un-publishing..." : "Un-publish"}
                       </Button>
                     )}
                   </div>
 
                   {/* content */}
-                  {projectPublishStore.fetchSettingsLoader ? (
+                  {fetchSettingsLoader ? (
                     <Loader className="space-y-4 px-6">
                       <Loader.Item height="30px" />
                       <Loader.Item height="30px" />
@@ -363,16 +363,16 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                                           : "hover:bg-custom-background-80 hover:text-custom-text-100"
                                       }`}
                                       onClick={() => {
-                                        const _views =
+                                        const optionViews =
                                           value.length > 0
                                             ? value.includes(option.key)
                                               ? value.filter((_o: string) => _o !== option.key)
                                               : [...value, option.key]
                                             : [option.key];
 
-                                        if (_views.length === 0) return;
+                                        if (optionViews.length === 0) return;
 
-                                        onChange(_views);
+                                        onChange(optionViews);
                                         checkIfUpdateIsRequired();
                                       }}
                                     >
@@ -462,7 +462,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                       <Globe2 className="h-4 w-4" />
                       <div className="text-sm">Anyone with the link can access</div>
                     </div>
-                    {!projectPublishStore.fetchSettingsLoader && (
+                    {!fetchSettingsLoader && (
                       <div className="relative flex items-center gap-2">
                         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                           Cancel

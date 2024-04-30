@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
 from plane.db.models import GlobalView, IssueView, IssueViewFavorite
@@ -10,7 +10,9 @@ from plane.utils.issue_filters import issue_filters
 
 
 class GlobalViewSerializer(BaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    workspace_detail = WorkspaceLiteSerializer(
+        source="workspace", read_only=True
+    )
 
     class Meta:
         model = GlobalView
@@ -38,10 +40,12 @@ class GlobalViewSerializer(BaseSerializer):
         return super().update(instance, validated_data)
 
 
-class IssueViewSerializer(BaseSerializer):
+class IssueViewSerializer(DynamicBaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    workspace_detail = WorkspaceLiteSerializer(
+        source="workspace", read_only=True
+    )
 
     class Meta:
         model = IssueView
