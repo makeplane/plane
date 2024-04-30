@@ -16,13 +16,14 @@ import { useCycle, useLabel, useMember, useModule, useProject, useProjectState }
 // utils
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 import { HeaderGroupByCard } from "./headers/group-by-card";
+import { TRenderQuickActions } from "./list-view-types";
 
 export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
   group_by: string | null;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   enableIssueQuickAdd: boolean;
   showEmptyGroup?: boolean;
@@ -177,7 +178,7 @@ export interface IList {
   issuesMap: TIssueMap;
   group_by: string | null;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   showEmptyGroup: boolean;
   enableIssueQuickAdd: boolean;

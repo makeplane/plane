@@ -25,7 +25,7 @@ import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
-import { getChangedIssuefields } from "@/helpers/issue.helper";
+import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
 import { useAppRouter, useEstimate, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
@@ -468,17 +468,13 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           workspaceSlug={workspaceSlug?.toString() as string}
                           workspaceId={workspaceId}
                           projectId={projectId}
-                          // dragDropEnabled={false}
                           onChange={(_description: object, description_html: string) => {
                             onChange(description_html);
                             handleFormChange();
                           }}
                           ref={editorRef}
                           tabIndex={getTabIndex("description_html")}
-                          placeholder={(isFocused) => {
-                            if (isFocused) return "Press '/' for commands...";
-                            else return "Click to add description";
-                          }}
+                          placeholder={getDescriptionPlaceholder}
                         />
                       )}
                     />

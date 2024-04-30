@@ -1,38 +1,41 @@
+import { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
-// components
-// hooks
 // ui
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
-// helper
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { IssueProperties } from "../properties/all-properties";
+import { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
   issueId: string;
   issuesMap: TIssueMap;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlockProps) => {
   const { issuesMap, issueId, updateIssue, quickActions, displayProperties, canEditProperties } = props;
+  // refs
+  const parentRef = useRef(null);
   // hooks
   const { workspaceSlug } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
-  const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
     issue &&
     issue.project_id &&
     issue.id &&
-    peekIssue?.issueId !== issue.id &&
+    !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const issue = issuesMap[issueId];
@@ -44,11 +47,12 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
 
   return (
     <div
+      ref={parentRef}
       className={cn(
-        "relative flex min-h-12 flex-col gap-3 bg-custom-background-100 p-3 text-sm md:flex-row md:items-center",
+        "min-h-[52px] relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 text-sm",
         {
-          "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue && peekIssue.issueId === issue.id,
-          "last:border-b-transparent": peekIssue?.issueId !== issue.id,
+          "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+          "last:border-b-transparent": !getIsIssuePeeked(issue.id),
         }
       )}
     >
@@ -86,7 +90,12 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           )}
         </div>
         {!issue?.tempId && (
-          <div className="block rounded border border-custom-border-300 md:hidden ">{quickActions(issue)}</div>
+          <div className="block md:hidden border border-custom-border-300 rounded ">
+            {quickActions({
+              issue,
+              parentRef,
+            })}
+          </div>
         )}
       </div>
       <div className="flex flex-shrink-0 items-center gap-2">
@@ -100,7 +109,12 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
               displayProperties={displayProperties}
               activeLayout="List"
             />
-            <div className="hidden md:block">{quickActions(issue)}</div>
+            <div className="hidden md:block">
+              {quickActions({
+                issue,
+                parentRef,
+              })}
+            </div>
           </>
         ) : (
           <div className="h-4 w-4">

@@ -25,7 +25,7 @@ export const IssuesSidebarBlock: React.FC<Props> = observer((props) => {
   const { block, enableReorder, provided, snapshot } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive } = useGanttChart();
-  const { peekIssue } = useIssueDetail();
+  const { getIsIssuePeeked } = useIssueDetail();
 
   const duration = findTotalDaysInRange(block.start_date, block.target_date);
 
@@ -33,8 +33,9 @@ export const IssuesSidebarBlock: React.FC<Props> = observer((props) => {
     <div
       className={cn({
         "rounded bg-custom-background-80": snapshot.isDragging,
-        "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
-          peekIssue?.issueId === block.data.id,
+        "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(
+          block.data.id
+        ),
       })}
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}
