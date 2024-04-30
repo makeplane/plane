@@ -1,4 +1,4 @@
-import { MutableRefObject, memo, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react-lite";
@@ -17,7 +17,6 @@ import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-
 // helper
 
 interface IssueBlockProps {
-  peekIssueId?: string;
   issueId: string;
   issuesMap: IIssueMap;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -89,9 +88,8 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   );
 });
 
-export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
+export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const {
-    peekIssueId,
     issueId,
     issuesMap,
     displayProperties,
@@ -107,14 +105,14 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
   const {
     router: { workspaceSlug },
   } = useApplication();
-  const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
     issue &&
     issue.project_id &&
     issue.id &&
-    peekIssue?.issueId !== issue.id &&
+    !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const issue = issuesMap[issueId];
@@ -184,9 +182,11 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
           ref={cardRef}
           className={cn(
             "block rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
-            { "hover:cursor-pointer": isDragAllowed },
-            { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id },
-            { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
+            {
+              "hover:cursor-pointer": isDragAllowed,
+              "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+              "bg-custom-background-80 z-[100]": isCurrentBlockDragging,
+            }
           )}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}

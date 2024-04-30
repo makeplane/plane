@@ -54,6 +54,8 @@ export interface IIssueDetail
   isDeleteAttachmentModalOpen: boolean;
   // computed
   isAnyModalOpen: boolean;
+  // helper actions
+  getIsIssuePeeked: (issueId: string) => boolean;
   // actions
   setPeekIssue: (peekIssue: TPeekIssue | undefined) => void;
   toggleCreateIssueModal: (value: boolean) => void;
@@ -155,6 +157,9 @@ export class IssueDetail implements IIssueDetail {
       this.isDeleteAttachmentModalOpen
     );
   }
+
+  // helper actions
+  getIsIssuePeeked = (issueId: string) => this.peekIssue?.issueId === issueId;
 
   // actions
   setPeekIssue = (peekIssue: TPeekIssue | undefined) => (this.peekIssue = peekIssue);

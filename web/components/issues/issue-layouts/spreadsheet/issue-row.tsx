@@ -148,7 +148,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const { workspaceSlug } = router.query;
   //hooks
   const { getProjectIdentifierById } = useProject();
-  const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   const { isMobile } = usePlatformOS();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -159,7 +159,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     issue &&
     issue.project_id &&
     issue.id &&
-    peekIssue?.issueId !== issue.id &&
+    !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
 
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
@@ -200,12 +200,8 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         className={cn(
           "sticky group left-0 h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
           {
-            "border-b-[0.5px]": peekIssue?.issueId !== issueDetail.id,
-          },
-          {
-            "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue?.issueId === issueDetail.id,
-          },
-          {
+            "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
+            "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issueDetail.id),
             "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
           }
         )}
