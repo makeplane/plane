@@ -31,7 +31,7 @@ import {
 } from "@plane/ui";
 import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "@/components/project";
 // constants
-import { E_SIDEBAR } from "@/constants/event-tracker";
+import { E_SIDEBAR, PROJECT_FAVORITED, PROJECT_UNFAVORITED } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -97,6 +97,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
+  const { captureEvent } = useEventTracker();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
@@ -128,6 +129,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
         message: () => "Couldn't add the project to favorites. Please try again.",
       },
     });
+    addToFavoritePromise.then(() => captureEvent(PROJECT_FAVORITED, { project_id: project.id, element: E_SIDEBAR }));
   };
 
   const handleRemoveFromFavorites = () => {
@@ -145,6 +147,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
         message: () => "Couldn't remove the project from favorites. Please try again.",
       },
     });
+    removeFromFavoritePromise.then(() =>
+      captureEvent(PROJECT_UNFAVORITED, { project_id: project.id, element: E_SIDEBAR })
+    );
   };
 
   const handleLeaveProject = () => {

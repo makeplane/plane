@@ -188,6 +188,8 @@ export const WORKSPACE_DELETED = "Workspace deleted";
 export const PROJECT_CREATED = "Project created";
 export const PROJECT_UPDATED = "Project updated";
 export const PROJECT_DELETED = "Project deleted";
+export const PROJECT_FAVORITED = "Project favorited";
+export const PROJECT_UNFAVORITED = "Project unfavorited";
 // Cycle Events
 export const CYCLE_CREATED = "Cycle created";
 export const CYCLE_UPDATED = "Cycle updated";
