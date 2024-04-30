@@ -30,10 +30,8 @@ import useDynamicDropdownPosition from "@/hooks/use-dynamic-dropdown";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // assets
-import userDark from "public/onboarding/user-dark.svg";
-import userLight from "public/onboarding/user-light.svg";
-import user1 from "public/users/user-1.png";
-import user2 from "public/users/user-2.png";
+import InviteMembersDark from "public/onboarding/invite-members-dark.svg";
+import InviteMembersLight from "public/onboarding/invite-members-light.svg";
 // components
 import { OnboardingHeader } from "./header";
 import { SwitchOrDeleteAccountDropdown } from "./switch-or-delete-account-dropdown";
@@ -136,7 +134,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
   return (
     <div>
       <div className="group relative grid grid-cols-10 gap-4">
-        <div className="col-span-6 ml-8 rounded-md bg-onboarding-background-200">
+        <div className="col-span-6 ml-8">
           <Controller
             control={control}
             name={`emails.${index}.email`}
@@ -164,7 +162,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
             )}
           />
         </div>
-        <div className="col-span-4 mr-8 flex items-center rounded-md border border-onboarding-border-100 bg-onboarding-background-200">
+        <div className="col-span-4 mr-8">
           <Controller
             control={control}
             name={`emails.${index}.role`}
@@ -184,10 +182,10 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
                   type="button"
                   ref={buttonRef}
                   onClick={() => setIsDropdownOpen((prev) => !prev)}
-                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-xs duration-300"
+                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-sm border-[0.5px] border-onboarding-border-100"
                 >
                   <span
-                    className={`text-xs ${
+                    className={`text-sm ${
                       !getValues(`emails.${index}.role_active`)
                         ? "text-onboarding-text-400"
                         : "text-onboarding-text-100"
@@ -197,7 +195,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
                   </span>
 
                   <ChevronDown
-                    className={`h-4 w-4 ${
+                    className={`size-3 ${
                       !getValues(`emails.${index}.role_active`)
                         ? "stroke-onboarding-text-400"
                         : "stroke-onboarding-text-100"
@@ -365,7 +363,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
   return (
     <div className="flex w-full h-full">
-      <div className="w-full lg:w-3/5 h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
+      <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="flex items-center justify-between">
           {/* Since this will always be the last step */}
           <OnboardingHeader currentStep={totalSteps} totalSteps={totalSteps} />
@@ -437,46 +435,14 @@ export const InviteMembers: React.FC<Props> = (props) => {
           </form>
         </div>
       </div>
-      <div className="hidden lg:block w-2/5 px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28 bg-onboarding-gradient-100">
+      <div className="hidden lg:block relative w-2/5 h-screen overflow-hidden px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <SwitchOrDeleteAccountDropdown />
-        <div
-          className={`fixed mt-16 ml-16 hidden h-fit w-1/5 rounded border-x border-t border-onboarding-border-300 border-opacity-10 bg-onboarding-gradient-300 p-4 pb-40 lg:block`}
-        >
-          <p className="text-base font-semibold text-onboarding-text-400">Members</p>
-
-          {Array.from({ length: 4 }).map((i, index) => (
-            <div key={index} className="mt-6 flex items-center gap-2">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
-                <Image src={resolvedTheme === "dark" ? userDark : userLight} alt="user" className="object-cover" />
-              </div>
-              <div className="w-full">
-                <div className="my-2 h-2.5 w-1/2 rounded-md  bg-onboarding-background-400" />
-                <div className="h-2 w-1/3 rounded-md bg-onboarding-background-100" />
-              </div>
-            </div>
-          ))}
-
-          <div className="relative mt-20">
-            <div className="absolute right-24 mt-1 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onboarding-shadow-sm">
-              <div className="h-10 w-10 flex-shrink-0 rounded-full bg-custom-primary-10">
-                <Image src={user2} alt="user" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Murphy cooper</p>
-                <p className="text-sm text-onboarding-text-400">murphy@plane.so</p>
-              </div>
-            </div>
-
-            <div className="absolute right-12 mt-16 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onboarding-shadow-sm">
-              <div className="h-10 w-10 flex-shrink-0 rounded-full bg-custom-primary-10">
-                <Image src={user1} alt="user" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Else Thompson</p>
-                <p className="text-sm text-onboarding-text-400">Elsa@plane.so</p>
-              </div>
-            </div>
-          </div>
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={resolvedTheme === "dark" ? InviteMembersDark : InviteMembersLight}
+            className="h-screen w-auto float-end object-cover"
+            alt="Profile setup"
+          />
         </div>
       </div>
     </div>

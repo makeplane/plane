@@ -23,7 +23,7 @@ export const SwitchOrDeleteAccountDropdown: FC<TSwithOrDeleteAccountDropdownProp
   return (
     <div className="flex w-full shrink-0 justify-end">
       <SwitchOrDeleteAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
-      <div className="flex items-center gap-x-2 pr-4">
+      <div className="flex items-center gap-x-2 pr-4 z-10">
         {user?.avatar && (
           <Avatar
             name={
@@ -42,7 +42,7 @@ export const SwitchOrDeleteAccountDropdown: FC<TSwithOrDeleteAccountDropdownProp
         )}
         <div>
           <Menu>
-            <Menu.Button className={"flex items-center gap-x-1"}>
+            <Menu.Button className={"flex items-center gap-x-1 z-10"}>
               <span className="text-sm font-medium">
                 <p className="text-sm font-medium text-custom-text-200">
                   {user?.first_name

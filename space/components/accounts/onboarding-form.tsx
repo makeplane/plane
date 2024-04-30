@@ -210,7 +210,7 @@ export const OnBoardingForm: React.FC<Props> = observer((props) => {
         disabled={isButtonDisabled}
         loading={isSubmitting}
       >
-        {isSubmitting ? "Updating..." : "Continue"}
+        Continue
       </Button>
     </form>
   );
