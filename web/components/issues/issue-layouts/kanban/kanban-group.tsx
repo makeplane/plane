@@ -11,13 +11,19 @@ import {
   TSubGroupedIssues,
   TUnGroupedIssues,
   TIssueGroupByOptions,
+  TIssueOrderByOptions,
 } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 //components
-import { KanbanDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload } from "./utils";
+import {
+  KanbanDropLocation,
+  getSourceFromDropPayload,
+  getDestinationFromDropPayload,
+  highlightIssueOnDrop,
+} from "./utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {
@@ -45,6 +51,7 @@ interface IKanbanGroup {
   groupByVisibilityToggle?: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
+  orderBy: TIssueOrderByOptions | undefined;
 }
 
 export const KanbanGroup = (props: IKanbanGroup) => {
@@ -52,6 +59,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     groupId,
     sub_group_id,
     group_by,
+    orderBy,
     sub_group_by,
     issuesMap,
     displayProperties,
@@ -102,13 +110,15 @@ export const KanbanGroup = (props: IKanbanGroup) => {
           if (!source || !destination) return;
 
           handleOnDrop(source, destination);
+
+          highlightIssueOnDrop(payload.source.element.id, orderBy !== "sort_order");
         },
       }),
       autoScrollForElements({
         element,
       })
     );
-  }, [columnRef?.current, groupId, sub_group_id, setIsDraggingOverColumn]);
+  }, [columnRef?.current, groupId, sub_group_id, setIsDraggingOverColumn, orderBy]);
 
   const prePopulateQuickAddData = (
     groupByKey: string | undefined,
@@ -162,16 +172,28 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     return preloadedData;
   };
 
+  const shouldOverlay = isDraggingOverColumn && orderBy !== "sort_order";
   return (
     <div
       id={`${groupId}__${sub_group_id}`}
       className={cn(
         "relative h-full transition-all min-h-[50px]",
         { "bg-custom-background-80": isDraggingOverColumn },
-        { "vertical-scrollbar scrollbar-md": !sub_group_by }
+        { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlay }
       )}
       ref={columnRef}
     >
+      <div
+        className={cn(
+          "absolute top-0 left-0 h-full w-full justify-center items-center text-sm text-custom-text-100",
+          {
+            "flex bg-custom-primary-10 border-[2px] border-custom-primary-40 rounded z-[2]": shouldOverlay,
+          },
+          { hidden: !shouldOverlay }
+        )}
+      >
+        <span>Drop here to move issue</span>
+      </div>
       <KanbanIssueBlocksList
         sub_group_id={sub_group_id}
         columnId={groupId}

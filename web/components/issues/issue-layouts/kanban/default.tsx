@@ -11,6 +11,7 @@ import {
   TUnGroupedIssues,
   TIssueKanbanFilters,
   TIssueGroupByOptions,
+  TIssueOrderByOptions,
 } from "@plane/types";
 // constants
 // hooks
@@ -39,6 +40,7 @@ export interface IGroupByKanBan {
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
+  orderBy: TIssueOrderByOptions | undefined;
   sub_group_id: string;
   isDragDisabled: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -87,6 +89,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     handleOnDrop,
     showEmptyGroup = true,
     subGroupIssueHeaderCount,
+    orderBy,
   } = props;
 
   const member = useMember();
@@ -180,6 +183,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   displayProperties={displayProperties}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
+                  orderBy={orderBy}
                   sub_group_id={sub_group_id}
                   isDragDisabled={isDragDisabled}
                   updateIssue={updateIssue}
@@ -206,6 +210,7 @@ export interface IKanBan {
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
+  orderBy: TIssueOrderByOptions | undefined;
   sub_group_id?: string;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
@@ -252,6 +257,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     handleOnDrop,
     showEmptyGroup,
     subGroupIssueHeaderCount,
+    orderBy,
   } = props;
 
   const issueKanBanView = useKanbanView();
@@ -263,6 +269,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       displayProperties={displayProperties}
       group_by={group_by}
       sub_group_by={sub_group_by}
+      orderBy={orderBy}
       sub_group_id={sub_group_id}
       isDragDisabled={!issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by)}
       updateIssue={updateIssue}
