@@ -422,8 +422,10 @@ body {
 }
 
 .vertical-lr {
+  writing-mode: vertical-lr;
   -webkit-writing-mode: vertical-lr;
   -ms-writing-mode: vertical-lr;
+  width: fit-content;
 }
 
 div.web-view-spinner {
