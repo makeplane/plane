@@ -55,7 +55,7 @@ export interface IIssueDetail
   // computed
   isAnyModalOpen: boolean;
   // helper actions
-  isIssuePeeked: (issueId: string) => boolean;
+  getIsIssuePeeked: (issueId: string) => boolean;
   // actions
   setPeekIssue: (peekIssue: TPeekIssue | undefined) => void;
   toggleCreateIssueModal: (value: boolean) => void;
@@ -159,7 +159,7 @@ export class IssueDetail implements IIssueDetail {
   }
 
   // helper actions
-  isIssuePeeked = (issueId: string) => this.peekIssue?.issueId === issueId;
+  getIsIssuePeeked = (issueId: string) => this.peekIssue?.issueId === issueId;
 
   // actions
   setPeekIssue = (peekIssue: TPeekIssue | undefined) => (this.peekIssue = peekIssue);

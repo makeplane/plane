@@ -27,14 +27,14 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     router: { workspaceSlug },
   } = useApplication();
   const { getProjectIdentifierById } = useProject();
-  const { isIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
     issue &&
     issue.project_id &&
     issue.id &&
-    !isIssuePeeked(issue.id) &&
+    !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const issue = issuesMap[issueId];
@@ -49,8 +49,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
       className={cn(
         "min-h-12 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 text-sm",
         {
-          "border border-custom-primary-70 hover:border-custom-primary-70": isIssuePeeked(issue.id),
-          "last:border-b-transparent": !isIssuePeeked(issue.id),
+          "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+          "last:border-b-transparent": !getIsIssuePeeked(issue.id),
         }
       )}
     >

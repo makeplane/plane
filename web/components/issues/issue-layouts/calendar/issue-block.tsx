@@ -27,7 +27,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
   } = useApplication();
   const { getProjectIdentifierById } = useProject();
   const { getProjectStates } = useProjectState();
-  const { isIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   const { isMobile } = usePlatformOS();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -41,7 +41,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
     issue &&
     issue.project_id &&
     issue.id &&
-    !isIssuePeeked(issue.id) &&
+    !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
@@ -83,7 +83,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
             {
               "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100": isDragging,
               "bg-custom-background-100 hover:bg-custom-background-90": !isDragging,
-              "border border-custom-primary-70 hover:border-custom-primary-70": isIssuePeeked(issue.id),
+              "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
             }
           )}
         >
