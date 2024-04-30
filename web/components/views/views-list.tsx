@@ -29,6 +29,11 @@ export const ProjectViewsList = observer(() => {
   } = useApplication();
   const { projectViewIds, getViewById, loader } = useProjectView();
 
+  // outside click detector hook
+  useOutsideClickDetector(inputRef, () => {
+    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
+  });
+
   if (loader || !projectViewIds) return <ViewListLoader />;
 
   // derived values
@@ -47,18 +52,13 @@ export const ProjectViewsList = observer(() => {
     }
   };
 
-  // outside click detector hook
-  useOutsideClickDetector(inputRef, () => {
-    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
-  });
-
   return (
     <>
       {viewsList.length > 0 ? (
         <div className="flex h-full w-full flex-col">
           <div className="h-[50px] flex-shrink-0 w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
             <div className="flex items-center">
-              <span className="block text-sm font-medium">View name</span>
+              <span className="block text-sm font-medium">Project Views</span>
             </div>
             <div className="h-full flex items-center gap-2">
               <div className="flex items-center">
