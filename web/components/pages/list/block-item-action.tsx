@@ -15,10 +15,11 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   pageId: string;
+  parentRef: React.RefObject<HTMLElement>;
 };
 
 export const BlockItemAction: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, pageId } = props;
+  const { workspaceSlug, projectId, pageId, parentRef } = props;
 
   // store hooks
   const { access, created_at, is_favorite, owned_by, addToFavorites, removeFromFavorites } = usePage(pageId);
@@ -88,7 +89,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
       />
 
       {/* quick actions dropdown */}
-      <PageQuickActions pageId={pageId} projectId={projectId} workspaceSlug={workspaceSlug} />
+      <PageQuickActions parentRef={parentRef} pageId={pageId} projectId={projectId} workspaceSlug={workspaceSlug} />
     </>
   );
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // icons
@@ -14,11 +14,12 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   moduleId: string;
-  isArchived?: boolean;
 };
 
 export const ModuleListItem: React.FC<Props> = observer((props) => {
-  const { moduleId, isArchived = false } = props;
+  const { moduleId } = props;
+  // refs
+  const parentRef = useRef(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -63,9 +64,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
       title={moduleDetails?.name ?? ""}
       itemLink={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
       onItemClick={(e) => {
-        if (isArchived) {
-          openModuleOverview(e);
-        }
+        if (moduleDetails.archived_at) openModuleOverview(e);
       }}
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
@@ -91,9 +90,10 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
         </button>
       }
       actionableItems={
-        <ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} isArchived={isArchived} />
+        <ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />
       }
       isMobile={isMobile}
+      parentRef={parentRef}
     />
   );
 });

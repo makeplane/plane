@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -24,6 +24,8 @@ type Props = {
 
 export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { moduleId } = props;
+  // refs
+  const parentRef = useRef(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -145,7 +147,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   return (
     <div className="relative">
-      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
+      <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
         <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div>
             <div className="flex items-center justify-between gap-2">
@@ -239,6 +241,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
         )}
         {workspaceSlug && projectId && (
           <ModuleQuickActions
+            parentRef={parentRef}
             moduleId={moduleId}
             projectId={projectId.toString()}
             workspaceSlug={workspaceSlug.toString()}

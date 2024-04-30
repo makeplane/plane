@@ -5,22 +5,15 @@ type Props = {
   cycleIds: string[];
   projectId: string;
   workspaceSlug: string;
-  isArchived?: boolean;
 };
 
 export const CyclesListMap: React.FC<Props> = (props) => {
-  const { cycleIds, projectId, workspaceSlug, isArchived } = props;
+  const { cycleIds, projectId, workspaceSlug } = props;
 
   return (
     <>
       {cycleIds.map((cycleId) => (
-        <CyclesListItem
-          key={cycleId}
-          cycleId={cycleId}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          isArchived={isArchived}
-        />
+        <CyclesListItem key={cycleId} cycleId={cycleId} workspaceSlug={workspaceSlug} projectId={projectId} />
       ))}
     </>
   );

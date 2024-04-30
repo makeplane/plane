@@ -2,6 +2,7 @@ import { MutableRefObject, memo } from "react";
 //types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { KanbanIssueBlock } from "@/components/issues";
+import { TRenderQuickActions } from "../list/list-view-types";
 // components
 
 interface IssueBlocksListProps {
@@ -12,7 +13,7 @@ interface IssueBlocksListProps {
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }

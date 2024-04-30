@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 // components
 import { ListItem } from "@/components/core/list";
@@ -15,6 +15,8 @@ type TPageListBlock = {
 
 export const PageListBlock: FC<TPageListBlock> = observer((props) => {
   const { workspaceSlug, projectId, pageId } = props;
+  // refs
+  const parentRef = useRef(null);
   // hooks
   const { name } = usePage(pageId);
   const { isMobile } = usePlatformOS();
@@ -23,8 +25,9 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
     <ListItem
       title={name ?? ""}
       itemLink={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
-      actionableItems={<BlockItemAction workspaceSlug={workspaceSlug} projectId={projectId} pageId={pageId} />}
+      actionableItems={<BlockItemAction workspaceSlug={workspaceSlug} projectId={projectId} pageId={pageId} parentRef={parentRef} />}
       isMobile={isMobile}
+      parentRef={parentRef}
     />
   );
 });

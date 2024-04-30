@@ -17,6 +17,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 //components
+import { TRenderQuickActions } from "../list/list-view-types";
 import { KanbanDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload } from "./utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
@@ -30,7 +31,7 @@ interface IKanbanGroup {
   sub_group_id: string;
   isDragDisabled: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,

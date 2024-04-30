@@ -2,27 +2,28 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
-import { ArchiveRestoreIcon, LinkIcon, Pencil, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui
-import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useModule, useEventTracker, useUser } from "@/hooks/store";
 
 type Props = {
+  parentRef: React.RefObject<HTMLDivElement>;
   moduleId: string;
   projectId: string;
   workspaceSlug: string;
-  isArchived?: boolean;
 };
 
 export const ModuleQuickActions: React.FC<Props> = observer((props) => {
-  const { moduleId, projectId, workspaceSlug, isArchived } = props;
+  const { parentRef, moduleId, projectId, workspaceSlug } = props;
   // router
   const router = useRouter();
   // states
@@ -37,6 +38,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const { getModuleById, restoreModule } = useModule();
   // derived values
   const moduleDetails = getModuleById(moduleId);
+  const isArchived = !!moduleDetails?.archived_at;
   // auth
   const isEditingAllowed =
     !!currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId] >= EUserProjectRoles.MEMBER;
@@ -44,34 +46,25 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const moduleState = moduleDetails?.status?.toLocaleLowerCase();
   const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
 
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`).then(() => {
+  const moduleLink = `${workspaceSlug}/projects/${projectId}/modules/${moduleId}`;
+  const handleCopyText = () =>
+    copyUrlToClipboard(moduleLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Module link copied to clipboard.",
       });
     });
-  };
+  const handleOpenInNewTab = () => window.open(`/${moduleLink}`, "_blank");
 
-  const handleEditModule = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleEditModule = () => {
     setTrackElement("Modules page list layout");
     setEditModal(true);
   };
 
-  const handleArchiveModule = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setArchiveModuleModal(true);
-  };
+  const handleArchiveModule = () => setArchiveModuleModal(true);
 
-  const handleRestoreModule = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleRestoreModule = async () =>
     await restoreModule(workspaceSlug, projectId, moduleId)
       .then(() => {
         setToast({
@@ -88,14 +81,60 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
           message: "Module could not be restored. Please try again.",
         })
       );
-  };
 
-  const handleDeleteModule = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDeleteModule = () => {
     setTrackElement("Modules page list layout");
     setDeleteModal(true);
   };
+
+  const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "edit",
+      title: "Edit",
+      icon: Pencil,
+      action: handleEditModule,
+      shouldRender: isEditingAllowed && !isArchived,
+    },
+    {
+      key: "open-new-tab",
+      action: handleOpenInNewTab,
+      title: "Open in new tab",
+      icon: ExternalLink,
+      shouldRender: !isArchived,
+    },
+    {
+      key: "copy-link",
+      action: handleCopyText,
+      title: "Copy link",
+      icon: LinkIcon,
+      shouldRender: !isArchived,
+    },
+    {
+      key: "archive",
+      action: handleArchiveModule,
+      title: "Archive",
+      description: isInArchivableGroup ? undefined : "Only completed or canceled\nmodule can be archived.",
+      icon: ArchiveIcon,
+      className: "items-start",
+      iconClassName: "mt-1",
+      shouldRender: isEditingAllowed && !isArchived,
+      disabled: !isInArchivableGroup,
+    },
+    {
+      key: "restore",
+      action: handleRestoreModule,
+      title: "Restore",
+      icon: ArchiveRestoreIcon,
+      shouldRender: isEditingAllowed && isArchived,
+    },
+    {
+      key: "delete",
+      action: handleDeleteModule,
+      title: "Delete",
+      icon: Trash2,
+      shouldRender: isEditingAllowed,
+    },
+  ];
 
   return (
     <>
@@ -118,60 +157,42 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
           <DeleteModuleModal data={moduleDetails} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
         </div>
       )}
-      <CustomMenu ellipsis placement="left-start">
-        {isEditingAllowed && !isArchived && (
-          <CustomMenu.MenuItem onClick={handleEditModule}>
-            <span className="flex items-center justify-start gap-2">
-              <Pencil className="h-3 w-3" />
-              <span>Edit module</span>
-            </span>
-          </CustomMenu.MenuItem>
-        )}
-        {isEditingAllowed && !isArchived && (
-          <CustomMenu.MenuItem onClick={handleArchiveModule} disabled={!isInArchivableGroup}>
-            {isInArchivableGroup ? (
-              <div className="flex items-center gap-2">
-                <ArchiveIcon className="h-3 w-3" />
-                Archive module
-              </div>
-            ) : (
-              <div className="flex items-start gap-2">
-                <ArchiveIcon className="h-3 w-3" />
-                <div className="-mt-1">
-                  <p>Archive module</p>
-                  <p className="text-xs text-custom-text-400">
-                    Only completed or cancelled <br /> module can be archived.
+      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+        {MENU_ITEMS.map((item) => {
+          if (item.shouldRender === false) return null;
+          return (
+            <CustomMenu.MenuItem
+              key={item.key}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                item.action();
+              }}
+              className={cn(
+                "flex items-center gap-2",
+                {
+                  "text-custom-text-400": item.disabled,
+                },
+                item.className
+              )}
+            >
+              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+              <div>
+                <h5>{item.title}</h5>
+                {item.description && (
+                  <p
+                    className={cn("text-custom-text-300 whitespace-pre-line", {
+                      "text-custom-text-400": item.disabled,
+                    })}
+                  >
+                    {item.description}
                   </p>
-                </div>
+                )}
               </div>
-            )}
-          </CustomMenu.MenuItem>
-        )}
-        {isEditingAllowed && isArchived && (
-          <CustomMenu.MenuItem onClick={handleRestoreModule}>
-            <span className="flex items-center justify-start gap-2">
-              <ArchiveRestoreIcon className="h-3 w-3" />
-              <span>Restore module</span>
-            </span>
-          </CustomMenu.MenuItem>
-        )}
-        {!isArchived && (
-          <CustomMenu.MenuItem onClick={handleCopyText}>
-            <span className="flex items-center justify-start gap-2">
-              <LinkIcon className="h-3 w-3" />
-              <span>Copy module link</span>
-            </span>
-          </CustomMenu.MenuItem>
-        )}
-        <hr className="my-2 border-custom-border-200" />
-        {isEditingAllowed && (
-          <CustomMenu.MenuItem onClick={handleDeleteModule}>
-            <span className="flex items-center justify-start gap-2">
-              <Trash2 className="h-3 w-3" />
-              <span>Delete module</span>
-            </span>
-          </CustomMenu.MenuItem>
-        )}
+            </CustomMenu.MenuItem>
+          );
+        })}
       </CustomMenu>
     </>
   );

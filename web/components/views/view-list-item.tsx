@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // types
@@ -15,6 +15,8 @@ type Props = {
 
 export const ProjectViewListItem: FC<Props> = observer((props) => {
   const { view } = props;
+  // refs
+  const parentRef = useRef(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -25,8 +27,9 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
     <ListItem
       title={view.name}
       itemLink={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}
-      actionableItems={<ViewListItemAction view={view} />}
+      actionableItems={<ViewListItemAction parentRef={parentRef} view={view} />}
       isMobile={isMobile}
+      parentRef={parentRef}
     />
   );
 });

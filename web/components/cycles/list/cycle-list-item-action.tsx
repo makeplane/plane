@@ -23,11 +23,11 @@ type Props = {
   projectId: string;
   cycleId: string;
   cycleDetails: ICycle;
-  isArchived: boolean;
+  parentRef: React.RefObject<HTMLDivElement>;
 };
 
 export const CycleListItemAction: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, cycleId, cycleDetails, isArchived } = props;
+  const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef } = props;
   // hooks
   const { isMobile } = usePlatformOS();
   // store hooks
@@ -103,6 +103,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       },
     });
   };
+
   return (
     <>
       <div className="text-xs text-custom-text-300 flex-shrink-0">
@@ -140,7 +141,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
         </div>
       </Tooltip>
 
-      {isEditingAllowed && !isArchived && (
+      {isEditingAllowed && !cycleDetails.archived_at && (
         <FavoriteStar
           onClick={(e) => {
             if (cycleDetails.is_favorite) handleRemoveFromFavorites(e);
@@ -149,12 +150,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           selected={!!cycleDetails.is_favorite}
         />
       )}
-      <CycleQuickActions
-        cycleId={cycleId}
-        projectId={projectId}
-        workspaceSlug={workspaceSlug}
-        isArchived={isArchived}
-      />
+      <CycleQuickActions parentRef={parentRef} cycleId={cycleId} projectId={projectId} workspaceSlug={workspaceSlug} />
     </>
   );
 });

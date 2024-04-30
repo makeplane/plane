@@ -27,7 +27,6 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
             cycleIds={cycleIds}
             projectId={projectId}
             workspaceSlug={workspaceSlug}
-            isArchived={isArchived}
           />
           {completedCycleIds.length !== 0 && (
             <Disclosure as="div" className="py-8 pl-3 space-y-4">
@@ -44,12 +43,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
                 )}
               </Disclosure.Button>
               <Disclosure.Panel>
-                <CyclesListMap
-                  cycleIds={completedCycleIds}
-                  projectId={projectId}
-                  workspaceSlug={workspaceSlug}
-                  isArchived={isArchived}
-                />
+                <CyclesListMap cycleIds={completedCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
               </Disclosure.Panel>
             </Disclosure>
           )}

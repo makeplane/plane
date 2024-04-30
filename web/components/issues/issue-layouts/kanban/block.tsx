@@ -10,6 +10,7 @@ import { cn } from "@/helpers/common.helper";
 import { useApplication, useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
+import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 // ui
@@ -23,22 +24,23 @@ interface IssueBlockProps {
   isDragDisabled: boolean;
   draggableId: string;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   issueIds: string[]; //DO NOT REMOVE< needed to force render for virtualization
 }
 
 interface IssueDetailsBlockProps {
+  cardRef: React.RefObject<HTMLElement>;
   issue: TIssue;
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   isReadOnly: boolean;
 }
 
-const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props: IssueDetailsBlockProps) => {
-  const { issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
+const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
+  const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
   // hooks
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
@@ -59,7 +61,10 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
             className="absolute -top-1 right-0 hidden group-hover/kanban-block:block"
             onClick={handleEventPropagation}
           >
-            {quickActions(issue)}
+            {quickActions({
+              issue,
+              parentRef: cardRef,
+            })}
           </div>
         </div>
       </WithDisplayPropertiesHOC>
@@ -200,6 +205,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
             changingReference={issueIds}
           >
             <KanbanIssueDetailsBlock
+              cardRef={cardRef}
               issue={issue}
               displayProperties={displayProperties}
               updateIssue={updateIssue}

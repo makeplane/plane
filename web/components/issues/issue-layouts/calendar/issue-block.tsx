@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 import { TIssue } from "@plane/types";
@@ -12,15 +11,21 @@ import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { TRenderQuickActions } from "../list/list-view-types";
 
 type Props = {
   issue: TIssue;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   isDragging?: boolean;
 };
 
 export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
   const { issue, quickActions, isDragging = false } = props;
+  // states
+  const [isMenuActive, setIsMenuActive] = useState(false);
+  // refs
+  const blockRef = useRef(null);
+  const menuActionRef = useRef<HTMLDivElement | null>(null);
   // hooks
   const {
     router: { workspaceSlug, projectId },
@@ -29,10 +34,6 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
   const { getProjectStates } = useProjectState();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   const { isMobile } = usePlatformOS();
-  // states
-  const [isMenuActive, setIsMenuActive] = useState(false);
-
-  const menuActionRef = useRef<HTMLDivElement | null>(null);
 
   const stateColor = getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
 
@@ -78,6 +79,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
         )}
 
         <div
+          ref={blockRef}
           className={cn(
             "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded border-b md:border-[0.5px] border-custom-border-200 hover:border-custom-border-400 md:px-1 px-4 py-1.5 ",
             {
@@ -110,7 +112,12 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
               e.stopPropagation();
             }}
           >
-            {quickActions(issue, customActionButton, placement)}
+            {quickActions({
+              issue,
+              parentRef: blockRef,
+              customActionButton,
+              placement,
+            })}
           </div>
         </div>
       </>

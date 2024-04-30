@@ -1,4 +1,4 @@
-import { FC, MouseEvent } from "react";
+import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
@@ -22,11 +22,12 @@ type TCyclesListItem = {
   handleRemoveFromFavorites?: () => void;
   workspaceSlug: string;
   projectId: string;
-  isArchived?: boolean;
 };
 
 export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
-  const { cycleId, workspaceSlug, projectId, isArchived = false } = props;
+  const { cycleId, workspaceSlug, projectId } = props;
+  // refs
+  const parentRef = useRef(null);
   // router
   const router = useRouter();
   // hooks
@@ -80,9 +81,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
       title={cycleDetails?.name ?? ""}
       itemLink={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
       onItemClick={(e) => {
-        if (isArchived) {
-          openCycleOverview(e);
-        }
+        if (cycleDetails.archived_at) openCycleOverview(e);
       }}
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
@@ -113,10 +112,11 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
           projectId={projectId}
           cycleId={cycleId}
           cycleDetails={cycleDetails}
-          isArchived={isArchived}
+          parentRef={parentRef}
         />
       }
       isMobile={isMobile}
+      parentRef={parentRef}
     />
   );
 });

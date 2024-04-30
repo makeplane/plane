@@ -1,29 +1,25 @@
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// icons
-import { LinkIcon, PencilIcon, TrashIcon } from "lucide-react";
 // types
 import { IProjectView } from "@plane/types";
-// ui
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { FavoriteStar } from "@/components/core";
-import { DeleteProjectViewModal, CreateUpdateProjectViewModal } from "@/components/views";
+import { DeleteProjectViewModal, CreateUpdateProjectViewModal, ViewQuickActions } from "@/components/views";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProjectView, useUser } from "@/hooks/store";
 
 type Props = {
+  parentRef: React.RefObject<HTMLElement>;
   view: IProjectView;
 };
 
 export const ViewListItemAction: FC<Props> = observer((props) => {
-  const { view } = props;
+  const { parentRef, view } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
@@ -54,18 +50,6 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
     removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
   };
 
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/views/${view.id}`).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "View link copied to clipboard.",
-      });
-    });
-  };
-
   return (
     <>
       {workspaceSlug && projectId && view && (
@@ -92,43 +76,14 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
           selected={view.is_favorite}
         />
       )}
-
-      <CustomMenu ellipsis>
-        {isEditingAllowed && (
-          <>
-            <CustomMenu.MenuItem
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setCreateUpdateViewModal(true);
-              }}
-            >
-              <span className="flex items-center justify-start gap-2">
-                <PencilIcon size={14} strokeWidth={2} />
-                <span>Edit View</span>
-              </span>
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setDeleteViewModal(true);
-              }}
-            >
-              <span className="flex items-center justify-start gap-2">
-                <TrashIcon size={14} strokeWidth={2} />
-                <span>Delete View</span>
-              </span>
-            </CustomMenu.MenuItem>
-          </>
-        )}
-        <CustomMenu.MenuItem onClick={handleCopyText}>
-          <span className="flex items-center justify-start gap-2">
-            <LinkIcon className="h-3 w-3" />
-            <span>Copy view link</span>
-          </span>
-        </CustomMenu.MenuItem>
-      </CustomMenu>
+      {projectId && workspaceSlug && (
+        <ViewQuickActions
+          parentRef={parentRef}
+          projectId={projectId.toString()}
+          view={view}
+          workspaceSlug={workspaceSlug.toString()}
+        />
+      )}
     </>
   );
 });

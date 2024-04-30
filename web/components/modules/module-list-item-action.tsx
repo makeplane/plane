@@ -23,11 +23,11 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 type Props = {
   moduleId: string;
   moduleDetails: IModule;
-  isArchived: boolean;
+  parentRef: React.RefObject<HTMLDivElement>;
 };
 
 export const ModuleListItemAction: FC<Props> = observer((props) => {
-  const { moduleId, moduleDetails, isArchived } = props;
+  const { moduleId, moduleDetails, parentRef } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -146,7 +146,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
         </div>
       </Tooltip>
 
-      {isEditingAllowed && !isArchived && (
+      {isEditingAllowed && !moduleDetails.archived_at && (
         <FavoriteStar
           onClick={(e) => {
             if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);
@@ -157,10 +157,10 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
       )}
       {workspaceSlug && projectId && (
         <ModuleQuickActions
+          parentRef={parentRef}
           moduleId={moduleId}
           projectId={projectId.toString()}
           workspaceSlug={workspaceSlug.toString()}
-          isArchived={isArchived}
         />
       )}
     </>
