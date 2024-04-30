@@ -38,8 +38,10 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
           "inline-block self-center h-4 w-4 transform rounded-full shadow ring-0 transition duration-200 ease-in-out",
           {
             "translate-x-5 bg-white": value,
-            "h-2 w-2 translate-x-3": value && size === "sm",
-            "h-3 w-3 translate-x-4": value && size === "md",
+            "h-2 w-2": size === "sm",
+            "h-3 w-3": size === "md",
+            "translate-x-3": value && size === "sm",
+            "translate-x-4": value && size === "md",
             "translate-x-0.5 bg-custom-background-90": !value,
             "cursor-not-allowed": disabled,
           }
