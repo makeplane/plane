@@ -23,7 +23,7 @@ type TInboxIssueRoot = {
 export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, inboxAccessible } = props;
   // states
-  const [toggleMobileSidebar, setToggleMobileSidebar] = useState(false);
+  const [isMobileSidebar, setIsMobileSidebar] = useState(true);
   // hooks
   const { loader, error, fetchInboxIssues } = useProjectInbox();
 
@@ -60,8 +60,8 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
       {!inboxIssueId && (
         <div className="flex lg:hidden items-center px-4 w-full h-12 border-b border-custom-border-200">
           <PanelLeft
-            onClick={() => setToggleMobileSidebar(!toggleMobileSidebar)}
-            className={cn("w-4 h-4 ", toggleMobileSidebar ? "text-custom-primary-100" : " text-custom-text-200")}
+            onClick={() => setIsMobileSidebar(!isMobileSidebar)}
+            className={cn("w-4 h-4 ", isMobileSidebar ? "text-custom-primary-100" : " text-custom-text-200")}
           />
         </div>
       )}
@@ -69,11 +69,11 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
         <div
           className={cn(
             "absolute z-10 top-[50px] lg:!top-0 lg:!relative bg-custom-background-100 flex-shrink-0 w-full lg:w-2/6 bottom-0 transition-all",
-            toggleMobileSidebar ? "translate-x-0" : "-translate-x-full lg:!translate-x-0",
+            isMobileSidebar ? "translate-x-0" : "-translate-x-full lg:!translate-x-0"
           )}
         >
           <InboxSidebar
-            setToggleMobileSidebar={setToggleMobileSidebar}
+            setIsMobileSidebar={setIsMobileSidebar}
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
           />
@@ -81,8 +81,8 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
 
         {inboxIssueId ? (
           <InboxContentRoot
-            setToggleMobileSidebar={setToggleMobileSidebar}
-            toggleMobileSidebar={toggleMobileSidebar}
+            setIsMobileSidebar={setIsMobileSidebar}
+            isMobileSidebar={isMobileSidebar}
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
             inboxIssueId={inboxIssueId.toString()}

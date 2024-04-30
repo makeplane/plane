@@ -20,7 +20,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 type IInboxSidebarProps = {
   workspaceSlug: string;
   projectId: string;
-  setToggleMobileSidebar: (value: boolean) => void;
+  setIsMobileSidebar: (value: boolean) => void;
 };
 
 const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
@@ -35,7 +35,7 @@ const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
 ];
 
 export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
-  const { workspaceSlug, projectId, setToggleMobileSidebar } = props;
+  const { workspaceSlug, projectId, setIsMobileSidebar } = props;
   // ref
   const containerRef = useRef<HTMLDivElement>(null);
   const elementRef = useRef<HTMLDivElement>(null);
@@ -115,7 +115,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
           >
             {inboxIssuesArray.length > 0 ? (
               <InboxIssueList
-                setToggleMobileSidebar={setToggleMobileSidebar}
+                setIsMobileSidebar={setIsMobileSidebar}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 projectIdentifier={currentProjectDetails?.identifier}
