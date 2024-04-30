@@ -91,8 +91,16 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   };
 
   useEffect(() => {
-    if (workspacesList && workspacesList?.length > 0) setTotalSteps(1);
-    else setTotalSteps(3);
+    // If user is already invited to a workspace, only show profile setup steps.
+    if (workspacesList && workspacesList?.length > 0) {
+      // If password is auto set then show two different steps for profile setup, else merge them.
+      if (user?.is_password_autoset) setTotalSteps(2);
+      else setTotalSteps(1);
+    } else {
+      // If password is auto set then total steps will increase to 4 due to extra step at profile setup stage.
+      if (user?.is_password_autoset) setTotalSteps(4);
+      else setTotalSteps(3);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -122,7 +130,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
       }
 
       // For Invited Users, they will skip all other steps.
-      if (totalSteps && totalSteps === 1) return;
+      if (totalSteps && totalSteps <= 2) return;
 
       if (onboardingStep.profile_complete && !(onboardingStep.workspace_join || onboardingStep.workspace_create)) {
         setStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
