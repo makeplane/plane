@@ -24,7 +24,6 @@ import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
-  peekIssueId?: string;
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
@@ -57,7 +56,6 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     issuesMap,
     displayProperties,
     issueIds,
-    peekIssueId,
     isDragDisabled,
     updateIssue,
     quickActions,
@@ -177,7 +175,6 @@ export const KanbanGroup = (props: IKanbanGroup) => {
         sub_group_id={sub_group_id}
         columnId={groupId}
         issuesMap={issuesMap}
-        peekIssueId={peekIssueId}
         issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
         displayProperties={displayProperties}
         isDragDisabled={isDragDisabled}

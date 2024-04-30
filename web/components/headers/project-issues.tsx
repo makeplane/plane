@@ -116,124 +116,121 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className="relative z-[15] items-center gap-x-2 gap-y-4">
-        <div className="flex items-center gap-2 p-4 bg-custom-sidebar-background-100">
-          <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-            <div className="flex items-center gap-2.5">
-              <Breadcrumbs onBack={() => router.back()}>
-                <Breadcrumbs.BreadcrumbItem
-                  type="text"
-                  link={
-                    <BreadcrumbLink
-                      href={`/${workspaceSlug}/projects`}
-                      label={currentProjectDetails?.name ?? "Project"}
-                      icon={
-                        currentProjectDetails ? (
-                          currentProjectDetails && (
-                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                              <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
-                            </span>
-                          )
-                        ) : (
-                          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                            <Briefcase className="h-4 w-4" />
+
+      <div className="relative z-[15] flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
+        <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+          <div className="flex items-center gap-2.5">
+            <Breadcrumbs onBack={() => router.back()}>
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                link={
+                  <BreadcrumbLink
+                    href={`/${workspaceSlug}/projects`}
+                    label={currentProjectDetails?.name ?? "Project"}
+                    icon={
+                      currentProjectDetails ? (
+                        currentProjectDetails && (
+                          <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                            <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                           </span>
                         )
-                      }
-                    />
-                  }
-                />
-
-                <Breadcrumbs.BreadcrumbItem
-                  type="text"
-                  link={
-                    <BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
-                  }
-                />
-              </Breadcrumbs>
-              {issueCount && issueCount > 0 ? (
-                <Tooltip
-                  isMobile={isMobile}
-                  tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in this project`}
-                  position="bottom"
-                >
-                  <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                    {issueCount}
-                  </span>
-                </Tooltip>
-              ) : null}
-            </div>
-            {currentProjectDetails?.is_deployed && deployUrl && (
-              <a
-                href={`${deployUrl}/${workspaceSlug}/${currentProjectDetails?.id}`}
-                className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
-                Public
-                <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
-              </a>
-            )}
-          </div>
-          <div className="items-center gap-2 hidden md:flex">
-            <LayoutSelection
-              layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
-              onChange={(layout) => handleLayoutChange(layout)}
-              selectedLayout={activeLayout}
-            />
-            <FiltersDropdown title="Filters" placement="bottom-end">
-              <FilterSelection
-                filters={issueFilters?.filters ?? {}}
-                handleFiltersUpdate={handleFiltersUpdate}
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                      ) : (
+                        <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                          <Briefcase className="h-4 w-4" />
+                        </span>
+                      )
+                    }
+                  />
                 }
-                labels={projectLabels}
-                memberIds={projectMemberIds ?? undefined}
-                states={projectStates}
-                cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                moduleViewDisabled={!currentProjectDetails?.module_view}
               />
-            </FiltersDropdown>
-            <FiltersDropdown title="Display" placement="bottom-end">
-              <DisplayFiltersSelection
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-                }
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
-                handleDisplayPropertiesUpdate={handleDisplayProperties}
-                cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                moduleViewDisabled={!currentProjectDetails?.module_view}
-              />
-            </FiltersDropdown>
-          </div>
 
-          {canUserCreateIssue && (
-            <>
-              <Button
-                className="hidden md:block"
-                onClick={() => setAnalyticsModal(true)}
-                variant="neutral-primary"
-                size="sm"
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
+              />
+            </Breadcrumbs>
+            {issueCount && issueCount > 0 ? (
+              <Tooltip
+                isMobile={isMobile}
+                tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in this project`}
+                position="bottom"
               >
-                Analytics
-              </Button>
-              <Button
-                onClick={() => {
-                  setTrackElement("Project issues page");
-                  toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
-                }}
-                size="sm"
-                prependIcon={<Plus />}
-              >
-                <div className="hidden sm:block">Add</div> Issue
-              </Button>
-            </>
+                <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                  {issueCount}
+                </span>
+              </Tooltip>
+            ) : null}
+          </div>
+          {currentProjectDetails?.is_deployed && deployUrl && (
+            <a
+              href={`${deployUrl}/${workspaceSlug}/${currentProjectDetails?.id}`}
+              className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
+              Public
+              <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
+            </a>
           )}
         </div>
+        <div className="items-center gap-2 hidden md:flex">
+          <LayoutSelection
+            layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+            onChange={(layout) => handleLayoutChange(layout)}
+            selectedLayout={activeLayout}
+          />
+          <FiltersDropdown title="Filters" placement="bottom-end">
+            <FilterSelection
+              filters={issueFilters?.filters ?? {}}
+              handleFiltersUpdate={handleFiltersUpdate}
+              layoutDisplayFiltersOptions={
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+              }
+              labels={projectLabels}
+              memberIds={projectMemberIds ?? undefined}
+              states={projectStates}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
+            />
+          </FiltersDropdown>
+          <FiltersDropdown title="Display" placement="bottom-end">
+            <DisplayFiltersSelection
+              layoutDisplayFiltersOptions={
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+              }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
+            />
+          </FiltersDropdown>
+        </div>
+
+        {canUserCreateIssue && (
+          <>
+            <Button
+              className="hidden md:block"
+              onClick={() => setAnalyticsModal(true)}
+              variant="neutral-primary"
+              size="sm"
+            >
+              Analytics
+            </Button>
+            <Button
+              onClick={() => {
+                setTrackElement("Project issues page");
+                toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+              }}
+              size="sm"
+              prependIcon={<Plus />}
+            >
+              <div className="hidden sm:block">Add</div> Issue
+            </Button>
+          </>
+        )}
       </div>
     </>
   );
