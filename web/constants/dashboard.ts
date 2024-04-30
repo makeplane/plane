@@ -132,7 +132,7 @@ export const DURATION_FILTER_OPTIONS: {
 }[] = [
   {
     key: EDurationFilters.NONE,
-    label: "None",
+    label: "All time",
   },
   {
     key: EDurationFilters.TODAY,
