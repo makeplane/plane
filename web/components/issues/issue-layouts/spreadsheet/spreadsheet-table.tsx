@@ -4,6 +4,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@pl
 //types
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 //components
+import { TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
 
@@ -13,11 +14,7 @@ type Props = {
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   issueIds: string[];
   isEstimateEnabled: boolean;
-  quickActions: (
-    issue: TIssue,
-    customActionButton?: React.ReactElement,
-    portalElement?: HTMLDivElement | null
-  ) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;

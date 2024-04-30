@@ -1,4 +1,4 @@
-import { MutableRefObject, memo, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react-lite";
@@ -10,6 +10,7 @@ import { cn } from "@/helpers/common.helper";
 import { useApplication, useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
+import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 // ui
@@ -17,29 +18,29 @@ import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-
 // helper
 
 interface IssueBlockProps {
-  peekIssueId?: string;
   issueId: string;
   issuesMap: IIssueMap;
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   draggableId: string;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   issueIds: string[]; //DO NOT REMOVE< needed to force render for virtualization
 }
 
 interface IssueDetailsBlockProps {
+  cardRef: React.RefObject<HTMLElement>;
   issue: TIssue;
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   isReadOnly: boolean;
 }
 
-const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props: IssueDetailsBlockProps) => {
-  const { issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
+const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
+  const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
   // hooks
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
@@ -60,7 +61,10 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
             className="absolute -top-1 right-0 hidden group-hover/kanban-block:block"
             onClick={handleEventPropagation}
           >
-            {quickActions(issue)}
+            {quickActions({
+              issue,
+              parentRef: cardRef,
+            })}
           </div>
         </div>
       </WithDisplayPropertiesHOC>
@@ -89,9 +93,8 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   );
 });
 
-export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
+export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const {
-    peekIssueId,
     issueId,
     issuesMap,
     displayProperties,
@@ -107,14 +110,14 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
   const {
     router: { workspaceSlug },
   } = useApplication();
-  const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
     issue &&
     issue.project_id &&
     issue.id &&
-    peekIssue?.issueId !== issue.id &&
+    !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const issue = issuesMap[issueId];
@@ -184,9 +187,11 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
           ref={cardRef}
           className={cn(
             "block rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
-            { "hover:cursor-pointer": isDragAllowed },
-            { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id },
-            { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
+            {
+              "hover:cursor-pointer": isDragAllowed,
+              "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+              "bg-custom-background-80 z-[100]": isCurrentBlockDragging,
+            }
           )}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
@@ -200,6 +205,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
             changingReference={issueIds}
           >
             <KanbanIssueDetailsBlock
+              cardRef={cardRef}
               issue={issue}
               displayProperties={displayProperties}
               updateIssue={updateIssue}

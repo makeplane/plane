@@ -1,5 +1,4 @@
 import { Droppable } from "@hello-pangea/dnd";
-import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
 import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
 // components
@@ -14,13 +13,14 @@ import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import { TRenderQuickActions } from "../list/list-view-types";
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
   quickAddCallback?: (

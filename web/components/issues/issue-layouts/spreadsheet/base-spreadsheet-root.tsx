@@ -1,7 +1,7 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
+import { IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
 // hooks
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
@@ -10,7 +10,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // views
 // types
 // constants
-import { IQuickActionProps } from "../list/list-view-types";
+import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetView } from "./spreadsheet-view";
 
 export type SpreadsheetStoreType =
@@ -66,9 +66,10 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     [projectId, updateFilters]
   );
 
-  const renderQuickActions = useCallback(
-    (issue: TIssue, customActionButton?: React.ReactElement, portalElement?: HTMLDivElement | null) => (
+  const renderQuickActions: TRenderQuickActions = useCallback(
+    ({ issue, parentRef, customActionButton, placement, portalElement }) => (
       <QuickActions
+        parentRef={parentRef}
         customActionButton={customActionButton}
         issue={issue}
         handleDelete={async () => removeIssue(issue.project_id, issue.id)}
@@ -78,6 +79,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
         portalElement={portalElement}
         readOnly={!isEditingAllowed || isCompletedCycle}
+        placements={placement}
       />
     ),
     [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]

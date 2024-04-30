@@ -2,18 +2,18 @@ import { MutableRefObject, memo } from "react";
 //types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { KanbanIssueBlock } from "@/components/issues";
+import { TRenderQuickActions } from "../list/list-view-types";
 // components
 
 interface IssueBlocksListProps {
   sub_group_id: string;
   columnId: string;
   issuesMap: IIssueMap;
-  peekIssueId?: string;
   issueIds: string[];
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
@@ -23,7 +23,6 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
     sub_group_id,
     columnId,
     issuesMap,
-    peekIssueId,
     issueIds,
     displayProperties,
     isDragDisabled,
@@ -47,7 +46,6 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
             return (
               <KanbanIssueBlock
                 key={draggableId}
-                peekIssueId={peekIssueId}
                 issueId={issueId}
                 issuesMap={issuesMap}
                 displayProperties={displayProperties}

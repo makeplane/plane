@@ -42,7 +42,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   } = props;
 
   const {
-    peekIssue,
+    getIsIssuePeeked,
     setPeekIssue,
     issue: { getIssueById },
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
@@ -65,7 +65,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     issue &&
     issue.project_id &&
     issue.id &&
-    peekIssue?.issueId !== issue.id &&
+    !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   if (!issue) return <></>;

@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // components
+import { ListLayout } from "@/components/core/list";
 import { EmptyState } from "@/components/empty-state";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
@@ -69,11 +70,11 @@ export const ModulesListView: React.FC = observer(() => {
       {displayFilters?.layout === "list" && (
         <div className="h-full overflow-y-auto">
           <div className="flex h-full w-full justify-between">
-            <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
+            <ListLayout>
               {filteredModuleIds.map((moduleId) => (
                 <ModuleListItem key={moduleId} moduleId={moduleId} />
               ))}
-            </div>
+            </ListLayout>
             <ModulePeekOverview
               projectId={projectId?.toString() ?? ""}
               workspaceSlug={workspaceSlug?.toString() ?? ""}

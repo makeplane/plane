@@ -33,7 +33,7 @@ interface IDocumentEditor {
   tabIndex?: number;
   // embed configuration
   embedHandler?: TEmbedConfig;
-  placeholder?: string | ((isFocused: boolean) => string);
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
 }
 
 const DocumentEditor = (props: IDocumentEditor) => {
