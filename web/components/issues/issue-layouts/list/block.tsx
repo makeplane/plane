@@ -47,7 +47,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   return (
     <div
       className={cn(
-        "min-h-12 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 text-sm",
+        "min-h-[52px] relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 text-sm",
         {
           "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
