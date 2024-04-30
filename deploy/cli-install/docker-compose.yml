@@ -39,7 +39,7 @@ x-app-env: &app-env
 services:
   web:
     <<: *app-env
-    image: registry.plane.tools/plane-enterprise/web-enterprise:${APP_RELEASE_VERSION}
+    image: registry.plane.tools/plane/web-enterprise:${APP_RELEASE_VERSION}
     pull_policy: if_not_present
     restart: unless-stopped
     command: /usr/local/bin/start.sh web/server.js web
@@ -51,7 +51,7 @@ services:
 
   space:
     <<: *app-env
-    image: registry.plane.tools/plane-enterprise/space-enterprise:${APP_RELEASE_VERSION}
+    image: registry.plane.tools/plane/space-enterprise:${APP_RELEASE_VERSION}
     pull_policy: if_not_present
     restart: unless-stopped
     command: /usr/local/bin/start.sh space/server.js space
@@ -64,7 +64,7 @@ services:
 
   api:
     <<: *app-env
-    image: registry.plane.tools/plane-enterprise/backend-enterprise:${APP_RELEASE_VERSION}
+    image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     pull_policy: if_not_present
     restart: unless-stopped
     command: ./bin/takeoff
@@ -78,7 +78,7 @@ services:
 
   worker:
     <<: *app-env
-    image: registry.plane.tools/plane-enterprise/backend-enterprise:${APP_RELEASE_VERSION}
+    image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     pull_policy: if_not_present
     restart: unless-stopped
     command: ./bin/worker
@@ -91,7 +91,7 @@ services:
 
   beat-worker:
     <<: *app-env
-    image: registry.plane.tools/plane-enterprise/backend-enterprise:${APP_RELEASE_VERSION}
+    image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     pull_policy: if_not_present
     restart: unless-stopped
     command: ./bin/beat
@@ -104,7 +104,7 @@ services:
 
   migrator:
     <<: *app-env
-    image: registry.plane.tools/plane-enterprise/backend-enterprise:${APP_RELEASE_VERSION}
+    image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     pull_policy: if_not_present
     restart: no
     command: >
@@ -145,7 +145,7 @@ services:
   # Comment this if you already have a reverse proxy running
   proxy:
     <<: *app-env
-    image: registry.plane.tools/plane-enterprise/proxy-enterprise:${APP_RELEASE_VERSION}
+    image: registry.plane.tools/plane/proxy-enterprise:${APP_RELEASE_VERSION}
     pull_policy: if_not_present
     restart: unless-stopped
     ports:
