@@ -28,9 +28,7 @@ def update_user_urls(apps, schema_editor):
         # prefix 1
         if user.avatar and (user.avatar.startswith(prefix1)):
             avatar_key = user.avatar
-            user.avatar = (
-                "/api/users/avatar/" + avatar_key[len(prefix1) :] + "/"
-            )
+            user.avatar = avatar_key[len(prefix1) :]
             bulk_users.append(user)
 
         # prefix 2
@@ -40,19 +38,13 @@ def update_user_urls(apps, schema_editor):
             and user.avatar.startswith(prefix2)
         ):
             avatar_key = user.avatar
-            user.avatar = (
-                "/api/users/avatar/" + avatar_key[len(prefix2) :] + "/"
-            )
+            user.avatar = avatar_key[len(prefix2) :]
             bulk_users.append(user)
 
         # prefix 1
         if user.cover_image and (user.cover_image.startswith(prefix1)):
             cover_image_key = user.cover_image
-            user.cover_image = (
-                "/api/users/cover-image/"
-                + cover_image_key[len(prefix1) :]
-                + "/"
-            )
+            user.cover_image = cover_image_key[len(prefix1) :]
             bulk_users.append(user)
 
         # prefix 2
@@ -62,11 +54,7 @@ def update_user_urls(apps, schema_editor):
             and user.cover_image.startswith(prefix2)
         ):
             cover_image_key = user.cover_image
-            user.cover_image = (
-                "/api/users/cover-image/"
-                + cover_image_key[len(prefix2) :]
-                + "/"
-            )
+            user.cover_image = cover_image_key[len(prefix2) :]
             bulk_users.append(user)
 
     User.objects.bulk_update(
@@ -95,7 +83,7 @@ def update_workspace_urls(apps, schema_editor):
         # prefix 1
         if workspace.logo and (workspace.logo.startswith(prefix1)):
             logo_key = workspace.logo
-            workspace.logo = f"/api/workspaces/{workspace.slug}/logo/{logo_key[len(prefix1) :]}/"
+            workspace.logo = logo_key[len(prefix1) :]
             bulk_workspaces.append(workspace)
 
         # prefix 2
@@ -105,7 +93,7 @@ def update_workspace_urls(apps, schema_editor):
             and (workspace.logo.startswith(prefix2))
         ):
             logo_key = workspace.logo
-            workspace.logo = f"/api/workspaces/{workspace.slug}/logo/{logo_key[len(prefix2) :]}/"
+            workspace.logo = logo_key[len(prefix2) :]
             bulk_workspaces.append(workspace)
 
     Workspace.objects.bulk_update(bulk_workspaces, ["logo"], batch_size=100)
@@ -134,7 +122,7 @@ def update_project_urls(apps, schema_editor):
         # prefix 1
         if project.cover_image and (project.cover_image.startswith(prefix1)):
             cover_image_key = project.cover_image
-            project.cover_image = f"/api/workspaces/{project.workspace.slug}/projects/{project.id}/cover-image/{cover_image_key[len(prefix1) :]}/"
+            project.cover_image = cover_image_key[len(prefix1) :]
             file_assets[cover_image_key[len(prefix1) :]] = str(project.id)
             bulk_projects.append(project)
 
@@ -145,7 +133,7 @@ def update_project_urls(apps, schema_editor):
             and (project.cover_image.startswith(prefix2))
         ):
             cover_image_key = project.cover_image
-            project.cover_image = f"/api/workspaces/{project.workspace.slug}/projects/{project.id}/cover-image/{cover_image_key[len(prefix2) :]}/"
+            project.cover_image = cover_image_key[len(prefix2) :]
             file_assets[cover_image_key[len(prefix2) :]] = str(project.id)
             bulk_projects.append(project)
 
