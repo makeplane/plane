@@ -14,7 +14,7 @@ import {
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useLabel, useMember, useProjectPages } from "@/hooks/store";
+import { useMember, useProjectPages } from "@/hooks/store";
 
 type Props = {
   pageType: TPageNavigationTabs;
@@ -29,7 +29,6 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { projectLabels } = useLabel();
 
   const handleRemoveFilter = useCallback(
     (key: keyof TPageFilterProps, value: string | null) => {
@@ -64,7 +63,6 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
             <PageFiltersSelection
               filters={filters}
               handleFiltersUpdate={updateFilters}
-              labels={projectLabels}
               memberIds={workspaceMemberIds ?? undefined}
             />
           </FiltersDropdown>
