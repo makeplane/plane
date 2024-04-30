@@ -1,0 +1,52 @@
+import React, { FC } from "react";
+import Link from "next/link";
+// ui
+import { Tooltip } from "@plane/ui";
+
+interface IListItemProps {
+  title: string;
+  itemLink: string;
+  onItemClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  prependTitleElement?: JSX.Element;
+  appendTitleElement?: JSX.Element;
+  actionableItems?: JSX.Element;
+  isMobile?: boolean;
+}
+
+export const ListItem: FC<IListItemProps> = (props) => {
+  const {
+    title,
+    prependTitleElement,
+    appendTitleElement,
+    actionableItems,
+    itemLink,
+    onItemClick,
+    isMobile = false,
+  } = props;
+  return (
+    <div className="relative">
+      <Link href={itemLink} onClick={onItemClick}>
+        <div className="group h-[52px] flex w-full flex-col items-center justify-between gap-5 p-6 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 sm:flex-row">
+          <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
+            <div className="relative flex w-full items-center gap-3 overflow-hidden">
+              <div className="flex items-center gap-4 truncate">
+                {prependTitleElement && <span className="flex-shrink-0">{prependTitleElement}</span>}
+                <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
+                  <span className="truncate text-sm">{title}</span>
+                </Tooltip>
+              </div>
+              {appendTitleElement && <span className="flex-shrink-0">{appendTitleElement}</span>}
+            </div>
+          </div>
+        </div>
+      </Link>
+      {actionableItems && (
+        <div className="absolute right-5 bottom-3.5 flex items-center gap-1.5">
+          <div className="relative flex items-center gap-4 sm:w-auto sm:flex-shrink-0 sm:justify-end">
+            {actionableItems}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
