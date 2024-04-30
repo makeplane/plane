@@ -134,7 +134,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
   return (
     <div>
       <div className="group relative grid grid-cols-10 gap-4">
-        <div className="col-span-6 ml-8 rounded-md bg-onboarding-background-200">
+        <div className="col-span-6 ml-8">
           <Controller
             control={control}
             name={`emails.${index}.email`}
@@ -162,7 +162,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
             )}
           />
         </div>
-        <div className="col-span-4 mr-8 flex items-center rounded-md border border-onboarding-border-100 bg-onboarding-background-200">
+        <div className="col-span-4 mr-8">
           <Controller
             control={control}
             name={`emails.${index}.role`}
@@ -182,10 +182,10 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
                   type="button"
                   ref={buttonRef}
                   onClick={() => setIsDropdownOpen((prev) => !prev)}
-                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-xs duration-300"
+                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-sm border-[0.5px] border-onboarding-border-100"
                 >
                   <span
-                    className={`text-xs ${
+                    className={`text-sm ${
                       !getValues(`emails.${index}.role_active`)
                         ? "text-onboarding-text-400"
                         : "text-onboarding-text-100"
@@ -195,7 +195,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
                   </span>
 
                   <ChevronDown
-                    className={`h-4 w-4 ${
+                    className={`size-3 ${
                       !getValues(`emails.${index}.role_active`)
                         ? "stroke-onboarding-text-400"
                         : "stroke-onboarding-text-100"

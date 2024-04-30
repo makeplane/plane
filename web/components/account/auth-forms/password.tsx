@@ -181,7 +181,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               )}
             </div>
             {!!passwordFormData.confirm_password && passwordFormData.password !== passwordFormData.confirm_password && (
-              <span className="text-sm text-red-500">Password doesn{"'"}t match</span>
+              <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
             )}
           </div>
         )}

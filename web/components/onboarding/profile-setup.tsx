@@ -329,7 +329,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                     )}
                   </button>
                 </div>
-                <div className="flex gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="first_name">
                       First name
@@ -355,7 +355,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                           ref={ref}
                           hasError={Boolean(errors.first_name)}
                           placeholder="RWilbur"
-                          className="w-full border-onboarding-border-100 focus:border-custom-primary-100"
+                          className="w-full border-onboarding-border-100"
                         />
                       )}
                     />
@@ -385,7 +385,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                           ref={ref}
                           hasError={Boolean(errors.last_name)}
                           placeholder="Wright"
-                          className="w-full border-onboarding-border-100 focus:border-custom-primary-100"
+                          className="w-full border-onboarding-border-100"
                         />
                       )}
                     />
@@ -405,7 +405,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                         required: isSignUpUsingMagicCode ? "Password is required" : false,
                       }}
                       render={({ field: { value, onChange, ref } }) => (
-                        <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                        <div className="relative flex items-center rounded-md">
                           <Input
                             type={showPassword ? "text" : "password"}
                             name="password"
@@ -414,7 +414,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                             ref={ref}
                             hasError={Boolean(errors.password)}
                             placeholder="New password..."
-                            className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                            className="w-full border-[0.5px] border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
                           />
@@ -445,10 +445,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                       control={control}
                       name="confirm_password"
                       rules={{
-                        validate: (value) => value === password || "Password doesn't match",
+                        validate: (value) => value === password || "Passwords don't match",
                       }}
                       render={({ field: { value, onChange, ref } }) => (
-                        <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                        <div className="relative flex items-center rounded-md">
                           <Input
                             type={showPassword ? "text" : "password"}
                             name="confirm_password"
@@ -457,7 +457,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                             ref={ref}
                             hasError={Boolean(errors.password)}
                             placeholder="Confirm password..."
-                            className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                            className="w-full border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                           />
                           {showPassword ? (
                             <EyeOff
@@ -548,7 +548,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
               disabled={isButtonDisabled}
               loading={isSubmitting}
             >
-              {isSubmitting ? "Updating..." : "Continue"}
+              Continue
             </Button>
           </form>
         </div>

@@ -195,7 +195,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
                       )}
                     </div>
                     {!!resetFormData.confirm_password && resetFormData.password !== resetFormData.confirm_password && (
-                      <span className="text-sm text-red-500">Password doesn{"'"}t match</span>
+                      <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
                     )}
                   </div>
                 )}
@@ -216,5 +216,3 @@ ResetPasswordPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default ResetPasswordPage;
-
-
