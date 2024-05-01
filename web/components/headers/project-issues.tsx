@@ -104,8 +104,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const issueCount = currentProjectDetails
-    ? issueFilters?.displayFilters?.sub_issue
-      ? currentProjectDetails?.total_issues + currentProjectDetails?.sub_issues
+    ? !issueFilters?.displayFilters?.sub_issue && currentProjectDetails?.sub_issues
+      ? currentProjectDetails?.total_issues - currentProjectDetails?.sub_issues
       : currentProjectDetails?.total_issues
     : undefined;
 
