@@ -18,8 +18,8 @@ import { IssueEmbedCard, PageContentBrowser, PageEditorTitle } from "@/component
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
-import { usePageFilters } from "@/hooks/use-page-filters";
 import { useIssueEmbed } from "@/hooks/use-issue-embed";
+import { usePageFilters } from "@/hooks/use-page-filters";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
@@ -80,7 +80,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
-  
+
   // page filters
   const { isFullWidth } = usePageFilters();
   // issue-embed
