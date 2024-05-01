@@ -72,6 +72,8 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
     if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
 
+    console.log("redirectionRoute", redirectionRoute);
+
     return redirectionRoute;
   };
 
@@ -113,11 +115,9 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.AUTHENTICATED) {
     if (currentUser?.id) {
-      if (currentUserProfile?.is_onboarded) {
-        return <>{children}</>;
-      } else {
-        const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.push(currentRedirectRoute);
+      if (currentUserProfile?.is_onboarded) return <>{children}</>;
+      else {
+        router.push(`/onboarding`);
         return;
       }
     } else {

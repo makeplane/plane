@@ -89,7 +89,7 @@ export class ProfileStore implements IProfileStore {
       return userProfile;
     } catch (error) {
       runInAction(() => {
-        this.isLoading = true;
+        this.isLoading = false;
         this.error = {
           status: "error",
           message: "Failed to fetch instance info",

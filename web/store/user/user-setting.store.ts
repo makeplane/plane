@@ -65,7 +65,7 @@ export class UserSettingsStore implements IUserSettingsStore {
     } catch (error) {
       console.log("Failed to fetch profile details");
       runInAction(() => {
-        this.isLoading = true;
+        this.isLoading = false;
         this.error = {
           status: "error",
           message: "Failed to fetch instance info",
