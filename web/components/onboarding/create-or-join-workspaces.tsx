@@ -24,10 +24,11 @@ type Props = {
   invitations: IWorkspaceMemberInvitation[];
   totalSteps: number;
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
+  finishOnboarding: () => Promise<void>;
 };
 
 export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
-  const { invitations, totalSteps, stepChange } = props;
+  const { invitations, totalSteps, stepChange, finishOnboarding } = props;
   // states
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);
   // store hooks
@@ -45,14 +46,15 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
 
   const handleNextStep = async () => {
     if (!user) return;
-    await stepChange({ workspace_join: true, workspace_create: true });
+
+    await finishOnboarding();
   };
 
   return (
     <div className="flex h-full w-full">
       <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="flex items-center justify-between">
-          <OnboardingHeader currentStep={2} totalSteps={totalSteps} />
+          <OnboardingHeader currentStep={totalSteps - 1} totalSteps={totalSteps} />
           <div className="shrink-0 lg:hidden">
             <SwitchOrDeleteAccountDropdown />
           </div>

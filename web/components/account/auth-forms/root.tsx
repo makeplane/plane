@@ -39,19 +39,19 @@ type Props = {
   mode: EAuthModes;
 };
 
-const Titles = {
+const titles = {
   [EAuthModes.SIGN_IN]: {
     [EAuthSteps.EMAIL]: {
       header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
+      subHeader: "Get back to your projects and make progress.",
     },
     [EAuthSteps.PASSWORD]: {
       header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
+      subHeader: "Get back to your projects and make progress.",
     },
     [EAuthSteps.UNIQUE_CODE]: {
       header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
+      subHeader: "Get back to your projects and make progress.",
     },
     [EAuthSteps.OPTIONAL_SET_PASSWORD]: {
       header: "",
@@ -61,7 +61,7 @@ const Titles = {
   [EAuthModes.SIGN_UP]: {
     [EAuthSteps.EMAIL]: {
       header: "Create your account",
-      subHeader: "Start tracking your projects with Plane",
+      subHeader: "Start tracking your projects with Plane.",
     },
     [EAuthSteps.PASSWORD]: {
       header: "Create your account",
@@ -98,7 +98,7 @@ const getHeaderSubHeader = (
     };
   }
 
-  return Titles[mode][step];
+  return titles[mode][step];
 };
 
 export const AuthRoot = observer((props: Props) => {

@@ -9,8 +9,10 @@ import { Spinner } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
 import { InviteMembers, CreateOrJoinWorkspaces, ProfileSetup } from "@/components/onboarding";
-// hooks
+// constants
 import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
+import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
+// hooks
 import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
 import useUserAuth from "@/hooks/use-user-auth";
 // layouts
@@ -24,7 +26,7 @@ import { WorkspaceService } from "@/services/workspace.service";
 export enum EOnboardingSteps {
   PROFILE_SETUP = "PROFILE_SETUP",
   WORKSPACE_CREATE_OR_JOIN = "WORKSPACE_CREATE_OR_JOIN",
-  WORKSPACE_INVITE = "WORKSPACE_INVITE",
+  INVITE_MEMBERS = "INVITE_MEMBERS",
 }
 
 const workspaceService = new WorkspaceService();
@@ -50,7 +52,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
   // fetching workspaces list
-  useSWR(`USER_WORKSPACES_LIST`, () => fetchWorkspaces(), {
+  useSWR(USER_WORKSPACES_LIST, () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
   // fetching user workspace invitations
@@ -70,11 +72,25 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
     await updateUserProfile(payload);
   };
+
   // complete onboarding
   const finishOnboarding = async () => {
-    if (!user || !workspacesList) return;
+    if (!user || !workspaces) return;
 
-    await updateUserOnBoard()
+    const firstWorkspace = Object.values(workspaces ?? {})?.[0];
+
+    await Promise.all([
+      updateUserProfile({
+        onboarding_step: {
+          profile_complete: true,
+          workspace_join: true,
+          workspace_create: true,
+          workspace_invite: true,
+        },
+        last_workspace_id: firstWorkspace?.id,
+      }),
+      updateUserOnBoard(),
+    ])
       .then(() => {
         captureEvent(USER_ONBOARDING_COMPLETED, {
           // user_role: user.role,
@@ -87,7 +103,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         console.log("Failed to update onboarding status");
       });
 
-    router.replace(`/${workspacesList[0]?.slug}`);
+    router.replace(`/${firstWorkspace?.slug}`);
   };
 
   useEffect(() => {
@@ -112,23 +128,6 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
       if (!onboardingStep.profile_complete) setStep(EOnboardingSteps.PROFILE_SETUP);
 
-      if (
-        !onboardingStep.workspace_join &&
-        !onboardingStep.workspace_create &&
-        workspacesList &&
-        workspacesList?.length > 0
-      ) {
-        await updateUserProfile({
-          onboarding_step: {
-            ...profile.onboarding_step,
-            workspace_join: true,
-            workspace_create: true,
-          },
-          last_workspace_id: workspacesList[0]?.id,
-        });
-        return;
-      }
-
       // For Invited Users, they will skip all other steps.
       if (totalSteps && totalSteps <= 2) return;
 
@@ -141,7 +140,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         (onboardingStep.workspace_join || onboardingStep.workspace_create) &&
         !onboardingStep.workspace_invite
       )
-        setStep(EOnboardingSteps.WORKSPACE_INVITE);
+        setStep(EOnboardingSteps.INVITE_MEMBERS);
     };
 
     handleStepChange();
@@ -161,12 +160,16 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
               finishOnboarding={finishOnboarding}
             />
           ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN ? (
-            <CreateOrJoinWorkspaces invitations={invitations} totalSteps={totalSteps} stepChange={stepChange} />
-          ) : step === EOnboardingSteps.WORKSPACE_INVITE ? (
+            <CreateOrJoinWorkspaces
+              invitations={invitations}
+              totalSteps={totalSteps}
+              stepChange={stepChange}
+              finishOnboarding={finishOnboarding}
+            />
+          ) : step === EOnboardingSteps.INVITE_MEMBERS ? (
             <InviteMembers
               finishOnboarding={finishOnboarding}
               totalSteps={totalSteps}
-              stepChange={stepChange}
               user={user}
               workspace={workspacesList?.[0]}
             />
