@@ -30,7 +30,7 @@ const defaultValues: TUniqueCodeFormValues = {
 // services
 const authService = new AuthService();
 
-export const UniqueCodeForm: React.FC<Props> = (props) => {
+export const AuthUniqueCodeForm: React.FC<Props> = (props) => {
   const { email, handleEmailClear, submitButtonText, mode } = props;
   // states
   const [uniqueCodeFormData, setUniqueCodeFormData] = useState<TUniqueCodeFormValues>({ ...defaultValues, email });
