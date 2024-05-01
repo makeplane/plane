@@ -18,6 +18,7 @@ import { PageContentBrowser, PageEditorTitle } from "@/components/pages";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { usePageFilters } from "@/hooks/use-page-filters";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
@@ -68,7 +69,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html ?? "<p></p>";
-  const isFullWidth = !!pageStore?.view_props?.full_width;
   const { description_html, isContentEditable, updateTitle, isSubmitting, setIsSubmitting } = pageStore;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -79,6 +79,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+  // page filters
+  const { isFullWidth } = usePageFilters();
 
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
