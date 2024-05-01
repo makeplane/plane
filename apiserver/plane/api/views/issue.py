@@ -32,7 +32,6 @@ from plane.api.serializers import (
     LabelSerializer,
 )
 from plane.app.permissions import (
-    WorkspaceEntityPermission,
     ProjectEntityPermission,
     ProjectLitePermission,
     ProjectMemberPermission,

@@ -123,6 +123,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
         portalElement={portalElement}
         placement={placements}
         menuItemsClassName="z-[14]"
+        maxHeight="lg"
         closeOnSelect
       >
         {MENU_ITEMS.map((item) => {

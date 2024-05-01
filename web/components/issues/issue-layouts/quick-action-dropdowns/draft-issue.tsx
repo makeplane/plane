@@ -107,6 +107,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
         portalElement={portalElement}
         placement={placements}
         menuItemsClassName="z-[14]"
+        maxHeight="lg"
         closeOnSelect
       >
         {MENU_ITEMS.map((item) => {

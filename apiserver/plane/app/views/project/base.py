@@ -185,7 +185,6 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             .annotate(
                 total_issues=Issue.issue_objects.filter(
                     project_id=self.kwargs.get("pk"),
-                    parent__isnull=True,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -204,7 +203,6 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 archived_issues=Issue.objects.filter(
                     project_id=self.kwargs.get("pk"),
                     archived_at__isnull=False,
-                    parent__isnull=True,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -224,7 +222,6 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 draft_issues=Issue.objects.filter(
                     project_id=self.kwargs.get("pk"),
                     is_draft=True,
-                    parent__isnull=True,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
