@@ -22,7 +22,7 @@ from plane.authentication.utils.login import user_login
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
-from plane.db.models import User
+from plane.db.models import User, Profile
 
 
 class MagicGenerateSpaceEndpoint(APIView):
@@ -122,9 +122,18 @@ class MagicSignInSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user)
             # redirect to referer path
+            if user.is_password_autoset and profile.is_onboarded:
+                path = "spaces/accounts/set-password"
+            else:
+                # Get the redirection path
+                path = (
+                    str(next_path)
+                    if next_path
+                    else "spaces"
+                )
             url = urljoin(
                 base_host(request=request),
-                str(next_path) if next_path else "spaces",
+                path
             )
             return HttpResponseRedirect(url)
 

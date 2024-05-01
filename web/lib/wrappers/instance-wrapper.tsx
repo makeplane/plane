@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
@@ -8,17 +8,14 @@ import { InstanceNotReady } from "@/components/instance";
 // hooks
 import { useInstance } from "@/hooks/store";
 
-type TInstanceLayout = {
+type TInstanceWrapper = {
   children: ReactNode;
 };
 
-const InstanceLayout: FC<TInstanceLayout> = observer((props) => {
+export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   const { children } = props;
   // store
   const { isLoading, instance, error, fetchInstanceInfo } = useInstance();
-  // states
-  const [isGodModeEnabled, setIsGodModeEnabled] = useState(false);
-  const handleGodModeStateChange = (state: boolean) => setIsGodModeEnabled(state);
 
   useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
@@ -40,15 +37,8 @@ const InstanceLayout: FC<TInstanceLayout> = observer((props) => {
       </div>
     );
 
-  // checking if the instance is activated or not
-  if (error && !error?.data?.is_activated) return <InstanceNotReady isGodModeEnabled={false} />;
-
   // instance is not ready and setup is not done
-  if (instance?.instance?.is_setup_done === false)
-    // if (isGodModeEnabled) return <MiniGodModeForm />;
-    return <InstanceNotReady isGodModeEnabled handleGodModeStateChange={handleGodModeStateChange} />;
+  if (instance?.instance?.is_setup_done === false) return <InstanceNotReady />;
 
   return <>{children}</>;
 });
-
-export default InstanceLayout;

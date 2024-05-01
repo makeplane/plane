@@ -9,8 +9,10 @@ import { Spinner } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
 import { InviteMembers, CreateOrJoinWorkspaces, ProfileSetup } from "@/components/onboarding";
-// hooks
+// constants
 import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
+import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
+// hooks
 import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
 import useUserAuth from "@/hooks/use-user-auth";
 // layouts
@@ -24,7 +26,7 @@ import { WorkspaceService } from "@/services/workspace.service";
 export enum EOnboardingSteps {
   PROFILE_SETUP = "PROFILE_SETUP",
   WORKSPACE_CREATE_OR_JOIN = "WORKSPACE_CREATE_OR_JOIN",
-  WORKSPACE_INVITE = "WORKSPACE_INVITE",
+  INVITE_MEMBERS = "INVITE_MEMBERS",
 }
 
 const workspaceService = new WorkspaceService();
@@ -50,7 +52,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
   // fetching workspaces list
-  useSWR(`USER_WORKSPACES_LIST`, () => fetchWorkspaces(), {
+  useSWR(USER_WORKSPACES_LIST, () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
   // fetching user workspace invitations
@@ -70,11 +72,25 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
     await updateUserProfile(payload);
   };
+
   // complete onboarding
   const finishOnboarding = async () => {
-    if (!user || !workspacesList) return;
+    if (!user || !workspaces) return;
 
-    await updateUserOnBoard()
+    const firstWorkspace = Object.values(workspaces ?? {})?.[0];
+
+    await Promise.all([
+      updateUserProfile({
+        onboarding_step: {
+          profile_complete: true,
+          workspace_join: true,
+          workspace_create: true,
+          workspace_invite: true,
+        },
+        last_workspace_id: firstWorkspace?.id,
+      }),
+      updateUserOnBoard(),
+    ])
       .then(() => {
         captureEvent(USER_ONBOARDING_COMPLETED, {
           // user_role: user.role,
@@ -87,12 +103,20 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         console.log("Failed to update onboarding status");
       });
 
-    router.replace(`/${workspacesList[0]?.slug}`);
+    router.replace(`/${firstWorkspace?.slug}`);
   };
 
   useEffect(() => {
-    if (workspacesList && workspacesList?.length > 0) setTotalSteps(1);
-    else setTotalSteps(3);
+    // If user is already invited to a workspace, only show profile setup steps.
+    if (workspacesList && workspacesList?.length > 0) {
+      // If password is auto set then show two different steps for profile setup, else merge them.
+      if (user?.is_password_autoset) setTotalSteps(2);
+      else setTotalSteps(1);
+    } else {
+      // If password is auto set then total steps will increase to 4 due to extra step at profile setup stage.
+      if (user?.is_password_autoset) setTotalSteps(4);
+      else setTotalSteps(3);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -104,25 +128,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
       if (!onboardingStep.profile_complete) setStep(EOnboardingSteps.PROFILE_SETUP);
 
-      if (
-        !onboardingStep.workspace_join &&
-        !onboardingStep.workspace_create &&
-        workspacesList &&
-        workspacesList?.length > 0
-      ) {
-        await updateUserProfile({
-          onboarding_step: {
-            ...profile.onboarding_step,
-            workspace_join: true,
-            workspace_create: true,
-          },
-          last_workspace_id: workspacesList[0]?.id,
-        });
-        return;
-      }
-
       // For Invited Users, they will skip all other steps.
-      if (totalSteps && totalSteps === 1) return;
+      if (totalSteps && totalSteps <= 2) return;
 
       if (onboardingStep.profile_complete && !(onboardingStep.workspace_join || onboardingStep.workspace_create)) {
         setStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
@@ -133,7 +140,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         (onboardingStep.workspace_join || onboardingStep.workspace_create) &&
         !onboardingStep.workspace_invite
       )
-        setStep(EOnboardingSteps.WORKSPACE_INVITE);
+        setStep(EOnboardingSteps.INVITE_MEMBERS);
     };
 
     handleStepChange();
@@ -143,7 +150,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title="Onboarding" />
-      {user && totalSteps && step !== null ? (
+      {user && totalSteps && step !== null && invitations ? (
         <div className={`flex h-full w-full flex-col`}>
           {step === EOnboardingSteps.PROFILE_SETUP ? (
             <ProfileSetup
@@ -152,13 +159,17 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
               stepChange={stepChange}
               finishOnboarding={finishOnboarding}
             />
-          ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN && invitations ? (
-            <CreateOrJoinWorkspaces invitations={invitations} totalSteps={totalSteps} stepChange={stepChange} />
-          ) : step === EOnboardingSteps.WORKSPACE_INVITE ? (
+          ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN ? (
+            <CreateOrJoinWorkspaces
+              invitations={invitations}
+              totalSteps={totalSteps}
+              stepChange={stepChange}
+              finishOnboarding={finishOnboarding}
+            />
+          ) : step === EOnboardingSteps.INVITE_MEMBERS ? (
             <InviteMembers
               finishOnboarding={finishOnboarding}
               totalSteps={totalSteps}
-              stepChange={stepChange}
               user={user}
               workspace={workspacesList?.[0]}
             />

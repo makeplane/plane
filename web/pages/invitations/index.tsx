@@ -16,6 +16,7 @@ import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 // constants
 import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
+import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 import { ROLE } from "@/constants/workspace";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
@@ -79,7 +80,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(() => {
-        mutate("USER_WORKSPACES");
+        mutate(USER_WORKSPACES_LIST);
         const firstInviteId = invitationsRespond[0];
         const invitation = invitations?.find((i) => i.id === firstInviteId);
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;

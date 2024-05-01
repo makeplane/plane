@@ -50,7 +50,7 @@ export const ArchivedModulesView: FC<IArchivedModulesView> = observer((props) =>
       <div className="flex h-full w-full justify-between">
         <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
           {filteredArchivedModuleIds.map((moduleId) => (
-            <ModuleListItem key={moduleId} moduleId={moduleId} isArchived />
+            <ModuleListItem key={moduleId} moduleId={moduleId} />
           ))}
         </div>
         <ModulePeekOverview

@@ -1,6 +1,8 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import { IUser, IUserAccount } from "@plane/types";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
@@ -9,7 +11,6 @@ import { RootStore } from "@/store/root.store";
 import { IAccountStore, AccountStore } from "@/store/user/account.store";
 import { ProfileStore, IProfileStore } from "@/store/user/profile.store";
 import { IUserMembershipStore, UserMembershipStore } from "@/store/user/user-membership.store";
-import { API_BASE_URL } from "@/helpers/common.helper";
 import { IUserSettingsStore, UserSettingsStore } from "./user-setting.store";
 
 export interface IUserStore {

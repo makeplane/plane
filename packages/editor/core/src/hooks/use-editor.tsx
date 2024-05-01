@@ -34,7 +34,7 @@ interface CustomEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   handleEditorReady?: (value: boolean) => void;
-  placeholder?: string | ((isFocused: boolean) => string);
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
 }
 

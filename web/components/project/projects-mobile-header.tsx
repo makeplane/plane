@@ -5,7 +5,7 @@ import { ChevronDown, ListFilter } from "lucide-react";
 // types
 import { TProjectFilters } from "@plane/types";
 // hooks
-import { useApplication, useMember, useProjectFilter } from "@/hooks/store";
+import { useAppRouter, useMember, useProjectFilter } from "@/hooks/store";
 // components
 import { FiltersDropdown } from "../issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "./dropdowns";
@@ -18,9 +18,7 @@ const ProjectsMobileHeader = observer(() => {
     updateFilters,
   } = useProjectFilter();
 
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
 
   const {
     workspace: { workspaceMemberIds },

@@ -1,6 +1,5 @@
-import React from "react";
+import { FC, FormEvent, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
 // types
@@ -10,82 +9,72 @@ import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "@/helpers/string.helper";
 
-type Props = {
-  onSubmit: (data: IEmailCheckData) => Promise<void>;
+type TAuthEmailForm = {
   defaultEmail: string;
+  onSubmit: (data: IEmailCheckData) => Promise<void>;
 };
 
-type TEmailFormValues = {
-  email: string;
-};
-
-export const AuthEmailForm: React.FC<Props> = observer((props) => {
+export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   const { onSubmit, defaultEmail } = props;
-  // hooks
-  const {
-    control,
-    formState: { errors, isSubmitting, isValid },
-    handleSubmit,
-  } = useForm<TEmailFormValues>({
-    defaultValues: {
-      email: defaultEmail,
-    },
-    mode: "onChange",
-    reValidateMode: "onChange",
-  });
+  // states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState(defaultEmail);
 
-  const handleFormSubmit = async (data: TEmailFormValues) => {
+  const emailError = useMemo(
+    () => (email && !checkEmailValidity(email) ? { email: "Email is invalid" } : undefined),
+    [email]
+  );
+
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
     const payload: IEmailCheckData = {
-      email: data.email,
+      email: email,
     };
-    onSubmit(payload);
+    await onSubmit(payload);
+    setIsSubmitting(false);
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-8 space-y-4 w-5/6 sm:w-96">
+    <form onSubmit={handleFormSubmit} className="mx-auto mt-8 space-y-4 w-5/6 sm:w-96">
       <div className="space-y-1">
         <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
           Email
         </label>
-        <Controller
-          control={control}
-          name="email"
-          rules={{
-            required: "Email is required",
-            validate: (value) => checkEmailValidity(value) || "Email is invalid",
-          }}
-          render={({ field: { value, onChange } }) => (
-            <>
-              <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={value}
-                  onChange={onChange}
-                  hasError={Boolean(errors.email)}
-                  placeholder="name@company.com"
-                  className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-                  autoFocus
-                />
-                {value.length > 0 && (
-                  <XCircle
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => onChange("")}
-                  />
-                )}
-              </div>
-              {errors.email && (
-                <p className="flex items-center gap-1 text-xs text-red-600 px-0.5">
-                  <CircleAlert height={12} width={12} />
-                  {errors.email.message}
-                </p>
-              )}
-            </>
+        <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            hasError={Boolean(emailError?.email)}
+            placeholder="name@company.com"
+            className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+            autoFocus
+          />
+          {email.length > 0 && (
+            <XCircle
+              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              onClick={() => setEmail("")}
+            />
           )}
-        />
+        </div>
+        {emailError?.email && (
+          <p className="flex items-center gap-1 text-xs text-red-600 px-0.5">
+            <CircleAlert height={12} width={12} />
+            {emailError.email}
+          </p>
+        )}
       </div>
-      <Button type="submit" variant="primary" className="w-full" size="lg" disabled={!isValid} loading={isSubmitting}>
+      <Button
+        type="submit"
+        variant="primary"
+        className="w-full"
+        size="lg"
+        disabled={email.length === 0 || Boolean(emailError?.email)}
+        loading={isSubmitting}
+      >
         Continue
       </Button>
     </form>

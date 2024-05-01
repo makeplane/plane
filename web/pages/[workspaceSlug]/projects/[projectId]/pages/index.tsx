@@ -4,10 +4,11 @@ import { useRouter } from "next/router";
 // types
 import { TPageNavigationTabs } from "@plane/types";
 // components
+import { PageHead } from "@/components/core";
 import { PagesHeader } from "@/components/headers";
 import { PagesListRoot, PagesListView } from "@/components/pages";
 // hooks
-import { useAppRouter } from "@/hooks/store";
+import { useAppRouter, useProject } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // lib
@@ -19,6 +20,10 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const { type } = router.query;
   // store hooks
   const { workspaceSlug, projectId } = useAppRouter();
+  const { getProjectById } = useProject();
+  // derived values
+  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
 
   const currentPageType = (): TPageNavigationTabs => {
     const pageType = type?.toString();
@@ -29,17 +34,20 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
 
   if (!workspaceSlug || !projectId) return <></>;
   return (
-    <PagesListView
-      workspaceSlug={workspaceSlug.toString()}
-      projectId={projectId.toString()}
-      pageType={currentPageType()}
-    >
-      <PagesListRoot
-        pageType={currentPageType()}
+    <>
+      <PageHead title={pageTitle} />
+      <PagesListView
         workspaceSlug={workspaceSlug.toString()}
         projectId={projectId.toString()}
-      />
-    </PagesListView>
+        pageType={currentPageType()}
+      >
+        <PagesListRoot
+          pageType={currentPageType()}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+        />
+      </PagesListView>
+    </>
   );
 });
 

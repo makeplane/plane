@@ -6,6 +6,7 @@ import { Spinner } from "@plane/ui";
 import { SpreadsheetQuickAddIssueForm } from "@/components/issues";
 import { SPREADSHEET_PROPERTY_LIST } from "@/constants/spreadsheet";
 import { useProject } from "@/hooks/store";
+import { TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetTable } from "./spreadsheet-table";
 // types
 //hooks
@@ -15,11 +16,7 @@ type Props = {
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   issueIds: string[] | undefined;
-  quickActions: (
-    issue: TIssue,
-    customActionButton?: React.ReactElement,
-    portalElement?: HTMLDivElement | null
-  ) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (

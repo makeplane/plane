@@ -42,7 +42,7 @@ const nextConfig = {
       },
       {
         source: "/god-mode/:path*",
-        destination: (process.env.NEXT_PUBLIC_GOD_MODE || "") + "/:path*",
+        destination: `${process.env.NEXT_PUBLIC_GOD_MODE_URL || ""}/:path*`,
       },
     ];
   },

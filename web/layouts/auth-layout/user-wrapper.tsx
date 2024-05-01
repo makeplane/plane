@@ -6,6 +6,7 @@ import useSWR from "swr";
 // ui
 import { Spinner } from "@plane/ui";
 // hooks
+import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 import { useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { useCurrentUserSettings } from "@/hooks/store/use-current-user-settings";
 
@@ -34,7 +35,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     shouldRetryOnError: false,
   });
   // fetching all workspaces
-  const { isLoading: workspaceLoader } = useSWR("USER_WORKSPACES_LIST", () => fetchWorkspaces(), {
+  const { isLoading: workspaceLoader } = useSWR(USER_WORKSPACES_LIST, () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
 
@@ -56,5 +57,3 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
 
   return <>{children}</>;
 });
-
-

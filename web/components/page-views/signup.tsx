@@ -1,19 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
-import { Spinner } from "@plane/ui";
 // components
-import { AuthRoot, EAuthModes } from "@/components/account";
+import { SignUpAuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
 import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useInstance, useUser } from "@/hooks/store";
-import useAuthRedirection from "@/hooks/use-auth-redirection";
-// types
+import { useEventTracker } from "@/hooks/store";
 // assets
 import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
@@ -21,24 +18,10 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 export const SignUpView = observer(() => {
   // store hooks
-  const { instance } = useInstance();
-  const { data: currentUser } = useUser();
   const { captureEvent } = useEventTracker();
   // hooks
   const { resolvedTheme } = useTheme();
   // login redirection hook
-  const { isRedirecting, handleRedirection } = useAuthRedirection();
-
-  useEffect(() => {
-    handleRedirection();
-  }, [handleRedirection]);
-
-  if (isRedirecting || currentUser || !instance?.config)
-    return (
-      <div className="grid h-screen place-items-center">
-        <Spinner />
-      </div>
-    );
 
   return (
     <div className="relative">
@@ -69,7 +52,7 @@ export const SignUpView = observer(() => {
         </div>
         <div className="mx-auto h-full">
           <div className="h-full overflow-auto px-7 pb-56 pt-4 sm:px-0">
-            <AuthRoot mode={EAuthModes.SIGN_UP} />
+            <SignUpAuthRoot />
           </div>
         </div>
       </div>

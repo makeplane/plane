@@ -5,19 +5,20 @@ import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import { Eye, EyeOff } from "lucide-react";
 // ui
-import { Button, Input, Spinner } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
 // helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
-// hooks
-import useAuthRedirection from "@/hooks/use-auth-redirection";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // lib
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
 import { AuthService } from "@/services/auth.service";
 // images
@@ -53,14 +54,6 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   // hooks
   const { resolvedTheme } = useTheme();
-  // store hooks
-  //const { captureEvent } = useEventTracker();
-  // sign in redirection hook
-  const { isRedirecting, handleRedirection } = useAuthRedirection();
-
-  useEffect(() => {
-    handleRedirection();
-  }, [handleRedirection]);
 
   const handleFormChange = (key: keyof TResetPasswordFormValues, value: string) =>
     setResetFormData((prev) => ({ ...prev, [key]: value }));
@@ -79,13 +72,6 @@ const ResetPasswordPage: NextPageWithLayout = () => {
         : true,
     [resetFormData]
   );
-
-  if (isRedirecting)
-    return (
-      <div className="grid h-screen place-items-center">
-        <Spinner />
-      </div>
-    );
 
   return (
     <div className="relative">
@@ -168,37 +154,35 @@ const ResetPasswordPage: NextPageWithLayout = () => {
                   </div>
                   {isPasswordInputFocused && <PasswordStrengthMeter password={resetFormData.password} />}
                 </div>
-                {getPasswordStrength(resetFormData.password) >= 3 && (
-                  <div className="space-y-1">
-                    <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
-                      Confirm password
-                    </label>
-                    <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        name="confirm_password"
-                        value={resetFormData.confirm_password}
-                        onChange={(e) => handleFormChange("confirm_password", e.target.value)}
-                        placeholder="Confirm password"
-                        className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                <div className="space-y-1">
+                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+                    Confirm password
+                  </label>
+                  <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      name="confirm_password"
+                      value={resetFormData.confirm_password}
+                      onChange={(e) => handleFormChange("confirm_password", e.target.value)}
+                      placeholder="Confirm password"
+                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                    />
+                    {showPassword ? (
+                      <EyeOff
+                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                        onClick={() => setShowPassword(false)}
                       />
-                      {showPassword ? (
-                        <EyeOff
-                          className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                          onClick={() => setShowPassword(false)}
-                        />
-                      ) : (
-                        <Eye
-                          className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                          onClick={() => setShowPassword(true)}
-                        />
-                      )}
-                    </div>
-                    {!!resetFormData.confirm_password && resetFormData.password !== resetFormData.confirm_password && (
-                      <span className="text-sm text-red-500">Password doesn{"'"}t match</span>
+                    ) : (
+                      <Eye
+                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                        onClick={() => setShowPassword(true)}
+                      />
                     )}
                   </div>
-                )}
+                  {!!resetFormData.confirm_password && resetFormData.password !== resetFormData.confirm_password && (
+                    <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
+                  )}
+                </div>
                 <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
                   Set password
                 </Button>
@@ -212,9 +196,11 @@ const ResetPasswordPage: NextPageWithLayout = () => {
 };
 
 ResetPasswordPage.getLayout = function getLayout(page: ReactElement) {
-  return <DefaultLayout>{page}</DefaultLayout>;
+  return (
+    <DefaultLayout>
+      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>{page}</AuthenticationWrapper>
+    </DefaultLayout>
+  );
 };
 
 export default ResetPasswordPage;
-
-

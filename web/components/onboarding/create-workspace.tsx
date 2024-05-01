@@ -36,7 +36,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
     handleSubmit,
     control,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<IWorkspace>({
     defaultValues: {
       name: "",
@@ -141,7 +141,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
       <div className="text-center space-y-1 py-4 mx-auto">
         <h3 className="text-3xl font-bold text-onboarding-text-100">Create a workspace</h3>
         <p className="font-medium text-onboarding-text-400">
-          To start using plane, you need to create or join a workspace
+          To start using Plane, you need to create or join a workspace.
         </p>
       </div>
       <form className="w-full mx-auto mt-2 space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>
@@ -162,7 +162,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
               },
             }}
             render={({ field: { value, ref, onChange } }) => (
-              <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+              <div className="relative flex items-center rounded-md">
                 <Input
                   id="name"
                   name="name"
@@ -176,7 +176,8 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
                   placeholder="Enter workspace name..."
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  className="w-full border-onboarding-border-100 text-base placeholder:text-base placeholder:text-custom-text-400/50"
+                  className="w-full border-onboarding-border-100 placeholder:text-custom-text-400"
+                  autoFocus
                 />
               </div>
             )}
@@ -185,16 +186,16 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
         </div>
         <div className="space-y-1">
           <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="slug">
-            Workspace url
+            Workspace URL
           </label>
           <Controller
             control={control}
             name="slug"
             render={({ field: { value, ref, onChange } }) => (
               <div
-                className={`relative flex items-center rounded-md border bg-onboarding-background-200 px-3 ${
+                className={`relative flex items-center rounded-md border-[0.5px] px-3 ${
                   invalidSlug ? "border-red-500" : "border-onboarding-border-100"
-                } `}
+                }`}
               >
                 <span className="whitespace-nowrap text-sm">{window && window.location.host}/</span>
                 <Input
@@ -213,7 +214,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
               </div>
             )}
           />
-          <p className="text-sm text-onboarding-text-300">You can only edit the slug of the url</p>
+          <p className="text-sm text-onboarding-text-300">You can only edit the slug of the URL</p>
           {slugError && <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>}
           {invalidSlug && (
             <span className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</span>
@@ -238,7 +239,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
                       <span className="text-custom-text-400">Select organization size</span>
                     )
                   }
-                  buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
+                  buttonClassName="!border-[0.5px] !border-onboarding-border-100 !shadow-none !rounded-md"
                   input
                   optionsClassName="w-full"
                 >
@@ -255,7 +256,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
             )}
           </div>
         </div>
-        <Button variant="primary" type="submit" size="lg" className="w-full">
+        <Button variant="primary" type="submit" size="lg" className="w-full" disabled={!isValid || invalidSlug}>
           {isSubmitting ? "Creating..." : "Continue"}
         </Button>
       </form>

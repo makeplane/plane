@@ -113,6 +113,7 @@ export const InstanceSignInForm: FC = (props) => {
               placeholder="name@company.com"
               value={formData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
+              autoFocus
             />
           </div>
 

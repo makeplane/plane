@@ -4,6 +4,8 @@ import { ChevronDown } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // ui
 import { Avatar } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 // components
@@ -20,19 +22,19 @@ export const SwitchOrDeleteAccountDropdown: FC<TSwithOrDeleteAccountDropdownProp
   // store hooks
   const { data: user } = useUser();
 
+  const displayName = user?.first_name
+    ? `${user?.first_name} ${user?.last_name ?? ""}`
+    : fullName && fullName.trim().length > 0
+      ? fullName
+      : user?.email;
+
   return (
     <div className="flex w-full shrink-0 justify-end">
       <SwitchOrDeleteAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
-      <div className="flex items-center gap-x-2 pr-4">
+      <div className="flex items-center gap-x-2 pr-4 z-10">
         {user?.avatar && (
           <Avatar
-            name={
-              user?.first_name
-                ? `${user?.first_name} ${user?.last_name ?? ""}`
-                : fullName && fullName.trim().length > 0
-                  ? fullName
-                  : user?.email
-            }
+            name={displayName}
             src={user?.avatar}
             size={24}
             shape="square"
@@ -40,43 +42,35 @@ export const SwitchOrDeleteAccountDropdown: FC<TSwithOrDeleteAccountDropdownProp
             className="!text-base capitalize"
           />
         )}
-        <div>
-          <Menu>
-            <Menu.Button className={"flex items-center gap-x-1"}>
-              <span className="text-sm font-medium">
-                <p className="text-sm font-medium text-custom-text-200">
-                  {user?.first_name
-                    ? `${user?.first_name} ${user?.last_name ?? ""}`
-                    : fullName && fullName.trim().length > 0
-                      ? fullName
-                      : user?.email}
-                </p>
-              </span>
-              <ChevronDown className="h-4 w-4 text-custom-text-300" />
-            </Menu.Button>
-            <Transition
-              enter="transition duration-100 ease-out"
-              enterFrom="transform scale-95 opacity-0"
-              enterTo="transform scale-100 opacity-100"
-              leave="transition duration-75 ease-out"
-              leaveFrom="transform scale-100 opacity-100"
-              leaveTo="transform scale-95 opacity-0"
-            >
-              <Menu.Items className={"absolute min-w-fit"}>
-                <Menu.Item as="div">
-                  <div
-                    className="mr-auto mt-2 rounded-md border border-red-400 bg-onboarding-background-200 p-3 text-base font-normal text-red-400 shadow-sm hover:cursor-pointer"
-                    onClick={() => {
-                      setShowDeleteAccountModal(true);
-                    }}
-                  >
-                    Wrong e-mail address?
-                  </div>
-                </Menu.Item>
-              </Menu.Items>
-            </Transition>
-          </Menu>
-        </div>
+        <Menu as="div" className="relative">
+          <Menu.Button className="flex items-center gap-x-1 z-10">
+            <span className="text-sm font-medium text-custom-text-200">{displayName}</span>
+            <ChevronDown className="h-4 w-4 text-custom-text-300" />
+          </Menu.Button>
+          <Transition
+            enter="transition duration-100 ease-out"
+            enterFrom="transform scale-95 opacity-0"
+            enterTo="transform scale-100 opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform scale-100 opacity-100"
+            leaveTo="transform scale-95 opacity-0"
+          >
+            <Menu.Items className="absolute z-10 right-0 rounded-md border-[0.5px] border-custom-border-300 mt-2 bg-custom-background-100 px-2 py-2.5 text-sm min-w-[12rem] shadow-custom-shadow-rg">
+              <Menu.Item
+                as="button"
+                type="button"
+                className={({ active }) =>
+                  cn("text-red-500 px-1 py-1.5 whitespace-nowrap text-left rounded w-full", {
+                    "bg-custom-background-80": active,
+                  })
+                }
+                onClick={() => setShowDeleteAccountModal(true)}
+              >
+                Wrong e-mail address?
+              </Menu.Item>
+            </Menu.Items>
+          </Transition>
+        </Menu>
       </div>
     </div>
   );

@@ -39,6 +39,7 @@ type TFormData = {
   email: string;
   company_name: string;
   password: string;
+  confirm_password?: string;
   is_telemetry_enabled: boolean;
 };
 
@@ -66,6 +67,7 @@ export const InstanceSignUpForm: FC = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
+  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -107,7 +109,11 @@ export const InstanceSignUpForm: FC = (props) => {
 
   const isButtonDisabled = useMemo(
     () =>
-      formData.first_name && formData.email && formData.password && getPasswordStrength(formData.password) >= 3
+      formData.first_name &&
+      formData.email &&
+      formData.password &&
+      getPasswordStrength(formData.password) >= 3 &&
+      formData.password === formData.confirm_password
         ? false
         : true,
     [formData]
@@ -144,6 +150,7 @@ export const InstanceSignUpForm: FC = (props) => {
                 placeholder="Wilber"
                 value={formData.first_name}
                 onChange={(e) => handleFormChange("first_name", e.target.value)}
+                autoFocus
               />
             </div>
             <div className="w-full space-y-1">
@@ -214,6 +221,8 @@ export const InstanceSignUpForm: FC = (props) => {
                 value={formData.password}
                 onChange={(e) => handleFormChange("password", e.target.value)}
                 hasError={errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD ? true : false}
+                onFocus={() => setIsPasswordInputFocused(true)}
+                onBlur={() => setIsPasswordInputFocused(false)}
               />
               {showPassword ? (
                 <button
@@ -236,21 +245,53 @@ export const InstanceSignUpForm: FC = (props) => {
             {errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD && errorData.message && (
               <p className="px-1 text-xs text-red-500">{errorData.message}</p>
             )}
-            <PasswordStrengthMeter password={formData.password} />
+            {isPasswordInputFocused && <PasswordStrengthMeter password={formData.password} />}
+          </div>
+
+          <div className="w-full space-y-1">
+            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+              Confirm password
+            </label>
+            <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+              <Input
+                type={showPassword ? "text" : "password"}
+                name="confirm_password"
+                value={formData.confirm_password}
+                onChange={(e) => handleFormChange("confirm_password", e.target.value)}
+                placeholder="Confirm password"
+                className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              />
+              {showPassword ? (
+                <EyeOff
+                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <Eye
+                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  onClick={() => setShowPassword(true)}
+                />
+              )}
+            </div>
+            {!!formData.confirm_password && formData.password !== formData.confirm_password && (
+              <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
+            )}
           </div>
 
           <div className="relative flex items-center pt-2 gap-2">
-            <Checkbox
-              id="is_telemetry_enabled"
-              name="is_telemetry_enabled"
-              value={formData.is_telemetry_enabled ? "True" : "False"}
-              onChange={() => handleFormChange("is_telemetry_enabled", !formData.is_telemetry_enabled)}
-              checked={formData.is_telemetry_enabled}
-            />
+            <div>
+              <Checkbox
+                id="is_telemetry_enabled"
+                name="is_telemetry_enabled"
+                value={formData.is_telemetry_enabled ? "True" : "False"}
+                onChange={() => handleFormChange("is_telemetry_enabled", !formData.is_telemetry_enabled)}
+                checked={formData.is_telemetry_enabled}
+              />
+            </div>
             <label className="text-sm text-custom-text-300 font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
               Allow Plane to anonymously collect usage events.
             </label>
-            <a href="#" className="text-sm font-medium text-blue-500 hover:text-blue-600">
+            <a href="https://docs.plane.so/telemetry" className="text-sm font-medium text-blue-500 hover:text-blue-600">
               See More
             </a>
           </div>

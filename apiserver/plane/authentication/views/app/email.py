@@ -29,8 +29,8 @@ class SignInAuthEndpoint(View):
         if instance is None or not instance.is_setup_done:
             # Redirection params
             params = {
-                "error_code": "REQUIRED_EMAIL_PASSWORD",
-                "error_message": "Both email and password are required",
+                "error_code": "INSTANCE_NOT_CONFIGURED",
+                "error_message": "Instance is not configured",
             }
             if next_path:
                 params["next_path"] = str(next_path)

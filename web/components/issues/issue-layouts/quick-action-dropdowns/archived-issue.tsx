@@ -4,13 +4,14 @@ import { useRouter } from "next/router";
 // icons
 import { ArchiveRestoreIcon, ExternalLink, Link, Trash2 } from "lucide-react";
 // ui
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DeleteIssueModal } from "@/components/issues";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssues, useUser } from "@/hooks/store";
@@ -18,7 +19,16 @@ import { useEventTracker, useIssues, useUser } from "@/hooks/store";
 import { IQuickActionProps } from "../list/list-view-types";
 
 export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
-  const { issue, handleDelete, handleRestore, customActionButton, portalElement, readOnly = false } = props;
+  const {
+    issue,
+    handleDelete,
+    handleRestore,
+    customActionButton,
+    portalElement,
+    readOnly = false,
+    placements = "bottom-end",
+    parentRef,
+  } = props;
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // router
@@ -66,6 +76,38 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
       });
   };
 
+  const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "restore",
+      title: "Restore",
+      icon: ArchiveRestoreIcon,
+      action: handleIssueRestore,
+      shouldRender: isRestoringAllowed,
+    },
+    {
+      key: "open-in-new-tab",
+      title: "Open in new tab",
+      icon: ExternalLink,
+      action: handleOpenInNewTab,
+    },
+    {
+      key: "copy-link",
+      title: "Copy link",
+      icon: Link,
+      action: handleCopyIssueLink,
+    },
+    {
+      key: "delete",
+      title: "Delete",
+      icon: Trash2,
+      action: () => {
+        setTrackElement(activeLayout);
+        setDeleteIssueModal(true);
+      },
+      shouldRender: isEditingAllowed,
+    },
+  ];
+
   return (
     <>
       <DeleteIssueModal
@@ -74,48 +116,49 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDelete}
       />
+      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu
-        menuItemsClassName="z-[14]"
-        placement="bottom-start"
+        ellipsis
         customButton={customActionButton}
         portalElement={portalElement}
-        maxHeight="lg"
+        placement={placements}
+        menuItemsClassName="z-[14]"
         closeOnSelect
-        ellipsis
       >
-        {isRestoringAllowed && (
-          <CustomMenu.MenuItem onClick={handleIssueRestore}>
-            <div className="flex items-center gap-2">
-              <ArchiveRestoreIcon className="h-3 w-3" />
-              Restore
-            </div>
-          </CustomMenu.MenuItem>
-        )}
-        <CustomMenu.MenuItem onClick={handleOpenInNewTab}>
-          <div className="flex items-center gap-2">
-            <ExternalLink className="h-3 w-3" />
-            Open in new tab
-          </div>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
-          <div className="flex items-center gap-2">
-            <Link className="h-3 w-3" />
-            Copy link
-          </div>
-        </CustomMenu.MenuItem>
-        {isEditingAllowed && (
-          <CustomMenu.MenuItem
-            onClick={() => {
-              setTrackElement(activeLayout);
-              setDeleteIssueModal(true);
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <Trash2 className="h-3 w-3" />
-              Delete issue
-            </div>
-          </CustomMenu.MenuItem>
-        )}
+        {MENU_ITEMS.map((item) => {
+          if (item.shouldRender === false) return null;
+          return (
+            <CustomMenu.MenuItem
+              key={item.key}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                item.action();
+              }}
+              className={cn(
+                "flex items-center gap-2",
+                {
+                  "text-custom-text-400": item.disabled,
+                },
+                item.className
+              )}
+            >
+              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+              <div>
+                <h5>{item.title}</h5>
+                {item.description && (
+                  <p
+                    className={cn("text-custom-text-300 whitespace-pre-line", {
+                      "text-custom-text-400": item.disabled,
+                    })}
+                  >
+                    {item.description}
+                  </p>
+                )}
+              </div>
+            </CustomMenu.MenuItem>
+          );
+        })}
       </CustomMenu>
     </>
   );

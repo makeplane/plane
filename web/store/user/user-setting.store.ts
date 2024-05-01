@@ -2,7 +2,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 import { UserService } from "services/user.service";
 // types
-import { IUserSettings, TUserProfile } from "@plane/types";
+import { IUserSettings } from "@plane/types";
 
 type TError = {
   status: string;
@@ -65,7 +65,7 @@ export class UserSettingsStore implements IUserSettingsStore {
     } catch (error) {
       console.log("Failed to fetch profile details");
       runInAction(() => {
-        this.isLoading = true;
+        this.isLoading = false;
         this.error = {
           status: "error",
           message: "Failed to fetch instance info",

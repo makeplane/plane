@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -7,22 +7,24 @@ import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
 // ui
-import { Button, Input, Spinner, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
 // constants
 import { FORGOT_PASS_LINK, NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
 import { cn } from "@/helpers/common.helper";
 import { checkEmailValidity } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
-import useAuthRedirection from "@/hooks/use-auth-redirection";
 import useTimer from "@/hooks/use-timer";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // lib
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
 import { AuthService } from "@/services/auth.service";
 // images
@@ -47,15 +49,11 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
   const { email } = router.query;
   // store hooks
   const { captureEvent } = useEventTracker();
-    // hooks
-    const { resolvedTheme } = useTheme();
+  // hooks
+  const { resolvedTheme } = useTheme();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(0);
-  const { isRedirecting, handleRedirection } = useAuthRedirection();
 
-  useEffect(() => {
-    handleRedirection();
-  }, [handleRedirection]);
   // form info
   const {
     control,
@@ -97,18 +95,11 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
       });
   };
 
-  if (isRedirecting)
-    return (
-      <div className="grid h-screen place-items-center">
-        <Spinner />
-      </div>
-    );
-
   return (
     <div className="relative">
       <PageHead title="Forgot Password" />
       <div className="absolute inset-0 z-0">
-      <Image
+        <Image
           src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
           className="w-screen min-h-screen object-cover"
           alt="Plane background pattern"
@@ -199,7 +190,11 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
 };
 
 ForgotPasswordPage.getLayout = function getLayout(page: ReactElement) {
-  return <DefaultLayout>{page}</DefaultLayout>;
+  return (
+    <DefaultLayout>
+      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>{page}</AuthenticationWrapper>
+    </DefaultLayout>
+  );
 };
 
 export default ForgotPasswordPage;
