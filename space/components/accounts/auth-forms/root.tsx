@@ -26,43 +26,28 @@ type TTitle = {
 };
 
 type THeaderSubheader = {
-  [mode in EAuthModes]: {
-    [step in Exclude<EAuthSteps, EAuthSteps.EMAIL>]: TTitle;
-  };
+  [mode in EAuthModes]: TTitle;
 };
 
-const Titles: THeaderSubheader = {
+const titles: THeaderSubheader = {
   [EAuthModes.SIGN_IN]: {
-    [EAuthSteps.PASSWORD]: {
-      header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
-    },
-    [EAuthSteps.UNIQUE_CODE]: {
-      header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
-    },
+    header: "Sign in to upvote or comment",
+    subHeader: "Contribute in nudging the features you want to get built.",
   },
   [EAuthModes.SIGN_UP]: {
-    [EAuthSteps.PASSWORD]: {
-      header: "Create your account",
-      subHeader: "Progress, visualize, and measure work how it works best for you.",
-    },
-    [EAuthSteps.UNIQUE_CODE]: {
-      header: "Create your account",
-      subHeader: "Progress, visualize, and measure work how it works best for you.",
-    },
+    header: "Comment or react to issues",
+    subHeader: "Use plane to add your valuable inputs to features.",
   },
 };
 
-// TODO: Better approach for this.
-const getHeaderSubHeader = (mode: EAuthModes | null, step: EAuthSteps): TTitle => {
+const getHeaderSubHeader = (mode: EAuthModes | null): TTitle => {
   if (mode) {
-    return (Titles[mode] as any)[step];
+    return titles[mode];
   }
 
   return {
-    header: "Get started with Plane",
-    subHeader: "Progress, visualize, and measure work how it works best for you.",
+    header: "Comment or react to issues",
+    subHeader: "Use plane to add your valuable inputs to features.",
   };
 };
 
@@ -81,7 +66,7 @@ export const AuthRoot = observer(() => {
   // derived values
   const isSmtpConfigured = instance?.config?.is_smtp_configured;
 
-  const { header, subHeader } = getHeaderSubHeader(authMode, authStep);
+  const { header, subHeader } = getHeaderSubHeader(authMode);
 
   const handelEmailVerification = async (data: IEmailCheckData) => {
     // update the global email state
