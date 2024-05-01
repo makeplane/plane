@@ -34,7 +34,7 @@ interface CustomEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   handleEditorReady?: (value: boolean) => void;
-  placeholder?: string | ((isFocused: boolean) => string);
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
 }
 
@@ -142,11 +142,11 @@ export const useEditor = ({
       executeMenuItemCommand: (itemName: EditorMenuItemNames) => {
         const editorItems = getEditorMenuItems(editorRef.current, uploadFile);
 
-        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.name === itemName);
+        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
 
         const item = getEditorMenuItem(itemName);
         if (item) {
-          if (item.name === "image") {
+          if (item.key === "image") {
             item.command(savedSelection);
           } else {
             item.command();
@@ -158,7 +158,7 @@ export const useEditor = ({
       isMenuItemActive: (itemName: EditorMenuItemNames): boolean => {
         const editorItems = getEditorMenuItems(editorRef.current, uploadFile);
 
-        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.name === itemName);
+        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
         const item = getEditorMenuItem(itemName);
         return item ? item.isActive() : false;
       },

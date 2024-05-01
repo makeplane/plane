@@ -14,6 +14,7 @@ import {
 } from "@plane/types";
 // components
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
+import { TRenderQuickActions } from "../list/list-view-types";
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 import { KanbanStoreType } from "./base-kanban-root";
 import { KanBan } from "./default";
@@ -106,7 +107,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   showEmptyGroup: boolean;
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
@@ -235,7 +236,7 @@ export interface IKanBanSwimLanes {
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   showEmptyGroup: boolean;

@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ArchiveRestoreIcon, Check, LinkIcon, Lock, Pencil, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Pencil, Trash2, UserPlus } from "lucide-react";
 // types
 import type { IProject } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
+import {
+  Avatar,
+  AvatarGroup,
+  Button,
+  Tooltip,
+  TOAST_TYPE,
+  setToast,
+  setPromiseToast,
+  ContextMenu,
+  TContextMenuItem,
+} from "@plane/ui";
 // components
 import { FavoriteStar } from "@/components/core";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal, ProjectLogo } from "@/components/project";
@@ -30,6 +40,8 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
   const [restoreProject, setRestoreProject] = useState(false);
+  // refs
+  const projectCardRef = useRef(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -80,14 +92,61 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
     });
   };
 
+  const projectLink = `${workspaceSlug}/projects/${project.id}/issues`;
   const handleCopyText = () =>
-    copyUrlToClipboard(`${workspaceSlug}/projects/${project.id}/issues`).then(() =>
+    copyUrlToClipboard(projectLink).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
       })
     );
+  const handleOpenInNewTab = () => window.open(`/${projectLink}`, "_blank");
+
+  const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "edit",
+      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
+      title: "Edit",
+      icon: Pencil,
+      shouldRender: !isArchived && (isOwner || isMember),
+    },
+    {
+      key: "join",
+      action: () => setJoinProjectModal(true),
+      title: "Join",
+      icon: UserPlus,
+      shouldRender: !project.is_member && !isArchived,
+    },
+    {
+      key: "open-new-tab",
+      action: handleOpenInNewTab,
+      title: "Open in new tab",
+      icon: ExternalLink,
+      shouldRender: project.is_member,
+    },
+    {
+      key: "copy-link",
+      action: handleCopyText,
+      title: "Copy link",
+      icon: LinkIcon,
+      shouldRender: true,
+    },
+    {
+      key: "restore",
+      action: () => setRestoreProject(true),
+      title: "Restore",
+      icon: ArchiveRestoreIcon,
+      shouldRender: isArchived && isOwner,
+    },
+    {
+      key: "delete",
+      action: () => setDeleteProjectModal(true),
+      title: "Delete",
+      icon: Trash2,
+      shouldRender: isArchived && isOwner,
+    },
+  ];
 
   return (
     <>
@@ -117,6 +176,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         />
       )}
       <Link
+        ref={projectCardRef}
         href={`/${workspaceSlug}/projects/${project.id}/issues`}
         onClick={(e) => {
           if (!project.is_member || isArchived) {
@@ -127,6 +187,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         }}
         className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
+        <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
         <div className="relative h-[118px] w-full rounded-t ">
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
 
