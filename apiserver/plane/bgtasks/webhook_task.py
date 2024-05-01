@@ -25,6 +25,7 @@ from plane.api.serializers import (
     ModuleIssueSerializer,
     ModuleSerializer,
     ProjectSerializer,
+    UserLiteSerializer,
 )
 from plane.db.models import (
     Cycle,
@@ -49,6 +50,7 @@ SERIALIZER_MAPPER = {
     "cycle_issue": CycleIssueSerializer,
     "module_issue": ModuleIssueSerializer,
     "issue_comment": IssueCommentSerializer,
+    "user": UserLiteSerializer,
 }
 
 MODEL_MAPPER = {
@@ -59,6 +61,7 @@ MODEL_MAPPER = {
     "cycle_issue": CycleIssue,
     "module_issue": ModuleIssue,
     "issue_comment": IssueComment,
+    "user": User,
 }
 
 
@@ -330,6 +333,12 @@ def webhook_send_task(
             else None
         )
 
+        activity = (
+            json.loads(json.dumps(activity, cls=DjangoJSONEncoder))
+            if activity is not None
+            else None
+        )
+
         action = {
             "POST": "create",
             "PATCH": "update",
@@ -457,6 +466,6 @@ def webhook_activity(
                 "field": field,
                 "new_value": new_value,
                 "old_value": old_value,
-                "actor_id": actor_id,
+                "actor": get_model_data(event="user", event_id=actor_id),
             },
         )

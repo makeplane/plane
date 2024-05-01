@@ -1297,7 +1297,7 @@ def create_issue_vote_activity(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="created",
+                verb="updated",
                 old_value=None,
                 new_value=requested_data.get("vote"),
                 field="vote",
@@ -1366,7 +1366,7 @@ def create_issue_relation_activity(
                 IssueActivity(
                     issue_id=issue_id,
                     actor_id=actor_id,
-                    verb="created",
+                    verb="updated",
                     old_value="",
                     new_value=f"{issue.project.identifier}-{issue.sequence_id}",
                     field=requested_data.get("relation_type"),
@@ -1381,7 +1381,7 @@ def create_issue_relation_activity(
                 IssueActivity(
                     issue_id=related_issue,
                     actor_id=actor_id,
-                    verb="created",
+                    verb="updated",
                     old_value="",
                     new_value=f"{issue.project.identifier}-{issue.sequence_id}",
                     field=(
@@ -1695,10 +1695,22 @@ def issue_activity(
 
             for activity in issue_activities_created:
                 webhook_activity.delay(
-                    event="issue",
-                    event_id=activity.issue_id,
+                    event=(
+                        "issue_comment"
+                        if activity.field == "comment"
+                        else "issue"
+                    ),
+                    event_id=(
+                        activity.issue_comment_id
+                        if activity.field == "comment"
+                        else activity.issue_id
+                    ),
                     verb=activity.verb,
-                    field=activity.field,
+                    field=(
+                        "description_html"
+                        if activity.field == "comment"
+                        else activity.field
+                    ),
                     old_value=activity.old_value,
                     new_value=activity.new_value,
                     actor_id=activity.actor_id,
