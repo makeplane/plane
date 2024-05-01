@@ -10,10 +10,10 @@ import {
   AuthHeader,
   AuthBanner,
   AuthEmailForm,
+  AuthUniqueCodeForm,
   AuthPasswordForm,
   OAuthOptions,
   TermsAndConditions,
-  UniqueCodeForm,
 } from "@/components/account";
 // helpers
 import {
@@ -63,7 +63,7 @@ export const SignUpAuthRoot: FC = observer(() => {
     await authService
       .signUpEmailCheck(data)
       .then(() => {
-        if (isSmtpConfigured) setAuthStep(EAuthSteps.UNIQUE_CODE);
+        if (isSmtpConfigured) setAuthStep(EAuthSteps.PASSWORD);
         else setAuthStep(EAuthSteps.PASSWORD);
       })
       .catch((error) => {
@@ -105,7 +105,7 @@ export const SignUpAuthRoot: FC = observer(() => {
       )}
       {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
       {authStep === EAuthSteps.UNIQUE_CODE && (
-        <UniqueCodeForm
+        <AuthUniqueCodeForm
           email={email}
           handleEmailClear={() => {
             setEmail("");
