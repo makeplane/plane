@@ -52,8 +52,7 @@ from plane.db.models import (
 from .base import BaseAPIView, WebhookMixin
 
 
-
-class WorkspaceIssueAPIEndpoint(WebhookMixin, BaseAPIView):
+class WorkspaceIssueAPIEndpoint(BaseAPIView):
     """
     This viewset provides `retrieveByIssueId` on workspace level
 
@@ -61,11 +60,8 @@ class WorkspaceIssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [
-        ProjectEntityPermission
-    ]
+    permission_classes = [ProjectEntityPermission]
     serializer_class = IssueSerializer
-
 
     @property
     def project__identifier(self):
@@ -92,7 +88,9 @@ class WorkspaceIssueAPIEndpoint(WebhookMixin, BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
 
-    def get(self, request, slug, project__identifier=None, issue__identifier=None):
+    def get(
+        self, request, slug, project__identifier=None, issue__identifier=None
+    ):
         if issue__identifier and project__identifier:
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
@@ -101,7 +99,11 @@ class WorkspaceIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            ).get(workspace__slug=slug, project__identifier=project__identifier, sequence_id=issue__identifier)
+            ).get(
+                workspace__slug=slug,
+                project__identifier=project__identifier,
+                sequence_id=issue__identifier,
+            )
             return Response(
                 IssueSerializer(
                     issue,
@@ -111,7 +113,8 @@ class WorkspaceIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
+
+class IssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to issue.

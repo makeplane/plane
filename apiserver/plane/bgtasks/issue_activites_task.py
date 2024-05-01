@@ -31,6 +31,7 @@ from plane.db.models import (
 )
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
+from plane.bgtasks.webhook_task import webhook_activity
 
 
 # Track Changes in name
@@ -1691,6 +1692,19 @@ def issue_activity(
                         )
             except Exception as e:
                 log_exception(e)
+
+            for activity in issue_activities_created:
+                webhook_activity.delay(
+                    event="issue",
+                    event_id=activity.issue_id,
+                    verb=activity.verb,
+                    field=activity.field,
+                    old_value=activity.old_value,
+                    new_value=activity.new_value,
+                    actor_id=activity.actor_id,
+                    current_site=origin,
+                    slug=activity.workspace.slug,
+                )
 
         if notification:
             notifications.delay(
