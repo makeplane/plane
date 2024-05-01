@@ -69,6 +69,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         issueOperations={issueOperations}
         disabled={disabled}
         value={issue.name}
+        containerClassName="-ml-3"
       />
 
       <IssueDescriptionInput
@@ -81,6 +82,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         disabled={disabled}
         issueOperations={issueOperations}
         setIsSubmitting={(value) => setIsSubmitting(value)}
+        containerClassName="-ml-3 border-none"
       />
 
       {currentUser && (

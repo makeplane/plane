@@ -4,13 +4,11 @@ import { ArchiveRestoreIcon, Clipboard, Copy, Link, Lock, LockOpen } from "lucid
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
 // ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useApplication, useUser } from "@/hooks/store";
+import { useApplication } from "@/hooks/store";
+import { usePageFilters } from "@/hooks/use-page-filters";
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -34,18 +32,13 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     canCurrentUserDuplicatePage,
     canCurrentUserLockPage,
     restore,
-    view_props,
-    updateViewProps,
   } = pageStore;
   // store hooks
   const {
     router: { workspaceSlug, projectId },
   } = useApplication();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
-  // auth
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  // page filters
+  const { isFullWidth, handleFullWidth } = usePageFilters();
 
   const handleArchivePage = async () =>
     await archive().catch(() =>
@@ -149,22 +142,10 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     <CustomMenu maxHeight="md" placement="bottom-start" verticalEllipsis closeOnSelect>
       <CustomMenu.MenuItem
         className="hidden md:flex w-full items-center justify-between gap-2"
-        onClick={() =>
-          updateViewProps({
-            full_width: !view_props?.full_width,
-          })
-        }
-        disabled={!isEditingAllowed}
+        onClick={() => handleFullWidth(!isFullWidth)}
       >
         Full width
-        <ToggleSwitch
-          value={!!view_props?.full_width}
-          onChange={() => {}}
-          className={cn({
-            "opacity-40": !isEditingAllowed,
-          })}
-          disabled={!isEditingAllowed}
-        />
+        <ToggleSwitch value={isFullWidth} onChange={() => {}} />
       </CustomMenu.MenuItem>
       {MENU_ITEMS.map((item) => {
         if (!item.shouldRender) return null;

@@ -171,6 +171,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
         customButton={customActionButton}
         portalElement={portalElement}
         menuItemsClassName="z-[14]"
+        maxHeight="lg"
         closeOnSelect
       >
         {MENU_ITEMS.map((item) => {

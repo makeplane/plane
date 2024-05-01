@@ -18,6 +18,7 @@ import { IssueEmbedCard, PageContentBrowser, PageEditorTitle } from "@/component
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { usePageFilters } from "@/hooks/use-page-filters";
 import { useIssueEmbed } from "@/hooks/use-issue-embed";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
@@ -69,7 +70,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html ?? "<p></p>";
-  const isFullWidth = !!pageStore?.view_props?.full_width;
   const { description_html, isContentEditable, updateTitle, isSubmitting, setIsSubmitting } = pageStore;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -80,6 +80,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+  
+  // page filters
+  const { isFullWidth } = usePageFilters();
   // issue-embed
   const { fetchIssues } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
 
@@ -99,8 +102,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       <div
         className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full p-5 duration-200 md:block", {
           "translate-x-0": sidePeekVisible,
-          "w-56 lg:w-72": !isFullWidth,
-          "w-[10%]": isFullWidth,
+          "w-40 lg:w-56": !isFullWidth,
+          "w-[5%]": isFullWidth,
         })}
       >
         {!isFullWidth && (
@@ -112,8 +115,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       </div>
       <div
         className={cn("h-full w-full pt-5", {
-          "md:w-[calc(100%-14rem)] xl:w-[calc(100%-18rem-18rem)]": !isFullWidth,
-          "md:w-[80%]": isFullWidth,
+          "md:w-[calc(100%-10rem)] xl:w-[calc(100%-14rem-14rem)]": !isFullWidth,
+          "md:w-[90%]": isFullWidth,
         })}
       >
         <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
@@ -201,8 +204,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       </div>
       <div
         className={cn("hidden xl:block flex-shrink-0", {
-          "w-56 lg:w-72": !isFullWidth,
-          "w-[10%]": isFullWidth,
+          "w-40 lg:w-56": !isFullWidth,
+          "w-[5%]": isFullWidth,
         })}
       />
     </div>

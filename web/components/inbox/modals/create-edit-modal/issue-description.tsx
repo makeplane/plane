@@ -11,6 +11,7 @@ import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { useProjectInbox } from "@/hooks/store";
 
 type TInboxIssueDescription = {
+  containerClassName?: string;
   workspaceSlug: string;
   projectId: string;
   workspaceId: string;
@@ -21,7 +22,7 @@ type TInboxIssueDescription = {
 
 // TODO: have to implement GPT Assistance
 export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props) => {
-  const { workspaceSlug, projectId, workspaceId, data, handleData, editorRef } = props;
+  const {containerClassName, workspaceSlug, projectId, workspaceId, data, handleData, editorRef } = props;
   // hooks
   const { loader } = useProjectInbox();
 
@@ -42,6 +43,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
         dragDropEnabled={false}
         onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
         placeholder={getDescriptionPlaceholder}
+        containerClassName={containerClassName}
       />
     </div>
   );
