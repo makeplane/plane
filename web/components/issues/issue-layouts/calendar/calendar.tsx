@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
 // types
 import type {
@@ -31,7 +30,7 @@ import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
-// types
+import { TRenderQuickActions } from "../list/list-view-types";
 import type { ICalendarWeek } from "./types";
 
 type Props = {
@@ -40,7 +39,7 @@ type Props = {
   groupedIssueIds: TGroupedIssues;
   layout: "month" | "week" | undefined;
   showWeekends: boolean;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,

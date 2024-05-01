@@ -35,7 +35,7 @@ export type IRichTextEditor = {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions: () => Promise<IMentionSuggestion[]>;
   };
-  placeholder?: string | ((isFocused: boolean) => string);
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
 };
 

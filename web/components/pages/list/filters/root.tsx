@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
-import { IIssueLabel, TPageFilterProps, TPageFilters } from "@plane/types";
+import { TPageFilterProps, TPageFilters } from "@plane/types";
 // components
 import { FilterOption } from "@/components/issues";
-import { FilterCreatedBy, FilterCreatedDate, FilterLabels } from "@/components/pages";
+import { FilterCreatedBy, FilterCreatedDate } from "@/components/pages";
 
 type Props = {
   filters: TPageFilters;
   handleFiltersUpdate: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
-  labels?: IIssueLabel[] | undefined;
   memberIds?: string[] | undefined;
 };
 
 export const PageFiltersSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate, labels, memberIds } = props;
+  const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -91,16 +90,6 @@ export const PageFiltersSelection: React.FC<Props> = observer((props) => {
             handleUpdate={(val) => handleFilters("created_by", val)}
             searchQuery={filtersSearchQuery}
             memberIds={memberIds}
-          />
-        </div>
-
-        {/* labels */}
-        <div className="py-2">
-          <FilterLabels
-            appliedFilters={filters.filters?.labels ?? null}
-            handleUpdate={(val) => handleFilters("labels", val)}
-            searchQuery={filtersSearchQuery}
-            labels={labels}
           />
         </div>
       </div>

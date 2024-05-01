@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, ExternalLink, Link, Lock, Trash2, UsersRound } from "lucide-react";
-import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DeletePageModal } from "@/components/pages";
 // helpers
@@ -11,12 +11,13 @@ import { usePage } from "@/hooks/store";
 
 type Props = {
   pageId: string;
+  parentRef: React.RefObject<HTMLElement>;
   projectId: string;
   workspaceSlug: string;
 };
 
 export const PageQuickActions: React.FC<Props> = observer((props) => {
-  const { pageId, projectId, workspaceSlug } = props;
+  const { pageId, parentRef, projectId, workspaceSlug } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   // store hooks
@@ -44,45 +45,39 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
 
   const handleOpenInNewTab = () => window.open(`/${pageLink}`, "_blank");
 
-  const MENU_ITEMS: {
-    key: string;
-    action: () => void;
-    label: string;
-    icon: React.FC<any>;
-    shouldRender: boolean;
-  }[] = [
+  const MENU_ITEMS: TContextMenuItem[] = [
     {
-      key: "copy-link",
-      action: handleCopyText,
-      label: "Copy link",
-      icon: Link,
-      shouldRender: true,
+      key: "make-public-private",
+      action: access === 0 ? makePrivate : makePublic,
+      title: access === 0 ? "Make private" : "Make public",
+      icon: access === 0 ? Lock : UsersRound,
+      shouldRender: canCurrentUserChangeAccess && !archived_at,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      label: "Open in new tab",
+      title: "Open in new tab",
       icon: ExternalLink,
+      shouldRender: true,
+    },
+    {
+      key: "copy-link",
+      action: handleCopyText,
+      title: "Copy link",
+      icon: Link,
       shouldRender: true,
     },
     {
       key: "archive-restore",
       action: archived_at ? restore : archive,
-      label: archived_at ? "Restore" : "Archive",
+      title: archived_at ? "Restore" : "Archive",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,
     },
     {
-      key: "make-public-private",
-      action: access === 0 ? makePrivate : makePublic,
-      label: access === 0 ? "Make private" : "Make public",
-      icon: access === 0 ? Lock : UsersRound,
-      shouldRender: canCurrentUserChangeAccess && !archived_at,
-    },
-    {
       key: "delete",
       action: () => setDeletePageModal(true),
-      label: "Delete",
+      title: "Delete",
       icon: Trash2,
       shouldRender: canCurrentUserDeletePage && !!archived_at,
     },
@@ -96,6 +91,7 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
         pageId={pageId}
         projectId={projectId}
       />
+      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu placement="bottom-end" ellipsis closeOnSelect>
         {MENU_ITEMS.map((item) => {
           if (!item.shouldRender) return null;
@@ -109,8 +105,8 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
               }}
               className="flex items-center gap-2"
             >
-              <item.icon className="h-3 w-3" />
-              {item.label}
+              {item.icon && <item.icon className="h-3 w-3" />}
+              {item.title}
             </CustomMenu.MenuItem>
           );
         })}

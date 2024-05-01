@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { ChevronRight } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // components
+import { ListLayout } from "@/components/core/list";
 import { CyclePeekOverview, CyclesListMap } from "@/components/cycles";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -21,12 +22,11 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
   return (
     <div className="h-full overflow-y-auto">
       <div className="flex h-full w-full justify-between">
-        <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
+        <ListLayout>
           <CyclesListMap
             cycleIds={cycleIds}
             projectId={projectId}
             workspaceSlug={workspaceSlug}
-            isArchived={isArchived}
           />
           {completedCycleIds.length !== 0 && (
             <Disclosure as="div" className="py-8 pl-3 space-y-4">
@@ -43,16 +43,11 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
                 )}
               </Disclosure.Button>
               <Disclosure.Panel>
-                <CyclesListMap
-                  cycleIds={completedCycleIds}
-                  projectId={projectId}
-                  workspaceSlug={workspaceSlug}
-                  isArchived={isArchived}
-                />
+                <CyclesListMap cycleIds={completedCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
               </Disclosure.Panel>
             </Disclosure>
           )}
-        </div>
+        </ListLayout>
         <CyclePeekOverview projectId={projectId} workspaceSlug={workspaceSlug} isArchived={isArchived} />
       </div>
     </div>

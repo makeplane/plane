@@ -32,7 +32,7 @@ export interface ILiteTextEditor {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   tabIndex?: number;
-  placeholder?: string | ((isFocused: boolean) => string);
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
 }
 
 const LiteTextEditor = (props: ILiteTextEditor) => {
