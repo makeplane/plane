@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 // services
 import { AuthService } from "@/services/auth.service";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "components/common";
 // icons
@@ -52,6 +52,7 @@ export const InstanceSignInForm: FC = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -85,7 +86,10 @@ export const InstanceSignInForm: FC = (props) => {
     } else return { type: undefined, message: undefined };
   }, [errorCode, errorMessage]);
 
-  const isButtonDisabled = useMemo(() => (formData.email && formData.password ? false : true), [formData]);
+  const isButtonDisabled = useMemo(
+    () => (!isSubmitting && formData.email && formData.password ? false : true),
+    [formData.email, formData.password, isSubmitting]
+  );
 
   return (
     <div className="relative w-full h-full overflow-hidden container mx-auto px-5 md:px-0 flex justify-center items-center">
@@ -97,7 +101,13 @@ export const InstanceSignInForm: FC = (props) => {
 
         {errorData.type && errorData?.message && <Banner type="error" message={errorData?.message} />}
 
-        <form className="space-y-4" method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-in/`}>
+        <form
+          className="space-y-4"
+          method="POST"
+          action={`${API_BASE_URL}/api/instances/admins/sign-in/`}
+          onSubmit={() => setIsSubmitting(true)}
+          onError={() => setIsSubmitting(false)}
+        >
           <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
           <div className="w-full space-y-1">
@@ -153,7 +163,7 @@ export const InstanceSignInForm: FC = (props) => {
           </div>
           <div className="py-2">
             <Button type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
-              Sign in
+              {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
             </Button>
           </div>
         </form>

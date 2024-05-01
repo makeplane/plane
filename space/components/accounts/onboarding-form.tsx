@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { IUser } from "@plane/types";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { UserImageUploadModal } from "@/components/accounts";
 // hooks
@@ -93,7 +93,7 @@ export const OnBoardingForm: React.FC<Props> = observer((props) => {
     });
   };
 
-  const isButtonDisabled = useMemo(() => (isValid ? false : true), [isValid]);
+  const isButtonDisabled = useMemo(() => (isValid && !isSubmitting ? false : true), [isSubmitting, isValid]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full mx-auto mt-2 space-y-4 sm:w-96">
@@ -202,15 +202,8 @@ export const OnBoardingForm: React.FC<Props> = observer((props) => {
           {errors.last_name && <span className="text-sm text-red-500">{errors.last_name.message}</span>}
         </div>
       </div>
-      <Button
-        variant="primary"
-        type="submit"
-        size="lg"
-        className="w-full"
-        disabled={isButtonDisabled}
-        loading={isSubmitting}
-      >
-        Continue
+      <Button variant="primary" type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
       </Button>
     </form>
   );

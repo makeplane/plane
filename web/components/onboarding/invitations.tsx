@@ -3,7 +3,7 @@ import useSWR from "swr";;
 // types
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
-import { Button, Checkbox } from "@plane/ui";
+import { Button, Checkbox, Spinner } from "@plane/ui";
 // constants
 import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
 import { USER_WORKSPACE_INVITATIONS } from "@/constants/fetch-keys";
@@ -127,7 +127,7 @@ export const Invitations: React.FC<Props> = (props) => {
         onClick={submitInvitations}
         disabled={isJoiningWorkspaces || !invitationsRespond.length}
       >
-        Continue to workspace
+        {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue to workspace"}
       </Button>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
         <hr className="w-full border-onboarding-border-100" />

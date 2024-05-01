@@ -63,7 +63,7 @@ export const SignUpAuthRoot: FC = observer(() => {
     await authService
       .signUpEmailCheck(data)
       .then(() => {
-        if (isSmtpConfigured) setAuthStep(EAuthSteps.PASSWORD);
+        if (isSmtpConfigured) setAuthStep(EAuthSteps.UNIQUE_CODE);
         else setAuthStep(EAuthSteps.PASSWORD);
       })
       .catch((error) => {

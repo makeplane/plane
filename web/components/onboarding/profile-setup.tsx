@@ -7,7 +7,7 @@ import { Eye, EyeOff } from "lucide-react";
 // types
 import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 import { UserImageUploadModal } from "@/components/core";
@@ -248,6 +248,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
   // Also handles the condition for optional password i.e if password field is optional it only checks for above validation if it's not empty.
   const isButtonDisabled = useMemo(
     () =>
+      !isSubmitting &&
       isValid &&
       (isPasswordAlreadySetup
         ? true
@@ -258,7 +259,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
             : true)
         ? false
         : true,
-    [isValid, isPasswordAlreadySetup, isSignUpUsingMagicCode, password, confirmPassword]
+    [isSubmitting, isValid, isPasswordAlreadySetup, isSignUpUsingMagicCode, password, confirmPassword]
   );
 
   const isCurrentStepUserPersonalization = profileSetupStep === EProfileSetupSteps.USER_PERSONALIZATION;
@@ -541,15 +542,8 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                 </div>
               </>
             )}
-            <Button
-              variant="primary"
-              type="submit"
-              size="lg"
-              className="w-full"
-              disabled={isButtonDisabled}
-              loading={isSubmitting}
-            >
-              Continue
+            <Button variant="primary" type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+              {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
             </Button>
           </form>
         </div>

@@ -1,13 +1,13 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
+// types
+import { IEmailCheckData } from "types/auth";
 // icons
 import { XCircle, CircleAlert } from "lucide-react";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "@/helpers/string.helper";
-// types
-import { IEmailCheckData } from "types/auth";
 
 type Props = {
   onSubmit: (data: IEmailCheckData) => Promise<void>;
@@ -84,8 +84,8 @@ export const EmailForm: React.FC<Props> = (props) => {
           )}
         />
       </div>
-      <Button type="submit" variant="primary" className="w-full" size="lg" disabled={!isValid} loading={isSubmitting}>
-        Continue
+      <Button type="submit" variant="primary" className="w-full" size="lg" disabled={!isValid || isSubmitting}>
+        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
       </Button>
     </form>
   );

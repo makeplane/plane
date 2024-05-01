@@ -5,7 +5,7 @@ import { CircleAlert, XCircle } from "lucide-react";
 // types
 import { IEmailCheckData } from "@plane/types";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "@/helpers/string.helper";
 
@@ -34,6 +34,8 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
     await onSubmit(payload);
     setIsSubmitting(false);
   };
+
+  const isButtonDisabled = email.length === 0 || Boolean(emailError?.email) || isSubmitting;
 
   return (
     <form onSubmit={handleFormSubmit} className="mx-auto mt-8 space-y-4 w-5/6 sm:w-96">
@@ -72,10 +74,9 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
         variant="primary"
         className="w-full"
         size="lg"
-        disabled={email.length === 0 || Boolean(emailError?.email)}
-        loading={isSubmitting}
+        disabled={isButtonDisabled}
       >
-        Continue
+        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
       </Button>
     </form>
   );

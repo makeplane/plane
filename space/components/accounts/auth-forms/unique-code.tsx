@@ -8,7 +8,7 @@ import { IEmailCheckData } from "types/auth";
 // icons
 import { CircleCheck, XCircle } from "lucide-react";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -41,6 +41,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   const [uniqueCodeFormData, setUniqueCodeFormData] = useState<TUniqueCodeFormValues>({ ...defaultValues, email });
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // router
   const router = useRouter();
   const { next_path } = router.query;
@@ -99,12 +100,15 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   }, []);
 
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
+  const isButtonDisabled = isRequestingNewCode || !uniqueCodeFormData.code || isSubmitting;
 
   return (
     <form
       className="mx-auto mt-5 space-y-4 w-5/6 sm:w-96"
       method="POST"
       action={`${API_BASE_URL}/auth/spaces/${mode === EAuthModes.SIGN_IN ? "magic-sign-in" : "magic-sign-up"}/`}
+      onSubmit={() => setIsSubmitting(true)}
+      onError={() => setIsSubmitting(false)}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <input type="hidden" name="next_path" value={next_path} />
@@ -170,15 +174,14 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
           </button>
         </div>
       </div>
-      <Button
-        type="submit"
-        variant="primary"
-        className="w-full"
-        size="lg"
-        loading={isRequestingNewCode}
-        disabled={isRequestingNewCode || !uniqueCodeFormData.code}
-      >
-        {isRequestingNewCode ? "Sending code" : submitButtonText}
+      <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+        {isRequestingNewCode ? (
+          "Sending code"
+        ) : isSubmitting ? (
+          <Spinner height="20px" width="20px" />
+        ) : (
+          submitButtonText
+        )}
       </Button>
     </form>
   );

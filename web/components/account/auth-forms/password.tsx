@@ -4,7 +4,7 @@ import Link from "next/link";
 // icons
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { ForgotPasswordPopover, PasswordStrengthMeter } from "@/components/account";
 // constants
@@ -45,6 +45,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // hooks
   const { instance } = useInstance();
   const { captureEvent } = useEventTracker();
@@ -84,6 +85,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
   const isButtonDisabled = useMemo(
     () =>
+      !isSubmitting &&
       !!passwordFormData.password &&
       (mode === EAuthModes.SIGN_UP
         ? getPasswordStrength(passwordFormData.password) >= 3 &&
@@ -91,7 +93,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         : true)
         ? false
         : true,
-    [mode, passwordFormData]
+    [isSubmitting, mode, passwordFormData.confirm_password, passwordFormData.password]
   );
 
   return (
@@ -99,6 +101,8 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       className="mx-auto mt-5 space-y-4 w-5/6 sm:w-96"
       method="POST"
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
+      onSubmit={() => setIsSubmitting(true)}
+      onError={() => setIsSubmitting(false)}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <div className="space-y-1">
@@ -189,7 +193,13 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         {mode === EAuthModes.SIGN_IN ? (
           <>
             <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-              {isSmtpConfigured ? "Continue" : "Go to workspace"}
+              {isSubmitting ? (
+                <Spinner height="20px" width="20px" />
+              ) : isSmtpConfigured ? (
+                "Continue"
+              ) : (
+                "Go to workspace"
+              )}
             </Button>
             {instance && isSmtpConfigured && (
               <Button
@@ -205,11 +215,10 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
           </>
         ) : (
           <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-            Create account
+            {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
           </Button>
         )}
       </div>
     </form>
   );
 });
-

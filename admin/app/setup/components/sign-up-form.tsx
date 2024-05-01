@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 // services
 import { AuthService } from "@/services/auth.service";
 // ui
-import { Button, Checkbox, Input } from "@plane/ui";
+import { Button, Checkbox, Input, Spinner } from "@plane/ui";
 // components
 import { Banner, PasswordStrengthMeter } from "components/common";
 // icons
@@ -68,6 +68,7 @@ export const InstanceSignUpForm: FC = (props) => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -109,6 +110,7 @@ export const InstanceSignUpForm: FC = (props) => {
 
   const isButtonDisabled = useMemo(
     () =>
+      !isSubmitting &&
       formData.first_name &&
       formData.email &&
       formData.password &&
@@ -116,7 +118,7 @@ export const InstanceSignUpForm: FC = (props) => {
       formData.password === formData.confirm_password
         ? false
         : true,
-    [formData]
+    [formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]
   );
 
   return (
@@ -133,7 +135,13 @@ export const InstanceSignUpForm: FC = (props) => {
             <Banner type="error" message={errorData?.message} />
           )}
 
-        <form className="space-y-4" method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-up/`}>
+        <form
+          className="space-y-4"
+          method="POST"
+          action={`${API_BASE_URL}/api/instances/admins/sign-up/`}
+          onSubmit={() => setIsSubmitting(true)}
+          onError={() => setIsSubmitting(false)}
+        >
           <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
           <div className="flex items-center gap-4">
@@ -252,25 +260,33 @@ export const InstanceSignUpForm: FC = (props) => {
             <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
               Confirm password
             </label>
-            <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+            <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
+                id="confirm_password"
                 name="confirm_password"
+                inputSize="md"
                 value={formData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder="Confirm password"
-                className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                className={cn("w-full pr-10")}
               />
               {showPassword ? (
-                <EyeOff
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                <button
+                  type="button"
+                  className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
                   onClick={() => setShowPassword(false)}
-                />
+                >
+                  <EyeOff className="h-4 w-4" />
+                </button>
               ) : (
-                <Eye
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                <button
+                  type="button"
+                  className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
                   onClick={() => setShowPassword(true)}
-                />
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
               )}
             </div>
             {!!formData.confirm_password && formData.password !== formData.confirm_password && (
@@ -298,7 +314,7 @@ export const InstanceSignUpForm: FC = (props) => {
 
           <div className="py-2">
             <Button type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
-              Continue
+              {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
             </Button>
           </div>
         </form>
