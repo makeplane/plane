@@ -52,6 +52,7 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
     );
 
   if (instance?.instance?.is_setup_done && pageType === EInstancePageType.PRE_SETUP) redirect("/");
+
   if (!instance?.instance?.is_setup_done && pageType === EInstancePageType.POST_SETUP) redirect("/setup");
 
   return <>{children}</>;
