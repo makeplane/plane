@@ -13,6 +13,7 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
+import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -173,6 +174,8 @@ export const KanbanGroup = (props: IKanbanGroup) => {
   };
 
   const shouldOverlay = isDraggingOverColumn && orderBy !== "sort_order";
+  const readableOrderBy = ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.title;
+
   return (
     <div
       id={`${groupId}__${sub_group_id}`}
@@ -187,12 +190,13 @@ export const KanbanGroup = (props: IKanbanGroup) => {
         className={cn(
           "absolute top-0 left-0 h-full w-full justify-center items-center text-sm text-custom-text-100",
           {
-            "flex bg-custom-primary-10 border-[2px] border-custom-primary-40 rounded z-[2]": shouldOverlay,
+            "flex flex-col bg-custom-primary-10 border-[2px] border-custom-primary-40 rounded z-[2]": shouldOverlay,
           },
           { hidden: !shouldOverlay }
         )}
       >
-        <span>Drop here to move issue</span>
+        {readableOrderBy && <span>The layout is ordered by {readableOrderBy}.</span>}
+        <span>Drop here to move the issue.</span>
       </div>
       <KanbanIssueBlocksList
         sub_group_id={sub_group_id}
@@ -205,7 +209,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
         updateIssue={updateIssue}
         quickActions={quickActions}
         canEditProperties={canEditProperties}
-        scrollableContainerRef={scrollableContainerRef}
+        scrollableContainerRef={sub_group_by ? scrollableContainerRef : columnRef}
       />
 
       {enableQuickIssueCreate && !disableIssueCreation && (
