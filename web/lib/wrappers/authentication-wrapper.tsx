@@ -1,4 +1,5 @@
 import { FC, ReactNode } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
@@ -19,7 +20,7 @@ const isValidURL = (url: string): boolean => {
   return !disallowedSchemes.test(url);
 };
 
-export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
+export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props) => {
   const router = useRouter();
   const { next_path } = router.query;
   // props
@@ -34,7 +35,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
   } = useUser();
   const { loader: workspaceLoader, workspaces, fetchWorkspaces } = useWorkspace();
 
-  useSWR("USER_INFORMATION", () => fetchCurrentUser(), {
+  useSWR("USER_INFORMATION", async () => fetchCurrentUser(), {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   });
@@ -42,7 +43,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
   useSWR(
     currentUser && currentUser?.id ? "USER_PROFILE_SETTINGS_INFORMATION" : null,
     async () => {
-      if (currentUser) {
+      if (currentUser && currentUser?.id) {
         fetchCurrentUserSettings();
         fetchUserProfile();
         fetchWorkspaces();
@@ -126,4 +127,4 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
   }
 
   return <>{children}</>;
-};
+});
