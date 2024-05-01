@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 // hooks
-// types
+import useTimer from "hooks/use-timer";
+import useToast from "hooks/use-toast";
 import { useRouter } from "next/router";
+// types
+import { IEmailCheckData } from "types/auth";
 // icons
 import { CircleCheck, XCircle } from "lucide-react";
 // ui
@@ -10,9 +13,6 @@ import { Button, Input } from "@plane/ui";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { AuthService } from "@/services/authentication.service";
-import useTimer from "hooks/use-timer";
-import useToast from "hooks/use-toast";
-import { IEmailCheckData } from "types/auth";
 import { EAuthModes } from "./root";
 
 type Props = {
@@ -175,8 +175,8 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
         variant="primary"
         className="w-full"
         size="lg"
-        // disabled={!isValid || hasEmailChanged}
         loading={isRequestingNewCode}
+        disabled={isRequestingNewCode || !uniqueCodeFormData.code}
       >
         {isRequestingNewCode ? "Sending code" : submitButtonText}
       </Button>

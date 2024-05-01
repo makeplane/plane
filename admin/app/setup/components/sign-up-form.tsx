@@ -291,7 +291,7 @@ export const InstanceSignUpForm: FC = (props) => {
             <label className="text-sm text-custom-text-300 font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
               Allow Plane to anonymously collect usage events.
             </label>
-            <a href="#" className="text-sm font-medium text-blue-500 hover:text-blue-600">
+            <a href="https://docs.plane.so/telemetry" className="text-sm font-medium text-blue-500 hover:text-blue-600">
               See More
             </a>
           </div>

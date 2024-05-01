@@ -36,7 +36,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
     handleSubmit,
     control,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<IWorkspace>({
     defaultValues: {
       name: "",
@@ -177,6 +177,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
                   ref={ref}
                   hasError={Boolean(errors.name)}
                   className="w-full border-onboarding-border-100 placeholder:text-custom-text-400"
+                  autoFocus
                 />
               </div>
             )}
@@ -255,7 +256,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
             )}
           </div>
         </div>
-        <Button variant="primary" type="submit" size="lg" className="w-full">
+        <Button variant="primary" type="submit" size="lg" className="w-full" disabled={!isValid || invalidSlug}>
           {isSubmitting ? "Creating..." : "Continue"}
         </Button>
       </form>
