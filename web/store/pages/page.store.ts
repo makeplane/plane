@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // types
-import { TPage, TPageViewProps } from "@plane/types";
+import { TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
@@ -33,7 +33,6 @@ export interface IPageStore extends TPage {
   cleanup: () => void;
   // actions
   update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
-  updateViewProps: (viewProps: Partial<TPageViewProps>) => void;
   makePublic: () => Promise<void>;
   makePrivate: () => Promise<void>;
   lock: () => Promise<void>;
@@ -65,7 +64,6 @@ export class PageStore implements IPageStore {
   updated_by: string | undefined;
   created_at: Date | undefined;
   updated_at: Date | undefined;
-  view_props: TPageViewProps | undefined;
   // helpers
   oldName: string = "";
   // reactions
@@ -93,7 +91,6 @@ export class PageStore implements IPageStore {
     this.updated_by = page?.updated_by || undefined;
     this.created_at = page?.created_at || undefined;
     this.updated_at = page?.updated_at || undefined;
-    this.view_props = page?.view_props || undefined;
     this.oldName = page?.name || "";
 
     makeObservable(this, {
@@ -117,7 +114,6 @@ export class PageStore implements IPageStore {
       updated_by: observable.ref,
       created_at: observable.ref,
       updated_at: observable.ref,
-      view_props: observable,
       // helpers
       oldName: observable,
       // computed
@@ -137,7 +133,6 @@ export class PageStore implements IPageStore {
       cleanup: action,
       // actions
       update: action,
-      updateViewProps: action,
       makePublic: action,
       makePrivate: action,
       lock: action,
@@ -216,7 +211,6 @@ export class PageStore implements IPageStore {
       updated_by: this.updated_by,
       created_at: this.created_at,
       updated_at: this.updated_at,
-      view_props: this.view_props,
     };
   }
 
@@ -333,38 +327,6 @@ export class PageStore implements IPageStore {
           const currentPageKey = key as keyof TPage;
           set(this, key, currentPage?.[currentPageKey] || undefined);
         });
-      });
-      throw error;
-    }
-  };
-
-  /**
-   * @description update the page view props
-   * @param {Partial<TPageViewProps>} updatedProps
-   */
-  updateViewProps = async (updatedProps: Partial<TPageViewProps>) => {
-    const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !projectId || !this.id) return undefined;
-
-    const currentViewProps = { ...this.view_props };
-
-    runInAction(() => {
-      Object.keys(updatedProps).forEach((key) => {
-        const currentPageKey = key as keyof TPageViewProps;
-        if (this.view_props) set(this.view_props, key, updatedProps[currentPageKey]);
-      });
-    });
-
-    try {
-      await this.pageService.update(workspaceSlug, projectId, this.id, {
-        view_props: {
-          ...this.view_props,
-          ...updatedProps,
-        },
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.view_props = currentViewProps;
       });
       throw error;
     }
