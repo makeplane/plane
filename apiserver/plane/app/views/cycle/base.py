@@ -24,6 +24,7 @@ from django.utils import timezone
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
@@ -45,8 +46,6 @@ from plane.db.models import (
     User,
 )
 from plane.utils.analytics_plot import burndown_plot
-
-# Module imports
 from .. import BaseAPIView, BaseViewSet, WebhookMixin
 
 
