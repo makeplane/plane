@@ -186,12 +186,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
           }`}
           ref={cardRef}
           className={cn(
-            "block rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
-            {
-              "hover:cursor-pointer": isDragAllowed,
-              "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
-              "bg-custom-background-80 z-[100]": isCurrentBlockDragging,
-            }
+            "block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+            { "hover:cursor-pointer": isDragAllowed },
+            { "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id) },
+            { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
           )}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
