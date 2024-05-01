@@ -260,7 +260,7 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
+class ModuleIssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to module issues.

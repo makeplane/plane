@@ -23,7 +23,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .. import BaseViewSet, WebhookMixin
+from .. import BaseViewSet
 from plane.app.serializers import (
     IssueSerializer,
     CycleIssueSerializer,
@@ -40,7 +40,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 
 
-class CycleIssueViewSet(WebhookMixin, BaseViewSet):
+class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
     model = CycleIssue
 

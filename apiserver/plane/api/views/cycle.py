@@ -515,7 +515,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
+class CycleIssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`,
     and `destroy` actions related to cycle issues.

@@ -32,7 +32,6 @@ from plane.api.serializers import (
     LabelSerializer,
 )
 from plane.app.permissions import (
-    WorkspaceEntityPermission,
     ProjectEntityPermission,
     ProjectLitePermission,
     ProjectMemberPermission,
@@ -49,7 +48,7 @@ from plane.db.models import (
     ProjectMember,
 )
 
-from .base import BaseAPIView, WebhookMixin
+from .base import BaseAPIView
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -656,7 +655,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
+class IssueCommentAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to comments of the particular issue.
