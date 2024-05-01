@@ -10,6 +10,8 @@ import { SignInAuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
 import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
+// helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useEventTracker, useInstance, useUser } from "@/hooks/store";
 import useAuthRedirection from "@/hooks/use-auth-redirection";
@@ -17,6 +19,8 @@ import useAuthRedirection from "@/hooks/use-auth-redirection";
 import DefaultLayout from "@/layouts/default-layout";
 // types
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // assets
 import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
@@ -83,7 +87,11 @@ const SignInPage: NextPageWithLayout = observer(() => {
 });
 
 SignInPage.getLayout = function getLayout(page: React.ReactElement) {
-  return <DefaultLayout>{page}</DefaultLayout>;
+  return (
+    <DefaultLayout>
+      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>{page}</AuthenticationWrapper>
+    </DefaultLayout>
+  );
 };
 
 export default SignInPage;

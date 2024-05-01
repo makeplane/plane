@@ -91,7 +91,7 @@ export const SignUpAuthRoot: FC = observer(() => {
     );
 
   return (
-    <div className="relative max-w-lg mx-auto flex flex-col space-y-6">
+    <div className="relative max-w-lg px-5 border border-red-500 mx-auto flex flex-col space-y-6">
       <AuthHeader
         workspaceSlug={workspaceSlug?.toString() || undefined}
         invitationId={invitation_id?.toString() || undefined}

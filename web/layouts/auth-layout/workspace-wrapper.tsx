@@ -25,7 +25,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // next themes
-  const { resolvedTheme, setTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { membership, signOut, data: currentUser } = useUser();
   const { fetchProjects } = useProject();

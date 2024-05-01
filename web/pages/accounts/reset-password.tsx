@@ -10,6 +10,7 @@ import { Button, Input, Spinner } from "@plane/ui";
 import { PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
 // helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
@@ -18,6 +19,8 @@ import useAuthRedirection from "@/hooks/use-auth-redirection";
 import DefaultLayout from "@/layouts/default-layout";
 // lib
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
 import { AuthService } from "@/services/auth.service";
 // images
@@ -212,7 +215,11 @@ const ResetPasswordPage: NextPageWithLayout = () => {
 };
 
 ResetPasswordPage.getLayout = function getLayout(page: ReactElement) {
-  return <DefaultLayout>{page}</DefaultLayout>;
+  return (
+    <DefaultLayout>
+      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>{page}</AuthenticationWrapper>
+    </DefaultLayout>
+  );
 };
 
 export default ResetPasswordPage;

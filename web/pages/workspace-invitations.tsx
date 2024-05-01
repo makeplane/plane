@@ -3,22 +3,25 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
-// hooks
 import { Spinner } from "@plane/ui";
+// components
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
+// constants
 import { WORKSPACE_INVITATION } from "@/constants/fetch-keys";
+// helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
+// hooks
 import { useUser } from "@/hooks/store";
-// services
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
-// ui
-// icons
 // types
 import { NextPageWithLayout } from "@/lib/types";
-import { WorkspaceService } from "@/services/workspace.service";
-// constants
-
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
+import { WorkspaceService } from "@/services/workspace.service";
+
+// service initialization
 const workspaceService = new WorkspaceService();
 
 const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
@@ -124,7 +127,11 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
 });
 
 WorkspaceInvitationPage.getLayout = function getLayout(page: ReactElement) {
-  return <DefaultLayout>{page}</DefaultLayout>;
+  return (
+    <DefaultLayout>
+      <AuthenticationWrapper pageType={EPageTypes.PUBLIC}>{page}</AuthenticationWrapper>
+    </DefaultLayout>
+  );
 };
 
 export default WorkspaceInvitationPage;

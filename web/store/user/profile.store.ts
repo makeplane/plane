@@ -88,7 +88,6 @@ export class ProfileStore implements IProfileStore {
 
       return userProfile;
     } catch (error) {
-      console.log("Failed to fetch profile details");
       runInAction(() => {
         this.isLoading = true;
         this.error = {

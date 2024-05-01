@@ -1,3 +1,10 @@
+export enum EPageTypes {
+  "PUBLIC" = "PUBLIC",
+  "NON_AUTHENTICATED" = "NON_AUTHENTICATED",
+  "ONBOARDING" = "ONBOARDING",
+  "AUTHENTICATED" = "AUTHENTICATED",
+}
+
 export enum EAuthModes {
   SIGN_IN = "SIGN_IN",
   SIGN_UP = "SIGN_UP",

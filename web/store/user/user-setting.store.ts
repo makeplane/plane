@@ -2,7 +2,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 import { UserService } from "services/user.service";
 // types
-import { IUserSettings, TUserProfile } from "@plane/types";
+import { IUserSettings } from "@plane/types";
 
 type TError = {
   status: string;

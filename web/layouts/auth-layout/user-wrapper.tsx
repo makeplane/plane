@@ -57,5 +57,3 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
 
   return <>{children}</>;
 });
-
-

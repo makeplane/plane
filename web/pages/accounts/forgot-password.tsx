@@ -13,6 +13,7 @@ import { PageHead } from "@/components/core";
 // constants
 import { FORGOT_PASS_LINK, NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
 import { cn } from "@/helpers/common.helper";
 import { checkEmailValidity } from "@/helpers/string.helper";
 // hooks
@@ -23,6 +24,8 @@ import useTimer from "@/hooks/use-timer";
 import DefaultLayout from "@/layouts/default-layout";
 // lib
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
 import { AuthService } from "@/services/auth.service";
 // images
@@ -47,8 +50,8 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
   const { email } = router.query;
   // store hooks
   const { captureEvent } = useEventTracker();
-    // hooks
-    const { resolvedTheme } = useTheme();
+  // hooks
+  const { resolvedTheme } = useTheme();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(0);
   const { isRedirecting, handleRedirection } = useAuthRedirection();
@@ -108,7 +111,7 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
     <div className="relative">
       <PageHead title="Forgot Password" />
       <div className="absolute inset-0 z-0">
-      <Image
+        <Image
           src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
           className="w-screen min-h-screen object-cover"
           alt="Plane background pattern"
@@ -199,7 +202,11 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
 };
 
 ForgotPasswordPage.getLayout = function getLayout(page: ReactElement) {
-  return <DefaultLayout>{page}</DefaultLayout>;
+  return (
+    <DefaultLayout>
+      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>{page}</AuthenticationWrapper>
+    </DefaultLayout>
+  );
 };
 
 export default ForgotPasswordPage;

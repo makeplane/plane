@@ -212,3 +212,4 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
     </form>
   );
 });
+

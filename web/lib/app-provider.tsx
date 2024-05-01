@@ -13,8 +13,8 @@ import { SWR_CONFIG } from "@/constants/swr-config";
 import { resolveGeneralTheme } from "@/helpers/theme.helper";
 // hooks
 import { useInstance, useWorkspace, useUser } from "@/hooks/store";
-// layouts
-import InstanceLayout from "@/lib/wrappers/instance-wrapper";
+// wrappers
+import { InstanceWrapper } from "@/lib/wrappers";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });
@@ -45,7 +45,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
     <>
       {/* TODO: Need to handle custom themes for toast */}
       <Toast theme={resolveGeneralTheme(resolvedTheme)} />
-      <InstanceLayout>
+      <InstanceWrapper>
         <StoreWrapper>
           <CrispWrapper user={currentUser}>
             <PostHogProvider
@@ -60,7 +60,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
             </PostHogProvider>
           </CrispWrapper>
         </StoreWrapper>
-      </InstanceLayout>
+      </InstanceWrapper>
     </>
   );
 });
