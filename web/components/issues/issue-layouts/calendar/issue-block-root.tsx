@@ -1,14 +1,14 @@
 import React from "react";
-import { Placement } from "@popperjs/core";
 // components
-import { TIssue, TIssueMap } from "@plane/types";
+import { TIssueMap } from "@plane/types";
 import { CalendarIssueBlock } from "@/components/issues";
+import { TRenderQuickActions } from "../list/list-view-types";
 // types
 
 type Props = {
   issues: TIssueMap | undefined;
   issueId: string;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   isDragging?: boolean;
 };
 

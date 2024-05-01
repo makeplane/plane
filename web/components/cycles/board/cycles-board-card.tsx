@@ -1,4 +1,4 @@
-import { FC, MouseEvent } from "react";
+import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -28,6 +28,8 @@ export interface ICyclesBoardCard {
 
 export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
+  // refs
+  const parentRef = useRef(null);
   // router
   const router = useRouter();
   // store
@@ -150,7 +152,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
 
   return (
     <div className="relative">
-      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
+      <Link ref={parentRef} href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
         <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 truncate">
@@ -246,7 +248,12 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
           />
         )}
 
-        <CycleQuickActions cycleId={cycleId} projectId={projectId} workspaceSlug={workspaceSlug} />
+        <CycleQuickActions
+          parentRef={parentRef}
+          cycleId={cycleId}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
+        />
       </div>
     </div>
   );

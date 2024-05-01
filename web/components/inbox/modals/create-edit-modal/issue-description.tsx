@@ -5,6 +5,8 @@ import { TIssue } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
+// helpers
+import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 
@@ -39,10 +41,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
         projectId={projectId}
         dragDropEnabled={false}
         onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
-        placeholder={(isFocused) => {
-          if (isFocused) return "Press '/' for commands...";
-          else return "Click to add description";
-        }}
+        placeholder={getDescriptionPlaceholder}
       />
     </div>
   );

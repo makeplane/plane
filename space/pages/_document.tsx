@@ -6,6 +6,7 @@ class MyDocument extends Document {
       <Html>
         <Head />
         <body className="w-100 bg-custom-background-100 antialiased">
+          <div id="context-menu-portal" />
           <Main />
           <NextScript />
         </body>

@@ -2,6 +2,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // types
 import { TPageNavigationTabs } from "@plane/types";
+// components
+import { ListLayout } from "@/components/core/list";
 // hooks
 import { useProjectPages } from "@/hooks/store";
 // components
@@ -22,10 +24,10 @@ export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
 
   if (!filteredPageIds) return <></>;
   return (
-    <div className="relative w-full h-full overflow-hidden overflow-y-auto divide-y-[0.5px] divide-custom-border-200">
+    <ListLayout>
       {filteredPageIds.map((pageId) => (
         <PageListBlock key={pageId} workspaceSlug={workspaceSlug} projectId={projectId} pageId={pageId} />
       ))}
-    </div>
+    </ListLayout>
   );
 });
