@@ -48,6 +48,8 @@ from plane.db.models import (
     Project,
 )
 from plane.utils.analytics_plot import burndown_plot
+from plane.utils.user_timezone_converter import user_timezone_converter
+
 
 # Module imports
 from .. import BaseAPIView, BaseViewSet, WebhookMixin
@@ -236,6 +238,10 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                     "updated_at",
                 )
             ).first()
+            datetime_fields = ["created_at", "updated_at"]
+            module = user_timezone_converter(
+                module, datetime_fields, request.user.user_timezone
+            )
             return Response(module, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -276,6 +282,10 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 "backlog_issues",
                 "created_at",
                 "updated_at",
+            )
+            datetime_fields = ["created_at", "updated_at"]
+            modules = user_timezone_converter(
+                modules, datetime_fields, request.user.user_timezone
             )
         return Response(modules, status=status.HTTP_200_OK)
 
@@ -454,6 +464,10 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 "created_at",
                 "updated_at",
             ).first()
+            datetime_fields = ["created_at", "updated_at"]
+            module = user_timezone_converter(
+                module, datetime_fields, request.user.user_timezone
+            )
             return Response(module, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
