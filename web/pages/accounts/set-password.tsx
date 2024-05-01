@@ -2,11 +2,10 @@ import { FormEvent, ReactElement, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // ui
-import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
@@ -14,7 +13,6 @@ import { PageHead } from "@/components/core";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
-import useAuthRedirection from "@/hooks/use-auth-redirection";
 // layouts
 import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
@@ -53,19 +51,7 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
 
-  const { data: user, fetchCurrentUser } = useUser();
-  // store hooks
-  //const { captureEvent } = useEventTracker();
-  // sign in redirection hook
-  const { isRedirecting, handleRedirection } = useAuthRedirection();
-
-  const { isLoading } = useSWR(`CURRENT_USER_DETAILS`, () => fetchCurrentUser(), {
-    shouldRetryOnError: false,
-  });
-
-  useEffect(() => {
-    if (user && !user?.is_password_autoset) handleRedirection();
-  }, [handleRedirection, user?.is_password_autoset]);
+  const { data: user } = useUser();
 
   useEffect(() => {
     if (csrfToken === undefined)
@@ -94,7 +80,6 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
     try {
       e.preventDefault();
       await handleSetPassword(passwordFormData.password);
-      await handleRedirection();
     } catch (err: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -103,13 +88,6 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
       });
     }
   };
-
-  if (isRedirecting || isLoading)
-    return (
-      <div className="grid h-screen place-items-center">
-        <Spinner />
-      </div>
-    );
 
   return (
     <div className="relative">

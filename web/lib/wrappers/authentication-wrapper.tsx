@@ -34,10 +34,14 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
   } = useUser();
   const { loader: workspaceLoader, workspaces, fetchWorkspaces } = useWorkspace();
 
+  useSWR("USER_INFORMATION", () => fetchCurrentUser(), {
+    revalidateOnFocus: false,
+    shouldRetryOnError: false,
+  });
+
   useSWR(
-    "USER_PROFILE_SETTINGS_INFORMATION",
+    currentUser && currentUser?.id ? "USER_PROFILE_SETTINGS_INFORMATION" : null,
     async () => {
-      await fetchCurrentUser();
       if (currentUser) {
         fetchCurrentUserSettings();
         fetchUserProfile();
@@ -80,7 +84,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
   if (pageType === EPageTypes.PUBLIC) return <>{children}</>;
 
   if (pageType === EPageTypes.NON_AUTHENTICATED) {
-    if (!currentUser) return <>{children}</>;
+    if (!currentUser?.id) return <>{children}</>;
     else {
       if (currentUserProfile?.is_onboarded) {
         const currentRedirectRoute = getWorkspaceRedirectionUrl();
@@ -94,7 +98,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
   }
 
   if (pageType === EPageTypes.ONBOARDING) {
-    if (!currentUser) {
+    if (!currentUser?.id) {
       router.push("/accounts/sign-in");
       return;
     } else {
@@ -107,7 +111,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
   }
 
   if (pageType === EPageTypes.AUTHENTICATED) {
-    if (currentUser) {
+    if (currentUser?.id) {
       if (currentUserProfile?.is_onboarded) {
         return <>{children}</>;
       } else {

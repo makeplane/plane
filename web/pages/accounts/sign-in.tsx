@@ -1,10 +1,8 @@
-import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
-import { Spinner } from "@plane/ui";
 // components
 import { SignInAuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
@@ -13,8 +11,7 @@ import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useEventTracker, useInstance, useUser } from "@/hooks/store";
-import useAuthRedirection from "@/hooks/use-auth-redirection";
+import { useEventTracker } from "@/hooks/store";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // types
@@ -30,24 +27,9 @@ export type AuthType = "sign-in" | "sign-up";
 
 const SignInPage: NextPageWithLayout = observer(() => {
   // store hooks
-  const { instance } = useInstance();
-  const { data: currentUser } = useUser();
   const { captureEvent } = useEventTracker();
   // hooks
   const { resolvedTheme } = useTheme();
-  // login redirection hook
-  const { isRedirecting, handleRedirection } = useAuthRedirection();
-
-  useEffect(() => {
-    handleRedirection();
-  }, [handleRedirection]);
-
-  if (isRedirecting || currentUser || !instance?.config)
-    return (
-      <div className="grid h-screen place-items-center">
-        <Spinner />
-      </div>
-    );
 
   return (
     <div className="relative">
