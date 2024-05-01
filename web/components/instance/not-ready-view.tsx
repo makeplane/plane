@@ -11,7 +11,7 @@ export const InstanceNotReady: FC = () => {
   const { resolvedTheme } = useTheme();
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
 
-  const planeGodModeUrl = `${process.env.NEXT_PUBLIC_GOD_MODE_URL}/spaces?setup/?auth_enabled=0`;
+  const planeGodModeUrl = `${process.env.NEXT_PUBLIC_GOD_MODE_URL}/god-mode/setup/?auth_enabled=0`;
 
   return (
     <div className="relative h-screen max-h-max w-full overflow-hidden overflow-y-auto flex flex-col">
