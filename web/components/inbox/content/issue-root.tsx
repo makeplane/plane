@@ -136,7 +136,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={issue.project_id}
             issueId={issue.id}
-            swrIssueDescription={null}
+            swrIssueDescription={issue.description_html ?? "<p></p>"}
             initialValue={issue.description_html ?? "<p></p>"}
             disabled={!isEditable}
             issueOperations={issueOperations}
