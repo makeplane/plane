@@ -46,8 +46,8 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
       <div className="hidden md:flex items-center border-b border-custom-border-200 px-3 py-2 md:px-5">
         <div
           className={cn("flex-shrink-0", {
-            "w-56 lg:w-72": !isFullWidth,
-            "w-[10%]": isFullWidth,
+            "w-40 lg:w-56": !isFullWidth,
+            "w-[5%]": isFullWidth,
           })}
         >
           <PageSummaryPopover
