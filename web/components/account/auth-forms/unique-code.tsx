@@ -69,10 +69,10 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       );
   };
 
-  const handleRequestNewCode = async () => {
+  const handleRequestNewCode = async (email: string) => {
     setIsRequestingNewCode(true);
 
-    await handleSendNewCode(uniqueCodeFormData.email)
+    await handleSendNewCode(email)
       .then(() => setResendCodeTimer(30))
       .finally(() => setIsRequestingNewCode(false));
   };
@@ -83,10 +83,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   }, [csrfToken]);
 
   useEffect(() => {
-    setIsRequestingNewCode(true);
-    handleSendNewCode(email)
-      .then(() => setResendCodeTimer(30))
-      .finally(() => setIsRequestingNewCode(false));
+    handleRequestNewCode(email);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -146,7 +143,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
           </p>
           <button
             type="button"
-            onClick={handleRequestNewCode}
+            onClick={() => handleRequestNewCode(uniqueCodeFormData.email)}
             className={`${
               isRequestNewCodeDisabled
                 ? "text-onboarding-text-400"
@@ -162,7 +159,14 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
           </button>
         </div>
       </div>
-      <Button type="submit" variant="primary" className="w-full" size="lg" loading={isRequestingNewCode}>
+      <Button
+        type="submit"
+        variant="primary"
+        className="w-full"
+        size="lg"
+        loading={isRequestingNewCode}
+        disabled={isRequestingNewCode || !uniqueCodeFormData.code}
+      >
         {isRequestingNewCode ? "Sending code" : submitButtonText}
       </Button>
     </form>

@@ -16,12 +16,12 @@ import {
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // types
-import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
+import { IUser, IWorkspace } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { MEMBER_INVITED } from "@/constants/event-tracker";
-import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+import { EUserWorkspaceRoles, ROLE, ROLE_DETAILS } from "@/constants/workspace";
 // helpers
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
@@ -39,7 +39,6 @@ import { SwitchOrDeleteAccountDropdown } from "./switch-or-delete-account-dropdo
 type Props = {
   finishOnboarding: () => Promise<void>;
   totalSteps: number;
-  stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
   user: IUser | undefined;
   workspace: IWorkspace | undefined;
 };
@@ -215,10 +214,10 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
                 >
                   <Listbox.Options
                     ref={dropdownRef}
-                    className="fixed z-10 mt-1 max-h-48 w-48 overflow-y-auto rounded-md border border-onboarding-border-100 bg-onboarding-background-200 text-xs shadow-lg focus:outline-none"
+                    className="fixed z-10 mt-1 h-fit w-48 sm:w-60 overflow-y-auto rounded-md border border-onboarding-border-100 bg-onboarding-background-200 shadow-sm focus:outline-none"
                   >
                     <div className="space-y-1 p-2">
-                      {Object.entries(ROLE).map(([key, value]) => (
+                      {Object.entries(ROLE_DETAILS).map(([key, value]) => (
                         <Listbox.Option
                           key={key}
                           value={parseInt(key)}
@@ -229,9 +228,12 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
                           }
                         >
                           {({ selected }) => (
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2">{value}</div>
-                              {selected && <Check className="h-4 w-4 flex-shrink-0" />}
+                            <div className="flex items-center text-wrap gap-2 p-1">
+                              <div className="flex flex-col">
+                                <div className="text-sm font-medium">{value.title}</div>
+                                <div className="flex text-xs text-custom-text-300">{value.description}</div>
+                              </div>
+                              {selected && <Check className="h-4 w-4 shrink-0" />}
                             </div>
                           )}
                         </Listbox.Option>
@@ -264,7 +266,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
 };
 
 export const InviteMembers: React.FC<Props> = (props) => {
-  const { finishOnboarding, totalSteps, stepChange, workspace } = props;
+  const { finishOnboarding, totalSteps, workspace } = props;
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
 
@@ -287,11 +289,6 @@ export const InviteMembers: React.FC<Props> = (props) => {
   });
 
   const nextStep = async () => {
-    const payload: Partial<TOnboardingSteps> = {
-      workspace_invite: true,
-    };
-
-    await stepChange(payload);
     await finishOnboarding();
   };
 
@@ -371,11 +368,11 @@ export const InviteMembers: React.FC<Props> = (props) => {
             <SwitchOrDeleteAccountDropdown />
           </div>
         </div>
-        <div className="flex flex-col w-full items-center justify-center p-8 mt-6">
+        <div className="flex flex-col w-full items-center justify-center p-8 mt-6 md:w-4/5 mx-auto">
           <div className="text-center space-y-1 py-4 mx-auto w-4/5">
             <h3 className="text-3xl font-bold text-onboarding-text-100">Invite your teammates</h3>
             <p className="font-medium text-onboarding-text-400">
-              Work in plane happens best with your team. Invite them now to use Plane to it’s potential.
+              Work in plane happens best with your team. Invite them now to use Plane to its potential.
             </p>
           </div>
           <form
@@ -410,14 +407,14 @@ export const InviteMembers: React.FC<Props> = (props) => {
               </div>
               <button
                 type="button"
-                className="flex items-center mx-8 gap-1.5 bg-transparent text-sm font-semibold text-custom-primary-100 outline-custom-primary-100"
+                className="flex items-center mx-8 gap-1.5 bg-transparent text-sm font-medium text-custom-primary-100 outline-custom-primary-100"
                 onClick={appendField}
               >
-                <Plus className="h-4 w-4 mb-0.5" strokeWidth={2.5} />
+                <Plus className="h-4 w-4" strokeWidth={2} />
                 Add another
               </button>
             </div>
-            <div className="flex flex-col mx-auto items-center justify-center gap-4 sm:w-96">
+            <div className="flex flex-col mx-auto px-8 sm:px-2 items-center justify-center gap-4 w-96">
               <Button
                 variant="primary"
                 type="submit"

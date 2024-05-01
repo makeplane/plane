@@ -59,7 +59,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
 
-  const redirectToUniqueCodeLogin = async () => {
+  const redirectToUniqueCodeSignIn = async () => {
     handleStepChange(EAuthSteps.UNIQUE_CODE);
   };
 
@@ -194,7 +194,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             {instance && isSmtpConfigured && (
               <Button
                 type="button"
-                onClick={redirectToUniqueCodeLogin}
+                onClick={redirectToUniqueCodeSignIn}
                 variant="outline-primary"
                 className="w-full"
                 size="lg"

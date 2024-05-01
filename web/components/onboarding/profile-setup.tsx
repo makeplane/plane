@@ -131,22 +131,21 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
       await Promise.all([
         updateCurrentUser(userDetailsPayload),
         updateUserProfile(profileUpdatePayload),
-        stepChange({ profile_complete: true }),
-      ]).then(() => {
-        captureEvent(USER_DETAILS, {
-          state: "SUCCESS",
-          element: "Onboarding",
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "Profile setup completed!",
-        });
-        // For Invited Users, they will skip all other steps and finish onboarding.
-        if (totalSteps <= 2) {
-          finishOnboarding();
-        }
+        totalSteps > 2 && stepChange({ profile_complete: true }),
+      ]);
+      captureEvent(USER_DETAILS, {
+        state: "SUCCESS",
+        element: "Onboarding",
       });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success",
+        message: "Profile setup completed!",
+      });
+      // For Invited Users, they will skip all other steps and finish onboarding.
+      if (totalSteps <= 2) {
+        finishOnboarding();
+      }
     } catch {
       captureEvent(USER_DETAILS, {
         state: "FAILED",
@@ -169,7 +168,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     try {
       await Promise.all([
         updateCurrentUser(userDetailsPayload),
-        formData.password ? handleSetPassword(formData.password) : Promise.resolve(),
+        formData.password && handleSetPassword(formData.password),
       ]).then(() => setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION));
     } catch {
       captureEvent(USER_DETAILS, {
@@ -190,21 +189,23 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
       role: formData.role,
     };
     try {
-      await Promise.all([updateUserProfile(profileUpdatePayload), stepChange({ profile_complete: true })]).then(() => {
-        captureEvent(USER_DETAILS, {
-          state: "SUCCESS",
-          element: "Onboarding",
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "Profile setup completed!",
-        });
-        // For Invited Users, they will skip all other steps and finish onboarding.
-        if (totalSteps <= 2) {
-          finishOnboarding();
-        }
+      await Promise.all([
+        updateUserProfile(profileUpdatePayload),
+        totalSteps > 2 && stepChange({ profile_complete: true }),
+      ]);
+      captureEvent(USER_DETAILS, {
+        state: "SUCCESS",
+        element: "Onboarding",
       });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success",
+        message: "Profile setup completed!",
+      });
+      // For Invited Users, they will skip all other steps and finish onboarding.
+      if (totalSteps <= 2) {
+        finishOnboarding();
+      }
     } catch {
       captureEvent(USER_DETAILS, {
         state: "FAILED",
