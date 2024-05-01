@@ -54,7 +54,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="rounded-lg space-y-4 pl-3">
         {issue.parent_id && (
           <IssueParentDetail
             workspaceSlug={workspaceSlug}
@@ -85,6 +85,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           issueOperations={issueOperations}
           disabled={!isEditable}
           value={issue.name}
+          containerClassName="-ml-3"
         />
 
         {/* {issue?.description_html === issueDescription && ( */}
@@ -97,6 +98,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           disabled={!isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
+          containerClassName="-ml-3 border-none"
         />
         {/* )} */}
 
@@ -121,14 +123,18 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         )}
       </div>
 
-      <IssueAttachmentRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
-        disabled={!isEditable}
-      />
+      <div className="pl-3">
+        <IssueAttachmentRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={!isEditable}
+        />
+      </div>
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
+      <div className="pl-3">
+        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
+      </div>
     </>
   );
 });
