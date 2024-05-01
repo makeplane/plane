@@ -12,7 +12,13 @@ import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
 import { ProjectLogo } from "@/components/project";
 // constants
-import { E_MODULES } from "@/constants/event-tracker";
+import {
+  E_MODULES,
+  MODULES_FILTER_APPLIED,
+  MODULES_FILTER_REMOVED,
+  MODULES_LAYOUT_CHANGED,
+  MODULES_SORT_UPDATED,
+} from "@/constants/event-tracker";
 import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
@@ -30,7 +36,7 @@ export const ModulesListHeader: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -57,7 +63,7 @@ export const ModulesListHeader: React.FC = observer(() => {
   const handleFilters = useCallback(
     (key: keyof TModuleFilters, value: string | string[]) => {
       if (!projectId) return;
-      const newValues = filters?.[key] ?? [];
+      const newValues = Array.from(filters?.[key] ?? []);
 
       if (Array.isArray(value))
         value.forEach((val) => {
@@ -68,10 +74,14 @@ export const ModulesListHeader: React.FC = observer(() => {
         if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
-
+      captureEvent((filters?.[key] ?? []).length > newValues.length ? MODULES_FILTER_REMOVED : MODULES_FILTER_APPLIED, {
+        filter_type: key,
+        filter_property: value,
+        current_filters: filters,
+      });
       updateFilters(projectId.toString(), { [key]: newValues });
     },
-    [filters, projectId, updateFilters]
+    [filters, projectId, updateFilters, captureEvent]
   );
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -175,6 +185,9 @@ export const ModulesListHeader: React.FC = observer(() => {
                 onClick={() => {
                   if (!projectId) return;
                   updateDisplayFilters(projectId.toString(), { layout: layout.key });
+                  captureEvent(MODULES_LAYOUT_CHANGED, {
+                    layout: layout.key,
+                  });
                 }}
               >
                 <layout.icon
@@ -189,10 +202,18 @@ export const ModulesListHeader: React.FC = observer(() => {
         </div>
         <ModuleOrderByDropdown
           value={displayFilters?.order_by}
-          onChange={(val) => {
+          onChange={(property, val) => {
             if (!projectId || val === displayFilters?.order_by) return;
             updateDisplayFilters(projectId.toString(), {
               order_by: val,
+            });
+            captureEvent(MODULES_SORT_UPDATED, {
+              changed_property: property,
+              change_details: val.replaceAll("-", ""),
+              current_sort: {
+                order_by: displayFilters?.order_by?.replaceAll("-", ""),
+                sort_by: displayFilters?.order_by?.startsWith("-") ? "desc" : "asc",
+              },
             });
           }}
         />
@@ -203,6 +224,11 @@ export const ModulesListHeader: React.FC = observer(() => {
             handleDisplayFiltersUpdate={(val) => {
               if (!projectId) return;
               updateDisplayFilters(projectId.toString(), val);
+              captureEvent(!val.favorites ? MODULES_FILTER_REMOVED : MODULES_FILTER_APPLIED, {
+                filter_type: "favorites",
+                filter_property: val.favorites,
+                current_filters: filters,
+              });
             }}
             handleFiltersUpdate={handleFilters}
             memberIds={workspaceMemberIds ?? undefined}

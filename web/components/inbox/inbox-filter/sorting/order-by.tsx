@@ -22,7 +22,7 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
     (filterKey: keyof TInboxIssueSorting, filterValue: TInboxIssueSorting[keyof TInboxIssueSorting]) => {
       captureEvent(INBOX_SORT_UPDATED, {
         changed_property: filterKey,
-        changed_details: filterValue,
+        change_details: filterValue,
         current_sort: inboxSorting,
       });
       handleInboxIssueSorting(filterKey, filterValue);

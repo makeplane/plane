@@ -9,7 +9,7 @@ import { cn } from "@/helpers/common.helper";
 // constants
 
 type Props = {
-  onChange: (value: TModuleOrderByOptions) => void;
+  onChange: (property: "order_by" | "sort_by", value: TModuleOrderByOptions) => void;
   value: TModuleOrderByOptions | undefined;
 };
 
@@ -38,8 +38,8 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
           key={option.key}
           className="flex items-center justify-between gap-2"
           onClick={() => {
-            if (isDescending) onChange(`-${option.key}` as TModuleOrderByOptions);
-            else onChange(option.key);
+            if (isDescending) onChange("order_by", `-${option.key}` as TModuleOrderByOptions);
+            else onChange("order_by", option.key);
           }}
         >
           {option.label}
@@ -50,7 +50,7 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {
-          if (isDescending) onChange(value.slice(1) as TModuleOrderByOptions);
+          if (isDescending) onChange("sort_by", value.slice(1) as TModuleOrderByOptions);
         }}
       >
         Ascending
@@ -59,7 +59,7 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {
-          if (!isDescending) onChange(`-${value}` as TModuleOrderByOptions);
+          if (!isDescending) onChange("sort_by", `-${value}` as TModuleOrderByOptions);
         }}
       >
         Descending

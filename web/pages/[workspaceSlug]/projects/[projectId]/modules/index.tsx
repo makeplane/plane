@@ -12,8 +12,9 @@ import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules"
 // hooks
 import ModulesListMobileHeader from "@/components/modules/moduels-list-mobile-header";
 import { EmptyStateType } from "@/constants/empty-state";
+import { MODULES_FILTER_REMOVED } from "@/constants/event-tracker";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
-import { useModuleFilter, useProject } from "@/hooks/store";
+import { useEventTracker, useModuleFilter, useProject } from "@/hooks/store";
 import { AppLayout } from "@/layouts/app-layout";
 import { NextPageWithLayout } from "@/lib/types";
 
@@ -23,6 +24,7 @@ const ProjectModulesPage: NextPageWithLayout = observer(() => {
   // store
   const { getProjectById, currentProjectDetails } = useProject();
   const { currentProjectFilters, clearAllFilters, updateFilters } = useModuleFilter();
+  const { captureEvent } = useEventTracker();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Modules` : undefined;
@@ -35,6 +37,11 @@ const ProjectModulesPage: NextPageWithLayout = observer(() => {
       if (!value) newValues = [];
       else newValues = newValues.filter((val) => val !== value);
 
+      captureEvent(MODULES_FILTER_REMOVED, {
+        filter_type: key,
+        filter_property: value,
+        current_filters: currentProjectFilters,
+      });
       updateFilters(projectId.toString(), { [key]: newValues });
     },
     [currentProjectFilters, projectId, updateFilters]

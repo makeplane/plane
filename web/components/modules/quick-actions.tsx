@@ -8,11 +8,12 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // constants
+import { E_MODULES, MODULE_ARCHIVED, MODULE_RESTORED } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useModule, useEventTracker, useUser } from "@/hooks/store";
+import { useModule, useEventTracker, useUser, useModuleFilter } from "@/hooks/store";
 
 type Props = {
   moduleId: string;
@@ -30,7 +31,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const [archiveModuleModal, setArchiveModuleModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
@@ -59,7 +60,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const handleEditModule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Modules page list layout");
+    setTrackElement(E_MODULES);
     setEditModal(true);
   };
 
@@ -67,6 +68,10 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
     e.preventDefault();
     e.stopPropagation();
     setArchiveModuleModal(true);
+    captureEvent(MODULE_ARCHIVED, {
+      module_id: moduleId,
+      element: E_MODULES,
+    });
   };
 
   const handleRestoreModule = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -78,6 +83,10 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
           type: TOAST_TYPE.SUCCESS,
           title: "Restore success",
           message: "Your module can be found in project modules.",
+        });
+        captureEvent(MODULE_RESTORED, {
+          module_id: moduleId,
+          element: E_MODULES,
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/archives/modules`);
       })
@@ -93,7 +102,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const handleDeleteModule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Modules page list layout");
+    setTrackElement(E_MODULES);
     setDeleteModal(true);
   };
 
