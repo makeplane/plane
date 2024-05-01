@@ -11,7 +11,7 @@ import { Banner } from "components/common";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // helpers
-import { API_BASE_URL, cn } from "@/helpers/common.helper";
+import { API_BASE_URL } from "@/helpers/common.helper";
 
 // service initialization
 const authService = new AuthService();
@@ -95,8 +95,12 @@ export const InstanceSignInForm: FC = (props) => {
     <div className="relative w-full h-full overflow-hidden container mx-auto px-5 md:px-0 flex justify-center items-center">
       <div className="w-full md:w-4/6 lg:w-3/6 xl:w-2/6 space-y-10">
         <div className="text-center space-y-1">
-          <h3 className="text-3xl font-bold">Manage your Plane instance</h3>
-          <p className="font-medium text-custom-text-400">Configure instance-wide settings to secure your instance</p>
+          <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
+            Manage your Plane instance
+          </h3>
+          <p className="font-medium text-onboarding-text-400">
+            Configure instance-wide settings to secure your instance
+          </p>
         </div>
 
         {errorData.type && errorData?.message && <Banner type="error" message={errorData?.message} />}
@@ -111,11 +115,11 @@ export const InstanceSignInForm: FC = (props) => {
           <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
+            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
               Email <span className="text-red-500">*</span>
             </label>
             <Input
-              className="w-full"
+              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
               id="email"
               name="email"
               type="email"
@@ -128,12 +132,12 @@ export const InstanceSignInForm: FC = (props) => {
           </div>
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
               Password <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Input
-                className={cn("w-full pr-10")}
+                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}

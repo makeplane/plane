@@ -11,8 +11,8 @@ import { AuthRoot, UserLoggedIn } from "@/components/accounts";
 import useAuthRedirection from "@/hooks/use-auth-redirection";
 import { useMobxStore } from "@/lib/mobx/store-provider";
 // images
-import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
+import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text-new.png";
 
 export const AuthView = observer(() => {

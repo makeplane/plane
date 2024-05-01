@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // icons
+import { useTheme } from "next-themes";
 import { Eye, EyeOff } from "lucide-react";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
@@ -21,7 +22,8 @@ import { NextPageWithLayout } from "@/lib/types";
 // services
 import { AuthService } from "@/services/auth.service";
 // images
-import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
+import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 type TResetPasswordFormValues = {
@@ -50,6 +52,8 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
   });
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+  // hooks
+  const { resolvedTheme } = useTheme();
 
   const { data: user } = useUser();
 
@@ -93,7 +97,11 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
     <div className="relative">
       <PageHead title="Reset Password" />
       <div className="absolute inset-0 z-0">
-        <Image src={PlaneBackgroundPattern} className="w-screen object-cover" alt="Plane background pattern" />
+        <Image
+          src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
+          className="w-screen object-cover"
+          alt="Plane background pattern"
+        />
       </div>
       <div className="relative z-10">
         <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28">

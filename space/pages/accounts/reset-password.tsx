@@ -16,8 +16,8 @@ import { getPasswordStrength } from "@/helpers/password.helper";
 // services
 import { AuthService } from "@/services/authentication.service";
 // images
-import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
+import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 type TResetPasswordFormValues = {

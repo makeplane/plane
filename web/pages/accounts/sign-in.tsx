@@ -19,8 +19,8 @@ import { NextPageWithLayout } from "@/lib/types";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // assets
-import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
+import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 export type AuthType = "sign-in" | "sign-up";

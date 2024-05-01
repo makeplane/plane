@@ -12,8 +12,8 @@ import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // assets
-import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
+import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 export const SignUpView = observer(() => {
