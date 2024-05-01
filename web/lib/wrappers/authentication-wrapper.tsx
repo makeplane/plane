@@ -72,8 +72,6 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
     if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
 
-    console.log("redirectionRoute", redirectionRoute);
-
     return redirectionRoute;
   };
 
