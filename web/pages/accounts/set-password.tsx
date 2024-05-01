@@ -183,38 +183,36 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
                   </div>
                   {isPasswordInputFocused && <PasswordStrengthMeter password={passwordFormData.password} />}
                 </div>
-                {getPasswordStrength(passwordFormData.password) >= 3 && (
-                  <div className="space-y-1">
-                    <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
-                      Confirm password
-                    </label>
-                    <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        name="confirm_password"
-                        value={passwordFormData.confirm_password}
-                        onChange={(e) => handleFormChange("confirm_password", e.target.value)}
-                        placeholder="Confirm password"
-                        className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                <div className="space-y-1">
+                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+                    Confirm password
+                  </label>
+                  <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      name="confirm_password"
+                      value={passwordFormData.confirm_password}
+                      onChange={(e) => handleFormChange("confirm_password", e.target.value)}
+                      placeholder="Confirm password"
+                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                    />
+                    {showPassword ? (
+                      <EyeOff
+                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                        onClick={() => setShowPassword(false)}
                       />
-                      {showPassword ? (
-                        <EyeOff
-                          className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                          onClick={() => setShowPassword(false)}
-                        />
-                      ) : (
-                        <Eye
-                          className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                          onClick={() => setShowPassword(true)}
-                        />
-                      )}
-                    </div>
-                    {!!passwordFormData.confirm_password &&
-                      passwordFormData.password !== passwordFormData.confirm_password && (
-                        <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
-                      )}
+                    ) : (
+                      <Eye
+                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                        onClick={() => setShowPassword(true)}
+                      />
+                    )}
                   </div>
-                )}
+                  {!!passwordFormData.confirm_password &&
+                    passwordFormData.password !== passwordFormData.confirm_password && (
+                      <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
+                    )}
+                </div>
                 <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
                   Continue
                 </Button>

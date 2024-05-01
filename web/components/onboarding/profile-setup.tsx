@@ -437,7 +437,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                     {errors.password && <span className="text-sm text-red-500">{errors.password.message}</span>}
                   </div>
                 )}
-                {!isPasswordAlreadySetup && password && getPasswordStrength(password) >= 3 && (
+                {!isPasswordAlreadySetup && (
                   <div className="space-y-1">
                     <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
                       Confirm password
