@@ -27,8 +27,7 @@ export * from "./use-issue-detail";
 // project inbox
 export * from "./use-project-inbox";
 export * from "./use-inbox-issues";
-export * from "./use-user-profile";
-export * from "./use-user";
+export * from "./user";
 export * from "./use-instance";
 export * from "./use-app-theme";
 export * from "./use-command-palette";

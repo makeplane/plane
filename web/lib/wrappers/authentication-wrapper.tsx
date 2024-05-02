@@ -6,7 +6,7 @@ import { Spinner } from "@plane/ui";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUser, useUserProfile, useUserSettings, useWorkspace } from "@/hooks/store";
 
 type TPageType = EPageTypes;
 
@@ -26,13 +26,13 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   // props
   const { children, pageType = EPageTypes.AUTHENTICATED } = props;
   // hooks
+  const { isLoading: isUserLoading, data: currentUser, fetchCurrentUser } = useUser();
+  const { isLoading: currentUserProfileLoader, data: currentUserProfile, fetchUserProfile } = useUserProfile();
   const {
-    isLoading: isUserLoading,
-    data: currentUser,
-    currentUserSettings: { isLoading: currentUserSettingsLoader, data: currentUserSettings, fetchCurrentUserSettings },
-    profile: { isLoading: currentUserProfileLoader, data: currentUserProfile, fetchUserProfile },
-    fetchCurrentUser,
-  } = useUser();
+    isLoading: currentUserSettingsLoader,
+    data: currentUserSettings,
+    fetchCurrentUserSettings,
+  } = useUserSettings();
   const { loader: workspaceLoader, workspaces, fetchWorkspaces } = useWorkspace();
 
   useSWR("USER_INFORMATION", async () => await fetchCurrentUser(), {
@@ -75,18 +75,12 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     return redirectionRoute;
   };
 
-  if (isUserLoading || currentUserSettingsLoader || currentUserProfileLoader || workspaceLoader)
+  if (isUserLoading || currentUserProfileLoader || currentUserSettingsLoader || workspaceLoader)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <Spinner />
       </div>
     );
-
-  console.log("---");
-  console.log("currentUser", currentUser?.id);
-  console.log("currentUserProfile", currentUserProfile?.id);
-  console.log("currentUserSettings", currentUserSettings?.id);
-  console.log("---");
 
   if (pageType === EPageTypes.PUBLIC) return <>{children}</>;
 

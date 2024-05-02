@@ -21,7 +21,7 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
   const { setQuery } = useAppRouter();
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const {
-    profile: { data: userProfile },
+    userProfile: { data: userProfile },
   } = useUser();
   // states
   const [dom, setDom] = useState<undefined | HTMLElement>();

@@ -8,7 +8,6 @@ import { Spinner } from "@plane/ui";
 // hooks
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 import { useUser, useUserProfile, useWorkspace } from "@/hooks/store";
-import { useCurrentUserSettings } from "@/hooks/store/use-current-user-settings";
 
 export interface IUserAuthWrapper {
   children: ReactNode;
@@ -19,7 +18,6 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   // store hooks
   const { fetchCurrentUser, data: currentUser, error: currentUserError } = useUser();
   const { fetchUserProfile } = useUserProfile();
-  const { fetchCurrentUserSettings } = useCurrentUserSettings();
   const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
@@ -28,10 +26,6 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     shouldRetryOnError: false,
   });
   useSWR("CURRENT_USER_PROFILE_DETAILS", () => fetchUserProfile(), {
-    shouldRetryOnError: false,
-  });
-  //fetching user settings
-  const { isLoading: userSettingsLoader } = useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
     shouldRetryOnError: false,
   });
   // fetching all workspaces
