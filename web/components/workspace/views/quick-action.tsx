@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // types
-import { IProjectView } from "@plane/types";
+import { IWorkspaceView } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "@/components/views";
+import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
@@ -17,24 +18,25 @@ import { useUser } from "@/hooks/store";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
-  projectId: string;
-  view: IProjectView;
   workspaceSlug: string;
+  globalViewId: string;
+  viewId: string;
+  view: IWorkspaceView;
 };
 
-export const ViewQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, projectId, view, workspaceSlug } = props;
+export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
+  const { parentRef, view, globalViewId, viewId, workspaceSlug } = props;
   // states
-  const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
+  const [updateViewModal, setUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
   // store hooks
   const {
-    membership: { currentProjectRole },
+    membership: { currentWorkspaceRole },
   } = useUser();
   // auth
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserProjectRoles.MEMBER;
 
-  const viewLink = `${workspaceSlug}/projects/${projectId}/views/${view.id}`;
+  const viewLink = `${workspaceSlug}/workspace-views/${view.id}`;
   const handleCopyText = () =>
     copyUrlToClipboard(viewLink).then(() => {
       setToast({
@@ -48,7 +50,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      action: () => setCreateUpdateViewModal(true),
+      action: () => setUpdateViewModal(true),
       title: "Edit",
       icon: Pencil,
       shouldRender: isEditingAllowed,
@@ -63,7 +65,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
       key: "copy-link",
       action: handleCopyText,
       title: "Copy link",
-      icon: Link,
+      icon: LinkIcon,
     },
     {
       key: "delete",
@@ -76,16 +78,43 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <CreateUpdateProjectViewModal
-        isOpen={createUpdateViewModal}
-        onClose={() => setCreateUpdateViewModal(false)}
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        data={view}
-      />
-      <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
+      <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
+      <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
+
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+
+      <CustomMenu
+        customButton={
+          <>
+            {viewId === globalViewId ? (
+              <span
+                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
+                  viewId === globalViewId
+                    ? "border-custom-primary-100 text-custom-primary-100"
+                    : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
+                }`}
+              >
+                {view.name}
+              </span>
+            ) : (
+              <Link key={viewId} id={`global-view-${viewId}`} href={`/${workspaceSlug}/workspace-views/${viewId}`}>
+                <span
+                  className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
+                    viewId === globalViewId
+                      ? "border-custom-primary-100 text-custom-primary-100"
+                      : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
+                  }`}
+                >
+                  {view.name}
+                </span>
+              </Link>
+            )}
+          </>
+        }
+        placement="bottom-end"
+        menuItemsClassName="z-20"
+        closeOnSelect
+      >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

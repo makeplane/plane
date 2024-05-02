@@ -31,7 +31,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.issue_filters import issue_filters
-
+from plane.utils.user_timezone_converter import user_timezone_converter
 
 class ModuleIssueViewSet(BaseViewSet):
     serializer_class = ModuleIssueSerializer
@@ -150,6 +150,11 @@ class ModuleIssueViewSet(BaseViewSet):
                 "is_draft",
                 "archived_at",
             )
+            datetime_fields = ["created_at", "updated_at"]
+            issues = user_timezone_converter(
+                issues, datetime_fields, request.user.user_timezone
+            )
+
         return Response(issues, status=status.HTTP_200_OK)
 
     # create multiple issues inside a module

@@ -147,8 +147,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const issueCount = moduleDetails
-    ? issueFilters?.displayFilters?.sub_issue && moduleDetails.sub_issues
-      ? moduleDetails.total_issues + moduleDetails.sub_issues
+    ? !issueFilters?.displayFilters?.sub_issue && moduleDetails.sub_issues
+      ? moduleDetails.total_issues - moduleDetails.sub_issues
       : moduleDetails.total_issues
     : undefined;
 
@@ -227,9 +227,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     className="ml-1.5 flex-shrink-0"
                     placement="bottom-start"
                   >
-                    {projectModuleIds?.map((moduleId) => (
-                      <ModuleDropdownOption key={moduleId} moduleId={moduleId} />
-                    ))}
+                    {projectModuleIds?.map((moduleId) => <ModuleDropdownOption key={moduleId} moduleId={moduleId} />)}
                   </CustomMenu>
                 }
               />

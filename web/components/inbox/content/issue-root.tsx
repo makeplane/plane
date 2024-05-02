@@ -114,7 +114,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="rounded-lg space-y-4 pl-3">
         <IssueTitleInput
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
@@ -124,6 +124,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           issueOperations={issueOperations}
           disabled={!isEditable}
           value={issue.name}
+          containerClassName="-ml-3"
         />
 
         {loader === "issue-loading" ? (
@@ -135,11 +136,12 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={issue.project_id}
             issueId={issue.id}
-            swrIssueDescription={null}
+            swrIssueDescription={issue.description_html ?? "<p></p>"}
             initialValue={issue.description_html ?? "<p></p>"}
             disabled={!isEditable}
             issueOperations={issueOperations}
             setIsSubmitting={(value) => setIsSubmitting(value)}
+            containerClassName="-ml-3 border-none"
           />
         )}
 
@@ -152,12 +154,15 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           />
         )}
       </div>
-      <IssueAttachmentRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issue.id}
-        disabled={!isEditable}
-      />
+
+      <div className="pl-3">
+        <IssueAttachmentRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issue.id}
+          disabled={!isEditable}
+        />
+      </div>
 
       <InboxIssueContentProperties
         workspaceSlug={workspaceSlug}
@@ -168,7 +173,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
       />
 
-      <div className="pb-12">
+      <div className="pb-12 pl-3">
         <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} />
       </div>
     </>

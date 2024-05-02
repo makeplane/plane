@@ -123,14 +123,14 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       action: handleOpenInNewTab,
       title: "Open in new tab",
       icon: ExternalLink,
-      shouldRender: project.is_member,
+      shouldRender: project.is_member && !isArchived,
     },
     {
       key: "copy-link",
       action: handleCopyText,
       title: "Copy link",
       icon: LinkIcon,
-      shouldRender: true,
+      shouldRender: !isArchived,
     },
     {
       key: "restore",
