@@ -1712,8 +1712,16 @@ def issue_activity(
                         if activity.field == "comment"
                         else activity.field
                     ),
-                    old_value=activity.old_value,
-                    new_value=activity.new_value,
+                    old_value=(
+                        activity.old_value
+                        if activity.old_value != ""
+                        else None
+                    ),
+                    new_value=(
+                        activity.new_value
+                        if activity.new_value != ""
+                        else None
+                    ),
                     actor_id=activity.actor_id,
                     current_site=origin,
                     slug=activity.workspace.slug,

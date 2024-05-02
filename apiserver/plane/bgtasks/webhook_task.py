@@ -471,8 +471,8 @@ def webhook_activity(
                 current_site=current_site,
                 activity={
                     "field": field,
-                    "new_value": new_value if new_value else None,
-                    "old_value": old_value if old_value else None,
+                    "new_value": new_value,
+                    "old_value": old_value,
                     "actor": get_model_data(event="user", event_id=actor_id),
                     "old_identifier": old_identifier,
                     "new_identifier": new_identifier,
