@@ -31,6 +31,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
   if (!issue || !issue?.id) return <></>;
+
   return (
     <div className="flex h-min w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
       <div className="h-min w-full overflow-y-auto px-3">

@@ -25,7 +25,7 @@ export const InboxIssueAppliedFilters: FC = observer(() => {
       {/* priority */}
       <InboxIssueAppliedFiltersPriority />
       {/* assignees */}
-      <InboxIssueAppliedFiltersMember filterKey="assignee" label="Assignee" />
+      <InboxIssueAppliedFiltersMember filterKey="assignees" label="Assignees" />
       {/* created_by */}
       <InboxIssueAppliedFiltersMember filterKey="created_by" label="Created By" />
       {/* label */}

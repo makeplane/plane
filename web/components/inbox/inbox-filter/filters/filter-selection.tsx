@@ -60,8 +60,8 @@ export const InboxIssueFilterSelection: FC = observer(() => {
         {/* assignees */}
         <div className="py-2">
           <FilterMember
-            filterKey="assignee"
-            label="Assignee"
+            filterKey="assignees"
+            label="Assignees"
             searchQuery={filtersSearchQuery}
             memberIds={projectMemberIds ?? []}
           />
