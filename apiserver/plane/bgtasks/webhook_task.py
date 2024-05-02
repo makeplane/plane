@@ -436,40 +436,47 @@ def webhook_activity(
     old_identifier,
     new_identifier,
 ):
-    webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
+    try:
+        webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
 
-    if event == "project":
-        webhooks = webhooks.filter(project=True)
+        if event == "project":
+            webhooks = webhooks.filter(project=True)
 
-    if event == "issue":
-        webhooks = webhooks.filter(issue=True)
+        if event == "issue":
+            webhooks = webhooks.filter(issue=True)
 
-    if event == "module" or event == "module_issue":
-        webhooks = webhooks.filter(module=True)
+        if event == "module" or event == "module_issue":
+            webhooks = webhooks.filter(module=True)
 
-    if event == "cycle" or event == "cycle_issue":
-        webhooks = webhooks.filter(cycle=True)
+        if event == "cycle" or event == "cycle_issue":
+            webhooks = webhooks.filter(cycle=True)
 
-    if event == "issue_comment":
-        webhooks = webhooks.filter(issue_comment=True)
+        if event == "issue_comment":
+            webhooks = webhooks.filter(issue_comment=True)
 
-    for webhook in webhooks:
-        webhook_send_task.delay(
-            webhook=webhook.id,
-            slug=slug,
-            event=event,
-            event_data=get_model_data(
+        for webhook in webhooks:
+            webhook_send_task.delay(
+                webhook=webhook.id,
+                slug=slug,
                 event=event,
-                event_id=event_id,
-            ),
-            action=verb,
-            current_site=current_site,
-            activity={
-                "field": field,
-                "new_value": new_value if new_value else None,
-                "old_value": old_value if old_value else None,
-                "actor": get_model_data(event="user", event_id=actor_id),
-                "old_identifier": old_identifier,
-                "new_identifier": new_identifier,
-            },
-        )
+                event_data=get_model_data(
+                    event=event,
+                    event_id=event_id,
+                ),
+                action=verb,
+                current_site=current_site,
+                activity={
+                    "field": field,
+                    "new_value": new_value if new_value else None,
+                    "old_value": old_value if old_value else None,
+                    "actor": get_model_data(event="user", event_id=actor_id),
+                    "old_identifier": old_identifier,
+                    "new_identifier": new_identifier,
+                },
+            )
+        return
+    except Exception as e:
+        if settings.DEBUG:
+            print(e)
+        log_exception(e)
+        return
