@@ -141,7 +141,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
     handleStepChange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, step, updateCurrentUser, workspacesList]);
+  }, [user, step, profile.onboarding_step, updateCurrentUser, workspacesList]);
 
   return (
     <>

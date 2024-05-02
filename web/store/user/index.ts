@@ -106,7 +106,6 @@ export class UserStore implements IUserStore {
           this.isLoading = false;
           this.isAuthenticated = false;
         });
-      console.log("this.isLoading", this.isLoading);
       return user;
     } catch (error) {
       runInAction(() => {
