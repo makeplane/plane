@@ -13,7 +13,6 @@ import {
   CopyPlus,
   CalendarClock,
   CalendarCheck2,
-  UserCircle2,
 } from "lucide-react";
 // hooks
 // components
@@ -37,7 +36,6 @@ import {
 } from "@/components/dropdowns";
 // ui
 // helpers
-import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import {
   DeleteIssueModal,
   IssueLinkRoot,
@@ -56,7 +54,7 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
-import { useEstimate, useIssueDetail, useMember, useProject, useProjectState, useUser } from "@/hooks/store";
+import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import type { TIssueOperations } from "./root";
@@ -90,11 +88,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
-  const { getUserDetails } = useMember();
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
-
-  const createdByDetails = getUserDetails(issue.created_by);
 
   const handleCopyText = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -261,21 +256,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 buttonClassName="w-min h-auto whitespace-nowrap"
               />
             </div>
-
-            {createdByDetails && (
-              <div className="flex h-8 items-center gap-2">
-                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                  <UserCircle2 className="h-4 w-4 flex-shrink-0" />
-                  <span>Created by</span>
-                </div>
-                <Tooltip tooltipContent={createdByDetails?.display_name} isMobile={isMobile}>
-                  <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
-                    <ButtonAvatars showTooltip={false} userIds={createdByDetails.id} />
-                    <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
-                  </div>
-                </Tooltip>
-              </div>
-            )}
 
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">

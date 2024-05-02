@@ -1,18 +1,16 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { CalendarCheck2, CopyPlus, Signal, Tag, UserCircle2 } from "lucide-react";
+import { CalendarCheck2, CopyPlus, Signal, Tag } from "lucide-react";
 import { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
 import { ControlLink, DoubleCircleIcon, Tooltip, UserGroupIcon } from "@plane/ui";
 // components
 import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
-import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { IssueLabel, TIssueOperations } from "@/components/issues";
 // helper
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
-import { useMember, useProject } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useProject } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -29,16 +27,10 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
   const router = useRouter();
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { getUserDetails } = useMember();
-
-  // hooks
-  const { isMobile } = usePlatformOS();
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
   if (!issue || !issue?.id) return <></>;
-
-  const createdByDetails = issue?.created_by ? getUserDetails(issue?.created_by) : undefined;
 
   return (
     <div className="flex h-min w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
@@ -115,21 +107,6 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
                 buttonClassName="w-min h-auto whitespace-nowrap"
               />
             </div>
-            {/* created by */}
-            {createdByDetails && (
-              <div className="flex items-center gap-2 h-8">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                  <UserCircle2 className="h-4 w-4 flex-shrink-0" />
-                  <span>Created by</span>
-                </div>
-                <Tooltip tooltipContent={createdByDetails?.display_name} isMobile={isMobile}>
-                  <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
-                    <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
-                    <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
-                  </div>
-                </Tooltip>
-              </div>
-            )}
           </div>
         </div>
         <div className={`divide-y-2 divide-custom-border-200 mt-3 ${!isEditable ? "opacity-60" : ""}`}>
