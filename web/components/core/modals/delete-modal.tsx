@@ -14,6 +14,7 @@ type Props = {
     loading: string;
     default: string;
   };
+  secondaryButtonText?: string;
   title: string;
 };
 
@@ -28,6 +29,7 @@ export const DeleteModalCore: React.FC<Props> = (props) => {
       loading: "Deleting",
       default: "Delete",
     },
+    secondaryButtonText = "Cancel",
     title,
   } = props;
 
@@ -68,7 +70,7 @@ export const DeleteModalCore: React.FC<Props> = (props) => {
                 </div>
                 <div className="px-5 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t-[0.5px] border-custom-border-200">
                   <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                    Cancel
+                    {secondaryButtonText}
                   </Button>
                   <Button variant="danger" size="sm" tabIndex={1} onClick={handleSubmit} loading={isDeleting}>
                     {isDeleting ? primaryButtonText.loading : primaryButtonText.default}
