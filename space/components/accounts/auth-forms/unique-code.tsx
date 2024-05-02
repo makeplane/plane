@@ -104,7 +104,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
 
   return (
     <form
-      className="mx-auto mt-5 space-y-4 w-5/6 sm:w-96"
+      className="mt-5 space-y-4"
       method="POST"
       action={`${API_BASE_URL}/auth/spaces/${mode === EAuthModes.SIGN_IN ? "magic-sign-in" : "magic-sign-up"}/`}
       onSubmit={() => setIsSubmitting(true)}

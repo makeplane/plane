@@ -117,44 +117,42 @@ export const AuthRoot = observer(() => {
   const isOAuthEnabled =
     instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled);
   return (
-    <>
-      <div className="mx-auto flex flex-col">
-        <div className="text-center space-y-1 py-4 mx-auto sm:w-96">
-          <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">{header}</h3>
-          <p className="font-medium text-onboarding-text-400">{subHeader}</p>
-        </div>
-        {authStep === EAuthSteps.EMAIL && <EmailForm onSubmit={handelEmailVerification} />}
-        {authMode && (
-          <>
-            {authStep === EAuthSteps.PASSWORD && (
-              <PasswordForm
-                email={email}
-                mode={authMode}
-                handleEmailClear={() => {
-                  setEmail("");
-                  setAuthMode(null);
-                  setAuthStep(EAuthSteps.EMAIL);
-                }}
-                handleStepChange={(step) => setAuthStep(step)}
-              />
-            )}
-            {authStep === EAuthSteps.UNIQUE_CODE && (
-              <UniqueCodeForm
-                email={email}
-                mode={authMode}
-                handleEmailClear={() => {
-                  setEmail("");
-                  setAuthMode(null);
-                  setAuthStep(EAuthSteps.EMAIL);
-                }}
-                submitButtonText="Continue"
-              />
-            )}
-          </>
-        )}
+    <div className="relative flex flex-col space-y-6">
+      <div className="space-y-1 text-center">
+        <h3 className="text-3xl font-bold text-onboarding-text-100">{header}</h3>
+        <p className="font-medium text-onboarding-text-400">{subHeader}</p>
       </div>
+      {authStep === EAuthSteps.EMAIL && <EmailForm onSubmit={handelEmailVerification} />}
+      {authMode && (
+        <>
+          {authStep === EAuthSteps.PASSWORD && (
+            <PasswordForm
+              email={email}
+              mode={authMode}
+              handleEmailClear={() => {
+                setEmail("");
+                setAuthMode(null);
+                setAuthStep(EAuthSteps.EMAIL);
+              }}
+              handleStepChange={(step) => setAuthStep(step)}
+            />
+          )}
+          {authStep === EAuthSteps.UNIQUE_CODE && (
+            <UniqueCodeForm
+              email={email}
+              mode={authMode}
+              handleEmailClear={() => {
+                setEmail("");
+                setAuthMode(null);
+                setAuthStep(EAuthSteps.EMAIL);
+              }}
+              submitButtonText="Continue"
+            />
+          )}
+        </>
+      )}
       {isOAuthEnabled && <OAuthOptions />}
       <TermsAndConditions mode={authMode} />
-    </>
+    </div>
   );
 });

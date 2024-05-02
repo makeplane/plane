@@ -40,7 +40,7 @@ export const EmailForm: React.FC<Props> = (props) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-8 space-y-4 w-5/6 sm:w-96">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="mt-8 space-y-4">
       <div className="space-y-1">
         <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
           Email

@@ -92,8 +92,8 @@ export const InstanceSignInForm: FC = (props) => {
   );
 
   return (
-    <div className="relative w-full h-full overflow-hidden container mx-auto px-5 md:px-0 flex justify-center items-center">
-      <div className="w-full md:w-4/6 lg:w-3/6 xl:w-2/6 space-y-10">
+    <div className="relative w-full h-full overflow-hidden container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 flex flex-col justify-center items-center">
+      <div className="relative flex flex-col space-y-6">
         <div className="text-center space-y-1">
           <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
             Manage your Plane instance
