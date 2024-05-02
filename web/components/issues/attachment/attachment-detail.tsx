@@ -83,7 +83,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
         </Link>
 
         {!disabled && (
-          <button onClick={() => toggleDeleteAttachmentModal(attachment.id)}>
+          <button type="button" onClick={() => toggleDeleteAttachmentModal(attachment.id)}>
             <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
           </button>
         )}
