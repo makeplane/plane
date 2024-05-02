@@ -1607,6 +1607,7 @@ def issue_activity(
     subscriber=True,
     notification=False,
     origin=None,
+    inbox=None,
 ):
     try:
         issue_activities = []
@@ -1698,12 +1699,12 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "issue"
+                        else "inbox_issue" if inbox else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else activity.issue_id
+                        else inbox if inbox else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(

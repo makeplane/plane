@@ -26,6 +26,7 @@ from plane.api.serializers import (
     ModuleSerializer,
     ProjectSerializer,
     UserLiteSerializer,
+    InboxIssueSerializer,
 )
 from plane.db.models import (
     Cycle,
@@ -38,6 +39,7 @@ from plane.db.models import (
     User,
     Webhook,
     WebhookLog,
+    InboxIssue,
 )
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
@@ -51,6 +53,7 @@ SERIALIZER_MAPPER = {
     "module_issue": ModuleIssueSerializer,
     "issue_comment": IssueCommentSerializer,
     "user": UserLiteSerializer,
+    "inbox_issue": InboxIssueSerializer,
 }
 
 MODEL_MAPPER = {
@@ -62,6 +65,7 @@ MODEL_MAPPER = {
     "module_issue": ModuleIssue,
     "issue_comment": IssueComment,
     "user": User,
+    "inbox_issue": InboxIssue,
 }
 
 
