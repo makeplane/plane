@@ -1,12 +1,11 @@
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
-// store
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IssueService } from "@/services/issue";
 import { TIssue } from "@plane/types";
-//services
+// services
+import { IssueService } from "@/services/issue";
 
 export type IIssueStore = {
   // observables

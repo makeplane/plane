@@ -4,12 +4,12 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
-// base class
+// types
+import { TIssue, TSubGroupedIssues, TGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 // services
 import { CycleService } from "@/services/cycle.service";
 import { IssueService } from "@/services/issue";
 // types
-import { TIssue, TSubGroupedIssues, TGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 import { IIssueRootStore } from "../root.store";
 
@@ -296,27 +296,49 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     issueIds: string[],
     fetchAddedIssues = true
   ) => {
+    const issuesBeforeUpdate: Record<string, string | null | undefined> = {};
     try {
+      // add the new issue ids to the cycle issues map
+      runInAction(() => {
+        update(this.issues, cycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, issueIds)));
+      });
+      issueIds.forEach((issueId) => {
+        const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
+        // keep original data backup to restore on error
+        issuesBeforeUpdate[issueId] = issueCycleId;
+        // remove issue from previous cycle if it exists
+        if (issueCycleId && issueCycleId !== cycleId) {
+          runInAction(() => {
+            pull(this.issues[issueCycleId], issueId);
+          });
+        }
+        // update the root issue map with the new cycle id
+        this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId });
+      });
+
       await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
         issues: issueIds,
       });
 
       if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
 
-      runInAction(() => {
-        update(this.issues, cycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, issueIds)));
-      });
-      issueIds.forEach((issueId) => {
-        const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
-        if (issueCycleId && issueCycleId !== cycleId) {
-          runInAction(() => {
-            pull(this.issues[issueCycleId], issueId);
-          });
-        }
-        this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId });
-      });
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
     } catch (error) {
+      issueIds.forEach((issueId) => {
+        // remove the new issue ids from the cycle issues map
+        runInAction(() => {
+          pull(this.issues[cycleId], issueId);
+        });
+        // get the original cycle id from the backup
+        const issueCycleId = issuesBeforeUpdate[issueId];
+        // add issue back to the previous cycle if it exists
+        if (issueCycleId)
+          runInAction(() => {
+            update(this.issues, issueCycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, [issueId])));
+          });
+        // update the root issue map with the original cycle id
+        this.rootStore.issues.updateIssue(issueId, { cycle_id: issueCycleId ?? null });
+      });
       throw error;
     }
   };

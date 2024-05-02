@@ -1,9 +1,10 @@
 import { makeObservable } from "mobx";
-// services
 import { computedFn } from "mobx-utils";
-import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 // types
 import { TIssue } from "@plane/types";
+// services
+import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
+// types
 import { IIssueDetail } from "./root.store";
 
 export interface IIssueStoreActions {
@@ -208,11 +209,11 @@ export class IssueStore implements IIssueStore {
   };
 
   removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
-    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeIssueFromModule(
+    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeIssuesFromModule(
       workspaceSlug,
       projectId,
       moduleId,
-      issueId
+      [issueId]
     );
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
     return currentModule;
