@@ -90,10 +90,10 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
       if (currentUserProfile?.is_onboarded) {
         const currentRedirectRoute = getWorkspaceRedirectionUrl();
         router.push(currentRedirectRoute);
-        return;
+        return <></>;
       } else {
         router.push("/onboarding");
-        return;
+        return <></>;
       }
     }
   }
@@ -101,12 +101,12 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   if (pageType === EPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
       router.push("/accounts/sign-in");
-      return;
+      return <></>;
     } else {
       if (currentUser && currentUserProfile?.is_onboarded) {
         const currentRedirectRoute = getWorkspaceRedirectionUrl();
         router.push(currentRedirectRoute);
-        return;
+        return <></>;
       } else return <>{children}</>;
     }
   }
@@ -116,11 +116,11 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
       if (currentUserProfile?.is_onboarded) return <>{children}</>;
       else {
         router.push(`/onboarding`);
-        return;
+        return <></>;
       }
     } else {
       router.push("/accounts/sign-in");
-      return;
+      return <></>;
     }
   }
 

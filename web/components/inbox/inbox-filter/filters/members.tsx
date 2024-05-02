@@ -20,7 +20,7 @@ export const FilterMember: FC<Props> = observer((props: Props) => {
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getUserDetails } = useMember();
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
