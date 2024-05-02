@@ -1,4 +1,4 @@
-import { FC, Fragment, Dispatch, SetStateAction, useState } from "react";
+import { FC, Fragment, useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import type { TIssueAttachment } from "@plane/types";
@@ -14,18 +14,18 @@ export type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "c
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  onClose: () => void;
   data: TIssueAttachment;
   handleAttachmentOperations: TAttachmentOperationsRemoveModal;
 };
 
 export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
-  const { isOpen, setIsOpen, data, handleAttachmentOperations } = props;
-  // state
+  const { isOpen, onClose, data, handleAttachmentOperations } = props;
+  // states
   const [loader, setLoader] = useState(false);
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
     setLoader(false);
   };
 
@@ -33,6 +33,8 @@ export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
     setLoader(true);
     handleAttachmentOperations.remove(assetId).finally(() => handleClose());
   };
+
+  console.log("attachment", data.attributes.name);
 
   return (
     data && (
