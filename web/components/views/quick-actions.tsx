@@ -8,12 +8,13 @@ import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from 
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "@/components/views";
 // constants
+import { E_VIEWS } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useEventTracker, useUser } from "@/hooks/store";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
@@ -31,6 +32,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { setTrackElement } = useEventTracker();
   // auth
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -48,7 +50,10 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      action: () => setCreateUpdateViewModal(true),
+      action: () => {
+        setTrackElement(E_VIEWS);
+        setCreateUpdateViewModal(true);
+      },
       title: "Edit",
       icon: Pencil,
       shouldRender: isEditingAllowed,
@@ -67,7 +72,10 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
     },
     {
       key: "delete",
-      action: () => setDeleteViewModal(true),
+      action: () => {
+        setTrackElement(E_VIEWS);
+        setDeleteViewModal(true);
+      },
       title: "Delete",
       icon: Trash2,
       shouldRender: isEditingAllowed,
