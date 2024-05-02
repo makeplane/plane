@@ -133,7 +133,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -143,7 +143,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <WorkspaceViewForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}

@@ -725,7 +725,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             </div>
           </div>
         </div>
-        <div className="p-5 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
+        <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
           <div>
             {!data?.id && (
               <div

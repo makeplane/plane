@@ -210,7 +210,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <div className="p-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={7}>
           Cancel
         </Button>

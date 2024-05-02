@@ -152,7 +152,7 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
           <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} isVisible />
         </div>
       </div>
-      <div className="p-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" type="button" onClick={handleModalClose}>
           Cancel
         </Button>

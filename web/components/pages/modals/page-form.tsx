@@ -58,7 +58,7 @@ export const PageForm: React.FC<Props> = (props) => {
           )}
         </div>
       </div>
-      <div className="p-5 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
         <div className="flex items-center gap-2">
           <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-custom-border-200 p-1">
             {PAGE_ACCESS_SPECIFIERS.map((access, index) => (

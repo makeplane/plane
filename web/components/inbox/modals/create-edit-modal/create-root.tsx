@@ -143,7 +143,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
         </div>
       </div>
-      <div className="p-5 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
         <div
           className="inline-flex items-center gap-1.5 cursor-pointer"
           onClick={() => setCreateMore((prevData) => !prevData)}
