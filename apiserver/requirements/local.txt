@@ -1,3 +1,5 @@
 -r base.txt
-
-django-debug-toolbar==4.1.0
+# debug toolbar
+django-debug-toolbar==4.3.0
+# formatter
+ruff==0.4.2
