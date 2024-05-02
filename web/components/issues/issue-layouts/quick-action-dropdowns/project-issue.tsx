@@ -191,6 +191,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
                 },
                 item.className
               )}
+              disabled={item.disabled}
             >
               {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
               <div>
