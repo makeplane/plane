@@ -86,7 +86,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId || !viewId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
+      const newValues = Array.from(issueFilters?.filters?.[key] ?? []);
 
       if (Array.isArray(value)) {
         // this validation is majorly for the filter start_date, target_date custom
@@ -98,24 +98,24 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
-
+      const event = (issueFilters?.filters?.[key] ?? []).length > newValues.length ? FILTER_REMOVED : FILTER_APPLIED;
       updateFilters(
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.FILTERS,
         { [key]: newValues },
         viewId.toString()
-      ).then(() => {
+      ).then(() =>
         captureIssuesFilterEvent({
-          eventName: (issueFilters?.filters?.[key] ?? []).length > newValues.length ? FILTER_REMOVED : FILTER_APPLIED,
+          eventName: event,
           payload: {
             routePath: router.asPath,
             filters: issueFilters,
             filter_property: value,
             filter_type: key,
           },
-        });
-      });
+        })
+      );
     },
     [workspaceSlug, projectId, viewId, issueFilters, updateFilters, captureIssuesFilterEvent, router.asPath]
   );

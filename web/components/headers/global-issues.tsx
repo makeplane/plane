@@ -48,7 +48,7 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !globalViewId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
+      const newValues = Array.from(issueFilters?.filters?.[key] ?? []);
 
       if (Array.isArray(value)) {
         // this validation is majorly for the filter start_date, target_date custom
@@ -61,6 +61,7 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
+      const event = (issueFilters?.filters?.[key] ?? []).length > newValues.length ? FILTER_REMOVED : FILTER_APPLIED;
       updateFilters(
         workspaceSlug.toString(),
         undefined,
@@ -69,7 +70,7 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
         globalViewId.toString()
       ).then(() => {
         captureIssuesFilterEvent({
-          eventName: (issueFilters?.filters?.[key] ?? []).length > newValues.length ? FILTER_REMOVED : FILTER_APPLIED,
+          eventName: event,
           payload: {
             routePath: router.asPath,
             filters: issueFilters,

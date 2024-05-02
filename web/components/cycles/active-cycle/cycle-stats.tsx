@@ -14,13 +14,14 @@ import { StateDropdown } from "@/components/dropdowns";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { ACYCLE_TAB_CHANGED } from "@/constants/event-tracker";
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 import { EIssuesStoreType } from "@/constants/issue";
 // helper
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks
-import { useIssues, useProject } from "@/hooks/store";
+import { useEventTracker, useIssues, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 export type ActiveCycleStatsProps = {
@@ -51,6 +52,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   } = useIssues(EIssuesStoreType.CYCLE);
 
   const { currentProjectDetails } = useProject();
+  const { captureEvent } = useEventTracker();
 
   const { data: activeCycleIssues } = useSWR(
     workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
@@ -65,17 +67,25 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
         as={Fragment}
         defaultIndex={currentValue(tab)}
         onChange={(i) => {
+          let tab: string;
           switch (i) {
             case 0:
-              return setTab("Priority-Issues");
+              tab = "Priority-Issues";
+              break;
             case 1:
-              return setTab("Assignees");
+              tab = "Assignees";
+              break;
             case 2:
-              return setTab("Labels");
-
+              tab = "Labels";
+              break;
             default:
-              return setTab("Priority-Issues");
+              tab = "Priority-Issues";
+              break;
           }
+          setTab(tab);
+          captureEvent(ACYCLE_TAB_CHANGED, {
+            tab: tab,
+          });
         }}
       >
         <Tab.List

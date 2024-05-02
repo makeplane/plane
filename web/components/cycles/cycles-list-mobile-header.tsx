@@ -5,13 +5,16 @@ import { CustomMenu } from "@plane/ui";
 // icon
 // constants
 import { CYCLE_VIEW_LAYOUTS } from "@/constants/cycle";
+import { CYCLE_LAYOUT_CHANGED } from "@/constants/event-tracker";
 // hooks
-import { useCycleFilter, useProject } from "@/hooks/store";
+import { useCycleFilter, useEventTracker, useProject } from "@/hooks/store";
 
 const CyclesListMobileHeader = observer(() => {
-  const { currentProjectDetails } = useProject();
   // hooks
+  const { currentProjectDetails } = useProject();
   const { updateDisplayFilters } = useCycleFilter();
+  const { captureEvent } = useEventTracker();
+
   return (
     <div className="flex justify-center sm:hidden">
       <CustomMenu
@@ -34,6 +37,9 @@ const CyclesListMobileHeader = observer(() => {
               key={layout.key}
               onClick={() => {
                 updateDisplayFilters(currentProjectDetails!.id, {
+                  layout: layout.key,
+                });
+                captureEvent(CYCLE_LAYOUT_CHANGED, {
                   layout: layout.key,
                 });
               }}

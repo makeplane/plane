@@ -13,7 +13,7 @@ import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useModule, useEventTracker, useUser, useModuleFilter } from "@/hooks/store";
+import { useModule, useEventTracker, useUser } from "@/hooks/store";
 
 type Props = {
   moduleId: string;

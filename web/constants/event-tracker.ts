@@ -196,6 +196,15 @@ export const CYCLE_UPDATED = "Cycle updated";
 export const CYCLE_DELETED = "Cycle deleted";
 export const CYCLE_FAVORITED = "Cycle favorited";
 export const CYCLE_UNFAVORITED = "Cycle unfavorited";
+export const CYCLES_LAYOUT_CHANGED = "cycles layout changed";
+export const CYCLES_SORT_UPDATED = "cycle sort updated";
+export const CYCLES_FILTER_APPLIED = "Cycles filter applied";
+export const CYCLES_FILTER_REMOVED = "Cycles filter removed";
+export const CYCLE_ARCHIVED = "Cycle archived";
+export const CYCLE_RESTORED = "Cycle restored";
+export const CYCLE_LAYOUT_CHANGED = "Cycle layout changed";
+export const CYCLE_TAB_CHANGED = "Cycle tab changed";
+export const ACYCLE_TAB_CHANGED = "Active cycle tab changed";
 // Module Events
 export const MODULE_CREATED = "Module created";
 export const MODULE_UPDATED = "Module updated";

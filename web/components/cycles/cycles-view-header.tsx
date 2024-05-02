@@ -11,10 +11,16 @@ import { CycleFiltersSelection } from "@/components/cycles";
 import { FiltersDropdown } from "@/components/issues";
 // constants
 import { CYCLE_TABS_LIST, CYCLE_VIEW_LAYOUTS } from "@/constants/cycle";
+import {
+  CYCLES_FILTER_APPLIED,
+  CYCLES_FILTER_REMOVED,
+  CYCLE_LAYOUT_CHANGED,
+  CYCLE_TAB_CHANGED,
+} from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useCycleFilter } from "@/hooks/store";
+import { useCycleFilter, useEventTracker } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -36,6 +42,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
     updateSearchQuery,
   } = useCycleFilter();
   const { isMobile } = usePlatformOS();
+  const { captureEvent } = useEventTracker();
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
   // outside click detector hook
@@ -48,7 +55,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   const handleFilters = useCallback(
     (key: keyof TCycleFilters, value: string | string[]) => {
       if (!projectId) return;
-      const newValues = currentProjectFilters?.[key] ?? [];
+      const newValues = Array.from(currentProjectFilters?.[key] ?? []);
 
       if (Array.isArray(value))
         value.forEach((val) => {
@@ -59,7 +66,14 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
         if (currentProjectFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
-
+      captureEvent(
+        (currentProjectFilters?.[key] ?? []).length > newValues.length ? CYCLES_FILTER_REMOVED : CYCLES_FILTER_APPLIED,
+        {
+          filter_type: key,
+          filter_property: value,
+          current_filters: currentProjectFilters,
+        }
+      );
       updateFilters(projectId, { [key]: newValues });
     },
     [currentProjectFilters, projectId, updateFilters]
@@ -81,6 +95,11 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
         {CYCLE_TABS_LIST.map((tab) => (
           <Tab
             key={tab.key}
+            onClick={() =>
+              captureEvent(CYCLE_TAB_CHANGED, {
+                tab: tab.key,
+              })
+            }
             className={({ selected }) =>
               `border-b-2 p-4 text-sm font-medium outline-none ${
                 selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
@@ -146,11 +165,14 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
                   className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
                     activeLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
                   }`}
-                  onClick={() =>
+                  onClick={() => {
                     updateDisplayFilters(projectId, {
                       layout: layout.key,
-                    })
-                  }
+                    });
+                    captureEvent(CYCLE_LAYOUT_CHANGED, {
+                      layout: layout.key,
+                    });
+                  }}
                 >
                   <layout.icon
                     strokeWidth={2}

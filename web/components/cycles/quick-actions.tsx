@@ -8,7 +8,7 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveCycleModal, CycleCreateUpdateModal, CycleDeleteModal } from "@/components/cycles";
 // constants
-import { E_CYCLES_LIST_LAYOUT } from "@/constants/event-tracker";
+import { CYCLE_ARCHIVED, CYCLE_RESTORED, E_CYCLES } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
@@ -31,7 +31,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
@@ -59,7 +59,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const handleEditCycle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement(E_CYCLES_LIST_LAYOUT);
+    setTrackElement(E_CYCLES);
     setUpdateModal(true);
   };
 
@@ -67,6 +67,10 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
     e.preventDefault();
     e.stopPropagation();
     setArchiveCycleModal(true);
+    captureEvent(CYCLE_ARCHIVED, {
+      cycleId: cycleId,
+      element: E_CYCLES,
+    });
   };
 
   const handleRestoreCycle = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -78,6 +82,10 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
           type: TOAST_TYPE.SUCCESS,
           title: "Restore success",
           message: "Your cycle can be found in project cycles.",
+        });
+        captureEvent(CYCLE_RESTORED, {
+          cycleId: cycleId,
+          element: E_CYCLES,
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles`);
       })
@@ -93,7 +101,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const handleDeleteCycle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement(E_CYCLES_LIST_LAYOUT);
+    setTrackElement(E_CYCLES);
     setDeleteModal(true);
   };
 

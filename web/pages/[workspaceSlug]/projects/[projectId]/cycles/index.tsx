@@ -18,7 +18,7 @@ import { CyclesHeader } from "@/components/headers";
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
 import { CYCLE_TABS_LIST } from "@/constants/cycle";
 import { EmptyStateType } from "@/constants/empty-state";
-import { E_CYCLES_EMPTY_STATE } from "@/constants/event-tracker";
+import { CYCLES_FILTER_REMOVED, E_CYCLES_EMPTY_STATE } from "@/constants/event-tracker";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { useEventTracker, useCycle, useProject, useCycleFilter } from "@/hooks/store";
 // layouts
@@ -37,6 +37,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { currentProjectCycleIds, loader } = useCycle();
   const { getProjectById, currentProjectDetails } = useProject();
+  const { captureEvent } = useEventTracker();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
@@ -58,6 +59,11 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
     if (!value) newValues = [];
     else newValues = newValues.filter((val) => val !== value);
 
+    captureEvent(CYCLES_FILTER_REMOVED, {
+      filter_type: key,
+      filter_property: value,
+      current_filters: currentProjectFilters,
+    });
     updateFilters(projectId.toString(), { [key]: newValues });
   };
 
