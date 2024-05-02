@@ -17,13 +17,13 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 //components
+import { TRenderQuickActions } from "../list/list-view-types";
 import { KanbanDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload } from "./utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
-  peekIssueId?: string;
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
@@ -31,7 +31,7 @@ interface IKanbanGroup {
   sub_group_id: string;
   isDragDisabled: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -56,7 +56,6 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     issuesMap,
     displayProperties,
     issueIds,
-    peekIssueId,
     isDragDisabled,
     updateIssue,
     quickActions,
@@ -176,7 +175,6 @@ export const KanbanGroup = (props: IKanbanGroup) => {
         sub_group_id={sub_group_id}
         columnId={groupId}
         issuesMap={issuesMap}
-        peekIssueId={peekIssueId}
         issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
         displayProperties={displayProperties}
         isDragDisabled={isDragDisabled}

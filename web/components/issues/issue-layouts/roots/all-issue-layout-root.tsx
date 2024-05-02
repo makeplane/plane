@@ -3,7 +3,7 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
+import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 // components
 import { EmptyState } from "@/components/empty-state";
@@ -20,6 +20,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { useCommandPalette, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
+import { TRenderQuickActions } from "../list/list-view-types";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -132,9 +133,10 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     [updateFilters, workspaceSlug, globalViewId]
   );
 
-  const renderQuickActions = useCallback(
-    (issue: TIssue, customActionButton?: React.ReactElement, portalElement?: HTMLDivElement | null) => (
+  const renderQuickActions: TRenderQuickActions = useCallback(
+    ({ issue, parentRef, customActionButton, placement, portalElement }) => (
       <AllIssueQuickActions
+        parentRef={parentRef}
         customActionButton={customActionButton}
         issue={issue}
         handleDelete={async () => removeIssue(issue.project_id, issue.id)}
@@ -142,6 +144,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         portalElement={portalElement}
         readOnly={!canEditProperties(issue.project_id)}
+        placements={placement}
       />
     ),
     [canEditProperties, removeIssue, updateIssue, archiveIssue]

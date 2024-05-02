@@ -4,7 +4,6 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { TIssue } from "@plane/types";
 // hooks
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { DeleteIssueModal } from "@/components/issues";
@@ -15,7 +14,7 @@ import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUser } fr
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // ui
 // types
-import { IQuickActionProps } from "../list/list-view-types";
+import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
@@ -168,9 +167,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     });
   };
 
-  const renderQuickActions = useCallback(
-    (issue: TIssue, customActionButton?: React.ReactElement) => (
+  const renderQuickActions: TRenderQuickActions = useCallback(
+    ({ issue, parentRef, customActionButton }) => (
       <QuickActions
+        parentRef={parentRef}
         customActionButton={customActionButton}
         issue={issue}
         handleDelete={async () => removeIssue(issue.project_id, issue.id)}

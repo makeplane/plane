@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -20,6 +21,8 @@ type Props = {
 
 export const UpcomingCycleListItem: React.FC<Props> = observer((props) => {
   const { cycleId } = props;
+  // refs
+  const parentRef = useRef(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -90,6 +93,7 @@ export const UpcomingCycleListItem: React.FC<Props> = observer((props) => {
 
   return (
     <Link
+      ref={parentRef}
       href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`}
       className="py-5 px-2 flex items-center justify-between gap-2 hover:bg-custom-background-90"
     >
@@ -123,6 +127,7 @@ export const UpcomingCycleListItem: React.FC<Props> = observer((props) => {
 
         {workspaceSlug && projectId && (
           <CycleQuickActions
+            parentRef={parentRef}
             cycleId={cycleId}
             projectId={projectId.toString()}
             workspaceSlug={workspaceSlug.toString()}

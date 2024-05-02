@@ -27,12 +27,10 @@ type Props = {
   isEditable: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: Dispatch<SetStateAction<"submitting" | "submitted" | "saved">>;
-  swrIssueDescription: string | undefined;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting, swrIssueDescription } =
-    props;
+  const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
   // hooks
   const { data: currentUser } = useUser();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
@@ -133,7 +131,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={issue.project_id}
             issueId={issue.id}
-            swrIssueDescription={swrIssueDescription}
+            swrIssueDescription={null}
             initialValue={issue.description_html ?? "<p></p>"}
             disabled={!isEditable}
             issueOperations={issueOperations}

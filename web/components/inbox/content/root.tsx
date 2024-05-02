@@ -24,14 +24,13 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
 
-  const { data: swrIssueDetails } = useSWR(
+  useSWR(
     workspaceSlug && projectId && inboxIssueId
       ? `PROJECT_INBOX_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${inboxIssueId}`
       : null,
     workspaceSlug && projectId && inboxIssueId
       ? () => fetchInboxIssueById(workspaceSlug, projectId, inboxIssueId)
-      : null,
-    { revalidateOnFocus: true }
+      : null
   );
 
   const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -61,7 +60,6 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             isEditable={isEditable && !isIssueDisabled}
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
-            swrIssueDescription={swrIssueDetails?.issue.description_html}
           />
         </div>
       </div>

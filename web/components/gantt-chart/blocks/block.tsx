@@ -36,7 +36,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
   } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive } = useGanttChart();
-  const { peekIssue } = useIssueDetail();
+  const { getIsIssuePeeked } = useIssueDetail();
 
   const isBlockVisibleOnChart = block.start_date && block.target_date;
 
@@ -81,8 +81,9 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
       <div
         className={cn("relative h-full", {
           "bg-custom-background-80": isBlockActive(block.id),
-          "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
-            peekIssue?.issueId === block.data.id,
+          "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(
+            block.data.id
+          ),
         })}
         onMouseEnter={() => updateActiveBlockId(block.id)}
         onMouseLeave={() => updateActiveBlockId(null)}

@@ -16,17 +16,14 @@ import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 // local components
+import { TRenderQuickActions } from "../list/list-view-types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssueColumn } from "./issue-column";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
   isEstimateEnabled: boolean;
-  quickActions: (
-    issue: TIssue,
-    customActionButton?: React.ReactElement,
-    portalElement?: HTMLDivElement | null
-  ) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
@@ -112,11 +109,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
 interface IssueRowDetailsProps {
   displayProperties: IIssueDisplayProperties;
   isEstimateEnabled: boolean;
-  quickActions: (
-    issue: TIssue,
-    customActionButton?: React.ReactElement,
-    portalElement?: HTMLDivElement | null
-  ) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
@@ -143,23 +136,25 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     setExpanded,
     spreadsheetColumnsList,
   } = props;
+  // states
+  const [isMenuActive, setIsMenuActive] = useState(false);
+  // refs
+  const cellRef = useRef(null);
+  const menuActionRef = useRef<HTMLDivElement | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  //hooks
+  // hooks
   const { getProjectIdentifierById } = useProject();
-  const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   const { isMobile } = usePlatformOS();
-  // states
-  const [isMenuActive, setIsMenuActive] = useState(false);
-  const menuActionRef = useRef<HTMLDivElement | null>(null);
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
     issue &&
     issue.project_id &&
     issue.id &&
-    peekIssue?.issueId !== issue.id &&
+    !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
 
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
@@ -196,16 +191,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   return (
     <>
       <td
+        ref={cellRef}
         id={`issue-${issueDetail.id}`}
         className={cn(
-          "sticky group left-0 h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
+          "group sticky left-0 h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
           {
-            "border-b-[0.5px]": peekIssue?.issueId !== issueDetail.id,
-          },
-          {
-            "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue?.issueId === issueDetail.id,
-          },
-          {
+            "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
+            "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issueDetail.id),
             "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
           }
         )}
@@ -218,7 +210,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           >
             <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
               <span
-                className={`flex items-center justify-center font-medium  group-hover:opacity-0 ${
+                className={`flex items-center justify-center font-medium group-hover:opacity-0 ${
                   isMenuActive ? "opacity-0" : "opacity-100"
                 }`}
               >
@@ -226,7 +218,12 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
               </span>
 
               <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
-                {quickActions(issueDetail, customActionButton, portalElement.current)}
+                {quickActions({
+                  issue: issueDetail,
+                  parentRef: cellRef,
+                  customActionButton,
+                  portalElement: portalElement.current,
+                })}
               </div>
             </div>
 
