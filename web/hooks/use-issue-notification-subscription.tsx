@@ -1,11 +1,9 @@
 import { useCallback } from "react";
 import useSWR from "swr";
-// hooks
-import useUserAuth from "@/hooks/use-user-auth";
+import { IUser, TUserProfile } from "@plane/types";
 // services
 import { NotificationService } from "@/services/notification.service";
 // types
-import { IUser, TUserProfile } from "@plane/types";
 
 const userNotificationServices = new NotificationService();
 
@@ -16,8 +14,6 @@ const useUserIssueNotificationSubscription = (
   projectId?: string | string[] | null,
   issueId?: string | string[] | null
 ) => {
-  const {} = useUserAuth({ user: user, userProfile: profile, isLoading: false });
-
   const { data, error, mutate } = useSWR(
     workspaceSlug && projectId && issueId ? `SUBSCRIPTION_STATUE_${workspaceSlug}_${projectId}_${issueId}` : null,
     workspaceSlug && projectId && issueId

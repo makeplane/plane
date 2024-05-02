@@ -35,7 +35,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   } = useUser();
   const { loader: workspaceLoader, workspaces, fetchWorkspaces } = useWorkspace();
 
-  useSWR("USER_INFORMATION", async () => fetchCurrentUser(), {
+  useSWR("USER_INFORMATION", async () => await fetchCurrentUser(), {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   });
@@ -44,9 +44,9 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     currentUser && currentUser?.id ? "USER_PROFILE_SETTINGS_INFORMATION" : null,
     async () => {
       if (currentUser && currentUser?.id) {
-        fetchCurrentUserSettings();
-        fetchUserProfile();
-        fetchWorkspaces();
+        await fetchCurrentUserSettings();
+        await fetchUserProfile();
+        await fetchWorkspaces();
       }
     },
     { revalidateOnFocus: false, shouldRetryOnError: false }
@@ -81,6 +81,12 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
         <Spinner />
       </div>
     );
+
+  console.log("---");
+  console.log("currentUser", currentUser?.id);
+  console.log("currentUserProfile", currentUserProfile?.id);
+  console.log("currentUserSettings", currentUserSettings?.id);
+  console.log("---");
 
   if (pageType === EPageTypes.PUBLIC) return <>{children}</>;
 

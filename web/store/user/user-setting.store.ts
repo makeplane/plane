@@ -19,7 +19,7 @@ export interface IUserSettingsStore {
 }
 
 export class UserSettingsStore implements IUserSettingsStore {
-  isLoading: boolean = false;
+  isLoading: boolean = true;
   data: IUserSettings = {
     id: undefined,
     email: undefined,

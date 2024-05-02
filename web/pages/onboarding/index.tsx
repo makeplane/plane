@@ -14,7 +14,6 @@ import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
-import useUserAuth from "@/hooks/use-user-auth";
 // layouts
 import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
@@ -39,16 +38,10 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { data: user, isLoading: currentUserLoader, updateCurrentUser } = useUser();
+  const { data: user, updateCurrentUser } = useUser();
   const { data: profile, updateUserOnBoard, updateUserProfile } = useUserProfile();
   const { workspaces, fetchWorkspaces } = useWorkspace();
-  // custom hooks
-  const {} = useUserAuth({
-    routeAuth: "onboarding",
-    user: user || null,
-    userProfile: profile,
-    isLoading: currentUserLoader,
-  });
+
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
   // fetching workspaces list

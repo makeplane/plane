@@ -35,7 +35,7 @@ export interface IUserStore {
 export class UserStore implements IUserStore {
   // observables flags
   isAuthenticated: boolean = false;
-  isLoading: boolean = false;
+  isLoading: boolean = true;
   error: any | undefined = undefined;
   data: IUser | undefined = undefined;
   // model observables

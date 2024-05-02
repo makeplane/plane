@@ -22,7 +22,7 @@ export interface IProfileStore {
 }
 
 export class ProfileStore implements IProfileStore {
-  isLoading: boolean = false;
+  isLoading: boolean = true;
   data: TUserProfile = {
     id: undefined,
     user: undefined,
