@@ -27,9 +27,9 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   const { children, pageType = EPageTypes.AUTHENTICATED } = props;
   // hooks
   const { isLoading: isUserLoading, data: currentUser, fetchCurrentUser } = useUser();
-  const { isLoading: currentUserProfileLoader, data: currentUserProfile } = useUserProfile();
-  const { isLoading: currentUserSettingsLoader, data: currentUserSettings } = useUserSettings();
-  const { loader: workspaceLoader, workspaces, fetchWorkspaces } = useWorkspace();
+  const { isLoading: isUserProfileLoading, data: currentUserProfile, fetchUserProfile } = useUserProfile();
+  const { isLoading: isUserSettingsLoading, data: currentUserSettings, fetchCurrentUserSettings } = useUserSettings();
+  const { loader: isWorkspaceLoading, workspaces, fetchWorkspaces } = useWorkspace();
 
   useSWR("USER_INFORMATION", async () => await fetchCurrentUser(), {
     revalidateOnFocus: false,
@@ -38,7 +38,10 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   useSWR(
     currentUser && currentUser?.id ? "USER_PROFILE_SETTINGS_INFORMATION" : null,
-    async () => currentUser && currentUser?.id && (await fetchWorkspaces()),
+    async () => {
+      if (currentUser && currentUser?.id)
+        await Promise.all([fetchUserProfile(), fetchCurrentUserSettings(), fetchWorkspaces()]);
+    },
     { revalidateOnFocus: false, shouldRetryOnError: false }
   );
 
@@ -65,7 +68,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     return redirectionRoute;
   };
 
-  if (isUserLoading || currentUserProfileLoader || currentUserSettingsLoader || workspaceLoader)
+  if (isUserLoading || isUserProfileLoading || isUserSettingsLoading || isWorkspaceLoading)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <Spinner />
