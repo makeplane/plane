@@ -34,8 +34,6 @@ export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
     handleAttachmentOperations.remove(assetId).finally(() => handleClose());
   };
 
-  console.log("attachment", data.attributes.name);
-
   return (
     data && (
       <Transition.Root show={isOpen} as={Fragment}>
