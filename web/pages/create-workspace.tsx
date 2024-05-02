@@ -10,11 +10,12 @@ import { PageHead } from "@/components/core";
 import { CreateWorkspaceForm } from "@/components/workspace";
 import { useUser } from "@/hooks/store";
 // layouts
-import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
 // components
 // images
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
@@ -79,9 +80,9 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
 
 CreateWorkspacePage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserAuthWrapper>
+    <AuthenticationWrapper>
       <DefaultLayout>{page} </DefaultLayout>
-    </UserAuthWrapper>
+    </AuthenticationWrapper>
   );
 };
 

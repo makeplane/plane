@@ -1,8 +1,9 @@
 import { FC, ReactNode } from "react";
 // layout
 import { CommandPalette } from "@/components/command-palette";
-import { UserAuthWrapper } from "@/layouts/auth-layout";
 import { ProfileLayoutSidebar } from "@/layouts/settings-layout";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // components
 
 interface IProfileSettingsLayout {
@@ -16,7 +17,7 @@ export const ProfileSettingsLayout: FC<IProfileSettingsLayout> = (props) => {
   return (
     <>
       <CommandPalette />
-      <UserAuthWrapper>
+      <AuthenticationWrapper>
         <div className="relative flex h-screen w-full overflow-hidden">
           <ProfileLayoutSidebar />
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
@@ -24,7 +25,7 @@ export const ProfileSettingsLayout: FC<IProfileSettingsLayout> = (props) => {
             <div className="h-full w-full overflow-hidden">{children}</div>
           </main>
         </div>
-      </UserAuthWrapper>
+      </AuthenticationWrapper>
     </>
   );
 };

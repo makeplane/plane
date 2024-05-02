@@ -12,13 +12,16 @@ import { InviteMembers, CreateOrJoinWorkspaces, ProfileSetup } from "@/component
 // constants
 import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
+// helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
 // layouts
-import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
 // lib types
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 
@@ -183,9 +186,9 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
 OnboardingPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserAuthWrapper>
+    <AuthenticationWrapper pageType={EPageTypes.ONBOARDING}>
       <DefaultLayout>{page}</DefaultLayout>
-    </UserAuthWrapper>
+    </AuthenticationWrapper>
   );
 };
 
