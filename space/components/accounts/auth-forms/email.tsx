@@ -1,13 +1,13 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-// types
-import { IEmailCheckData } from "types/auth";
 // icons
 import { XCircle, CircleAlert } from "lucide-react";
 // ui
 import { Button, Input, Spinner } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "@/helpers/string.helper";
+// types
+import { IEmailCheckData } from "@/types/auth";
 
 type Props = {
   onSubmit: (data: IEmailCheckData) => Promise<void>;

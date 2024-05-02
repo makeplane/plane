@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-// hooks
-import useTimer from "hooks/use-timer";
-import useToast from "hooks/use-toast";
 import { useRouter } from "next/router";
-// types
-import { IEmailCheckData } from "types/auth";
 // icons
 import { CircleCheck, XCircle } from "lucide-react";
 // ui
 import { Button, Input, Spinner } from "@plane/ui";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+// hooks
+import useTimer from "@/hooks/use-timer";
+import useToast from "@/hooks/use-toast";
 // services
 import { AuthService } from "@/services/authentication.service";
+// types
+import { IEmailCheckData } from "@/types/auth";
 import { EAuthModes } from "./root";
 
 type Props = {
