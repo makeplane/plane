@@ -180,21 +180,22 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       id={`${groupId}__${sub_group_id}`}
       className={cn(
         "relative h-full transition-all min-h-[50px]",
-        { "bg-custom-background-80": isDraggingOverColumn },
+        { "bg-custom-background-80 rounded": isDraggingOverColumn },
         { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlay }
       )}
       ref={columnRef}
     >
       <div
         className={cn(
-          "absolute top-0 left-0 h-full w-full justify-center items-center text-sm text-custom-text-100",
+          "absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded",
           {
-            "flex flex-col bg-custom-primary-10 border-[2px] border-custom-primary-40 rounded z-[2]": shouldOverlay,
+            "flex flex-col bg-custom-background-80 border-[1px] border-custom-border-300 z-[2]": shouldOverlay,
           },
-          { hidden: !shouldOverlay }
+          { hidden: !shouldOverlay },
+          { "justify-center": !sub_group_by }
         )}
       >
-        {readableOrderBy && <span>The layout is ordered by {readableOrderBy}.</span>}
+        {readableOrderBy && <span className="pt-6">The layout is ordered by {readableOrderBy}.</span>}
         <span>Drop here to move the issue.</span>
       </div>
       <KanbanIssueBlocksList

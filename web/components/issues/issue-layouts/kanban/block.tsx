@@ -8,6 +8,7 @@ import { ControlLink, DropIndicator, Tooltip } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { cn } from "@/helpers/common.helper";
 import { useApplication, useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { TRenderQuickActions } from "../list/list-view-types";
@@ -130,6 +131,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const canEditIssueProperties = canEditProperties(issue?.project_id);
 
   const isDragAllowed = !isDragDisabled && !issue?.tempId && canEditIssueProperties;
+
+  useOutsideClickDetector(cardRef, () => {
+    cardRef?.current?.classList?.remove("highlight");
+  });
 
   // Make Issue block both as as Draggable and,
   // as a DropTarget for other issues being dragged to get the location of drop

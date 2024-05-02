@@ -220,10 +220,5 @@ export const highlightIssueOnDrop = (elementId: string | undefined, shouldScroll
     if (shouldScrollIntoView && sourceElement)
       await scrollIntoView(sourceElement, { behavior: "smooth", block: "center", duration: 1000 });
     sourceElement?.classList?.add("highlight");
-    setTimeout(() => {
-      const sourceElementId = elementId ?? "";
-      const sourceElement = document.getElementById(sourceElementId);
-      sourceElement?.classList?.remove("highlight");
-    }, 2000);
   }, 200);
 };

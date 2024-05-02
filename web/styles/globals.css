@@ -635,5 +635,5 @@ div.web-view-spinner div.bar12 {
 
 /* highlight class */
 .highlight {
-  border: 1px solid rgb(var(--color-primary-100));
+  border: 1px solid rgb(var(--color-primary-100)) !important;
 }
