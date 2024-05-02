@@ -6,10 +6,12 @@ import { Avatar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { FavoriteStar } from "@/components/core";
 import { PageQuickActions } from "@/components/pages/dropdowns";
+// constants
+import { E_PAGES, PAGE_FAVORITED, PAGE_UNFAVORITED } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useMember, usePage } from "@/hooks/store";
+import { useEventTracker, useMember, usePage } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -24,6 +26,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   // store hooks
   const { access, created_at, is_favorite, owned_by, addToFavorites, removeFromFavorites } = usePage(pageId);
   const { getUserDetails } = useMember();
+  const { captureEvent } = useEventTracker();
 
   // derived values
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
@@ -31,21 +34,29 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   // handlers
   const handleFavorites = () => {
     if (is_favorite)
-      removeFromFavorites().then(() =>
+      removeFromFavorites().then(() => {
+        captureEvent(PAGE_FAVORITED, {
+          page_id: pageId,
+          element: E_PAGES,
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Page removed from favorites.",
-        })
-      );
+        });
+      });
     else
-      addToFavorites().then(() =>
+      addToFavorites().then(() => {
+        captureEvent(PAGE_UNFAVORITED, {
+          page_id: pageId,
+          element: E_PAGES,
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Page added to favorites.",
-        })
-      );
+        });
+      });
   };
   return (
     <>

@@ -5,6 +5,10 @@ import { TPageFilterProps, TPageFilters } from "@plane/types";
 // components
 import { FilterOption } from "@/components/issues";
 import { FilterCreatedBy, FilterCreatedDate } from "@/components/pages";
+// constants
+import { PAGES_FILTER_APPLIED, PAGES_FILTER_REMOVED } from "@/constants/event-tracker";
+// hooks
+import { useEventTracker } from "@/hooks/store";
 
 type Props = {
   filters: TPageFilters;
@@ -16,11 +20,13 @@ export const PageFiltersSelection: React.FC<Props> = observer((props) => {
   const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const handleFilters = (key: keyof TPageFilterProps, value: boolean | string | string[]) => {
-    const newValues = filters.filters?.[key] ?? [];
+    if (typeof filters.filters?.[key] === "boolean" && typeof value === "boolean") return;
 
-    if (typeof newValues === "boolean" && typeof value === "boolean") return;
+    const newValues = Array.from((filters.filters?.[key] ?? []) as string[]);
 
     if (Array.isArray(newValues)) {
       if (Array.isArray(value))
@@ -32,6 +38,16 @@ export const PageFiltersSelection: React.FC<Props> = observer((props) => {
         if (newValues?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
+      captureEvent(
+        ((filters.filters?.[key] ?? []) as string[]).length > newValues.length
+          ? PAGES_FILTER_REMOVED
+          : PAGES_FILTER_APPLIED,
+        {
+          filter_type: key,
+          filter_property: value,
+          current_filters: filters?.filters,
+        }
+      );
     }
 
     handleFiltersUpdate("filters", {
@@ -64,12 +80,17 @@ export const PageFiltersSelection: React.FC<Props> = observer((props) => {
         <div className="py-2">
           <FilterOption
             isChecked={!!filters.filters?.favorites}
-            onClick={() =>
+            onClick={() => {
               handleFiltersUpdate("filters", {
                 ...filters.filters,
                 favorites: !filters.filters?.favorites,
-              })
-            }
+              });
+              captureEvent(!filters.filters?.favorites ? PAGES_FILTER_REMOVED : PAGES_FILTER_APPLIED, {
+                filter_type: "favorites",
+                filter_property: filters.filters?.favorites,
+                current_filters: filters,
+              });
+            }}
             title="Favorites"
           />
         </div>

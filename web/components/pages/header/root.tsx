@@ -11,10 +11,12 @@ import {
   PageSearchInput,
   PageTabNavigation,
 } from "@/components/pages";
+// constants
+import { PAGES_SORT_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useMember, useProjectPages } from "@/hooks/store";
+import { useEventTracker, useMember, useProjectPages } from "@/hooks/store";
 
 type Props = {
   pageType: TPageNavigationTabs;
@@ -29,6 +31,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
+  const { captureEvent } = useEventTracker();
 
   const handleRemoveFilter = useCallback(
     (key: keyof TPageFilterProps, value: string | null) => {
@@ -57,6 +60,14 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
             onChange={(val) => {
               if (val.key) updateFilters("sortKey", val.key);
               if (val.order) updateFilters("sortBy", val.order);
+              captureEvent(PAGES_SORT_UPDATED, {
+                changed_property: val.order ? "sort_by" : "order_by",
+                change_details: val.order || val.key,
+                current_sort: {
+                  order_by: filters.sortKey,
+                  sort_by: filters.sortBy,
+                },
+              });
             }}
           />
           <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">

@@ -292,6 +292,10 @@ export const PAGE_LOCKED = "Page locked";
 export const PAGE_UNLOCKED = "Page unlocked";
 export const PAGE_DUPLICATED = "Page duplicated";
 export const PAGE_RESTORED = "Page restored";
+export const PAGES_TAB_CHANGED = "Pages tab changed";
+export const PAGES_SORT_UPDATED = "Pages sort updated";
+export const PAGES_FILTER_APPLIED = "Pages filter applied";
+export const PAGES_FILTER_REMOVED = "Pages filter removed";
 // AI Assistant Events
 export const AI_TRIGGERED = "AI triggered";
 export const AI_RES_USED = "AI response used";
@@ -317,7 +321,7 @@ export const WEBHOOK_CREATED = "Webhook created";
 export const WEBHOOK_UPDATED = "Webhook updated";
 export const WEBHOOK_DELETED = "Webhook deleted";
 export const WEBHOOK_ENABLED = "Webhook enabled";
-export const WEBHOOK_DISABLED = "Webhook diabled";
+export const WEBHOOK_DISABLED = "Webhook disabled";
 export const WEBHOOK_KEY_REGEN = "Webhook secret key regenerated";
 // API Token Events
 export const API_TOKEN_CREATED = "API token created";
