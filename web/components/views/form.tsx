@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-import { IProjectView, IIssueFilterOptions } from "@plane/types";
-// hooks
-import { Button, Input, TextArea } from "@plane/ui";
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
-// components
-// ui
 // types
+import { IProjectView, IIssueFilterOptions } from "@plane/types";
+// ui
+import { Button, Input, TextArea } from "@plane/ui";
+// components
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// hooks
+import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
 type Props = {
   data?: IProjectView | null;
@@ -108,116 +108,109 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   }, [data, preLoadedData, reset]);
 
   return (
-    <form onSubmit={handleSubmit(handleCreateUpdateView)}>
-      <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
-        <div className="space-y-3">
-          <div className="flex flex-col gap-1">
-            <Controller
-              control={control}
-              name="name"
-              rules={{
-                required: "Title is required",
-                maxLength: {
-                  value: 255,
-                  message: "Title should be less than 255 characters",
-                },
-              }}
-              render={({ field: { value, onChange } }) => (
-                <Input
-                  id="name"
-                  type="name"
-                  name="name"
-                  value={value}
-                  onChange={onChange}
-                  hasError={Boolean(errors.name)}
-                  placeholder="Title"
-                  className="w-full resize-none text-xl focus:border-blue-400"
-                  tabIndex={1}
-                />
-              )}
-            />
-            <span className="text-xs text-red-500">{errors?.name?.message}</span>
-          </div>
-          <div>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <TextArea
-                  id="description"
-                  name="description"
-                  placeholder="Description"
-                  className="min-h-24 w-full resize-none text-sm"
-                  hasError={Boolean(errors?.description)}
-                  value={value}
-                  onChange={onChange}
-                  tabIndex={2}
-                />
-              )}
-            />
-          </div>
-          <div>
-            <Controller
-              control={control}
-              name="filters"
-              render={({ field: { onChange, value: filters } }) => (
-                <FiltersDropdown title="Filters" tabIndex={3}>
-                  <FilterSelection
-                    filters={filters ?? {}}
-                    handleFiltersUpdate={(key, value) => {
-                      const newValues = filters?.[key] ?? [];
-
-                      if (Array.isArray(value)) {
-                        value.forEach((val) => {
-                          if (!newValues.includes(val)) newValues.push(val);
-                        });
-                      } else {
-                        if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-                        else newValues.push(value);
-                      }
-
-                      onChange({
-                        ...filters,
-                        [key]: newValues,
-                      });
-                    }}
-                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
-                    labels={projectLabels ?? undefined}
-                    memberIds={projectMemberIds ?? undefined}
-                    states={projectStates}
-                    cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                    moduleViewDisabled={!currentProjectDetails?.module_view}
-                  />
-                </FiltersDropdown>
-              )}
-            />
-          </div>
-          {selectedFilters && Object.keys(selectedFilters).length > 0 && (
-            <div>
-              <AppliedFiltersList
-                appliedFilters={selectedFilters}
-                handleClearAllFilters={clearAllFilters}
-                handleRemoveFilter={handleRemoveFilter}
-                labels={projectLabels ?? []}
-                states={projectStates}
+    <form onSubmit={handleSubmit(handleCreateUpdateView)} className="space-y-5">
+      <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} View</h3>
+      <div className="space-y-3">
+        <div className="space-y-1">
+          <Controller
+            control={control}
+            name="name"
+            rules={{
+              required: "Title is required",
+              maxLength: {
+                value: 255,
+                message: "Title should be less than 255 characters",
+              },
+            }}
+            render={({ field: { value, onChange } }) => (
+              <Input
+                id="name"
+                type="name"
+                name="name"
+                value={value}
+                onChange={onChange}
+                hasError={Boolean(errors.name)}
+                placeholder="Title"
+                className="w-full text-base"
+                tabIndex={1}
+                autoFocus
               />
-            </div>
-          )}
+            )}
+          />
+          <span className="text-xs text-red-500">{errors?.name?.message}</span>
         </div>
+        <div>
+          <Controller
+            name="description"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <TextArea
+                id="description"
+                name="description"
+                placeholder="Description"
+                className="w-full text-base resize-none min-h-24"
+                hasError={Boolean(errors?.description)}
+                value={value}
+                onChange={onChange}
+                tabIndex={2}
+              />
+            )}
+          />
+        </div>
+        <div>
+          <Controller
+            control={control}
+            name="filters"
+            render={({ field: { onChange, value: filters } }) => (
+              <FiltersDropdown title="Filters" tabIndex={3}>
+                <FilterSelection
+                  filters={filters ?? {}}
+                  handleFiltersUpdate={(key, value) => {
+                    const newValues = filters?.[key] ?? [];
+
+                    if (Array.isArray(value)) {
+                      value.forEach((val) => {
+                        if (!newValues.includes(val)) newValues.push(val);
+                      });
+                    } else {
+                      if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+                      else newValues.push(value);
+                    }
+
+                    onChange({
+                      ...filters,
+                      [key]: newValues,
+                    });
+                  }}
+                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
+                  labels={projectLabels ?? undefined}
+                  memberIds={projectMemberIds ?? undefined}
+                  states={projectStates}
+                  cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                  moduleViewDisabled={!currentProjectDetails?.module_view}
+                />
+              </FiltersDropdown>
+            )}
+          />
+        </div>
+        {selectedFilters && Object.keys(selectedFilters).length > 0 && (
+          <div>
+            <AppliedFiltersList
+              appliedFilters={selectedFilters}
+              handleClearAllFilters={clearAllFilters}
+              handleRemoveFilter={handleRemoveFilter}
+              labels={projectLabels ?? []}
+              states={projectStates}
+            />
+          </div>
+        )}
       </div>
-      <div className="mt-5 flex justify-end gap-2">
+      <div className="pt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" tabIndex={5} disabled={isSubmitting}>
-          {data
-            ? isSubmitting
-              ? "Updating View..."
-              : "Update View"
-            : isSubmitting
-              ? "Creating View..."
-              : "Create View"}
+        <Button variant="primary" size="sm" type="submit" tabIndex={5} loading={isSubmitting}>
+          {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
         </Button>
       </div>
     </form>

@@ -125,23 +125,25 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
 
   if (!workspaceSlug || !projectId || !workspaceId || !formData) return <></>;
   return (
-    <div className="relative space-y-4">
-      <InboxIssueTitle
-        data={formData}
-        handleData={handleFormData}
-        isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
-      />
-      <InboxIssueDescription
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        workspaceId={workspaceId}
-        data={formData}
-        handleData={handleFormData}
-        editorRef={descriptionEditorRef}
-        containerClassName="border-[0.5px] border-custom-border-200 py-3"
-      />
-      <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} isVisible />
-      <div className="relative flex justify-end items-center gap-3">
+    <div className="space-y-5">
+      <div className="space-y-3">
+        <InboxIssueTitle
+          data={formData}
+          handleData={handleFormData}
+          isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
+        />
+        <InboxIssueDescription
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          workspaceId={workspaceId}
+          data={formData}
+          handleData={handleFormData}
+          editorRef={descriptionEditorRef}
+          containerClassName="border-[0.5px] border-custom-border-200 py-2"
+        />
+        <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} isVisible />
+      </div>
+      <div className="pt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" type="button" onClick={handleModalClose}>
           Cancel
         </Button>
@@ -153,7 +155,7 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
           disabled={isTitleLengthMoreThan255Character}
           onClick={handleFormSubmit}
         >
-          {formSubmitting ? "Adding..." : "Add to project"}
+          {formSubmitting ? "Adding" : "Add to project"}
         </Button>
       </div>
     </div>

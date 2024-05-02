@@ -37,7 +37,7 @@ export const InboxIssueCreateEditModalRoot: FC<TInboxIssueCreateEditModalRoot> =
             <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="fixed inset-0 z-20 overflow-y-auto">
             <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
               <Transition.Child
                 as={Fragment}
@@ -50,8 +50,8 @@ export const InboxIssueCreateEditModalRoot: FC<TInboxIssueCreateEditModalRoot> =
               >
                 <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all w-full lg:max-w-4xl">
                   {issue && issue?.id ? (
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-medium text-custom-text-100">
+                    <div className="space-y-5">
+                      <h3 className="text-xl font-medium text-custom-text-200">
                         Move {currentProjectDetails?.identifier}-{issue?.sequence_id} to project issues
                       </h3>
                       <InboxIssueEditRoot
@@ -64,8 +64,8 @@ export const InboxIssueCreateEditModalRoot: FC<TInboxIssueCreateEditModalRoot> =
                       />
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-medium text-custom-text-100">Create Inbox Issue</h3>
+                    <div className="space-y-5">
+                      <h3 className="text-xl font-medium text-custom-text-200">Create Inbox Issue</h3>
                       <InboxIssueCreateRoot
                         workspaceSlug={workspaceSlug}
                         projectId={projectId}
