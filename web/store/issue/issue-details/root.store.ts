@@ -51,7 +51,7 @@ export interface IIssueDetail
   isArchiveIssueModalOpen: boolean;
   isRelationModalOpen: TIssueRelationTypes | null;
   isSubIssuesModalOpen: boolean;
-  isDeleteAttachmentModalOpen: boolean;
+  isDeleteAttachmentModalOpen: string | null;
   // computed
   isAnyModalOpen: boolean;
   // helper actions
@@ -65,7 +65,7 @@ export interface IIssueDetail
   toggleArchiveIssueModal: (value: boolean) => void;
   toggleRelationModal: (relationType: TIssueRelationTypes | null) => void;
   toggleSubIssuesModal: (value: boolean) => void;
-  toggleDeleteAttachmentModal: (value: boolean) => void;
+  toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -90,7 +90,7 @@ export class IssueDetail implements IIssueDetail {
   isArchiveIssueModalOpen: boolean = false;
   isRelationModalOpen: TIssueRelationTypes | null = null;
   isSubIssuesModalOpen: boolean = false;
-  isDeleteAttachmentModalOpen: boolean = false;
+  isDeleteAttachmentModalOpen: string | null = null;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -154,7 +154,7 @@ export class IssueDetail implements IIssueDetail {
       this.isArchiveIssueModalOpen ||
       !!this.isRelationModalOpen ||
       this.isSubIssuesModalOpen ||
-      this.isDeleteAttachmentModalOpen
+      !!this.isDeleteAttachmentModalOpen
     );
   }
 
@@ -170,7 +170,7 @@ export class IssueDetail implements IIssueDetail {
   toggleArchiveIssueModal = (value: boolean) => (this.isArchiveIssueModalOpen = value);
   toggleRelationModal = (relationType: TIssueRelationTypes | null) => (this.isRelationModalOpen = relationType);
   toggleSubIssuesModal = (value: boolean) => (this.isSubIssuesModalOpen = value);
-  toggleDeleteAttachmentModal = (value: boolean) => (this.isDeleteAttachmentModalOpen = value);
+  toggleDeleteAttachmentModal = (attachmentId: string | null) => (this.isDeleteAttachmentModalOpen = attachmentId);
 
   // issue
   fetchIssue = async (
