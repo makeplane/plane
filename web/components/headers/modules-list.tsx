@@ -19,7 +19,7 @@ export const ModulesListHeader: React.FC = observer(() => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
-  const { setTrackElement, captureEvent } = useEventTracker();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
