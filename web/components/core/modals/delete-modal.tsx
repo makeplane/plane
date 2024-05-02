@@ -10,11 +10,26 @@ type Props = {
   handleSubmit: () => Promise<void>;
   isDeleting: boolean;
   isOpen: boolean;
+  primaryButtonText?: {
+    loading: string;
+    default: string;
+  };
   title: string;
 };
 
 export const DeleteModalCore: React.FC<Props> = (props) => {
-  const { content, handleClose, handleSubmit, isDeleting, isOpen, title } = props;
+  const {
+    content,
+    handleClose,
+    handleSubmit,
+    isDeleting,
+    isOpen,
+    primaryButtonText = {
+      loading: "Deleting",
+      default: "Delete",
+    },
+    title,
+  } = props;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -56,7 +71,7 @@ export const DeleteModalCore: React.FC<Props> = (props) => {
                     Cancel
                   </Button>
                   <Button variant="danger" size="sm" tabIndex={1} onClick={handleSubmit} loading={isDeleting}>
-                    {isDeleting ? "Deleting" : "Delete"}
+                    {isDeleting ? primaryButtonText.loading : primaryButtonText.default}
                   </Button>
                 </div>
               </Dialog.Panel>
