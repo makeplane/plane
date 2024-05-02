@@ -51,15 +51,12 @@ export class UserStore implements IUserStore {
   // service
   userService: UserService;
   authService: AuthService;
-  // root store
-  rootStore: RootStore;
 
-  constructor(rootStore: RootStore) {
+  constructor(private store: RootStore) {
     // stores
-    this.rootStore = rootStore;
     this.userProfile = new ProfileStore();
     this.userSettings = new UserSettingsStore();
-    this.membership = new UserMembershipStore(rootStore);
+    this.membership = new UserMembershipStore(store);
     // service
     this.userService = new UserService();
     this.authService = new AuthService();
@@ -87,22 +84,29 @@ export class UserStore implements IUserStore {
    * @description fetches the current user
    * @returns {Promise<IUser>}
    */
-  fetchCurrentUser = async () => {
+  fetchCurrentUser = async (): Promise<IUser> => {
     try {
       runInAction(() => {
         this.isLoading = true;
         this.error = undefined;
       });
       const user = await this.userService.currentUser();
-      if (user && user.id) {
+      if (user && user?.id) {
         await this.userProfile.fetchUserProfile();
         await this.userSettings.fetchCurrentUserSettings();
+        await this.store.workspaceRoot.fetchWorkspaces();
         runInAction(() => {
           this.data = user;
           this.isLoading = false;
           this.isAuthenticated = true;
         });
-      }
+      } else
+        runInAction(() => {
+          this.data = user;
+          this.isLoading = false;
+          this.isAuthenticated = false;
+        });
+      console.log("this.isLoading", this.isLoading);
       return user;
     } catch (error) {
       runInAction(() => {
@@ -122,7 +126,7 @@ export class UserStore implements IUserStore {
    * @param data
    * @returns {Promise<IUser>}
    */
-  updateCurrentUser = async (data: Partial<IUser>) => {
+  updateCurrentUser = async (data: Partial<IUser>): Promise<IUser> => {
     const currentUserData = this.data;
     try {
       if (currentUserData) {
@@ -154,17 +158,17 @@ export class UserStore implements IUserStore {
    * @description deactivates the current user
    * @returns {Promise<void>}
    */
-  deactivateAccount = async () => {
+  deactivateAccount = async (): Promise<void> => {
     await this.userService.deactivateAccount();
-    this.rootStore.resetOnSignOut();
+    this.store.resetOnSignOut();
   };
 
   /**
    * @description signs out the current user
    * @returns {Promise<void>}
    */
-  signOut = async () => {
+  signOut = async (): Promise<void> => {
     await this.authService.signOut(API_BASE_URL);
-    this.rootStore.resetOnSignOut();
+    this.store.resetOnSignOut();
   };
 }

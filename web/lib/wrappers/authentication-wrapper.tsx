@@ -27,23 +27,14 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   const { children, pageType = EPageTypes.AUTHENTICATED } = props;
   // hooks
   const { isLoading: isUserLoading, data: currentUser, fetchCurrentUser } = useUser();
-  const { isLoading: isUserProfileLoading, data: currentUserProfile, fetchUserProfile } = useUserProfile();
-  const { isLoading: isUserSettingsLoading, data: currentUserSettings, fetchCurrentUserSettings } = useUserSettings();
-  const { loader: isWorkspaceLoading, workspaces, fetchWorkspaces } = useWorkspace();
+  const { data: currentUserProfile } = useUserProfile();
+  const { data: currentUserSettings } = useUserSettings();
+  const { workspaces } = useWorkspace();
 
-  useSWR("USER_INFORMATION", async () => await fetchCurrentUser(), {
+  const { isLoading: isUserSWRLoading } = useSWR("USER_INFORMATION", async () => await fetchCurrentUser(), {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   });
-
-  useSWR(
-    currentUser && currentUser?.id ? "USER_PROFILE_SETTINGS_INFORMATION" : null,
-    async () => {
-      if (currentUser && currentUser?.id)
-        await Promise.all([fetchUserProfile(), fetchCurrentUserSettings(), fetchWorkspaces()]);
-    },
-    { revalidateOnFocus: false, shouldRetryOnError: false }
-  );
 
   const getWorkspaceRedirectionUrl = (): string => {
     let redirectionRoute = "/profile";
@@ -68,7 +59,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     return redirectionRoute;
   };
 
-  if (isUserLoading || isUserProfileLoading || isUserSettingsLoading || isWorkspaceLoading)
+  if (isUserSWRLoading || isUserLoading)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <Spinner />
@@ -106,7 +97,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.AUTHENTICATED) {
     if (currentUser?.id) {
-      if (currentUserProfile?.id && currentUserProfile?.is_onboarded) return <>{children}</>;
+      if (currentUserProfile && currentUserProfile?.id && currentUserProfile?.is_onboarded) return <>{children}</>;
       else {
         router.push(`/onboarding`);
         return <></>;
