@@ -1707,7 +1707,7 @@ def issue_activity(
                     ),
                     verb=activity.verb,
                     field=(
-                        "description_html"
+                        "description"
                         if activity.field == "comment"
                         else activity.field
                     ),
@@ -1716,6 +1716,8 @@ def issue_activity(
                     actor_id=activity.actor_id,
                     current_site=origin,
                     slug=activity.workspace.slug,
+                    old_identifier=activity.old_identifier,
+                    new_identifier=activity.new_identifier,
                 )
 
         if notification:

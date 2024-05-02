@@ -433,6 +433,8 @@ def webhook_activity(
     slug,
     current_site,
     event_id,
+    old_identifier,
+    new_identifier,
 ):
     webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
 
@@ -464,8 +466,10 @@ def webhook_activity(
             current_site=current_site,
             activity={
                 "field": field,
-                "new_value": new_value,
-                "old_value": old_value,
+                "new_value": new_value if new_value else None,
+                "old_value": old_value if old_value else None,
                 "actor": get_model_data(event="user", event_id=actor_id),
+                "old_identifier": old_identifier,
+                "new_identifier": new_identifier,
             },
         )
