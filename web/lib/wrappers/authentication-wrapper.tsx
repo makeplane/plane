@@ -27,12 +27,8 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   const { children, pageType = EPageTypes.AUTHENTICATED } = props;
   // hooks
   const { isLoading: isUserLoading, data: currentUser, fetchCurrentUser } = useUser();
-  const { isLoading: currentUserProfileLoader, data: currentUserProfile, fetchUserProfile } = useUserProfile();
-  const {
-    isLoading: currentUserSettingsLoader,
-    data: currentUserSettings,
-    fetchCurrentUserSettings,
-  } = useUserSettings();
+  const { isLoading: currentUserProfileLoader, data: currentUserProfile } = useUserProfile();
+  const { isLoading: currentUserSettingsLoader, data: currentUserSettings } = useUserSettings();
   const { loader: workspaceLoader, workspaces, fetchWorkspaces } = useWorkspace();
 
   useSWR("USER_INFORMATION", async () => await fetchCurrentUser(), {
@@ -42,13 +38,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   useSWR(
     currentUser && currentUser?.id ? "USER_PROFILE_SETTINGS_INFORMATION" : null,
-    async () => {
-      if (currentUser && currentUser?.id) {
-        await fetchCurrentUserSettings();
-        await fetchUserProfile();
-        await fetchWorkspaces();
-      }
-    },
+    async () => currentUser && currentUser?.id && (await fetchWorkspaces()),
     { revalidateOnFocus: false, shouldRetryOnError: false }
   );
 
@@ -87,7 +77,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   if (pageType === EPageTypes.NON_AUTHENTICATED) {
     if (!currentUser?.id) return <>{children}</>;
     else {
-      if (currentUserProfile?.is_onboarded) {
+      if (currentUserProfile?.id && currentUserProfile?.is_onboarded) {
         const currentRedirectRoute = getWorkspaceRedirectionUrl();
         router.push(currentRedirectRoute);
         return <></>;
@@ -103,7 +93,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
       router.push("/accounts/sign-in");
       return <></>;
     } else {
-      if (currentUser && currentUserProfile?.is_onboarded) {
+      if (currentUser && currentUserProfile?.id && currentUserProfile?.is_onboarded) {
         const currentRedirectRoute = getWorkspaceRedirectionUrl();
         router.push(currentRedirectRoute);
         return <></>;
@@ -113,7 +103,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.AUTHENTICATED) {
     if (currentUser?.id) {
-      if (currentUserProfile?.is_onboarded) return <>{children}</>;
+      if (currentUserProfile?.id && currentUserProfile?.is_onboarded) return <>{children}</>;
       else {
         router.push(`/onboarding`);
         return <></>;
