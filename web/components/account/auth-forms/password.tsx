@@ -98,7 +98,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
   return (
     <form
-      className="mx-auto mt-5 space-y-4 w-5/6 sm:w-96"
+      className="mt-5 space-y-4"
       method="POST"
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
       onSubmit={() => setIsSubmitting(true)}

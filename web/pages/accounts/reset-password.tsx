@@ -74,120 +74,118 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   );
 
   return (
-    <div className="relative">
+    <div className="relative w-screen h-screen overflow-hidden">
       <PageHead title="Reset Password" />
       <div className="absolute inset-0 z-0">
         <Image
           src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
-          className="w-screen min-h-screen object-cover"
+          className="w-full h-full object-cover"
           alt="Plane background pattern"
         />
       </div>
-      <div className="relative z-10">
-        <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28">
+      <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
+        <div className="container mx-auto px-10 lg:px-0 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
           <div className="flex items-center gap-x-2 py-10">
-            <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-2" />
+            <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" />
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
         </div>
-        <div className="mx-auto h-full">
-          <div className="h-full overflow-auto px-7 pb-56 pt-4 sm:px-0">
-            <div className="mx-auto flex flex-col">
-              <div className="text-center space-y-1 py-4 mx-auto sm:w-96">
-                <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
-                  Set new password
-                </h3>
-                <p className="font-medium text-onboarding-text-400">Secure your account with a strong password</p>
+        <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10">
+          <div className="relative flex flex-col space-y-6">
+            <div className="text-center space-y-1 py-4">
+              <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
+                Set new password
+              </h3>
+              <p className="font-medium text-onboarding-text-400">Secure your account with a strong password</p>
+            </div>
+            <form
+              className="mt-5 space-y-4"
+              method="POST"
+              action={`${API_BASE_URL}/auth/reset-password/${uidb64?.toString()}/${token?.toString()}/`}
+            >
+              <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+              <div className="space-y-1">
+                <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+                  Email
+                </label>
+                <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={resetFormData.email}
+                    //hasError={Boolean(errors.email)}
+                    placeholder="name@company.com"
+                    className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400 cursor-not-allowed"
+                    disabled
+                  />
+                </div>
               </div>
-              <form
-                className="mx-auto mt-5 space-y-4 w-5/6 sm:w-96"
-                method="POST"
-                action={`${API_BASE_URL}/auth/reset-password/${uidb64?.toString()}/${token?.toString()}/`}
-              >
-                <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-                <div className="space-y-1">
-                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
-                    Email
-                  </label>
-                  <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={resetFormData.email}
-                      //hasError={Boolean(errors.email)}
-                      placeholder="name@company.com"
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400 cursor-not-allowed"
-                      disabled
+              <div className="space-y-1">
+                <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
+                  Password
+                </label>
+                <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={resetFormData.password}
+                    onChange={(e) => handleFormChange("password", e.target.value)}
+                    //hasError={Boolean(errors.password)}
+                    placeholder="Enter password"
+                    className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                    minLength={8}
+                    onFocus={() => setIsPasswordInputFocused(true)}
+                    onBlur={() => setIsPasswordInputFocused(false)}
+                    autoFocus
+                  />
+                  {showPassword ? (
+                    <EyeOff
+                      className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                      onClick={() => setShowPassword(false)}
                     />
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
-                    Password
-                  </label>
-                  <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={resetFormData.password}
-                      onChange={(e) => handleFormChange("password", e.target.value)}
-                      //hasError={Boolean(errors.password)}
-                      placeholder="Enter password"
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-                      minLength={8}
-                      onFocus={() => setIsPasswordInputFocused(true)}
-                      onBlur={() => setIsPasswordInputFocused(false)}
-                      autoFocus
+                  ) : (
+                    <Eye
+                      className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                      onClick={() => setShowPassword(true)}
                     />
-                    {showPassword ? (
-                      <EyeOff
-                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                        onClick={() => setShowPassword(false)}
-                      />
-                    ) : (
-                      <Eye
-                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                        onClick={() => setShowPassword(true)}
-                      />
-                    )}
-                  </div>
-                  {isPasswordInputFocused && <PasswordStrengthMeter password={resetFormData.password} />}
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
-                    Confirm password
-                  </label>
-                  <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      name="confirm_password"
-                      value={resetFormData.confirm_password}
-                      onChange={(e) => handleFormChange("confirm_password", e.target.value)}
-                      placeholder="Confirm password"
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-                    />
-                    {showPassword ? (
-                      <EyeOff
-                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                        onClick={() => setShowPassword(false)}
-                      />
-                    ) : (
-                      <Eye
-                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                        onClick={() => setShowPassword(true)}
-                      />
-                    )}
-                  </div>
-                  {!!resetFormData.confirm_password && resetFormData.password !== resetFormData.confirm_password && (
-                    <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
                   )}
                 </div>
-                <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-                  Set password
-                </Button>
-              </form>
-            </div>
+                {isPasswordInputFocused && <PasswordStrengthMeter password={resetFormData.password} />}
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+                  Confirm password
+                </label>
+                <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    name="confirm_password"
+                    value={resetFormData.confirm_password}
+                    onChange={(e) => handleFormChange("confirm_password", e.target.value)}
+                    placeholder="Confirm password"
+                    className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                  />
+                  {showPassword ? (
+                    <EyeOff
+                      className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                      onClick={() => setShowPassword(false)}
+                    />
+                  ) : (
+                    <Eye
+                      className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                      onClick={() => setShowPassword(true)}
+                    />
+                  )}
+                </div>
+                {!!resetFormData.confirm_password && resetFormData.password !== resetFormData.confirm_password && (
+                  <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
+                )}
+              </div>
+              <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+                Set password
+              </Button>
+            </form>
           </div>
         </div>
       </div>

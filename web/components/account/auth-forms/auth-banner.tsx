@@ -13,7 +13,7 @@ export const AuthBanner: FC<TAuthBanner> = (props) => {
 
   if (!bannerData) return <></>;
   return (
-    <div className="relative inline-flex items-center p-2 rounded-md gap-2 border border-custom-primary-100/50 bg-custom-primary-100/10">
+    <div className="relative flex items-center p-2 rounded-md gap-2 border border-custom-primary-100/50 bg-custom-primary-100/10">
       <div className="w-4 h-4 flex-shrink-0 relative flex justify-center items-center">
         <Info size={16} className="text-custom-primary-100" />
       </div>

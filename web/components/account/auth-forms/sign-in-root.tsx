@@ -11,7 +11,7 @@ import {
   AuthPasswordForm,
   OAuthOptions,
   TermsAndConditions,
-  UniqueCodeForm,
+  AuthUniqueCodeForm,
 } from "@/components/account";
 // helpers
 import {
@@ -82,45 +82,43 @@ export const SignInAuthRoot = observer(() => {
     );
 
   return (
-    <>
-      <div className="relative max-w-lg mx-auto flex flex-col space-y-6">
-        <AuthHeader
-          workspaceSlug={workspaceSlug?.toString() || undefined}
-          invitationId={invitation_id?.toString() || undefined}
-          invitationEmail={email || undefined}
-          authMode={EAuthModes.SIGN_IN}
-          currentAuthStep={authStep}
-          handleLoader={setIsLoading}
+    <div className="relative flex flex-col space-y-6">
+      <AuthHeader
+        workspaceSlug={workspaceSlug?.toString() || undefined}
+        invitationId={invitation_id?.toString() || undefined}
+        invitationEmail={email || undefined}
+        authMode={EAuthModes.SIGN_IN}
+        currentAuthStep={authStep}
+        handleLoader={setIsLoading}
+      />
+      {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
+        <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
+      )}
+      {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
+      {authStep === EAuthSteps.UNIQUE_CODE && (
+        <AuthUniqueCodeForm
+          email={email}
+          handleEmailClear={() => {
+            setEmail("");
+            setAuthStep(EAuthSteps.EMAIL);
+          }}
+          submitButtonText="Continue"
+          mode={authMode}
         />
-        {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-          <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
-        )}
-        {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
-        {authStep === EAuthSteps.UNIQUE_CODE && (
-          <UniqueCodeForm
-            email={email}
-            handleEmailClear={() => {
-              setEmail("");
-              setAuthStep(EAuthSteps.EMAIL);
-            }}
-            submitButtonText="Continue"
-            mode={authMode}
-          />
-        )}
-        {authStep === EAuthSteps.PASSWORD && (
-          <AuthPasswordForm
-            email={email}
-            handleEmailClear={() => {
-              setEmail("");
-              setAuthStep(EAuthSteps.EMAIL);
-            }}
-            handleStepChange={(step) => setAuthStep(step)}
-            mode={authMode}
-          />
-        )}
-        {isOAuthEnabled && <OAuthOptions />}
-        <TermsAndConditions isSignUp={false} />
-      </div>
-    </>
+      )}
+      {authStep === EAuthSteps.PASSWORD && (
+        <AuthPasswordForm
+          email={email}
+          handleEmailClear={() => {
+            setEmail("");
+            setAuthStep(EAuthSteps.EMAIL);
+          }}
+          handleStepChange={(step) => setAuthStep(step)}
+          mode={authMode}
+        />
+      )}
+      {isOAuthEnabled && <OAuthOptions />}
+      <TermsAndConditions isSignUp={false} />
+    </div>
   );
 });

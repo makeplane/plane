@@ -38,7 +38,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   const isButtonDisabled = email.length === 0 || Boolean(emailError?.email) || isSubmitting;
 
   return (
-    <form onSubmit={handleFormSubmit} className="mx-auto mt-8 space-y-4 w-5/6 sm:w-96">
+    <form onSubmit={handleFormSubmit} className="mt-8 space-y-4">
       <div className="space-y-1">
         <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
           Email
@@ -69,13 +69,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
           </p>
         )}
       </div>
-      <Button
-        type="submit"
-        variant="primary"
-        className="w-full"
-        size="lg"
-        disabled={isButtonDisabled}
-      >
+      <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
         {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
       </Button>
     </form>

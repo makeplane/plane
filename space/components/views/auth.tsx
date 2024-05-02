@@ -50,7 +50,7 @@ export const AuthView = observer(() => {
               <div className="absolute inset-0 z-0">
                 <Image
                   src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
-                  className="w-screen min-h-screen object-cover"
+                  className="w-full h-full object-cover"
                   alt="Plane background pattern"
                 />
               </div>
