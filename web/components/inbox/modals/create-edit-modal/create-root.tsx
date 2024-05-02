@@ -1,7 +1,9 @@
 import { FC, FormEvent, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// editor
 import { EditorRefApi } from "@plane/rich-text-editor";
+// types
 import { TIssue } from "@plane/types";
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -120,25 +122,28 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
 
   if (!workspaceSlug || !projectId || !workspaceId) return <></>;
   return (
-    <form className="relative space-y-5" onSubmit={handleFormSubmit}>
-      <div className="space-y-3">
-        <InboxIssueTitle
-          data={formData}
-          handleData={handleFormData}
-          isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
-        />
-        <InboxIssueDescription
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          workspaceId={workspaceId}
-          data={formData}
-          handleData={handleFormData}
-          editorRef={descriptionEditorRef}
-          containerClassName="border-[0.5px] border-custom-border-200 py-2"
-        />
-        <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
+    <form onSubmit={handleFormSubmit}>
+      <div className="space-y-5 p-5">
+        <h3 className="text-xl font-medium text-custom-text-200">Create Inbox Issue</h3>
+        <div className="space-y-3">
+          <InboxIssueTitle
+            data={formData}
+            handleData={handleFormData}
+            isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
+          />
+          <InboxIssueDescription
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            workspaceId={workspaceId}
+            data={formData}
+            handleData={handleFormData}
+            editorRef={descriptionEditorRef}
+            containerClassName="border-[0.5px] border-custom-border-200 py-2"
+          />
+          <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
+        </div>
       </div>
-      <div className="pt-5 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="p-5 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
         <div
           className="inline-flex items-center gap-1.5 cursor-pointer"
           onClick={() => setCreateMore((prevData) => !prevData)}

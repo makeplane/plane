@@ -52,113 +52,115 @@ export const CycleForm: React.FC<Props> = (props) => {
   }, [data, reset]);
 
   return (
-    <form onSubmit={handleSubmit((formData) => handleFormSubmit(formData, dirtyFields))} className="space-y-5">
-      <div className="flex items-center gap-x-3">
-        {!status && (
-          <Controller
-            control={control}
-            name="project_id"
-            render={({ field: { value, onChange } }) => (
-              <div className="h-7">
-                <ProjectDropdown
-                  value={value}
-                  onChange={(val) => {
-                    onChange(val);
-                    setActiveProject(val);
-                  }}
-                  buttonVariant="border-with-text"
-                  renderCondition={(project) => shouldRenderProject(project)}
-                  tabIndex={7}
-                />
-              </div>
-            )}
-          />
-        )}
-        <h3 className="text-xl font-medium text-custom-text-200">{status ? "Update" : "Create"} Cycle</h3>
-      </div>
-      <div className="space-y-3">
-        <div className="space-y-1">
-          <Controller
-            name="name"
-            control={control}
-            rules={{
-              required: "Title is required",
-              maxLength: {
-                value: 255,
-                message: "Title should be less than 255 characters",
-              },
-            }}
-            render={({ field: { value, onChange } }) => (
-              <Input
-                name="name"
-                type="text"
-                placeholder="Title"
-                className="w-full text-base"
-                value={value}
-                inputSize="md"
-                onChange={onChange}
-                hasError={Boolean(errors?.name)}
-                tabIndex={1}
-                autoFocus
-              />
-            )}
-          />
-          <span className="text-xs text-red-500">{errors?.name?.message}</span>
-        </div>
-        <div>
-          <Controller
-            name="description"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <TextArea
-                name="description"
-                placeholder="Description"
-                className="w-full text-base resize-none min-h-24"
-                hasError={Boolean(errors?.description)}
-                value={value}
-                onChange={onChange}
-                tabIndex={2}
-              />
-            )}
-          />
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Controller
-            control={control}
-            name="start_date"
-            render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
-              <Controller
-                control={control}
-                name="end_date"
-                render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-                  <DateRangeDropdown
+    <form onSubmit={handleSubmit((formData) => handleFormSubmit(formData, dirtyFields))}>
+      <div className="space-y-5 p-5">
+        <div className="flex items-center gap-x-3">
+          {!status && (
+            <Controller
+              control={control}
+              name="project_id"
+              render={({ field: { value, onChange } }) => (
+                <div className="h-7">
+                  <ProjectDropdown
+                    value={value}
+                    onChange={(val) => {
+                      onChange(val);
+                      setActiveProject(val);
+                    }}
                     buttonVariant="border-with-text"
-                    className="h-7"
-                    minDate={new Date()}
-                    value={{
-                      from: getDate(startDateValue),
-                      to: getDate(endDateValue),
-                    }}
-                    onSelect={(val) => {
-                      onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                      onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
-                    }}
-                    placeholder={{
-                      from: "Start date",
-                      to: "End date",
-                    }}
-                    hideIcon={{
-                      to: true,
-                    }}
-                    tabIndex={3}
+                    renderCondition={(project) => shouldRenderProject(project)}
+                    tabIndex={7}
                   />
-                )}
-              />
-            )}
-          />
+                </div>
+              )}
+            />
+          )}
+          <h3 className="text-xl font-medium text-custom-text-200">{status ? "Update" : "Create"} Cycle</h3>
+        </div>
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <Controller
+              name="name"
+              control={control}
+              rules={{
+                required: "Title is required",
+                maxLength: {
+                  value: 255,
+                  message: "Title should be less than 255 characters",
+                },
+              }}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  name="name"
+                  type="text"
+                  placeholder="Title"
+                  className="w-full text-base"
+                  value={value}
+                  inputSize="md"
+                  onChange={onChange}
+                  hasError={Boolean(errors?.name)}
+                  tabIndex={1}
+                  autoFocus
+                />
+              )}
+            />
+            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+          </div>
+          <div>
+            <Controller
+              name="description"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  name="description"
+                  placeholder="Description"
+                  className="w-full text-base resize-none min-h-24"
+                  hasError={Boolean(errors?.description)}
+                  value={value}
+                  onChange={onChange}
+                  tabIndex={2}
+                />
+              )}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Controller
+              control={control}
+              name="start_date"
+              render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                <Controller
+                  control={control}
+                  name="end_date"
+                  render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                    <DateRangeDropdown
+                      buttonVariant="border-with-text"
+                      className="h-7"
+                      minDate={new Date()}
+                      value={{
+                        from: getDate(startDateValue),
+                        to: getDate(endDateValue),
+                      }}
+                      onSelect={(val) => {
+                        onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                        onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                      }}
+                      placeholder={{
+                        from: "Start date",
+                        to: "End date",
+                      }}
+                      hideIcon={{
+                        to: true,
+                      }}
+                      tabIndex={3}
+                    />
+                  )}
+                />
+              )}
+            />
+          </div>
         </div>
       </div>
-      <div className="pt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="p-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>

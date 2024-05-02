@@ -1,11 +1,9 @@
 import { FC, Fragment } from "react";
-import { observer } from "mobx-react";
 import { Transition, Dialog } from "@headlessui/react";
+// types
 import { TIssue } from "@plane/types";
 // components
 import { InboxIssueCreateRoot, InboxIssueEditRoot } from "@/components/inbox/modals/create-edit-modal";
-// hooks
-import { useProject } from "@/hooks/store";
 
 type TInboxIssueCreateEditModalRoot = {
   workspaceSlug: string;
@@ -16,10 +14,8 @@ type TInboxIssueCreateEditModalRoot = {
   onSubmit?: () => void;
 };
 
-export const InboxIssueCreateEditModalRoot: FC<TInboxIssueCreateEditModalRoot> = observer((props) => {
+export const InboxIssueCreateEditModalRoot: FC<TInboxIssueCreateEditModalRoot> = (props) => {
   const { workspaceSlug, projectId, modalState, handleModalClose, issue, onSubmit } = props;
-  // hooks
-  const { currentProjectDetails } = useProject();
 
   return (
     <div>
@@ -48,30 +44,22 @@ export const InboxIssueCreateEditModalRoot: FC<TInboxIssueCreateEditModalRoot> =
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all w-full lg:max-w-4xl">
+                <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all w-full lg:max-w-4xl">
                   {issue && issue?.id ? (
-                    <div className="space-y-5">
-                      <h3 className="text-xl font-medium text-custom-text-200">
-                        Move {currentProjectDetails?.identifier}-{issue?.sequence_id} to project issues
-                      </h3>
-                      <InboxIssueEditRoot
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        issueId={issue.id}
-                        issue={issue}
-                        handleModalClose={handleModalClose}
-                        onSubmit={onSubmit}
-                      />
-                    </div>
+                    <InboxIssueEditRoot
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                      issueId={issue.id}
+                      issue={issue}
+                      handleModalClose={handleModalClose}
+                      onSubmit={onSubmit}
+                    />
                   ) : (
-                    <div className="space-y-5">
-                      <h3 className="text-xl font-medium text-custom-text-200">Create Inbox Issue</h3>
-                      <InboxIssueCreateRoot
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        handleModalClose={handleModalClose}
-                      />
-                    </div>
+                    <InboxIssueCreateRoot
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                      handleModalClose={handleModalClose}
+                    />
                   )}
                 </Dialog.Panel>
               </Transition.Child>
@@ -81,4 +69,4 @@ export const InboxIssueCreateEditModalRoot: FC<TInboxIssueCreateEditModalRoot> =
       </Transition.Root>
     </div>
   );
-});
+};
