@@ -217,8 +217,8 @@ export const highlightIssueOnDrop = (elementId: string | undefined, shouldScroll
   setTimeout(async () => {
     const sourceElementId = elementId ?? "";
     const sourceElement = document.getElementById(sourceElementId);
-    if (shouldScrollIntoView && sourceElement)
-      await scrollIntoView(sourceElement, { behavior: "smooth", block: "center", duration: 1000 });
     sourceElement?.classList?.add("highlight");
+    if (shouldScrollIntoView && sourceElement)
+      await scrollIntoView(sourceElement, { behavior: "smooth", block: "center", duration: 1500 });
   }, 200);
 };
