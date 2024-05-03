@@ -163,7 +163,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     viewId: string
   ) => {
     try {
-      this.rootStore.issues.updateIssue(issueId, data, true);
+      this.rootStore.issues.updateIssue(issueId, data);
       await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
     } catch (error) {
       if (viewId) this.fetchIssues(workspaceSlug, viewId, "mutation");
@@ -203,13 +203,9 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
       const response = await this.issueArchiveService.archiveIssue(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
-        this.rootStore.issues.updateIssue(
-          issueId,
-          {
-            archived_at: response.archived_at,
-          },
-          true
-        );
+        this.rootStore.issues.updateIssue(issueId, {
+          archived_at: response.archived_at,
+        });
         pull(this.issues[uniqueViewId], issueId);
       });
     } catch (error) {

@@ -173,7 +173,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     try {
-      this.rootStore.issues.updateIssue(issueId, data, true);
+      this.rootStore.issues.updateIssue(issueId, data);
 
       await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
     } catch (error) {
@@ -202,13 +202,9 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       const response = await this.issueArchiveService.archiveIssue(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
-        this.rootStore.issues.updateIssue(
-          issueId,
-          {
-            archived_at: response.archived_at,
-          },
-          true
-        );
+        this.rootStore.issues.updateIssue(issueId, {
+          archived_at: response.archived_at,
+        });
         pull(this.issues[projectId], issueId);
       });
 

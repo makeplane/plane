@@ -127,13 +127,9 @@ export class ArchivedIssues extends IssueHelperStore implements IArchivedIssues 
       const response = await this.archivedIssueService.restoreIssue(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
-        this.rootStore.issues.updateIssue(
-          issueId,
-          {
-            archived_at: null,
-          },
-          true
-        );
+        this.rootStore.issues.updateIssue(issueId, {
+          archived_at: null,
+        });
         pull(this.issues[projectId], issueId);
       });
 

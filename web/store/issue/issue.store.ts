@@ -15,7 +15,7 @@ export type IIssueStore = {
   // actions
   getIssues(workspaceSlug: string, projectId: string, issueIds: string[]): Promise<TIssue[]>;
   addIssue(issues: TIssue[], shouldReplace?: boolean): void;
-  updateIssue(issueId: string, issue: Partial<TIssue>, updateDate?: boolean): void;
+  updateIssue(issueId: string, issue: Partial<TIssue>): void;
   removeIssue(issueId: string): void;
   // helper methods
   getIssueById(issueId: string): undefined | TIssue;
@@ -74,13 +74,13 @@ export class IssueStore implements IIssueStore {
    * @param {Partial<TIssue>} issue
    * @returns {void}
    */
-  updateIssue = (issueId: string, issue: Partial<TIssue>, shouldUpdateDate = false) => {
+  updateIssue = (issueId: string, issue: Partial<TIssue>) => {
     if (!issue || !issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return;
     runInAction(() => {
+      set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
       Object.keys(issue).forEach((key) => {
         set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
       });
-      if (shouldUpdateDate) set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
     });
   };
 
