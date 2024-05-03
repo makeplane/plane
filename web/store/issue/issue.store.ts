@@ -6,6 +6,7 @@ import { computedFn } from "mobx-utils";
 // types
 import { IssueService } from "@/services/issue";
 import { TIssue } from "@plane/types";
+import { getCurrentDateTimeInISO } from "@/helpers/date-time.helper";
 //services
 
 export type IIssueStore = {
@@ -79,10 +80,7 @@ export class IssueStore implements IIssueStore {
       Object.keys(issue).forEach((key) => {
         set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
       });
-      if (shouldUpdateDate) {
-        const date = new Date();
-        set(this.issuesMap, [issueId, "updated_at"], date.toISOString());
-      }
+      if (shouldUpdateDate) set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
     });
   };
 

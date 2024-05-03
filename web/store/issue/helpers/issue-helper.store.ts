@@ -7,7 +7,7 @@ import values from "lodash/values";
 import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { convertToISODateString, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
 import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 // store
@@ -249,18 +249,6 @@ export class IssueHelperStore implements TIssueHelperStore {
     return 0;
   }
 
-  /**
-   * Gets the date string in ISO format regardless of the input date string
-   * @param dateString
-   * @returns
-   */
-  getISODateString = (dateString: string | undefined) => {
-    if (!dateString) return dateString;
-
-    const date = new Date(dateString);
-    return date.toISOString();
-  };
-
   issuesSortWithOrderBy = (issueObject: TIssueMap, key: Partial<TIssueOrderByOptions>): TIssue[] => {
     let array = values(issueObject);
     array = orderBy(array, "created_at");
@@ -274,13 +262,13 @@ export class IssueHelperStore implements TIssueHelperStore {
         return orderBy(array, (issue) => this.populateIssueDataForSorting("state_id", issue["state_id"]), ["desc"]);
       // dates
       case "created_at":
-        return orderBy(array, (issue) => this.getISODateString(issue["created_at"]));
+        return orderBy(array, (issue) => convertToISODateString(issue["created_at"]));
       case "-created_at":
-        return orderBy(array, (issue) => this.getISODateString(issue["created_at"]), ["desc"]);
+        return orderBy(array, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
       case "updated_at":
-        return orderBy(array, (issue) => this.getISODateString(issue["updated_at"]));
+        return orderBy(array, (issue) => convertToISODateString(issue["updated_at"]));
       case "-updated_at":
-        return orderBy(array, (issue) => this.getISODateString(issue["updated_at"]), ["desc"]);
+        return orderBy(array, (issue) => convertToISODateString(issue["updated_at"]), ["desc"]);
       case "start_date":
         return orderBy(array, [this.getSortOrderToFilterEmptyValues.bind(null, "start_date"), "start_date"]); //preferring sorting based on empty values to always keep the empty values below
       case "-start_date":
