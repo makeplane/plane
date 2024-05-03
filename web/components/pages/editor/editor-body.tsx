@@ -12,10 +12,8 @@ import {
 } from "@plane/document-editor";
 // types
 import { IUserLite, TPage } from "@plane/types";
-// ui
-import { Spinner } from "@plane/ui";
 // components
-import { PageContentBrowser, PageEditorTitle } from "@/components/pages";
+import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -90,12 +88,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(description_html ?? "<p></p>");
   }, [description_html, updateMarkings]);
 
-  if (pageDescription === undefined)
-    return (
-      <div className="h-full w-full grid place-items-center">
-        <Spinner />
-      </div>
-    );
+  if (pageDescription === undefined) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
