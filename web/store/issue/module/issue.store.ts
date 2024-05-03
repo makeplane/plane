@@ -369,10 +369,12 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
   };
 
   addModulesToIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
+    // keep a copy of the original module ids
+    const originalModuleIds = this.rootStore.issues.issuesMap[issueId]?.module_ids ?? [];
     try {
       runInAction(() => {
+        // add the new issue ids to the module issues map
         moduleIds.forEach((moduleId) => {
-          // add the new issue ids to the module issues map
           update(this.issues, moduleId, (moduleIssueIds = []) => {
             if (moduleIssueIds.includes(issueId)) return moduleIssueIds;
             else return uniq(concat(moduleIssueIds, [issueId]));
@@ -390,14 +392,12 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
       return issueToModule;
     } catch (error) {
+      // revert the issue back to its original module ids
+      set(this.rootStore.issues.issuesMap, [issueId, "module_ids"], originalModuleIds);
+      // remove the new issue ids from the module issues map
       moduleIds.forEach((moduleId) => {
         runInAction(() => {
-          // remove the new issue ids from the module issues map
           update(this.issues, moduleId, (moduleIssueIds = []) => pull(moduleIssueIds, issueId));
-          // remove the new module ids from the root issue map
-          update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
-            pull(issueModuleIds, moduleId)
-          );
         });
       });
 

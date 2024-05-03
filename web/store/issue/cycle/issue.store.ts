@@ -296,7 +296,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     issueIds: string[],
     fetchAddedIssues = true
   ) => {
-    const issuesBeforeUpdate: Record<string, string | null | undefined> = {};
+    const issueCyclesBeforeUpdate: Record<string, string | null | undefined> = {};
     try {
       // add the new issue ids to the cycle issues map
       runInAction(() => {
@@ -305,7 +305,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       issueIds.forEach((issueId) => {
         const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
         // keep original data backup to restore on error
-        issuesBeforeUpdate[issueId] = issueCycleId;
+        issueCyclesBeforeUpdate[issueId] = issueCycleId;
         // remove issue from previous cycle if it exists
         if (issueCycleId && issueCycleId !== cycleId) {
           runInAction(() => {
@@ -330,7 +330,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
           pull(this.issues[cycleId], issueId);
         });
         // get the original cycle id from the backup
-        const issueCycleId = issuesBeforeUpdate[issueId];
+        const issueCycleId = issueCyclesBeforeUpdate[issueId];
         // add issue back to the previous cycle if it exists
         if (issueCycleId)
           runInAction(() => {
