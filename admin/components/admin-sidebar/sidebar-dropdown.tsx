@@ -19,7 +19,7 @@ const authService = new AuthService();
 export const SidebarDropdown = observer(() => {
   // store hooks
   const { isSidebarCollapsed } = useTheme();
-  const { currentUser } = useUser();
+  const { currentUser, signOut } = useUser();
   // hooks
   const { resolvedTheme, setTheme } = useNextTheme();
   // state
@@ -29,6 +29,8 @@ export const SidebarDropdown = observer(() => {
     const newTheme = resolvedTheme === "dark" ? "light" : "dark";
     setTheme(newTheme);
   };
+
+  const handleSignOut = () => signOut();
 
   useEffect(() => {
     if (csrfToken === undefined)
@@ -95,7 +97,7 @@ export const SidebarDropdown = observer(() => {
                 </Menu.Item>
               </div>
               <div className="py-2">
-                <form method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-out/`}>
+                <form method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-out/`} onSubmit={handleSignOut}>
                   <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
                   <Menu.Item
                     as="button"
