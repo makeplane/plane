@@ -636,6 +636,7 @@ class IssueInboxSerializer(DynamicBaseSerializer):
             "project_id",
             "created_at",
             "label_ids",
+            "created_by",
         ]
         read_only_fields = fields
 
