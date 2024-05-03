@@ -186,9 +186,9 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
           if (isDragAllowed) setIsCurrentBlockDragging(true);
           else
             setToast({
-              type: TOAST_TYPE.INFO,
-              title: "Info",
-              message: "Drag and drop is disabled for the current issue grouping",
+              type: TOAST_TYPE.WARNING,
+              title: "Cannot move issue",
+              message: "Drag and drop is disabled for the current grouping",
             });
         }}
       >
