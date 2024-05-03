@@ -3,7 +3,7 @@ import { Loader } from "@plane/ui";
 
 export const PageContentLoader = () => (
   <div className="flex">
-    <div className="w-40 lg:w-56" />
+    <div className="w-[5%]" />
     <Loader className="flex-shrink-0 flex-grow">
       <div className="mt-10 space-y-2">
         <Loader.Item height="20px" />
@@ -23,6 +23,6 @@ export const PageContentLoader = () => (
         ))}
       </div>
     </Loader>
-    <div className="w-40 lg:w-56" />
+    <div className="w-[5%]" />
   </div>
 );
