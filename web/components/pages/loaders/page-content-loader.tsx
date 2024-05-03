@@ -5,7 +5,7 @@ export const PageContentLoader = () => (
   <div className="flex">
     <div className="w-40 lg:w-56" />
     <Loader className="flex-shrink-0 flex-grow">
-      <div className="mt-4 space-y-2">
+      <div className="mt-10 space-y-2">
         <Loader.Item height="20px" />
         <Loader.Item height="20px" width="80%" />
         <Loader.Item height="20px" width="80%" />
