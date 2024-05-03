@@ -23,7 +23,7 @@ import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
-import { getChangedIssuefields } from "@/helpers/issue.helper";
+import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 import { useApplication, useEstimate, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
@@ -190,6 +190,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
     reset({
       ...defaultValues,
+      ...(isCreateMoreToggleEnabled ? { ...data } : {}),
       project_id: getValues("project_id"),
       description_html: data?.description_html ?? "<p></p>",
     });
@@ -390,6 +391,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   />
                 )}
               />
+              <span className="text-xs text-red-500">{errors?.name?.message}</span>
+
               <div className="relative">
                 {data?.description_html === undefined ? (
                   <Loader className="min-h-[7rem] space-y-2 overflow-hidden rounded-md border border-custom-border-200 p-2 py-2">
@@ -470,17 +473,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           workspaceSlug={workspaceSlug?.toString() as string}
                           workspaceId={workspaceId}
                           projectId={projectId}
-                          // dragDropEnabled={false}
                           onChange={(_description: object, description_html: string) => {
                             onChange(description_html);
                             handleFormChange();
                           }}
                           ref={editorRef}
                           tabIndex={getTabIndex("description_html")}
-                          placeholder={(isFocused) => {
-                            if (isFocused) return "Press '/' for commands...";
-                            else return "Click to add description";
-                          }}
+                          placeholder={getDescriptionPlaceholder}
+                          containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
                         />
                       )}
                     />

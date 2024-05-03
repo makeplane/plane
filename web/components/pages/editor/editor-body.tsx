@@ -18,6 +18,7 @@ import { PageContentBrowser, PageEditorTitle } from "@/components/pages";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { usePageFilters } from "@/hooks/use-page-filters";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
@@ -68,7 +69,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html ?? "<p></p>";
-  const isFullWidth = !!pageStore?.view_props?.full_width;
   const { description_html, isContentEditable, updateTitle, isSubmitting, setIsSubmitting } = pageStore;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -79,6 +79,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+  // page filters
+  const { isFullWidth } = usePageFilters();
 
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
@@ -91,8 +93,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       <div
         className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full p-5 duration-200 md:block", {
           "translate-x-0": sidePeekVisible,
-          "w-56 lg:w-72": !isFullWidth,
-          "w-[10%]": isFullWidth,
+          "w-40 lg:w-56": !isFullWidth,
+          "w-[5%]": isFullWidth,
         })}
       >
         {!isFullWidth && (
@@ -104,12 +106,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       </div>
       <div
         className={cn("h-full w-full pt-5", {
-          "md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]": !isFullWidth,
-          "w-[80%]": isFullWidth,
+          "md:w-[calc(100%-10rem)] xl:w-[calc(100%-14rem-14rem)]": !isFullWidth,
+          "md:w-[90%]": isFullWidth,
         })}
       >
         <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <div className="relative w-full flex-shrink-0 pl-5">
+          <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
             <PageEditorTitle
               editorRef={editorRef}
               title={pageTitle}
@@ -134,7 +136,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                   value={swrPageDetails?.description_html ?? "<p></p>"}
                   ref={editorRef}
                   containerClassName="p-0 pb-64"
-                  editorClassName="px-10"
+                  editorClassName="lg:px-10 pl-8"
                   onChange={(_description_json, description_html) => {
                     setIsSubmitting("submitting");
                     setShowAlert(true);
@@ -154,7 +156,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               initialValue={pageDescription}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
-              editorClassName="px-10"
+              editorClassName="lg:px-10 pl-8"
               mentionHandler={{
                 highlights: mentionHighlights,
               }}
@@ -163,9 +165,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div
-        className={cn("hidden lg:block h-full flex-shrink-0", {
-          "w-56 lg:w-72": !isFullWidth,
-          "w-[10%]": isFullWidth,
+        className={cn("hidden xl:block flex-shrink-0", {
+          "w-40 lg:w-56": !isFullWidth,
+          "w-[5%]": isFullWidth,
         })}
       />
     </div>

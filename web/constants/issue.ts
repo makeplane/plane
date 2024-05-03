@@ -160,7 +160,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
       extra_options: {
         access: true,
-        values: ["show_empty_groups"],
+        values: ["show_empty_groups", "sub_issue"],
       },
     },
     kanban: {
@@ -336,7 +336,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
     },
     calendar: {
       filters: ["priority", "state", "cycle", "module", "assignees", "mentions", "created_by", "labels", "start_date"],
-      display_properties: true,
+      display_properties: false,
       display_filters: {
         type: [null, "active", "backlog"],
       },

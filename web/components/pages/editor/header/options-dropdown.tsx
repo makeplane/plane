@@ -8,6 +8,7 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@pl
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useApplication } from "@/hooks/store";
+import { usePageFilters } from "@/hooks/use-page-filters";
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -31,13 +32,13 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     canCurrentUserDuplicatePage,
     canCurrentUserLockPage,
     restore,
-    view_props,
-    updateViewProps,
   } = pageStore;
   // store hooks
   const {
     router: { workspaceSlug, projectId },
   } = useApplication();
+  // page filters
+  const { isFullWidth, handleFullWidth } = usePageFilters();
 
   const handleArchivePage = async () =>
     await archive().catch(() =>
@@ -140,15 +141,11 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   return (
     <CustomMenu maxHeight="md" placement="bottom-start" verticalEllipsis closeOnSelect>
       <CustomMenu.MenuItem
-        className="flex w-full items-center justify-between gap-2"
-        onClick={() =>
-          updateViewProps({
-            full_width: !view_props?.full_width,
-          })
-        }
+        className="hidden md:flex w-full items-center justify-between gap-2"
+        onClick={() => handleFullWidth(!isFullWidth)}
       >
         Full width
-        <ToggleSwitch value={!!view_props?.full_width} onChange={() => {}} />
+        <ToggleSwitch value={isFullWidth} onChange={() => {}} />
       </CustomMenu.MenuItem>
       {MENU_ITEMS.map((item) => {
         if (!item.shouldRender) return null;

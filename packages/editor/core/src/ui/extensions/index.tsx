@@ -43,7 +43,7 @@ type TArguments = {
     cancelUploadImage?: () => void;
     uploadFile: UploadImage;
   };
-  placeholder?: string | ((isFocused: boolean) => string);
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
 };
 
@@ -147,7 +147,7 @@ export const CoreEditorExtensions = ({
 
       if (placeholder) {
         if (typeof placeholder === "string") return placeholder;
-        else return placeholder(editor.isFocused);
+        else return placeholder(editor.isFocused, editor.getHTML());
       }
 
       return "Press '/' for commands...";

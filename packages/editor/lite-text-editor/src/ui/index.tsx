@@ -32,7 +32,8 @@ export interface ILiteTextEditor {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   tabIndex?: number;
-  placeholder?: string | ((isFocused: boolean) => string);
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
+  id?: string;
 }
 
 const LiteTextEditor = (props: ILiteTextEditor) => {
@@ -48,12 +49,14 @@ const LiteTextEditor = (props: ILiteTextEditor) => {
     tabIndex,
     mentionHandler,
     placeholder = "Add comment...",
+    id = "",
   } = props;
 
   const editor = useEditor({
     onChange,
     initialValue,
     value,
+    id,
     editorClassName,
     restoreFile: fileHandler.restore,
     uploadFile: fileHandler.upload,

@@ -1,28 +1,53 @@
-name: Create Sync Action
+name: Create PR on Sync
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - preview
+      - "sync/**"
 
 env:
-  SOURCE_BRANCH_NAME: ${{ github.ref_name }}
+  CURRENT_BRANCH: ${{ github.ref_name }}
+  SOURCE_BRANCH: ${{ vars.SYNC_SOURCE_BRANCH_NAME }} # The sync branch such as "sync/ce"
+  TARGET_BRANCH: ${{ vars.SYNC_TARGET_BRANCH_NAME }} # The target branch that you would like to merge changes like develop
+  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }} # Personal access token required to modify contents and workflows
+  REVIEWER: ${{ vars.SYNC_PR_REVIEWER }}
+  ACCOUNT_USER_NAME: ${{ vars.ACCOUNT_USER_NAME }}
+  ACCOUNT_USER_EMAIL: ${{ vars.ACCOUNT_USER_EMAIL }}
 
 jobs:
-  sync_changes:
+  Check_Branch:
+    runs-on: ubuntu-latest
+    outputs:
+      BRANCH_MATCH: ${{ steps.check-branch.outputs.MATCH }}
+    steps:
+      - name: Check if current branch matches the secret
+        id: check-branch
+        run: |
+          if [ "$CURRENT_BRANCH" = "$SOURCE_BRANCH" ]; then
+            echo "MATCH=true" >> $GITHUB_OUTPUT
+          else
+            echo "MATCH=false" >> $GITHUB_OUTPUT
+          fi
+  Auto_Merge:
+    if: ${{ needs.Check_Branch.outputs.BRANCH_MATCH == 'true' }}
+    needs: [Check_Branch]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-      contents: read
+      contents: write
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4.1.1
         with:
-          persist-credentials: false
-          fetch-depth: 0
+          fetch-depth: 0 # Fetch all history for all branches and tags
 
-      - name: Setup GH CLI
+      - name: Setup Git
+        run: |
+          git config user.name "$ACCOUNT_USER_NAME"
+          git config user.email "$ACCOUNT_USER_EMAIL"
+
+      - name: Setup GH CLI and Git Config
         run: |
           type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
           curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
@@ -31,25 +56,14 @@ jobs:
           sudo apt update
           sudo apt install gh -y
 
-      - name: Push Changes to Target Repo A
-        env:
-          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      - name: Create PR to Target Branch
         run: |
-          TARGET_REPO="${{ secrets.TARGET_REPO_A }}"
-          TARGET_BRANCH="${{ secrets.TARGET_REPO_A_BRANCH_NAME }}"
-          SOURCE_BRANCH="${{ env.SOURCE_BRANCH_NAME }}"
-
-          git checkout $SOURCE_BRANCH
-          git remote add target-origin-a "https://$GH_TOKEN@github.com/$TARGET_REPO.git"
-          git push target-origin-a $SOURCE_BRANCH:$TARGET_BRANCH
-
-      - name: Push Changes to Target Repo B
-        env:
-          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        run: |
-          TARGET_REPO="${{ secrets.TARGET_REPO_B }}"
-          TARGET_BRANCH="${{ secrets.TARGET_REPO_B_BRANCH_NAME }}"
-          SOURCE_BRANCH="${{ env.SOURCE_BRANCH_NAME }}"
-
-          git remote add target-origin-b "https://$GH_TOKEN@github.com/$TARGET_REPO.git"
-          git push target-origin-b $SOURCE_BRANCH:$TARGET_BRANCH
+          # get all pull requests and check if there is already a PR
+          PR_EXISTS=$(gh pr list --base $TARGET_BRANCH --head $SOURCE_BRANCH --state open --json number | jq '.[] | .number')
+          if [ -n "$PR_EXISTS" ]; then
+            echo "Pull Request already exists: $PR_EXISTS"
+          else
+            echo "Creating new pull request"
+            PR_URL=$(gh pr create --base $TARGET_BRANCH --head $SOURCE_BRANCH --title "sync: merge conflicts need to be resolved" --body "")
+            echo "Pull Request created: $PR_URL"
+          fi

@@ -1,4 +1,6 @@
 import React from "react";
+// helpers
+import { cn } from "../helpers";
 
 type Props = {
   children: React.ReactNode;
@@ -6,7 +8,7 @@ type Props = {
 };
 
 const Loader = ({ children, className = "" }: Props) => (
-  <div className={`${className} animate-pulse`} role="status">
+  <div className={cn("animate-pulse", className)} role="status">
     {children}
   </div>
 );

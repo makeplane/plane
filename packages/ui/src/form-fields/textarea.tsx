@@ -11,21 +11,11 @@ export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 }
 
 const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => {
-  const {
-    id,
-    name,
-    value = "",
-    rows = 1,
-    cols = 1,
-    mode = "primary",
-    hasError = false,
-    className = "",
-    ...rest
-  } = props;
+  const { id, name, value = "", mode = "primary", hasError = false, className = "", ...rest } = props;
   // refs
   const textAreaRef = useRef<any>(ref);
   // auto re-size
-  useAutoResizeTextArea(textAreaRef);
+  useAutoResizeTextArea(textAreaRef, value);
 
   return (
     <textarea
@@ -33,8 +23,6 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>((props, re
       name={name}
       ref={textAreaRef}
       value={value}
-      rows={rows}
-      cols={cols}
       className={cn(
         "no-scrollbar w-full bg-transparent px-3 py-2 placeholder-custom-text-400 outline-none",
         {

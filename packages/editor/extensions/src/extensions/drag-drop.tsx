@@ -225,6 +225,9 @@ function DragHandle(options: DragHandleOptions) {
       dragHandleElement.addEventListener("click", (e) => {
         handleClick(e, view);
       });
+      dragHandleElement.addEventListener("contextmenu", (e) => {
+        handleClick(e, view);
+      });
 
       dragHandleElement.addEventListener("drag", (e) => {
         hideDragHandle();

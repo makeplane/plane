@@ -1,12 +1,13 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// hooks
+// components
 import { CycleIssueQuickActions } from "@/components/issues";
+// constants
 import { EIssuesStoreType } from "@/constants/issue";
-import { useCycle, useIssues } from "@/hooks/store";
-// ui
-// types
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
+import { useCycle, useIssues, useUser } from "@/hooks/store";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
 
@@ -19,11 +20,18 @@ export const CycleKanBanLayout: React.FC = observer(() => {
   // store
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
   const { currentProjectCompletedCycleIds } = useCycle();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
 
   const isCompletedCycle =
     cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const canEditIssueProperties = useCallback(() => !isCompletedCycle, [isCompletedCycle]);
+  const canEditIssueProperties = useCallback(
+    () => !isCompletedCycle && isEditingAllowed,
+    [isCompletedCycle, isEditingAllowed]
+  );
 
   const addIssuesToView = useCallback(
     (issueIds: string[]) => {

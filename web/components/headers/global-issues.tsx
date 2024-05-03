@@ -1,35 +1,23 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
-import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-import { List, PlusIcon, Sheet } from "lucide-react";
+// icons
+import { PlusIcon } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
-import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
+// ui
+import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
-// components
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
-// ui
-// icons
-// types
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// hooks
 import { useLabel, useMember, useUser, useIssues } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 
-const GLOBAL_VIEW_LAYOUTS = [
-  { key: "list", title: "List", link: "/workspace-views", icon: List },
-  { key: "spreadsheet", title: "Spreadsheet", link: "/workspace-views/all-issues", icon: Sheet },
-];
-
-type Props = {
-  activeLayout: "list" | "spreadsheet";
-};
-
-export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
-  const { activeLayout } = props;
+export const GlobalIssuesHeader: React.FC = observer(() => {
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
@@ -46,7 +34,6 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { isMobile } = usePlatformOS();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
@@ -116,65 +103,32 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <BreadcrumbLink
-                  label={`All ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
-                  icon={
-                    activeLayout === "spreadsheet" ? (
-                      <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                    ) : (
-                      <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
-                    )
-                  }
-                />
+                <BreadcrumbLink label={`All Issues`} icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
               }
             />
           </Breadcrumbs>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
-            {GLOBAL_VIEW_LAYOUTS.map((layout) => (
-              <Link key={layout.key} href={`/${workspaceSlug}/${layout.link}`}>
-                <span>
-                  <Tooltip tooltipContent={layout.title} isMobile={isMobile}>
-                    <div
-                      className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-                        activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
-                      }`}
-                    >
-                      <layout.icon
-                        size={14}
-                        strokeWidth={2}
-                        className={`${activeLayout === layout.key ? "text-custom-text-100" : "text-custom-text-200"}`}
-                      />
-                    </div>
-                  </Tooltip>
-                </span>
-              </Link>
-            ))}
-          </div>
-
-          {activeLayout === "spreadsheet" && (
-            <>
-              <FiltersDropdown title="Filters" placement="bottom-end">
-                <FilterSelection
-                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
-                  filters={issueFilters?.filters ?? {}}
-                  handleFiltersUpdate={handleFiltersUpdate}
-                  labels={workspaceLabels ?? undefined}
-                  memberIds={workspaceMemberIds ?? undefined}
-                />
-              </FiltersDropdown>
-              <FiltersDropdown title="Display" placement="bottom-end">
-                <DisplayFiltersSelection
-                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
-                  displayFilters={issueFilters?.displayFilters ?? {}}
-                  handleDisplayFiltersUpdate={handleDisplayFilters}
-                  displayProperties={issueFilters?.displayProperties ?? {}}
-                  handleDisplayPropertiesUpdate={handleDisplayProperties}
-                />
-              </FiltersDropdown>
-            </>
-          )}
+          <>
+            <FiltersDropdown title="Filters" placement="bottom-end">
+              <FilterSelection
+                layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                filters={issueFilters?.filters ?? {}}
+                handleFiltersUpdate={handleFiltersUpdate}
+                labels={workspaceLabels ?? undefined}
+                memberIds={workspaceMemberIds ?? undefined}
+              />
+            </FiltersDropdown>
+            <FiltersDropdown title="Display" placement="bottom-end">
+              <DisplayFiltersSelection
+                layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                displayFilters={issueFilters?.displayFilters ?? {}}
+                handleDisplayFiltersUpdate={handleDisplayFilters}
+                displayProperties={issueFilters?.displayProperties ?? {}}
+                handleDisplayPropertiesUpdate={handleDisplayProperties}
+              />
+            </FiltersDropdown>
+          </>
           {isAuthorizedUser && (
             <Button variant="primary" size="sm" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
               New View

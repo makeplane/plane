@@ -5,10 +5,13 @@ import { TIssue } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
+// helpers
+import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 
 type TInboxIssueDescription = {
+  containerClassName?: string;
   workspaceSlug: string;
   projectId: string;
   workspaceId: string;
@@ -19,7 +22,7 @@ type TInboxIssueDescription = {
 
 // TODO: have to implement GPT Assistance
 export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props) => {
-  const { workspaceSlug, projectId, workspaceId, data, handleData, editorRef } = props;
+  const { containerClassName, workspaceSlug, projectId, workspaceId, data, handleData, editorRef } = props;
   // hooks
   const { loader } = useProjectInbox();
 
@@ -39,10 +42,8 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
         projectId={projectId}
         dragDropEnabled={false}
         onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
-        placeholder={(isFocused) => {
-          if (isFocused) return "Press '/' for commands...";
-          else return "Click to add description";
-        }}
+        placeholder={getDescriptionPlaceholder}
+        containerClassName={containerClassName}
       />
     </div>
   );

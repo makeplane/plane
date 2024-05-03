@@ -1,13 +1,6 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import { v4 as uuidv4 } from "uuid";
-// helpers
-import { getDate } from "@/helpers/date-time.helper";
-import { orderArrayBy } from "@/helpers/array.helper";
 // types
-import { IGanttBlock } from "@/components/gantt-chart";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { STATE_GROUPS } from "@/constants/state";
 import {
   TIssue,
   TIssueGroupByOptions,
@@ -16,6 +9,13 @@ import {
   TIssueParams,
   TStateGroups,
 } from "@plane/types";
+import { IGanttBlock } from "@/components/gantt-chart";
+// constants
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { STATE_GROUPS } from "@/constants/state";
+// helpers
+import { orderArrayBy } from "@/helpers/array.helper";
+import { getDate } from "@/helpers/date-time.helper";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
@@ -204,4 +204,10 @@ export const formatTextList = (TextArray: string[]): string => {
     default:
       return `${TextArray.slice(0, 3).join(", ")}, and +${count - 3} more`;
   }
+};
+
+export const getDescriptionPlaceholder = (isFocused: boolean, description: string | undefined): string => {
+  const isDescriptionEmpty = !description || description === "<p></p>" || description.trim() === "";
+  if (!isDescriptionEmpty || isFocused) return "Press '/' for commands...";
+  else return "Click to add description";
 };

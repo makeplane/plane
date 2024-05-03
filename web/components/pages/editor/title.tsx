@@ -22,12 +22,19 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   return (
     <>
       {readOnly ? (
-        <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{title}</h6>
+        <h6
+          className="break-words bg-transparent text-[1.75rem] font-semibold"
+          style={{
+            lineHeight: "1.2",
+          }}
+        >
+          {title}
+        </h6>
       ) : (
         <>
           <TextArea
             onChange={(e) => updateTitle(e.target.value)}
-            className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none rounded-none"
+            className="w-full bg-custom-background text-[1.75rem] font-semibold outline-none p-0 border-none resize-none rounded-none"
             style={{
               lineHeight: "1.2",
             }}

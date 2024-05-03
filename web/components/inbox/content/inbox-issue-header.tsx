@@ -17,6 +17,7 @@ import { Button, ControlLink, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui
 import {
   DeclineIssueModal,
   DeleteInboxIssueModal,
+  InboxIssueActionsMobileHeader,
   InboxIssueCreateEditModalRoot,
   InboxIssueSnoozeModal,
   InboxIssueStatus,
@@ -38,10 +39,12 @@ type TInboxIssueActionsHeader = {
   projectId: string;
   inboxIssue: IInboxIssueStore | undefined;
   isSubmitting: "submitting" | "submitted" | "saved";
+  isMobileSidebar: boolean;
+  setIsMobileSidebar: (value: boolean) => void;
 };
 
 export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssue, isSubmitting } = props;
+  const { workspaceSlug, projectId, inboxIssue, isSubmitting, isMobileSidebar, setIsMobileSidebar } = props;
   // states
   const [isSnoozeDateModalOpen, setIsSnoozeDateModalOpen] = useState(false);
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
@@ -207,7 +210,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
         />
       </>
 
-      <div className="relative flex h-full w-full items-center justify-between gap-2 px-4">
+      <div className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 px-4">
         <div className="flex items-center gap-4">
           {issue?.project_id && issue.sequence_id && (
             <h3 className="text-base font-medium text-custom-text-300 flex-shrink-0">
@@ -289,35 +292,61 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 </ControlLink>
               </div>
             ) : (
-              <CustomMenu verticalEllipsis placement="bottom-start">
-                {canMarkAsAccepted && (
-                  <CustomMenu.MenuItem onClick={() => setIsSnoozeDateModalOpen(true)}>
-                    <div className="flex items-center gap-2">
-                      <Clock size={14} strokeWidth={2} />
-                      Snooze
-                    </div>
-                  </CustomMenu.MenuItem>
+              <>
+                {isAllowed && (
+                  <CustomMenu verticalEllipsis placement="bottom-start">
+                    {canMarkAsAccepted && (
+                      <CustomMenu.MenuItem onClick={() => setIsSnoozeDateModalOpen(true)}>
+                        <div className="flex items-center gap-2">
+                          <Clock size={14} strokeWidth={2} />
+                          Snooze
+                        </div>
+                      </CustomMenu.MenuItem>
+                    )}
+                    {canMarkAsDuplicate && (
+                      <CustomMenu.MenuItem onClick={() => setSelectDuplicateIssue(true)}>
+                        <div className="flex items-center gap-2">
+                          <FileStack size={14} strokeWidth={2} />
+                          Mark as duplicate
+                        </div>
+                      </CustomMenu.MenuItem>
+                    )}
+                    {canDelete && (
+                      <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
+                        <div className="flex items-center gap-2">
+                          <Trash2 size={14} strokeWidth={2} />
+                          Delete
+                        </div>
+                      </CustomMenu.MenuItem>
+                    )}
+                  </CustomMenu>
                 )}
-                {canMarkAsDuplicate && (
-                  <CustomMenu.MenuItem onClick={() => setSelectDuplicateIssue(true)}>
-                    <div className="flex items-center gap-2">
-                      <FileStack size={14} strokeWidth={2} />
-                      Mark as duplicate
-                    </div>
-                  </CustomMenu.MenuItem>
-                )}
-                {canDelete && (
-                  <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
-                    <div className="flex items-center gap-2">
-                      <Trash2 size={14} strokeWidth={2} />
-                      Delete
-                    </div>
-                  </CustomMenu.MenuItem>
-                )}
-              </CustomMenu>
+              </>
             )}
           </div>
         </div>
+      </div>
+
+      <div className="lg:hidden">
+        <InboxIssueActionsMobileHeader
+          inboxIssue={inboxIssue}
+          isSubmitting={isSubmitting}
+          handleCopyIssueLink={handleCopyIssueLink}
+          setAcceptIssueModal={setAcceptIssueModal}
+          setDeclineIssueModal={setDeclineIssueModal}
+          setIsSnoozeDateModalOpen={setIsSnoozeDateModalOpen}
+          setSelectDuplicateIssue={setSelectDuplicateIssue}
+          setDeleteIssueModal={setDeleteIssueModal}
+          canMarkAsAccepted={canMarkAsAccepted}
+          canMarkAsDeclined={canMarkAsDeclined}
+          canMarkAsDuplicate={canMarkAsDuplicate}
+          canDelete={canDelete}
+          isAcceptedOrDeclined={isAcceptedOrDeclined}
+          handleInboxIssueNavigation={handleInboxIssueNavigation}
+          workspaceSlug={workspaceSlug}
+          isMobileSidebar={isMobileSidebar}
+          setIsMobileSidebar={setIsMobileSidebar}
+        />
       </div>
     </>
   );

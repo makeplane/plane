@@ -120,10 +120,10 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
               return (
                 <li key={activityItem.id}>
                   <div className="relative pb-1">
-                    <div className="relative flex items-center space-x-2">
+                    <div className="relative flex items-start space-x-2">
                       <>
                         <div>
-                          <div className="relative px-1.5">
+                          <div className="relative px-1.5 mt-4">
                             <div className="mt-1.5">
                               <div className="flex h-6 w-6 items-center justify-center">
                                 {activityItem.field ? (
@@ -150,7 +150,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                           </div>
                         </div>
                         <div className="min-w-0 flex-1 border-b border-custom-border-100 py-4">
-                          <div className="flex gap-1 break-words text-sm text-custom-text-200">
+                          <div className="break-words text-sm text-custom-text-200">
                             {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                               <span className="text-gray font-medium">Plane</span>
                             ) : activityItem.actor_detail.is_bot ? (
@@ -158,6 +158,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                             ) : (
                               <Link
                                 href={`/${activityItem.workspace_detail.slug}/profile/${activityItem.actor_detail.id}`}
+                                className="inline"
                               >
                                 <span className="text-gray font-medium">
                                   {currentUser?.id === activityItem.actor_detail.id
@@ -166,7 +167,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                                 </span>
                               </Link>
                             )}{" "}
-                            <div className="flex gap-1 truncate">
+                            <div className="inline gap-1">
                               {message}{" "}
                               <span className="flex-shrink-0 whitespace-nowrap">
                                 {calculateTimeAgo(activityItem.created_at)}

@@ -47,11 +47,13 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
 
   const handleFilters = useCallback(
     (key: keyof TCycleFilters, value: string | string[]) => {
+      if (!projectId) return;
       const newValues = currentProjectFilters?.[key] ?? [];
 
       if (Array.isArray(value))
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       else {
         if (currentProjectFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -74,7 +76,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-custom-border-200 px-4 sm:px-5 sm:pb-0">
+    <div className="h-[50px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-custom-border-200 px-6 sm:pb-0">
       <Tab.List as="div" className="flex items-center overflow-x-scroll">
         {CYCLE_TABS_LIST.map((tab) => (
           <Tab

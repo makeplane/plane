@@ -31,6 +31,11 @@ export type TPeekIssue = {
   issueId: string;
 };
 
+export type TIssueRelationModal = {
+  issueId: string | null;
+  relationType: TIssueRelationTypes | null;
+};
+
 export interface IIssueDetail
   extends IIssueStoreActions,
     IIssueReactionStoreActions,
@@ -46,24 +51,26 @@ export interface IIssueDetail
   peekIssue: TPeekIssue | undefined;
   isCreateIssueModalOpen: boolean;
   isIssueLinkModalOpen: boolean;
-  isParentIssueModalOpen: boolean;
+  isParentIssueModalOpen: string | null;
   isDeleteIssueModalOpen: string | null;
-  isArchiveIssueModalOpen: boolean;
-  isRelationModalOpen: TIssueRelationTypes | null;
-  isSubIssuesModalOpen: boolean;
-  isDeleteAttachmentModalOpen: boolean;
+  isArchiveIssueModalOpen: string | null;
+  isRelationModalOpen: TIssueRelationModal | null;
+  isSubIssuesModalOpen: string | null;
+  isDeleteAttachmentModalOpen: string | null;
   // computed
   isAnyModalOpen: boolean;
+  // helper actions
+  getIsIssuePeeked: (issueId: string) => boolean;
   // actions
   setPeekIssue: (peekIssue: TPeekIssue | undefined) => void;
   toggleCreateIssueModal: (value: boolean) => void;
   toggleIssueLinkModal: (value: boolean) => void;
-  toggleParentIssueModal: (value: boolean) => void;
+  toggleParentIssueModal: (issueId: string | null) => void;
   toggleDeleteIssueModal: (issueId: string | null) => void;
-  toggleArchiveIssueModal: (value: boolean) => void;
-  toggleRelationModal: (relationType: TIssueRelationTypes | null) => void;
-  toggleSubIssuesModal: (value: boolean) => void;
-  toggleDeleteAttachmentModal: (value: boolean) => void;
+  toggleArchiveIssueModal: (value: string | null) => void;
+  toggleRelationModal: (issueId: string | null, relationType: TIssueRelationTypes | null) => void;
+  toggleSubIssuesModal: (value: string | null) => void;
+  toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -83,12 +90,12 @@ export class IssueDetail implements IIssueDetail {
   peekIssue: TPeekIssue | undefined = undefined;
   isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
-  isParentIssueModalOpen: boolean = false;
+  isParentIssueModalOpen: string | null = null;
   isDeleteIssueModalOpen: string | null = null;
-  isArchiveIssueModalOpen: boolean = false;
-  isRelationModalOpen: TIssueRelationTypes | null = null;
-  isSubIssuesModalOpen: boolean = false;
-  isDeleteAttachmentModalOpen: boolean = false;
+  isArchiveIssueModalOpen: string | null = null;
+  isRelationModalOpen: TIssueRelationModal | null = null;
+  isSubIssuesModalOpen: string | null = null;
+  isDeleteAttachmentModalOpen: string | null = null;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -147,25 +154,29 @@ export class IssueDetail implements IIssueDetail {
     return (
       this.isCreateIssueModalOpen ||
       this.isIssueLinkModalOpen ||
-      this.isParentIssueModalOpen ||
+      !!this.isParentIssueModalOpen ||
       !!this.isDeleteIssueModalOpen ||
-      this.isArchiveIssueModalOpen ||
-      !!this.isRelationModalOpen ||
-      this.isSubIssuesModalOpen ||
-      this.isDeleteAttachmentModalOpen
+      !!this.isArchiveIssueModalOpen ||
+      !!this.isRelationModalOpen?.issueId ||
+      !!this.isSubIssuesModalOpen ||
+      !!this.isDeleteAttachmentModalOpen
     );
   }
+
+  // helper actions
+  getIsIssuePeeked = (issueId: string) => this.peekIssue?.issueId === issueId;
 
   // actions
   setPeekIssue = (peekIssue: TPeekIssue | undefined) => (this.peekIssue = peekIssue);
   toggleCreateIssueModal = (value: boolean) => (this.isCreateIssueModalOpen = value);
   toggleIssueLinkModal = (value: boolean) => (this.isIssueLinkModalOpen = value);
-  toggleParentIssueModal = (value: boolean) => (this.isParentIssueModalOpen = value);
+  toggleParentIssueModal = (issueId: string | null) => (this.isParentIssueModalOpen = issueId);
   toggleDeleteIssueModal = (issueId: string | null) => (this.isDeleteIssueModalOpen = issueId);
-  toggleArchiveIssueModal = (value: boolean) => (this.isArchiveIssueModalOpen = value);
-  toggleRelationModal = (relationType: TIssueRelationTypes | null) => (this.isRelationModalOpen = relationType);
-  toggleSubIssuesModal = (value: boolean) => (this.isSubIssuesModalOpen = value);
-  toggleDeleteAttachmentModal = (value: boolean) => (this.isDeleteAttachmentModalOpen = value);
+  toggleArchiveIssueModal = (issueId: string | null) => (this.isArchiveIssueModalOpen = issueId);
+  toggleRelationModal = (issueId: string | null, relationType: TIssueRelationTypes | null) =>
+    (this.isRelationModalOpen = { issueId, relationType });
+  toggleSubIssuesModal = (issueId: string | null) => (this.isSubIssuesModalOpen = issueId);
+  toggleDeleteAttachmentModal = (attachmentId: string | null) => (this.isDeleteAttachmentModalOpen = attachmentId);
 
   // issue
   fetchIssue = async (

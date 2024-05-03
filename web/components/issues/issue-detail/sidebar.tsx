@@ -460,12 +460,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
           </div>
 
-          <IssueLinkRoot
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            disabled={!isEditable}
-          />
+          <IssueLinkRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!isEditable} />
         </div>
       </div>
     </>

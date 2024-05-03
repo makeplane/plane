@@ -417,7 +417,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             <ButtonToRender
               priority={value}
               className={cn(buttonClassName, {
-                "text-white": resolvedTheme === "dark",
+                "text-custom-text-200": resolvedTheme?.includes("dark") || resolvedTheme === "custom",
               })}
               highlightUrgent={highlightUrgent}
               dropdownArrow={dropdownArrow && !disabled}

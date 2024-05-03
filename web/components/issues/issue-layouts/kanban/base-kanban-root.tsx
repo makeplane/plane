@@ -4,7 +4,6 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { TIssue } from "@plane/types";
 // hooks
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { DeleteIssueModal } from "@/components/issues";
@@ -15,7 +14,7 @@ import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUser } fr
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // ui
 // types
-import { IQuickActionProps } from "../list/list-view-types";
+import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
@@ -75,6 +74,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const sub_group_by = displayFilters?.sub_group_by;
   const group_by = displayFilters?.group_by;
+
+  const orderBy = displayFilters?.order_by;
 
   const userDisplayFilters = displayFilters || null;
 
@@ -158,7 +159,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       issues.getIssueIds,
       updateIssue,
       group_by,
-      sub_group_by
+      sub_group_by,
+      orderBy !== "sort_order"
     ).catch((err) => {
       setToast({
         title: "Error",
@@ -168,9 +170,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     });
   };
 
-  const renderQuickActions = useCallback(
-    (issue: TIssue, customActionButton?: React.ReactElement) => (
+  const renderQuickActions: TRenderQuickActions = useCallback(
+    ({ issue, parentRef, customActionButton }) => (
       <QuickActions
+        parentRef={parentRef}
         customActionButton={customActionButton}
         issue={issue}
         handleDelete={async () => removeIssue(issue.project_id, issue.id)}
@@ -233,7 +236,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
         ref={scrollableContainerRef}
       >
-        <div className="relative h-full w-max min-w-full bg-custom-background-90 px-2">
+        <div className="relative h-full w-max min-w-full bg-custom-background-90">
           {/* drag and delete component */}
           <div
             className={`fixed left-1/2 -translate-x-1/2 ${
@@ -259,6 +262,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               displayProperties={displayProperties}
               sub_group_by={sub_group_by}
               group_by={group_by}
+              orderBy={orderBy}
               updateIssue={updateIssue}
               quickActions={renderQuickActions}
               handleKanbanFilters={handleKanbanFilters}

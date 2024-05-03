@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 import { TIssue } from "@plane/types";
@@ -12,27 +11,29 @@ import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { TRenderQuickActions } from "../list/list-view-types";
 
 type Props = {
   issue: TIssue;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   isDragging?: boolean;
 };
 
 export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
   const { issue, quickActions, isDragging = false } = props;
+  // states
+  const [isMenuActive, setIsMenuActive] = useState(false);
+  // refs
+  const blockRef = useRef(null);
+  const menuActionRef = useRef<HTMLDivElement | null>(null);
   // hooks
   const {
     router: { workspaceSlug, projectId },
   } = useApplication();
   const { getProjectIdentifierById } = useProject();
   const { getProjectStates } = useProjectState();
-  const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   const { isMobile } = usePlatformOS();
-  // states
-  const [isMenuActive, setIsMenuActive] = useState(false);
-
-  const menuActionRef = useRef<HTMLDivElement | null>(null);
 
   const stateColor = getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
 
@@ -41,7 +42,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
     issue &&
     issue.project_id &&
     issue.id &&
-    peekIssue?.issueId !== issue.id &&
+    !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
@@ -78,14 +79,13 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
         )}
 
         <div
+          ref={blockRef}
           className={cn(
             "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded border-b md:border-[0.5px] border-custom-border-200 hover:border-custom-border-400 md:px-1 px-4 py-1.5 ",
             {
               "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100": isDragging,
-            },
-            { "bg-custom-background-100 hover:bg-custom-background-90": !isDragging },
-            {
-              "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue?.issueId === issue.id,
+              "bg-custom-background-100 hover:bg-custom-background-90": !isDragging,
+              "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
             }
           )}
         >
@@ -112,7 +112,12 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
               e.stopPropagation();
             }}
           >
-            {quickActions(issue, customActionButton, placement)}
+            {quickActions({
+              issue,
+              parentRef: blockRef,
+              customActionButton,
+              placement,
+            })}
           </div>
         </div>
       </>

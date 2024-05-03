@@ -1,6 +1,5 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
-import { TIssue } from "@plane/types";
 // types
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
@@ -9,7 +8,7 @@ import { useIssues, useUser } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
 import { List } from "./default";
-import { IQuickActionProps } from "./list-view-types";
+import { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
 // constants
 // hooks
 
@@ -69,9 +68,10 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const group_by = displayFilters?.group_by || null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
-  const renderQuickActions = useCallback(
-    (issue: TIssue) => (
+  const renderQuickActions: TRenderQuickActions = useCallback(
+    ({ issue, parentRef }) => (
       <QuickActions
+        parentRef={parentRef}
         issue={issue}
         handleDelete={async () => removeIssue(issue.project_id, issue.id)}
         handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}

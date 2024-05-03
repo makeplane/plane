@@ -5,3 +5,5 @@ export * from "./header";
 export * from "./modal";
 export * from "./view-list-item";
 export * from "./views-list";
+export * from "./quick-action";
+export * from "./default-view-quick-action";

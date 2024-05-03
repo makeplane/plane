@@ -111,7 +111,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     // clearing up the description state when we leave the component
     return () => setDescription(undefined);
-  }, [data, projectId, workspaceProjectIds, isOpen, activeProjectId]);
+  }, [data, projectId, isOpen, activeProjectId]);
 
   const addIssueToCycle = async (issue: TIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProjectId) return;

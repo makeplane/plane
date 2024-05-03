@@ -1,3 +1,4 @@
+import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
@@ -95,23 +96,25 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
         ...(appliedFilters ?? {}),
       },
     }).then((res) => {
-      captureEvent(GLOBAL_VIEW_UPDATED, {
-        view_id: res.id,
-        applied_filters: res.filters,
-        state: "SUCCESS",
-        element: "Spreadsheet view",
-      });
+      if (res)
+        captureEvent(GLOBAL_VIEW_UPDATED, {
+          view_id: res.id,
+          applied_filters: res.filters,
+          state: "SUCCESS",
+          element: "Spreadsheet view",
+        });
     });
   };
 
-  const areFiltersEqual = isEqual(appliedFilters, viewDetails?.filters);
+  const areFiltersEqual = isEqual(appliedFilters ?? {}, viewDetails?.filters ?? {});
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => view.key).includes(globalViewId as TStaticViewTypes);
 
   // return if no filters are applied
-  if (!appliedFilters && areFiltersEqual) return null;
+
+  if (isEmpty(appliedFilters) && areFiltersEqual) return null;
 
   return (
     <div className="flex items-start justify-between gap-4 p-4">

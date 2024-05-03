@@ -19,6 +19,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 type IInboxSidebarProps = {
   workspaceSlug: string;
   projectId: string;
+  setIsMobileSidebar: (value: boolean) => void;
 };
 
 const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
@@ -33,7 +34,7 @@ const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
 ];
 
 export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
-  const { workspaceSlug, projectId } = props;
+  const { workspaceSlug, projectId, setIsMobileSidebar } = props;
   // ref
   const containerRef = useRef<HTMLDivElement>(null);
   const elementRef = useRef<HTMLDivElement>(null);
@@ -64,14 +65,14 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   });
 
   return (
-    <div className="flex-shrink-0 w-2/6 h-full border-r border-custom-border-300">
+    <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">
       <div className="relative w-full h-full flex flex-col overflow-hidden">
-        <div className="border-b border-custom-border-300 flex-shrink-0 w-full h-[50px] relative flex items-center gap-2 pr-3 whitespace-nowrap">
+        <div className="border-b border-custom-border-300 flex-shrink-0 w-full h-[50px] relative flex items-center gap-2  whitespace-nowrap px-3">
           {tabNavigationOptions.map((option) => (
             <div
               key={option?.key}
               className={cn(
-                `text-sm relative flex items-center gap-1 h-[50px] px-2 cursor-pointer transition-all font-medium`,
+                `text-sm relative flex items-center gap-1 h-[50px] px-3 cursor-pointer transition-all font-medium`,
                 currentTab === option?.key ? `text-custom-primary-100` : `hover:text-custom-text-200`
               )}
               onClick={() => {
@@ -109,6 +110,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
           >
             {inboxIssuesArray.length > 0 ? (
               <InboxIssueList
+                setIsMobileSidebar={setIsMobileSidebar}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 projectIdentifier={currentProjectDetails?.identifier}
@@ -121,8 +123,8 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                     getAppliedFiltersCount > 0
                       ? EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE
                       : currentTab === EInboxIssueCurrentTab.OPEN
-                      ? EmptyStateType.INBOX_SIDEBAR_OPEN_TAB
-                      : EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB
+                        ? EmptyStateType.INBOX_SIDEBAR_OPEN_TAB
+                        : EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB
                   }
                   layout="screen-simple"
                 />

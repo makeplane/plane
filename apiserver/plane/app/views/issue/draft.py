@@ -1,6 +1,7 @@
 # Python imports
 import json
 
+# Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
@@ -19,14 +20,12 @@ from django.db.models import (
     When,
 )
 from django.db.models.functions import Coalesce
-
-# Django imports
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from rest_framework import status
 
 # Third Party imports
+from rest_framework import status
 from rest_framework.response import Response
 
 from plane.app.permissions import ProjectEntityPermission
@@ -46,6 +45,7 @@ from plane.db.models import (
     Project,
 )
 from plane.utils.issue_filters import issue_filters
+from plane.utils.user_timezone_converter import user_timezone_converter
 
 # Module imports
 from .. import BaseViewSet
@@ -229,6 +229,10 @@ class IssueDraftViewSet(BaseViewSet):
                 "link_count",
                 "is_draft",
                 "archived_at",
+            )
+            datetime_fields = ["created_at", "updated_at"]
+            issues = user_timezone_converter(
+                issue_queryset, datetime_fields, request.user.user_timezone
             )
         return Response(issues, status=status.HTTP_200_OK)
 

@@ -116,10 +116,16 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     setFormSubmitting(false);
   };
 
+  const isTitleLengthMoreThan255Character = formData?.name ? formData.name.length > 255 : false;
+
   if (!workspaceSlug || !projectId || !workspaceId) return <></>;
   return (
     <form className="relative space-y-4" onSubmit={handleFormSubmit}>
-      <InboxIssueTitle data={formData} handleData={handleFormData} />
+      <InboxIssueTitle
+        data={formData}
+        handleData={handleFormData}
+        isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
+      />
       <InboxIssueDescription
         workspaceSlug={workspaceSlug}
         projectId={projectId}
@@ -127,18 +133,28 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
         data={formData}
         handleData={handleFormData}
         editorRef={descriptionEditorRef}
+        containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
       />
       <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
       <div className="relative flex justify-between items-center gap-3">
-        <div className="flex cursor-pointer items-center gap-1" onClick={() => setCreateMore((prevData) => !prevData)}>
+        <div
+          className="flex cursor-pointer items-center gap-1.5"
+          onClick={() => setCreateMore((prevData) => !prevData)}
+        >
+          <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
           <span className="text-xs">Create more</span>
-          <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
         </div>
         <div className="relative flex items-center gap-3">
           <Button variant="neutral-primary" size="sm" type="button" onClick={handleModalClose}>
             Discard
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={formSubmitting}>
+          <Button
+            variant="primary"
+            size="sm"
+            type="submit"
+            loading={formSubmitting}
+            disabled={isTitleLengthMoreThan255Character}
+          >
             {formSubmitting ? "Adding Issue..." : "Add Issue"}
           </Button>
         </div>

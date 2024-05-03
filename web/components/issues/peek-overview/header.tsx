@@ -54,7 +54,7 @@ export type PeekOverviewHeaderProps = {
   isArchived: boolean;
   disabled: boolean;
   toggleDeleteIssueModal: (issueId: string | null) => void;
-  toggleArchiveIssueModal: (value: boolean) => void;
+  toggleArchiveIssueModal: (issueId: string | null) => void;
   handleRestoreIssue: () => void;
   isSubmitting: "submitting" | "submitted" | "saved";
 };
@@ -112,22 +112,28 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
       }`}
     >
       <div className="flex items-center gap-4">
-        <button onClick={removeRoutePeekId}>
-          <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-        </button>
+        <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
+          <button onClick={removeRoutePeekId}>
+            <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+          </button>
+        </Tooltip>
 
-        <Link href={`/${issueLink}`} onClick={() => removeRoutePeekId()}>
-          <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-        </Link>
+        <Tooltip tooltipContent="Open issue in full screen" isMobile={isMobile}>
+          <Link href={`/${issueLink}`} onClick={() => removeRoutePeekId()}>
+            <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+          </Link>
+        </Tooltip>
         {currentMode && (
           <div className="flex flex-shrink-0 items-center gap-2">
             <CustomSelect
               value={currentMode}
               onChange={(val: any) => setPeekMode(val)}
               customButton={
-                <button type="button" className="">
-                  <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-                </button>
+                <Tooltip tooltipContent="Toggle peek view layout" isMobile={isMobile}>
+                  <button type="button" className="">
+                    <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+                  </button>
+                </Tooltip>
               }
             >
               {PEEK_OPTIONS.map((mode) => (
@@ -172,7 +178,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
                 })}
                 onClick={() => {
                   if (!isInArchivableGroup) return;
-                  toggleArchiveIssueModal(true);
+                  toggleArchiveIssueModal(issueId);
                 }}
               >
                 <ArchiveIcon className="h-4 w-4" />

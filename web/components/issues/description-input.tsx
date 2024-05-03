@@ -9,23 +9,27 @@ import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 import { TIssueOperations } from "@/components/issues/issue-detail";
+// helpers
+import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 
 export type IssueDescriptionInputProps = {
+  containerClassName?: string;
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   initialValue: string | undefined;
   disabled?: boolean;
   issueOperations: TIssueOperations;
-  placeholder?: string | ((isFocused: boolean) => string);
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
   swrIssueDescription: string | null | undefined;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
   const {
+    containerClassName,
     workspaceSlug,
     projectId,
     issueId,
@@ -106,18 +110,14 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                   debouncedFormSave();
                 }}
                 placeholder={
-                  placeholder
-                    ? placeholder
-                    : (isFocused) => {
-                        if (isFocused) return "Press '/' for commands...";
-                        else return "Click to add description";
-                      }
+                  placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
                 }
+                containerClassName={containerClassName}
               />
             ) : (
               <RichTextReadOnlyEditor
                 initialValue={localIssueDescription.description_html ?? ""}
-                containerClassName="!p-0 !pt-2 text-custom-text-200 min-h-[150px]"
+                containerClassName={containerClassName}
               />
             )
           }

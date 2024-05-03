@@ -11,21 +11,14 @@ import {
   TUnGroupedIssues,
   TIssueKanbanFilters,
   TIssueGroupByOptions,
+  TIssueOrderByOptions,
 } from "@plane/types";
 // constants
 // hooks
-import {
-  useCycle,
-  useIssueDetail,
-  useKanbanView,
-  useLabel,
-  useMember,
-  useModule,
-  useProject,
-  useProjectState,
-} from "@/hooks/store";
+import { useCycle, useKanbanView, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 // types
 // parent components
+import { TRenderQuickActions } from "../list/list-view-types";
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 // components
 import { KanbanStoreType } from "./base-kanban-root";
@@ -39,10 +32,11 @@ export interface IGroupByKanBan {
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
+  orderBy: TIssueOrderByOptions | undefined;
   sub_group_id: string;
   isDragDisabled: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: any;
   enableQuickIssueCreate?: boolean;
@@ -87,6 +81,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     handleOnDrop,
     showEmptyGroup = true,
     subGroupIssueHeaderCount,
+    orderBy,
   } = props;
 
   const member = useMember();
@@ -95,7 +90,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const cycle = useCycle();
   const moduleInfo = useModule();
   const projectState = useProjectState();
-  const { peekIssue } = useIssueDetail();
 
   const list = getGroupByColumns(
     group_by as GroupByColumnTypes,
@@ -138,7 +132,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className={`relative w-full flex gap-2 ${sub_group_by ? "h-full" : "h-full"}`}>
+    <div className={`relative w-full flex gap-2 px-2 ${sub_group_by ? "h-full" : "h-full"}`}>
       {list &&
         list.length > 0 &&
         list.map((subList: IGroupByColumn) => {
@@ -176,10 +170,10 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   groupId={subList.id}
                   issuesMap={issuesMap}
                   issueIds={issueIds}
-                  peekIssueId={peekIssue?.issueId ?? ""}
                   displayProperties={displayProperties}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
+                  orderBy={orderBy}
                   sub_group_id={sub_group_id}
                   isDragDisabled={isDragDisabled}
                   updateIssue={updateIssue}
@@ -206,9 +200,10 @@ export interface IKanBan {
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
+  orderBy: TIssueOrderByOptions | undefined;
   sub_group_id?: string;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   showEmptyGroup: boolean;
@@ -252,6 +247,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     handleOnDrop,
     showEmptyGroup,
     subGroupIssueHeaderCount,
+    orderBy,
   } = props;
 
   const issueKanBanView = useKanbanView();
@@ -263,6 +259,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       displayProperties={displayProperties}
       group_by={group_by}
       sub_group_by={sub_group_by}
+      orderBy={orderBy}
       sub_group_id={sub_group_id}
       isDragDisabled={!issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by)}
       updateIssue={updateIssue}
