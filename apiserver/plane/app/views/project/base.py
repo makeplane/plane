@@ -52,7 +52,7 @@ from plane.db.models import (
     Issue,
 )
 from plane.utils.cache import cache_response
-from plane.bgtasks.webhook_activity_task import model_activity
+from plane.bgtasks.webhook_task import model_activity
 
 
 class ProjectViewSet(BaseViewSet):

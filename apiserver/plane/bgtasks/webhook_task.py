@@ -186,64 +186,6 @@ def webhook_task(self, webhook, slug, event, event_data, action, current_site):
         return
 
 
-@shared_task()
-def send_webhook(event, payload, kw, action, slug, bulk, current_site):
-    try:
-        webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
-
-        if event == "project":
-            webhooks = webhooks.filter(project=True)
-
-        if event == "issue":
-            webhooks = webhooks.filter(issue=True)
-
-        if event == "module" or event == "module_issue":
-            webhooks = webhooks.filter(module=True)
-
-        if event == "cycle" or event == "cycle_issue":
-            webhooks = webhooks.filter(cycle=True)
-
-        if event == "issue_comment":
-            webhooks = webhooks.filter(issue_comment=True)
-
-        if webhooks:
-            if action in ["POST", "PATCH"]:
-                if bulk and event in ["cycle_issue", "module_issue"]:
-                    return
-                else:
-                    event_data = [
-                        get_model_data(
-                            event=event,
-                            event_id=(
-                                payload.get("id")
-                                if isinstance(payload, dict)
-                                else kw.get("pk")
-                            ),
-                            many=False,
-                        )
-                    ]
-
-            if action == "DELETE":
-                event_data = [{"id": kw.get("pk")}]
-
-            for webhook in webhooks:
-                for data in event_data:
-                    webhook_task.delay(
-                        webhook=webhook.id,
-                        slug=slug,
-                        event=event,
-                        event_data=data,
-                        action=action,
-                        current_site=current_site,
-                    )
-
-    except Exception as e:
-        if settings.DEBUG:
-            print(e)
-        log_exception(e)
-        return
-
-
 @shared_task
 def send_webhook_deactivation_email(
     webhook_id, receiver_id, current_site, reason
@@ -484,3 +426,57 @@ def webhook_activity(
             print(e)
         log_exception(e)
         return
+
+
+@shared_task
+def model_activity(
+    model_name,
+    model_id,
+    requested_data,
+    current_instance,
+    actor_id,
+    slug,
+    origin=None,
+):
+    """Function takes in two json and computes differences between keys of both the json"""
+    if current_instance is None:
+        webhook_activity.delay(
+            event=model_name,
+            verb="created",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=actor_id,
+            slug=slug,
+            current_site=origin,
+            event_id=model_id,
+            old_identifier=None,
+            new_identifier=None,
+        )
+        return
+
+    # Load the current instance
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    # Loop through all keys in requested data and check the current value and requested value
+    for key in requested_data:
+        current_value = current_instance.get(key, None)
+        requested_value = requested_data.get(key, None)
+        if current_value != requested_value:
+            webhook_activity.delay(
+                event=model_name,
+                verb="updated",
+                field=key,
+                old_value=current_value,
+                new_value=requested_value,
+                actor_id=actor_id,
+                slug=slug,
+                current_site=origin,
+                event_id=model_id,
+                old_identifier=None,
+                new_identifier=None,
+            )
+
+    return

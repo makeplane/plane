@@ -1,6 +1,7 @@
 # Python imports
 import json
 
+# Django Imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
@@ -17,14 +18,14 @@ from django.db.models import (
     Value,
 )
 from django.db.models.functions import Coalesce
-
-# Django Imports
+from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
-from rest_framework import status
 
 # Third party imports
+from rest_framework import status
 from rest_framework.response import Response
 
+# Module imports
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
@@ -49,13 +50,11 @@ from plane.db.models import (
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.utils.user_timezone_converter import user_timezone_converter
+from plane.bgtasks.webhook_task import model_activity
+from .. import BaseAPIView, BaseViewSet
 
 
-# Module imports
-from .. import BaseAPIView, BaseViewSet, WebhookMixin
-
-
-class ModuleViewSet(WebhookMixin, BaseViewSet):
+class ModuleViewSet(BaseViewSet):
     model = Module
     permission_classes = [
         ProjectEntityPermission,
@@ -238,6 +237,16 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                     "updated_at",
                 )
             ).first()
+            # Send the model activity
+            model_activity.delay(
+                model_name="module",
+                model_id=str(module["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(
                 module, datetime_fields, request.user.user_timezone
@@ -422,6 +431,9 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
 
     def partial_update(self, request, slug, project_id, pk):
         module = self.get_queryset().filter(pk=pk)
+        current_instance = json.dumps(
+            ModuleSerializer(module).data, cls=DjangoJSONEncoder
+        )
 
         if module.first().archived_at:
             return Response(
@@ -464,6 +476,18 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 "created_at",
                 "updated_at",
             ).first()
+
+            # Send the model activity
+            model_activity.delay(
+                model_name="module",
+                model_id=str(module["id"]),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(
                 module, datetime_fields, request.user.user_timezone

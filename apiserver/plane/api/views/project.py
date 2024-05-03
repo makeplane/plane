@@ -27,7 +27,7 @@ from plane.db.models import (
     State,
     Workspace,
 )
-from plane.bgtasks.webhook_activity_task import model_activity
+from plane.bgtasks.webhook_task import model_activity
 from .base import BaseAPIView
 
 
