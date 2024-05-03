@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-// ui
-import { Dialog, Transition } from "@headlessui/react";
+// types
 import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
+// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { CreateModalCore } from "@/components/core";
 // helpers
 import { csvDownload } from "@/helpers/download.helper";
-// types
+// components
 import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
 // utils
 import { getCurrentHookAsCSV } from "./utils";
-// ui
 
 interface ICreateWebhookModal {
   currentWorkspace: IWorkspace | null;
@@ -93,48 +93,17 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog
-        as="div"
-        className="relative z-20"
-        onClose={() => {
-          if (!generatedWebhook) handleClose();
-        }}
-      >
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 p-6 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-2xl">
-                {!generatedWebhook ? (
-                  <WebhookForm onSubmit={handleCreateWebhook} handleClose={handleClose} />
-                ) : (
-                  <GeneratedHookDetails webhookDetails={generatedWebhook} handleClose={handleClose} />
-                )}
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+    <CreateModalCore
+      isOpen={isOpen}
+      handleClose={() => {
+        if (!generatedWebhook) handleClose();
+      }}
+    >
+      {!generatedWebhook ? (
+        <WebhookForm onSubmit={handleCreateWebhook} handleClose={handleClose} />
+      ) : (
+        <GeneratedHookDetails webhookDetails={generatedWebhook} handleClose={handleClose} />
+      )}
+    </CreateModalCore>
   );
 };

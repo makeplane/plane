@@ -1,4 +1,5 @@
 export * from "./bulk-delete-issues-modal";
+export * from "./create-modal";
 export * from "./delete-modal";
 export * from "./existing-issues-list-modal";
 export * from "./gpt-assistant-popover";
