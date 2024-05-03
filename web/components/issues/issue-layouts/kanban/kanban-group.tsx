@@ -186,6 +186,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       ref={columnRef}
     >
       <div
+        //column overlay when issues are not sorted by manual
         className={cn(
           "absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded",
           {

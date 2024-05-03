@@ -213,6 +213,11 @@ export const handleDragDrop = async (
   }
 };
 
+/**
+ * This Method finds the DOM element with elementId, scrolls to it and highlights the issue block
+ * @param elementId 
+ * @param shouldScrollIntoView
+ */
 export const highlightIssueOnDrop = (elementId: string | undefined, shouldScrollIntoView = true) => {
   setTimeout(async () => {
     const sourceElementId = elementId ?? "";
