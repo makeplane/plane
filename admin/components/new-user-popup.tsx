@@ -2,9 +2,8 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import Link from "next/link";
 import Image from "next/image";
-import { useTheme } from "next-themes";
+import { useTheme as nextUseTheme } from "next-themes";
 // ui
 import { Button, getButtonStyling } from "@plane/ui";
 // helpers
@@ -12,25 +11,17 @@ import { resolveGeneralTheme } from "helpers/common.helper";
 // icons
 import TakeoffIconLight from "/public/logos/takeoff-icon-light.svg";
 import TakeoffIconDark from "/public/logos/takeoff-icon-dark.svg";
+import { useTheme } from "@/hooks";
 
-type Props = {
-  isOpen: boolean;
-  onClose?: () => void;
-};
-
-export const CreateWorkspacePopup: React.FC<Props> = observer((props) => {
-  const { isOpen, onClose } = props;
+export const NewUserPopup: React.FC = observer(() => {
+  // hooks
+  const { isNewUserPopup, toggleNewUserPopup } = useTheme();
   // theme
-  const { resolvedTheme } = useTheme();
+  const { resolvedTheme } = nextUseTheme();
 
-  const handleClose = () => {
-    onClose && onClose();
-  };
-
-  if (!isOpen) return null;
-
+  if (!isNewUserPopup) return <></>;
   return (
-    <div className="absolute bottom-8 right-6 p-6 w-96 border border-custom-border-100 shadow-md rounded-xl bg-custom-background-100 z-20">
+    <div className="absolute bottom-8 right-8 p-6 w-96 border border-custom-border-100 shadow-md rounded-lg bg-custom-background-100">
       <div className="flex gap-4">
         <div className="grow">
           <div className="text-base font-semibold">Create workspace</div>
@@ -39,10 +30,13 @@ export const CreateWorkspacePopup: React.FC<Props> = observer((props) => {
             workspace, you will need to login again.
           </div>
           <div className="flex items-center gap-4 pt-2">
-            <Link href="/create-workspace" className={getButtonStyling("primary", "sm")}>
+            <a
+              href={`${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : "/"}`}
+              className={getButtonStyling("primary", "sm")}
+            >
               Create workspace
-            </Link>
-            <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+            </a>
+            <Button variant="neutral-primary" size="sm" onClick={toggleNewUserPopup}>
               Close
             </Button>
           </div>

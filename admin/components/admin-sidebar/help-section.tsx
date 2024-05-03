@@ -4,10 +4,9 @@ import { FC, useState, useRef } from "react";
 import { Transition } from "@headlessui/react";
 import Link from "next/link";
 import { FileText, HelpCircle, MoveLeft } from "lucide-react";
+import { DiscordIcon, GithubIcon, getButtonStyling } from "@plane/ui";
 // hooks
 import { useTheme } from "@/hooks";
-// icons
-import { DiscordIcon, GithubIcon } from "@plane/ui";
 // assets
 import packageJson from "package.json";
 
@@ -44,8 +43,14 @@ export const HelpSection: FC = () => {
       }`}
     >
       <div
-        className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full justify-end"}`}
+        className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full justify-between"}`}
       >
+        <a
+          href={`${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : "/"}`}
+          className={getButtonStyling("outline-primary", "sm")}
+        >
+          Go to plane
+        </a>
         <button
           type="button"
           className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${

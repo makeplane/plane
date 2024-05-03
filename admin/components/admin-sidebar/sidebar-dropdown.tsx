@@ -1,37 +1,39 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useTheme as useNextTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 import { LogOut, UserCog2, Palette } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
-import { Avatar, TOAST_TYPE, setToast } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 // hooks
 import { useTheme, useUser } from "@/hooks";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+// services
+import { AuthService } from "@/services";
+
+// service initialization
+const authService = new AuthService();
 
 export const SidebarDropdown = observer(() => {
   // store hooks
   const { isSidebarCollapsed } = useTheme();
-  const { currentUser, signOut } = useUser();
+  const { currentUser } = useUser();
   // hooks
   const { resolvedTheme, setTheme } = useNextTheme();
-
-  const handleSignOut = async () => {
-    await signOut().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to sign out. Please try again.",
-      })
-    );
-  };
+  // state
+  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
 
   const handleThemeSwitch = () => {
     const newTheme = resolvedTheme === "dark" ? "light" : "dark";
     setTheme(newTheme);
   };
+
+  useEffect(() => {
+    if (csrfToken === undefined)
+      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+  }, [csrfToken]);
 
   return (
     <div className="flex max-h-[3.75rem] items-center gap-x-5 gap-y-2 border-b border-custom-sidebar-border-200 px-4 py-3.5">
@@ -94,11 +96,11 @@ export const SidebarDropdown = observer(() => {
               </div>
               <div className="py-2">
                 <form method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-out/`}>
+                  <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
                   <Menu.Item
                     as="button"
-                    type="button"
+                    type="submit"
                     className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
-                    onClick={handleSignOut}
                   >
                     <LogOut className="h-4 w-4 stroke-[1.5]" />
                     Sign out
