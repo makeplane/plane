@@ -96,7 +96,7 @@ class ForgotPasswordEndpoint(APIView):
             )
         )
 
-        if not (EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
+        if not (EMAIL_HOST):
             return Response(
                 {
                     "error_code": "SMTP_NOT_CONFIGURED",
