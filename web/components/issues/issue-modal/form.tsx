@@ -480,7 +480,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           ref={editorRef}
                           tabIndex={getTabIndex("description_html")}
                           placeholder={getDescriptionPlaceholder}
-                          containerClassName="border-[0.5px] border-custom-border-200 py-3"
+                          containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
                         />
                       )}
                     />

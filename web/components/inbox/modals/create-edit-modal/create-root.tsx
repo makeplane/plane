@@ -133,7 +133,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
         data={formData}
         handleData={handleFormData}
         editorRef={descriptionEditorRef}
-        containerClassName="border-[0.5px] border-custom-border-200 py-3"
+        containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
       />
       <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
       <div className="relative flex justify-between items-center gap-3">
