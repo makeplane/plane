@@ -313,7 +313,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
             pull(this.issues[issueCycleId], issueId);
           });
         }
-        this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId });
+        this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId }, true);
       });
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
     } catch (error) {
@@ -327,7 +327,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
         pull(this.issues[cycleId], issueId);
       });
 
-      this.rootStore.issues.updateIssue(issueId, { cycle_id: null });
+      this.rootStore.issues.updateIssue(issueId, { cycle_id: null }, true);
 
       await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);

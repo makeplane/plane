@@ -233,7 +233,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     userId: string
   ) => {
     try {
-      this.rootStore.issues.updateIssue(issueId, data);
+      this.rootStore.issues.updateIssue(issueId, data, true);
       await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, data.id as keyof TIssue, data);
     } catch (error) {
       if (this.currentView) this.fetchIssues(workspaceSlug, undefined, "mutation", userId, this.currentView);
