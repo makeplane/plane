@@ -1,4 +1,4 @@
-import { FC, Dispatch, SetStateAction, useState } from "react";
+import { FC, useState } from "react";
 import type { TIssueAttachment } from "@plane/types";
 // components
 import { DeleteModalCore } from "@/components/core";
@@ -11,18 +11,18 @@ export type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "c
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  onClose: () => void;
   data: TIssueAttachment;
   handleAttachmentOperations: TAttachmentOperationsRemoveModal;
 };
 
 export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
-  const { isOpen, setIsOpen, data, handleAttachmentOperations } = props;
-  // state
+  const { isOpen, onClose, data, handleAttachmentOperations } = props;
+  // states
   const [loader, setLoader] = useState(false);
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
     setLoader(false);
   };
 

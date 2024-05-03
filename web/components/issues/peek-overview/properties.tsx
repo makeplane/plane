@@ -10,11 +10,10 @@ import {
   XCircle,
   CalendarClock,
   CalendarCheck2,
-  UserCircle2,
 } from "lucide-react";
 // hooks
 // ui icons
-import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon, RelatedIcon, Tooltip } from "@plane/ui";
+import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon, RelatedIcon } from "@plane/ui";
 // components
 import {
   DateDropdown,
@@ -23,7 +22,6 @@ import {
   MemberDropdown,
   StateDropdown,
 } from "@/components/dropdowns";
-import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import {
   IssueLinkRoot,
   IssueCycleSelect,
@@ -37,8 +35,7 @@ import {
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
-import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -56,12 +53,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-  const { getUserDetails } = useMember();
-  const { isMobile } = usePlatformOS();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
-  const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
@@ -136,22 +130,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             buttonClassName="w-min h-auto whitespace-nowrap"
           />
         </div>
-
-        {/* created by */}
-        {createdByDetails && (
-          <div className="flex w-full items-center gap-3 h-8">
-            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <UserCircle2 className="h-4 w-4 flex-shrink-0" />
-              <span>Created by</span>
-            </div>
-            <Tooltip tooltipContent={createdByDetails?.display_name} isMobile={isMobile}>
-              <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
-                <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
-                <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
-              </div>
-            </Tooltip>
-          </div>
-        )}
 
         {/* start date */}
         <div className="flex w-full items-center gap-3 h-8">
