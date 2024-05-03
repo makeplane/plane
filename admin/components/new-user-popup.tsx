@@ -19,6 +19,8 @@ export const NewUserPopup: React.FC = observer(() => {
   // theme
   const { resolvedTheme } = nextUseTheme();
 
+  const redirectionLink = `${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : `${process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX === "1" ? `/god-mode/` : `/`}`}`;
+
   if (!isNewUserPopup) return <></>;
   return (
     <div className="absolute bottom-8 right-8 p-6 w-96 border border-custom-border-100 shadow-md rounded-lg bg-custom-background-100">
@@ -30,10 +32,7 @@ export const NewUserPopup: React.FC = observer(() => {
             workspace, you will need to login again.
           </div>
           <div className="flex items-center gap-4 pt-2">
-            <a
-              href={`${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : "/"}`}
-              className={getButtonStyling("primary", "sm")}
-            >
+            <a href={redirectionLink} className={getButtonStyling("primary", "sm")}>
               Create workspace
             </a>
             <Button variant="neutral-primary" size="sm" onClick={toggleNewUserPopup}>
