@@ -75,6 +75,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const sub_group_by = displayFilters?.sub_group_by;
   const group_by = displayFilters?.group_by;
 
+  const orderBy = displayFilters?.order_by;
+
   const userDisplayFilters = displayFilters || null;
 
   const KanBanView = sub_group_by ? KanBanSwimLanes : KanBan;
@@ -157,7 +159,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       issues.getIssueIds,
       updateIssue,
       group_by,
-      sub_group_by
+      sub_group_by,
+      orderBy !== "sort_order"
     ).catch((err) => {
       setToast({
         title: "Error",
@@ -259,6 +262,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               displayProperties={displayProperties}
               sub_group_by={sub_group_by}
               group_by={group_by}
+              orderBy={orderBy}
               updateIssue={updateIssue}
               quickActions={renderQuickActions}
               handleKanbanFilters={handleKanbanFilters}
