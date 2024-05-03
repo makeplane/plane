@@ -1,7 +1,10 @@
-import { set } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import isEmpty from "lodash/isEmpty";
+import isEqual from "lodash/isEqual";
+import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
-import { IWorkspaceView } from "@plane/types";
+import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // constants
 import { EIssueFilterType } from "@/constants/issue";
 // services
@@ -146,22 +149,40 @@ export class GlobalViewStore implements IGlobalViewStore {
     viewId: string,
     data: Partial<IWorkspaceView>
   ): Promise<IWorkspaceView | undefined> => {
-    const currentViewData = this.getViewDetailsById(viewId);
+    const currentViewData = this.getViewDetailsById(viewId) ? cloneDeep(this.getViewDetailsById(viewId)) : undefined;
     try {
       Object.keys(data).forEach((key) => {
         const currentKey = key as keyof IWorkspaceView;
         set(this.globalViewMap, [viewId, currentKey], data[currentKey]);
       });
       const currentView = await this.workspaceService.updateView(workspaceSlug, viewId, data);
-      if (data != undefined && data.filters && data.hasOwnProperty("filters")) {
-        await this.rootStore.issue.workspaceIssuesFilter.updateFilters(
-          workspaceSlug,
-          undefined,
-          EIssueFilterType.FILTERS,
-          data.filters,
-          viewId
-        );
-        await this.rootStore.issue.workspaceIssues.fetchIssues(workspaceSlug, viewId, "mutation");
+      // applying the filters in the global view
+      if (!isEqual(currentViewData?.filters || {}, currentView?.filters || {})) {
+        if (isEmpty(currentView?.filters)) {
+          const currentGlobalViewFilters: IIssueFilterOptions = this.rootStore.issue.workspaceIssuesFilter.filters[
+            viewId
+          ].filters as IIssueFilterOptions;
+          const newFilters: IIssueFilterOptions = {};
+          Object.keys(currentGlobalViewFilters ?? {}).forEach((key) => {
+            newFilters[key as keyof IIssueFilterOptions] = [];
+          });
+          await this.rootStore.issue.workspaceIssuesFilter.updateFilters(
+            workspaceSlug,
+            undefined,
+            EIssueFilterType.FILTERS,
+            newFilters,
+            viewId
+          );
+        } else {
+          await this.rootStore.issue.workspaceIssuesFilter.updateFilters(
+            workspaceSlug,
+            undefined,
+            EIssueFilterType.FILTERS,
+            currentView.filters,
+            viewId
+          );
+        }
+        this.rootStore.issue.workspaceIssues.fetchIssues(workspaceSlug, viewId, "mutation");
       }
       return currentView;
     } catch {
