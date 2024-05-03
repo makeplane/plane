@@ -333,6 +333,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 # Admin Cookie
 ADMIN_SESSION_COOKIE_NAME = "plane-admin-session-id"
+ADMIN_SESSION_COOKIE_AGE = 18000
 
 # CSRF cookies
 CSRF_COOKIE_SECURE = secure_origins
