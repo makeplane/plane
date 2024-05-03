@@ -4,7 +4,7 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { observer } from "mobx-react-lite";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks
-import { ControlLink, DropIndicator, Tooltip } from "@plane/ui";
+import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { cn } from "@/helpers/common.helper";
 import { useApplication, useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
@@ -182,7 +182,15 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       <div
         // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
         className={cn("group/kanban-block relative p-1.5", { "z-[1]": isCurrentBlockDragging })}
-        onDragStart={() => isDragAllowed && setIsCurrentBlockDragging(true)}
+        onDragStart={() => {
+          if (isDragAllowed) setIsCurrentBlockDragging(true);
+          else
+            setToast({
+              type: TOAST_TYPE.INFO,
+              title: "Info",
+              message: "Drag and drop is disabled for the current issue grouping",
+            });
+        }}
       >
         <ControlLink
           id={`issue-${issue.id}`}
