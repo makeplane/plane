@@ -86,12 +86,15 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
 
   if (!relationIssueIds) return null;
 
+  const isRelationKeyModalActive =
+    isRelationModalOpen?.relationType === relationKey && isRelationModalOpen?.issueId === issueId;
+
   return (
     <>
       <ExistingIssuesListModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
-        isOpen={isRelationModalOpen?.relationType === relationKey && isRelationModalOpen?.issueId === issueId}
+        isOpen={isRelationKeyModalActive}
         handleClose={() => toggleRelationModal(null, null)}
         searchParams={{ issue_relation: true, issue_id: issueId }}
         handleOnSubmit={onSubmit}
@@ -105,8 +108,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
           {
             "cursor-not-allowed": disabled,
             "hover:bg-custom-background-80": !disabled,
-            "bg-custom-background-80":
-              isRelationModalOpen?.relationType === relationKey && isRelationModalOpen?.issueId === issueId,
+            "bg-custom-background-80": isRelationKeyModalActive,
           },
           className
         )}
