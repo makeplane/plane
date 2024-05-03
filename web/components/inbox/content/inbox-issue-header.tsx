@@ -292,32 +292,36 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 </ControlLink>
               </div>
             ) : (
-              <CustomMenu verticalEllipsis placement="bottom-start">
-                {canMarkAsAccepted && (
-                  <CustomMenu.MenuItem onClick={() => setIsSnoozeDateModalOpen(true)}>
-                    <div className="flex items-center gap-2">
-                      <Clock size={14} strokeWidth={2} />
-                      Snooze
-                    </div>
-                  </CustomMenu.MenuItem>
+              <>
+                {isAllowed && (
+                  <CustomMenu verticalEllipsis placement="bottom-start">
+                    {canMarkAsAccepted && (
+                      <CustomMenu.MenuItem onClick={() => setIsSnoozeDateModalOpen(true)}>
+                        <div className="flex items-center gap-2">
+                          <Clock size={14} strokeWidth={2} />
+                          Snooze
+                        </div>
+                      </CustomMenu.MenuItem>
+                    )}
+                    {canMarkAsDuplicate && (
+                      <CustomMenu.MenuItem onClick={() => setSelectDuplicateIssue(true)}>
+                        <div className="flex items-center gap-2">
+                          <FileStack size={14} strokeWidth={2} />
+                          Mark as duplicate
+                        </div>
+                      </CustomMenu.MenuItem>
+                    )}
+                    {canDelete && (
+                      <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
+                        <div className="flex items-center gap-2">
+                          <Trash2 size={14} strokeWidth={2} />
+                          Delete
+                        </div>
+                      </CustomMenu.MenuItem>
+                    )}
+                  </CustomMenu>
                 )}
-                {canMarkAsDuplicate && (
-                  <CustomMenu.MenuItem onClick={() => setSelectDuplicateIssue(true)}>
-                    <div className="flex items-center gap-2">
-                      <FileStack size={14} strokeWidth={2} />
-                      Mark as duplicate
-                    </div>
-                  </CustomMenu.MenuItem>
-                )}
-                {canDelete && (
-                  <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
-                    <div className="flex items-center gap-2">
-                      <Trash2 size={14} strokeWidth={2} />
-                      Delete
-                    </div>
-                  </CustomMenu.MenuItem>
-                )}
-              </CustomMenu>
+              </>
             )}
           </div>
         </div>
