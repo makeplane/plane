@@ -51,7 +51,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         suggestions: mentionSuggestions,
       }}
       {...rest}
-      containerClassName={cn("relative min-h-[150px] pl-3", containerClassName)}
+      containerClassName={cn("relative pl-3", containerClassName)}
     />
   );
 });
