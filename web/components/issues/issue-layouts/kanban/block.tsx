@@ -4,10 +4,11 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { observer } from "mobx-react-lite";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks
-import { ControlLink, DropIndicator, Tooltip } from "@plane/ui";
+import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { cn } from "@/helpers/common.helper";
 import { useApplication, useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { TRenderQuickActions } from "../list/list-view-types";
@@ -131,6 +132,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
 
   const isDragAllowed = !isDragDisabled && !issue?.tempId && canEditIssueProperties;
 
+  useOutsideClickDetector(cardRef, () => {
+    cardRef?.current?.classList?.remove("highlight");
+  });
+
   // Make Issue block both as as Draggable and,
   // as a DropTarget for other issues being dragged to get the location of drop
   useEffect(() => {
@@ -177,7 +182,15 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       <div
         // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
         className={cn("group/kanban-block relative p-1.5", { "z-[1]": isCurrentBlockDragging })}
-        onDragStart={() => isDragAllowed && setIsCurrentBlockDragging(true)}
+        onDragStart={() => {
+          if (isDragAllowed) setIsCurrentBlockDragging(true);
+          else
+            setToast({
+              type: TOAST_TYPE.WARNING,
+              title: "Cannot move issue",
+              message: "Drag and drop is disabled for the current grouping",
+            });
+        }}
       >
         <ControlLink
           id={`issue-${issue.id}`}
@@ -186,12 +199,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
           }`}
           ref={cardRef}
           className={cn(
-            "block rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
-            {
-              "hover:cursor-pointer": isDragAllowed,
-              "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
-              "bg-custom-background-80 z-[100]": isCurrentBlockDragging,
-            }
+            "block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+            { "hover:cursor-pointer": isDragAllowed },
+            { "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id) },
+            { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
           )}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}

@@ -20,7 +20,7 @@ export type TInboxIssueCurrentTab = EInboxIssueCurrentTab;
 export type TInboxIssueStatus = EInboxIssueStatus;
 
 // filters
-export type TInboxIssueFilterMemberKeys = "assignee" | "created_by";
+export type TInboxIssueFilterMemberKeys = "assignees" | "created_by";
 
 export type TInboxIssueFilterDateKeys = "created_at" | "updated_at";
 
