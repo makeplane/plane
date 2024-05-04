@@ -92,7 +92,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
       ) : (
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-            Discard
+            Cancel
           </Button>
           {!webhookSecretKey && (
             <Button type="submit" variant="primary" size="sm" loading={isSubmitting}>

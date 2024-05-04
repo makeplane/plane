@@ -231,7 +231,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
         </div>
         <div className="flex items-center gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-            Discard
+            Cancel
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
             {isSubmitting ? "Generating" : "Generate token"}
