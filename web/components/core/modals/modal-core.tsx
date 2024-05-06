@@ -4,8 +4,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { cn } from "@/helpers/common.helper";
 
 export enum EModalPosition {
-  TOP = "my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20",
-  CENTER = "flex items-end sm:items-center justify-center p-4 sm:p-0 min-h-full",
+  TOP = "flex items-center justify-center text-center mx-4 my-10 md:my-20",
+  CENTER = "flex items-end sm:items-center justify-center p-4 min-h-full",
 }
 
 export enum EModalWidth {
@@ -53,7 +53,7 @@ export const ModalCore: React.FC<Props> = (props) => {
             >
               <Dialog.Panel
                 className={cn(
-                  "relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:w-full",
+                  "relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all w-full",
                   width
                 )}
               >
