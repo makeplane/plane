@@ -1,9 +1,11 @@
+import cloneDeep from "lodash/cloneDeep";
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 import { UserService } from "services/user.service";
 // types
-import { TUserProfile } from "@plane/types";
+import { IUserTheme, TUserProfile } from "@plane/types";
+import { RootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
@@ -20,6 +22,7 @@ export interface IUserProfileStore {
   updateUserProfile: (data: Partial<TUserProfile>) => Promise<TUserProfile | undefined>;
   updateUserOnBoard: () => Promise<TUserProfile | undefined>;
   updateTourCompleted: () => Promise<TUserProfile | undefined>;
+  updateUserTheme: (data: Partial<IUserTheme>) => Promise<TUserProfile | undefined>;
 }
 
 export class ProfileStore implements IUserProfileStore {
@@ -59,7 +62,7 @@ export class ProfileStore implements IUserProfileStore {
   // services
   userService: UserService;
 
-  constructor() {
+  constructor(public store: RootStore) {
     makeObservable(this, {
       // observables
       isLoading: observable.ref,
@@ -70,6 +73,7 @@ export class ProfileStore implements IUserProfileStore {
       updateUserProfile: action,
       updateUserOnBoard: action,
       updateTourCompleted: action,
+      updateUserTheme: action,
     });
     // services
     this.userService = new UserService();
@@ -174,6 +178,36 @@ export class ProfileStore implements IUserProfileStore {
         this.error = {
           status: "user-profile-tour-complete-error",
           message: "Failed to update user profile is_tour_completed",
+        };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * @description updates the user theme
+   * @returns @returns {Promise<TUserProfile | undefined>}
+   */
+  updateUserTheme = async (data: Partial<IUserTheme>) => {
+    const currentProfileTheme = cloneDeep(this.data.theme);
+    try {
+      runInAction(() => {
+        Object.keys(data).forEach((key: string) => {
+          const userKey: keyof IUserTheme = key as keyof IUserTheme;
+          if (this.data.theme) set(this.data.theme, userKey, data[userKey]);
+        });
+      });
+      const userProfile = await this.userService.updateCurrentUserProfile({ theme: this.data.theme });
+      return userProfile;
+    } catch (error) {
+      runInAction(() => {
+        Object.keys(data).forEach((key: string) => {
+          const userKey: keyof IUserTheme = key as keyof IUserTheme;
+          if (currentProfileTheme) set(this.data.theme, userKey, currentProfileTheme[userKey]);
+        });
+        this.error = {
+          status: "user-profile-theme-update-error",
+          message: "Failed to update user profile theme",
         };
       });
       throw error;
