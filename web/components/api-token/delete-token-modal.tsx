@@ -6,7 +6,7 @@ import { IApiToken } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { DeleteModalCore } from "@/components/core";
+import { AlertModalCore } from "@/components/core";
 // fetch-keys
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // services
@@ -66,7 +66,7 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
   };
 
   return (
-    <DeleteModalCore
+    <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDeletion}
       isDeleting={deleteLoading}

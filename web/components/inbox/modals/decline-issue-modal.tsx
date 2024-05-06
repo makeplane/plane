@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // types
 import type { TIssue } from "@plane/types";
 // components
-import { DeleteModalCore } from "@/components/core";
+import { AlertModalCore } from "@/components/core";
 // hooks
 import { useProject } from "@/hooks/store";
 
@@ -33,7 +33,7 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <DeleteModalCore
+    <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDecline}
       isDeleting={isDeclining}

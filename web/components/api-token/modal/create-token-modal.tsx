@@ -7,7 +7,7 @@ import { IApiToken } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-token";
-import { CreateModalCore } from "@/components/core";
+import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 // fetch-keys
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // helpers
@@ -85,7 +85,7 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <CreateModalCore isOpen={isOpen} handleClose={() => {}}>
+    <ModalCore isOpen={isOpen} handleClose={() => {}} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       {generatedToken ? (
         <GeneratedTokenDetails handleClose={handleClose} tokenDetails={generatedToken} />
       ) : (
@@ -96,6 +96,6 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
           onSubmit={handleCreateToken}
         />
       )}
-    </CreateModalCore>
+    </ModalCore>
   );
 };

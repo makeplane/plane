@@ -6,7 +6,7 @@ import type { IIssueLabel } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { DeleteModalCore } from "@/components/core";
+import { AlertModalCore } from "@/components/core";
 // hooks
 import { useLabel } from "@/hooks/store";
 
@@ -53,7 +53,7 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <DeleteModalCore
+    <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDeletion}
       isDeleting={isDeleteLoading}

@@ -6,7 +6,7 @@ import type { IModule } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { DeleteModalCore } from "@/components/core";
+import { AlertModalCore } from "@/components/core";
 // constants
 import { MODULE_DELETED } from "@/constants/event-tracker";
 // hooks
@@ -70,7 +70,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <DeleteModalCore
+    <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDeletion}
       isDeleting={isDeleteLoading}

@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // types
 import type { TIssue } from "@plane/types";
 // components
-import { DeleteModalCore } from "@/components/core";
+import { AlertModalCore } from "@/components/core";
 // hooks
 import { useProject } from "@/hooks/store";
 
@@ -33,7 +33,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
   };
 
   return (
-    <DeleteModalCore
+    <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDelete}
       isDeleting={isDeleting}

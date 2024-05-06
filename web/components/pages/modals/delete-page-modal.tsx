@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { DeleteModalCore } from "@/components/core";
+import { AlertModalCore } from "@/components/core";
 // constants
 import { PAGE_DELETED } from "@/constants/event-tracker";
 // hooks
@@ -71,7 +71,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   };
 
   return (
-    <DeleteModalCore
+    <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDelete}
       isDeleting={isDeleting}

@@ -6,7 +6,7 @@ import { ICycle } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { DeleteModalCore } from "@/components/core";
+import { AlertModalCore } from "@/components/core";
 // constants
 import { CYCLE_DELETED } from "@/constants/event-tracker";
 // hooks
@@ -70,7 +70,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   };
 
   return (
-    <DeleteModalCore
+    <AlertModalCore
       handleClose={handleClose}
       handleSubmit={formSubmit}
       isDeleting={loader}

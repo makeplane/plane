@@ -4,7 +4,7 @@ import { TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { DeleteModalCore } from "@/components/core";
+import { AlertModalCore } from "@/components/core";
 // hooks
 import { useIssues, useProject } from "@/hooks/store";
 
@@ -57,7 +57,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <DeleteModalCore
+    <AlertModalCore
       handleClose={onClose}
       handleSubmit={handleIssueDelete}
       isDeleting={isDeleting}

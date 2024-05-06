@@ -1,14 +1,29 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+// helpers
+import { cn } from "@/helpers/common.helper";
+
+export enum EModalPosition {
+  TOP = "my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20",
+  CENTER = "flex items-end sm:items-center justify-center p-4 sm:p-0 min-h-full",
+}
+
+export enum EModalWidth {
+  XL = "sm:max-w-xl",
+  XXL = "sm:max-w-2xl",
+  XXXL = "sm:max-w-3xl",
+  XXXXL = "sm:max-w-4xl",
+}
 
 type Props = {
   children: React.ReactNode;
   handleClose: () => void;
   isOpen: boolean;
+  position?: EModalPosition;
+  width?: EModalWidth;
 };
-
-export const CreateModalCore: React.FC<Props> = (props) => {
-  const { children, handleClose, isOpen } = props;
+export const ModalCore: React.FC<Props> = (props) => {
+  const { children, handleClose, isOpen, position = EModalPosition.CENTER, width = EModalWidth.XXL } = props;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -26,7 +41,7 @@ export const CreateModalCore: React.FC<Props> = (props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
+          <div className={position}>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -36,7 +51,12 @@ export const CreateModalCore: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel
+                className={cn(
+                  "relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:w-full",
+                  width
+                )}
+              >
                 {children}
               </Dialog.Panel>
             </Transition.Child>

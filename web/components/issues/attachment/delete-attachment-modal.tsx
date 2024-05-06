@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import type { TIssueAttachment } from "@plane/types";
 // components
-import { DeleteModalCore } from "@/components/core";
+import { AlertModalCore } from "@/components/core";
 // helper
 import { getFileName } from "@/helpers/attachment.helper";
 // types
@@ -32,7 +32,7 @@ export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
   };
 
   return (
-    <DeleteModalCore
+    <AlertModalCore
       handleClose={handleClose}
       handleSubmit={() => handleDeletion(data.id)}
       isDeleting={loader}

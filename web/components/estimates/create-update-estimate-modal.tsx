@@ -7,7 +7,7 @@ import { IEstimate, IEstimateFormData } from "@plane/types";
 // ui
 import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { CreateModalCore } from "@/components/core";
+import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 // helpers
 import { checkDuplicates } from "@/helpers/array.helper";
 // hooks
@@ -197,7 +197,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   }, [data, reset]);
 
   return (
-    <CreateModalCore isOpen={isOpen} handleClose={handleClose}>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-5 p-5">
           <div className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} Estimate</div>
@@ -287,6 +287,6 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
           </Button>
         </div>
       </form>
-    </CreateModalCore>
+    </ModalCore>
   );
 });

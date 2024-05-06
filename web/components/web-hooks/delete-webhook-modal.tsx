@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { DeleteModalCore } from "@/components/core";
+import { AlertModalCore } from "@/components/core";
 // hooks
 import { useWebhook } from "@/hooks/store";
 
@@ -52,7 +52,7 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   };
 
   return (
-    <DeleteModalCore
+    <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDelete}
       isDeleting={isDeleting}

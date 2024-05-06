@@ -5,7 +5,7 @@ import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { CreateModalCore } from "@/components/core";
+import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 // helpers
 import { csvDownload } from "@/helpers/download.helper";
 // components
@@ -93,17 +93,19 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
   };
 
   return (
-    <CreateModalCore
+    <ModalCore
       isOpen={isOpen}
       handleClose={() => {
         if (!generatedWebhook) handleClose();
       }}
+      position={EModalPosition.TOP}
+      width={EModalWidth.XXL}
     >
       {!generatedWebhook ? (
         <WebhookForm onSubmit={handleCreateWebhook} handleClose={handleClose} />
       ) : (
         <GeneratedHookDetails webhookDetails={generatedWebhook} handleClose={handleClose} />
       )}
-    </CreateModalCore>
+    </ModalCore>
   );
 };
