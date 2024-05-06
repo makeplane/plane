@@ -663,9 +663,7 @@ def notifications(
                                             "old_value": str(
                                                 last_activity.old_value
                                             ),
-                                            "activity_time": issue_activity.get(
-                                                "created_at"
-                                            ),
+                                            "activity_time": str(last_activity.created_at),
                                         },
                                     },
                                 )
