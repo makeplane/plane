@@ -1,3 +1,4 @@
+import concat from "lodash/concat";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import update from "lodash/update";
@@ -381,7 +382,7 @@ export class ModulesStore implements IModuleStore {
     try {
       const moduleLink = await this.moduleService.createModuleLink(workspaceSlug, projectId, moduleId, data);
       runInAction(() => {
-        update(this.moduleMap, [moduleId, "link_module"], (moduleLinks = []) => [...moduleLinks, moduleLink]);
+        update(this.moduleMap, [moduleId, "link_module"], (moduleLinks = []) => concat(moduleLinks, moduleLink));
       });
       return moduleLink;
     } catch (error) {
