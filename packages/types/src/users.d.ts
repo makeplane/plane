@@ -27,7 +27,7 @@ export interface IUser {
   user_timezone: string;
   username: string;
   last_login_medium: TLoginMediums;
-  // theme: IUserTheme;
+  theme: IUserTheme;
 }
 
 export interface IUserAccount {
@@ -48,7 +48,7 @@ export type TUserProfile = {
     palette: string | undefined;
     primary: string | undefined;
     background: string | undefined;
-    darkPalette: string | undefined;
+    darkPalette: boolean | undefined;
     sidebarText: string | undefined;
     sidebarBackground: string | undefined;
   };
@@ -80,14 +80,14 @@ export interface IUserSettings {
 }
 
 export interface IUserTheme {
-  background: string;
-  text: string;
-  primary: string;
-  sidebarBackground: string;
-  sidebarText: string;
-  darkPalette: boolean;
-  palette: string;
-  theme: string;
+  text: string | undefined;
+  theme: string | undefined;
+  palette: string | undefined;
+  primary: string | undefined;
+  background: string | undefined;
+  darkPalette: boolean | undefined;
+  sidebarText: string | undefined;
+  sidebarBackground: string | undefined;
 }
 
 export interface IUserLite {

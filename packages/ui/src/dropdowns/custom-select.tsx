@@ -67,7 +67,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
               className={`flex items-center justify-between gap-1 text-xs ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${customButtonClassName}`}
-              onClick={openDropdown}
+              onClick={isOpen ? closeDropdown : openDropdown}
             >
               {customButton}
             </button>
@@ -77,12 +77,17 @@ const CustomSelect = (props: ICustomSelectProps) => {
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 ${
-                input ? "px-3 py-2 text-sm" : "px-2 py-1 text-xs"
-              } ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-              } ${buttonClassName}`}
-              onClick={openDropdown}
+              className={cn(
+                "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300",
+                {
+                  "px-3 py-2 text-sm": input,
+                  "px-2 py-1 text-xs": !input,
+                  "cursor-not-allowed text-custom-text-200": disabled,
+                  "cursor-pointer hover:bg-custom-background-80": !disabled,
+                },
+                buttonClassName
+              )}
+              onClick={isOpen ? closeDropdown : openDropdown}
             >
               {label}
               {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

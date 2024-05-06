@@ -4,9 +4,9 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { IUserTheme } from "@plane/types";
 // ui
-import { Button, InputColorPicker } from "@plane/ui";
+import { Button, InputColorPicker, setPromiseToast } from "@plane/ui";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store";
 
 const inputRules = {
   required: "Background color is required",
@@ -25,13 +25,9 @@ const inputRules = {
 };
 
 export const CustomThemeSelector: React.FC = observer(() => {
-  const {
-    userProfile: { data: userProfile },
-  } = useUser();
-
-  const userTheme: any = userProfile?.theme;
-  // hooks
   const { setTheme } = useTheme();
+  // hooks
+  const { data: userProfile, updateUserTheme } = useUserProfile();
 
   const {
     control,
@@ -40,17 +36,18 @@ export const CustomThemeSelector: React.FC = observer(() => {
     watch,
   } = useForm<IUserTheme>({
     defaultValues: {
-      background: userTheme?.background !== "" ? userTheme?.background : "#0d101b",
-      text: userTheme?.text !== "" ? userTheme?.text : "#c5c5c5",
-      primary: userTheme?.primary !== "" ? userTheme?.primary : "#3f76ff",
-      sidebarBackground: userTheme?.sidebarBackground !== "" ? userTheme?.sidebarBackground : "#0d101b",
-      sidebarText: userTheme?.sidebarText !== "" ? userTheme?.sidebarText : "#c5c5c5",
-      darkPalette: userTheme?.darkPalette || false,
-      palette: userTheme?.palette !== "" ? userTheme?.palette : "",
+      background: userProfile?.theme?.background !== "" ? userProfile?.theme?.background : "#0d101b",
+      text: userProfile?.theme?.text !== "" ? userProfile?.theme?.text : "#c5c5c5",
+      primary: userProfile?.theme?.primary !== "" ? userProfile?.theme?.primary : "#3f76ff",
+      sidebarBackground:
+        userProfile?.theme?.sidebarBackground !== "" ? userProfile?.theme?.sidebarBackground : "#0d101b",
+      sidebarText: userProfile?.theme?.sidebarText !== "" ? userProfile?.theme?.sidebarText : "#c5c5c5",
+      darkPalette: userProfile?.theme?.darkPalette || false,
+      palette: userProfile?.theme?.palette !== "" ? userProfile?.theme?.palette : "",
     },
   });
 
-  const handleUpdateTheme = async (formData: any) => {
+  const handleUpdateTheme = async (formData: Partial<IUserTheme>) => {
     const payload: IUserTheme = {
       background: formData.background,
       text: formData.text,
@@ -61,12 +58,22 @@ export const CustomThemeSelector: React.FC = observer(() => {
       palette: `${formData.background},${formData.text},${formData.primary},${formData.sidebarBackground},${formData.sidebarText}`,
       theme: "custom",
     };
-
     setTheme("custom");
 
-    console.log(payload);
+    const updateCurrentUserThemePromise = updateUserTheme(payload);
+    setPromiseToast(updateCurrentUserThemePromise, {
+      loading: "Updating theme...",
+      success: {
+        title: "Success!",
+        message: () => "Theme updated successfully!",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Failed to Update the theme",
+      },
+    });
 
-    // return updateUserProfile({ theme: payload });
+    return;
   };
 
   const handleValueChange = (val: string | undefined, onChange: any) => {

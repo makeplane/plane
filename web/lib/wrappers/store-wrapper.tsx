@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 // hooks
-import { useAppRouter, useAppTheme, useUser } from "@/hooks/store";
+import { useAppRouter, useAppTheme, useUserProfile } from "@/hooks/store";
 
 type TStoreWrapper = {
   children: ReactNode;
@@ -20,9 +20,7 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
   // store hooks
   const { setQuery } = useAppRouter();
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
-  const {
-    userProfile: { data: userProfile },
-  } = useUser();
+  const { data: userProfile } = useUserProfile();
   // states
   const [dom, setDom] = useState<undefined | HTMLElement>();
 
@@ -40,14 +38,19 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
    * Setting up the theme of the user by fetching it from local storage
    */
   useEffect(() => {
-    if (!userProfile) return;
-    if (window) setDom(window.document?.querySelector<HTMLElement>("[data-theme='custom']") || undefined);
+    if (!userProfile?.theme?.theme) return;
+    if (window) setDom(() => window.document?.querySelector<HTMLElement>("[data-theme='custom']") || undefined);
 
     setTheme(userProfile?.theme?.theme || "system");
     if (userProfile?.theme?.theme === "custom" && userProfile?.theme?.palette && dom)
-      applyTheme(userProfile?.theme?.palette, false);
+      applyTheme(
+        userProfile?.theme?.palette !== ",,,,"
+          ? userProfile?.theme?.palette
+          : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+        false
+      );
     else unsetCustomCssVariables();
-  }, [userProfile, setTheme, dom]);
+  }, [userProfile, userProfile?.theme?.theme, userProfile?.theme?.palette, setTheme, dom]);
 
   useEffect(() => {
     if (!router.query) return;

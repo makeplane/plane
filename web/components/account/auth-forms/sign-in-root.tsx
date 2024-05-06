@@ -48,7 +48,15 @@ export const SignInAuthRoot = observer(() => {
         error_code?.toString() as EAuthenticationErrorCodes,
         error_message?.toString()
       );
-      if (errorhandler) setErrorInfo(errorhandler);
+      if (errorhandler) {
+        if (errorhandler?.type === EErrorAlertType.TOAST_ALERT) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: errorhandler?.title,
+            message: errorhandler?.message as string,
+          });
+        } else setErrorInfo(errorhandler);
+      }
     }
   }, [error_code, error_message]);
 

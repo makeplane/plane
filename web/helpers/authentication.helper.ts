@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export enum EPageTypes {
   "PUBLIC" = "PUBLIC",
   "NON_AUTHENTICATED" = "NON_AUTHENTICATED",
@@ -35,11 +37,6 @@ export enum EAuthenticationErrorCodes {
   REQUIRED_EMAIL_PASSWORD_FIRST_NAME = "REQUIRED_EMAIL_PASSWORD_FIRST_NAME",
   REQUIRED_EMAIL_PASSWORD = "REQUIRED_EMAIL_PASSWORD",
   EMAIL_CODE_REQUIRED = "EMAIL_CODE_REQUIRED",
-  // inline local errors
-  INLINE_EMAIL = "INLINE_EMAIL",
-  INLINE_PASSWORD = "INLINE_PASSWORD",
-  INLINE_FIRST_NAME = "INLINE_FIRST_NAME",
-  INLINE_EMAIL_CODE = "INLINE_EMAIL_CODE",
 }
 
 export enum EErrorAlertType {
@@ -51,7 +48,64 @@ export enum EErrorAlertType {
   INLINE_EMAIL_CODE = "INLINE_EMAIL_CODE",
 }
 
-export type TAuthErrorInfo = { type: EErrorAlertType; message: string };
+export type TAuthErrorInfo = { type: EErrorAlertType; title: string; message: ReactNode };
+
+const errorCodeMessages: { [key in EAuthenticationErrorCodes]: { title: string; message: ReactNode } } = {
+  [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {
+    title: `Instance not configured`,
+    message: `Instance not configured. Please contact your administrator.`,
+  },
+  [EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED]: {
+    title: `SMTP not configured`,
+    message: `SMTP not configured. Please contact your administrator.`,
+  },
+  [EAuthenticationErrorCodes.AUTHENTICATION_FAILED]: {
+    title: `Authentication failed.`,
+    message: `Authentication failed. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.INVALID_TOKEN]: { title: `Invalid token.`, message: `Invalid token. Please try again.` },
+  [EAuthenticationErrorCodes.EXPIRED_TOKEN]: { title: `Expired token.`, message: `Expired token. Please try again.` },
+  [EAuthenticationErrorCodes.IMPROPERLY_CONFIGURED]: {
+    title: `Improperly configured.`,
+    message: `Improperly configured. Please contact your administrator.`,
+  },
+  [EAuthenticationErrorCodes.OAUTH_PROVIDER_ERROR]: {
+    title: `OAuth provider error.`,
+    message: `OAuth provider error. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.INVALID_EMAIL]: {
+    title: `Invalid email.`,
+    message: `Invalid email. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.INVALID_PASSWORD]: {
+    title: `Invalid password.`,
+    message: `Invalid password. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
+    title: `User does not exist.`,
+    message: `User does not exist. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.ADMIN_ALREADY_EXIST]: {
+    title: `Admin already exists.`,
+    message: `Admin already exists. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.USER_ALREADY_EXIST]: {
+    title: `User already exists.`,
+    message: `User already exists. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME]: {
+    title: `Missing fields.`,
+    message: `Email, password, and first name are required.`,
+  },
+  [EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD]: {
+    title: `Missing fields.`,
+    message: `Email and password are required.`,
+  },
+  [EAuthenticationErrorCodes.EMAIL_CODE_REQUIRED]: {
+    title: `Missing fields.`,
+    message: `Email and code are required.`,
+  },
+};
 
 export const authErrorHandler = (
   errorCode: EAuthenticationErrorCodes,
@@ -67,49 +121,28 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.OAUTH_PROVIDER_ERROR,
   ];
   const bannerAlertErrorCodes = [
+    EAuthenticationErrorCodes.INVALID_EMAIL,
+    EAuthenticationErrorCodes.INVALID_PASSWORD,
     EAuthenticationErrorCodes.USER_DOES_NOT_EXIST,
     EAuthenticationErrorCodes.ADMIN_ALREADY_EXIST,
     EAuthenticationErrorCodes.USER_ALREADY_EXIST,
+    EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME,
+    EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD,
+    EAuthenticationErrorCodes.EMAIL_CODE_REQUIRED,
   ];
-  const inlineFirstNameErrorCodes = [EAuthenticationErrorCodes.INLINE_FIRST_NAME];
-  const inlineEmailErrorCodes = [EAuthenticationErrorCodes.INLINE_EMAIL];
-  const inlineEmailCodeErrorCodes = [EAuthenticationErrorCodes.INLINE_EMAIL_CODE];
-  const inlinePasswordErrorCodes = [EAuthenticationErrorCodes.INLINE_PASSWORD];
 
   if (toastAlertErrorCodes.includes(errorCode))
     return {
       type: EErrorAlertType.TOAST_ALERT,
-      message: errorMessage || "Something went wrong. Please try again.",
+      title: errorCodeMessages[errorCode]?.title || "Error",
+      message: errorMessage || errorCodeMessages[errorCode]?.message || "Something went wrong. Please try again.",
     };
 
   if (bannerAlertErrorCodes.includes(errorCode))
     return {
       type: EErrorAlertType.BANNER_ALERT,
-      message: errorMessage || "Something went wrong. Please try again.",
-    };
-
-  if (inlineFirstNameErrorCodes.includes(errorCode))
-    return {
-      type: EErrorAlertType.INLINE_FIRST_NAME,
-      message: errorMessage || "Something went wrong. Please try again.",
-    };
-
-  if (inlineEmailErrorCodes.includes(errorCode))
-    return {
-      type: EErrorAlertType.INLINE_EMAIL,
-      message: errorMessage || "Something went wrong. Please try again.",
-    };
-
-  if (inlinePasswordErrorCodes.includes(errorCode))
-    return {
-      type: EErrorAlertType.INLINE_PASSWORD,
-      message: errorMessage || "Something went wrong. Please try again.",
-    };
-
-  if (inlineEmailCodeErrorCodes.includes(errorCode))
-    return {
-      type: EErrorAlertType.INLINE_EMAIL_CODE,
-      message: errorMessage || "Something went wrong. Please try again.",
+      title: errorCodeMessages[errorCode]?.title || "Error",
+      message: errorMessage || errorCodeMessages[errorCode]?.message || "Something went wrong. Please try again.",
     };
 
   return undefined;
