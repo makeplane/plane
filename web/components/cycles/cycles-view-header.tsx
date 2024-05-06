@@ -1,6 +1,9 @@
 import { useCallback, useRef, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
+// icons
 import { ListFilter, Search, X } from "lucide-react";
+// headless ui
 import { Tab } from "@headlessui/react";
 // types
 import { TCycleFilters } from "@plane/types";
@@ -75,6 +78,13 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
     }
   };
 
+  const appliedFilters: TCycleFilters = {};
+  Object.entries(currentProjectFilters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    appliedFilters[key as keyof TCycleFilters] = value;
+  });
+
   return (
     <div className="h-[50px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-custom-border-200 px-6 sm:pb-0">
       <Tab.List as="div" className="flex items-center overflow-x-scroll">
@@ -135,7 +145,12 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
               </button>
             )}
           </div>
-          <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+          <FiltersDropdown
+            icon={<ListFilter className="h-3 w-3" />}
+            title="Filters"
+            placement="bottom-end"
+            isFiltersApplied={!isEmpty(appliedFilters)}
+          >
             <CycleFiltersSelection filters={currentProjectFilters ?? {}} handleFiltersUpdate={handleFilters} />
           </FiltersDropdown>
           <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">

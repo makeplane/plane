@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
@@ -45,6 +46,14 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
     [filters.filters, updateFilters]
   );
 
+  const appliedFilters: { [key: string]: string[] | boolean | null | undefined } = {};
+  Object.entries(filters?.filters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+
+    appliedFilters[key] = Array.isArray(value) ? value : [String(value)];
+  });
+
   return (
     <>
       <div className="flex-shrink-0 h-[50px] w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
@@ -59,7 +68,12 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
               if (val.order) updateFilters("sortBy", val.order);
             }}
           />
-          <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+          <FiltersDropdown
+            icon={<ListFilter className="h-3 w-3" />}
+            title="Filters"
+            placement="bottom-end"
+            isFiltersApplied={!isEmpty(appliedFilters)}
+          >
             <PageFiltersSelection
               filters={filters}
               handleFiltersUpdate={updateFilters}

@@ -1,16 +1,22 @@
 import { useCallback, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+// icons
 import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-// hooks
+// ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
+// components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 import { ProjectLogo } from "@/components/project";
+// constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import {
   useApplication,
   useEventTracker,
@@ -21,12 +27,7 @@ import {
   useMember,
 } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
-// components
-// ui
-// types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// constants
-// helper
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
   // states
@@ -109,6 +110,13 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
       : currentProjectDetails?.total_issues
     : undefined;
 
+  const appliedFilters: IIssueFilterOptions = {};
+  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    appliedFilters[key as keyof IIssueFilterOptions] = value;
+  });
+
   return (
     <>
       <ProjectAnalyticsModal
@@ -180,7 +188,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
             onChange={(layout) => handleLayoutChange(layout)}
             selectedLayout={activeLayout}
           />
-          <FiltersDropdown title="Filters" placement="bottom-end">
+          <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={!isEmpty(appliedFilters)}>
             <FilterSelection
               filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}

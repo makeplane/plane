@@ -1,20 +1,26 @@
 import { useCallback, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-// components
+// icons
 import { ArrowRight, Plus, PanelRight } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+// ui
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/ui";
+// components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 import { ProjectLogo } from "@/components/project";
+// constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { truncateText } from "@/helpers/string.helper";
+// hooks
 import {
   useApplication,
   useEventTracker,
@@ -27,12 +33,7 @@ import {
   useIssues,
 } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
-// ui
-// icons
-// helpers
-// types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// constants
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
@@ -152,6 +153,13 @@ export const CycleIssuesHeader: React.FC = observer(() => {
       : cycleDetails.total_issues
     : undefined;
 
+  const appliedFilters: IIssueFilterOptions = {};
+  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    appliedFilters[key as keyof IIssueFilterOptions] = value;
+  });
+
   return (
     <>
       <ProjectAnalyticsModal
@@ -239,7 +247,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />
-            <FiltersDropdown title="Filters" placement="bottom-end">
+            <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={!isEmpty(appliedFilters)}>
               <FilterSelection
                 filters={issueFilters?.filters ?? {}}
                 handleFiltersUpdate={handleFiltersUpdate}

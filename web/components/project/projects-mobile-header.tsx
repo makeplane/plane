@@ -1,14 +1,15 @@
 import { useCallback } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 // icons
 import { ChevronDown, ListFilter } from "lucide-react";
 // types
 import { TProjectFilters } from "@plane/types";
 // hooks
+import { FiltersDropdown } from "@/components/issues/issue-layouts";
+import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project/dropdowns";
+// hooks
 import { useApplication, useMember, useProjectFilter } from "@/hooks/store";
-// components
-import { FiltersDropdown } from "../issues";
-import { ProjectFiltersSelection, ProjectOrderByDropdown } from "./dropdowns";
 
 const ProjectsMobileHeader = observer(() => {
   const {
@@ -44,6 +45,13 @@ const ProjectsMobileHeader = observer(() => {
     [filters, updateFilters, workspaceSlug]
   );
 
+  const appliedFilters: TProjectFilters = {};
+  Object.entries(filters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    appliedFilters[key as keyof TProjectFilters] = value;
+  });
+
   return (
     <div className="flex py-2 border-b border-custom-border-200 md:hidden bg-custom-background-100 w-full">
       <ProjectOrderByDropdown
@@ -68,6 +76,7 @@ const ProjectsMobileHeader = observer(() => {
               <ChevronDown className="h-3 w-3" strokeWidth={2} />
             </div>
           }
+          isFiltersApplied={!isEmpty(appliedFilters)}
         >
           <ProjectFiltersSelection
             displayFilters={displayFilters ?? {}}

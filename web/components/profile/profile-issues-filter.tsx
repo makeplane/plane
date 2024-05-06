@@ -1,13 +1,15 @@
 import { useCallback } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
-// hooks
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { useIssues, useLabel } from "@/hooks/store";
 // constants
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// hooks
+import { useIssues, useLabel } from "@/hooks/store";
 
 export const ProfileIssuesFilter = observer(() => {
   // router
@@ -93,6 +95,13 @@ export const ProfileIssuesFilter = observer(() => {
     [workspaceSlug, updateFilters, userId]
   );
 
+  const appliedFilters: IIssueFilterOptions = {};
+  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    appliedFilters[key as keyof IIssueFilterOptions] = value;
+  });
+
   return (
     <div className="relative flex items-center justify-end gap-2">
       <LayoutSelection
@@ -101,7 +110,7 @@ export const ProfileIssuesFilter = observer(() => {
         selectedLayout={activeLayout}
       />
 
-      <FiltersDropdown title="Filters" placement="bottom-end">
+      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={!isEmpty(appliedFilters)}>
         <FilterSelection
           layoutDisplayFiltersOptions={
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined

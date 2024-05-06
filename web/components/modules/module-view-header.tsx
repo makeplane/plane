@@ -1,7 +1,10 @@
 import React, { FC, useCallback, useRef, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// icons
 import { ListFilter, Search, X } from "lucide-react";
+// helpers
 import { cn } from "@plane/editor-core";
 // types
 import { TModuleFilters } from "@plane/types";
@@ -79,6 +82,14 @@ export const ModuleViewHeader: FC = observer(() => {
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
+
+  const appliedFilters: TModuleFilters = {};
+  Object.entries(filters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    appliedFilters[key as keyof TModuleFilters] = value;
+  });
+
   return (
     <div className="hidden h-full sm:flex items-center gap-3 self-end">
       <div className="flex items-center">
@@ -135,7 +146,12 @@ export const ModuleViewHeader: FC = observer(() => {
           });
         }}
       />
-      <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+      <FiltersDropdown
+        icon={<ListFilter className="h-3 w-3" />}
+        title="Filters"
+        placement="bottom-end"
+        isFiltersApplied={!isEmpty(appliedFilters)}
+      >
         <ModuleFiltersSelection
           displayFilters={displayFilters ?? {}}
           filters={filters ?? {}}

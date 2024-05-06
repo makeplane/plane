@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
@@ -99,6 +100,14 @@ const ProfileIssuesMobileHeader = observer(() => {
     },
     [workspaceSlug, updateFilters, userId]
   );
+
+  const appliedFilters: IIssueFilterOptions = {};
+  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    appliedFilters[key as keyof IIssueFilterOptions] = value;
+  });
+
   return (
     <div className="flex justify-evenly border-b border-custom-border-200 py-2 md:hidden">
       <CustomMenu
@@ -135,6 +144,7 @@ const ProfileIssuesMobileHeader = observer(() => {
               <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
             </span>
           }
+          isFiltersApplied={!isEmpty(appliedFilters)}
         >
           <FilterSelection
             layoutDisplayFiltersOptions={

@@ -1,19 +1,20 @@
 import { useCallback, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import router from "next/router";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-// hooks
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
-import { useIssues, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
-// types
 // constants
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+// hooks
+import { useIssues, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 
 export const ModuleMobileHeader = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -86,6 +87,13 @@ export const ModuleMobileHeader = observer(() => {
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
 
+  const appliedFilters: IIssueFilterOptions = {};
+  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    appliedFilters[key as keyof IIssueFilterOptions] = value;
+  });
+
   return (
     <div className="block md:hidden">
       <ProjectAnalyticsModal
@@ -125,6 +133,7 @@ export const ModuleMobileHeader = observer(() => {
                 <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
               </span>
             }
+            isFiltersApplied={!isEmpty(appliedFilters)}
           >
             <FilterSelection
               filters={issueFilters?.filters ?? {}}

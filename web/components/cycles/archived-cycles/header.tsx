@@ -1,4 +1,5 @@
 import { FC, useCallback, useRef, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // icons
@@ -61,6 +62,13 @@ export const ArchivedCyclesHeader: FC = observer(() => {
     }
   };
 
+  const appliedFilters: TCycleFilters = {};
+  Object.entries(currentProjectArchivedFilters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    appliedFilters[key as keyof TCycleFilters] = value;
+  });
+
   return (
     <div className="group relative flex border-b border-custom-border-200">
       <div className="flex w-full items-center overflow-x-auto px-4 gap-2 horizontal-scrollbar scrollbar-sm">
@@ -110,7 +118,12 @@ export const ArchivedCyclesHeader: FC = observer(() => {
             </button>
           )}
         </div>
-        <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+        <FiltersDropdown
+          icon={<ListFilter className="h-3 w-3" />}
+          title="Filters"
+          placement="bottom-end"
+          isFiltersApplied={!isEmpty(appliedFilters)}
+        >
           <CycleFiltersSelection
             filters={currentProjectArchivedFilters ?? {}}
             handleFiltersUpdate={handleFilters}

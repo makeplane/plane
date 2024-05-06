@@ -1,18 +1,21 @@
 import { useCallback, useRef, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
+// icons
 import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
+// types
 import { TProjectFilters } from "@plane/types";
-// hooks
-// components
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
-// helpers
-// constants
 import { FiltersDropdown } from "@/components/issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
+// constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useApplication, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
@@ -77,6 +80,13 @@ export const ProjectsHeader = observer(() => {
       else setIsSearchOpen(false);
     }
   };
+
+  const appliedFilters: TProjectFilters = {};
+  Object.entries(filters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    appliedFilters[key as keyof TProjectFilters] = value;
+  });
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -145,7 +155,12 @@ export const ProjectsHeader = observer(() => {
               });
             }}
           />
-          <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+          <FiltersDropdown
+            icon={<ListFilter className="h-3 w-3" />}
+            title="Filters"
+            placement="bottom-end"
+            isFiltersApplied={!isEmpty(appliedFilters)}
+          >
             <ProjectFiltersSelection
               displayFilters={displayFilters ?? {}}
               filters={filters ?? {}}
