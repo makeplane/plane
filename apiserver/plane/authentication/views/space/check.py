@@ -1,3 +1,7 @@
+# Django imports
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+
 # Third party imports
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -28,6 +32,24 @@ class EmailCheckEndpoint(APIView):
             )
 
         email = request.data.get("email", False)
+
+        # Return error if email is not present
+        if not email:
+            return Response(
+                {"error": "Email is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Validate email
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response(
+                {
+                    "error": "Email is invalid please provide a valid email address"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Check if a user already exists with the given email
         existing_user = User.objects.filter(email=email).first()
