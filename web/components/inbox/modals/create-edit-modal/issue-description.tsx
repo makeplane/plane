@@ -22,7 +22,7 @@ type TInboxIssueDescription = {
 
 // TODO: have to implement GPT Assistance
 export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props) => {
-  const {containerClassName, workspaceSlug, projectId, workspaceId, data, handleData, editorRef } = props;
+  const { containerClassName, workspaceSlug, projectId, workspaceId, data, handleData, editorRef } = props;
   // hooks
   const { loader } = useProjectInbox();
 
