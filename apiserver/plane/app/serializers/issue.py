@@ -442,7 +442,7 @@ class IssueLinkSerializer(BaseSerializer):
             raise serializers.ValidationError("Invalid URL format.")
 
         # Check URL scheme
-        if not value.startswith(('http://', 'https://')):
+        if not value.startswith(("http://", "https://")):
             raise serializers.ValidationError("Invalid URL scheme.")
 
         return value
