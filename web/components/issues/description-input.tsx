@@ -15,6 +15,7 @@ import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { useWorkspace } from "@/hooks/store";
 
 export type IssueDescriptionInputProps = {
+  containerClassName?: string;
   workspaceSlug: string;
   projectId: string;
   issueId: string;
@@ -28,6 +29,7 @@ export type IssueDescriptionInputProps = {
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
   const {
+    containerClassName,
     workspaceSlug,
     projectId,
     issueId,
@@ -110,11 +112,12 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                 placeholder={
                   placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
                 }
+                containerClassName={containerClassName}
               />
             ) : (
               <RichTextReadOnlyEditor
                 initialValue={localIssueDescription.description_html ?? ""}
-                containerClassName="!p-0 !pt-2 text-custom-text-200 min-h-[150px]"
+                containerClassName={containerClassName}
               />
             )
           }

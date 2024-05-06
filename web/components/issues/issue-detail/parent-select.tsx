@@ -47,7 +47,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
     try {
       await issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: _issueId });
       await issueOperations.fetch(workspaceSlug, projectId, issueId);
-      toggleParentIssueModal(false);
+      toggleParentIssueModal(issueId);
     } catch (error) {
       console.error("something went wrong while fetching the issue");
     }
@@ -79,8 +79,8 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
       <ParentIssuesListModal
         projectId={projectId}
         issueId={issueId}
-        isOpen={isParentIssueModalOpen}
-        handleClose={() => toggleParentIssueModal(false)}
+        isOpen={isParentIssueModalOpen === issueId}
+        handleClose={() => toggleParentIssueModal(null)}
         onChange={(issue: any) => handleParentIssue(issue?.id)}
       />
       <button
@@ -94,7 +94,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
           },
           className
         )}
-        onClick={() => toggleParentIssueModal(true)}
+        onClick={() => toggleParentIssueModal(issue.id)}
         disabled={disabled}
       >
         {issue.parent_id && parentIssue ? (

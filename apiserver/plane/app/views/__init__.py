@@ -29,7 +29,7 @@ from .user.base import (
 )
 
 
-from .base import BaseAPIView, BaseViewSet, WebhookMixin
+from .base import BaseAPIView, BaseViewSet
 
 from .workspace.base import (
     WorkSpaceViewSet,
