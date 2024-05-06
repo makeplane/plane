@@ -128,7 +128,7 @@ def extract_mentions(issue_instance):
             "mention-component", attrs={"target": "users"}
         )
 
-        mentions = [mention_tag["id"] for mention_tag in mention_tags]
+        mentions = [mention_tag["entity_identifier"] for mention_tag in mention_tags]
 
         return list(set(mentions))
     except Exception:
@@ -144,7 +144,7 @@ def extract_comment_mentions(comment_value):
             "mention-component", attrs={"target": "users"}
         )
         for mention_tag in mentions_tags:
-            mentions.append(mention_tag["id"])
+            mentions.append(mention_tag["entity_identifier"])
         return list(set(mentions))
     except Exception:
         return []
@@ -663,9 +663,7 @@ def notifications(
                                             "old_value": str(
                                                 last_activity.old_value
                                             ),
-                                            "activity_time": issue_activity.get(
-                                                "created_at"
-                                            ),
+                                            "activity_time": str(last_activity.created_at),
                                         },
                                     },
                                 )
