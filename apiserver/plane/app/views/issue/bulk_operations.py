@@ -80,7 +80,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 issue.priority = properties.get("priority")
 
             # State
-            if properties.get("state", False):
+            if properties.get("state_id", False):
                 bulk_issue_activities.append(
                     {
                         "type": "issue.activity.updated",
@@ -96,7 +96,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                         "epoch": epoch,
                     }
                 )
-                issue.state_id = properties.get("state")
+                issue.state_id = properties.get("state_id")
 
             # Start date
             if properties.get("start_date", False):
@@ -139,8 +139,8 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             bulk_update_issues.append(issue)
 
             # Labels
-            if properties.get("labels", []):
-                for label_id in properties.get("labels", []):
+            if properties.get("label_ids", []):
+                for label_id in properties.get("label_ids", []):
                     bulk_update_issue_labels.append(
                         IssueLabel(
                             issue=issue,
@@ -154,7 +154,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
-                            {"label_ids": properties.get("labels", [])}
+                            {"label_ids": properties.get("label_ids", [])}
                         ),
                         "current_instance": json.dumps(
                             {
@@ -172,9 +172,9 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 )
 
             # Assignees
-            if properties.get("assignees", []):
+            if properties.get("assignee_ids", []):
                 for assignee_id in properties.get(
-                    "assignees", issue.assignees
+                    "assignee_ids", issue.assignees
                 ):
                     bulk_update_issue_assignees.append(
                         IssueAssignee(
@@ -189,7 +189,11 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
-                            {"assignee_ids": properties.get("assignees", [])}
+                            {
+                                "assignee_ids": properties.get(
+                                    "assignee_ids", []
+                                )
+                            }
                         ),
                         "current_instance": json.dumps(
                             {
