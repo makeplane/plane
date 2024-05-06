@@ -11,6 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.19",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@tailwindcss/typography": "^0.5.9",

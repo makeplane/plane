@@ -6,6 +6,8 @@ import { Controller, Control } from "react-hook-form";
 import { Input } from "@plane/ui";
 // icons
 import { Eye, EyeOff } from "lucide-react";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 type Props = {
   control: Control<any>;
@@ -51,7 +53,9 @@ export const ControllerInput: React.FC<Props> = (props) => {
               ref={ref}
               hasError={error}
               placeholder={placeholder}
-              className="w-full rounded-md font-medium"
+              className={cn("w-full rounded-md font-medium", {
+                "pr-10": type === "password",
+              })}
             />
           )}
         />
@@ -72,7 +76,7 @@ export const ControllerInput: React.FC<Props> = (props) => {
             </button>
           ))}
       </div>
-      {description && <p className="text-xs text-custom-text-400">{description}</p>}
+      {description && <p className="text-xs text-custom-text-300">{description}</p>}
     </div>
   );
 };
