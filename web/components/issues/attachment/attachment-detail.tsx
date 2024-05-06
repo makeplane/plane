@@ -2,19 +2,19 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
+// ui
 import { Tooltip } from "@plane/ui";
-import { getFileIcon } from "@/components/icons/attachment";
+// icons
+import { getFileIcon } from "@/components/icons";
+// components
+import { IssueAttachmentDeleteModal } from "@/components/issues";
+// helpers
 import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/attachment.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { truncateText } from "@/helpers/string.helper";
+// hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// hooks
-// ui
-// components
-// icons
-// helper
-import { IssueAttachmentDeleteModal } from "./delete-attachment-confirmation-modal";
 // types
 import { TAttachmentOperations } from "./root";
 
@@ -36,24 +36,24 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
     isDeleteAttachmentModalOpen,
     toggleDeleteAttachmentModal,
   } = useIssueDetail();
-  // states
+  // derived values
+  const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
+  // hooks
   const { isMobile } = usePlatformOS();
-  const attachment = attachmentId && getAttachmentById(attachmentId);
 
   if (!attachment) return <></>;
+
   return (
     <>
-      <IssueAttachmentDeleteModal
-        isOpen={isDeleteAttachmentModalOpen}
-        setIsOpen={() => toggleDeleteAttachmentModal(false)}
-        handleAttachmentOperations={handleAttachmentOperations}
-        data={attachment}
-      />
-
-      <div
-        key={attachmentId}
-        className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-200 bg-custom-background-100 px-4 py-2 text-sm"
-      >
+      {isDeleteAttachmentModalOpen === attachment.id && (
+        <IssueAttachmentDeleteModal
+          isOpen={!!isDeleteAttachmentModalOpen}
+          onClose={() => toggleDeleteAttachmentModal(null)}
+          handleAttachmentOperations={handleAttachmentOperations}
+          data={attachment}
+        />
+      )}
+      <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-200 bg-custom-background-100 px-4 py-2 text-sm">
         <Link href={attachment.asset} target="_blank" rel="noopener noreferrer">
           <div className="flex items-center gap-3">
             <div className="h-7 w-7">{getFileIcon(getFileExtension(attachment.asset))}</div>
@@ -83,7 +83,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
         </Link>
 
         {!disabled && (
-          <button onClick={() => toggleDeleteAttachmentModal(true)}>
+          <button type="button" onClick={() => toggleDeleteAttachmentModal(attachment.id)}>
             <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
           </button>
         )}

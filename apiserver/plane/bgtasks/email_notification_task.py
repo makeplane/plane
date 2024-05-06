@@ -152,7 +152,7 @@ def process_mention(mention_component):
     soup = BeautifulSoup(mention_component, "html.parser")
     mentions = soup.find_all("mention-component")
     for mention in mentions:
-        user_id = mention["id"]
+        user_id = mention["entity_identifier"]
         user = User.objects.get(pk=user_id)
         user_name = user.display_name
         highlighted_name = f"@{user_name}"

@@ -1,5 +1,6 @@
 # Python imports
 import boto3
+import json
 
 # Django imports
 from django.db import IntegrityError
@@ -14,6 +15,7 @@ from django.db.models import (
 )
 from django.conf import settings
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from rest_framework.response import Response
@@ -22,7 +24,7 @@ from rest_framework import serializers
 from rest_framework.permissions import AllowAny
 
 # Module imports
-from plane.app.views.base import BaseViewSet, BaseAPIView, WebhookMixin
+from plane.app.views.base import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
     ProjectSerializer,
     ProjectListSerializer,
@@ -50,9 +52,10 @@ from plane.db.models import (
     Issue,
 )
 from plane.utils.cache import cache_response
+from plane.bgtasks.webhook_task import model_activity
 
 
-class ProjectViewSet(WebhookMixin, BaseViewSet):
+class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
     webhook_event = "project"
@@ -334,6 +337,17 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     .filter(pk=serializer.data["id"])
                     .first()
                 )
+
+                model_activity.delay(
+                    model_name="project",
+                    model_id=str(project.id),
+                    requested_data=request.data,
+                    current_instance=None,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 serializer = ProjectListSerializer(project)
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
@@ -364,7 +378,9 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             workspace = Workspace.objects.get(slug=slug)
 
             project = Project.objects.get(pk=pk)
-
+            current_instance = json.dumps(
+                ProjectSerializer(project).data, cls=DjangoJSONEncoder
+            )
             if project.archived_at:
                 return Response(
                     {"error": "Archived projects cannot be updated"},
@@ -401,6 +417,16 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
                     .first()
+                )
+
+                model_activity.delay(
+                    model_name="project",
+                    model_id=str(project.id),
+                    requested_data=request.data,
+                    current_instance=current_instance,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
                 )
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)

@@ -141,7 +141,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             disabled={!isEditable}
             issueOperations={issueOperations}
             setIsSubmitting={(value) => setIsSubmitting(value)}
-            containerClassName="-ml-3 border-none"
+            containerClassName="-ml-3 !mb-6 border-none"
           />
         )}
 
