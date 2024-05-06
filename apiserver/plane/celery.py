@@ -34,7 +34,7 @@ app.conf.beat_schedule = {
     },
     "check-every-day-to-delete-api-logs": {
         "task": "plane.bgtasks.api_logs_task.delete_api_logs",
-        "schedule": crontab(hour=8, minute=6),
+        "schedule": crontab(hour=0, minute=0),
     },
 }
 
