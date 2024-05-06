@@ -29,7 +29,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .. import BaseViewSet
+from .. import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
     IssueSerializer,
     IssueFlatSerializer,
@@ -243,7 +243,7 @@ class IssueArchiveViewSet(BaseViewSet):
             issues = user_timezone_converter(
                 issue_queryset, datetime_fields, request.user.user_timezone
             )
-            
+
         return Response(issues, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk=None):
@@ -349,5 +349,50 @@ class IssueArchiveViewSet(BaseViewSet):
         )
         issue.archived_at = None
         issue.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class BulkArchiveIssuesEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def post(self, request, slug, project_id):
+        issue_ids = request.data.get("issue_ids", [])
+
+        if not len(issue_ids):
+            return Response(
+                {"error": "Issue IDs are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        issues = Issue.objects.filter(
+            workspace__slug=slug, project_id=project_id, pk__in=issue_ids
+        )
+        bulk_archive_issues = []
+        for issue in issues:
+            issue_activity.delay(
+                type="issue.activity.updated",
+                requested_data=json.dumps(
+                    {
+                        "archived_at": str(timezone.now().date()),
+                        "automation": False,
+                    }
+                ),
+                actor_id=str(request.user.id),
+                issue_id=str(issue.id),
+                project_id=str(project_id),
+                current_instance=json.dumps(
+                    IssueSerializer(issue).data, cls=DjangoJSONEncoder
+                ),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+            issue.archived_at = timezone.now().date()
+            bulk_archive_issues.append(issue)
+    
+        Issue.objects.bulk_update(bulk_archive_issues, ["archived_at"])
 
         return Response(status=status.HTTP_204_NO_CONTENT)

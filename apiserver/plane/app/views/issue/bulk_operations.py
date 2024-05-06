@@ -29,9 +29,9 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
-        if not issue_ids:
+        if not len(issue_ids):
             return Response(
-                {"error": "issue id is required"},
+                {"error": "Issue IDs are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -136,6 +136,8 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 )
                 issue.target_date = properties.get("target_date")
 
+            bulk_update_issues.append(issue)
+
             # Labels
             if properties.get("labels", []):
                 for label_id in properties.get("labels", []):
@@ -209,7 +211,6 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             bulk_update_issues,
             [
                 "priority",
-                "estimate_point",
                 "start_date",
                 "target_date",
                 "state",
