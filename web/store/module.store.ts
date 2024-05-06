@@ -1,3 +1,4 @@
+import concat from "lodash/concat";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import update from "lodash/update";
@@ -372,13 +373,22 @@ export class ModulesStore implements IModuleStore {
    * @param data
    * @returns ILinkDetails
    */
-  createModuleLink = async (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<ILinkDetails>) =>
-    await this.moduleService.createModuleLink(workspaceSlug, projectId, moduleId, data).then((response) => {
+  createModuleLink = async (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    data: Partial<ILinkDetails>
+  ) => {
+    try {
+      const moduleLink = await this.moduleService.createModuleLink(workspaceSlug, projectId, moduleId, data);
       runInAction(() => {
-        set(this.moduleMap, [moduleId, "link_module"], [response]);
+        update(this.moduleMap, [moduleId, "link_module"], (moduleLinks = []) => concat(moduleLinks, moduleLink));
       });
-      return response;
-    });
+      return moduleLink;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   /**
    * @description updates module link details
@@ -422,14 +432,19 @@ export class ModulesStore implements IModuleStore {
    * @param moduleId
    * @param linkId
    */
-  deleteModuleLink = async (workspaceSlug: string, projectId: string, moduleId: string, linkId: string) =>
-    await this.moduleService.deleteModuleLink(workspaceSlug, projectId, moduleId, linkId).then(() => {
-      const moduleDetails = this.getModuleById(moduleId);
-      const linkModules = moduleDetails?.link_module?.filter((link) => link.id !== linkId);
+  deleteModuleLink = async (workspaceSlug: string, projectId: string, moduleId: string, linkId: string) => {
+    try {
+      const moduleLink = await this.moduleService.deleteModuleLink(workspaceSlug, projectId, moduleId, linkId);
       runInAction(() => {
-        set(this.moduleMap, [moduleId, "link_module"], linkModules);
+        update(this.moduleMap, [moduleId, "link_module"], (moduleLinks = []) =>
+          moduleLinks.filter((link: ILinkDetails) => link.id !== linkId)
+        );
       });
-    });
+      return moduleLink;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   /**
    * @description adds a module to favorites
