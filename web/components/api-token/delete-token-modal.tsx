@@ -57,7 +57,7 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
       .catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error",
+          title: "Error!",
           message: err?.message ?? "Something went wrong. Please try again.",
         })
       )

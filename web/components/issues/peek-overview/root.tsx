@@ -100,7 +100,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               path: router.asPath,
             });
             setToast({
-              title: "Issue update failed",
+              title: "Error!",
               type: TOAST_TYPE.ERROR,
               message: "Issue update failed",
             });
@@ -110,7 +110,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         try {
           removeIssue(workspaceSlug, projectId, issueId);
           setToast({
-            title: "Issue deleted successfully",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Issue deleted successfully",
           });
@@ -121,7 +121,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch (error) {
           setToast({
-            title: "Issue delete failed",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Issue delete failed",
           });

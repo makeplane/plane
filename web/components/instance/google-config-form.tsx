@@ -40,7 +40,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
       .updateInstanceConfigurations(payload)
       .then(() =>
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "Google Configuration Settings updated successfully",
         })
