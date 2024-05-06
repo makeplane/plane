@@ -5,6 +5,7 @@ import json
 from django.core import serializers
 from django.db.models import Count, F, Func, OuterRef, Q, Sum
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
@@ -26,10 +27,11 @@ from plane.db.models import (
 )
 from plane.utils.analytics_plot import burndown_plot
 
-from .base import BaseAPIView, WebhookMixin
+from .base import BaseAPIView
+from plane.bgtasks.webhook_task import model_activity
 
 
-class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
+class CycleAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to cycle.
@@ -277,6 +279,16 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                     project_id=project_id,
                     owned_by=request.user,
                 )
+                # Send the model activity
+                model_activity.delay(
+                    model_name="cycle",
+                    model_id=str(serializer.data["id"]),
+                    requested_data=request.data,
+                    current_instance=None,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
                 )
@@ -295,6 +307,11 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
         cycle = Cycle.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+
+        current_instance = json.dumps(
+            CycleSerializer(cycle).data, cls=DjangoJSONEncoder
+        )
+
         if cycle.archived_at:
             return Response(
                 {"error": "Archived cycle cannot be edited"},
@@ -344,6 +361,17 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                     status=status.HTTP_409_CONFLICT,
                 )
             serializer.save()
+
+            # Send the model activity
+            model_activity.delay(
+                model_name="cycle",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -515,7 +543,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
+class CycleIssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`,
     and `destroy` actions related to cycle issues.
