@@ -168,6 +168,10 @@ from .authentication import (
     MagicSignInEndpoint,
 )
 
+from .issue.bulk_operations import (
+    BulkIssueOperationsEndpoint
+)
+
 from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,

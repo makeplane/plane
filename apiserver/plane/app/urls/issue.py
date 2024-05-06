@@ -19,6 +19,7 @@ from plane.app.views import (
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
+    BulkIssueOperationsEndpoint,
 )
 
 urlpatterns = [
@@ -297,5 +298,10 @@ urlpatterns = [
             }
         ),
         name="project-issue-draft",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-operation-issues/",
+        BulkIssueOperationsEndpoint.as_view(),
+        name="bulk-operations-issues",
     ),
 ]
