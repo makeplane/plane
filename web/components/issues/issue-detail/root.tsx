@@ -26,6 +26,7 @@ export type TIssueOperations = {
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restore?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  addCycleToIssue?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
@@ -62,6 +63,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     updateIssue,
     removeIssue,
     archiveIssue,
+    addCycleToIssue,
     addIssueToCycle,
     removeIssueFromCycle,
     addModulesToIssue,
@@ -154,6 +156,35 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: "Issue details page" },
+            path: router.asPath,
+          });
+        }
+      },
+      addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+        try {
+          await addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { issueId, state: "SUCCESS", element: "Issue detail page" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
+            path: router.asPath,
+          });
+        } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be added to the cycle. Please try again.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { state: "FAILED", element: "Issue detail page" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
             path: router.asPath,
           });
         }

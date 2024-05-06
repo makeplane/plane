@@ -1,19 +1,18 @@
 import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+// types
 import { TIssue } from "@plane/types";
-// hooks
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import { IssueView } from "@/components/issues";
 // ui
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
+import { IssueView } from "@/components/issues";
+// constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
-// components
-// types
-// constants
 
 interface IIssuePeekOverview {
   is_archived?: boolean;
@@ -60,8 +59,14 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     archiveIssue,
     issue: { getIssueById, fetchIssue },
   } = useIssueDetail();
-  const { addIssueToCycle, removeIssueFromCycle, addModulesToIssue, removeIssueFromModule, removeModulesFromIssue } =
-    useIssueDetail();
+  const {
+    addCycleToIssue,
+    addIssueToCycle,
+    removeIssueFromCycle,
+    addModulesToIssue,
+    removeIssueFromModule,
+    removeModulesFromIssue,
+  } = useIssueDetail();
   const { captureIssueEvent } = useEventTracker();
   // state
   const [loader, setLoader] = useState(false);
@@ -170,6 +175,36 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_RESTORED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        }
+      },
+      addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+        try {
+          console.log("Peek adding...");
+          await addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
+            path: router.asPath,
+          });
+        } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be added to the cycle. Please try again.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { state: "FAILED", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
             path: router.asPath,
           });
         }

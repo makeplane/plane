@@ -59,6 +59,7 @@ export interface ICycleIssues {
     fetchAddedIssues?: boolean
   ) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
+  addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   transferIssuesFromCycle: (
     workspaceSlug: string,
     projectId: string,
@@ -101,6 +102,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       quickAddIssue: action,
       addIssueToCycle: action,
       removeIssueFromCycle: action,
+      addCycleToIssue: action,
       transferIssuesFromCycle: action,
       fetchActiveCycleIssues: action,
     });
@@ -296,16 +298,19 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     issueIds: string[],
     fetchAddedIssues = true
   ) => {
-    const issueCyclesBeforeUpdate: Record<string, string | null | undefined> = {};
     try {
+      await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
+        issues: issueIds,
+      });
+
+      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
+
       // add the new issue ids to the cycle issues map
       runInAction(() => {
         update(this.issues, cycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, issueIds)));
       });
       issueIds.forEach((issueId) => {
         const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
-        // keep original data backup to restore on error
-        issueCyclesBeforeUpdate[issueId] = issueCycleId;
         // remove issue from previous cycle if it exists
         if (issueCycleId && issueCycleId !== cycleId) {
           runInAction(() => {
@@ -316,29 +321,8 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
         this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId });
       });
 
-      await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
-        issues: issueIds,
-      });
-
-      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
-
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
     } catch (error) {
-      issueIds.forEach((issueId) => {
-        // remove the new issue ids from the cycle issues map
-        runInAction(() => {
-          pull(this.issues[cycleId], issueId);
-        });
-        // get the original cycle id from the backup
-        const issueCycleId = issueCyclesBeforeUpdate[issueId];
-        // add issue back to the previous cycle if it exists
-        if (issueCycleId)
-          runInAction(() => {
-            update(this.issues, issueCycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, [issueId])));
-          });
-        // update the root issue map with the original cycle id
-        this.rootStore.issues.updateIssue(issueId, { cycle_id: issueCycleId ?? null });
-      });
       throw error;
     }
   };
@@ -354,6 +338,43 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
     } catch (error) {
+      throw error;
+    }
+  };
+
+  addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+    const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
+    try {
+      // add the new issue ids to the cycle issues map
+      runInAction(() => {
+        update(this.issues, cycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, [issueId])));
+      });
+      // remove issue from previous cycle if it exists
+      if (issueCycleId && issueCycleId !== cycleId) {
+        runInAction(() => {
+          pull(this.issues[issueCycleId], issueId);
+        });
+      }
+      // update the root issue map with the new cycle id
+      this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId });
+
+      await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
+        issues: [issueId],
+      });
+
+      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+    } catch (error) {
+      // remove the new issue ids from the cycle issues map
+      runInAction(() => {
+        pull(this.issues[cycleId], issueId);
+      });
+      // add issue back to the previous cycle if it exists
+      if (issueCycleId)
+        runInAction(() => {
+          update(this.issues, issueCycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, [issueId])));
+        });
+      // update the root issue map with the original cycle id
+      this.rootStore.issues.updateIssue(issueId, { cycle_id: issueCycleId ?? null });
       throw error;
     }
   };

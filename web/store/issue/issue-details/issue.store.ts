@@ -18,6 +18,7 @@ export interface IIssueStoreActions {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addModulesToIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<any>;
@@ -161,6 +162,16 @@ export class IssueStore implements IIssueStore {
 
   archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.rootIssueDetailStore.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
+
+  addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+    await this.rootIssueDetailStore.rootIssueStore.cycleIssues.addCycleToIssue(
+      workspaceSlug,
+      projectId,
+      cycleId,
+      issueId
+    );
+    await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+  };
 
   addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
     await this.rootIssueDetailStore.rootIssueStore.cycleIssues.addIssueToCycle(
