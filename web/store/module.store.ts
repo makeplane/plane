@@ -377,6 +377,7 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [moduleId, "link_module"], [response]);
       });
+      this.fetchModuleDetails(workspaceSlug, projectId, moduleId);
       return response;
     });
 
@@ -429,6 +430,7 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [moduleId, "link_module"], linkModules);
       });
+      this.fetchModuleDetails(workspaceSlug, projectId, moduleId);
     });
 
   /**
