@@ -3,11 +3,10 @@ import { IUser } from "@plane/types";
 // helpers
 import { EUserStatus, TUserStatus } from "@/helpers";
 // services
-import { UserService } from "services/user.service";
+import { UserService } from "@/services/user.service";
 // root store
 import { RootStore } from "@/store/root-store";
 import { AuthService } from "@/services";
-import { API_BASE_URL } from "@/helpers/common.helper";
 
 export interface IUserStore {
   // observables
@@ -79,7 +78,6 @@ export class UserStore implements IUserStore {
   };
 
   signOut = async () => {
-    await this.authService.signOut(API_BASE_URL);
     this.rootStore.resetOnSignOut();
   };
 }

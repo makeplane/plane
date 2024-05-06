@@ -1,8 +1,7 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
-// services
-import { UserService } from "services/user.service";
-// types
 import { IUserSettings } from "@plane/types";
+// services
+import { UserService } from "@/services/user.service";
 
 type TError = {
   status: string;
@@ -12,14 +11,16 @@ type TError = {
 export interface IUserSettingsStore {
   // observables
   isLoading: boolean;
-  data: IUserSettings;
   error: TError | undefined;
+  data: IUserSettings;
   // actions
   fetchCurrentUserSettings: () => Promise<IUserSettings | undefined>;
 }
 
 export class UserSettingsStore implements IUserSettingsStore {
+  // observables
   isLoading: boolean = false;
+  error: TError | undefined = undefined;
   data: IUserSettings = {
     id: undefined,
     email: undefined,
@@ -31,7 +32,6 @@ export class UserSettingsStore implements IUserSettingsStore {
       invites: undefined,
     },
   };
-  error: TError | undefined = undefined;
   // services
   userService: UserService;
 
@@ -39,8 +39,8 @@ export class UserSettingsStore implements IUserSettingsStore {
     makeObservable(this, {
       // observables
       isLoading: observable.ref,
-      data: observable,
       error: observable,
+      data: observable,
       // actions
       fetchCurrentUserSettings: action,
     });
@@ -49,26 +49,28 @@ export class UserSettingsStore implements IUserSettingsStore {
   }
 
   // actions
+  /**
+   * @description fetches user profile information
+   * @returns {Promise<IUserSettings | undefined>}
+   */
   fetchCurrentUserSettings = async () => {
     try {
       runInAction(() => {
         this.isLoading = true;
         this.error = undefined;
       });
-      const currentUserSettings = await this.userService.currentUserSettings();
+      const userSettings = await this.userService.currentUserSettings();
       runInAction(() => {
         this.isLoading = false;
-        this.data = currentUserSettings;
+        this.data = userSettings;
       });
-
-      return currentUserSettings;
+      return userSettings;
     } catch (error) {
-      console.log("Failed to fetch profile details");
       runInAction(() => {
         this.isLoading = false;
         this.error = {
           status: "error",
-          message: "Failed to fetch instance info",
+          message: "Failed to fetch user settings",
         };
       });
     }

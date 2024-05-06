@@ -11,8 +11,8 @@ import { AuthRoot, UserLoggedIn } from "@/components/accounts";
 import useAuthRedirection from "@/hooks/use-auth-redirection";
 import { useMobxStore } from "@/lib/mobx/store-provider";
 // images
-import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
+import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text-new.png";
 
 export const AuthView = observer(() => {
@@ -46,25 +46,23 @@ export const AuthView = observer(() => {
           {currentUser ? (
             <UserLoggedIn />
           ) : (
-            <div className="relative w-full h-screen overflow-hidden">
+            <div className="relative w-screen h-screen overflow-hidden">
               <div className="absolute inset-0 z-0">
                 <Image
                   src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
-                  className="w-screen min-h-screen object-cover"
+                  className="w-full h-full object-cover"
                   alt="Plane background pattern"
                 />
               </div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28">
+              <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
+                <div className="container mx-auto px-10 lg:px-0 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
                   <div className="flex items-center gap-x-2 py-10">
-                    <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-2" />
+                    <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" />
                     <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
                   </div>
                 </div>
-                <div className="mx-auto h-full">
-                  <div className="h-full overflow-auto px-7 pt-4 sm:px-0">
-                    <AuthRoot />
-                  </div>
+                <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10">
+                  <AuthRoot />
                 </div>
               </div>
             </div>

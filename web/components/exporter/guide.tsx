@@ -18,7 +18,6 @@ import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
 import { EXPORTERS_LIST } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
-import useUserAuth from "@/hooks/use-user-auth";
 // services
 import { IntegrationService } from "@/services/integrations";
 
@@ -33,9 +32,7 @@ const IntegrationGuide = observer(() => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
   // store hooks
-  const { data: currentUser, isLoading: currentUserLoader, profile } = useUser();
-  // custom hooks
-  const {} = useUserAuth({ user: currentUser || null, userProfile: profile?.data, isLoading: currentUserLoader });
+  const { data: currentUser } = useUser();
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,

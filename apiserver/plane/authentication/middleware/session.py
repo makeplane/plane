@@ -38,11 +38,13 @@ class SessionMiddleware(MiddlewareMixin):
             return response
         # First check if we need to delete this cookie.
         # The session should be deleted only if the session is entirely empty.
+        is_admin_path = "instances" in request.path
         cookie_name = (
             settings.ADMIN_SESSION_COOKIE_NAME
-            if "instances" in request.path
+            if is_admin_path
             else settings.SESSION_COOKIE_NAME
         )
+
         if cookie_name in request.COOKIES and empty:
             response.delete_cookie(
                 cookie_name,
@@ -59,11 +61,16 @@ class SessionMiddleware(MiddlewareMixin):
                     max_age = None
                     expires = None
                 else:
-                    max_age = request.session.get_expiry_age()
+                    # Use different max_age based on whether it's an admin cookie
+                    if is_admin_path:
+                        max_age = settings.ADMIN_SESSION_COOKIE_AGE
+                    else:
+                        max_age = request.session.get_expiry_age()
+
                     expires_time = time.time() + max_age
                     expires = http_date(expires_time)
+
                 # Save the session data and refresh the client cookie.
-                # Skip session save for 5xx responses.
                 if response.status_code < 500:
                     try:
                         request.session.save()

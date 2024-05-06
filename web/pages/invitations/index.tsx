@@ -22,10 +22,11 @@ import { ROLE } from "@/constants/workspace";
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
 import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
-import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
 // types
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
 import { UserService } from "@/services/user.service";
 import { WorkspaceService } from "@/services/workspace.service";
@@ -238,9 +239,9 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
 
 UserInvitationsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserAuthWrapper>
+    <AuthenticationWrapper>
       <DefaultLayout>{page}</DefaultLayout>
-    </UserAuthWrapper>
+    </AuthenticationWrapper>
   );
 };
 

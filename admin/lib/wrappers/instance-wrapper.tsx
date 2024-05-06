@@ -46,7 +46,7 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
 
   if (instance?.instance?.is_setup_done === false && authEnabled === "1")
     return (
-      <DefaultLayout>
+      <DefaultLayout withoutBackground>
         <InstanceNotReady />
       </DefaultLayout>
     );

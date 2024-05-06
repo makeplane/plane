@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 import { EAuthModes, EAuthSteps, ForgotPasswordPopover, PasswordStrengthMeter } from "@/components/accounts";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -40,6 +40,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // hooks
   const {
     instanceStore: { instance },
@@ -82,6 +83,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
 
   const isButtonDisabled = useMemo(
     () =>
+      !isSubmitting &&
       !!passwordFormData.password &&
       (mode === EAuthModes.SIGN_UP
         ? getPasswordStrength(passwordFormData.password) >= 3 &&
@@ -89,14 +91,16 @@ export const PasswordForm: React.FC<Props> = (props) => {
         : true)
         ? false
         : true,
-    [mode, passwordFormData]
+    [isSubmitting, mode, passwordFormData.confirm_password, passwordFormData.password]
   );
 
   return (
     <form
-      className="mx-auto mt-5 space-y-4 w-5/6 sm:w-96"
+      className="mt-5 space-y-4"
       method="POST"
       action={`${API_BASE_URL}/auth/spaces/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
+      onSubmit={() => setIsSubmitting(true)}
+      onError={() => setIsSubmitting(false)}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <input type="hidden" name="next_path" value={next_path} />
@@ -153,7 +157,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
         </div>
         {passwordSupport}
       </div>
-      {mode === EAuthModes.SIGN_UP && getPasswordStrength(passwordFormData.password) >= 3 && (
+      {mode === EAuthModes.SIGN_UP && (
         <div className="space-y-1">
           <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
             Confirm password
@@ -188,7 +192,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
         {mode === EAuthModes.SIGN_IN ? (
           <>
             <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-              Go to board
+              {isSubmitting ? <Spinner height="20px" width="20px" /> : "Go to board"}
             </Button>
             {instance && isSmtpConfigured && (
               <Button
@@ -204,7 +208,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
           </>
         ) : (
           <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-            Create account
+            {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
           </Button>
         )}
       </div>

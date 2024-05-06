@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // types
 import { IEmailCheckData } from "@plane/types";
 // ui
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   AuthHeader,
@@ -39,7 +39,6 @@ export const SignUpAuthRoot: FC = observer(() => {
   // states
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
-  const [isLoading, setIsLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   // hooks
   const { instance } = useInstance();
@@ -63,7 +62,7 @@ export const SignUpAuthRoot: FC = observer(() => {
     await authService
       .signUpEmailCheck(data)
       .then(() => {
-        if (isSmtpConfigured) setAuthStep(EAuthSteps.PASSWORD);
+        if (isSmtpConfigured) setAuthStep(EAuthSteps.UNIQUE_CODE);
         else setAuthStep(EAuthSteps.PASSWORD);
       })
       .catch((error) => {
@@ -83,51 +82,44 @@ export const SignUpAuthRoot: FC = observer(() => {
   const isOAuthEnabled =
     instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled);
 
-  if (isLoading)
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <Spinner />
-      </div>
-    );
-
   return (
-    <div className="relative max-w-lg px-5 mx-auto flex flex-col space-y-6">
+    <div className="relative flex flex-col space-y-6">
       <AuthHeader
         workspaceSlug={workspaceSlug?.toString() || undefined}
         invitationId={invitation_id?.toString() || undefined}
         invitationEmail={email || undefined}
         authMode={EAuthModes.SIGN_UP}
         currentAuthStep={authStep}
-        handleLoader={setIsLoading}
-      />
-      {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-        <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
-      )}
-      {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
-      {authStep === EAuthSteps.UNIQUE_CODE && (
-        <AuthUniqueCodeForm
-          email={email}
-          handleEmailClear={() => {
-            setEmail("");
-            setAuthStep(EAuthSteps.EMAIL);
-          }}
-          submitButtonText="Continue"
-          mode={authMode}
-        />
-      )}
-      {authStep === EAuthSteps.PASSWORD && (
-        <AuthPasswordForm
-          email={email}
-          handleEmailClear={() => {
-            setEmail("");
-            setAuthStep(EAuthSteps.EMAIL);
-          }}
-          handleStepChange={(step) => setAuthStep(step)}
-          mode={authMode}
-        />
-      )}
-      {isOAuthEnabled && <OAuthOptions />}
-      <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP} />
+      >
+        {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
+          <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
+        )}
+        {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
+        {authStep === EAuthSteps.UNIQUE_CODE && (
+          <AuthUniqueCodeForm
+            email={email}
+            handleEmailClear={() => {
+              setEmail("");
+              setAuthStep(EAuthSteps.EMAIL);
+            }}
+            submitButtonText="Continue"
+            mode={authMode}
+          />
+        )}
+        {authStep === EAuthSteps.PASSWORD && (
+          <AuthPasswordForm
+            email={email}
+            handleEmailClear={() => {
+              setEmail("");
+              setAuthStep(EAuthSteps.EMAIL);
+            }}
+            handleStepChange={(step) => setAuthStep(step)}
+            mode={authMode}
+          />
+        )}
+        {isOAuthEnabled && <OAuthOptions />}
+        <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP} />
+      </AuthHeader>
     </div>
   );
 });

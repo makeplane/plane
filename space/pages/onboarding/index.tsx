@@ -15,7 +15,7 @@ import ProfileSetup from "public/onboarding/profile-setup.svg";
 
 const imagePrefix = Boolean(parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0")) ? "/spaces" : "";
 
-const OnBoardingPage = () => {
+const OnBoardingPage = observer(() => {
   // router
   const router = useRouter();
   const { next_path } = router.query;
@@ -30,7 +30,7 @@ const OnBoardingPage = () => {
   const user = userStore?.currentUser;
   if (!user) {
     router.push("/");
-    return;
+    return <></>;
   }
 
   // complete onboarding
@@ -117,6 +117,6 @@ const OnBoardingPage = () => {
       </div>
     </div>
   );
-};
+});
 
-export default observer(OnBoardingPage);
+export default OnBoardingPage;

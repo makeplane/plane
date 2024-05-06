@@ -18,7 +18,7 @@ import { Listbox, Transition } from "@headlessui/react";
 // types
 import { IUser, IWorkspace } from "@plane/types";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { MEMBER_INVITED } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles, ROLE, ROLE_DETAILS } from "@/constants/workspace";
@@ -420,10 +420,9 @@ export const InviteMembers: React.FC<Props> = (props) => {
                 type="submit"
                 size="lg"
                 className="w-full"
-                disabled={isInvitationDisabled || !isValid}
-                loading={isSubmitting}
+                disabled={isInvitationDisabled || !isValid || isSubmitting}
               >
-                Continue
+                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
               </Button>
               <Button variant="link-neutral" size="lg" className="w-full" onClick={nextStep}>
                 I’ll do it later

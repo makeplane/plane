@@ -44,7 +44,7 @@ class MagicCodeProvider(CredentialAdapter):
             )
         )
 
-        if not (EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
+        if not (EMAIL_HOST):
             raise ImproperlyConfigured(
                 "SMTP is not configured. Please contact the support team."
             )

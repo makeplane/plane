@@ -76,7 +76,7 @@ export class RootStore {
     this.theme = new ThemeStore(this);
   }
 
-  resetOnSignout() {
+  resetOnSignOut() {
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
     this.memberRoot = new MemberRootStore(this);

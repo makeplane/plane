@@ -150,8 +150,6 @@ class InstanceEndpoint(BaseAPIView):
         # is smtp configured
         data["is_smtp_configured"] = (
             bool(EMAIL_HOST)
-            and bool(EMAIL_HOST_USER)
-            and bool(EMAIL_HOST_PASSWORD)
         )
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() > 1

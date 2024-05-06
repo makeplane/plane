@@ -1,6 +1,8 @@
 import { FC, ReactNode } from "react";
+// components
 import { InstanceSidebar } from "@/components/admin-sidebar";
 import { InstanceHeader } from "@/components/auth-header";
+import { NewUserPopup } from "@/components/new-user-popup";
 
 type TAdminLayout = {
   children: ReactNode;
@@ -16,6 +18,7 @@ export const AdminLayout: FC<TAdminLayout> = (props) => {
         <InstanceHeader />
         <div className="h-full w-full overflow-hidden">{children}</div>
       </main>
+      <NewUserPopup />
     </div>
   );
 };

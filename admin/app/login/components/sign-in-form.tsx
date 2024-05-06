@@ -5,13 +5,13 @@ import { useSearchParams } from "next/navigation";
 // services
 import { AuthService } from "@/services/auth.service";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "components/common";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // helpers
-import { API_BASE_URL, cn } from "@/helpers/common.helper";
+import { API_BASE_URL } from "@/helpers/common.helper";
 
 // service initialization
 const authService = new AuthService();
@@ -52,6 +52,7 @@ export const InstanceSignInForm: FC = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -85,27 +86,40 @@ export const InstanceSignInForm: FC = (props) => {
     } else return { type: undefined, message: undefined };
   }, [errorCode, errorMessage]);
 
-  const isButtonDisabled = useMemo(() => (formData.email && formData.password ? false : true), [formData]);
+  const isButtonDisabled = useMemo(
+    () => (!isSubmitting && formData.email && formData.password ? false : true),
+    [formData.email, formData.password, isSubmitting]
+  );
 
   return (
-    <div className="relative w-full h-full overflow-hidden container mx-auto px-5 md:px-0 flex justify-center items-center">
-      <div className="w-full md:w-4/6 lg:w-3/6 xl:w-2/6 space-y-10">
+    <div className="relative w-full h-full overflow-hidden container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 flex flex-col justify-center items-center">
+      <div className="relative flex flex-col space-y-6">
         <div className="text-center space-y-1">
-          <h3 className="text-3xl font-bold">Manage your Plane instance</h3>
-          <p className="font-medium text-custom-text-400">Configure instance-wide settings to secure your instance</p>
+          <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
+            Manage your Plane instance
+          </h3>
+          <p className="font-medium text-onboarding-text-400">
+            Configure instance-wide settings to secure your instance
+          </p>
         </div>
 
         {errorData.type && errorData?.message && <Banner type="error" message={errorData?.message} />}
 
-        <form className="space-y-4" method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-in/`}>
+        <form
+          className="space-y-4"
+          method="POST"
+          action={`${API_BASE_URL}/api/instances/admins/sign-in/`}
+          onSubmit={() => setIsSubmitting(true)}
+          onError={() => setIsSubmitting(false)}
+        >
           <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
+            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
               Email <span className="text-red-500">*</span>
             </label>
             <Input
-              className="w-full"
+              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
               id="email"
               name="email"
               type="email"
@@ -118,12 +132,12 @@ export const InstanceSignInForm: FC = (props) => {
           </div>
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
               Password <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Input
-                className={cn("w-full pr-10")}
+                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -153,7 +167,7 @@ export const InstanceSignInForm: FC = (props) => {
           </div>
           <div className="py-2">
             <Button type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
-              Sign in
+              {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
             </Button>
           </div>
         </form>

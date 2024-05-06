@@ -12,14 +12,16 @@ import { InviteMembers, CreateOrJoinWorkspaces, ProfileSetup } from "@/component
 // constants
 import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
+// helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
-import useUserAuth from "@/hooks/use-user-auth";
 // layouts
-import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
 // lib types
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 
@@ -39,16 +41,10 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { data: user, isLoading: currentUserLoader, updateCurrentUser } = useUser();
+  const { data: user, updateCurrentUser } = useUser();
   const { data: profile, updateUserOnBoard, updateUserProfile } = useUserProfile();
   const { workspaces, fetchWorkspaces } = useWorkspace();
-  // custom hooks
-  const {} = useUserAuth({
-    routeAuth: "onboarding",
-    user: user || null,
-    userProfile: profile,
-    isLoading: currentUserLoader,
-  });
+
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
   // fetching workspaces list
@@ -145,7 +141,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
     handleStepChange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, step, updateCurrentUser, workspacesList]);
+  }, [user, step, profile.onboarding_step, updateCurrentUser, workspacesList]);
 
   return (
     <>
@@ -190,9 +186,9 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
 OnboardingPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserAuthWrapper>
+    <AuthenticationWrapper pageType={EPageTypes.ONBOARDING}>
       <DefaultLayout>{page}</DefaultLayout>
-    </UserAuthWrapper>
+    </AuthenticationWrapper>
   );
 };
 

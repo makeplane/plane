@@ -3,11 +3,10 @@
 import { FC, useState, useRef } from "react";
 import { Transition } from "@headlessui/react";
 import Link from "next/link";
-import { FileText, HelpCircle, MoveLeft } from "lucide-react";
+import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
+import { DiscordIcon, GithubIcon } from "@plane/ui";
 // hooks
 import { useTheme } from "@/hooks";
-// icons
-import { DiscordIcon, GithubIcon } from "@plane/ui";
 // assets
 import packageJson from "package.json";
 
@@ -37,18 +36,26 @@ export const HelpSection: FC = () => {
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
+  const redirectionLink = `${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : `${process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX === "1" ? `/god-mode/` : `/`}`}`;
+
   return (
     <div
       className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
         isSidebarCollapsed ? "flex-col" : ""
       }`}
     >
-      <div
-        className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full justify-end"}`}
-      >
+      <div className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full"}`}>
+        <a
+          href={redirectionLink}
+          className={`relative px-2 py-1.5 flex items-center gap-2 font-medium rounded border border-custom-primary-100/20 bg-custom-primary-100/10 text-xs text-custom-primary-200 whitespace-nowrap`}
+        >
+          <ExternalLink size={14} />
+          {!isSidebarCollapsed && "Redirect to plane"}
+        </a>
+
         <button
           type="button"
-          className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+          className={`ml-auto grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
             isSidebarCollapsed ? "w-full" : ""
           }`}
           onClick={() => setIsNeedHelpOpen((prev) => !prev)}

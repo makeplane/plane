@@ -17,8 +17,8 @@ import useTimer from "@/hooks/use-timer";
 // services
 import { AuthService } from "@/services/authentication.service";
 // images
-import PlaneBackgroundPatternDark from "public/onboarding/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/onboarding/background-pattern.svg";
+import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 type TForgotPasswordFormValues = {
@@ -79,9 +79,9 @@ const ForgotPasswordPage: NextPage = () => {
   return (
     <div className="relative h-screen w-full overflow-hidden">
       <div className="absolute inset-0 z-0">
-      <Image
+        <Image
           src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
-          className="w-screen min-h-screen object-cover"
+          className="w-full h-full object-cover"
           alt="Plane background pattern"
         />
       </div>
@@ -158,6 +158,5 @@ const ForgotPasswordPage: NextPage = () => {
     </div>
   );
 };
-
 
 export default ForgotPasswordPage;

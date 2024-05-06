@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
-import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { WORKSPACE_CREATED } from "@/constants/event-tracker";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
@@ -115,6 +115,8 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
       last_workspace_id: firstWorkspace?.id,
     });
   };
+
+  const isButtonDisabled = !isValid || invalidSlug || isSubmitting;
 
   return (
     <div className="space-y-4">
@@ -256,8 +258,8 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
             )}
           </div>
         </div>
-        <Button variant="primary" type="submit" size="lg" className="w-full" disabled={!isValid || invalidSlug}>
-          {isSubmitting ? "Creating..." : "Continue"}
+        <Button variant="primary" type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+          {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>
       </form>
     </div>

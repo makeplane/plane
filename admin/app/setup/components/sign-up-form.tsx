@@ -5,13 +5,13 @@ import { useSearchParams } from "next/navigation";
 // services
 import { AuthService } from "@/services/auth.service";
 // ui
-import { Button, Checkbox, Input } from "@plane/ui";
+import { Button, Checkbox, Input, Spinner } from "@plane/ui";
 // components
 import { Banner, PasswordStrengthMeter } from "components/common";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // helpers
-import { API_BASE_URL, cn } from "@/helpers/common.helper";
+import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 
 // service initialization
@@ -68,6 +68,7 @@ export const InstanceSignUpForm: FC = (props) => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -109,6 +110,7 @@ export const InstanceSignUpForm: FC = (props) => {
 
   const isButtonDisabled = useMemo(
     () =>
+      !isSubmitting &&
       formData.first_name &&
       formData.email &&
       formData.password &&
@@ -116,15 +118,19 @@ export const InstanceSignUpForm: FC = (props) => {
       formData.password === formData.confirm_password
         ? false
         : true,
-    [formData]
+    [formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]
   );
 
   return (
-    <div className="relative w-full min-h-full h-auto overflow-hidden container mx-auto px-5 lg:px-0 flex justify-center items-center">
-      <div className="w-full md:w-4/6 lg:w-3/6 xl:w-2/6 space-y-10">
+    <div className="relative w-full h-full overflow-hidden container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 flex flex-col justify-center items-center">
+      <div className="relative flex flex-col space-y-6">
         <div className="text-center space-y-1">
-          <h3 className="text-3xl font-bold">Setup your Plane Instance</h3>
-          <p className="font-medium text-custom-text-400">Post setup you will be able to manage this Plane instance.</p>
+          <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
+            Setup your Plane Instance
+          </h3>
+          <p className="font-medium text-onboarding-text-400">
+            Post setup you will be able to manage this Plane instance.
+          </p>
         </div>
 
         {errorData.type &&
@@ -133,16 +139,22 @@ export const InstanceSignUpForm: FC = (props) => {
             <Banner type="error" message={errorData?.message} />
           )}
 
-        <form className="space-y-4" method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-up/`}>
+        <form
+          className="space-y-4"
+          method="POST"
+          action={`${API_BASE_URL}/api/instances/admins/sign-up/`}
+          onSubmit={() => setIsSubmitting(true)}
+          onError={() => setIsSubmitting(false)}
+        >
           <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
           <div className="flex items-center gap-4">
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="first_name">
+              <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="first_name">
                 First name <span className="text-red-500">*</span>
               </label>
               <Input
-                className="w-full"
+                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                 id="first_name"
                 name="first_name"
                 type="text"
@@ -154,11 +166,11 @@ export const InstanceSignUpForm: FC = (props) => {
               />
             </div>
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="last_name">
+              <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="last_name">
                 Last name
               </label>
               <Input
-                className="w-full"
+                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                 id="last_name"
                 name="last_name"
                 type="text"
@@ -171,11 +183,11 @@ export const InstanceSignUpForm: FC = (props) => {
           </div>
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
+            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
               Email <span className="text-red-500">*</span>
             </label>
             <Input
-              className="w-full"
+              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
               id="email"
               name="email"
               type="email"
@@ -191,11 +203,11 @@ export const InstanceSignUpForm: FC = (props) => {
           </div>
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-custom-text-300 font-medium" htmlFor="company_name">
+            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="company_name">
               Company name
             </label>
             <Input
-              className="w-full"
+              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
               id="company_name"
               name="company_name"
               type="text"
@@ -207,12 +219,12 @@ export const InstanceSignUpForm: FC = (props) => {
           </div>
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
               Set a password <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Input
-                className={cn("w-full pr-10")}
+                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -252,25 +264,33 @@ export const InstanceSignUpForm: FC = (props) => {
             <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
               Confirm password
             </label>
-            <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+            <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
+                id="confirm_password"
                 name="confirm_password"
+                inputSize="md"
                 value={formData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder="Confirm password"
-                className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
               />
               {showPassword ? (
-                <EyeOff
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                <button
+                  type="button"
+                  className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
                   onClick={() => setShowPassword(false)}
-                />
+                >
+                  <EyeOff className="h-4 w-4" />
+                </button>
               ) : (
-                <Eye
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                <button
+                  type="button"
+                  className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
                   onClick={() => setShowPassword(true)}
-                />
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
               )}
             </div>
             {!!formData.confirm_password && formData.password !== formData.confirm_password && (
@@ -288,7 +308,10 @@ export const InstanceSignUpForm: FC = (props) => {
                 checked={formData.is_telemetry_enabled}
               />
             </div>
-            <label className="text-sm text-custom-text-300 font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
+            <label
+              className="text-sm text-onboarding-text-300 font-medium cursor-pointer"
+              htmlFor="is_telemetry_enabled"
+            >
               Allow Plane to anonymously collect usage events.
             </label>
             <a href="https://docs.plane.so/telemetry" className="text-sm font-medium text-blue-500 hover:text-blue-600">
@@ -298,7 +321,7 @@ export const InstanceSignUpForm: FC = (props) => {
 
           <div className="py-2">
             <Button type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
-              Continue
+              {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
             </Button>
           </div>
         </form>

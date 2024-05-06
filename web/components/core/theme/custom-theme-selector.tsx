@@ -26,7 +26,7 @@ const inputRules = {
 
 export const CustomThemeSelector: React.FC = observer(() => {
   const {
-    profile: { data: userProfile },
+    userProfile: { data: userProfile },
   } = useUser();
 
   const userTheme: any = userProfile?.theme;
