@@ -111,6 +111,7 @@ class SignInAuthEndpoint(View):
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = {
+                "email": email,
                 "error_code": str(e.error_code),
                 "error_message": str(e.error_message),
             }

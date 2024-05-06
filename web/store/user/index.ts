@@ -54,7 +54,7 @@ export class UserStore implements IUserStore {
 
   constructor(private store: RootStore) {
     // stores
-    this.userProfile = new ProfileStore();
+    this.userProfile = new ProfileStore(store);
     this.userSettings = new UserSettingsStore();
     this.membership = new UserMembershipStore(store);
     // service
