@@ -106,7 +106,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
           {label ? (
             label
           ) : value && value.length > 0 ? (
-            <span className="flex items-center justify-center gap-2 text-xs">
+            <span className="flex items-center justify-center gap-2 text-xs h-full">
               <IssueLabelsList
                 labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
                 length={3}
