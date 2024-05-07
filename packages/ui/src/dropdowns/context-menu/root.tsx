@@ -34,6 +34,7 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
     y: 0,
   });
   const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   // refs
   const contextMenuRef = useRef<HTMLDivElement>(null);
   // derived values
@@ -44,8 +45,22 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
     setActiveItemIndex(0);
   };
 
+  // calculate window width
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   // calculate position of context menu
   useEffect(() => {
+    // don't show context menu on mobile
+    if (windowWidth <= 640) return;
+
     const parentElement = parentRef.current;
     const contextMenu = contextMenuRef.current;
     if (!parentElement || !contextMenu) return;
@@ -83,7 +98,7 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
       parentElement.removeEventListener("contextmenu", handleContextMenu);
       window.removeEventListener("keydown", hideContextMenu);
     };
-  }, [contextMenuRef, isOpen, parentRef, setIsOpen, setPosition]);
+  }, [contextMenuRef, isOpen, parentRef, setIsOpen, setPosition, windowWidth]);
 
   // handle keyboard navigation
   useEffect(() => {
