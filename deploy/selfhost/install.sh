@@ -292,10 +292,9 @@ function backupSingleVolume() {
 function backupData() {
     local datetime=$(date +"%Y%m%d-%H%M")
     local BACKUP_FOLDER=$PLANE_INSTALL_DIR/backup/$datetime
-    mkdir -p $BACKUP_FOLDER
+    mkdir -p "$BACKUP_FOLDER"
 
     volumes=$(docker volume ls -f "name=plane-app" --format "{{.Name}}" | grep -E "_pgdata|_redisdata|_uploads")
-    num=1
     # Check if there are any matching volumes
     if [ -z "$volumes" ]; then
         echo "No volumes found starting with 'plane-app'"
@@ -307,7 +306,7 @@ function backupData() {
         local backup_folder="$BACKUP_FOLDER/$vol"
         mkdir -p "$backup_folder"
         echo "Backing Up $vol"
-        backupSingleVolume $backup_folder $vol
+        backupSingleVolume "$backup_folder" "$vol"
     done
 
     echo ""
