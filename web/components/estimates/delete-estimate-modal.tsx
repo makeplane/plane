@@ -64,7 +64,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
     <AlertModalCore
       handleClose={onClose}
       handleSubmit={handleEstimateDelete}
-      isDeleting={isDeleteLoading}
+      isSubmitting={isDeleteLoading}
       isOpen={isOpen}
       title="Delete Estimate"
       content={

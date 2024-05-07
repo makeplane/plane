@@ -62,7 +62,7 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
     <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDeleteView}
-      isDeleting={isDeleteLoading}
+      isSubmitting={isDeleteLoading}
       isOpen={isOpen}
       title="Delete View"
       content={

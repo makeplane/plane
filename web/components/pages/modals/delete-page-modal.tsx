@@ -74,7 +74,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
     <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDelete}
-      isDeleting={isDeleting}
+      isSubmitting={isDeleting}
       isOpen={isOpen}
       title="Delete Page"
       content={

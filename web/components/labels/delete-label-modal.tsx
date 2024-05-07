@@ -56,7 +56,7 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
     <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDeletion}
-      isDeleting={isDeleteLoading}
+      isSubmitting={isDeleteLoading}
       isOpen={isOpen}
       title="Delete Label"
       content={

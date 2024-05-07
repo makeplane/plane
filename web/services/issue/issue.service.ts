@@ -266,7 +266,9 @@ export class IssueService extends APIService {
     data: {
       issue_ids: string[];
     }
-  ): Promise<any> {
+  ): Promise<{
+    archived_at: string;
+  }> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-archive-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {

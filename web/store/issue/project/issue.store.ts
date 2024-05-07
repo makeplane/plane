@@ -27,6 +27,7 @@ export interface IProjectIssues {
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
 }
 
 export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
@@ -59,6 +60,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       removeIssue: action,
       archiveIssue: action,
       removeBulkIssues: action,
+      archiveBulkIssues: action,
       quickAddIssue: action,
     });
     // root store
@@ -257,6 +259,22 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
+      throw error;
+    }
+  };
+
+  archiveBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+    try {
+      const response = await this.issueService.bulkArchiveIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+
+      runInAction(() => {
+        issueIds.forEach((issueId) => {
+          this.rootStore.issues.updateIssue(issueId, {
+            archived_at: response.archived_at,
+          });
+        });
+      });
+    } catch (error) {
       throw error;
     }
   };
