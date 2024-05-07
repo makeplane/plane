@@ -462,7 +462,7 @@ def model_activity(
 
     # Loop through all keys in requested data and check the current value and requested value
     for key in requested_data:
-        # Check if key is present in requested data
+        # Check if key is present in current instance or not
         if key in current_instance:
             current_value = current_instance.get(key, None)
             requested_value = requested_data.get(key, None)
