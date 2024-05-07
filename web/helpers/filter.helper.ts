@@ -9,6 +9,7 @@ type TFilters = {
   [key: string]: boolean | string[] | string | null;
 };
 
+// TODO: Refactor calculateTotalFilters function with typescript generics
 /**
  * @description calculates the total number of filters applied
  * @param {TFilters} filters
