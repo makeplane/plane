@@ -7,7 +7,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX === "1" ? "/god-mode" : "",
+  basePath: "/god-mode",
 };
 
 module.exports = nextConfig;

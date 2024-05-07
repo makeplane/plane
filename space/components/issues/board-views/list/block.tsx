@@ -9,7 +9,7 @@ import { IssueBlockState } from "@/components/issues/board-views/block-state";
 // mobx hook
 import { useMobxStore } from "@/lib/mobx/store-provider";
 // interfaces
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 import { IIssue } from "types/issue";
 // store
 

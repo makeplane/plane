@@ -10,14 +10,7 @@ import instanceNotReady from "public/instance/plane-instance-not-ready.webp";
 import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 
-type TInstanceNotReady = {
-  isGodModeEnabled: boolean;
-  handleGodModeStateChange?: (state: boolean) => void;
-};
-
-export const InstanceNotReady: FC<TInstanceNotReady> = () => {
-  // const { isGodModeEnabled, handleGodModeStateChange } = props;
-
+export const InstanceNotReady: FC = () => {
   const { resolvedTheme } = useTheme();
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;

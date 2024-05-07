@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { issueViews } from "@/constants/data";
 // mobx
 import { useMobxStore } from "@/lib/mobx/store-provider";
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 import { TIssueBoardKeys } from "types/issue";
 
 export const NavbarIssueBoardView = observer(() => {

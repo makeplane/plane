@@ -6,6 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import { EditorRefApi } from "@plane/lite-text-editor";
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks
+import { useUser } from "@/hooks/store";
 import useToast from "@/hooks/use-toast";
 // lib
 import { useMobxStore } from "@/lib/mobx/store-provider";
@@ -29,7 +30,8 @@ export const AddComment: React.FC<Props> = observer(() => {
   const { workspace_slug, project_slug } = router.query;
   // store hooks
   const { project } = useMobxStore();
-  const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
+  const { issueDetails: issueDetailStore } = useMobxStore();
+  const { data: currentUser } = useUser();
   // derived values
   const workspaceId = project.workspace?.id;
   const issueId = issueDetailStore.peekId;
@@ -62,6 +64,7 @@ export const AddComment: React.FC<Props> = observer(() => {
       );
   };
 
+  // TODO: on click if he user is not logged in redirect to login page
   return (
     <div>
       <div className="issue-comments-section">
@@ -70,7 +73,9 @@ export const AddComment: React.FC<Props> = observer(() => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <LiteTextEditor
-              onEnterKeyPress={(e) => userStore.requiredLogin(() => handleSubmit(onSubmit)(e))}
+              onEnterKeyPress={(e) => {
+                if (currentUser) handleSubmit(onSubmit)(e);
+              }}
               workspaceId={workspaceId as string}
               workspaceSlug={workspace_slug as string}
               ref={editorRef}

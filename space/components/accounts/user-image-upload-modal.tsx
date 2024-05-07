@@ -6,7 +6,7 @@ import { Transition, Dialog } from "@headlessui/react";
 // hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useInstance } from "@/hooks/store";
 // services
 import fileService from "@/services/file.service";
 
@@ -27,9 +27,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   // store hooks
-  const {
-    instanceStore: { instance },
-  } = useMobxStore();
+  const { instance } = useInstance();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 

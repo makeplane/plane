@@ -10,7 +10,7 @@ import { useMobxStore } from "@/lib/mobx/store-provider";
 
 // components
 // interfaces
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 import { IIssue } from "types/issue";
 
 export const IssueKanBanBlock = observer(({ issue }: { issue: IIssue }) => {

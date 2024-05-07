@@ -1,17 +1,14 @@
 import Image from "next/image";
-
-// mobx
-import { useMobxStore } from "@/lib/mobx/store-provider";
+// hooks
+import { useUser } from "@/hooks/store";
 // assets
 import PlaneLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import UserLoggedInImage from "public/user-logged-in.svg";
 
 export const UserLoggedIn = () => {
-  const { user: userStore } = useMobxStore();
-  const user = userStore.currentUser;
+  const { data: user } = useUser();
 
   if (!user) return null;
-
   return (
     <div className="flex h-screen w-screen flex-col">
       <div className="relative flex w-full items-center justify-between gap-4 border-b border-custom-border-200 px-6 py-5">

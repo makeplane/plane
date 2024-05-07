@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // store
 import { useMobxStore } from "@/lib/mobx/store-provider";
 import { IIssueFilterOptions } from "@/store/issues/types";
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 import { AppliedFiltersList } from "./filters-list";
 
 export const IssueAppliedFilters: FC = observer(() => {

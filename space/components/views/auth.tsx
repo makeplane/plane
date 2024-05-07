@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 // ui
@@ -7,9 +6,8 @@ import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // components
 import { AuthRoot, UserLoggedIn } from "@/components/accounts";
-// mobx
-import useAuthRedirection from "@/hooks/use-auth-redirection";
-import { useMobxStore } from "@/lib/mobx/store-provider";
+// hooks
+import { useUser } from "@/hooks/store";
 // images
 import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
@@ -19,11 +17,7 @@ export const AuthView = observer(() => {
   // hooks
   const { resolvedTheme } = useTheme();
   // store
-  const {
-    user: { currentUser, fetchCurrentUser, loader },
-  } = useMobxStore();
-  // sign in redirection hook
-  const { isRedirecting, handleRedirection } = useAuthRedirection();
+  const { data: currentUser, fetchCurrentUser, isLoading } = useUser();
 
   // fetching user information
   useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
@@ -31,13 +25,9 @@ export const AuthView = observer(() => {
     revalidateOnFocus: false,
   });
 
-  useEffect(() => {
-    handleRedirection();
-  }, [handleRedirection]);
-
   return (
     <>
-      {loader || isRedirecting ? (
+      {isLoading ? (
         <div className="relative flex h-screen w-screen items-center justify-center">
           <Spinner />
         </div>

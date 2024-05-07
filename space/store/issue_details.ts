@@ -1,10 +1,11 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
 import { v4 as uuidv4 } from "uuid";
-// store
-import { RootStore } from "./root";
 // services
 import IssueService from "@/services/issue.service";
-import { IIssue, IVote } from "types/issue";
+// store types
+import { RootStore } from "@/store/root.store";
+// types
+import { IIssue, IVote } from "@/types/issue";
 
 export type IPeekMode = "side" | "modal" | "full";
 
@@ -330,7 +331,7 @@ class IssueDetailStore implements IIssueDetailStore {
   removeIssueReaction = async (workspaceSlug: string, projectId: string, issueId: string, reactionHex: string) => {
     try {
       const newReactions = this.details[issueId].reactions.filter(
-        (_r) => !(_r.reaction === reactionHex && _r.actor_detail.id === this.rootStore.user.currentUser?.id)
+        (_r) => !(_r.reaction === reactionHex && _r.actor_detail.id === this.rootStore.user.data?.id)
       );
 
       runInAction(() => {
@@ -361,7 +362,7 @@ class IssueDetailStore implements IIssueDetailStore {
 
   addIssueVote = async (workspaceSlug: string, projectId: string, issueId: string, data: { vote: 1 | -1 }) => {
     const newVote: IVote = {
-      actor: this.rootStore.user.currentUser?.id ?? "",
+      actor: this.rootStore.user.data?.id ?? "",
       actor_detail: this.rootStore.user.currentActor,
       issue: issueId,
       project: projectId,
@@ -369,7 +370,7 @@ class IssueDetailStore implements IIssueDetailStore {
       vote: data.vote,
     };
 
-    const filteredVotes = this.details[issueId].votes.filter((v) => v.actor !== this.rootStore.user.currentUser?.id);
+    const filteredVotes = this.details[issueId].votes.filter((v) => v.actor !== this.rootStore.user.data?.id);
 
     try {
       runInAction(() => {
@@ -400,7 +401,7 @@ class IssueDetailStore implements IIssueDetailStore {
   };
 
   removeIssueVote = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const newVotes = this.details[issueId].votes.filter((v) => v.actor !== this.rootStore.user.currentUser?.id);
+    const newVotes = this.details[issueId].votes.filter((v) => v.actor !== this.rootStore.user.data?.id);
 
     try {
       runInAction(() => {

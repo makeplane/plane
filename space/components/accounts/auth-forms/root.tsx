@@ -4,8 +4,8 @@ import { observer } from "mobx-react-lite";
 import { IEmailCheckData } from "@plane/types";
 import { EmailForm, UniqueCodeForm, PasswordForm, OAuthOptions, TermsAndConditions } from "@/components/accounts";
 // hooks
+import { useInstance } from "@/hooks/store";
 import useToast from "@/hooks/use-toast";
-import { useMobxStore } from "@/lib/mobx/store-provider";
 // services
 import { AuthService } from "@/services/authentication.service";
 
@@ -60,9 +60,7 @@ export const AuthRoot = observer(() => {
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState("");
   // hooks
-  const {
-    instanceStore: { instance },
-  } = useMobxStore();
+  const { instance } = useInstance();
   // derived values
   const isSmtpConfigured = instance?.config?.is_smtp_configured;
 
