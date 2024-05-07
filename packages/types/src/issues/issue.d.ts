@@ -51,3 +51,18 @@ export type TIssue = {
 export type TIssueMap = {
   [issue_id: string]: TIssue;
 };
+
+export type TBulkIssueProperties = Pick<
+  TIssue,
+  | "state_id"
+  | "priority"
+  | "label_ids"
+  | "assignee_ids"
+  | "start_date"
+  | "target_date"
+>;
+
+export type TBulkOperationsPayload = {
+  issue_ids: string[];
+  properties: Partial<TBulkIssueProperties>;
+};

@@ -64,7 +64,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
-      <div className="space-y-5">
+      <div className="space-y-5 p-5">
         <div className="flex items-center gap-x-3">
           {!status && (
             <Controller
@@ -86,11 +86,10 @@ export const ModuleForm: React.FC<Props> = (props) => {
               )}
             />
           )}
-          <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Module</h3>
+          <h3 className="text-xl font-medium text-custom-text-200">{status ? "Update" : "Create"} Module</h3>
         </div>
-
         <div className="space-y-3">
-          <div className="flex flex-col gap-1">
+          <div className="space-y-1">
             <Controller
               control={control}
               name="name"
@@ -101,18 +100,18 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   message: "Title should be less than 255 characters",
                 },
               }}
-              render={({ field: { value, onChange, ref } }) => (
+              render={({ field: { value, onChange } }) => (
                 <Input
                   id="name"
                   name="name"
                   type="text"
                   value={value}
                   onChange={onChange}
-                  ref={ref}
                   hasError={Boolean(errors?.name)}
-                  placeholder="Module Title"
-                  className="w-full resize-none placeholder:text-sm placeholder:font-medium focus:border-blue-400"
+                  placeholder="Title"
+                  className="w-full text-base"
                   tabIndex={1}
+                  autoFocus
                 />
               )}
             />
@@ -128,8 +127,8 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   name="description"
                   value={value}
                   onChange={onChange}
-                  placeholder="Description..."
-                  className="w-full text-sm resize-none min-h-24"
+                  placeholder="Description"
+                  className="w-full text-base resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   tabIndex={2}
                 />
@@ -211,12 +210,12 @@ export const ModuleForm: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <div className="mt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200 pt-5">
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={7}>
           Cancel
         </Button>
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={8}>
-          {status ? (isSubmitting ? "Updating" : "Update module") : isSubmitting ? "Creating" : "Create module"}
+          {status ? (isSubmitting ? "Updating" : "Update Module") : isSubmitting ? "Creating" : "Create Module"}
         </Button>
       </div>
     </form>

@@ -2,10 +2,12 @@ import { FC, useState, useRef } from "react";
 import Link from "next/link";
 import { FileText, HelpCircle, MessagesSquare, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
-// hooks
+// ui
 import { DiscordIcon, GithubIcon } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
 import { useApplication } from "@/hooks/store";
-// icons
 // assets
 import packageJson from "package.json";
 
@@ -45,9 +47,12 @@ export const InstanceHelpSection: FC = () => {
 
   return (
     <div
-      className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
-        sidebarCollapsed ? "flex-col" : ""
-      }`}
+      className={cn(
+        "flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 h-28",
+        {
+          "flex-col h-auto py-1.5": sidebarCollapsed,
+        }
+      )}
     >
       <div className={`flex items-center gap-1 ${sidebarCollapsed ? "flex-col justify-center" : "w-full justify-end"}`}>
         <button

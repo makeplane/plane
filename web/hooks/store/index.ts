@@ -1,4 +1,5 @@
 export * from "./use-application";
+export * from "./use-bulk-issue-operations";
 export * from "./use-calendar-view";
 export * from "./use-cycle-filter";
 export * from "./use-cycle";

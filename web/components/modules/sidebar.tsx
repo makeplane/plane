@@ -673,18 +673,20 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               </div>
                             )}
 
-                            <LinksList
-                              links={moduleDetails.link_module}
-                              handleEditLink={handleEditLink}
-                              handleDeleteLink={handleDeleteLink}
-                              userAuth={{
-                                isGuest: currentProjectRole === EUserProjectRoles.GUEST,
-                                isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
-                                isMember: currentProjectRole === EUserProjectRoles.MEMBER,
-                                isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
-                              }}
-                              disabled={isArchived}
-                            />
+                            {moduleId && (
+                              <LinksList
+                                moduleId={moduleId}
+                                handleEditLink={handleEditLink}
+                                handleDeleteLink={handleDeleteLink}
+                                userAuth={{
+                                  isGuest: currentProjectRole === EUserProjectRoles.GUEST,
+                                  isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
+                                  isMember: currentProjectRole === EUserProjectRoles.MEMBER,
+                                  isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
+                                }}
+                                disabled={isArchived}
+                              />
+                            )}
                           </>
                         ) : (
                           <div className="flex items-center justify-between gap-2">

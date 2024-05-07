@@ -1,5 +1,5 @@
 import { useRef } from "react";
-// components
+// types
 import {
   GroupByColumnTypes,
   TGroupedIssues,
@@ -7,11 +7,12 @@ import {
   IIssueDisplayProperties,
   TIssueMap,
   TUnGroupedIssues,
-  IGroupByColumn,
 } from "@plane/types";
-import { IssueBlocksList, ListQuickAddIssueForm } from "@/components/issues";
-// hooks
+// components
+import { IssueBlocksList, IssueBulkOperationsRoot, ListQuickAddIssueForm } from "@/components/issues";
+// constants
 import { EIssuesStoreType } from "@/constants/issue";
+// hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 // utils
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
@@ -128,9 +129,8 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
       className="vertical-scrollbar scrollbar-lg relative h-full w-full overflow-auto vertical-scrollbar-margin-top-md"
     >
       {groups &&
-        groups.length > 0 &&
         groups.map(
-          (_list: IGroupByColumn) =>
+          (_list) =>
             validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
               <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
                 <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
@@ -169,6 +169,9 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
               </div>
             )
         )}
+      <div className="sticky bottom-0 left-0 z-10 h-14">
+        <IssueBulkOperationsRoot />
+      </div>
     </div>
   );
 };

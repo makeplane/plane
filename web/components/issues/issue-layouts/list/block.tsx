@@ -1,12 +1,14 @@
 import { useRef } from "react";
 import { observer } from "mobx-react-lite";
+// types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { useApplication, useBulkIssueOperations, useIssueDetail, useProject } from "@/hooks/store";
+import { useEntitySelection } from "@/hooks/use-entity-selection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { IssueProperties } from "../properties/all-properties";
@@ -42,22 +44,43 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
 
   const issue = issuesMap[issueId];
   const { isMobile } = usePlatformOS();
+
+  const { getIsIssueSelected } = useBulkIssueOperations();
+  const { handleClick } = useEntitySelection();
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
+  const isIssueSelected = getIsIssueSelected(issueId);
 
   return (
     <div
       ref={parentRef}
       className={cn(
-        "min-h-[52px] relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 text-sm",
+        "group/list-block min-h-[52px] relative flex flex-col md:flex-row md:items-center gap-2 bg-custom-background-100 p-3 text-sm transition-colors",
         {
           "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
+          "hover:bg-custom-background-90": !isIssueSelected,
+          "bg-custom-primary-100/5": isIssueSelected,
         }
       )}
     >
+      {canEditIssueProperties && (
+        <div className="flex-shrink-0 flex items-center w-5">
+          <input
+            type="checkbox"
+            className={cn(
+              "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto cursor-pointer transition-opacity outline-none",
+              {
+                "opacity-100 pointer-events-auto": isIssueSelected,
+              }
+            )}
+            onClick={(e) => handleClick(e, issueId)}
+            checked={isIssueSelected}
+          />
+        </div>
+      )}
       <div className="flex w-full truncate">
         <div className="flex flex-grow items-center gap-3 truncate">
           {displayProperties && displayProperties?.key && (
