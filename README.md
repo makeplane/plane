@@ -7,7 +7,7 @@
 </p>
 
 <h3 align="center"><b>Plane</b></h3>
-<p align="center"><b>Open-source project management that unlocks customer value.</b></p>
+<p align="center"><b>Open-source project management that unlocks customer value</b></p>
 
 <p align="center">
 <a href="https://discord.com/invite/A92xrEGCge">
@@ -40,22 +40,22 @@
     </a>
 </p>
 
-Meet [Plane](https://dub.sh/plane-website-readme). An open-source software development tool to manage issues, sprints, and product roadmaps with peace of mind. 🧘‍♀️
+Meet [Plane](https://dub.sh/plane-website-readme), an open-source project management tool to track issues, run ~sprints~ cycles, and manage product roadmaps without the chaos of managing the tool itself. 🧘‍♀️
 
-> Plane is still in its early days, not everything will be perfect yet, and hiccups may happen. Please let us know of any suggestions, ideas, or bugs that you encounter on our [Discord](https://discord.com/invite/A92xrEGCge) or GitHub issues, and we will use your feedback to improve in our upcoming releases.
+> Plane is evolving every day. Your suggestions, ideas, and reported bugs help us immensely. Do not hesitate to join in the conversation on [Discord](https://discord.com/invite/A92xrEGCge) or raise a GitHub issue. We read everything and respond to most.
 
 ## ⚡ Installation
 
-The easiest way to get started with Plane is by creating a [Plane Cloud](https://app.plane.so) account where we offer a hosted solution for users.
+The easiest way to get started with Plane is by creating a [Plane Cloud](https://app.plane.so) account.
 
-If you want more control over your data, prefer to self-host Plane, please refer to our [deployment documentation](https://docs.plane.so/docker-compose).
+If you would like to self-host Plane, please see our [deployment guide](https://docs.plane.so/docker-compose).
 
-| Installation Methods | Documentation Link                                                                                                                                           |
+| Installation methods | Docs link                                                                                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Docker               | [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://docs.plane.so/self-hosting/methods/docker-compose)         |
 | Kubernetes           | [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://docs.plane.so/kubernetes) |
 
-`Instance admin` can configure instance settings using our [God-mode](https://docs.plane.so/instance-admin) feature.
+`Instance admins` can configure instance settings with [God-mode](https://docs.plane.so/instance-admin).
 
 ## 🚀 Features
 
