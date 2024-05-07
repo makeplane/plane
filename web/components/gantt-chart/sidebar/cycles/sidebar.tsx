@@ -3,7 +3,7 @@ import { MutableRefObject } from "react";
 import { Loader } from "@plane/ui";
 // components
 import { IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart/types";
-import { GanttDnDHOC } from "../GanttDnDHOC";
+import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
 import { CyclesSidebarBlock } from "./block";
 // types

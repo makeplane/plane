@@ -4,7 +4,7 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import { DropIndicator } from "@plane/ui";
-import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/kanban/utils";
+import { HIGHLIGHT_WITH_LINE, highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 type Props = {
@@ -86,13 +86,13 @@ export const GanttDnDHOC = observer((props: Props) => {
           const destinationId = self?.data?.id as string | undefined;
 
           onDrop(sourceId, destinationId, currentInstruction === "DRAG_BELOW");
-          highlightIssueOnDrop(source?.element?.id, false);
+          highlightIssueOnDrop(source?.element?.id, false, true);
         },
       })
     );
   }, [blockRef?.current, dragHandleRef?.current, isLastChild, onDrop]);
 
-  useOutsideClickDetector(blockRef, () => blockRef?.current?.classList?.remove("highlight"));
+  useOutsideClickDetector(blockRef, () => blockRef?.current?.classList?.remove(HIGHLIGHT_WITH_LINE));
 
   return (
     <div id={`issue-draggable-${id}`} className={"relative"} ref={blockRef}>

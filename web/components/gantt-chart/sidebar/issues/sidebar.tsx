@@ -4,7 +4,7 @@ import { MutableRefObject } from "react";
 import { Loader } from "@plane/ui";
 // types
 import { IGanttBlock, IBlockUpdateData } from "@/components/gantt-chart/types";
-import { GanttDnDHOC } from "../GanttDnDHOC";
+import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
 import { IssuesSidebarBlock } from "./block";
 
