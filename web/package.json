@@ -40,7 +40,7 @@
     "dotenv": "^16.0.3",
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
-    "lucide-react": "^0.368.0",
+    "lucide-react": "^0.378.0",
     "mobx": "^6.10.0",
     "mobx-react": "^9.1.0",
     "mobx-utils": "^6.0.8",
