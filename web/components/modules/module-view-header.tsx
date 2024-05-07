@@ -79,6 +79,7 @@ export const ModuleViewHeader: FC = observer(() => {
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
+
   return (
     <div className="hidden h-full sm:flex items-center gap-3 self-end">
       <div className="flex items-center">
