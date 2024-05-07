@@ -13,7 +13,7 @@ import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/com
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
 // helpers
-import { calculateTotalIssueFilters } from "@/helpers/filter.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
@@ -86,7 +86,7 @@ export const IssuesMobileHeader = observer(() => {
     [workspaceSlug, projectId, updateFilters]
   );
 
-  const isFiltersApplied = calculateTotalIssueFilters(issueFilters?.filters ?? {}) !== 0;
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <>

@@ -16,7 +16,7 @@ import { ProjectLogo } from "@/components/project";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
-import { calculateTotalIssueFilters } from "@/helpers/filter.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import {
   useApplication,
@@ -111,7 +111,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
       : currentProjectDetails?.total_issues
     : undefined;
 
-  const isFiltersApplied = calculateTotalIssueFilters(issueFilters?.filters ?? {}) !== 0;
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <>

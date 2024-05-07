@@ -12,7 +12,7 @@ import { ProjectLogo } from "@/components/project";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
-import { calculateTotalIssueFilters } from "@/helpers/filter.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -85,7 +85,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
       : currentProjectDetails.draft_issues
     : undefined;
 
-  const isFiltersApplied = calculateTotalIssueFilters(issueFilters?.filters ?? {}) !== 0;
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">

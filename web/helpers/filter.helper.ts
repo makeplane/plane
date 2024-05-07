@@ -1,25 +1,18 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
-// types
-import { IIssueFilterOptions } from "@plane/types";
 // helpers
 import { getDate } from "./date-time.helper";
 // import { IIssueFilterOptions } from "@plane/types";
 
-type TFilters = {
-  [key: string]: boolean | string[] | string | null;
-};
-
-// TODO: Refactor calculateTotalFilters function with typescript generics
 /**
  * @description calculates the total number of filters applied
- * @param {TFilters} filters
+ * @param {T} filters
  * @returns {number}
  */
-export const calculateTotalFilters = (filters: TFilters): number =>
+export const calculateTotalFilters = <T>(filters: T): number =>
   filters && Object.keys(filters).length > 0
     ? Object.keys(filters)
         .map((key) => {
-          const value = filters[key as keyof TFilters];
+          const value = filters[key as keyof T];
           if (value === null) return 0;
           if (Array.isArray(value)) return value.length;
           if (typeof value === "boolean") return value ? 1 : 0;
@@ -27,25 +20,6 @@ export const calculateTotalFilters = (filters: TFilters): number =>
         })
         .reduce((curr, prev) => curr + prev, 0)
     : 0;
-
-/**
- * @description calculates the total number of issue filters applied
- * @param {IIssueFilterOptions} filters
- * @returns {number}
- */
-export const calculateTotalIssueFilters = (filters: IIssueFilterOptions): number =>
-  filters && Object.keys(filters).length > 0
-    ? Object.keys(filters)
-        .map((key) => {
-          const value = filters[key as keyof IIssueFilterOptions];
-          if (value === null) return 0;
-          if (Array.isArray(value)) return value.length;
-          if (typeof value === "boolean") return value ? 1 : 0;
-          return 0;
-        })
-        .reduce((curr, prev) => curr + prev, 0)
-    : 0;
-
 /**
  * @description checks if the date satisfies the filter
  * @param {Date} date

@@ -18,7 +18,7 @@ import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { calculateTotalIssueFilters } from "@/helpers/filter.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
@@ -153,7 +153,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
       : cycleDetails.total_issues
     : undefined;
 
-  const isFiltersApplied = calculateTotalIssueFilters(issueFilters?.filters ?? {}) !== 0;
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <>
