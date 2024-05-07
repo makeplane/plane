@@ -1,5 +1,5 @@
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useApplication, useIssues } from "./store";
+import { useCallback, useMemo } from "react";
+// types
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -8,7 +8,10 @@ import {
   TIssueKanbanFilters,
   TLoader,
 } from "@plane/types";
-import { useCallback, useMemo } from "react";
+// constants
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+// hooks
+import { useApplication, useIssues } from "./store";
 
 interface IssueActions {
   fetchIssues?: (projectId: string, loadType: TLoader) => Promise<TIssue[] | undefined>;
@@ -238,9 +241,9 @@ const useModuleIssueActions = () => {
   const removeIssueFromView = useCallback(
     async (projectId: string, issueId: string) => {
       if (!moduleId || !workspaceSlug) return;
-      return await issues.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+      return await issues.removeIssuesFromModule(workspaceSlug, projectId, moduleId, [issueId]);
     },
-    [issues.removeIssueFromModule, moduleId, workspaceSlug]
+    [issues.removeIssuesFromModule, moduleId, workspaceSlug]
   );
   const archiveIssue = useCallback(
     async (projectId: string, issueId: string) => {

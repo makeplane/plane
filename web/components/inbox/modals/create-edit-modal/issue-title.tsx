@@ -13,7 +13,7 @@ export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
   const { data, handleData, isTitleLengthMoreThan255Character } = props;
 
   return (
-    <div className="relative flex flex-wrap gap-2 items-center">
+    <div className="space-y-1">
       <Input
         id="name"
         name="name"
@@ -21,7 +21,7 @@ export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
         value={data?.name}
         onChange={(e) => handleData("name", e.target.value)}
         placeholder="Title"
-        className="w-full resize-none text-xl"
+        className="w-full text-base"
         required
       />
       {isTitleLengthMoreThan255Character && (

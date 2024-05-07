@@ -15,6 +15,7 @@ from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.core.exceptions import ObjectDoesNotExist
 
 # Module imports
 from plane.api.serializers import (
@@ -422,6 +423,9 @@ def webhook_activity(
             )
         return
     except Exception as e:
+        # Return if a does not exist error occurs
+        if isinstance(e, ObjectDoesNotExist):
+            return
         if settings.DEBUG:
             print(e)
         log_exception(e)
@@ -462,21 +466,23 @@ def model_activity(
 
     # Loop through all keys in requested data and check the current value and requested value
     for key in requested_data:
-        current_value = current_instance.get(key, None)
-        requested_value = requested_data.get(key, None)
-        if current_value != requested_value:
-            webhook_activity.delay(
-                event=model_name,
-                verb="updated",
-                field=key,
-                old_value=current_value,
-                new_value=requested_value,
-                actor_id=actor_id,
-                slug=slug,
-                current_site=origin,
-                event_id=model_id,
-                old_identifier=None,
-                new_identifier=None,
-            )
+        # Check if key is present in current instance or not
+        if key in current_instance:
+            current_value = current_instance.get(key, None)
+            requested_value = requested_data.get(key, None)
+            if current_value != requested_value:
+                webhook_activity.delay(
+                    event=model_name,
+                    verb="updated",
+                    field=key,
+                    old_value=current_value,
+                    new_value=requested_value,
+                    actor_id=actor_id,
+                    slug=slug,
+                    current_site=origin,
+                    event_id=model_id,
+                    old_identifier=None,
+                    new_identifier=None,
+                )
 
     return

@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
+// types
 import type { TIssue } from "@plane/types";
-// hooks
+// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-
+// components
+import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
+// constants
 import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
+// hooks
 import {
   useApplication,
   useEventTracker,
@@ -22,9 +25,6 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
-// ui
-// types
-// constants
 
 export interface IssuesModalProps {
   data?: Partial<TIssue>;
@@ -241,72 +241,47 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   if (!workspaceProjectIds || workspaceProjectIds.length === 0 || !activeProjectId) return null;
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={() => handleClose(true)}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative mx-4 transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-4xl">
-                {withDraftIssueWrapper ? (
-                  <DraftIssueLayout
-                    changesMade={changesMade}
-                    data={{
-                      ...data,
-                      description_html: description,
-                      cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
-                      module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId] : null,
-                    }}
-                    issueTitleRef={issueTitleRef}
-                    onChange={handleFormChange}
-                    onClose={handleClose}
-                    onSubmit={handleFormSubmit}
-                    projectId={activeProjectId}
-                    isCreateMoreToggleEnabled={createMore}
-                    onCreateMoreToggleChange={handleCreateMoreToggleChange}
-                    isDraft={isDraft}
-                  />
-                ) : (
-                  <IssueFormRoot
-                    issueTitleRef={issueTitleRef}
-                    data={{
-                      ...data,
-                      description_html: description,
-                      cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
-                      module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId] : null,
-                    }}
-                    onClose={() => handleClose(false)}
-                    isCreateMoreToggleEnabled={createMore}
-                    onCreateMoreToggleChange={handleCreateMoreToggleChange}
-                    onSubmit={handleFormSubmit}
-                    projectId={activeProjectId}
-                    isDraft={isDraft}
-                  />
-                )}
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+    <ModalCore
+      isOpen={isOpen}
+      handleClose={() => handleClose(true)}
+      position={EModalPosition.TOP}
+      width={EModalWidth.XXXXL}
+    >
+      {withDraftIssueWrapper ? (
+        <DraftIssueLayout
+          changesMade={changesMade}
+          data={{
+            ...data,
+            description_html: description,
+            cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
+            module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId] : null,
+          }}
+          issueTitleRef={issueTitleRef}
+          onChange={handleFormChange}
+          onClose={handleClose}
+          onSubmit={handleFormSubmit}
+          projectId={activeProjectId}
+          isCreateMoreToggleEnabled={createMore}
+          onCreateMoreToggleChange={handleCreateMoreToggleChange}
+          isDraft={isDraft}
+        />
+      ) : (
+        <IssueFormRoot
+          issueTitleRef={issueTitleRef}
+          data={{
+            ...data,
+            description_html: description,
+            cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
+            module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId] : null,
+          }}
+          onClose={() => handleClose(false)}
+          isCreateMoreToggleEnabled={createMore}
+          onCreateMoreToggleChange={handleCreateMoreToggleChange}
+          onSubmit={handleFormSubmit}
+          projectId={activeProjectId}
+          isDraft={isDraft}
+        />
+      )}
+    </ModalCore>
   );
 });

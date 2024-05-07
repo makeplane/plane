@@ -1,11 +1,12 @@
 import React, { Fragment, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
+// icons
 import { ChevronUp } from "lucide-react";
+// headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@plane/ui";
-// icons
 
 type Props = {
   children: React.ReactNode;
@@ -15,10 +16,20 @@ type Props = {
   disabled?: boolean;
   tabIndex?: number;
   menuButton?: React.ReactNode;
+  isFiltersApplied?: boolean;
 };
 
 export const FiltersDropdown: React.FC<Props> = (props) => {
-  const { children, icon, title = "Dropdown", placement, disabled = false, tabIndex, menuButton } = props;
+  const {
+    children,
+    icon,
+    title = "Dropdown",
+    placement,
+    disabled = false,
+    tabIndex,
+    menuButton,
+    isFiltersApplied = false,
+  } = props;
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -50,10 +61,16 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                     <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />
                   }
                   tabIndex={tabIndex}
+                  className="relative"
                 >
-                  <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
-                    <span>{title}</span>
-                  </div>
+                  <>
+                    <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
+                      <span>{title}</span>
+                    </div>
+                    {isFiltersApplied && (
+                      <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
+                    )}
+                  </>
                 </Button>
               )}
             </Popover.Button>
@@ -73,7 +90,9 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                   style={styles.popper}
                   {...attributes.popper}
                 >
-                  <div className="flex max-h-[30rem] lg:max-h-[37.5rem] w-[18.75rem] flex-col overflow-hidden">{children}</div>
+                  <div className="flex max-h-[30rem] lg:max-h-[37.5rem] w-[18.75rem] flex-col overflow-hidden">
+                    {children}
+                  </div>
                 </div>
               </Popover.Panel>
             </Transition>

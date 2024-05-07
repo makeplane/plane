@@ -1,21 +1,20 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
-import { Dialog, Transition } from "@headlessui/react";
+// types
 import { IApiToken } from "@plane/types";
-// services
+// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-
+// components
 import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-token";
+import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
+// fetch-keys
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+// helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { csvDownload } from "@/helpers/download.helper";
+// services
 import { APITokenService } from "@/services/api_token.service";
-// ui
-// components
-// helpers
-// types
-// fetch-keys
 
 type Props = {
   isOpen: boolean;
@@ -77,7 +76,7 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error",
+          title: "Error!",
           message: err.message,
         });
 
@@ -86,47 +85,17 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={() => {}}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="grid h-full w-full place-items-center p-4 text-center">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 px-4 text-left shadow-custom-shadow-md transition-all w-full sm:max-w-2xl">
-                {generatedToken ? (
-                  <GeneratedTokenDetails handleClose={handleClose} tokenDetails={generatedToken} />
-                ) : (
-                  <CreateApiTokenForm
-                    handleClose={handleClose}
-                    neverExpires={neverExpires}
-                    toggleNeverExpires={() => setNeverExpires((prevData) => !prevData)}
-                    onSubmit={handleCreateToken}
-                  />
-                )}
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+    <ModalCore isOpen={isOpen} handleClose={() => {}} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+      {generatedToken ? (
+        <GeneratedTokenDetails handleClose={handleClose} tokenDetails={generatedToken} />
+      ) : (
+        <CreateApiTokenForm
+          handleClose={handleClose}
+          neverExpires={neverExpires}
+          toggleNeverExpires={() => setNeverExpires((prevData) => !prevData)}
+          onSubmit={handleCreateToken}
+        />
+      )}
+    </ModalCore>
   );
 };

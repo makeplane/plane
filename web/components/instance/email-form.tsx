@@ -53,7 +53,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
       .updateInstanceConfigurations(payload)
       .then(() =>
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "Email Settings updated successfully",
         })

@@ -40,7 +40,7 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
       .updateInstanceInfo(payload)
       .then(() =>
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "Settings updated successfully",
         })

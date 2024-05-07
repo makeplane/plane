@@ -32,19 +32,18 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
         <Loader.Item width="100%" height="140px" />
       </Loader>
     );
+
   return (
-    <div className="relative">
-      <RichTextEditor
-        initialValue={!data?.description_html || data?.description_html === "" ? "<p></p>" : data?.description_html}
-        ref={editorRef}
-        workspaceSlug={workspaceSlug}
-        workspaceId={workspaceId}
-        projectId={projectId}
-        dragDropEnabled={false}
-        onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
-        placeholder={getDescriptionPlaceholder}
-        containerClassName={containerClassName}
-      />
-    </div>
+    <RichTextEditor
+      initialValue={!data?.description_html || data?.description_html === "" ? "<p></p>" : data?.description_html}
+      ref={editorRef}
+      workspaceSlug={workspaceSlug}
+      workspaceId={workspaceId}
+      projectId={projectId}
+      dragDropEnabled={false}
+      onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
+      placeholder={getDescriptionPlaceholder}
+      containerClassName={containerClassName}
+    />
   );
 });
