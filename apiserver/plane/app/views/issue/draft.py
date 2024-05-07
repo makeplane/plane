@@ -232,7 +232,7 @@ class IssueDraftViewSet(BaseViewSet):
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(
-                issue_queryset, datetime_fields, request.user.user_timezone
+                issues, datetime_fields, request.user.user_timezone
             )
         return Response(issues, status=status.HTTP_200_OK)
 
