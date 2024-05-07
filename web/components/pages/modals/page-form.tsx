@@ -39,28 +39,27 @@ export const PageForm: React.FC<Props> = (props) => {
 
   return (
     <form onSubmit={handlePageFormSubmit}>
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">Create Page</h3>
-
-        <div className="space-y-2">
+      <div className="space-y-5 p-5">
+        <h3 className="text-xl font-medium text-custom-text-200">Create Page</h3>
+        <div className="space-y-1">
           <Input
             id="name"
             type="text"
             value={formData.name}
             onChange={(e) => handleFormData("name", e.target.value)}
             placeholder="Title"
-            className="w-full resize-none text-lg"
+            className="w-full resize-none text-base"
             tabIndex={1}
             required
+            autoFocus
           />
           {isTitleLengthMoreThan255Character && (
             <span className="text-xs text-red-500">Max length of the name should be less than 255 characters</span>
           )}
         </div>
       </div>
-
-      <div className="mt-5 relative flex items-center justify-between gap-2">
-        <div className="relative flex items-center gap-2">
+      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
+        <div className="flex items-center gap-2">
           <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-custom-border-200 p-1">
             {PAGE_ACCESS_SPECIFIERS.map((access, index) => (
               <Tooltip key={access.key} tooltipContent={access.label} isMobile={isMobile}>
@@ -88,8 +87,7 @@ export const PageForm: React.FC<Props> = (props) => {
             {PAGE_ACCESS_SPECIFIERS.find((access) => access.key === formData.access)?.label}
           </h6>
         </div>
-
-        <div className="relative flex items-center gap-2 justify-end">
+        <div className="flex items-center justify-end gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={4}>
             Cancel
           </Button>

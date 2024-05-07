@@ -43,7 +43,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
     await updateInstanceConfigurations(payload)
       .then(() => {
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "SSO and OAuth Settings updated successfully",
         });
@@ -52,7 +52,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
       .catch((err) => {
         console.error(err);
         setToast({
-          title: "Error",
+          title: "Error!",
           type: TOAST_TYPE.ERROR,
           message: "Failed to update SSO and OAuth Settings",
         });

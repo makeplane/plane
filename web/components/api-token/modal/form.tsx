@@ -2,13 +2,15 @@ import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { Calendar } from "lucide-react";
+// types
 import { IApiToken } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { DateDropdown } from "@/components/dropdowns";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-// types
 
 type Props = {
   handleClose: () => void;
@@ -106,13 +108,14 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
 
   const today = new Date();
   const tomorrow = add(today, { days: 1 });
+  const expiredAt = watch("expired_at");
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">Create token</h3>
+      <div className="space-y-5 p-5">
+        <h3 className="text-xl font-medium text-custom-text-200">Create token</h3>
         <div className="space-y-3">
-          <div>
+          <div className="space-y-1">
             <Controller
               control={control}
               name="label"
@@ -130,8 +133,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   hasError={Boolean(errors.label)}
-                  placeholder="Token title"
-                  className="w-full text-sm font-medium"
+                  placeholder="Title"
+                  className="w-full text-base"
                 />
               )}
             />
@@ -145,8 +148,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.description)}
-                placeholder="Token description"
-                className="min-h-24 w-full text-sm"
+                placeholder="Description"
+                className="w-full text-base resize-none min-h-24"
               />
             )}
           />
@@ -162,9 +165,12 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     <CustomSelect
                       customButton={
                         <div
-                          className={`flex items-center gap-2 rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 ${
-                            neverExpires ? "text-custom-text-400" : ""
-                          }`}
+                          className={cn(
+                            "h-7 flex items-center gap-2 rounded border-[0.5px] border-custom-border-300 px-2 py-0.5",
+                            {
+                              "text-custom-text-400": neverExpires,
+                            }
+                          )}
                         >
                           <Calendar className="h-3 w-3" />
                           {value === "custom"
@@ -188,33 +194,35 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                   );
                 }}
               />
-              {watch("expired_at") === "custom" && (
-                <DateDropdown
-                  value={customDate}
-                  onChange={(date) => setCustomDate(date)}
-                  minDate={tomorrow}
-                  icon={<Calendar className="h-3 w-3" />}
-                  buttonVariant="border-with-text"
-                  placeholder="Set date"
-                  disabled={neverExpires}
-                />
+              {expiredAt === "custom" && (
+                <div className="h-7">
+                  <DateDropdown
+                    value={customDate}
+                    onChange={(date) => setCustomDate(date)}
+                    minDate={tomorrow}
+                    icon={<Calendar className="h-3 w-3" />}
+                    buttonVariant="border-with-text"
+                    placeholder="Set date"
+                    disabled={neverExpires}
+                  />
+                </div>
               )}
             </div>
             {!neverExpires && (
               <span className="text-xs text-custom-text-400">
-                {watch("expired_at") === "custom"
+                {expiredAt === "custom"
                   ? customDate
                     ? `Expires ${renderFormattedDate(customDate)}`
                     : null
-                  : watch("expired_at")
-                    ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
+                  : expiredAt
+                    ? `Expires ${getExpiryDate(expiredAt ?? "")}`
                     : null}
               </span>
             )}
           </div>
         </div>
       </div>
-      <div className="mt-5 flex items-center justify-between gap-2">
+      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
         <div className="flex cursor-pointer items-center gap-1.5" onClick={toggleNeverExpires}>
           <div className="flex cursor-pointer items-center justify-center">
             <ToggleSwitch value={neverExpires} onChange={() => {}} size="sm" />
@@ -223,10 +231,10 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
         </div>
         <div className="flex items-center gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-            Discard
+            Cancel
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Generating..." : "Generate token"}
+            {isSubmitting ? "Generating" : "Generate token"}
           </Button>
         </div>
       </div>

@@ -431,15 +431,15 @@ class ModuleViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, pk):
         module = self.get_queryset().filter(pk=pk)
-        current_instance = json.dumps(
-            ModuleSerializer(module).data, cls=DjangoJSONEncoder
-        )
 
         if module.first().archived_at:
             return Response(
                 {"error": "Archived module cannot be updated"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        current_instance = json.dumps(
+            ModuleSerializer(module.first()).data, cls=DjangoJSONEncoder
+        )
         serializer = ModuleWriteSerializer(
             module.first(), data=request.data, partial=True
         )

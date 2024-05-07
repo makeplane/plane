@@ -91,7 +91,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         copyTextToClipboard(editorRef.getMarkDown()).then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Successful!",
+            title: "Success!",
             message: "Markdown copied to clipboard.",
           })
         );
@@ -106,7 +106,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${id}`).then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Successful!",
+            title: "Success!",
             message: "Page link copied to clipboard.",
           })
         );

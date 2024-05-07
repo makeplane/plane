@@ -40,7 +40,7 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
       .updateInstanceConfigurations(payload)
       .then(() =>
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "Image Configuration Settings updated successfully",
         })
