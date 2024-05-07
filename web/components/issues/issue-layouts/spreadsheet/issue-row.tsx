@@ -33,6 +33,7 @@ interface Props {
   containerRef: MutableRefObject<HTMLTableElement | null>;
   issueIds: string[];
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
+  spacingLeft?: number;
 }
 
 export const SpreadsheetIssueRow = observer((props: Props) => {
@@ -49,6 +50,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     containerRef,
     issueIds,
     spreadsheetColumnsList,
+    spacingLeft = 14,
   } = props;
 
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -72,6 +74,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           quickActions={quickActions}
           canEditProperties={canEditProperties}
           nestingLevel={nestingLevel}
+          spacingLeft={spacingLeft}
           isEstimateEnabled={isEstimateEnabled}
           updateIssue={updateIssue}
           portalElement={portalElement}
@@ -93,6 +96,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             quickActions={quickActions}
             canEditProperties={canEditProperties}
             nestingLevel={nestingLevel + 1}
+            spacingLeft={spacingLeft + 24}
             isEstimateEnabled={isEstimateEnabled}
             updateIssue={updateIssue}
             portalElement={portalElement}
@@ -119,6 +123,7 @@ interface IssueRowDetailsProps {
   isExpanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
+  spacingLeft?: number;
 }
 
 const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
@@ -135,6 +140,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     isExpanded,
     setExpanded,
     spreadsheetColumnsList,
+    spacingLeft = 14,
   } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -161,7 +167,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   const issueDetail = issue.getIssueById(issueId);
 
-  const paddingLeft = `${nestingLevel * 54}px`;
+  const paddingLeft = `${spacingLeft}px`;
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
