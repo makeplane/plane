@@ -332,7 +332,7 @@ function askForAction() {
         echo "   8) Exit"
         echo 
         read -p "Action [2]: " ACTION
-        until [[ -z "$ACTION" || "$ACTION" =~ ^[1-7]$ ]]; do
+        until [[ -z "$ACTION" || "$ACTION" =~ ^[1-8]$ ]]; do
             echo "$ACTION: invalid selection."
             read -p "Action [2]: " ACTION
         done

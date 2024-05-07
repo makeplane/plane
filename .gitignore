@@ -81,3 +81,4 @@ tmp/
 ## packages
 dist
 .temp/
+deploy/selfhost/plane-app/
