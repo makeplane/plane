@@ -1,18 +1,21 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import router from "next/router";
-// components
-import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
 // icons
-// constants
+import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+// types
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+// ui
+import { CustomMenu } from "@plane/ui";
+// components
 import { ProjectAnalyticsModal } from "@/components/analytics";
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues/issue-layouts";
+// constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
-// layouts
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "./issue-layouts";
 
 export const IssuesMobileHeader = observer(() => {
   const layouts = [
@@ -83,6 +86,8 @@ export const IssuesMobileHeader = observer(() => {
     [workspaceSlug, projectId, updateFilters]
   );
 
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+
   return (
     <>
       <ProjectAnalyticsModal
@@ -122,6 +127,7 @@ export const IssuesMobileHeader = observer(() => {
                 <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
               </span>
             }
+            isFiltersApplied={isFiltersApplied}
           >
             <FilterSelection
               filters={issueFilters?.filters ?? {}}

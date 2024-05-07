@@ -66,7 +66,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
+        title: "Error!",
         message: "Something went wrong",
       });
     }

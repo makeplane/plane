@@ -1,8 +1,8 @@
 import isEmpty from "lodash/isEmpty";
 import { autorun, makeObservable, observable } from "mobx";
+import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
 // root store
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
-import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
 import { RootStore } from "../root.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
