@@ -53,13 +53,13 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await createComment(workspaceSlug, projectId, issueId, data);
           setToast({
-            title: "Comment created successfully.",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Comment created successfully.",
           });
         } catch (error) {
           setToast({
-            title: "Comment creation failed.",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Comment creation failed. Please try again later.",
           });
@@ -70,13 +70,13 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await updateComment(workspaceSlug, projectId, issueId, commentId, data);
           setToast({
-            title: "Comment updated successfully.",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Comment updated successfully.",
           });
         } catch (error) {
           setToast({
-            title: "Comment update failed.",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Comment update failed. Please try again later.",
           });
@@ -87,13 +87,13 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await removeComment(workspaceSlug, projectId, issueId, commentId);
           setToast({
-            title: "Comment removed successfully.",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Comment removed successfully.",
           });
         } catch (error) {
           setToast({
-            title: "Comment remove failed.",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Comment remove failed. Please try again later.",
           });

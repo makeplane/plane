@@ -163,7 +163,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       orderBy !== "sort_order"
     ).catch((err) => {
       setToast({
-        title: "Error",
+        title: "Error!",
         type: TOAST_TYPE.ERROR,
         message: err?.detail ?? "Failed to perform this action",
       });

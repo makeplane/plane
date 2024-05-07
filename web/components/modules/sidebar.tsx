@@ -125,7 +125,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Module link created",
+          title: "Success!",
           message: "Module link created successfully.",
         });
       })
@@ -151,7 +151,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Module link updated",
+          title: "Success!",
           message: "Module link updated successfully.",
         });
       })
@@ -175,7 +175,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Module link deleted",
+          title: "Success!",
           message: "Module link deleted successfully.",
         });
       })

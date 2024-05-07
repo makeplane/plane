@@ -99,7 +99,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
       handleClose();
       onSuccess();
       setToast({
-        title: "Notification snoozed",
+        title: "Success!",
         message: "Notification snoozed successfully",
         type: TOAST_TYPE.SUCCESS,
       });

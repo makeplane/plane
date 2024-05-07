@@ -42,7 +42,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
       .updateInstanceConfigurations(payload)
       .then(() =>
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "Github Configuration Settings updated successfully",
         })

@@ -2,21 +2,23 @@ import { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
+// icons
 import { Plus } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-// hooks
-// components
 // ui
 import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// helpers
-// types
-// constants
 import { ProjectLogo } from "@/components/project";
+// constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
+// hooks
 import {
   useApplication,
   useEventTracker,
@@ -128,6 +130,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+
   return (
     <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2">
@@ -200,7 +204,12 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           selectedLayout={activeLayout}
         />
 
-        <FiltersDropdown title="Filters" placement="bottom-end" disabled={!canUserCreateIssue}>
+        <FiltersDropdown
+          title="Filters"
+          placement="bottom-end"
+          disabled={!canUserCreateIssue}
+          isFiltersApplied={isFiltersApplied}
+        >
           <FilterSelection
             filters={issueFilters?.filters ?? {}}
             handleFiltersUpdate={handleFiltersUpdate}
