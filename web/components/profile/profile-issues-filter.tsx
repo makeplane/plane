@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // types
@@ -8,6 +7,8 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
 // constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// helpers
+import { calculateTotalIssueFilters } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";
 
@@ -95,12 +96,7 @@ export const ProfileIssuesFilter = observer(() => {
     [workspaceSlug, updateFilters, userId]
   );
 
-  const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof IIssueFilterOptions] = value;
-  });
+  const isFiltersApplied = calculateTotalIssueFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <div className="relative flex items-center justify-end gap-2">
@@ -110,7 +106,7 @@ export const ProfileIssuesFilter = observer(() => {
         selectedLayout={activeLayout}
       />
 
-      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={!isEmpty(appliedFilters)}>
+      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
         <FilterSelection
           layoutDisplayFiltersOptions={
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined

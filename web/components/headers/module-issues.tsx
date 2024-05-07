@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -19,6 +18,7 @@ import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { calculateTotalIssueFilters } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
@@ -153,12 +153,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       : moduleDetails.total_issues
     : undefined;
 
-  const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof IIssueFilterOptions] = value;
-  });
+  const isFiltersApplied = calculateTotalIssueFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <>
@@ -248,7 +243,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 onChange={(layout) => handleLayoutChange(layout)}
                 selectedLayout={activeLayout}
               />
-              <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={!isEmpty(appliedFilters)}>
+              <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
                 <FilterSelection
                   filters={issueFilters?.filters ?? {}}
                   handleFiltersUpdate={handleFiltersUpdate}

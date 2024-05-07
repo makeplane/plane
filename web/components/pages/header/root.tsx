@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
@@ -54,6 +53,8 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
     appliedFilters[key] = Array.isArray(value) ? value : [String(value)];
   });
 
+  const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
+
   return (
     <>
       <div className="flex-shrink-0 h-[50px] w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
@@ -72,7 +73,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
             icon={<ListFilter className="h-3 w-3" />}
             title="Filters"
             placement="bottom-end"
-            isFiltersApplied={!isEmpty(appliedFilters)}
+            isFiltersApplied={isFiltersApplied}
           >
             <PageFiltersSelection
               filters={filters}

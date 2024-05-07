@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 // icons
 import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
@@ -15,6 +14,7 @@ import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/pr
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useApplication, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
@@ -81,12 +81,7 @@ export const ProjectsHeader = observer(() => {
     }
   };
 
-  const appliedFilters: TProjectFilters = {};
-  Object.entries(filters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof TProjectFilters] = value;
-  });
+  const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -159,7 +154,7 @@ export const ProjectsHeader = observer(() => {
             icon={<ListFilter className="h-3 w-3" />}
             title="Filters"
             placement="bottom-end"
-            isFiltersApplied={!isEmpty(appliedFilters)}
+            isFiltersApplied={isFiltersApplied}
           >
             <ProjectFiltersSelection
               displayFilters={displayFilters ?? {}}

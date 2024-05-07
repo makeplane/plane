@@ -1,5 +1,4 @@
 import { FC } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // types
@@ -9,6 +8,8 @@ import { ArchiveTabsList } from "@/components/archives";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// helpers
+import { calculateTotalIssueFilters } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
@@ -63,12 +64,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
     updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
   };
 
-  const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof IIssueFilterOptions] = value;
-  });
+  const isFiltersApplied = calculateTotalIssueFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <div className="group relative flex border-b border-custom-border-200">
@@ -77,7 +73,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
       </div>
       {/* filter options */}
       <div className="flex items-center gap-2 px-8">
-        <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={!isEmpty(appliedFilters)}>
+        <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
           <FilterSelection
             filters={issueFilters?.filters || {}}
             handleFiltersUpdate={handleFiltersUpdate}

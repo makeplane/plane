@@ -1,5 +1,4 @@
 import React, { FC, useCallback, useRef, useState } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
@@ -15,6 +14,8 @@ import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules/dropdowns";
 // constants
 import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
@@ -83,12 +84,7 @@ export const ModuleViewHeader: FC = observer(() => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
 
-  const appliedFilters: TModuleFilters = {};
-  Object.entries(filters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof TModuleFilters] = value;
-  });
+  const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;
 
   return (
     <div className="hidden h-full sm:flex items-center gap-3 self-end">
@@ -150,7 +146,7 @@ export const ModuleViewHeader: FC = observer(() => {
         icon={<ListFilter className="h-3 w-3" />}
         title="Filters"
         placement="bottom-end"
-        isFiltersApplied={!isEmpty(appliedFilters)}
+        isFiltersApplied={isFiltersApplied}
       >
         <ModuleFiltersSelection
           displayFilters={displayFilters ?? {}}

@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import router from "next/router";
 // icons
@@ -13,6 +12,8 @@ import { ProjectAnalyticsModal } from "@/components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues/issue-layouts";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+// helpers
+import { calculateTotalIssueFilters } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
@@ -85,12 +86,7 @@ export const IssuesMobileHeader = observer(() => {
     [workspaceSlug, projectId, updateFilters]
   );
 
-  const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof IIssueFilterOptions] = value;
-  });
+  const isFiltersApplied = calculateTotalIssueFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <>
@@ -131,7 +127,7 @@ export const IssuesMobileHeader = observer(() => {
                 <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
               </span>
             }
-            isFiltersApplied={!isEmpty(appliedFilters)}
+            isFiltersApplied={isFiltersApplied}
           >
             <FilterSelection
               filters={issueFilters?.filters ?? {}}

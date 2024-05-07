@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -17,6 +16,7 @@ import { ProjectLogo } from "@/components/project";
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
+import { calculateTotalIssueFilters } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
@@ -130,12 +130,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof IIssueFilterOptions] = value;
-  });
+  const isFiltersApplied = calculateTotalIssueFilters(issueFilters?.filters ?? {}) !== 0;
+
   return (
     <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2">
@@ -212,7 +208,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           title="Filters"
           placement="bottom-end"
           disabled={!canUserCreateIssue}
-          isFiltersApplied={!isEmpty(appliedFilters)}
+          isFiltersApplied={isFiltersApplied}
         >
           <FilterSelection
             filters={issueFilters?.filters ?? {}}

@@ -1,5 +1,4 @@
 import { FC, useCallback, useRef, useState } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // icons
@@ -12,6 +11,7 @@ import { CycleFiltersSelection } from "@/components/cycles";
 import { FiltersDropdown } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useCycleFilter } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
@@ -62,12 +62,7 @@ export const ArchivedCyclesHeader: FC = observer(() => {
     }
   };
 
-  const appliedFilters: TCycleFilters = {};
-  Object.entries(currentProjectArchivedFilters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof TCycleFilters] = value;
-  });
+  const isFiltersApplied = calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0;
 
   return (
     <div className="group relative flex border-b border-custom-border-200">
@@ -122,7 +117,7 @@ export const ArchivedCyclesHeader: FC = observer(() => {
           icon={<ListFilter className="h-3 w-3" />}
           title="Filters"
           placement="bottom-end"
-          isFiltersApplied={!isEmpty(appliedFilters)}
+          isFiltersApplied={isFiltersApplied}
         >
           <CycleFiltersSelection
             filters={currentProjectArchivedFilters ?? {}}

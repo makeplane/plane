@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
@@ -16,6 +15,7 @@ import { FiltersDropdown } from "@/components/issues";
 import { CYCLE_TABS_LIST, CYCLE_VIEW_LAYOUTS } from "@/constants/cycle";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useCycleFilter } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
@@ -78,12 +78,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
     }
   };
 
-  const appliedFilters: TCycleFilters = {};
-  Object.entries(currentProjectFilters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof TCycleFilters] = value;
-  });
+  const isFiltersApplied = calculateTotalFilters(currentProjectFilters ?? {}) !== 0;
 
   return (
     <div className="h-[50px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-custom-border-200 px-6 sm:pb-0">
@@ -149,7 +144,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
             icon={<ListFilter className="h-3 w-3" />}
             title="Filters"
             placement="bottom-end"
-            isFiltersApplied={!isEmpty(appliedFilters)}
+            isFiltersApplied={isFiltersApplied}
           >
             <CycleFiltersSelection filters={currentProjectFilters ?? {}} handleFiltersUpdate={handleFilters} />
           </FiltersDropdown>

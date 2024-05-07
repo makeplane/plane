@@ -1,11 +1,12 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+// types
+import { IIssueFilterOptions } from "@plane/types";
 // helpers
 import { getDate } from "./date-time.helper";
-// types
 // import { IIssueFilterOptions } from "@plane/types";
 
 type TFilters = {
-  [key: string]: boolean | string[] | null;
+  [key: string]: boolean | string[] | string | null;
 };
 
 /**
@@ -18,6 +19,24 @@ export const calculateTotalFilters = (filters: TFilters): number =>
     ? Object.keys(filters)
         .map((key) => {
           const value = filters[key as keyof TFilters];
+          if (value === null) return 0;
+          if (Array.isArray(value)) return value.length;
+          if (typeof value === "boolean") return value ? 1 : 0;
+          return 0;
+        })
+        .reduce((curr, prev) => curr + prev, 0)
+    : 0;
+
+/**
+ * @description calculates the total number of issue filters applied
+ * @param {IIssueFilterOptions} filters
+ * @returns {number}
+ */
+export const calculateTotalIssueFilters = (filters: IIssueFilterOptions): number =>
+  filters && Object.keys(filters).length > 0
+    ? Object.keys(filters)
+        .map((key) => {
+          const value = filters[key as keyof IIssueFilterOptions];
           if (value === null) return 0;
           if (Array.isArray(value)) return value.length;
           if (typeof value === "boolean") return value ? 1 : 0;

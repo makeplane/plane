@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // icons
@@ -15,6 +14,8 @@ import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
+import { calculateTotalIssueFilters } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useMember, useUser, useIssues } from "@/hooks/store";
 
@@ -95,12 +96,7 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
-  const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(issueFilters?.filters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof IIssueFilterOptions] = value;
-  });
+  const isFiltersApplied = calculateTotalIssueFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <>
@@ -118,7 +114,7 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
         </div>
         <div className="flex items-center gap-2">
           <>
-            <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={!isEmpty(appliedFilters)}>
+            <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
               <FilterSelection
                 layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                 filters={issueFilters?.filters ?? {}}
