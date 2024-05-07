@@ -15,6 +15,7 @@ from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.core.exceptions import ObjectDoesNotExist
 
 # Module imports
 from plane.api.serializers import (
@@ -422,6 +423,9 @@ def webhook_activity(
             )
         return
     except Exception as e:
+        # Return if a does not exist error occurs
+        if isinstance(e, ObjectDoesNotExist):
+            return
         if settings.DEBUG:
             print(e)
         log_exception(e)
