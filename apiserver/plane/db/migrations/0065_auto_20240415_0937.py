@@ -213,16 +213,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.RunPython(migrate_user_profile),
-        migrations.AddField(
-            model_name="project",
-            name="end_date",
-            field=models.DateField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name="project",
-            name="start_date",
-            field=models.DateField(blank=True, null=True),
-        ),
         migrations.RemoveField(
             model_name="user",
             name="billing_address",

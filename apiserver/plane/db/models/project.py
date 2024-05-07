@@ -115,8 +115,6 @@ class Project(BaseModel):
         related_name="default_state",
     )
     archived_at = models.DateTimeField(null=True)
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         """Return name of the project"""
