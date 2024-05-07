@@ -6,12 +6,13 @@ from urllib.parse import urlencode
 import pytz
 import requests
 
-# Django imports
-from django.core.exceptions import ImproperlyConfigured
-
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
 
 
 class GitHubOAuthProvider(OauthAdapter):
@@ -37,8 +38,9 @@ class GitHubOAuthProvider(OauthAdapter):
         )
 
         if not (GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET):
-            raise ImproperlyConfigured(
-                "Google is not configured. Please contact the support team."
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["GITHUB_NOT_CONFIGURED"],
+                error_message="GITHUB_NOT_CONFIGURED",
             )
 
         client_id = GITHUB_CLIENT_ID

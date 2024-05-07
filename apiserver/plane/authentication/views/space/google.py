@@ -3,17 +3,18 @@ import uuid
 from urllib.parse import urlencode, urljoin
 
 # Django import
-from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
 from django.views import View
 
+# Module imports
 from plane.authentication.provider.oauth.google import GoogleOAuthProvider
 from plane.authentication.utils.login import user_login
-
-
-# Module imports
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
 
 
 class GoogleOauthInitiateSpaceEndpoint(View):
@@ -26,10 +27,13 @@ class GoogleOauthInitiateSpaceEndpoint(View):
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
-            params = {
-                "error_code": "INSTANCE_NOT_CONFIGURED",
-                "error_message": "Instance is not configured",
-            }
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "INSTANCE_NOT_CONFIGURED"
+                ],
+                error_message="INSTANCE_NOT_CONFIGURED",
+            )
+            params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
@@ -44,11 +48,8 @@ class GoogleOauthInitiateSpaceEndpoint(View):
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
-        except ImproperlyConfigured as e:
-            params = {
-                "error_code": "IMPROPERLY_CONFIGURED",
-                "error_message": str(e),
-            }
+        except AuthenticationException as e:
+            params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
@@ -66,10 +67,13 @@ class GoogleCallbackSpaceEndpoint(View):
         next_path = request.session.get("next_path")
 
         if state != request.session.get("state", ""):
-            params = {
-                "error_code": "OAUTH_PROVIDER_ERROR",
-                "error_message": "State does not match",
-            }
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "GOOGLE_OAUTH_PROVIDER_ERROR"
+                ],
+                error_message="GOOGLE_OAUTH_PROVIDER_ERROR",
+            )
+            params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
@@ -78,10 +82,13 @@ class GoogleCallbackSpaceEndpoint(View):
             )
             return HttpResponseRedirect(url)
         if not code:
-            params = {
-                "error_code": "OAUTH_PROVIDER_ERROR",
-                "error_message": "Something went wrong while fetching data from OAuth provider. Please try again after sometime.",
-            }
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "GOOGLE_OAUTH_PROVIDER_ERROR"
+                ],
+                error_message="GOOGLE_OAUTH_PROVIDER_ERROR",
+            )
+            params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = next_path
             url = urljoin(
@@ -102,11 +109,8 @@ class GoogleCallbackSpaceEndpoint(View):
                 base_host, str(next_path) if next_path else "/spaces"
             )
             return HttpResponseRedirect(url)
-        except ImproperlyConfigured as e:
-            params = {
-                "error_code": "IMPROPERLY_CONFIGURED",
-                "error_message": str(e),
-            }
+        except AuthenticationException as e:
+            params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(

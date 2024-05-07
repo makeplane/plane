@@ -34,6 +34,10 @@ from plane.db.models import User
 from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
 from plane.authentication.utils.host import base_host
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
 
 
 class CSRFTokenEndpoint(APIView):
@@ -69,11 +73,14 @@ class ForgotPasswordEndpoint(APIView):
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "INSTANCE_NOT_CONFIGURED"
+                ],
+                error_message="INSTANCE_NOT_CONFIGURED",
+            )
             return Response(
-                {
-                    "error_code": "INSTANCE_NOT_CONFIGURED",
-                    "error_message": "Instance is not configured",
-                },
+                exc.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -97,22 +104,24 @@ class ForgotPasswordEndpoint(APIView):
         )
 
         if not (EMAIL_HOST):
+            exc = AuthenticationException(
+                error_message="SMTP_NOT_CONFIGURED",
+                error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
+            )
             return Response(
-                {
-                    "error_code": "SMTP_NOT_CONFIGURED",
-                    "error_message": "SMTP is not configured. Please contact your admin",
-                },
+                exc.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
             validate_email(email)
         except ValidationError:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
+                error_message="INVALID_EMAIL",
+            )
             return Response(
-                {
-                    "error_code": "INVALID_EMAIL",
-                    "error_message": "Please enter a valid email",
-                },
+                exc.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -130,11 +139,12 @@ class ForgotPasswordEndpoint(APIView):
                 {"message": "Check your email to reset your password"},
                 status=status.HTTP_200_OK,
             )
+        exc = AuthenticationException(
+            error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
+            error_message="USER_DOES_NOT_EXIST",
+        )
         return Response(
-            {
-                "error_code": "INVALID_EMAIL",
-                "error_message": "Please check the email",
-            },
+            exc.get_error_dict(),
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -149,39 +159,43 @@ class ResetPasswordEndpoint(View):
 
             # check if the token is valid for the user
             if not PasswordResetTokenGenerator().check_token(user, token):
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "INVALID_PASSWORD_TOKEN"
+                    ],
+                    error_message="INVALID_PASSWORD_TOKEN",
+                )
+                params = exc.get_error_dict()
                 url = urljoin(
                     base_host(request=request),
-                    "accounts/reset-password?"
-                    + urlencode(
-                        {
-                            "error_code": "INVALID_TOKEN",
-                            "error_message": "Token is invalid",
-                        }
-                    ),
+                    "accounts/reset-password?" + urlencode(params),
                 )
                 return HttpResponseRedirect(url)
 
             password = request.POST.get("password", False)
 
             if not password:
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
+                    error_message="INVALID_PASSWORD",
+                )
                 url = urljoin(
                     base_host(request=request),
-                    "?" + urlencode({"error": "Password is required"}),
+                    "?" + urlencode(exc.get_error_dict()),
                 )
                 return HttpResponseRedirect(url)
 
             # Check the password complexity
             results = zxcvbn(password)
             if results["score"] < 3:
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
+                    error_message="INVALID_PASSWORD",
+                )
                 url = urljoin(
                     base_host(request=request),
                     "accounts/reset-password?"
-                    + urlencode(
-                        {
-                            "error_code": "INVALID_PASSWORD",
-                            "error_message": "The password is not a valid password",
-                        }
-                    ),
+                    + urlencode(exc.get_error_dict()),
                 )
                 return HttpResponseRedirect(url)
 
@@ -196,15 +210,15 @@ class ResetPasswordEndpoint(View):
             )
             return HttpResponseRedirect(url)
         except DjangoUnicodeDecodeError:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "EXPIRED_PASSWORD_TOKEN"
+                ],
+                error_message="EXPIRED_PASSWORD_TOKEN",
+            )
             url = urljoin(
                 base_host(request=request),
-                "accounts/reset-password?"
-                + urlencode(
-                    {
-                        "error_code": "INVALID_TOKEN",
-                        "error_message": "The password token is not valid",
-                    }
-                ),
+                "accounts/reset-password?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
@@ -215,19 +229,29 @@ class ChangePasswordEndpoint(APIView):
         user = User.objects.get(pk=request.user.id)
         if serializer.is_valid():
             if not user.check_password(serializer.data.get("old_password")):
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "INCORRECT_OLD_PASSWORD"
+                    ],
+                    error_message="INCORRECT_OLD_PASSWORD",
+                    payload={"error": "Old password is not correct"},
+                )
                 return Response(
-                    {"error": "Old password is not correct"},
+                    exc.get_error_dict(),
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             # check the password score
             results = zxcvbn(serializer.data.get("new_password"))
             if results["score"] < 3:
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "INVALID_NEW_PASSWORD"
+                    ],
+                    error_message="INVALID_NEW_PASSWORD",
+                )
                 return Response(
-                    {
-                        "error_code": "INVALID_PASSWORD",
-                        "error_message": "Invalid password.",
-                    },
+                    exc.get_error_dict(),
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -240,11 +264,12 @@ class ChangePasswordEndpoint(APIView):
                 {"message": "Password updated successfully"},
                 status=status.HTTP_200_OK,
             )
+        exc = AuthenticationException(
+            error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
+            error_message="INVALID_PASSWORD",
+        )
         return Response(
-            {
-                "error_code": "INVALID_PASSWORD",
-                "error_message": "Invalid passwords provided",
-            },
+            exc.get_error_dict(),
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -256,30 +281,37 @@ class SetUserPasswordEndpoint(APIView):
 
         # If the user password is not autoset then return error
         if not user.is_password_autoset:
-            return Response(
-                {
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_ALREADY_SET"],
+                error_message="PASSWORD_ALREADY_SET",
+                payload={
                     "error": "Your password is already set please change your password from profile"
                 },
+            )
+            return Response(
+                exc.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Check password validation
-        if not password and len(str(password)) < 8:
+        if not password:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
+                error_message="INVALID_PASSWORD",
+            )
             return Response(
-                {
-                    "error_code": "INVALID_PASSWORD",
-                    "error_message": "Invalid password.",
-                },
+                exc.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         results = zxcvbn(password)
         if results["score"] < 3:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
+                error_message="INVALID_PASSWORD",
+            )
             return Response(
-                {
-                    "error_code": "INVALID_PASSWORD",
-                    "error_message": "Invalid password.",
-                },
+                exc.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

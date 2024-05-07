@@ -15,6 +15,10 @@ from plane.authentication.utils.workspace_project_join import (
 )
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
 
 
 class GitHubOauthInitiateEndpoint(View):
@@ -29,10 +33,15 @@ class GitHubOauthInitiateEndpoint(View):
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
-            params = {
-                "error_code": "INSTANCE_NOT_CONFIGURED",
-                "error_message": "Instance is not configured",
-            }
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "INSTANCE_NOT_CONFIGURED"
+                ],
+                error_message="INSTANCE_NOT_CONFIGURED",
+            )
+            params = exc.get_error_dict()
+            if next_path:
+                params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request),
                 "?" + urlencode(params),
@@ -44,11 +53,8 @@ class GitHubOauthInitiateEndpoint(View):
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
-        except ImproperlyConfigured as e:
-            params = {
-                "error_code": "IMPROPERLY_CONFIGURED",
-                "error_message": str(e),
-            }
+        except AuthenticationException as e:
+            params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
@@ -67,10 +73,13 @@ class GitHubCallbackEndpoint(View):
         next_path = request.session.get("next_path")
 
         if state != request.session.get("state", ""):
-            params = {
-                "error_code": "OAUTH_PROVIDER_ERROR",
-                "error_message": "State does not match",
-            }
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "GITHUB_OAUTH_PROVIDER_ERROR"
+                ],
+                error_message="GITHUB_OAUTH_PROVIDER_ERROR",
+            )
+            params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
@@ -80,10 +89,13 @@ class GitHubCallbackEndpoint(View):
             return HttpResponseRedirect(url)
 
         if not code:
-            params = {
-                "error_code": "OAUTH_PROVIDER_ERROR",
-                "error_message": "Something went wrong while fetching data from OAuth provider. Please try again after sometime.",
-            }
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "GITHUB_OAUTH_PROVIDER_ERROR"
+                ],
+                error_message="GITHUB_OAUTH_PROVIDER_ERROR",
+            )
+            params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
@@ -110,11 +122,8 @@ class GitHubCallbackEndpoint(View):
             # redirect to referer path
             url = urljoin(base_host, path)
             return HttpResponseRedirect(url)
-        except ImproperlyConfigured as e:
-            params = {
-                "error_code": "IMPROPERLY_CONFIGURED",
-                "error_message": str(e),
-            }
+        except AuthenticationException as e:
+            params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(

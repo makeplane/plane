@@ -11,6 +11,10 @@ from rest_framework.views import APIView
 ## Module imports
 from plane.db.models import User
 from plane.license.models import Instance
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 
 
 class EmailCheckEndpoint(APIView):
@@ -23,11 +27,14 @@ class EmailCheckEndpoint(APIView):
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "INSTANCE_NOT_CONFIGURED"
+                ],
+                error_message="INSTANCE_NOT_CONFIGURED",
+            )
             return Response(
-                {
-                    "error_code": "INSTANCE_NOT_CONFIGURED",
-                    "error_message": "Instance is not configured",
-                },
+                exc.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -35,8 +42,12 @@ class EmailCheckEndpoint(APIView):
 
         # Return error if email is not present
         if not email:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["EMAIL_REQUIRED"],
+                error_message="EMAIL_REQUIRED",
+            )
             return Response(
-                {"error": "Email is required"},
+                exc.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -44,13 +55,14 @@ class EmailCheckEndpoint(APIView):
         try:
             validate_email(email)
         except ValidationError:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
+                error_message="INVALID_EMAIL",
+            )
             return Response(
-                {
-                    "error": "Email is invalid please provide a valid email address"
-                },
+                exc.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         # Check if a user already exists with the given email
         existing_user = User.objects.filter(email=email).first()
 

@@ -1,0 +1,58 @@
+AUTHENTICATION_ERROR_CODES = {
+    "INSTANCE_NOT_CONFIGURED": 5000,
+    "SIGNUP_DISABLED": 5001,
+    "INVALID_PASSWORD": 5002,
+    "USER_ALREADY_EXIST": 5003,
+    "USER_DOES_NOT_EXIST": 5004,
+    "AUTHENTICATION_FAILED_SIGN_IN": 5005,
+    "AUTHENTICATION_FAILED_SIGN_UP": 5006,
+    "SMTP_NOT_CONFIGURED": 5007,
+    "INVALID_MAGIC_CODE": 5008,
+    "EXPIRED_MAGIC_CODE": 5009,
+    "GOOGLE_NOT_CONFIGURED": 5010,
+    "GITHUB_NOT_CONFIGURED": 5011,
+    "INVALID_EMAIL": 5012,
+    "EMAIL_REQUIRED": 5013,
+    "REQUIRED_EMAIL_PASSWORD_SIGN_IN": 5014,
+    "INVALID_EMAIL_SIGN_IN": 5015,
+    "INVALID_EMAIL_SIGN_UP": 5016,
+    "INVALID_EMAIL_MAGIC_SIGN_IN": 5017,
+    "INVALID_EMAIL_MAGIC_SIGN_UP": 5018,
+    "GITHUB_OAUTH_PROVIDER_ERROR": 5019,
+    "GOOGLE_OAUTH_PROVIDER_ERROR": 5020,
+    "MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED": 5021,
+    "MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED": 5022,
+    "INVALID_PASSWORD_TOKEN": 5023,
+    "EXPIRED_PASSWORD_TOKEN": 5024,
+    "INCORRECT_OLD_PASSWORD": 5025,
+    "INVALID_NEW_PASSWORD": 5026,
+    "PASSWORD_ALREADY_SET": 5027,
+    "ADMIN_ALREADY_EXIST": 5028,
+    "REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME": 5029,
+    "INVALID_ADMIN_EMAIL": 5030,
+    "INVALID_ADMIN_PASSWORD": 5031,
+    "REQUIRED_ADMIN_EMAIL_PASSWORD": 5032,
+    "ADMIN_AUTHENTICATION_FAILED": 5034,
+}
+
+
+class AuthenticationException(Exception):
+
+    error_code = None
+    error_message = None
+    payload = {}
+
+    def __init__(self, error_code, error_message, payload={}):
+        self.error_code = error_code
+        self.error_message = error_message
+        self.payload = payload
+
+    def get_error_dict(self):
+        error = {
+            "error_code": self.error_code,
+            "error_message": self.error_message,
+        }
+        for key in self.payload:
+            error[key] = self.payload[key]
+
+        return error

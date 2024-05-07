@@ -5,12 +5,13 @@ from urllib.parse import urlencode
 
 import pytz
 
-# Django imports
-from django.core.exceptions import ImproperlyConfigured
-
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 
 
 class GoogleOAuthProvider(OauthAdapter):
@@ -34,8 +35,9 @@ class GoogleOAuthProvider(OauthAdapter):
         )
 
         if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET):
-            raise ImproperlyConfigured(
-                "Google is not configured. Please contact the support team."
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["GOOGLE_NOT_CONFIGURED"],
+                error_message="GOOGLE_NOT_CONFIGURED",
             )
 
         client_id = GOOGLE_CLIENT_ID

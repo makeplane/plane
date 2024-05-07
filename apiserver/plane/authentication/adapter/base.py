@@ -3,7 +3,6 @@ import os
 import uuid
 
 # Django imports
-from django.core.exceptions import ImproperlyConfigured
 from django.utils import timezone
 
 # Third party imports
@@ -16,16 +15,7 @@ from plane.db.models import (
     WorkspaceMemberInvite,
 )
 from plane.license.utils.instance_value import get_configuration_value
-
-
-class AuthenticationException(Exception):
-
-    error_code = None
-    error_message = None
-
-    def __init__(self, error_code, error_message):
-        self.error_code = error_code
-        self.error_message = error_message
+from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
 
 
 class Adapter:
@@ -75,8 +65,10 @@ class Adapter:
                     email=email,
                 ).exists()
             ):
-                raise ImproperlyConfigured(
-                    "Account creation is disabled for this instance please contact your admin"
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["SIGNUP_DISABLED"],
+                    error_message="SIGNUP_DISABLED",
+                    payload={"email": email},
                 )
             user = User(email=email, username=uuid.uuid4().hex)
 
@@ -89,8 +81,11 @@ class Adapter:
                 results = zxcvbn(self.code)
                 if results["score"] < 3:
                     raise AuthenticationException(
-                        error_message="The password is not a valid password",
-                        error_code="INVALID_PASSWORD",
+                        error_code=AUTHENTICATION_ERROR_CODES[
+                            "INVALID_PASSWORD"
+                        ],
+                        error_message="INVALID_PASSWORD",
+                        payload={"email": email},
                     )
 
                 user.set_password(self.code)

@@ -14,7 +14,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 # Module imports
-from plane.authentication.adapter.base import AuthenticationException
 from plane.authentication.provider.credentials.magic_code import (
     MagicCodeProvider,
 )
@@ -23,6 +22,10 @@ from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 from plane.db.models import User, Profile
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
 
 
 class MagicGenerateSpaceEndpoint(APIView):
@@ -35,11 +38,14 @@ class MagicGenerateSpaceEndpoint(APIView):
         # Check if instance is configured
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "INSTANCE_NOT_CONFIGURED"
+                ],
+                error_message="INSTANCE_NOT_CONFIGURED",
+            )
             return Response(
-                {
-                    "error_code": "INSTANCE_NOT_CONFIGURED",
-                    "error_message": "Instance is not configured",
-                }
+                exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST
             )
 
         origin = base_host(request=request)
@@ -53,28 +59,9 @@ class MagicGenerateSpaceEndpoint(APIView):
             # If the smtp is configured send through here
             magic_link.delay(email, key, token, origin)
             return Response({"key": str(key)}, status=status.HTTP_200_OK)
-        except ImproperlyConfigured as e:
-            return Response(
-                {
-                    "error_code": "IMPROPERLY_CONFIGURED",
-                    "error_message": str(e),
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
         except AuthenticationException as e:
             return Response(
-                {
-                    "error_code": str(e.error_code),
-                    "error_message": str(e.error_message),
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except ValidationError:
-            return Response(
-                {
-                    "error_code": "INVALID_EMAIL",
-                    "error_message": "Valid email is required for generating a magic code",
-                },
+                e.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -89,10 +76,13 @@ class MagicSignInSpaceEndpoint(View):
         next_path = request.POST.get("next_path")
 
         if code == "" or email == "":
-            params = {
-                "error_code": "EMAIL_CODE_REQUIRED",
-                "error_message": "Email and code are required",
-            }
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED"
+                ],
+                error_message="MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED",
+            )
+            params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
@@ -122,26 +112,17 @@ class MagicSignInSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user)
             # redirect to referer path
+            profile = Profile.objects.get(user=user)
             if user.is_password_autoset and profile.is_onboarded:
                 path = "spaces/accounts/set-password"
             else:
                 # Get the redirection path
-                path = (
-                    str(next_path)
-                    if next_path
-                    else "spaces"
-                )
-            url = urljoin(
-                base_host(request=request),
-                path
-            )
+                path = str(next_path) if next_path else "spaces"
+            url = urljoin(base_host(request=request), path)
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
-            params = {
-                "error_code": str(e.error_code),
-                "error_message": str(e.error_message),
-            }
+            params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
@@ -161,10 +142,13 @@ class MagicSignUpSpaceEndpoint(View):
         next_path = request.POST.get("next_path")
 
         if code == "" or email == "":
-            params = {
-                "error_code": "EMAIL_CODE_REQUIRED",
-                "error_message": "Email and code are required",
-            }
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED"
+                ],
+                error_message="MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED",
+            )
+            params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
@@ -174,10 +158,11 @@ class MagicSignUpSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
         if User.objects.filter(email=email).exists():
-            params = {
-                "error_code": "USER_ALREADY_EXIST",
-                "error_message": "User already exists with the email.",
-            }
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["USER_ALREADY_EXIST"],
+                error_message="USER_ALREADY_EXIST",
+            )
+            params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
@@ -201,10 +186,7 @@ class MagicSignUpSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
-            params = {
-                "error_code": str(e.error_code),
-                "error_message": str(e.error_message),
-            }
+            params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(

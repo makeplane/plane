@@ -1,7 +1,10 @@
 # Module imports
-from plane.authentication.adapter.base import AuthenticationException
 from plane.authentication.adapter.credential import CredentialAdapter
 from plane.db.models import User
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 
 
 class EmailProvider(CredentialAdapter):
@@ -25,8 +28,10 @@ class EmailProvider(CredentialAdapter):
             # Check if the user already exists
             if User.objects.filter(email=self.key).exists():
                 raise AuthenticationException(
-                    error_message="User with this email already exists",
-                    error_code="USER_ALREADY_EXIST",
+                    error_message="USER_ALREADY_EXIST",
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "USER_ALREADY_EXIST"
+                    ],
                 )
 
             super().set_user_data(
@@ -46,18 +51,35 @@ class EmailProvider(CredentialAdapter):
             user = User.objects.filter(
                 email=self.key,
             ).first()
-            # Existing user
+
+            # User does not exists
             if not user:
                 raise AuthenticationException(
-                    error_message="Sorry, we could not find a user with the provided credentials. Please try again.",
-                    error_code="AUTHENTICATION_FAILED",
+                    error_message="USER_DOES_NOT_EXIST",
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "USER_DOES_NOT_EXIST"
+                    ],
+                    payload={
+                        "email": self.key,
+                    },
                 )
 
             # Check user password
             if not user.check_password(self.code):
                 raise AuthenticationException(
-                    error_message="Sorry, we could not find a user with the provided credentials. Please try again.",
-                    error_code="AUTHENTICATION_FAILED",
+                    error_message=(
+                        "AUTHENTICATION_FAILED_SIGN_UP"
+                        if self.is_signup
+                        else "AUTHENTICATION_FAILED_SIGN_IN"
+                    ),
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        (
+                            "AUTHENTICATION_FAILED_SIGN_UP"
+                            if self.is_signup
+                            else "AUTHENTICATION_FAILED_SIGN_IN"
+                        )
+                    ],
+                    payload={"email": self.key},
                 )
 
             super().set_user_data(

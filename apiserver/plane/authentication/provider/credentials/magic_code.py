@@ -4,14 +4,15 @@ import os
 import random
 import string
 
-# Django imports
-from django.core.exceptions import ImproperlyConfigured
 
 # Module imports
-from plane.authentication.adapter.base import AuthenticationException
 from plane.authentication.adapter.credential import CredentialAdapter
 from plane.license.utils.instance_value import get_configuration_value
 from plane.settings.redis import redis_instance
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 
 
 class MagicCodeProvider(CredentialAdapter):
@@ -45,8 +46,10 @@ class MagicCodeProvider(CredentialAdapter):
         )
 
         if not (EMAIL_HOST):
-            raise ImproperlyConfigured(
-                "SMTP is not configured. Please contact the support team."
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
+                error_message="SMTP_NOT_CONFIGURED",
+                payload={"email": str(self.key)},
             )
 
         super().__init__(request, self.provider)
@@ -113,11 +116,15 @@ class MagicCodeProvider(CredentialAdapter):
                 return
             else:
                 raise AuthenticationException(
-                    error_message="The token is not valid.",
-                    error_code="INVALID_TOKEN",
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "INVALID_MAGIC_CODE"
+                    ],
+                    error_message="INVALID_MAGIC_CODE",
+                    payload={"email": str(self.key)},
                 )
         else:
             raise AuthenticationException(
-                error_message="The token has expired. Please regenerate the token and try again.",
-                error_code="EXPIRED_TOKEN",
+                error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE"],
+                error_message="EXPIRED_MAGIC_CODE",
+                payload={"email": str(self.key)},
             )
