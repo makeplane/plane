@@ -99,7 +99,7 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${TOAST_TYPE.SUCCESS}!`,
+          title: `Success!`,
           message: "Issue created successfully.",
         });
         descriptionEditorRef?.current?.clearEditor();
@@ -118,7 +118,7 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: `${TOAST_TYPE.ERROR}!`,
+          title: `Error!`,
           message: "Some error occurred. Please try again.",
         });
       });

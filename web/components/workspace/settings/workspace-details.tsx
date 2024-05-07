@@ -75,7 +75,7 @@ export const WorkspaceDetails: FC = observer(() => {
           },
         });
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "Workspace updated successfully",
         });

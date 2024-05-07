@@ -42,7 +42,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
       .updateInstanceConfigurations(payload)
       .then(() =>
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "AI Settings updated successfully",
         })

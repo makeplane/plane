@@ -73,7 +73,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
       reset(defaultValues);
     } catch (error) {
       setToast({
-        title: "Label creation failed",
+        title: "Error!",
         type: TOAST_TYPE.ERROR,
         message: "Label creation failed. Please try again sometime later.",
       });
