@@ -66,6 +66,11 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
   const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
+  const toggleDropdown = () => {
+    if (isOpen) closeDropdown();
+    else openDropdown();
+  };
+
   return (
     <Combobox
       as="div"
@@ -90,7 +95,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                       ? "cursor-not-allowed text-custom-text-200"
                       : "cursor-pointer hover:bg-custom-background-80"
                   }  ${customButtonClassName}`}
-                  onClick={openDropdown}
+                  onClick={toggleDropdown}
                 >
                   {customButton}
                 </button>
@@ -107,7 +112,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                       ? "cursor-not-allowed text-custom-text-200"
                       : "cursor-pointer hover:bg-custom-background-80"
                   } ${buttonClassName}`}
-                  onClick={openDropdown}
+                  onClick={toggleDropdown}
                 >
                   {label}
                   {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
