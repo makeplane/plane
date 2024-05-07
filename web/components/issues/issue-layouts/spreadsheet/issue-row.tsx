@@ -96,7 +96,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             quickActions={quickActions}
             canEditProperties={canEditProperties}
             nestingLevel={nestingLevel + 1}
-            spacingLeft={spacingLeft + (displayProperties.key ? 24 : 32)}
+            spacingLeft={spacingLeft + (displayProperties.key ? 16 : 28)}
             isEstimateEnabled={isEstimateEnabled}
             updateIssue={updateIssue}
             portalElement={portalElement}
