@@ -8,7 +8,7 @@ import { Avatar } from "@plane/ui";
 // components
 import { OnBoardingForm } from "@/components/accounts/onboarding-form";
 // mobx
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useUser, useUserProfile } from "@/hooks/store";
 // assets
 import ProfileSetupDark from "public/onboarding/profile-setup-dark.svg";
 import ProfileSetup from "public/onboarding/profile-setup.svg";
@@ -22,12 +22,10 @@ const OnBoardingPage = observer(() => {
 
   // hooks
   const { resolvedTheme } = useTheme();
-  const {
-    user: userStore,
-    profile: { currentUserProfile, updateUserProfile },
-  } = useMobxStore();
 
-  const user = userStore?.currentUser;
+  const { data: user } = useUser();
+  const { data: currentUserProfile, updateUserProfile } = useUserProfile();
+
   if (!user) {
     router.push("/");
     return <></>;

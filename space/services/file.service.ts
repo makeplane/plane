@@ -43,7 +43,6 @@ class FileService extends APIService {
     this.cancelSource = axios.CancelToken.source();
     return this.post(`/api/workspaces/${workspaceSlug}/file-assets/`, file, {
       headers: {
-        ...this.getHeaders(),
         "Content-Type": "multipart/form-data",
       },
       cancelToken: this.cancelSource.token,
@@ -117,7 +116,6 @@ class FileService extends APIService {
 
   async restoreImage(assetUrlWithWorkspaceId: string): Promise<any> {
     return this.post(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/restore/`, {
-      headers: this.getHeaders(),
       "Content-Type": "application/json",
     })
       .then((response) => response?.status)
@@ -140,7 +138,6 @@ class FileService extends APIService {
   async uploadUserFile(file: FormData): Promise<any> {
     return this.post(`/api/users/file-assets/`, file, {
       headers: {
-        ...this.getHeaders(),
         "Content-Type": "multipart/form-data",
       },
     })

@@ -6,7 +6,7 @@ import { IssueListHeader } from "@/components/issues/board-views/list/header";
 // mobx hook
 import { useMobxStore } from "@/lib/mobx/store-provider";
 // store
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 import { IIssueState, IIssue } from "types/issue";
 
 export const IssueListView = observer(() => {

@@ -1,9 +1,10 @@
+import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// services
 import { TUserProfile } from "@plane/types";
-import { UserService } from "services/user.service";
-// types
-import { RootStore } from "./root";
+// services
+import { UserService } from "@/services/user.service";
+// store types
+import { RootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
@@ -13,16 +14,17 @@ type TError = {
 export interface IProfileStore {
   // observables
   isLoading: boolean;
-  currentUserProfile: TUserProfile;
   error: TError | undefined;
+  data: TUserProfile;
   // actions
   fetchUserProfile: () => Promise<TUserProfile | undefined>;
-  updateUserProfile: (currentUserProfile: Partial<TUserProfile>) => Promise<void>;
+  updateUserProfile: (data: Partial<TUserProfile>) => Promise<TUserProfile | undefined>;
 }
 
-class ProfileStore implements IProfileStore {
+export class ProfileStore implements IProfileStore {
   isLoading: boolean = false;
-  currentUserProfile: TUserProfile = {
+  error: TError | undefined = undefined;
+  data: TUserProfile = {
     id: undefined,
     user: undefined,
     role: undefined,
@@ -52,28 +54,29 @@ class ProfileStore implements IProfileStore {
     created_at: "",
     updated_at: "",
   };
-  error: TError | undefined = undefined;
-  // root store
-  rootStore;
+
   // services
   userService: UserService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(public store: RootStore) {
     makeObservable(this, {
       // observables
       isLoading: observable.ref,
-      currentUserProfile: observable,
       error: observable,
+      data: observable,
       // actions
       fetchUserProfile: action,
       updateUserProfile: action,
     });
-    this.rootStore = _rootStore;
     // services
     this.userService = new UserService();
   }
 
   // actions
+  /**
+   * @description fetches user profile information
+   * @returns {Promise<TUserProfile | undefined>}
+   */
   fetchUserProfile = async () => {
     try {
       runInAction(() => {
@@ -83,45 +86,49 @@ class ProfileStore implements IProfileStore {
       const userProfile = await this.userService.getCurrentUserProfile();
       runInAction(() => {
         this.isLoading = false;
-        this.currentUserProfile = userProfile;
+        this.data = userProfile;
       });
-
       return userProfile;
     } catch (error) {
-      console.log("Failed to fetch profile details");
       runInAction(() => {
-        this.isLoading = true;
+        this.isLoading = false;
         this.error = {
-          status: "error",
-          message: "Failed to fetch instance info",
+          status: "user-profile-fetch-error",
+          message: "Failed to fetch user profile",
         };
       });
-      throw error;
     }
   };
 
-  updateUserProfile = async (currentUserProfile: Partial<TUserProfile>) => {
+  /**
+   * @description updated the user profile information
+   * @param {Partial<TUserProfile>} data
+   * @returns {Promise<TUserProfile | undefined>}
+   */
+  updateUserProfile = async (data: Partial<TUserProfile>) => {
+    const currentUserProfileData = this.data;
     try {
-      runInAction(() => {
-        this.isLoading = true;
-        this.error = undefined;
-      });
-      const userProfile = await this.userService.updateCurrentUserProfile(currentUserProfile);
-      runInAction(() => {
-        this.isLoading = false;
-        this.currentUserProfile = userProfile;
-      });
+      if (currentUserProfileData) {
+        Object.keys(data).forEach((key: string) => {
+          const userKey: keyof TUserProfile = key as keyof TUserProfile;
+          if (this.data) set(this.data, userKey, data[userKey]);
+        });
+      }
+      const userProfile = await this.userService.updateCurrentUserProfile(data);
+      return userProfile;
     } catch (error) {
-      console.log("Failed to fetch profile details");
+      if (currentUserProfileData) {
+        Object.keys(currentUserProfileData).forEach((key: string) => {
+          const userKey: keyof TUserProfile = key as keyof TUserProfile;
+          if (this.data) set(this.data, userKey, currentUserProfileData[userKey]);
+        });
+      }
       runInAction(() => {
-        this.isLoading = true;
         this.error = {
-          status: "error",
-          message: "Failed to fetch instance info",
+          status: "user-profile-update-error",
+          message: "Failed to update user profile",
         };
       });
     }
   };
 }
-
-export default ProfileStore;

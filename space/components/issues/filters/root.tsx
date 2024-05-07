@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useMobxStore } from "@/lib/mobx/store-provider";
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/store/issues/helpers";
 import { IIssueFilterOptions } from "@/store/issues/types";
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 import { FiltersDropdown } from "./helpers/dropdown";
 import { FilterSelection } from "./selection";
 // types

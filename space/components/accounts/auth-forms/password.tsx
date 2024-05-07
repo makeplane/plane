@@ -10,7 +10,8 @@ import { EAuthModes, EAuthSteps, ForgotPasswordPopover, PasswordStrengthMeter } 
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { getPasswordStrength } from "@/helpers/password.helper";
-import { useMobxStore } from "@/lib/mobx/store-provider";
+// hooks
+import { useInstance } from "@/hooks/store";
 import { AuthService } from "@/services/authentication.service";
 
 type Props = {
@@ -42,9 +43,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // hooks
-  const {
-    instanceStore: { instance },
-  } = useMobxStore();
+  const { instance } = useInstance();
   // router
   const router = useRouter();
   const { next_path } = router.query;

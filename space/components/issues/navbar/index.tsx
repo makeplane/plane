@@ -7,21 +7,21 @@ import { Briefcase } from "lucide-react";
 import { Avatar, Button } from "@plane/ui";
 import { ProjectLogo } from "@/components/common";
 import { IssueFiltersDropdown } from "@/components/issues/filters";
-// ui
-// lib
+// hooks
+import { useUser } from "@/hooks/store";
 import { useMobxStore } from "@/lib/mobx/store-provider";
 // store
-import { RootStore } from "@/store/root";
-import { TIssueBoardKeys } from "types/issue";
+import { RootStore } from "@/store/root.store";
+import { TIssueBoardKeys } from "@/types/issue";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarTheme } from "./theme";
 
 const IssueNavbar = observer(() => {
   const {
     project: projectStore,
-    user: userStore,
     issuesFilter: { updateFilters },
   }: RootStore = useMobxStore();
+  const { data: user } = useUser();
   // router
   const router = useRouter();
   const { workspace_slug, project_slug, board, peekId, states, priorities, labels } = router.query as {
@@ -33,8 +33,6 @@ const IssueNavbar = observer(() => {
     priorities: string;
     labels: string;
   };
-
-  const user = userStore?.currentUser;
 
   useEffect(() => {
     if (workspace_slug && project_slug) {

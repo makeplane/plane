@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 // mobx
 // lib
 import { Tooltip } from "@plane/ui";
+// hooks
+import { useUser } from "@/hooks/store";
 import { useMobxStore } from "@/lib/mobx/store-provider";
 // ui
 
@@ -16,9 +18,9 @@ export const IssueVotes: React.FC = observer(() => {
 
   const { workspace_slug, project_slug } = router.query;
 
-  const { user: userStore, issueDetails: issueDetailsStore } = useMobxStore();
+  const { issueDetails: issueDetailsStore } = useMobxStore();
+  const { data: user, fetchCurrentUser } = useUser();
 
-  const user = userStore?.currentUser;
   const issueId = issueDetailsStore.peekId;
 
   const votes = issueId ? issueDetailsStore.details[issueId]?.votes : [];
@@ -49,8 +51,8 @@ export const IssueVotes: React.FC = observer(() => {
   useEffect(() => {
     if (user) return;
 
-    userStore.fetchCurrentUser();
-  }, [user, userStore]);
+    fetchCurrentUser();
+  }, [user, fetchCurrentUser]);
 
   const VOTES_LIMIT = 1000;
 
@@ -78,9 +80,8 @@ export const IssueVotes: React.FC = observer(() => {
           type="button"
           disabled={isSubmitting}
           onClick={(e) => {
-            userStore.requiredLogin(() => {
-              handleVote(e, 1);
-            });
+            if (user) handleVote(e, 1);
+            // userStore.requiredLogin(() => {});
           }}
           className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
             isUpVotedByUser ? "border-custom-primary-200 text-custom-primary-200" : "border-custom-border-300"
@@ -113,9 +114,8 @@ export const IssueVotes: React.FC = observer(() => {
           type="button"
           disabled={isSubmitting}
           onClick={(e) => {
-            userStore.requiredLogin(() => {
-              handleVote(e, -1);
-            });
+            if (user) handleVote(e, -1);
+            // userStore.requiredLogin(() => {});
           }}
           className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
             isDownVotedByUser ? "border-red-600 text-red-600" : "border-custom-border-300"

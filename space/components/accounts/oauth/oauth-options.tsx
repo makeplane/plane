@@ -2,13 +2,11 @@ import { observer } from "mobx-react-lite";
 // components
 import { GithubOAuthButton, GoogleOAuthButton } from "@/components/accounts";
 // hooks
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useInstance } from "@/hooks/store";
 
 export const OAuthOptions: React.FC = observer(() => {
   // hooks
-  const {
-    instanceStore: { instance },
-  } = useMobxStore();
+  const { instance } = useInstance();
 
   return (
     <>

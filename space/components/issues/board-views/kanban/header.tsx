@@ -7,7 +7,7 @@ import { issueGroupFilter } from "@/constants/data";
 // ui
 // mobx hook
 import { useMobxStore } from "@/lib/mobx/store-provider";
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 import { IIssueState } from "types/issue";
 
 export const IssueKanBanHeader = observer(({ state }: { state: IIssueState }) => {

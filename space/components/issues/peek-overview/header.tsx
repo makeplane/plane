@@ -10,7 +10,7 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 // store
 import { useMobxStore } from "@/lib/mobx/store-provider";
 import { IPeekMode } from "@/store/issue_details";
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 // lib
 import useToast from "hooks/use-toast";
 // types
