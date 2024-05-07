@@ -45,14 +45,6 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
     [filters.filters, updateFilters]
   );
 
-  const appliedFilters: { [key: string]: string[] | boolean | null | undefined } = {};
-  Object.entries(filters?.filters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-
-    appliedFilters[key] = Array.isArray(value) ? value : [String(value)];
-  });
-
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
 
   return (
