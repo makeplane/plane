@@ -1,4 +1,5 @@
 import pull from "lodash/pull";
+import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { IPragmaticDropPayload, TIssue, TIssueGroupByOptions } from "@plane/types";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/issue-helper.store";
 
@@ -87,14 +88,17 @@ export const getDestinationFromDropPayload = (payload: IPragmaticDropPayload): K
 const handleSortOrder = (
   destinationIssues: string[],
   destinationIssueId: string | undefined,
-  getIssueById: (issueId: string) => TIssue | undefined
+  getIssueById: (issueId: string) => TIssue | undefined,
+  shouldAddIssueAtTop = false
 ) => {
   const sortOrderDefaultValue = 65535;
   let currentIssueState = {};
 
   const destinationIndex = destinationIssueId
     ? destinationIssues.indexOf(destinationIssueId)
-    : destinationIssues.length;
+    : shouldAddIssueAtTop
+      ? 0
+      : destinationIssues.length;
 
   if (destinationIssues && destinationIssues.length > 0) {
     if (destinationIndex === 0) {
@@ -145,7 +149,8 @@ export const handleDragDrop = async (
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined,
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined,
   groupBy: TIssueGroupByOptions | undefined,
-  subGroupBy: TIssueGroupByOptions | undefined
+  subGroupBy: TIssueGroupByOptions | undefined,
+  shouldAddIssueAtTop = false
 ) => {
   if (!source.id || !groupBy || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
 
@@ -165,7 +170,7 @@ export const handleDragDrop = async (
   // for both horizontal and vertical dnd
   updatedIssue = {
     ...updatedIssue,
-    ...handleSortOrder(destinationIssues, destination.id, getIssueById),
+    ...handleSortOrder(destinationIssues, destination.id, getIssueById, shouldAddIssueAtTop),
   };
 
   if (source.groupId && destination.groupId && source.groupId !== destination.groupId) {
@@ -206,4 +211,19 @@ export const handleDragDrop = async (
       }))
     );
   }
+};
+
+/**
+ * This Method finds the DOM element with elementId, scrolls to it and highlights the issue block
+ * @param elementId
+ * @param shouldScrollIntoView
+ */
+export const highlightIssueOnDrop = (elementId: string | undefined, shouldScrollIntoView = true) => {
+  setTimeout(async () => {
+    const sourceElementId = elementId ?? "";
+    const sourceElement = document.getElementById(sourceElementId);
+    sourceElement?.classList?.add("highlight");
+    if (shouldScrollIntoView && sourceElement)
+      await scrollIntoView(sourceElement, { behavior: "smooth", block: "center", duration: 1500 });
+  }, 200);
 };

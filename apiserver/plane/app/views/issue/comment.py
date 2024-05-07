@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .. import BaseViewSet, WebhookMixin
+from .. import BaseViewSet
 from plane.app.serializers import (
     IssueCommentSerializer,
     CommentReactionSerializer,
@@ -25,7 +25,7 @@ from plane.db.models import (
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
-class IssueCommentViewSet(WebhookMixin, BaseViewSet):
+class IssueCommentViewSet(BaseViewSet):
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"

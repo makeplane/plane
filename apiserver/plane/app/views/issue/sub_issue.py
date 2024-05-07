@@ -31,6 +31,7 @@ from plane.db.models import (
     IssueAttachment,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.utils.user_timezone_converter import user_timezone_converter
 from collections import defaultdict
 
 
@@ -131,6 +132,10 @@ class SubIssuesEndpoint(BaseAPIView):
             "link_count",
             "is_draft",
             "archived_at",
+        )
+        datetime_fields = ["created_at", "updated_at"]
+        sub_issues = user_timezone_converter(
+            sub_issues, datetime_fields, request.user.user_timezone
         )
         return Response(
             {

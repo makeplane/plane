@@ -84,17 +84,19 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
 
     await updateGlobalView(workspaceSlug.toString(), data.id, payloadData)
       .then((res) => {
-        captureEvent(GLOBAL_VIEW_UPDATED, {
-          view_id: res.id,
-          applied_filters: res.filters,
-          state: "SUCCESS",
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "View updated successfully.",
-        });
-        handleClose();
+        if (res) {
+          captureEvent(GLOBAL_VIEW_UPDATED, {
+            view_id: res.id,
+            applied_filters: res.filters,
+            state: "SUCCESS",
+          });
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: "View updated successfully.",
+          });
+          handleClose();
+        }
       })
       .catch(() => {
         captureEvent(GLOBAL_VIEW_UPDATED, {

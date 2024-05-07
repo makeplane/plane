@@ -29,7 +29,7 @@ from .user.base import (
 )
 
 
-from .base import BaseAPIView, BaseViewSet, WebhookMixin
+from .base import BaseAPIView, BaseViewSet
 
 from .workspace.base import (
     WorkSpaceViewSet,
@@ -141,6 +141,9 @@ from .issue.relation import (
     IssueRelationViewSet,
 )
 
+from .issue.bulk_operations import (
+    BulkIssueOperationsEndpoint,
+)
 from .issue.reaction import (
     IssueReactionViewSet,
 )

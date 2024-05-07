@@ -1,11 +1,16 @@
-import { set } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import isEmpty from "lodash/isEmpty";
+import isEqual from "lodash/isEqual";
+import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
+import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
+// constants
+import { EIssueFilterType } from "@/constants/issue";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // types
 import { RootStore } from "@/store/root.store";
-import { IWorkspaceView } from "@plane/types";
 
 export interface IGlobalViewStore {
   // observables
@@ -20,7 +25,11 @@ export interface IGlobalViewStore {
   fetchGlobalViewDetails: (workspaceSlug: string, viewId: string) => Promise<IWorkspaceView>;
   // crud actions
   createGlobalView: (workspaceSlug: string, data: Partial<IWorkspaceView>) => Promise<IWorkspaceView>;
-  updateGlobalView: (workspaceSlug: string, viewId: string, data: Partial<IWorkspaceView>) => Promise<IWorkspaceView>;
+  updateGlobalView: (
+    workspaceSlug: string,
+    viewId: string,
+    data: Partial<IWorkspaceView>
+  ) => Promise<IWorkspaceView | undefined>;
   deleteGlobalView: (workspaceSlug: string, viewId: string) => Promise<any>;
 }
 
@@ -139,14 +148,50 @@ export class GlobalViewStore implements IGlobalViewStore {
     workspaceSlug: string,
     viewId: string,
     data: Partial<IWorkspaceView>
-  ): Promise<IWorkspaceView> =>
-    await this.workspaceService.updateView(workspaceSlug, viewId, data).then((response) => {
-      const viewToUpdate = { ...this.getViewDetailsById(viewId), ...data };
-      runInAction(() => {
-        set(this.globalViewMap, viewId, viewToUpdate);
+  ): Promise<IWorkspaceView | undefined> => {
+    const currentViewData = this.getViewDetailsById(viewId) ? cloneDeep(this.getViewDetailsById(viewId)) : undefined;
+    try {
+      Object.keys(data).forEach((key) => {
+        const currentKey = key as keyof IWorkspaceView;
+        set(this.globalViewMap, [viewId, currentKey], data[currentKey]);
       });
-      return response;
-    });
+      const currentView = await this.workspaceService.updateView(workspaceSlug, viewId, data);
+      // applying the filters in the global view
+      if (!isEqual(currentViewData?.filters || {}, currentView?.filters || {})) {
+        if (isEmpty(currentView?.filters)) {
+          const currentGlobalViewFilters: IIssueFilterOptions = this.rootStore.issue.workspaceIssuesFilter.filters[
+            viewId
+          ].filters as IIssueFilterOptions;
+          const newFilters: IIssueFilterOptions = {};
+          Object.keys(currentGlobalViewFilters ?? {}).forEach((key) => {
+            newFilters[key as keyof IIssueFilterOptions] = [];
+          });
+          await this.rootStore.issue.workspaceIssuesFilter.updateFilters(
+            workspaceSlug,
+            undefined,
+            EIssueFilterType.FILTERS,
+            newFilters,
+            viewId
+          );
+        } else {
+          await this.rootStore.issue.workspaceIssuesFilter.updateFilters(
+            workspaceSlug,
+            undefined,
+            EIssueFilterType.FILTERS,
+            currentView.filters,
+            viewId
+          );
+        }
+        this.rootStore.issue.workspaceIssues.fetchIssues(workspaceSlug, viewId, "mutation");
+      }
+      return currentView;
+    } catch {
+      Object.keys(data).forEach((key) => {
+        const currentKey = key as keyof IWorkspaceView;
+        if (currentViewData) set(this.globalViewMap, [viewId, currentKey], currentViewData[currentKey]);
+      });
+    }
+  };
 
   /**
    * @description delete global view

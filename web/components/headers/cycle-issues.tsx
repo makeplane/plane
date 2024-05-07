@@ -145,8 +145,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const issueCount = cycleDetails
-    ? issueFilters?.displayFilters?.sub_issue && cycleDetails?.sub_issues
-      ? cycleDetails.total_issues + cycleDetails?.sub_issues
+    ? !issueFilters?.displayFilters?.sub_issue && cycleDetails?.sub_issues
+      ? cycleDetails.total_issues - cycleDetails?.sub_issues
       : cycleDetails.total_issues
     : undefined;
 
@@ -225,9 +225,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     className="ml-1.5 flex-shrink-0 truncate"
                     placement="bottom-start"
                   >
-                    {currentProjectCycleIds?.map((cycleId) => (
-                      <CycleDropdownOption key={cycleId} cycleId={cycleId} />
-                    ))}
+                    {currentProjectCycleIds?.map((cycleId) => <CycleDropdownOption key={cycleId} cycleId={cycleId} />)}
                   </CustomMenu>
                 }
               />

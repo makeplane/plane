@@ -85,7 +85,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
         setIsSearching(false);
         setIsLoading(false);
       });
-  }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, searchParams, workspaceSlug]);
+  }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, workspaceSlug]);
 
   return (
     <>

@@ -4,6 +4,8 @@ import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-ed
 import { PageEditorMobileHeaderRoot, PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { usePageFilters } from "@/hooks/use-page-filters";
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -36,8 +38,9 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     setSidePeekVisible,
   } = props;
   // derived values
-  const { isContentEditable, view_props } = pageStore;
-  const isFullWidth = !!view_props?.full_width;
+  const { isContentEditable } = pageStore;
+  // page filters
+  const { isFullWidth } = usePageFilters();
 
   if (!editorRef.current && !readOnlyEditorRef.current) return null;
 
@@ -46,8 +49,8 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
       <div className="hidden md:flex items-center border-b border-custom-border-200 px-3 py-2 md:px-5">
         <div
           className={cn("flex-shrink-0", {
-            "w-56 lg:w-72": !isFullWidth,
-            "w-[10%]": isFullWidth,
+            "w-40 lg:w-56": !isFullWidth,
+            "w-[5%]": isFullWidth,
           })}
         >
           <PageSummaryPopover

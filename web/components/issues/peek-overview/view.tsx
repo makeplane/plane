@@ -87,8 +87,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     <>
       {issue && !is_archived && (
         <ArchiveIssueModal
-          isOpen={isArchiveIssueModalOpen}
-          handleClose={() => toggleArchiveIssueModal(false)}
+          isOpen={isArchiveIssueModalOpen === issueId}
+          handleClose={() => toggleArchiveIssueModal(null)}
           data={issue}
           onSubmit={async () => {
             if (issueOperations.archive) await issueOperations.archive(workspaceSlug, projectId, issueId);

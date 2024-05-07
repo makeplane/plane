@@ -107,6 +107,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
         portalElement={portalElement}
         placement={placements}
         menuItemsClassName="z-[14]"
+        maxHeight="lg"
         closeOnSelect
       >
         {MENU_ITEMS.map((item) => {
@@ -126,6 +127,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
                 },
                 item.className
               )}
+              disabled={item.disabled}
             >
               {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
               <div>

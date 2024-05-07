@@ -45,6 +45,7 @@ from plane.db.models import (
     Project,
 )
 from plane.utils.issue_filters import issue_filters
+from plane.utils.user_timezone_converter import user_timezone_converter
 
 # Module imports
 from .. import BaseViewSet
@@ -228,6 +229,10 @@ class IssueDraftViewSet(BaseViewSet):
                 "link_count",
                 "is_draft",
                 "archived_at",
+            )
+            datetime_fields = ["created_at", "updated_at"]
+            issues = user_timezone_converter(
+                issue_queryset, datetime_fields, request.user.user_timezone
             )
         return Response(issues, status=status.HTTP_200_OK)
 

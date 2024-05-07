@@ -1,7 +1,11 @@
+# Python imports
+import json
+
 # Django imports
 from django.db import IntegrityError
 from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
@@ -23,11 +27,11 @@ from plane.db.models import (
     State,
     Workspace,
 )
+from plane.bgtasks.webhook_task import model_activity
+from .base import BaseAPIView
 
-from .base import BaseAPIView, WebhookMixin
 
-
-class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
+class ProjectAPIEndpoint(BaseAPIView):
     """Project Endpoints to create, update, list, retrieve and delete endpoint"""
 
     serializer_class = ProjectSerializer
@@ -236,6 +240,17 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     .filter(pk=serializer.data["id"])
                     .first()
                 )
+                # Model activity
+                model_activity.delay(
+                    model_name="project",
+                    model_id=str(project.id),
+                    requested_data=request.data,
+                    current_instance=None,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 serializer = ProjectSerializer(project)
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
@@ -265,7 +280,9 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
         try:
             workspace = Workspace.objects.get(slug=slug)
             project = Project.objects.get(pk=pk)
-
+            current_instance = json.dumps(
+                ProjectSerializer(project).data, cls=DjangoJSONEncoder
+            )
             if project.archived_at:
                 return Response(
                     {"error": "Archived project cannot be updated"},
@@ -303,6 +320,17 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     .filter(pk=serializer.data["id"])
                     .first()
                 )
+
+                model_activity.delay(
+                    model_name="project",
+                    model_id=str(project.id),
+                    requested_data=request.data,
+                    current_instance=current_instance,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 serializer = ProjectSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(

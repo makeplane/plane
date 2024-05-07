@@ -20,6 +20,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
@@ -47,10 +48,11 @@ from plane.db.models import (
 from plane.utils.analytics_plot import burndown_plot
 
 # Module imports
-from .. import BaseAPIView, BaseViewSet, WebhookMixin
+from .. import BaseAPIView, BaseViewSet
+from plane.bgtasks.webhook_task import model_activity
 
 
-class CycleViewSet(WebhookMixin, BaseViewSet):
+class CycleViewSet(BaseViewSet):
     serializer_class = CycleSerializer
     model = Cycle
     webhook_event = "cycle"
@@ -412,6 +414,17 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     )
                     .first()
                 )
+
+                # Send the model activity
+                model_activity.delay(
+                    model_name="cycle",
+                    model_id=str(cycle["id"]),
+                    requested_data=request.data,
+                    current_instance=None,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
                 return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -434,6 +447,11 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 {"error": "Archived cycle cannot be updated"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        current_instance = json.dumps(
+            CycleSerializer(cycle).data, cls=DjangoJSONEncoder
+        )
+
         request_data = request.data
 
         if (
@@ -487,6 +505,18 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "assignee_ids",
                 "status",
             ).first()
+
+            # Send the model activity
+            model_activity.delay(
+                model_name="cycle",
+                model_id=str(cycle["id"]),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
             return Response(cycle, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

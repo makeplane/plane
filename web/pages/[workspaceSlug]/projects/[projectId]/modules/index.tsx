@@ -7,7 +7,7 @@ import { TModuleFilters } from "@plane/types";
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { ModulesListHeader } from "@/components/headers";
-import { ModuleAppliedFiltersList, ModuleViewHeader, ModulesListView } from "@/components/modules";
+import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
 // types
 // hooks
 import ModulesListMobileHeader from "@/components/modules/moduels-list-mobile-header";
@@ -57,12 +57,6 @@ const ProjectModulesPage: NextPageWithLayout = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className="h-full w-full flex flex-col">
-        <div className="h-[50px] flex-shrink-0 w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
-          <div className="flex items-center">
-            <span className="block text-sm font-medium">Module name</span>
-          </div>
-          <ModuleViewHeader />
-        </div>
         {calculateTotalFilters(currentProjectFilters ?? {}) !== 0 && (
           <div className="border-b border-custom-border-200 px-5 py-3">
             <ModuleAppliedFiltersList

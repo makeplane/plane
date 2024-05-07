@@ -32,6 +32,8 @@ from plane.db.models import (
     ModuleLink,
 )
 from plane.utils.analytics_plot import burndown_plot
+from plane.utils.user_timezone_converter import user_timezone_converter
+
 
 # Module imports
 from .. import BaseAPIView
@@ -198,6 +200,10 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 "created_at",
                 "updated_at",
                 "archived_at",
+            )
+            datetime_fields = ["created_at", "updated_at"]
+            modules = user_timezone_converter(
+                modules, datetime_fields, request.user.user_timezone
             )
             return Response(modules, status=status.HTTP_200_OK)
         else:

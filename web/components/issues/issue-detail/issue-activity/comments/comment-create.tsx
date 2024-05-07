@@ -18,10 +18,11 @@ type TIssueCommentCreate = {
   workspaceSlug: string;
   activityOperations: TActivityOperations;
   showAccessSpecifier?: boolean;
+  issueId: string;
 };
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
-  const { workspaceSlug, projectId, activityOperations, showAccessSpecifier = false } = props;
+  const { workspaceSlug, projectId, issueId, activityOperations, showAccessSpecifier = false } = props;
   // refs
   const editorRef = useRef<any>(null);
   // store hooks
@@ -72,6 +73,8 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             render={({ field: { value, onChange } }) => (
               <LiteTextEditor
                 workspaceId={workspaceId}
+                id={"add_comment_" + issueId}
+                value={"<p></p>"}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 onEnterKeyPress={(e) => {

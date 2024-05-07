@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 // components
 import { TextArea } from "@plane/ui";
 // types
+import { cn } from "@/helpers/common.helper";
 import useDebounce from "@/hooks/use-debounce";
 import { TIssueOperations } from "./issue-detail";
 // hooks
@@ -16,12 +17,26 @@ export type IssueTitleInputProps = {
   issueOperations: TIssueOperations;
   projectId: string;
   issueId: string;
+  className?: string;
+  containerClassName?: string;
 };
 
 export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
-  const { disabled, value, workspaceSlug, isSubmitting, setIsSubmitting, issueId, issueOperations, projectId } = props;
+  const {
+    disabled,
+    value,
+    workspaceSlug,
+    isSubmitting,
+    setIsSubmitting,
+    issueId,
+    issueOperations,
+    projectId,
+    className,
+    containerClassName,
+  } = props;
   // states
   const [title, setTitle] = useState("");
+  const [isLengthVisible, setIsLengthVisible] = useState(false);
   // hooks
   const debouncedValue = useDebounce(title, 1500);
 
@@ -76,19 +91,32 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   if (disabled) return <div className="text-2xl font-medium">{title}</div>;
 
   return (
-    <div className="relative">
+    <div className={cn("relative", containerClassName)}>
       <TextArea
         id="title-input"
-        className={`min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary ${
-          title?.length === 0 ? "!ring-red-400" : ""
-        }`}
+        className={cn(
+          "block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-0 text-2xl font-medium outline-none ring-0",
+          {
+            "ring-red-400": title.length === 0,
+          },
+          className
+        )}
         disabled={disabled}
         value={title}
         onChange={handleTitleChange}
         maxLength={255}
         placeholder="Issue title"
+        onFocus={() => setIsLengthVisible(true)}
+        onBlur={() => setIsLengthVisible(false)}
       />
-      <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200">
+      <div
+        className={cn(
+          "pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
+          {
+            "opacity-100": isLengthVisible,
+          }
+        )}
+      >
         <span className={`${title.length === 0 || title.length > 255 ? "text-red-500" : ""}`}>{title.length}</span>
         /255
       </div>

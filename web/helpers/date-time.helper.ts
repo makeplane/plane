@@ -224,7 +224,29 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
     return undefined;
   }
 };
+
 export const isInDateFormat = (date: string) => {
   const datePattern = /^\d{4}-\d{2}-\d{2}$/;
   return datePattern.test(date);
+};
+
+/**
+ * returns the date string in ISO format regardless of the timezone in input date string
+ * @param dateString
+ * @returns
+ */
+export const convertToISODateString = (dateString: string | undefined) => {
+  if (!dateString) return dateString;
+
+  const date = new Date(dateString);
+  return date.toISOString();
+};
+
+/**
+ * get current Date time in UTC ISO format
+ * @returns
+ */
+export const getCurrentDateTimeInISO = () => {
+  const date = new Date();
+  return date.toISOString();
 };

@@ -16,12 +16,7 @@ export type TPage = {
   project: string | undefined;
   updated_at: Date | undefined;
   updated_by: string | undefined;
-  view_props: TPageViewProps | undefined;
   workspace: string | undefined;
-};
-
-export type TPageViewProps = {
-  full_width?: boolean;
 };
 
 // page filters

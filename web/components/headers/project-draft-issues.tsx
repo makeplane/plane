@@ -78,8 +78,8 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   );
 
   const issueCount = currentProjectDetails
-    ? issueFilters?.displayFilters?.sub_issue
-      ? currentProjectDetails.draft_issues + currentProjectDetails.draft_sub_issues
+    ? !issueFilters?.displayFilters?.sub_issue && currentProjectDetails.draft_sub_issues
+      ? currentProjectDetails.draft_issues - currentProjectDetails.draft_sub_issues
       : currentProjectDetails.draft_issues
     : undefined;
 

@@ -42,7 +42,7 @@ from plane.db.models import (
     IssueAttachment,
 )
 from plane.utils.issue_filters import issue_filters
-
+from plane.utils.user_timezone_converter import user_timezone_converter
 
 class GlobalViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
@@ -254,6 +254,10 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                 "link_count",
                 "is_draft",
                 "archived_at",
+            )
+            datetime_fields = ["created_at", "updated_at"]
+            issues = user_timezone_converter(
+                issues, datetime_fields, request.user.user_timezone
             )
         return Response(issues, status=status.HTTP_200_OK)
 

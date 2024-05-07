@@ -53,7 +53,7 @@ export type PeekOverviewHeaderProps = {
   isArchived: boolean;
   disabled: boolean;
   toggleDeleteIssueModal: (issueId: string | null) => void;
-  toggleArchiveIssueModal: (value: boolean) => void;
+  toggleArchiveIssueModal: (issueId: string | null) => void;
   handleRestoreIssue: () => void;
   isSubmitting: "submitting" | "submitted" | "saved";
 };
@@ -177,7 +177,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
                 })}
                 onClick={() => {
                   if (!isInArchivableGroup) return;
-                  toggleArchiveIssueModal(true);
+                  toggleArchiveIssueModal(issueId);
                 }}
               >
                 <ArchiveIcon className="h-4 w-4" />

@@ -422,8 +422,10 @@ body {
 }
 
 .vertical-lr {
+  writing-mode: vertical-lr;
   -webkit-writing-mode: vertical-lr;
   -ms-writing-mode: vertical-lr;
+  width: fit-content;
 }
 
 div.web-view-spinner {
@@ -629,4 +631,9 @@ div.web-view-spinner div.bar12 {
 }
 .scrollbar-lg::-webkit-scrollbar-thumb {
   border: 4px solid rgba(0, 0, 0, 0);
+}
+
+/* highlight class */
+.highlight {
+  border: 1px solid rgb(var(--color-primary-100)) !important;
 }

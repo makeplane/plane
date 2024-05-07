@@ -96,12 +96,13 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
         ...(appliedFilters ?? {}),
       },
     }).then((res) => {
-      captureEvent(GLOBAL_VIEW_UPDATED, {
-        view_id: res.id,
-        applied_filters: res.filters,
-        state: "SUCCESS",
-        element: "Spreadsheet view",
-      });
+      if (res)
+        captureEvent(GLOBAL_VIEW_UPDATED, {
+          view_id: res.id,
+          applied_filters: res.filters,
+          state: "SUCCESS",
+          element: "Spreadsheet view",
+        });
     });
   };
 

@@ -381,7 +381,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                       onClick={() => {
                         setTrackElement("Issue detail nested sub-issue");
                         handleIssueCrudState("existing", parentIssueId, null);
-                        toggleSubIssuesModal(true);
+                        toggleSubIssuesModal(issue.id);
                       }}
                     >
                       <div className="flex items-center gap-2">
@@ -439,7 +439,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     onClick={() => {
                       setTrackElement("Issue detail nested sub-issue");
                       handleIssueCrudState("existing", parentIssueId, null);
-                      toggleSubIssuesModal(true);
+                      toggleSubIssuesModal(issue.id);
                     }}
                   >
                     <div className="flex items-center gap-2">
@@ -476,7 +476,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               isOpen={issueCrudState?.existing?.toggle}
               handleClose={() => {
                 handleIssueCrudState("existing", null, null);
-                toggleSubIssuesModal(false);
+                toggleSubIssuesModal(null);
               }}
               searchParams={{ sub_issue: true, issue_id: issueCrudState?.existing?.parentIssueId }}
               handleOnSubmit={(_issue) =>

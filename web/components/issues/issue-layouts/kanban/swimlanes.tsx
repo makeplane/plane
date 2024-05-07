@@ -11,6 +11,7 @@ import {
   TUnGroupedIssues,
   TIssueKanbanFilters,
   TIssueGroupByOptions,
+  TIssueOrderByOptions,
 } from "@plane/types";
 // components
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
@@ -114,6 +115,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   disableIssueCreation?: boolean;
   storeType: KanbanStoreType;
   enableQuickIssueCreate: boolean;
+  orderBy: TIssueOrderByOptions | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   quickAddCallback?: (
@@ -146,6 +148,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     viewId,
     scrollableContainerRef,
     handleOnDrop,
+    orderBy,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
@@ -181,7 +184,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
           if (subGroupByVisibilityToggle.showGroup === false) return <></>;
           return (
             <div key={_list.id} className="flex flex-shrink-0 flex-col">
-              <div className="sticky top-[50px] z-[1] py-1 flex w-full items-center bg-custom-background-100 border-y-[0.5px] border-custom-border-200">
+              <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-custom-background-100 border-y-[0.5px] border-custom-border-200">
                 <div className="sticky left-0 flex-shrink-0">
                   <HeaderSubGroupByCard
                     column_id={_list.id}
@@ -216,6 +219,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     viewId={viewId}
                     scrollableContainerRef={scrollableContainerRef}
                     handleOnDrop={handleOnDrop}
+                    orderBy={orderBy}
                     subGroupIssueHeaderCount={(groupByListId: string) =>
                       getSubGroupHeaderIssuesCount(issueIds as TSubGroupedIssues, groupByListId)
                     }
@@ -254,6 +258,7 @@ export interface IKanBanSwimLanes {
   viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  orderBy: TIssueOrderByOptions | undefined;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
@@ -263,6 +268,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     displayProperties,
     sub_group_by,
     group_by,
+    orderBy,
     updateIssue,
     storeType,
     quickActions,
@@ -313,7 +319,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
 
   return (
     <div className="relative">
-      <div className="sticky top-0 z-[2] h-[50px] bg-custom-background-90 px-2">
+      <div className="sticky top-0 z-[4] h-[50px] bg-custom-background-90 px-2">
         <SubGroupSwimlaneHeader
           issueIds={issueIds}
           group_by={group_by}
@@ -334,6 +340,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           displayProperties={displayProperties}
           group_by={group_by}
           sub_group_by={sub_group_by}
+          orderBy={orderBy}
           updateIssue={updateIssue}
           quickActions={quickActions}
           kanbanFilters={kanbanFilters}

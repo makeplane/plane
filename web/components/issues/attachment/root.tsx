@@ -95,7 +95,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
+    [captureIssueEvent, workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
   );
 
   return (

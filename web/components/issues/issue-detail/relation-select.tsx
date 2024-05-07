@@ -81,22 +81,26 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
       data.map((i) => i.id)
     );
 
-    toggleRelationModal(null);
+    toggleRelationModal(null, null);
   };
 
   if (!relationIssueIds) return null;
+
+  const isRelationKeyModalActive =
+    isRelationModalOpen?.relationType === relationKey && isRelationModalOpen?.issueId === issueId;
 
   return (
     <>
       <ExistingIssuesListModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
-        isOpen={isRelationModalOpen === relationKey}
-        handleClose={() => toggleRelationModal(null)}
+        isOpen={isRelationKeyModalActive}
+        handleClose={() => toggleRelationModal(null, null)}
         searchParams={{ issue_relation: true, issue_id: issueId }}
         handleOnSubmit={onSubmit}
         workspaceLevelToggle
       />
+
       <button
         type="button"
         className={cn(
@@ -104,11 +108,11 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
           {
             "cursor-not-allowed": disabled,
             "hover:bg-custom-background-80": !disabled,
-            "bg-custom-background-80": isRelationModalOpen === relationKey,
+            "bg-custom-background-80": isRelationKeyModalActive,
           },
           className
         )}
-        onClick={() => toggleRelationModal(relationKey)}
+        onClick={() => toggleRelationModal(issueId, relationKey)}
         disabled={disabled}
       >
         <div className="flex w-full items-start justify-between">
