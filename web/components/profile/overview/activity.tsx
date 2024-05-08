@@ -1,30 +1,29 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-//hooks
+// ui
 import { Loader } from "@plane/ui";
+// components
 import { ActivityMessage, IssueLink } from "@/components/core";
 import { ProfileEmptyState } from "@/components/ui";
+// constants
 import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { useUser } from "@/hooks/store";
-// services
-import { UserService } from "@/services/user.service";
-import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
-// components
-// ui
-// image
 // helpers
-// fetch-keys
-
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
+//hooks
 // services
+import { useUser } from "@/hooks/store";
+import { UserService } from "@/services/user.service";
+// assets
+import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
+
 const userService = new UserService();
 
 export const ProfileActivity = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
 
   const { data: userProfileActivity } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString(), {}) : null,

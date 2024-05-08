@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
 import { PanelRight } from "lucide-react";
@@ -7,7 +7,7 @@ import { Breadcrumbs, LayersIcon } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 import { ProjectLogo } from "@/components/project";
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 // ui
 // helpers
 // services
@@ -20,13 +20,13 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
   const { workspaceSlug, projectId, issueId } = router.query;
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { theme: themeStore } = useApplication();
+  const { issueDetailSidebarCollapsed, toggleIssueDetailSidebar } = useAppTheme();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
   // derived values
   const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
-  const isSidebarCollapsed = themeStore.issueDetailSidebarCollapsed;
+  const isSidebarCollapsed = issueDetailSidebarCollapsed;
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -41,7 +41,7 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
                     currentProjectDetails && (
-                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                      <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                         <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                       </span>
                     )
@@ -76,9 +76,9 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
-      <button className="block md:hidden" onClick={() => themeStore.toggleIssueDetailSidebar()}>
+      <button className="block md:hidden" onClick={() => toggleIssueDetailSidebar()}>
         <PanelRight
-          className={cn("w-4 h-4 ", !isSidebarCollapsed ? "text-custom-primary-100" : " text-custom-text-200")}
+          className={cn("h-4 w-4 ", !isSidebarCollapsed ? "text-custom-primary-100" : " text-custom-text-200")}
         />
       </button>
     </div>

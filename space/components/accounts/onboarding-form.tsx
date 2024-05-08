@@ -1,182 +1,209 @@
-import { useEffect, Fragment } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import { Check, ChevronDown } from "lucide-react";
-import { Listbox, Transition } from "@headlessui/react";
-// mobx store
-import { Button, Input } from "@plane/ui";
-import { USER_ROLES } from "@/constants/workspace";
-import { useMobxStore } from "@/lib/mobx/store-provider";
-// constants
-// hooks
-import { UserService } from "@/services/user.service";
-import useToast from "hooks/use-toast";
-// services
+// types
+import { IUser } from "@plane/types";
 // ui
+import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { UserImageUploadModal } from "@/components/accounts";
+// hooks
+import { useMobxStore } from "@/hooks/store";
+// services
+import fileService from "@/services/file.service";
 
-const defaultValues = {
+type TProfileSetupFormValues = {
+  first_name: string;
+  last_name: string;
+  avatar?: string | null;
+};
+
+const defaultValues: Partial<TProfileSetupFormValues> = {
   first_name: "",
   last_name: "",
-  role: "",
+  avatar: "",
 };
 
 type Props = {
-  user?: any;
+  user?: IUser;
+  finishOnboarding: () => Promise<void>;
 };
 
-export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
-  const { setToastAlert } = useToast();
-
-  const router = useRouter();
-  const { next_path } = router.query;
-
-  const { user: userStore } = useMobxStore();
-
+export const OnBoardingForm: React.FC<Props> = observer((props) => {
+  const { user, finishOnboarding } = props;
+  // states
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
+  // store hooks
   const {
-    register,
+    user: { updateCurrentUser },
+  } = useMobxStore();
+  // form info
+  const {
+    getValues,
     handleSubmit,
     control,
-    reset,
+    watch,
+    setValue,
     formState: { errors, isSubmitting, isValid },
-  } = useForm({
-    defaultValues,
+  } = useForm<TProfileSetupFormValues>({
+    defaultValues: {
+      ...defaultValues,
+      first_name: user?.first_name,
+      last_name: user?.last_name,
+      avatar: user?.avatar,
+    },
+    mode: "onChange",
   });
 
-  const onSubmit = async (formData: any) => {
-    const payload = {
-      ...formData,
-      onboarding_step: {
-        ...user.onboarding_step,
-        profile_complete: true,
-      },
+  const onSubmit = async (formData: TProfileSetupFormValues) => {
+    if (!user) return;
+
+    const userDetailsPayload: Partial<IUser> = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      avatar: formData.avatar,
     };
 
-    const userService = new UserService();
-
-    await userService.updateMe(payload).then((response) => {
-      userStore.setCurrentUser(response);
-      router.push(next_path?.toString() || "/");
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Details updated successfully.",
+    try {
+      await updateCurrentUser(userDetailsPayload).then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success",
+          message: "Profile setup completed!",
+        });
+        finishOnboarding();
       });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error",
+        message: "Profile setup failed. Please try again!",
+      });
+    }
+  };
+
+  const handleDelete = (url: string | null | undefined) => {
+    if (!url) return;
+
+    setIsRemoving(true);
+    fileService.deleteUserFile(url).finally(() => {
+      setValue("avatar", "");
+      setIsRemoving(false);
     });
   };
 
-  useEffect(() => {
-    if (user) {
-      reset({
-        first_name: user.first_name,
-        last_name: user.last_name,
-        role: user.role,
-      });
-    }
-  }, [user, reset]);
+  const isButtonDisabled = useMemo(() => (isValid && !isSubmitting ? false : true), [isSubmitting, isValid]);
 
   return (
-    <form
-      className="h-full w-full space-y-7 overflow-y-auto sm:flex sm:flex-col sm:items-start sm:justify-center sm:space-y-10"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="relative sm:text-lg">
-        <div className="absolute -left-3 -top-1 text-gray-800">{'"'}</div>
-        <h5>Hey there 👋🏻</h5>
-        <h5 className="mb-6 mt-5">Let{"'"}s get you onboard!</h5>
-        <h4 className="text-xl font-semibold sm:text-2xl">Set up your Plane profile.</h4>
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full mx-auto mt-2 space-y-4 sm:w-96">
+      <Controller
+        control={control}
+        name="avatar"
+        render={({ field: { onChange, value } }) => (
+          <UserImageUploadModal
+            isOpen={isImageUploadModalOpen}
+            onClose={() => setIsImageUploadModalOpen(false)}
+            isRemoving={isRemoving}
+            handleDelete={() => handleDelete(getValues("avatar"))}
+            onSuccess={(url) => {
+              onChange(url);
+              setIsImageUploadModalOpen(false);
+            }}
+            value={value && value.trim() !== "" ? value : null}
+          />
+        )}
+      />
+      <div className="space-y-1 flex items-center justify-center">
+        <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
+          {!watch("avatar") || watch("avatar") === "" ? (
+            <div className="flex flex-col items-center justify-between">
+              <div className="relative h-14 w-14 overflow-hidden">
+                <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-white text-3xl font-medium bg-[#9747FF] uppercase">
+                  {watch("first_name")[0] ?? "R"}
+                </div>
+              </div>
+              <div className="pt-1 text-sm font-medium text-custom-primary-300 hover:text-custom-primary-400">
+                Choose image
+              </div>
+            </div>
+          ) : (
+            <div className="relative mr-3 h-16 w-16 overflow-hidden">
+              <img
+                src={watch("avatar") || undefined}
+                className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                onClick={() => setIsImageUploadModalOpen(true)}
+                alt={user?.display_name}
+              />
+            </div>
+          )}
+        </button>
       </div>
-
-      <div className="space-y-7 sm:w-3/4 md:w-2/5">
-        <div className="space-y-1 text-sm">
-          <label htmlFor="firstName">First Name</label>
-          <Input
-            id="firstName"
-            autoComplete="off"
-            className="w-full"
-            placeholder="Enter your first name..."
-            {...register("first_name", {
+      <div className="flex gap-4">
+        <div className="space-y-1">
+          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="first_name">
+            First name
+          </label>
+          <Controller
+            control={control}
+            name="first_name"
+            rules={{
               required: "First name is required",
-            })}
+              maxLength: {
+                value: 24,
+                message: "First name must be within 24 characters.",
+              },
+            }}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="first_name"
+                name="first_name"
+                type="text"
+                value={value}
+                autoFocus
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.first_name)}
+                placeholder="RWilbur"
+                className="w-full border-onboarding-border-100 focus:border-custom-primary-100"
+              />
+            )}
           />
-          {errors.first_name && <div className="text-sm text-red-500">{errors.first_name.message}</div>}
+          {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
         </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="lastName">Last Name</label>
-          <Input
-            id="lastName"
-            autoComplete="off"
-            className="w-full"
-            placeholder="Enter your last name..."
-            {...register("last_name", {
+        <div className="space-y-1">
+          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="last_name">
+            Last name
+          </label>
+          <Controller
+            control={control}
+            name="last_name"
+            rules={{
               required: "Last name is required",
-            })}
+              maxLength: {
+                value: 24,
+                message: "Last name must be within 24 characters.",
+              },
+            }}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="last_name"
+                name="last_name"
+                type="text"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.last_name)}
+                placeholder="Wright"
+                className="w-full border-onboarding-border-100 focus:border-custom-primary-100"
+              />
+            )}
           />
-          {errors.last_name && <div className="text-sm text-red-500">{errors.last_name.message}</div>}
-        </div>
-        <div className="space-y-1 text-sm">
-          <span>What{"'"}s your role?</span>
-          <div className="w-full">
-            <Controller
-              name="role"
-              control={control}
-              rules={{ required: "This field is required" }}
-              render={({ field: { value, onChange } }) => (
-                <Listbox as="div" value={value} onChange={onChange} className="relative flex-shrink-0 text-left">
-                  <Listbox.Button
-                    type="button"
-                    className={`flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-300 px-3 py-2 text-sm shadow-sm duration-300 focus:outline-none`}
-                  >
-                    <span className={value ? "" : "text-custom-text-400"}>{value || "Select your role..."}</span>
-                    <ChevronDown className="h-3 w-3" aria-hidden="true" strokeWidth={2} />
-                  </Listbox.Button>
-
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Listbox.Options
-                      className={`absolute left-0 z-10 mt-1 max-h-36 w-full origin-top-left overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-lg focus:outline-none`}
-                    >
-                      <div className="space-y-1 p-2">
-                        {USER_ROLES.map((role) => (
-                          <Listbox.Option
-                            key={role.value}
-                            value={role.value}
-                            className={({ active, selected }) =>
-                              `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                                active || selected ? "bg-custom-background-80" : ""
-                              } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                            }
-                          >
-                            {({ selected }) => (
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-2">
-                                  <span>{role.label}</span>
-                                </div>
-                                {selected && <Check className="h-3 w-3 flex-shrink-0" strokeWidth={2} />}
-                              </div>
-                            )}
-                          </Listbox.Option>
-                        ))}
-                      </div>
-                    </Listbox.Options>
-                  </Transition>
-                </Listbox>
-              )}
-            />
-            {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
-          </div>
+          {errors.last_name && <span className="text-sm text-red-500">{errors.last_name.message}</span>}
         </div>
       </div>
-
-      <Button variant="primary" type="submit" size="xl" disabled={!isValid} loading={isSubmitting}>
-        {isSubmitting ? "Updating..." : "Continue"}
+      <Button variant="primary" type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
       </Button>
     </form>
   );

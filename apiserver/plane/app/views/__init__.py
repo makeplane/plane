@@ -28,7 +28,6 @@ from .user.base import (
     UserActivityEndpoint,
 )
 
-from .oauth import OauthEndpoint
 
 from .base import BaseAPIView, BaseViewSet
 
@@ -92,6 +91,8 @@ from .cycle.base import (
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
     CycleUserPropertiesEndpoint,
+    CycleViewSet,
+    TransferCycleIssueEndpoint,
 )
 from .cycle.active_cycle import ActiveCycleEndpoint
 from .cycle.issue import (
@@ -153,21 +154,6 @@ from .issue.subscriber import (
     IssueSubscriberViewSet,
 )
 
-from .auth_extended import (
-    ForgotPasswordEndpoint,
-    ResetPasswordEndpoint,
-    ChangePasswordEndpoint,
-    SetUserPasswordEndpoint,
-    EmailCheckEndpoint,
-    MagicGenerateEndpoint,
-)
-
-
-from .authentication import (
-    SignInEndpoint,
-    SignOutEndpoint,
-    MagicSignInEndpoint,
-)
 
 from .module.base import (
     ModuleViewSet,
@@ -201,7 +187,6 @@ from .external.base import (
     GPTIntegrationEndpoint,
     UnsplashEndpoint,
 )
-
 from .estimate.base import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
@@ -220,13 +205,11 @@ from .analytic.base import (
 from .notification.base import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
-    MarkAllReadNotificationViewSet,
     UserNotificationPreferenceEndpoint,
 )
 
 from .exporter.base import ExportIssuesEndpoint
 
-from .config import ConfigurationEndpoint, MobileConfigurationEndpoint
 
 from .webhook.base import (
     WebhookEndpoint,
@@ -260,3 +243,6 @@ from .integration.github import (
 )
 
 from .integration.slack import SlackProjectSyncViewSet
+from .exporter.base import ExportIssuesEndpoint
+from .notification.base import MarkAllReadNotificationViewSet
+from .user.base import AccountEndpoint, ProfileEndpoint

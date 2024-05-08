@@ -12,7 +12,7 @@ import { EmptyStateType } from "@/constants/empty-state";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useApplication, useProjectView } from "@/hooks/store";
+import { useCommandPalette, useProjectView } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ProjectViewsList = observer(() => {
@@ -24,9 +24,7 @@ export const ProjectViewsList = observer(() => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // store hooks
-  const {
-    commandPalette: { toggleCreateViewModal },
-  } = useApplication();
+  const { toggleCreateViewModal } = useCommandPalette();
   const { projectViewIds, getViewById, loader } = useProjectView();
 
   // outside click detector hook

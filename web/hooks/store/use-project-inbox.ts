@@ -1,7 +1,6 @@
 import { useContext } from "react";
 // mobx store
-import { StoreContext } from "contexts/store-context";
-// types
+import { StoreContext } from "@/lib/store-context";
 import { IProjectInboxStore } from "@/store/inbox/project-inbox.store";
 
 export const useProjectInbox = (): IProjectInboxStore => {

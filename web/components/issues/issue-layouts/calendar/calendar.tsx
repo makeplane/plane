@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
+// types
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -9,28 +10,28 @@ import type {
   TIssueKanbanFilters,
   TIssueMap,
 } from "@plane/types";
-// hooks
+// ui
 import { Spinner } from "@plane/ui";
+// components
 import { CalendarHeader, CalendarIssueBlocks, CalendarWeekDays, CalendarWeekHeader } from "@/components/issues";
+// constants
 import { MONTHS_LIST } from "@/constants/calendar";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+// hooks
 import { useIssues, useUser } from "@/hooks/store";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import useSize from "@/hooks/use-window-size";
-// components
-// ui
-// types
+// store
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { TRenderQuickActions } from "../list/list-view-types";
 import type { ICalendarWeek } from "./types";
-// helpers
-// constants
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -108,7 +109,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           updateFilters={updateFilters}
         />
         <div
-          className={cn("flex md:h-full w-full flex-col overflow-y-auto", {
+          className={cn("flex w-full flex-col overflow-y-auto md:h-full", {
             "vertical-scrollbar scrollbar-lg": windowWidth > 768,
           })}
         >

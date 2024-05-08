@@ -12,13 +12,13 @@ import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import {
-  useApplication,
   useEventTracker,
   useCycle,
   useIssues,
   useModule,
   useProject,
   useIssueDetail,
+  useAppRouter,
 } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -55,9 +55,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const [description, setDescription] = useState<string | undefined>(undefined);
   // store hooks
   const { captureIssueEvent } = useEventTracker();
-  const {
-    router: { workspaceSlug, projectId, cycleId, moduleId },
-  } = useApplication();
+  const { workspaceSlug, projectId, cycleId, moduleId } = useAppRouter();
   const { workspaceProjectIds } = useProject();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();

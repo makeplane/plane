@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
@@ -79,14 +79,14 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
       startedCount > 0
         ? "started"
         : unStartedCount > 0
-          ? "unstarted"
-          : backlogCount > 0
-            ? "backlog"
-            : completedCount > 0
-              ? "completed"
-              : canceledCount > 0
-                ? "cancelled"
-                : null;
+        ? "unstarted"
+        : backlogCount > 0
+        ? "backlog"
+        : completedCount > 0
+        ? "completed"
+        : canceledCount > 0
+        ? "cancelled"
+        : null;
 
     setActiveStateGroup(stateGroup);
     setDefaultStateGroup(stateGroup);

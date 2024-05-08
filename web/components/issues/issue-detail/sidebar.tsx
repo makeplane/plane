@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import {
+  CalendarCheck2,
+  CalendarClock,
+  CircleDot,
+  CopyPlus,
+  LayoutPanelTop,
   LinkIcon,
   Signal,
   Tag,
   Trash2,
   Triangle,
-  LayoutPanelTop,
   XCircle,
-  CircleDot,
-  CopyPlus,
-  CalendarClock,
-  CalendarCheck2,
 } from "lucide-react";
 // hooks
 // components
@@ -22,29 +22,29 @@ import {
   DiceIcon,
   DoubleCircleIcon,
   RelatedIcon,
+  TOAST_TYPE,
   Tooltip,
   UserGroupIcon,
-  TOAST_TYPE,
   setToast,
 } from "@plane/ui";
 import {
   DateDropdown,
   EstimateDropdown,
-  PriorityDropdown,
   MemberDropdown,
+  PriorityDropdown,
   StateDropdown,
 } from "@/components/dropdowns";
 // ui
 // helpers
 import {
+  ArchiveIssueModal,
   DeleteIssueModal,
-  IssueLinkRoot,
-  IssueRelationSelect,
   IssueCycleSelect,
+  IssueLabel,
+  IssueLinkRoot,
   IssueModuleSelect,
   IssueParentSelect,
-  IssueLabel,
-  ArchiveIssueModal,
+  IssueRelationSelect,
 } from "@/components/issues";
 // helpers
 // types
@@ -81,7 +81,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   // store hooks
   const { getProjectById } = useProject();
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
   const {
     issue: { getIssueById },

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components

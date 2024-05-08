@@ -9,7 +9,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // components
 import { FullScreenPeekView, SidePeekView } from "@/components/issues/peek-overview";
 // lib
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 
 export const IssuePeekOverview: React.FC = observer(() => {
   // states

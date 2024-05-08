@@ -1,10 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// services
-import { DashboardService } from "@/services/dashboard.service";
 // types
-import { RootStore } from "@/store/root.store";
 import {
   THomeDashboardResponse,
   TWidget,
@@ -13,6 +10,10 @@ import {
   TWidgetKeys,
   TWidgetStatsRequestParams,
 } from "@plane/types";
+// services
+import { DashboardService } from "@/services/dashboard.service";
+// stores
+import { RootStore } from "@/store/root.store";
 
 export interface IDashboardStore {
   // error states
@@ -92,7 +93,7 @@ export class DashboardStore implements IDashboardStore {
     });
 
     // router store
-    this.routerStore = _rootStore.app.router;
+    this.routerStore = _rootStore.router;
     this.issueStore = _rootStore.issue.issues;
     // services
     this.dashboardService = new DashboardService();
@@ -176,9 +177,8 @@ export class DashboardStore implements IDashboardStore {
   fetchWidgetStats = async (workspaceSlug: string, dashboardId: string, params: TWidgetStatsRequestParams) =>
     this.dashboardService
       .getWidgetStats(workspaceSlug, dashboardId, params)
-      .then((res) => {
+      .then((res: any) => {
         runInAction(() => {
-          // @ts-ignore
           if (res.issues) this.issueStore.addIssue(res.issues);
           set(this.widgetStats, [workspaceSlug, dashboardId, params.widget_key], res);
           set(this.widgetStatsError, [workspaceSlug, dashboardId, params.widget_key], null);

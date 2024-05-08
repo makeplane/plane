@@ -21,7 +21,7 @@ const fileService = new FileService();
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
   const { containerClassName, workspaceSlug, workspaceId, projectId, ...rest } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const {
     getUserDetails,
     project: { getProjectMemberIds },

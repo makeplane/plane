@@ -39,8 +39,8 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
         <div className={`divide-y-2 divide-custom-border-200 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* State */}
-            <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
@@ -62,8 +62,8 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
               )}
             </div>
             {/* Assignee */}
-            <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Assignees</span>
               </div>
@@ -90,8 +90,8 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
               />
             </div>
             {/* Priority */}
-            <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <Signal className="h-4 w-4 flex-shrink-0" />
                 <span>Priority</span>
               </div>
@@ -112,8 +112,8 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
         <div className={`divide-y-2 divide-custom-border-200 mt-3 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Due Date */}
-            <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
                 <span>Due date</span>
               </div>
@@ -129,7 +129,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
                 minDate={minDate ?? undefined}
                 disabled={!isEditable}
                 buttonVariant="transparent-with-text"
-                className="w-3/5 flex-grow group"
+                className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
                 hideIcon
@@ -137,8 +137,8 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
               />
             </div>
             {/* Labels */}
-            <div className="flex items-center gap-2 min-h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex min-h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <Tag className="h-4 w-4 flex-shrink-0" />
                 <span>Labels</span>
               </div>

@@ -1,18 +1,18 @@
 import { useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
+// types
 import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
-// hooks
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { ExistingIssuesListModal } from "@/components/core";
 // components
+import { ExistingIssuesListModal } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
-// types
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EIssuesStoreType } from "@/constants/issue";
-import { useApplication, useCycle, useEventTracker, useIssues } from "@/hooks/store";
+// hooks
+import { useCommandPalette, useCycle, useEventTracker, useIssues } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -30,9 +30,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   // store hooks
   const { getCycleById } = useCycle();
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
 
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
@@ -67,8 +65,8 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const emptyStateType = isCompletedAndEmpty
     ? EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES
     : isEmptyFilters
-      ? EmptyStateType.PROJECT_EMPTY_FILTER
-      : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
+    ? EmptyStateType.PROJECT_EMPTY_FILTER
+    : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
   const additionalPath = isCompletedAndEmpty ? undefined : activeLayout ?? "list";
   const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 

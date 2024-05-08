@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Plus } from "lucide-react";
 // hooks
@@ -9,16 +9,14 @@ import { BreadcrumbLink } from "@/components/common";
 import { ProjectLogo } from "@/components/project";
 import { EUserProjectRoles } from "@/constants/project";
 // constants
-import { useApplication, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useProject, useUser } from "@/hooks/store";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    commandPalette: { toggleCreateViewModal },
-  } = useApplication();
+  const { toggleCreateViewModal } = useCommandPalette();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -41,7 +39,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
                     label={currentProjectDetails?.name ?? "Project"}
                     icon={
                       currentProjectDetails && (
-                        <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                        <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                           <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                         </span>
                       )

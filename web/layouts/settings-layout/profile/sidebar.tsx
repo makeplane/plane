@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-import { mutate } from "swr";
+// icons
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
-// hooks
-import { useApplication, useUser, useWorkspace } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
-import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // constants
 import { PROFILE_ACTION_LINKS } from "@/constants/profile";
+// hooks
+import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
   {
@@ -34,13 +33,10 @@ export const ProfileLayoutSidebar = observer(() => {
   const [isSigningOut, setIsSigningOut] = useState(false);
   // router
   const router = useRouter();
-  // next themes
-  const { setTheme } = useTheme();
   // store hooks
-  const {
-    theme: { sidebarCollapsed, toggleSidebar },
-  } = useApplication();
-  const { currentUser, currentUserSettings, signOut } = useUser();
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { data: currentUser, signOut } = useUser();
+  const { data: currentUserSettings } = useUserSettings();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
 
@@ -83,13 +79,7 @@ export const ProfileLayoutSidebar = observer(() => {
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
-
     await signOut()
-      .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
-        setTheme("system");
-        router.push("/");
-      })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -128,7 +118,7 @@ export const ProfileLayoutSidebar = observer(() => {
           {!sidebarCollapsed && (
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
           )}
-          <div className="mt-2 h-full space-y-1.5 overflow-y-auto vertical-scrollbar scrollbar-sm">
+          <div className="vertical-scrollbar scrollbar-sm mt-2 h-full space-y-1.5 overflow-y-auto">
             {PROFILE_ACTION_LINKS.map((link) => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
@@ -162,7 +152,7 @@ export const ProfileLayoutSidebar = observer(() => {
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
           )}
           {workspacesList && workspacesList.length > 0 && (
-            <div className="mt-2 h-full space-y-1.5 overflow-y-auto vertical-scrollbar scrollbar-sm">
+            <div className="vertical-scrollbar scrollbar-sm mt-2 h-full space-y-1.5 overflow-y-auto">
               {workspacesList.map((workspace) => (
                 <Link
                   key={workspace.id}

@@ -1,11 +1,12 @@
 import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
-// services
 import { computedFn } from "mobx-utils";
-import { ProjectEstimateService } from "@/services/project";
 // types
-import { RootStore } from "@/store/root.store";
 import { IEstimate, IEstimateFormData } from "@plane/types";
+// services
+import { ProjectEstimateService } from "@/services/project";
+// store
+import { RootStore } from "@/store/root.store";
 
 export interface IEstimateStore {
   //Loaders
@@ -81,8 +82,8 @@ export class EstimateStore implements IEstimateStore {
    * @description returns the list of estimates for current project
    */
   get projectEstimates() {
-    const projectId = this.rootStore.app.router.projectId;
-    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
+    const projectId = this.rootStore.router.projectId;
+    const worksapceSlug = this.rootStore.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return null;
     return Object.values(this.estimateMap).filter((estimate) => estimate.project === projectId);
   }
@@ -131,7 +132,7 @@ export class EstimateStore implements IEstimateStore {
    */
   getProjectActiveEstimateDetails = computedFn((projectId: string) => {
     const projectDetails = this.rootStore.projectRoot.project?.getProjectById(projectId);
-    const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
+    const worksapceSlug = this.rootStore.router.workspaceSlug || "";
     if (!projectDetails || !projectDetails?.estimate || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug]))
       return null;
     return this.estimateMap?.[projectDetails?.estimate || ""] || null;
