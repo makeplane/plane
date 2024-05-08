@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react-lite";
 import type {
   IIssueDisplayFilterOptions,
@@ -39,6 +41,11 @@ type Props = {
   layout: "month" | "week" | undefined;
   showWeekends: boolean;
   quickActions: TRenderQuickActions;
+  handleDragAndDrop: (
+    issueId: string | undefined,
+    sourceDate: string | undefined,
+    destinationDate: string | undefined
+  ) => Promise<void>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
@@ -62,6 +69,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     groupedIssueIds,
     layout,
     showWeekends,
+    handleDragAndDrop,
     quickActions,
     quickAddCallback,
     addIssuesToView,
@@ -71,6 +79,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   } = props;
   // states
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  //refs
+  const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
   // store hooks
   const {
     issues: { viewFlags },
@@ -89,6 +99,19 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   const allWeeksOfActiveMonth = issueCalendarView.allWeeksOfActiveMonth;
 
   const formattedDatePayload = renderFormattedPayloadDate(selectedDate) ?? undefined;
+
+  // Enable Auto Scroll for calendar
+  useEffect(() => {
+    const element = scrollableContainerRef.current;
+
+    if (!element) return;
+
+    return combine(
+      autoScrollForElements({
+        element,
+      })
+    );
+  }, [scrollableContainerRef?.current]);
 
   if (!calendarPayload || !formattedDatePayload)
     return (
@@ -111,6 +134,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           className={cn("flex md:h-full w-full flex-col overflow-y-auto", {
             "vertical-scrollbar scrollbar-lg": windowWidth > 768,
           })}
+          ref={scrollableContainerRef}
         >
           <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
           <div className="h-full w-full">
@@ -122,6 +146,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                       selectedDate={selectedDate}
                       setSelectedDate={setSelectedDate}
                       issuesFilterStore={issuesFilterStore}
+                      handleDragAndDrop={handleDragAndDrop}
                       key={weekIndex}
                       week={week}
                       issues={issues}
@@ -142,6 +167,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
                 issuesFilterStore={issuesFilterStore}
+                handleDragAndDrop={handleDragAndDrop}
                 week={issueCalendarView.allDaysOfActiveWeek}
                 issues={issues}
                 groupedIssueIds={groupedIssueIds}
@@ -174,6 +200,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               addIssuesToView={addIssuesToView}
               viewId={viewId}
               readOnly={readOnly}
+              isMonthLayout={false}
+              showAllIssues
               isDragDisabled
               isMobileView
             />
