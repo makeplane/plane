@@ -34,7 +34,7 @@
     "@tiptap/pm": "^2.1.13",
     "@tiptap/react": "^2.1.13",
     "@tiptap/suggestion": "^2.1.13",
-    "lucide-react": "^0.294.0",
+    "lucide-react": "^0.378.0",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {

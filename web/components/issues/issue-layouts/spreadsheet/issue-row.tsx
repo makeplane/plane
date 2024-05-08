@@ -1,4 +1,4 @@
-import { Dispatch, MutableRefObject, SetStateAction, useRef, useState } from "react";
+import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // icons
@@ -33,6 +33,7 @@ interface Props {
   containerRef: MutableRefObject<HTMLTableElement | null>;
   issueIds: string[];
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
+  spacingLeft?: number;
 }
 
 export const SpreadsheetIssueRow = observer((props: Props) => {
@@ -49,6 +50,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     containerRef,
     issueIds,
     spreadsheetColumnsList,
+    spacingLeft = 14,
   } = props;
 
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -72,6 +74,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           quickActions={quickActions}
           canEditProperties={canEditProperties}
           nestingLevel={nestingLevel}
+          spacingLeft={spacingLeft}
           isEstimateEnabled={isEstimateEnabled}
           updateIssue={updateIssue}
           portalElement={portalElement}
@@ -93,6 +96,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             quickActions={quickActions}
             canEditProperties={canEditProperties}
             nestingLevel={nestingLevel + 1}
+            spacingLeft={spacingLeft + (displayProperties.key ? 16 : 28)}
             isEstimateEnabled={isEstimateEnabled}
             updateIssue={updateIssue}
             portalElement={portalElement}
@@ -119,6 +123,7 @@ interface IssueRowDetailsProps {
   isExpanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
+  spacingLeft?: number;
 }
 
 const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
@@ -135,6 +140,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     isExpanded,
     setExpanded,
     spreadsheetColumnsList,
+    spacingLeft = 14,
   } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -161,22 +167,14 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   const issueDetail = issue.getIssueById(issueId);
 
-  const paddingLeft = `${nestingLevel * 54}px`;
+  const paddingLeft = `${spacingLeft}px`;
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
-
-  const handleToggleExpand = () => {
-    setExpanded((prevState) => {
-      if (!prevState && workspaceSlug && issueDetail)
-        subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issueDetail.project_id, issueDetail.id);
-      return !prevState;
-    });
-  };
 
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
+      className={`flex items-center h-full w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
         isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
@@ -186,76 +184,85 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   );
   if (!issueDetail) return null;
 
+  const handleToggleExpand = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (nestingLevel >= 3) {
+      handleIssuePeekOverview(issueDetail);
+    } else {
+      setExpanded((prevState) => {
+        if (!prevState && workspaceSlug && issueDetail)
+          subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issueDetail.project_id, issueDetail.id);
+        return !prevState;
+      });
+    }
+  };
+
   const disableUserActions = !canEditProperties(issueDetail.project_id);
 
   return (
     <>
-      <td
-        ref={cellRef}
-        id={`issue-${issueDetail.id}`}
-        className={cn(
-          "group sticky left-0 h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
-          {
-            "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
-            "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issueDetail.id),
-            "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
-          }
-        )}
-        tabIndex={0}
-      >
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
-          <div
-            className="flex min-w-min items-center gap-1.5 px-4 py-2.5 pr-0"
-            style={issueDetail.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}
-          >
-            <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
-              <span
-                className={`flex items-center justify-center font-medium group-hover:opacity-0 ${
-                  isMenuActive ? "opacity-0" : "opacity-100"
-                }`}
-              >
-                {getProjectIdentifierById(issueDetail.project_id)}-{issueDetail.sequence_id}
-              </span>
-
-              <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
-                {quickActions({
-                  issue: issueDetail,
-                  parentRef: cellRef,
-                  customActionButton,
-                  portalElement: portalElement.current,
-                })}
-              </div>
-            </div>
-
-            {issueDetail.sub_issues_count > 0 && (
-              <div className="flex h-6 w-6 items-center justify-center">
-                <button
-                  className="h-5 w-5 cursor-pointer rounded-sm hover:bg-custom-background-90 hover:text-custom-text-100"
-                  onClick={() => handleToggleExpand()}
-                >
-                  <ChevronRight className={`h-3.5 w-3.5 ${isExpanded ? "rotate-90" : ""}`} />
-                </button>
-              </div>
-            )}
-          </div>
-        </WithDisplayPropertiesHOC>
+      <td ref={cellRef} id={`issue-${issueDetail.id}`} tabIndex={0}>
         <ControlLink
           id={`issue-${issueId}`}
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
-          className="clickable w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          className={cn(
+            "group clickable cursor-pointer sticky left-0 h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
+            {
+              "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
+              "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issueDetail.id),
+              "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
+            }
+          )}
           disabled={!!issueDetail?.tempId}
         >
-          <div className="w-full overflow-hidden">
-            <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
-              <div
-                className="h-full w-full cursor-pointer truncate px-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
-                tabIndex={-1}
-              >
-                {issueDetail.name}
+          <div
+            className="flex min-w-min items-center gap-1 px-4 py-2.5 pr-0"
+            style={issueDetail.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}
+          >
+            <div className="flex h-5 w-5 items-center justify-center">
+              {issueDetail.sub_issues_count > 0 && (
+                <button
+                  className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                  onClick={handleToggleExpand}
+                >
+                  <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
+                </button>
+              )}
+            </div>
+
+            <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
+              <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
+                <p className={`flex items-center justify-center font-medium leading-7`}>
+                  {getProjectIdentifierById(issueDetail.project_id)}-{issueDetail.sequence_id}
+                </p>
               </div>
-            </Tooltip>
+            </WithDisplayPropertiesHOC>
+          </div>
+
+          <div className="flex items-center gap-2 justify-between h-full w-full pr-4 truncate">
+            <div className="w-full line-clamp-1 text-sm text-custom-text-100">
+              <div className="w-full overflow-hidden">
+                <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
+                  <div
+                    className="h-full w-full cursor-pointer truncate px-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
+                    tabIndex={-1}
+                  >
+                    {issueDetail.name}
+                  </div>
+                </Tooltip>
+              </div>
+            </div>
+            <div className={`hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
+              {quickActions({
+                issue: issueDetail,
+                parentRef: cellRef,
+                customActionButton,
+                portalElement: portalElement.current,
+              })}
+            </div>
           </div>
         </ControlLink>
       </td>
