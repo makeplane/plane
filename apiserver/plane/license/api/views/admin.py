@@ -28,7 +28,7 @@ from plane.license.models import Instance, InstanceAdmin
 from plane.db.models import User, Profile
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.authentication.utils.login import user_login
-from plane.authentication.utils.host import base_host
+from plane.authentication.utils.host import base_host, user_ip
 from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
@@ -402,9 +402,20 @@ class InstanceAdminSignOutEndpoint(View):
     ]
 
     def post(self, request):
-        logout(request)
-        url = urljoin(
-            base_host(request=request),
-            "god-mode/login?" + urlencode({"success": "true"}),
-        )
-        return HttpResponseRedirect(url)
+        # Get user
+        try:
+            user = User.objects.get(pk=request.user.id)
+            user.last_logout_ip = user_ip(request=request)
+            user.last_logout_time = timezone.now()
+            user.save()
+            # Log the user out
+            logout(request)
+            url = urljoin(
+                base_host(request=request),
+                "accounts/sign-in?" + urlencode({"success": "true"}),
+            )
+            return HttpResponseRedirect(url)
+        except Exception:
+            return HttpResponseRedirect(
+                base_host(request=request), "accounts/sign-in"
+            )
