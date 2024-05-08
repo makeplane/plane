@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.3",
-    "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^1.0.3",
+    "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^1.3.0",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
@@ -40,7 +40,7 @@
     "dotenv": "^16.0.3",
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
-    "lucide-react": "^0.368.0",
+    "lucide-react": "^0.378.0",
     "mobx": "^6.10.0",
     "mobx-react": "^9.1.0",
     "mobx-utils": "^6.0.8",

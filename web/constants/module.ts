@@ -92,4 +92,8 @@ export const MODULE_ORDER_BY_OPTIONS: { key: TModuleOrderByOptions; label: strin
     key: "created_at",
     label: "Created date",
   },
+  {
+    key: "sort_order",
+    label: "Manual",
+  },
 ];

@@ -13,6 +13,7 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
+import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -20,12 +21,7 @@ import { cn } from "@/helpers/common.helper";
 import { useProjectState } from "@/hooks/store";
 //components
 import { TRenderQuickActions } from "../list/list-view-types";
-import {
-  KanbanDropLocation,
-  getSourceFromDropPayload,
-  getDestinationFromDropPayload,
-  highlightIssueOnDrop,
-} from "./utils";
+import { KanbanDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload } from "./utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {

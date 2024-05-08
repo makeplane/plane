@@ -72,8 +72,14 @@ ul[data-type="taskList"] li {
 }
 
 ul[data-type="taskList"] li > label {
+  position: absolute;
+  left: -5px;
   margin: 0.1rem 0.15rem 0 0;
   user-select: none;
+}
+
+ul[data-type="taskList"] li > div {
+  margin-left: 1.15rem;
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"] {

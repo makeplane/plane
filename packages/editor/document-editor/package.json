@@ -36,7 +36,7 @@
     "@tiptap/core": "^2.1.13",
     "@tiptap/pm": "^2.1.13",
     "@tiptap/suggestion": "^2.1.13",
-    "lucide-react": "^0.309.0",
+    "lucide-react": "^0.378.0",
     "react-popper": "^2.3.0",
     "tippy.js": "^6.3.7",
     "uuid": "^9.0.1"

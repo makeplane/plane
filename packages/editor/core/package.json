@@ -49,7 +49,7 @@
     "jsx-dom-cjs": "^8.0.3",
     "linkifyjs": "^4.1.3",
     "lowlight": "^3.0.0",
-    "lucide-react": "^0.294.0",
+    "lucide-react": "^0.378.0",
     "prosemirror-codemark": "^0.4.2",
     "react-moveable": "^0.54.2",
     "tailwind-merge": "^1.14.0",

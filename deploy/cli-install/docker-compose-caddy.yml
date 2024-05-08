@@ -121,7 +121,7 @@ services:
 
   plane-db:
     <<: *app-env
-    image: postgres:15.5-alpine
+    image: registry.plane.tools/plane/postgres:15.5-alpine
     restart: unless-stopped
     command: postgres -c 'max_connections=1000'
     volumes:
@@ -129,14 +129,14 @@ services:
 
   plane-redis:
     <<: *app-env
-    image: redis:7.2.4-alpine
+    image: registry.plane.tools/plane/redis:7.2.4-alpine
     restart: unless-stopped
     volumes:
       - ${INSTALL_DIR}/data/redis:/data
 
   plane-minio:
     <<: *app-env
-    image: minio/minio:latest
+    image: registry.plane.tools/plane/minio:latest
     restart: unless-stopped
     command: server /export --console-address ":9090"
     volumes:
@@ -146,7 +146,7 @@ services:
   # Comment this if you already have a reverse proxy running
   proxy:
     <<: *proxy-env
-    image: makeplane/caddy:latest
+    image: registry.plane.tools/plane/caddy:latest
     restart: unless-stopped
     ports:
       - ${LISTEN_HTTP_PORT:-80}:80

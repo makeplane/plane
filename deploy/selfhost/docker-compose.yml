@@ -33,6 +33,9 @@ x-app-env: &app-env
     - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-"secret-key"}
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+    - MONGO_DB_URL=${MONGO_DB_URL:-"mongodb://plane-mongodb:27017/"}
+    - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME:-plane}
+    - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD:-plane}
 
 services:
   web:
@@ -122,6 +125,15 @@ services:
     command: postgres -c 'max_connections=1000'
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  plane-mongodb:
+      <<: *app-env
+      image: mongo:7.0.5
+      pull_policy: if_not_present
+      restart: unless-stopped
+      volumes:
+        - mongodbdata:/data/db
+    
   plane-redis:
     <<: *app-env
     image: redis:7.2.4-alpine
@@ -155,6 +167,7 @@ volumes:
   pgdata:
   redisdata:
   uploads:
+  mongodbdata:
   logs_api:
   logs_worker:
   logs_beat-worker:
