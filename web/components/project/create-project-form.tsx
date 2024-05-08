@@ -365,7 +365,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
               render={({ field: { value, onChange } }) => {
                 if (value === undefined || value === null || typeof value === "string")
                   return (
-                    <div className="h-7 flex-shrink-0" tabIndex={5}>
+                    <div className="flex-shrink-0" tabIndex={5}>
                       <MemberDropdown
                         value={value}
                         onChange={(lead) => onChange(lead === value ? null : lead)}

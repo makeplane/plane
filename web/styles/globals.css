@@ -637,3 +637,7 @@ div.web-view-spinner div.bar12 {
 .highlight {
   border: 1px solid rgb(var(--color-primary-100)) !important;
 }
+.highlight-with-line {
+  border-left: 5px solid rgb(var(--color-primary-100)) !important;
+  background: rgb(var(--color-background-80));
+}

@@ -1,10 +1,9 @@
 import { FC, MutableRefObject } from "react";
 // components
 import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
-import RenderIfVisible from "@/components/core/render-if-visible-HOC";
-import { IssueBlock } from "@/components/issues";
-import { TRenderQuickActions } from "./list-view-types";
+import { IssueBlockRoot } from "@/components/issues/issue-layouts/list";
 // types
+import { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
@@ -22,27 +21,21 @@ export const IssueBlocksList: FC<Props> = (props) => {
   return (
     <div className="relative h-full w-full">
       {issueIds && issueIds.length > 0 ? (
-        issueIds.map((issueId: string) => {
-          if (!issueId) return null;
-          return (
-            <RenderIfVisible
-              key={`${issueId}`}
-              defaultHeight="3rem"
-              root={containerRef}
-              classNames="relative border-b border-b-custom-border-200 last:border-b-transparent"
-              changingReference={issueIds}
-            >
-              <IssueBlock
-                issueId={issueId}
-                issuesMap={issuesMap}
-                updateIssue={updateIssue}
-                quickActions={quickActions}
-                canEditProperties={canEditProperties}
-                displayProperties={displayProperties}
-              />
-            </RenderIfVisible>
-          );
-        })
+        issueIds.map((issueId: string) => (
+          <IssueBlockRoot
+            key={`${issueId}`}
+            issueIds={issueIds}
+            issueId={issueId}
+            issuesMap={issuesMap}
+            updateIssue={updateIssue}
+            quickActions={quickActions}
+            canEditProperties={canEditProperties}
+            displayProperties={displayProperties}
+            nestingLevel={0}
+            spacingLeft={0}
+            containerRef={containerRef}
+          />
+        ))
       ) : (
         <div className="bg-custom-background-100 p-3 text-sm text-custom-text-400">No issues</div>
       )}

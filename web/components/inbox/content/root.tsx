@@ -30,7 +30,11 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
       : null,
     workspaceSlug && projectId && inboxIssueId
       ? () => fetchInboxIssueById(workspaceSlug, projectId, inboxIssueId)
-      : null
+      : null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
   );
 
   const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;

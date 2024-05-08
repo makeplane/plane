@@ -84,7 +84,7 @@ export const ModuleViewHeader: FC = observer(() => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
 
-  const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;
+  const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0 || displayFilters?.favorites;
 
   return (
     <div className="hidden h-full sm:flex items-center gap-3 self-end">
