@@ -178,8 +178,10 @@ class InstanceAdminSignUpEndpoint(View):
         # Existing user
         if User.objects.filter(email=email).exists():
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["USER_ALREADY_EXISTS"],
-                error_message="USER_ALREADY_EXISTS",
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "ADMIN_USER_ALREADY_EXIST"
+                ],
+                error_message="ADMIN_USER_ALREADY_EXIST",
                 payload={
                     "email": email,
                     "first_name": first_name,
@@ -317,8 +319,10 @@ class InstanceAdminSignInEndpoint(View):
         # Error out if the user is not present
         if not user:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
-                error_message="USER_DOES_NOT_EXIST",
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "ADMIN_USER_DOES_NOT_EXIST"
+                ],
+                error_message="ADMIN_USER_DOES_NOT_EXIST",
                 payload={
                     "email": email,
                 },
