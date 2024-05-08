@@ -8,11 +8,12 @@ import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 
 type Props = {
   appliedFilters: TModuleFilters;
-  isFavoriteFilterApplied: boolean;
+  isFavoriteFilterApplied?: boolean;
   handleClearAllFilters: () => void;
-  handleDisplayFiltersUpdate: (updatedDisplayProperties: Partial<TModuleDisplayFilters>) => void;
+  handleDisplayFiltersUpdate?: (updatedDisplayProperties: Partial<TModuleDisplayFilters>) => void;
   handleRemoveFilter: (key: keyof TModuleFilters, value: string | null) => void;
   alwaysAllowEditing?: boolean;
+  isArchived?: boolean;
 };
 
 const MEMBERS_FILTERS = ["lead", "members"];
@@ -26,6 +27,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
     handleRemoveFilter,
     handleDisplayFiltersUpdate,
     alwaysAllowEditing,
+    isArchived = false,
   } = props;
 
   if (!appliedFilters && !isFavoriteFilterApplied) return null;
@@ -82,7 +84,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
           </div>
         );
       })}
-      {isFavoriteFilterApplied && (
+      {!isArchived && isFavoriteFilterApplied && (
         <div
           key="module_display_filters"
           className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
@@ -96,6 +98,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
                   type="button"
                   className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                   onClick={() =>
+                    handleDisplayFiltersUpdate &&
                     handleDisplayFiltersUpdate({
                       favorites: !isFavoriteFilterApplied,
                     })
