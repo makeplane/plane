@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      ADMIN_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-admin:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      ADMIN_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/admin-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -278,7 +278,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  branch_build_push_backend:
+  branch_build_push_apiserver:
     if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
