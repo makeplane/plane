@@ -101,7 +101,7 @@ jobs:
       - run: yarn lint --filter=web
 
   build-admin:
-    needs: lint-space
+    needs: lint-admin
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
