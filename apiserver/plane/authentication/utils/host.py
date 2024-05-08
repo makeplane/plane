@@ -8,3 +8,7 @@ def base_host(request):
         or f"{urlsplit(request.META.get('HTTP_REFERER')).scheme}://{urlsplit(request.META.get('HTTP_REFERER')).netloc}"
         or f"{request.scheme}://{request.get_host()}"
     )
+
+
+def user_ip(request):
+    return str(request.META.get("REMOTE_ADDR"))
