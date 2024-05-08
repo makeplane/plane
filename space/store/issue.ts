@@ -2,7 +2,7 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 // services
 import IssueService from "@/services/issue.service";
 // store
-import { RootStore } from "./root";
+import { RootStore } from "./root.store";
 // types
 // import { IssueDetailType, TIssueBoardKeys } from "types/issue";
 import { IIssue, IIssueState, IIssueLabel } from "types/issue";

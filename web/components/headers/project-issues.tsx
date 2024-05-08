@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
 import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
@@ -19,13 +19,13 @@ import { EUserProjectRoles } from "@/constants/project";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import {
-  useApplication,
   useEventTracker,
   useLabel,
   useProject,
   useProjectState,
   useUser,
   useMember,
+  useCommandPalette,
 } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -43,9 +43,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },

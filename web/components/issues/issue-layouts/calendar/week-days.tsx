@@ -57,7 +57,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={`grid md:divide-x-[0.5px] divide-custom-border-200 ${showWeekends ? "grid-cols-7" : "grid-cols-5"} ${
+      className={`grid divide-custom-border-200 md:divide-x-[0.5px] ${showWeekends ? "grid-cols-7" : "grid-cols-5"} ${
         calendarLayout === "month" ? "" : "h-full"
       }`}
     >

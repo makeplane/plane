@@ -6,11 +6,11 @@ import { useRouter } from "next/router";
 import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
 import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
 import { IssueBlockState } from "@/components/issues/board-views/block-state";
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 
 // components
 // interfaces
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 import { IIssue } from "types/issue";
 
 export const IssueKanBanBlock = observer(({ issue }: { issue: IIssue }) => {

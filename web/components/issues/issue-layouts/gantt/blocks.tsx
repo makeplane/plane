@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { useApplication, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useAppRouter, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -14,9 +14,7 @@ type Props = {
 export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   const { issueId } = props;
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { getProjectStates } = useProjectState();
   const {
     issue: { getIssueById },
@@ -59,7 +57,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
         }
         position="top-left"
       >
-        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100 overflow-hidden">
+        <div className="relative w-full overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100">
           {issueDetails?.name}
         </div>
       </Tooltip>
@@ -73,9 +71,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   // store hooks
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const {
     issue: { getIssueById },
     setPeekIssue,
@@ -96,7 +92,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
       href={`/${workspaceSlug}/projects/${issueDetails?.project_id}/issues/${issueDetails?.id}`}
       target="_blank"
       onClick={handleIssuePeekOverview}
-      className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+      className="line-clamp-1 w-full cursor-pointer text-sm text-custom-text-100"
       disabled={!!issueDetails?.tempId}
     >
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2">

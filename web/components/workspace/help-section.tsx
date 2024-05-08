@@ -1,20 +1,19 @@
 import React, { useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
 // headless ui
 import { Transition } from "@headlessui/react";
 // ui
-import { DiscordIcon, GithubIcon, Tooltip, Button } from "@plane/ui";
-// components
-import { ProPlanModal } from "@/components/license";
+import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
-import { useApplication, useEventTracker } from "@/hooks/store";
+import { useAppTheme, useCommandPalette } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // assets
 import packageJson from "package.json";
+import { PlaneBadge } from "./plane-badge";
 
 const HELP_OPTIONS = [
   {
@@ -39,14 +38,9 @@ export interface WorkspaceHelpSectionProps {
 }
 
 export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
-  // states
-  const [isProPlanModalOpen, setIsProPlanModalOpen] = useState(false);
   // store hooks
-  const {
-    theme: { sidebarCollapsed, toggleSidebar },
-    commandPalette: { toggleShortcutModal },
-  } = useApplication();
-  const { captureEvent } = useEventTracker();
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { toggleShortcutModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
@@ -63,27 +57,17 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
 
   const isCollapsed = sidebarCollapsed || false;
 
-  const handleProPlanModalOpen = () => {
-    setIsProPlanModalOpen(true);
-    captureEvent("pro_plan_modal_opened", {});
-  };
-
   return (
     <>
-      <ProPlanModal isOpen={isProPlanModalOpen} handleClose={() => setIsProPlanModalOpen(false)} />
       <div
         className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-[6px] ${
           isCollapsed ? "flex-col" : ""
         }`}
       >
         {!isCollapsed && (
-          <Button
-            variant="outline-primary"
-            className="w-1/2 cursor-pointer rounded-2xl px-2.5 py-1.5 text-center text-sm font-medium outline-none"
-            onClick={handleProPlanModalOpen}
-          >
-            Plane Pro
-          </Button>
+          <>
+            <PlaneBadge />
+          </>
         )}
         <div className={`flex items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "w-1/2 justify-evenly"}`}>
           <Tooltip tooltipContent="Shortcuts" isMobile={isMobile}>

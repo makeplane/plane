@@ -1,14 +1,16 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-/// layouts
 // components
-import { ProjectDetailsView } from "@/components/views/project-details";
-// lib
-import { useMobxStore } from "@/lib/mobx/store-provider";
-import ProjectLayout from "layouts/project-layout";
+import { ProjectDetailsView } from "@/components/views";
+// helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
+// hooks
+import { useMobxStore } from "@/hooks/store";
+// layouts
+import ProjectLayout from "@/layouts/project-layout";
+// wrappers
+import { AuthWrapper } from "@/lib/wrappers";
 
 const WorkspaceProjectPage = (props: any) => {
   const SITE_TITLE = props?.project_settings?.project_details?.name || "Plane | Deploy";
@@ -31,12 +33,14 @@ const WorkspaceProjectPage = (props: any) => {
   });
 
   return (
-    <ProjectLayout>
-      <Head>
-        <title>{SITE_TITLE}</title>
-      </Head>
-      <ProjectDetailsView />
-    </ProjectLayout>
+    <AuthWrapper pageType={EPageTypes.AUTHENTICATED}>
+      <ProjectLayout>
+        <Head>
+          <title>{SITE_TITLE}</title>
+        </Head>
+        <ProjectDetailsView />
+      </ProjectLayout>
+    </AuthWrapper>
   );
 };
 

@@ -8,7 +8,7 @@ import { Combobox } from "@headlessui/react";
 import { DiceIcon } from "@plane/ui";
 //store
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useModule } from "@/hooks/store";
+import { useAppRouter, useModule } from "@/hooks/store";
 //hooks
 //icon
 //types
@@ -31,15 +31,13 @@ interface Props {
 
 export const ModuleOptions = observer((props: Props) => {
   const { projectId, isOpen, referenceElement, placement, multiple } = props;
-
+  // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // refs
   const inputRef = useRef<HTMLInputElement | null>(null);
-
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { getProjectModuleIds, fetchModules, getModuleById } = useModule();
 
   useEffect(() => {
@@ -47,6 +45,7 @@ export const ModuleOptions = observer((props: Props) => {
       onOpen();
       inputRef.current && inputRef.current.focus();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   // popper-js init
@@ -133,7 +132,7 @@ export const ModuleOptions = observer((props: Props) => {
                   value={option.value}
                   className={({ active, selected }) =>
                     cn(
-                      "w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none",
+                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
                       {
                         "bg-custom-background-80": active,
                         "text-custom-text-100": selected,
@@ -151,10 +150,10 @@ export const ModuleOptions = observer((props: Props) => {
                 </Combobox.Option>
               ))
             ) : (
-              <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
+              <p className="px-1.5 py-1 italic text-custom-text-400">No matching results</p>
             )
           ) : (
-            <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+            <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
           )}
         </div>
       </div>

@@ -1,6 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 // hooks

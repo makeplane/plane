@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { AlertTriangle } from "lucide-react";
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // types
 import { IUserLite } from "@plane/types";
@@ -25,7 +26,7 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { getProjectById } = useProject();
 
   const handleClose = () => {
@@ -112,8 +113,8 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
                         ? "Leaving..."
                         : "Leave"
                       : isDeleteLoading
-                        ? "Removing..."
-                        : "Remove"}
+                      ? "Removing..."
+                      : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

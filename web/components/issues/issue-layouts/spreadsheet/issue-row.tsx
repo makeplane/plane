@@ -1,5 +1,5 @@
 import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
 import { ChevronRight, MoreHorizontal } from "lucide-react";

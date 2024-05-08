@@ -1,6 +1,6 @@
 import { useContext } from "react";
-// context
-import { StoreContext } from "@/contexts/store-context";
+// mobx store
+import { StoreContext } from "@/lib/store-context";
 // mobx store
 import { IPageStore } from "@/store/pages/page.store";
 

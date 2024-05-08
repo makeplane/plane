@@ -10,7 +10,7 @@ import { TCycleGroups } from "@plane/types";
 // ui
 import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 // store hooks
-import { useApplication, useCycle } from "@/hooks/store";
+import { useAppRouter, useCycle } from "@/hooks/store";
 // types
 
 type DropdownOptions =
@@ -30,16 +30,12 @@ type CycleOptionsProps = {
 
 export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
   const { projectId, isOpen, referenceElement, placement } = props;
-
   //state hooks
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { getProjectCycleIds, fetchAllCycles, getCycleById } = useCycle();
 
   useEffect(() => {
@@ -136,7 +132,7 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
                   key={option.value}
                   value={option.value}
                   className={({ active, selected }) =>
-                    `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
+                    `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                       active ? "bg-custom-background-80" : ""
                     } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                   }
@@ -150,10 +146,10 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
                 </Combobox.Option>
               ))
             ) : (
-              <p className="text-custom-text-400 italic py-1 px-1.5">No matches found</p>
+              <p className="px-1.5 py-1 italic text-custom-text-400">No matches found</p>
             )
           ) : (
-            <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+            <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
           )}
         </div>
       </div>

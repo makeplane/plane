@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
@@ -8,7 +8,6 @@ import { Spinner } from "@plane/ui";
 import { JoinProject } from "@/components/auth-screens";
 import { EmptyState } from "@/components/common";
 import {
-  useApplication,
   useEventTracker,
   useCycle,
   useEstimate,
@@ -19,7 +18,7 @@ import {
   useProjectState,
   useProjectView,
   useUser,
-  // useInbox,
+  useCommandPalette,
 } from "@/hooks/store";
 // images
 import emptyProject from "public/empty-state/project.svg";
@@ -32,9 +31,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
   // const { fetchInboxes } = useInbox();
-  const {
-    commandPalette: { toggleCreateProjectModal },
-  } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },

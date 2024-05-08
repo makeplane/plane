@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
+// types
 import { TIssue, TIssueMap } from "@plane/types";
 // components
 import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/issues";
@@ -79,7 +80,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
       )}
 
       {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
-        <div className="px-1 md:px-2 py-1 border-custom-border-200 border-b md:border-none">
+        <div className="border-b border-custom-border-200 px-1 py-1 md:border-none md:px-2">
           <CalendarQuickAddIssueForm
             formKey="target_date"
             groupId={formattedDatePayload}
@@ -94,10 +95,10 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
         </div>
       )}
       {totalIssues > 4 && (
-        <div className="hidden md:flex items-center px-2.5 py-1">
+        <div className="hidden items-center px-2.5 py-1 md:flex">
           <button
             type="button"
-            className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-custom-background-80 hover:text-custom-text-300"
+            className="w-min whitespace-nowrap rounded px-1.5 py-1 text-xs font-medium text-custom-text-400  hover:bg-custom-background-80 hover:text-custom-text-300"
             onClick={() => setShowAllIssues(!showAllIssues)}
           >
             {showAllIssues ? "Hide" : totalIssues - 4 + " more"}

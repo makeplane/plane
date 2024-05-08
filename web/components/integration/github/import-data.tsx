@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 import { IWorkspaceIntegration } from "@plane/types";
 // hooks

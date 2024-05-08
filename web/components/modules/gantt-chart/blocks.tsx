@@ -8,7 +8,7 @@ import { Tooltip, ModuleStatusIcon } from "@plane/ui";
 import { MODULE_STATUS } from "@/constants/module";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // constants
-import { useApplication, useModule } from "@/hooks/store";
+import { useAppRouter, useModule } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -20,9 +20,7 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { getModuleById } = useModule();
   // derived values
   const moduleDetails = getModuleById(moduleId);
@@ -60,9 +58,7 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
 export const ModuleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { moduleId } = props;
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { getModuleById } = useModule();
   // derived values
   const moduleDetails = getModuleById(moduleId);
