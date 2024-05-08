@@ -71,7 +71,7 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
         )}
         <button
           type="button"
-          className={cn("grid place-items-center h-4 w-4 rounded-full border border-transparent", {
+          className={cn("grid place-items-center h-5 w-5 rounded-full border border-transparent", {
             "border-custom-border-400": !showHexInput,
           })}
           onClick={() => {
@@ -91,7 +91,7 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
           <button
             key={icon.name}
             type="button"
-            className="h-6 w-6 select-none text-lg grid place-items-center rounded hover:bg-custom-background-80"
+            className="h-9 w-9 select-none text-lg grid place-items-center rounded hover:bg-custom-background-80"
             onClick={() => {
               onChange({
                 name: icon.name,
@@ -99,7 +99,7 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
               });
             }}
           >
-            <span style={{ color: activeColor }} className="material-symbols-rounded text-base">
+            <span style={{ color: activeColor }} className="material-symbols-rounded text-[20px]">
               {icon.name}
             </span>
           </button>
