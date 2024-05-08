@@ -2,9 +2,9 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // service
 import ProjectService from "@/services/project.service";
-import { TIssueBoardKeys } from "types/issue";
 // types
-import { IWorkspace, IProject, IProjectSettings } from "types/project";
+import { TIssueBoardKeys } from "@/types/issue";
+import { IWorkspace, IProject, IProjectSettings } from "@/types/project";
 
 export interface IProjectStore {
   loader: boolean;
@@ -18,7 +18,7 @@ export interface IProjectStore {
   setActiveBoard: (value: TIssueBoardKeys) => void;
 }
 
-class ProjectStore implements IProjectStore {
+export class ProjectStore implements IProjectStore {
   loader: boolean = false;
   error: any | null = null;
   // data
@@ -61,15 +61,15 @@ class ProjectStore implements IProjectStore {
       const response = await this.projectService.getProjectSettings(workspace_slug, project_slug);
 
       if (response) {
-        const _project: IProject = { ...response?.project_details };
-        const _workspace: IWorkspace = { ...response?.workspace_detail };
-        const _viewOptions = { ...response?.views };
-        const _deploySettings = { ...response };
+        const currentProject: IProject = { ...response?.project_details };
+        const currentWorkspace: IWorkspace = { ...response?.workspace_detail };
+        const currentViewOptions = { ...response?.views };
+        const currentDeploySettings = { ...response };
         runInAction(() => {
-          this.project = _project;
-          this.workspace = _workspace;
-          this.viewOptions = _viewOptions;
-          this.deploySettings = _deploySettings;
+          this.project = currentProject;
+          this.workspace = currentWorkspace;
+          this.viewOptions = currentViewOptions;
+          this.deploySettings = currentDeploySettings;
           this.loader = false;
         });
       }
@@ -85,5 +85,3 @@ class ProjectStore implements IProjectStore {
     this.activeBoard = boardValue;
   };
 }
-
-export default ProjectStore;

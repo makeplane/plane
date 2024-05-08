@@ -1,12 +1,14 @@
 import uuid
 
-# Django imports
-from django.db import models
 from django.conf import settings
 
+# Django imports
+from django.db import models
+
 # Module imports
-from . import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
+
+from .project import ProjectBaseModel
 
 
 def get_view_props():
@@ -40,6 +42,7 @@ class Page(ProjectBaseModel):
     archived_at = models.DateField(null=True)
     is_locked = models.BooleanField(default=False)
     view_props = models.JSONField(default=get_view_props)
+    logo_props = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Page"
@@ -121,7 +124,7 @@ class PageBlock(ProjectBaseModel):
 
         if self.completed_at and self.issue:
             try:
-                from plane.db.models import State, Issue
+                from plane.db.models import Issue, State
 
                 completed_state = State.objects.filter(
                     group="completed", project=self.project

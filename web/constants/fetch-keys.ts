@@ -1,5 +1,5 @@
-import { objToQueryParams } from "@/helpers/string.helper";
 import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "@plane/types";
+import { objToQueryParams } from "@/helpers/string.helper";
 
 const paramsToKey = (params: any) => {
   const {
@@ -76,7 +76,7 @@ const myIssuesParamsToKey = (params: any) => {
 
 export const CURRENT_USER = "CURRENT_USER";
 export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
-export const USER_WORKSPACES = "USER_WORKSPACES";
+export const USER_WORKSPACES_LIST = "USER_WORKSPACES_LIST";
 
 export const WORKSPACE_DETAILS = (workspaceSlug: string) => `WORKSPACE_DETAILS_${workspaceSlug.toUpperCase()}`;
 

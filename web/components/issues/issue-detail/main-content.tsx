@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // types
 import { TIssue } from "@plane/types";
 // ui
@@ -33,7 +33,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { projectStates } = useProjectState();
   const {
     issue: { getIssueById },

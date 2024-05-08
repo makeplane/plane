@@ -14,20 +14,22 @@ import { useUser } from "@/hooks/store";
 
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    userProfile: { data: userProfile },
+  } = useUser();
 
-  const isDarkMode = currentUser?.theme.theme === "dark";
+  const isDarkMode = userProfile?.theme.theme === "dark";
 
   return (
-    <div className="flex flex-col gap-10 pt-8 px-8 rounded-xl h-full vertical-scrollbar scrollbar-lg">
+    <div className="vertical-scrollbar scrollbar-lg flex h-full flex-col gap-10 rounded-xl px-8 pt-8">
       <div
-        className={cn("flex item-center justify-between rounded-xl min-h-[25rem]", {
-          "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": currentUser?.theme.theme === "dark",
-          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": currentUser?.theme.theme === "light",
+        className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
+          "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
+          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": userProfile?.theme.theme === "light",
         })}
       >
-        <div className="relative px-14 flex flex-col gap-7 justify-center lg:w-1/2">
-          <div className="flex flex-col gap-2 max-w-64">
+        <div className="relative flex flex-col justify-center gap-7 px-14 lg:w-1/2">
+          <div className="flex max-w-64 flex-col gap-2">
             <h2 className="text-2xl font-semibold">On-demand snapshots of all your cycles</h2>
             <p className="text-base font-medium text-custom-text-300">
               Monitor cycles across projects, track high-priority issues, and zoom in cycles that need attention.
@@ -54,8 +56,8 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
             />
           </span>
         </div>
-        <div className="relative w-1/2 hidden lg:block">
-          <span className="absolute right-0 bottom-0">
+        <div className="relative hidden w-1/2 lg:block">
+          <span className="absolute bottom-0 right-0">
             <Image
               src={`/workspace-active-cycles/cta-r-1-${isDarkMode ? "dark" : "light"}.webp`}
               height={420}
@@ -63,7 +65,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
               alt="r-1"
             />
           </span>
-          <span className="absolute right-1/2 -bottom-16 rounded-xl">
+          <span className="absolute -bottom-16 right-1/2 rounded-xl">
             <Image
               src={`/workspace-active-cycles/cta-r-2-${isDarkMode ? "dark" : "light"}.webp`}
               height={210}
@@ -73,12 +75,12 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           </span>
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 pb-8 h-full">
+      <div className="grid h-full grid-cols-1 gap-5 pb-8 lg:grid-cols-2 xl:grid-cols-3">
         {WORKSPACE_ACTIVE_CYCLES_DETAILS.map((item) => (
-          <div key={item.title} className="flex flex-col gap-2 p-4 min-h-32 w-full bg-custom-background-80 rounded-md">
+          <div key={item.title} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-custom-background-80 p-4">
             <div className="flex items-center gap-2">
               <h3 className="font-medium">{item.title}</h3>
-              <item.icon className="text-blue-500 h-4 w-4" />
+              <item.icon className="h-4 w-4 text-blue-500" />
             </div>
             <span className="text-sm text-custom-text-300">{item.description}</span>
           </div>

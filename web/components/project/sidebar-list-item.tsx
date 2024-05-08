@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import {
@@ -33,7 +33,7 @@ import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "@/component
 import { EUserProjectRoles } from "@/constants/project";
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useApplication, useEventTracker, useProject } from "@/hooks/store";
+import { useAppTheme, useEventTracker, useProject } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // helpers
@@ -91,7 +91,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false, disableDrag } = props;
   // store hooks
-  const { theme: themeStore } = useApplication();
+  const { sidebarCollapsed: isCollapsed, toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
@@ -106,7 +106,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId: URLProjectId } = router.query;
   // derived values
   const project = getProjectById(projectId);
-  const isCollapsed = themeStore.sidebarCollapsed;
   // auth
   const isAdmin = project?.member_role === EUserProjectRoles.ADMIN;
   const isViewerOrGuest =
@@ -157,7 +156,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   const handleProjectClick = () => {
     if (window.innerWidth < 768) {
-      themeStore.toggleSidebar();
+      toggleSidebar();
     }
   };
 
@@ -214,14 +213,14 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 <Disclosure.Button
                   as="div"
                   className={cn(
-                    "flex items-center justify-between flex-grow cursor-pointer select-none truncate text-left text-sm font-medium",
+                    "flex flex-grow cursor-pointer select-none items-center justify-between truncate text-left text-sm font-medium",
                     {
                       "justify-center": isCollapsed,
                     }
                   )}
                 >
                   <div
-                    className={cn("w-full flex-grow flex items-center gap-1 truncate", {
+                    className={cn("flex w-full flex-grow items-center gap-1 truncate", {
                       "justify-center": isCollapsed,
                     })}
                   >
@@ -233,7 +232,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {!isCollapsed && (
                     <ChevronDown
                       className={cn(
-                        "hidden h-4 w-4 flex-shrink-0 mb-0.5 text-custom-sidebar-text-400 duration-300 group-hover:block",
+                        "mb-0.5 hidden h-4 w-4 flex-shrink-0 text-custom-sidebar-text-400 duration-300 group-hover:block",
                         {
                           "rotate-180": open,
                           block: isMenuActive,
