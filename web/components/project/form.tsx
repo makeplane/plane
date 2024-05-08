@@ -169,6 +169,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                         [val?.type]: logoValue,
                       });
                     }}
+                    className="flex items-center"
                     defaultIconColor={value?.in_use && value.in_use === "icon" ? value?.icon?.color : undefined}
                     defaultOpen={
                       value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
