@@ -19,43 +19,6 @@ export enum EAuthSteps {
   UNIQUE_CODE = "UNIQUE_CODE",
 }
 
-export enum EAuthenticationErrorCodes {
-  INSTANCE_NOT_CONFIGURED = "5000",
-  SIGNUP_DISABLED = "5001",
-  INVALID_PASSWORD = "5002",
-  USER_ALREADY_EXIST = "5003",
-  USER_DOES_NOT_EXIST = "5004",
-  AUTHENTICATION_FAILED_SIGN_IN = "5005",
-  AUTHENTICATION_FAILED_SIGN_UP = "5006",
-  SMTP_NOT_CONFIGURED = "5007",
-  INVALID_MAGIC_CODE = "5008",
-  EXPIRED_MAGIC_CODE = "5009",
-  GOOGLE_NOT_CONFIGURED = "5010",
-  GITHUB_NOT_CONFIGURED = "5011",
-  INVALID_EMAIL = "5012",
-  EMAIL_REQUIRED = "5013",
-  REQUIRED_EMAIL_PASSWORD_SIGN_IN = "5014",
-  INVALID_EMAIL_SIGN_IN = "5015",
-  INVALID_EMAIL_SIGN_UP = "5016",
-  INVALID_EMAIL_MAGIC_SIGN_IN = "5017",
-  INVALID_EMAIL_MAGIC_SIGN_UP = "5018",
-  GITHUB_OAUTH_PROVIDER_ERROR = "5019",
-  GOOGLE_OAUTH_PROVIDER_ERROR = "5020",
-  MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED = "5021",
-  MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED = "5022",
-  INVALID_PASSWORD_TOKEN = "5023",
-  EXPIRED_PASSWORD_TOKEN = "5024",
-  INCORRECT_OLD_PASSWORD = "5025",
-  INVALID_NEW_PASSWORD = "5026",
-  PASSWORD_ALREADY_SET = "5027",
-  ADMIN_ALREADY_EXIST = "5028",
-  REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME = "5029",
-  INVALID_ADMIN_EMAIL = "5030",
-  INVALID_ADMIN_PASSWORD = "5031",
-  REQUIRED_ADMIN_EMAIL_PASSWORD = "5032",
-  ADMIN_AUTHENTICATION_FAILED = "5034",
-}
-
 export enum EErrorAlertType {
   BANNER_ALERT = "BANNER_ALERT",
   TOAST_ALERT = "TOAST_ALERT",
@@ -63,6 +26,47 @@ export enum EErrorAlertType {
   INLINE_EMAIL = "INLINE_EMAIL",
   INLINE_PASSWORD = "INLINE_PASSWORD",
   INLINE_EMAIL_CODE = "INLINE_EMAIL_CODE",
+}
+
+export enum EAuthenticationErrorCodes {
+  // Global
+  INSTANCE_NOT_CONFIGURED = "5000",
+  SIGNUP_DISABLED = "5001",
+  INVALID_PASSWORD = "5002", // Password strength validation
+  SMTP_NOT_CONFIGURED = "5007",
+  // email check
+  INVALID_EMAIL = "5012",
+  EMAIL_REQUIRED = "5013",
+  // Sign Up
+  USER_ALREADY_EXIST = "5003",
+  REQUIRED_EMAIL_PASSWORD_SIGN_UP = "5015",
+  AUTHENTICATION_FAILED_SIGN_UP = "5006",
+  INVALID_EMAIL_SIGN_UP = "5017",
+  MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED = "5023",
+  INVALID_EMAIL_MAGIC_SIGN_UP = "5019",
+  // Sign In
+  USER_DOES_NOT_EXIST = "5004",
+  REQUIRED_EMAIL_PASSWORD_SIGN_IN = "5014",
+  AUTHENTICATION_FAILED_SIGN_IN = "5005",
+  INVALID_EMAIL_SIGN_IN = "5016",
+  MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED = "5022",
+  INVALID_EMAIL_MAGIC_SIGN_IN = "5018",
+  // Both Sign in and Sign up
+  INVALID_MAGIC_CODE = "5008",
+  EXPIRED_MAGIC_CODE = "5009",
+  // Oauth
+  GOOGLE_NOT_CONFIGURED = "5010",
+  GITHUB_NOT_CONFIGURED = "5011",
+  GOOGLE_OAUTH_PROVIDER_ERROR = "5021",
+  GITHUB_OAUTH_PROVIDER_ERROR = "5020",
+  // Reset Password
+  INVALID_PASSWORD_TOKEN = "5024",
+  EXPIRED_PASSWORD_TOKEN = "5025",
+  // Change password
+  INCORRECT_OLD_PASSWORD = "5026",
+  INVALID_NEW_PASSWORD = "5027",
+  // set password
+  PASSWORD_ALREADY_SET = "5028", // used in the onboarding and set password page
 }
 
 export type TAuthErrorInfo = {
@@ -75,6 +79,7 @@ export type TAuthErrorInfo = {
 const errorCodeMessages: {
   [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
 } = {
+  // global
   [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {
     title: `Instance not configured`,
     message: () => `Instance not configured. Please contact your administrator.`,
@@ -87,6 +92,22 @@ const errorCodeMessages: {
     title: `Invalid password`,
     message: () => `Invalid password. Please try again.`,
   },
+  [EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED]: {
+    title: `SMTP not configured`,
+    message: () => `SMTP not configured. Please contact your administrator.`,
+  },
+
+  // email check in both sign up and sign in
+  [EAuthenticationErrorCodes.INVALID_EMAIL]: {
+    title: `Invalid email`,
+    message: () => `Invalid email. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.EMAIL_REQUIRED]: {
+    title: `Email required`,
+    message: () => `Email required. Please try again.`,
+  },
+
+  // sign up
   [EAuthenticationErrorCodes.USER_ALREADY_EXIST]: {
     title: `User already exists`,
     message: (email = undefined) => (
@@ -102,6 +123,28 @@ const errorCodeMessages: {
       </div>
     ),
   },
+  [EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_UP]: {
+    title: `Email and password required`,
+    message: () => `Email and password required. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP]: {
+    title: `Authentication failed`,
+    message: () => `Authentication failed. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_UP]: {
+    title: `Invalid email`,
+    message: () => `Invalid email. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED]: {
+    title: `Email and code required`,
+    message: () => `Email and code required. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP]: {
+    title: `Invalid email`,
+    message: () => `Invalid email. Please try again.`,
+  },
+
+  // sign in
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
     title: `User does not exist`,
     message: (email = undefined) => (
@@ -117,18 +160,28 @@ const errorCodeMessages: {
       </div>
     ),
   },
+  [EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_IN]: {
+    title: `Email and password required`,
+    message: () => `Email and password required. Please try again.`,
+  },
   [EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN]: {
     title: `Authentication failed`,
     message: () => `Authentication failed. Please try again.`,
   },
-  [EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP]: {
-    title: `Authentication failed`,
-    message: () => `Authentication failed. Please try again.`,
+  [EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_IN]: {
+    title: `Invalid email`,
+    message: () => `Invalid email. Please try again.`,
   },
-  [EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED]: {
-    title: `SMTP not configured`,
-    message: () => `SMTP not configured. Please contact your administrator.`,
+  [EAuthenticationErrorCodes.MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED]: {
+    title: `Email and code required`,
+    message: () => `Email and code required. Please try again.`,
   },
+  [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN]: {
+    title: `Invalid email`,
+    message: () => `Invalid email. Please try again.`,
+  },
+
+  // Both Sign in and Sign up
   [EAuthenticationErrorCodes.INVALID_MAGIC_CODE]: {
     title: `Authentication failed`,
     message: () => `Invalid magic code. Please try again.`,
@@ -137,6 +190,8 @@ const errorCodeMessages: {
     title: `Expired magic code`,
     message: () => `Expired magic code. Please try again.`,
   },
+
+  // Oauth
   [EAuthenticationErrorCodes.GOOGLE_NOT_CONFIGURED]: {
     title: `Google not configured`,
     message: () => `Google not configured. Please contact your administrator.`,
@@ -145,50 +200,16 @@ const errorCodeMessages: {
     title: `GitHub not configured`,
     message: () => `GitHub not configured. Please contact your administrator.`,
   },
-  [EAuthenticationErrorCodes.INVALID_EMAIL]: {
-    title: `Invalid email`,
-    message: () => `Invalid email. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.EMAIL_REQUIRED]: {
-    title: `Email required`,
-    message: () => `Email required. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_IN]: {
-    title: `Email and password required`,
-    message: () => `Email and password required. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_IN]: {
-    title: `Invalid email`,
-    message: () => `Invalid email. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_UP]: {
-    title: `Invalid email`,
-    message: () => `Invalid email. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN]: {
-    title: `Invalid email`,
-    message: () => `Invalid email. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP]: {
-    title: `Invalid email`,
-    message: () => `Invalid email. Please try again.`,
+  [EAuthenticationErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR]: {
+    title: `Google OAuth provider error`,
+    message: () => `Google OAuth provider error. Please try again.`,
   },
   [EAuthenticationErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR]: {
     title: `GitHub OAuth provider error`,
     message: () => `GitHub OAuth provider error. Please try again.`,
   },
-  [EAuthenticationErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR]: {
-    title: `Google OAuth provider error`,
-    message: () => `Google OAuth provider error. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED]: {
-    title: `Email and code required`,
-    message: () => `Email and code required. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED]: {
-    title: `Email and code required`,
-    message: () => `Email and code required. Please try again.`,
-  },
+
+  // Reset Password
   [EAuthenticationErrorCodes.INVALID_PASSWORD_TOKEN]: {
     title: `Invalid password token`,
     message: () => `Invalid password token. Please try again.`,
@@ -197,6 +218,8 @@ const errorCodeMessages: {
     title: `Expired password token`,
     message: () => `Expired password token. Please try again.`,
   },
+
+  // Change password
   [EAuthenticationErrorCodes.INCORRECT_OLD_PASSWORD]: {
     title: `Incorrect old password`,
     message: () => `Incorrect old password. Please try again.`,
@@ -205,33 +228,11 @@ const errorCodeMessages: {
     title: `Invalid new password`,
     message: () => `Invalid new password. Please try again.`,
   },
+
+  // set password
   [EAuthenticationErrorCodes.PASSWORD_ALREADY_SET]: {
     title: `Password already set`,
     message: () => `Password already set. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.ADMIN_ALREADY_EXIST]: {
-    title: `Admin already exists`,
-    message: () => `Admin already exists. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME]: {
-    title: `Email, password and first name required`,
-    message: () => `Email, password and first name required. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.INVALID_ADMIN_EMAIL]: {
-    title: `Invalid email`,
-    message: () => `Invalid email. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.INVALID_ADMIN_PASSWORD]: {
-    title: `Invalid password`,
-    message: () => `Invalid password. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD]: {
-    title: `Email and password required`,
-    message: () => `Email and password required. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.ADMIN_AUTHENTICATION_FAILED]: {
-    title: `Authentication failed`,
-    message: () => `Authentication failed. Please try again.`,
   },
 };
 
@@ -240,42 +241,37 @@ export const authErrorHandler = (
   email?: string | undefined
 ): TAuthErrorInfo | undefined => {
   const toastAlertErrorCodes = [
-    EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthenticationErrorCodes.SIGNUP_DISABLED,
     EAuthenticationErrorCodes.INVALID_PASSWORD,
-    EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN,
-    EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP,
     EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED,
+    EAuthenticationErrorCodes.INVALID_EMAIL,
+    EAuthenticationErrorCodes.EMAIL_REQUIRED,
+    EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP,
+    EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_UP,
+    EAuthenticationErrorCodes.MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED,
+    EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP,
+    EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN,
+    EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_IN,
+    EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
     EAuthenticationErrorCodes.INVALID_MAGIC_CODE,
     EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE,
     EAuthenticationErrorCodes.GOOGLE_NOT_CONFIGURED,
     EAuthenticationErrorCodes.GITHUB_NOT_CONFIGURED,
-    EAuthenticationErrorCodes.INVALID_EMAIL,
-    EAuthenticationErrorCodes.EMAIL_REQUIRED,
-    EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_IN,
-    EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_IN,
-    EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_UP,
-    EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
-    EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP,
-    EAuthenticationErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR,
     EAuthenticationErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR,
-    EAuthenticationErrorCodes.MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED,
-    EAuthenticationErrorCodes.MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED,
+    EAuthenticationErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR,
     EAuthenticationErrorCodes.INVALID_PASSWORD_TOKEN,
     EAuthenticationErrorCodes.EXPIRED_PASSWORD_TOKEN,
     EAuthenticationErrorCodes.INCORRECT_OLD_PASSWORD,
     EAuthenticationErrorCodes.INVALID_NEW_PASSWORD,
     EAuthenticationErrorCodes.PASSWORD_ALREADY_SET,
-    EAuthenticationErrorCodes.ADMIN_ALREADY_EXIST,
-    EAuthenticationErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME,
-    EAuthenticationErrorCodes.INVALID_ADMIN_EMAIL,
-    EAuthenticationErrorCodes.INVALID_ADMIN_PASSWORD,
-    EAuthenticationErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD,
-    EAuthenticationErrorCodes.ADMIN_AUTHENTICATION_FAILED,
   ];
   const bannerAlertErrorCodes = [
+    EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthenticationErrorCodes.USER_ALREADY_EXIST,
     EAuthenticationErrorCodes.USER_DOES_NOT_EXIST,
+    EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_UP,
+    EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_IN,
+    EAuthenticationErrorCodes.MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED,
   ];
 
   if (toastAlertErrorCodes.includes(errorCode))
