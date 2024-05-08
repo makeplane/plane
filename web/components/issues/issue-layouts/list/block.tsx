@@ -97,12 +97,16 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
       <div className="flex w-full truncate" style={issue.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
           <div className="flex items-center gap-1.5">
-            <button
-              className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
-              onClick={handleToggleExpand}
-            >
-              <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
-            </button>
+            <div className="flex h-5 w-5 items-center justify-center">
+              {issue.sub_issues_count > 0 && (
+                <button
+                  className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
+                  onClick={handleToggleExpand}
+                >
+                  <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
+                </button>
+              )}
+            </div>
             {displayProperties && displayProperties?.key && (
               <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
                 {projectIdentifier}-{issue.sequence_id}
