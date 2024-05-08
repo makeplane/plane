@@ -191,7 +191,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
               <CustomEmojiIconPicker
                 label={
                   <span className="grid h-11 w-11 place-items-center rounded-md bg-custom-background-80">
-                    <ProjectLogo logo={value} className="text-xl" />
+                    <ProjectLogo logo={value} className="text-[24px] leading-[24px]" />
                   </span>
                 }
                 onChange={(val: any) => {
