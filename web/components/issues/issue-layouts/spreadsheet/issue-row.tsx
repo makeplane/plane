@@ -225,7 +225,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
             <div className="flex h-5 w-5 items-center justify-center">
               {issueDetail.sub_issues_count > 0 && (
                 <button
-                  className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400 hover:bg-custom-background-90 hover:text-custom-text-300"
+                  className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400 hover:text-custom-text-300"
                   onClick={handleToggleExpand}
                 >
                   <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
