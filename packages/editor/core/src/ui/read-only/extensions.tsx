@@ -79,7 +79,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   }),
   TaskItem.configure({
     HTMLAttributes: {
-      class: "flex pointer-events-none",
+      class: "relative pointer-events-none",
     },
     nested: true,
   }),
