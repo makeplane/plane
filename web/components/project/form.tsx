@@ -151,7 +151,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   <CustomEmojiIconPicker
                     label={
                       <span className="grid h-7 w-7 place-items-center">
-                        <ProjectLogo logo={value} className="text-lg" />
+                        <ProjectLogo logo={value} className="text-[24px] leading-[24px]" />
                       </span>
                     }
                     onChange={(val) => {
