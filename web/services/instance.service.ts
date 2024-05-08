@@ -12,10 +12,7 @@ export class InstanceService extends APIService {
 
   async requestCSRFToken(): Promise<{ csrf_token: string }> {
     return this.get("/auth/get-csrf-token/")
-      .then((response) => {
-        this.setCSRFToken(response.data.csrf_token);
-        return response.data;
-      })
+      .then((response) => response.data)
       .catch((error) => {
         throw error;
       });
@@ -24,23 +21,6 @@ export class InstanceService extends APIService {
   async getInstanceInfo(): Promise<IInstance> {
     return this.get("/api/instances/")
       .then((response) => response.data)
-      .catch((error) => {
-        throw error;
-      });
-  }
-
-  async createInstanceAdmin(data: FormData): Promise<void> {
-    return this.post("/api/instances/admins/sign-in/", {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        "X-CSRFToken": this.getCSRFToken(),
-      },
-      data,
-    })
-      .then((response) => {
-        console.log("response.data", response.data);
-        response.data;
-      })
       .catch((error) => {
         throw error;
       });

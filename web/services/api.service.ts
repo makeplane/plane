@@ -26,18 +26,18 @@ export abstract class APIService {
   }
 
   get(url: string, params = {}) {
-    return this.axiosInstance.get(url, { params });
+    return this.axiosInstance.get(url, params);
   }
 
-  post(url: string, data: any, config = {}) {
+  post(url: string, data = {}, config = {}) {
     return this.axiosInstance.post(url, data, config);
   }
 
-  put(url: string, data: any, config = {}) {
+  put(url: string, data = {}, config = {}) {
     return this.axiosInstance.put(url, data, config);
   }
 
-  patch(url: string, data: any, config = {}) {
+  patch(url: string, data = {}, config = {}) {
     return this.axiosInstance.patch(url, data, config);
   }
 
