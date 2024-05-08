@@ -59,7 +59,9 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
             {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
           <div
-            className="absolute -top-1 right-0 hidden group-hover/kanban-block:block"
+            className={cn("absolute -top-1 right-0", {
+              "hidden group-hover/kanban-block:block": !isMobile,
+            })}
             onClick={handleEventPropagation}
           >
             {quickActions({
