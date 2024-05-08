@@ -26,7 +26,7 @@ export class AuthService extends APIService {
       });
   }
 
-  async sendResetPasswordLink(data: { email: string }): Promise<any> {
+  async sendResetPasswordLink(data: { email: string }): Promise<void> {
     return this.post(`/auth/forgot-password/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -34,7 +34,7 @@ export class AuthService extends APIService {
       });
   }
 
-  async generateUniqueCode(data: { email: string }): Promise<any> {
+  async generateUniqueCode(data: { email: string }): Promise<void> {
     return this.post("/auth/spaces/magic-generate/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {

@@ -7,15 +7,15 @@ import "@/styles/globals.css";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, TWITTER_USER_NAME, SITE_KEYWORDS, SITE_TITLE } from "@/constants/seo";
 import { ToastContextProvider } from "@/contexts/toast.context";
 // mobx store provider
-import InstanceLayout from "@/layouts/instance-layout";
-import { MobxStoreProvider } from "@/lib/mobx/store-provider";
-// constants
+import { StoreProvider } from "@/lib/store-context";
+// wrappers
+import { InstanceWrapper } from "@/lib/wrappers";
 
 const prefix = parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0") === 0 ? "/" : "/spaces/";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <MobxStoreProvider>
+    <>
       <Head>
         <title>{SITE_TITLE}</title>
         <meta property="og:site_name" content={SITE_NAME} />
@@ -31,14 +31,16 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="manifest" href={`${prefix}site.webmanifest.json`} />
         <link rel="shortcut icon" href={`${prefix}favicon/favicon.ico`} />
       </Head>
-      <ToastContextProvider>
-        <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-          <InstanceLayout>
-            <Component {...pageProps} />
-          </InstanceLayout>
-        </ThemeProvider>
-      </ToastContextProvider>
-    </MobxStoreProvider>
+      <StoreProvider>
+        <ToastContextProvider>
+          <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+            <InstanceWrapper>
+              <Component {...pageProps} />
+            </InstanceWrapper>
+          </ThemeProvider>
+        </ToastContextProvider>
+      </StoreProvider>
+    </>
   );
 }
 

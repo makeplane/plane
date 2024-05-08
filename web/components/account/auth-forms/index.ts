@@ -1,5 +1,4 @@
-export * from "./sign-up-root";
-export * from "./sign-in-root";
+export * from "./auth-root";
 
 export * from "./auth-header";
 export * from "./auth-banner";

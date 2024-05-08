@@ -6,10 +6,8 @@ import { useForm, Controller } from "react-hook-form";
 import { EditorRefApi } from "@plane/lite-text-editor";
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useMobxStore, useUser } from "@/hooks/store";
 import useToast from "@/hooks/use-toast";
-// lib
-import { useMobxStore } from "@/lib/mobx/store-provider";
 // types
 import { Comment } from "@/types/issue";
 

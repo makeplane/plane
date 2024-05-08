@@ -10,9 +10,7 @@ import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { useUser } from "@/hooks/store";
-// mobx store
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore, useUser } from "@/hooks/store";
 // store
 import { RootStore } from "@/store/root.store";
 // types

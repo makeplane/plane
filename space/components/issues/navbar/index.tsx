@@ -8,8 +8,7 @@ import { Avatar, Button } from "@plane/ui";
 import { ProjectLogo } from "@/components/common";
 import { IssueFiltersDropdown } from "@/components/issues/filters";
 // hooks
-import { useUser } from "@/hooks/store";
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore, useUser } from "@/hooks/store";
 // store
 import { RootStore } from "@/store/root.store";
 import { TIssueBoardKeys } from "@/types/issue";

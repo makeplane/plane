@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // constants
 import { issueViews } from "@/constants/data";
 // mobx
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 import { RootStore } from "@/store/root.store";
 import { TIssueBoardKeys } from "types/issue";
 

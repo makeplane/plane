@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // components
 // store
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 import { IIssueFilterOptions } from "@/store/issues/types";
 import { RootStore } from "@/store/root.store";
 import { AppliedFiltersList } from "./filters-list";

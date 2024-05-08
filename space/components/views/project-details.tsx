@@ -11,8 +11,7 @@ import { IssueSpreadsheetView } from "@/components/issues/board-views/spreadshee
 import { IssueAppliedFilters } from "@/components/issues/filters/applied-filters/root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // mobx store
-import { useUser } from "@/hooks/store";
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore, useUser } from "@/hooks/store";
 import { RootStore } from "@/store/root.store";
 // assets
 import SomethingWentWrongImage from "public/something-went-wrong.svg";

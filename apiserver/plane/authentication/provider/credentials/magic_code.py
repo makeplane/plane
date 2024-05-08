@@ -120,7 +120,7 @@ class MagicCodeProvider(CredentialAdapter):
                         "INVALID_MAGIC_CODE"
                     ],
                     error_message="INVALID_MAGIC_CODE",
-                    payload={"email": str(self.key)},
+                    payload={"email": str(email)},
                 )
         else:
             raise AuthenticationException(

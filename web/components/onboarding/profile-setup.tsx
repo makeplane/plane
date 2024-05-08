@@ -356,7 +356,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                           onChange={onChange}
                           ref={ref}
                           hasError={Boolean(errors.first_name)}
-                          placeholder="RWilbur"
+                          placeholder="Wilbur"
                           className="w-full border-onboarding-border-100"
                         />
                       )}

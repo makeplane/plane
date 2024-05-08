@@ -1,19 +1,17 @@
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// types
 import { IEmailCheckData } from "@plane/types";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   AuthHeader,
   AuthBanner,
   AuthEmailForm,
-  AuthUniqueCodeForm,
   AuthPasswordForm,
   OAuthOptions,
   TermsAndConditions,
+  AuthUniqueCodeForm,
 } from "@/components/account";
 // helpers
 import {
@@ -29,30 +27,44 @@ import { useInstance } from "@/hooks/store";
 // services
 import { AuthService } from "@/services/auth.service";
 
-// service initialization
 const authService = new AuthService();
 
-export const SignUpAuthRoot: FC = observer(() => {
+type TAuthRoot = {
+  authMode: EAuthModes;
+};
+
+export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   //router
   const router = useRouter();
-  const { email: emailParam, invitation_id, slug: workspaceSlug, error_code, error_message } = router.query;
+  const { email: emailParam, invitation_id, slug: workspaceSlug, error_code } = router.query;
+  // props
+  const { authMode } = props;
   // states
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   // hooks
   const { instance } = useInstance();
-  // derived values
-  const authMode = EAuthModes.SIGN_UP;
-  const isSmtpConfigured = instance?.config?.is_smtp_configured;
 
   useEffect(() => {
-    if (error_code && error_message) {
-      const errorhandler = authErrorHandler(
-        error_code?.toString() as EAuthenticationErrorCodes,
-        error_message?.toString()
-      );
+    if (error_code) {
+      const errorhandler = authErrorHandler(error_code?.toString() as EAuthenticationErrorCodes);
       if (errorhandler) {
+        if (
+          [
+            EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN,
+            EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP,
+          ].includes(errorhandler.code)
+        )
+          setAuthStep(EAuthSteps.PASSWORD);
+        if (
+          [EAuthenticationErrorCodes.INVALID_MAGIC_CODE, EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE].includes(
+            errorhandler.code
+          )
+        )
+          setAuthStep(EAuthSteps.UNIQUE_CODE);
+
+        // validating wheather to show alert to banner
         if (errorhandler?.type === EErrorAlertType.TOAST_ALERT) {
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -62,28 +74,30 @@ export const SignUpAuthRoot: FC = observer(() => {
         } else setErrorInfo(errorhandler);
       }
     }
-  }, [error_code, error_message]);
+  }, [error_code, authMode]);
 
-  // email verification
+  // step 1 submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
-    await authService
-      .signUpEmailCheck(data)
+
+    const emailCheckRequest =
+      authMode === EAuthModes.SIGN_IN ? authService.signInEmailCheck(data) : authService.signUpEmailCheck(data);
+
+    await emailCheckRequest
       .then(() => {
-        if (isSmtpConfigured) setAuthStep(EAuthSteps.UNIQUE_CODE);
-        else setAuthStep(EAuthSteps.PASSWORD);
+        setAuthStep(EAuthSteps.PASSWORD);
       })
       .catch((error) => {
-        const errorhandler = authErrorHandler(error?.error_code, error?.error_message);
-        if (errorhandler) {
+        const errorhandler = authErrorHandler(error?.error_code.toString(), data?.email || undefined);
+        if (errorhandler?.type === EErrorAlertType.BANNER_ALERT) {
           setErrorInfo(errorhandler);
           return;
-        }
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error_message ?? "Something went wrong. Please try again.",
-        });
+        } else if (errorhandler?.type === EErrorAlertType.TOAST_ALERT)
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: errorhandler?.title,
+            message: (errorhandler?.message as string) || "Something went wrong. Please try again.",
+          });
       });
   };
 
@@ -96,7 +110,7 @@ export const SignUpAuthRoot: FC = observer(() => {
         workspaceSlug={workspaceSlug?.toString() || undefined}
         invitationId={invitation_id?.toString() || undefined}
         invitationEmail={email || undefined}
-        authMode={EAuthModes.SIGN_UP}
+        authMode={authMode}
         currentAuthStep={authStep}
       >
         {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
@@ -126,7 +140,7 @@ export const SignUpAuthRoot: FC = observer(() => {
           />
         )}
         {isOAuthEnabled && <OAuthOptions />}
-        <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP} />
+        <TermsAndConditions isSignUp={false} />
       </AuthHeader>
     </div>
   );

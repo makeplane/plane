@@ -111,7 +111,7 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
         </div>
-        <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10">
+        <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 lg:pt-28 transition-all">
           <div className="relative flex flex-col space-y-6">
             <div className="text-center space-y-1 py-4">
               <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
