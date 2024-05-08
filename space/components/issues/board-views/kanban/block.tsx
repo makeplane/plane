@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
 import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
 import { IssueBlockState } from "@/components/issues/board-views/block-state";
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 
 // components
 // interfaces

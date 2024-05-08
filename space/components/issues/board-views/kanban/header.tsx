@@ -6,7 +6,7 @@ import { StateGroupIcon } from "@plane/ui";
 import { issueGroupFilter } from "@/constants/data";
 // ui
 // mobx hook
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 import { RootStore } from "@/store/root.store";
 import { IIssueState } from "types/issue";
 

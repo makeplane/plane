@@ -1,4 +1,4 @@
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 import { RootStore } from "@/store/root.store";
 
 const useEditorSuggestions = () => {

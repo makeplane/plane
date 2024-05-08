@@ -30,12 +30,7 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
     );
 
   // something went wrong while in the request
-  if (error && error?.status === "error")
-    return (
-      <div className="relative flex h-screen w-screen items-center justify-center">
-        Something went wrong. please try again later
-      </div>
-    );
+  if (error && error?.status === "error") return <>{children}</>;
 
   // instance is not ready and setup is not done
   if (instance?.instance?.is_setup_done === false) return <InstanceNotReady />;

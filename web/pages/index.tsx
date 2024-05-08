@@ -5,12 +5,12 @@ import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
 // components
-import { SignUpAuthRoot } from "@/components/account";
+import { AuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
 import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 // helpers
-import { EPageTypes } from "@/helpers/authentication.helper";
+import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // layouts
@@ -56,8 +56,8 @@ const HomePage: NextPageWithLayout = observer(() => {
             </Link>
           </div>
         </div>
-        <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10">
-          <SignUpAuthRoot />
+        <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 lg:pt-28 transition-all">
+          <AuthRoot authMode={EAuthModes.SIGN_UP} />
         </div>
       </div>
     </div>

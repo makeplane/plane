@@ -4,7 +4,7 @@ import { IssueListBlock } from "@/components/issues/board-views/list/block";
 import { IssueListHeader } from "@/components/issues/board-views/list/header";
 // interfaces
 // mobx hook
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 // store
 import { RootStore } from "@/store/root.store";
 import { IIssueState, IIssue } from "types/issue";

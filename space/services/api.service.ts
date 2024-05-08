@@ -19,7 +19,7 @@ abstract class APIService {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response && error.response.status === 401) window.location.href = "/space/login";
+        if (error.response && error.response.status === 401) window.location.href = "/";
         return Promise.reject(error.response?.data ?? error);
       }
     );

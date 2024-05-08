@@ -4,12 +4,10 @@ import { useRouter } from "next/router";
 // lib
 import { Tooltip } from "@plane/ui";
 import { ReactionSelector } from "@/components/ui";
+// helpers
 import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
 // hooks
-import { useUser } from "@/hooks/store";
-import { useMobxStore } from "@/lib/mobx/store-provider";
-// helpers
-// components
+import { useMobxStore, useUser } from "@/hooks/store";
 
 export const IssueEmojiReactions: React.FC = observer(() => {
   // router

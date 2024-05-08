@@ -8,7 +8,7 @@ import { Icon } from "@/components/ui";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // store
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 import { IPeekMode } from "@/store/issue_details";
 import { RootStore } from "@/store/root.store";
 // lib

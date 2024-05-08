@@ -8,20 +8,20 @@ import { InstanceNotReady } from "@/components/instance";
 // hooks
 import { useInstance } from "@/hooks/store";
 
-type TInstanceLayout = {
+type TInstanceWrapper = {
   children: ReactNode;
 };
 
-const InstanceLayout: FC<TInstanceLayout> = observer((props) => {
+export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   const { children } = props;
-  // store
+  // hooks
   const { isLoading, instance, fetchInstanceInfo } = useInstance();
 
-  useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
+  const { isLoading: isSWRLoading } = useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
   });
 
-  if (isLoading)
+  if (isSWRLoading || isLoading)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <Spinner />
@@ -32,5 +32,3 @@ const InstanceLayout: FC<TInstanceLayout> = observer((props) => {
 
   return <>{children}</>;
 });
-
-export default InstanceLayout;

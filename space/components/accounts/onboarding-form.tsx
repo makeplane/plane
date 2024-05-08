@@ -8,7 +8,7 @@ import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { UserImageUploadModal } from "@/components/accounts";
 // hooks
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 // services
 import fileService from "@/services/file.service";
 

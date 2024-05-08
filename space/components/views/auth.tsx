@@ -20,14 +20,14 @@ export const AuthView = observer(() => {
   const { data: currentUser, fetchCurrentUser, isLoading } = useUser();
 
   // fetching user information
-  useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
+  const { isLoading: isSWRLoading } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
     shouldRetryOnError: false,
     revalidateOnFocus: false,
   });
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || isSWRLoading ? (
         <div className="relative flex h-screen w-screen items-center justify-center">
           <Spinner />
         </div>

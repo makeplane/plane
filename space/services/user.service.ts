@@ -18,7 +18,7 @@ export class UserService extends APIService {
       });
   }
 
-  async updateUser(data: Partial<IUser>): Promise<any> {
+  async updateUser(data: Partial<IUser>): Promise<IUser> {
     return this.patch("/api/users/me/", data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -33,7 +33,7 @@ export class UserService extends APIService {
         throw error?.response;
       });
   }
-  async updateCurrentUserProfile(data: any): Promise<any> {
+  async updateCurrentUserProfile(data: Partial<TUserProfile>): Promise<TUserProfile> {
     return this.patch("/api/users/me/profile/", data)
       .then((response) => response?.data)
       .catch((error) => {
