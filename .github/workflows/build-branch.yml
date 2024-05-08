@@ -22,11 +22,11 @@ jobs:
       gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
-      build_frontend: ${{ steps.changed_files.outputs.frontend_any_changed }}
+      build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
+      build_apiserver: ${{ steps.changed_files.outputs.apiserver_any_changed }}
       build_admin: ${{ steps.changed_files.outputs.admin_any_changed }}
       build_space: ${{ steps.changed_files.outputs.space_any_changed }}
-      build_backend: ${{ steps.changed_files.outputs.backend_any_changed }}
-      build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
+      build_web: ${{ steps.changed_files.outputs.web_any_changed }}
 
     steps:
       - id: set_env_variables
@@ -54,8 +54,12 @@ jobs:
         uses: tj-actions/changed-files@v42
         with:
           files_yaml: |
-            frontend:
-              - web/**
+            apiserver:
+              - apiserver/**
+            proxy:
+              - nginx/**
+            admin:
+              - admin/**
               - packages/**
               - 'package.json'
               - 'yarn.lock'
@@ -68,20 +72,16 @@ jobs:
               - 'yarn.lock'
               - 'tsconfig.json'
               - 'turbo.json'
-            admin:
-              - admin/**
+            web:
+              - web/**
               - packages/**
               - 'package.json'
               - 'yarn.lock'
               - 'tsconfig.json'
               - 'turbo.json'
-            backend:
-              - apiserver/**
-            proxy:
-              - nginx/**
 
-  branch_build_push_frontend:
-    if: ${{ needs.branch_build_setup.outputs.build_frontend == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+  branch_build_push_web:
+    if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -236,8 +236,8 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  branch_build_push_backend:
-    if: ${{ needs.branch_build_setup.outputs.build_backend == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+  branch_build_push_apiserver:
+    if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
