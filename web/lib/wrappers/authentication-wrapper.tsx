@@ -102,7 +102,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     } else {
       if (
         currentUser &&
-        currentUser?.is_password_autoset &&
+        !currentUser?.is_password_autoset &&
         currentUserProfile?.id &&
         currentUserProfile?.is_onboarded
       ) {

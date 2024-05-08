@@ -84,8 +84,11 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
       authMode === EAuthModes.SIGN_IN ? authService.signInEmailCheck(data) : authService.signUpEmailCheck(data);
 
     await emailCheckRequest
-      .then(() => {
-        setAuthStep(EAuthSteps.PASSWORD);
+      .then((response) => {
+        if (authMode === EAuthModes.SIGN_IN) {
+          if (response.is_password_autoset) setAuthStep(EAuthSteps.UNIQUE_CODE);
+          else setAuthStep(EAuthSteps.PASSWORD);
+        } else setAuthStep(EAuthSteps.PASSWORD);
       })
       .catch((error) => {
         const errorhandler = authErrorHandler(error?.error_code.toString(), data?.email || undefined);
