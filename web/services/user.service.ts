@@ -23,7 +23,6 @@ export class UserService extends APIService {
   currentUserConfig() {
     return {
       url: `${this.baseURL}/api/users/me/`,
-      headers: this.getHeaders(),
     };
   }
 
