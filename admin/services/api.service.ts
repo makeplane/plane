@@ -19,7 +19,7 @@ export abstract class APIService {
       (response) => response,
       (error) => {
         if (error.response && error.response.status === 401) window.location.href = "/login";
-        return Promise.reject(error.response?.data ?? error);
+        return Promise.reject(error);
       }
     );
   }
