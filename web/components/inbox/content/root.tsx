@@ -30,7 +30,11 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
       : null,
     workspaceSlug && projectId && inboxIssueId
       ? () => fetchInboxIssueById(workspaceSlug, projectId, inboxIssueId)
-      : null
+      : null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
   );
 
   const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -52,7 +56,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             isSubmitting={isSubmitting}
           />
         </div>
-        <div className="h-full w-full space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5 vertical-scrollbar scrollbar-md">
+        <div className="h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto px-6 py-5 vertical-scrollbar scrollbar-md">
           <InboxIssueMainContent
             workspaceSlug={workspaceSlug}
             projectId={projectId}

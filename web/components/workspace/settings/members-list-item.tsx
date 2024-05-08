@@ -55,7 +55,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
       .catch((err: any) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error",
+          title: "Error!",
           message: err?.error || "Something went wrong. Please try again.",
         })
       );
@@ -67,7 +67,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     await removeMemberFromWorkspace(workspaceSlug.toString(), memberDetails.member.id).catch((err) =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
+        title: "Error!",
         message: err?.error || "Something went wrong. Please try again.",
       })
     );

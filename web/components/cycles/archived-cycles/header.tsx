@@ -11,6 +11,7 @@ import { CycleFiltersSelection } from "@/components/cycles";
 import { FiltersDropdown } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useCycleFilter } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
@@ -61,6 +62,8 @@ export const ArchivedCyclesHeader: FC = observer(() => {
     }
   };
 
+  const isFiltersApplied = calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0;
+
   return (
     <div className="group relative flex border-b border-custom-border-200">
       <div className="flex w-full items-center overflow-x-auto px-4 gap-2 horizontal-scrollbar scrollbar-sm">
@@ -110,7 +113,12 @@ export const ArchivedCyclesHeader: FC = observer(() => {
             </button>
           )}
         </div>
-        <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+        <FiltersDropdown
+          icon={<ListFilter className="h-3 w-3" />}
+          title="Filters"
+          placement="bottom-end"
+          isFiltersApplied={isFiltersApplied}
+        >
           <CycleFiltersSelection
             filters={currentProjectArchivedFilters ?? {}}
             handleFiltersUpdate={handleFilters}

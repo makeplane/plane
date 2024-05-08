@@ -4,13 +4,14 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
-// base class
+// types
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 // services
 import { IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
-// types
-import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
+// helpers
 import { IssueHelperStore } from "../helpers/issue-helper.store";
+// store
 import { IIssueRootStore } from "../root.store";
 
 export interface IModuleIssues {
@@ -69,7 +70,6 @@ export interface IModuleIssues {
     issueId: string,
     moduleIds: string[]
   ) => Promise<void>;
-  removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
 }
 
 export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
@@ -106,7 +106,6 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       removeIssuesFromModule: action,
       addModulesToIssue: action,
       removeModulesFromIssue: action,
-      removeIssueFromModule: action,
     });
 
     this.rootIssueStore = _rootStore;
@@ -301,27 +300,39 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     fetchAddedIssues = true
   ) => {
     try {
-      await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
-        issues: issueIds,
-      });
-
-      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
-
+      // add the new issue ids to the module issues map
       runInAction(() => {
         update(this.issues, moduleId, (moduleIssueIds = []) => {
           if (!moduleIssueIds) return [...issueIds];
           else return uniq(concat(moduleIssueIds, issueIds));
         });
       });
-
+      // update the root issue map with the new module ids
       issueIds.forEach((issueId) => {
         update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) => {
           if (issueModuleIds.includes(moduleId)) return issueModuleIds;
           else return uniq(concat(issueModuleIds, [moduleId]));
         });
       });
+
+      await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+        issues: issueIds,
+      });
+
+      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
+
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
     } catch (error) {
+      issueIds.forEach((issueId) => {
+        runInAction(() => {
+          // remove the new issue ids from the module issues map
+          pull(this.issues[moduleId], issueId);
+          // remove the new module ids from the root issue map
+          update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
+            pull(issueModuleIds, moduleId)
+          );
+        });
+      });
       throw error;
     }
   };
@@ -358,25 +369,38 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
   };
 
   addModulesToIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
+    // keep a copy of the original module ids
+    const originalModuleIds = this.rootStore.issues.issuesMap[issueId]?.module_ids ?? [];
     try {
-      const issueToModule = await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
-        modules: moduleIds,
-      });
-
       runInAction(() => {
+        // add the new issue ids to the module issues map
         moduleIds.forEach((moduleId) => {
           update(this.issues, moduleId, (moduleIssueIds = []) => {
             if (moduleIssueIds.includes(issueId)) return moduleIssueIds;
             else return uniq(concat(moduleIssueIds, [issueId]));
           });
         });
+        // update the root issue map with the new module ids
         update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
           uniq(concat(issueModuleIds, moduleIds))
         );
       });
 
+      const issueToModule = await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
+        modules: moduleIds,
+      });
+
       return issueToModule;
     } catch (error) {
+      // revert the issue back to its original module ids
+      set(this.rootStore.issues.issuesMap, [issueId, "module_ids"], originalModuleIds);
+      // remove the new issue ids from the module issues map
+      moduleIds.forEach((moduleId) => {
+        runInAction(() => {
+          update(this.issues, moduleId, (moduleIssueIds = []) => pull(moduleIssueIds, issueId));
+        });
+      });
+
       throw error;
     }
   };
@@ -401,23 +425,6 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
         issueId,
         moduleIds
       );
-
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
-    try {
-      runInAction(() => {
-        pull(this.issues[moduleId], issueId);
-        update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
-          pull(issueModuleIds, moduleId)
-        );
-      });
-
-      const response = await this.moduleService.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
 
       return response;
     } catch (error) {

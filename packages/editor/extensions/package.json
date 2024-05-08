@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor-extensions",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Package that powers Plane's Editor with extensions",
   "private": true,
   "main": "./dist/index.mjs",
@@ -34,7 +34,7 @@
     "@tiptap/pm": "^2.1.13",
     "@tiptap/react": "^2.1.13",
     "@tiptap/suggestion": "^2.1.13",
-    "lucide-react": "^0.294.0",
+    "lucide-react": "^0.378.0",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {

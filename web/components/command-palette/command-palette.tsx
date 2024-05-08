@@ -196,6 +196,11 @@ export const CommandPalette: FC = observer(() => {
 
       const keyPressed = key.toLowerCase();
       const cmdClicked = ctrlKey || metaKey;
+
+      if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
+        e.preventDefault();
+        toggleCommandPaletteModal(true);
+      }
       // if on input, textarea or editor, don't do anything
       if (
         e.target instanceof HTMLTextAreaElement ||
@@ -205,10 +210,7 @@ export const CommandPalette: FC = observer(() => {
         return;
 
       if (cmdClicked) {
-        if (keyPressed === "k") {
-          e.preventDefault();
-          toggleCommandPaletteModal(true);
-        } else if (keyPressed === "c" && altKey) {
+        if (keyPressed === "c" && altKey) {
           e.preventDefault();
           copyIssueUrlToClipboard();
         } else if (keyPressed === "b") {

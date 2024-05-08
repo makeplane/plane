@@ -1,9 +1,9 @@
-// services
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { APIService } from "@/services/api.service";
-// type
+// types
 import type { TIssue, IIssueDisplayProperties, TIssueLink, TIssueSubIssues, TIssueActivity } from "@plane/types";
-// helper
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
+// services
+import { APIService } from "@/services/api.service";
 
 export class IssueService extends APIService {
   constructor() {
