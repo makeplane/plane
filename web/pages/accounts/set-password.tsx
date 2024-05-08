@@ -11,6 +11,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
 // helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
@@ -212,7 +213,7 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
 
 SetPasswordPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AuthenticationWrapper>
+    <AuthenticationWrapper pageType={EPageTypes.SET_PASSWORD}>
       <DefaultLayout>{page}</DefaultLayout>
     </AuthenticationWrapper>
   );

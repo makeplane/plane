@@ -95,6 +95,24 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     }
   }
 
+  if (pageType === EPageTypes.SET_PASSWORD) {
+    if (!currentUser?.id) {
+      router.push("/accounts/sign-in");
+      return <></>;
+    } else {
+      if (
+        currentUser &&
+        currentUser?.is_password_autoset &&
+        currentUserProfile?.id &&
+        currentUserProfile?.is_onboarded
+      ) {
+        const currentRedirectRoute = getWorkspaceRedirectionUrl();
+        router.push(currentRedirectRoute);
+        return <></>;
+      } else return <>{children}</>;
+    }
+  }
+
   if (pageType === EPageTypes.AUTHENTICATED) {
     if (currentUser?.id) {
       if (currentUserProfile && currentUserProfile?.id && currentUserProfile?.is_onboarded) return <>{children}</>;
