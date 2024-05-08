@@ -400,7 +400,10 @@ class PagesDescriptionViewSet(BaseViewSet):
         binary_data = page.description_yjs
 
         def stream_data():
-            yield binary_data
+            if binary_data:
+                yield binary_data
+            else:
+                yield b""
 
         response = StreamingHttpResponse(
             stream_data(), content_type="application/octet-stream"
