@@ -1,13 +1,14 @@
 import { Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
+// types
 import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
 // components
 import { CalendarIssueBlocks, ICalendarDate } from "@/components/issues";
-// helpers
+// constants
 import { MONTHS_LIST } from "@/constants/calendar";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-// constants
 // types
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
@@ -69,7 +70,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
       <div className="group relative flex h-full w-full flex-col bg-custom-background-90">
         {/* header */}
         <div
-          className={`hidden md:flex items-center justify-end flex-shrink-0 px-2 py-1.5 text-right text-xs ${
+          className={`hidden flex-shrink-0 items-center justify-end px-2 py-1.5 text-right text-xs md:flex ${
             calendarLayout === "month" // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
@@ -83,7 +84,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
           {isToday ? (
-            <span className="flex items-center justify-center h-5 w-5 rounded-full bg-custom-primary-100 text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-primary-100 text-white">
               {date.date.getDate()}
             </span>
           ) : (
@@ -92,7 +93,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         </div>
 
         {/* content */}
-        <div className="h-full w-full hidden md:block">
+        <div className="hidden h-full w-full md:block">
           <Droppable droppableId={formattedDatePayload} isDropDisabled={readOnly}>
             {(provided, snapshot) => (
               <div
@@ -127,14 +128,14 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         <div
           onClick={() => setSelectedDate(date.date)}
           className={cn(
-            "text-sm py-2.5 h-full w-full font-medium mx-auto flex flex-col justify-start items-center md:hidden cursor-pointer",
+            "mx-auto flex h-full w-full cursor-pointer flex-col items-center justify-start py-2.5 text-sm font-medium md:hidden",
             {
               "bg-custom-background-100": date.date.getDay() !== 0 && date.date.getDay() !== 6,
             }
           )}
         >
           <div
-            className={cn("h-6 w-6  rounded-full flex items-center justify-center ", {
+            className={cn("flex h-6  w-6 items-center justify-center rounded-full ", {
               "bg-custom-primary-100 text-white": isSelectedDate,
               "bg-custom-primary-100/10 text-custom-primary-100 ": isToday && !isSelectedDate,
             })}
@@ -142,7 +143,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
             {date.date.getDate()}
           </div>
 
-          {totalIssues > 0 && <div className="flex flex-shrink-0 h-1.5 w-1.5 bg-custom-primary-100 rounded mt-1" />}
+          {totalIssues > 0 && <div className="mt-1 flex h-1.5 w-1.5 flex-shrink-0 rounded bg-custom-primary-100" />}
         </div>
       </div>
     </>

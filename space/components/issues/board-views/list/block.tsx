@@ -7,9 +7,9 @@ import { IssueBlockLabels } from "@/components/issues/board-views/block-labels";
 import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
 import { IssueBlockState } from "@/components/issues/board-views/block-state";
 // mobx hook
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 // interfaces
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 import { IIssue } from "types/issue";
 // store
 

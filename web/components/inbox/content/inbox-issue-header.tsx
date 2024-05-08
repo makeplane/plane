@@ -53,10 +53,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // store
   const { currentTab, deleteInboxIssue, inboxIssuesArray } = useProjectInbox();
+  const { data: currentUser } = useUser();
   const {
-    currentUser,
     membership: { currentProjectRole },
   } = useUser();
+
   const router = useRouter();
   const { getProjectById } = useProject();
 

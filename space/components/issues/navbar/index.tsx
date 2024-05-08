@@ -7,21 +7,20 @@ import { Briefcase } from "lucide-react";
 import { Avatar, Button } from "@plane/ui";
 import { ProjectLogo } from "@/components/common";
 import { IssueFiltersDropdown } from "@/components/issues/filters";
-// ui
-// lib
-import { useMobxStore } from "@/lib/mobx/store-provider";
+// hooks
+import { useMobxStore, useUser } from "@/hooks/store";
 // store
-import { RootStore } from "@/store/root";
-import { TIssueBoardKeys } from "types/issue";
+import { RootStore } from "@/store/root.store";
+import { TIssueBoardKeys } from "@/types/issue";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarTheme } from "./theme";
 
 const IssueNavbar = observer(() => {
   const {
     project: projectStore,
-    user: userStore,
     issuesFilter: { updateFilters },
   }: RootStore = useMobxStore();
+  const { data: user } = useUser();
   // router
   const router = useRouter();
   const { workspace_slug, project_slug, board, peekId, states, priorities, labels } = router.query as {
@@ -33,8 +32,6 @@ const IssueNavbar = observer(() => {
     priorities: string;
     labels: string;
   };
-
-  const user = userStore?.currentUser;
 
   useEffect(() => {
     if (workspace_slug && project_slug) {
@@ -142,7 +139,7 @@ const IssueNavbar = observer(() => {
 
       {user ? (
         <div className="flex items-center gap-2 rounded border border-custom-border-200 p-2">
-          <Avatar name={user?.display_name} src={user?.avatar} shape="square" size="sm" />
+          <Avatar name={user?.display_name} src={user?.avatar ?? undefined} shape="square" size="sm" />
           <h6 className="text-xs font-medium">{user.display_name}</h6>
         </div>
       ) : (

@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import { Button } from "@plane/ui";
-import { useUser } from "@/hooks/store";
 // ui
+import { Button } from "@plane/ui";
+// hooks
+import { useUser } from "@/hooks/store";
 
-type Props = {
+export type Props = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => Promise<void>;
@@ -22,7 +22,7 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
   // states
   const [isRemoving, setIsRemoving] = useState(false);
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
 
   const handleClose = () => {
     onClose();
@@ -102,8 +102,8 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                         ? "Leaving"
                         : "Leave"
                       : isRemoving
-                        ? "Removing"
-                        : "Remove"}
+                      ? "Removing"
+                      : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

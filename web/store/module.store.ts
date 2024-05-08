@@ -121,7 +121,7 @@ export class ModulesStore implements IModuleStore {
    * get all module ids for the current project
    */
   get projectModuleIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let projectModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId && !m?.archived_at);
     projectModules = sortBy(projectModules, [(m) => m.sort_order]);
@@ -133,7 +133,7 @@ export class ModulesStore implements IModuleStore {
    * get all archived module ids for the current project
    */
   get projectArchivedModuleIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let archivedModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId && !!m?.archived_at);
     archivedModules = sortBy(archivedModules, [(m) => m.sort_order]);

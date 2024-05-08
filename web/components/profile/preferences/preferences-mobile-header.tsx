@@ -24,7 +24,6 @@ export const PreferencesMobileHeader = () => {
         <Link
           key={index}
           href={link.href}
-          onClick={() => console.log(router.asPath)}
           className={cn(
             "flex justify-around py-2 w-full",
             router.asPath.includes(link.label.toLowerCase()) ? "border-b-2 border-custom-primary-100" : ""

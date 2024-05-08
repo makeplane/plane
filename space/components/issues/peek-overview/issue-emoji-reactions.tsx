@@ -4,19 +4,19 @@ import { useRouter } from "next/router";
 // lib
 import { Tooltip } from "@plane/ui";
 import { ReactionSelector } from "@/components/ui";
-import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
-import { useMobxStore } from "@/lib/mobx/store-provider";
 // helpers
-// components
+import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
+// hooks
+import { useMobxStore, useUser } from "@/hooks/store";
 
 export const IssueEmojiReactions: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspace_slug, project_slug } = router.query;
   // store
-  const { user: userStore, issueDetails: issueDetailsStore } = useMobxStore();
+  const { issueDetails: issueDetailsStore } = useMobxStore();
+  const { data: user, fetchCurrentUser } = useUser();
 
-  const user = userStore?.currentUser;
   const issueId = issueDetailsStore.peekId;
   const reactions = issueId ? issueDetailsStore.details[issueId]?.reactions || [] : [];
   const groupedReactions = groupReactions(reactions, "reaction");
@@ -44,16 +44,16 @@ export const IssueEmojiReactions: React.FC = observer(() => {
 
   useEffect(() => {
     if (user) return;
-    userStore.fetchCurrentUser();
-  }, [user, userStore]);
+    fetchCurrentUser();
+  }, [user, fetchCurrentUser]);
 
+  // TODO: on onclick of reaction, if user not logged in redirect to login page
   return (
     <>
       <ReactionSelector
         onSelect={(value) => {
-          userStore.requiredLogin(() => {
-            handleReactionClick(value);
-          });
+          if (user) handleReactionClick(value);
+          // userStore.requiredLogin(() => {});
         }}
         selected={userReactions?.map((r) => r.reaction)}
         size="md"
@@ -80,9 +80,8 @@ export const IssueEmojiReactions: React.FC = observer(() => {
                 <button
                   type="button"
                   onClick={() => {
-                    userStore.requiredLogin(() => {
-                      handleReactionClick(reaction);
-                    });
+                    if (user) handleReactionClick(reaction);
+                    // userStore.requiredLogin(() => {});
                   }}
                   className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
                     reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)

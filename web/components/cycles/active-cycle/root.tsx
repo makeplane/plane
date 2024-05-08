@@ -58,14 +58,14 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
     else
       return (
         <>
-          <div className="h-52 w-full grid place-items-center mb-6">
+          <div className="mb-6 grid h-52 w-full place-items-center">
             <div className="text-center">
-              <h5 className="text-xl font-medium mb-1">No active cycle</h5>
-              <p className="text-custom-text-400 text-base">
+              <h5 className="mb-1 text-xl font-medium">No active cycle</h5>
+              <p className="text-base text-custom-text-400">
                 Create new cycles to find them here or check
                 <br />
                 {"'"}All{"'"} cycles tab to see all cycles or{" "}
-                <button type="button" className="text-custom-primary-100 font-medium" onClick={handleEmptyStateAction}>
+                <button type="button" className="font-medium text-custom-primary-100" onClick={handleEmptyStateAction}>
                   click here
                 </button>
               </p>

@@ -10,7 +10,7 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { TRenderQuickActions } from "./list-view-types";
@@ -44,11 +44,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   // refs
   const parentRef = useRef(null);
   // hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
-
-  // store hooks
+  const { workspaceSlug } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
 
@@ -152,7 +148,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         {!issue?.tempId ? (
           <>
             <IssueProperties
-              className="relative flex flex-wrap md:flex-grow md:flex-shrink-0 items-center gap-2 whitespace-nowrap"
+              className="relative flex flex-wrap items-center gap-2 whitespace-nowrap md:flex-shrink-0 md:flex-grow"
               issue={issue}
               isReadOnly={!canEditIssueProperties}
               updateIssue={updateIssue}

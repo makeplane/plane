@@ -59,7 +59,7 @@ export class CycleFilterStore implements ICycleFilterStore {
     this.rootStore = _rootStore;
     // initialize display filters of the current project
     reaction(
-      () => this.rootStore.app.router.projectId,
+      () => this.rootStore.router.projectId,
       (projectId) => {
         if (!projectId) return;
         this.initProjectCycleFilters(projectId);
@@ -72,7 +72,7 @@ export class CycleFilterStore implements ICycleFilterStore {
    * @description get display filters of the current project
    */
   get currentProjectDisplayFilters() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId) return;
     return this.displayFilters[projectId];
   }
@@ -81,7 +81,7 @@ export class CycleFilterStore implements ICycleFilterStore {
    * @description get filters of the current project
    */
   get currentProjectFilters() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId) return;
     return this.filters[projectId]?.default ?? {};
   }
@@ -90,7 +90,7 @@ export class CycleFilterStore implements ICycleFilterStore {
    * @description get archived filters of the current project
    */
   get currentProjectArchivedFilters() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId) return;
     return this.filters[projectId].archived;
   }

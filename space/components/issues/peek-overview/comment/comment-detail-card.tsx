@@ -9,10 +9,10 @@ import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
-// mobx store
-import { useMobxStore } from "@/lib/mobx/store-provider";
+// hooks
+import { useMobxStore, useUser } from "@/hooks/store";
 // store
-import { RootStore } from "@/store/root";
+import { RootStore } from "@/store/root.store";
 // types
 import { Comment } from "@/types/issue";
 
@@ -27,7 +27,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   const workspaceId = project.workspace?.id;
 
   // store
-  const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
+  const { issueDetails: issueDetailStore } = useMobxStore();
+  const { data: currentUser } = useUser();
   // states
   const [isEditing, setIsEditing] = useState(false);
   // refs
@@ -139,7 +140,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
         </div>
       </div>
 
-      {userStore?.currentUser?.id === comment?.actor_detail?.id && (
+      {currentUser?.id === comment?.actor_detail?.id && (
         <Menu as="div" className="relative w-min text-left">
           <Menu.Button
             type="button"

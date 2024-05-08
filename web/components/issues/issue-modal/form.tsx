@@ -7,6 +7,7 @@ import { EditorRefApi } from "@plane/rich-text-editor";
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
 // hooks
 import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { GptAssistantPopover } from "@/components/core";
 import {
   CycleDropdown,
@@ -22,17 +23,15 @@ import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-e
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
+// helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
-import { useApplication, useEstimate, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
+// hooks
+import { useAppRouter, useEstimate, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
 import { AIService } from "@/services/ai.service";
-// components
-// ui
-// helpers
-// types
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -108,20 +107,16 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
-
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
-
-  // store hooks
-  const {
-    config: { envConfig },
-    router: { projectId: routeProjectId },
-  } = useApplication();
+  const { projectId: routeProjectId } = useAppRouter();
+  const { instance } = useInstance();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
 
@@ -415,7 +410,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               ) : (
                 <>
                   <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex items-center gap-2">
-                    {issueName && issueName.trim() !== "" && envConfig?.has_openai_configured && (
+                    {issueName && issueName.trim() !== "" && instance?.config?.has_openai_configured && (
                       <button
                         type="button"
                         className={`flex items-center gap-1 rounded bg-custom-background-90 px-1.5 py-1 text-xs ${
@@ -434,7 +429,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         )}
                       </button>
                     )}
-                    {envConfig?.has_openai_configured && (
+                    {instance?.config?.has_openai_configured && (
                       <GptAssistantPopover
                         isOpen={gptAssistantModal}
                         projectId={projectId}
