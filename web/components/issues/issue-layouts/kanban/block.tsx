@@ -112,6 +112,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     router: { workspaceSlug },
   } = useApplication();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -206,7 +207,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
           )}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
-          disabled={!!issue?.tempId}
+          disabled={!!issue?.tempId || isMobile}
         >
           <RenderIfVisible
             classNames="space-y-2 px-3 py-2"
