@@ -32,7 +32,7 @@
     "@plane/editor-core": "*",
     "@plane/editor-extensions": "*",
     "@tiptap/core": "^2.1.13",
-    "lucide-react": "^0.294.0"
+    "lucide-react": "^0.378.0"
   },
   "devDependencies": {
     "@types/node": "18.15.3",

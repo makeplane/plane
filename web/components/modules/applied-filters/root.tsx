@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { TModuleFilters } from "@plane/types";
+import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
 import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "@/components/modules";
 // helpers
@@ -8,19 +8,30 @@ import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 
 type Props = {
   appliedFilters: TModuleFilters;
+  isFavoriteFilterApplied?: boolean;
   handleClearAllFilters: () => void;
+  handleDisplayFiltersUpdate?: (updatedDisplayProperties: Partial<TModuleDisplayFilters>) => void;
   handleRemoveFilter: (key: keyof TModuleFilters, value: string | null) => void;
   alwaysAllowEditing?: boolean;
+  isArchived?: boolean;
 };
 
 const MEMBERS_FILTERS = ["lead", "members"];
 const DATE_FILTERS = ["start_date", "target_date"];
 
 export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
-  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
+  const {
+    appliedFilters,
+    isFavoriteFilterApplied,
+    handleClearAllFilters,
+    handleRemoveFilter,
+    handleDisplayFiltersUpdate,
+    alwaysAllowEditing,
+    isArchived = false,
+  } = props;
 
-  if (!appliedFilters) return null;
-  if (Object.keys(appliedFilters).length === 0) return null;
+  if (!appliedFilters && !isFavoriteFilterApplied) return null;
+  if (Object.keys(appliedFilters).length === 0 && !isFavoriteFilterApplied) return null;
 
   const isEditingAllowed = alwaysAllowEditing;
 
@@ -73,6 +84,33 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
           </div>
         );
       })}
+      {!isArchived && isFavoriteFilterApplied && (
+        <div
+          key="module_display_filters"
+          className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
+        >
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-xs text-custom-text-300">Modules</span>
+            <div className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80">
+              Favorite
+              {isEditingAllowed && (
+                <button
+                  type="button"
+                  className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                  onClick={() =>
+                    handleDisplayFiltersUpdate &&
+                    handleDisplayFiltersUpdate({
+                      favorites: !isFavoriteFilterApplied,
+                    })
+                  }
+                >
+                  <X size={10} strokeWidth={2} />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       {isEditingAllowed && (
         <button
           type="button"

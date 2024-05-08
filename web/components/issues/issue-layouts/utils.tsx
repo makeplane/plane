@@ -1,3 +1,4 @@
+import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
@@ -15,6 +16,9 @@ import { IStateStore } from "@/store/state.store";
 // helpers
 // constants
 // types
+
+export const HIGHLIGHT_CLASS = "highlight";
+export const HIGHLIGHT_WITH_LINE = "highlight-with-line";
 
 export const isWorkspaceLevel = (type: EIssuesStoreType) =>
   [EIssuesStoreType.PROFILE, EIssuesStoreType.GLOBAL].includes(type) ? true : false;
@@ -239,4 +243,23 @@ const getCreatedByColumns = (member: IMemberRootStore) => {
       payload: {},
     };
   });
+};
+
+/**
+ * This Method finds the DOM element with elementId, scrolls to it and highlights the issue block
+ * @param elementId
+ * @param shouldScrollIntoView
+ */
+export const highlightIssueOnDrop = (
+  elementId: string | undefined,
+  shouldScrollIntoView = true,
+  shouldHighLightWithLine = false
+) => {
+  setTimeout(async () => {
+    const sourceElementId = elementId ?? "";
+    const sourceElement = document.getElementById(sourceElementId);
+    sourceElement?.classList?.add(shouldHighLightWithLine ? HIGHLIGHT_WITH_LINE : HIGHLIGHT_CLASS);
+    if (shouldScrollIntoView && sourceElement)
+      await scrollIntoView(sourceElement, { behavior: "smooth", block: "center", duration: 1500 });
+  }, 200);
 };

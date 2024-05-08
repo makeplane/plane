@@ -113,7 +113,7 @@ export const CoreEditorExtensions = ({
   }),
   TaskItem.configure({
     HTMLAttributes: {
-      class: "flex",
+      class: "relative",
     },
     nested: true,
   }),

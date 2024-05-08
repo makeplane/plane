@@ -35,6 +35,7 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
   if (orderByKey === "created_at") orderedModules = sortBy(modules, [(m) => m.created_at]);
   if (orderByKey === "-created_at") orderedModules = sortBy(modules, [(m) => !m.created_at]);
 
+  if (orderByKey === "sort_order") orderedModules = sortBy(modules, [(m) => m.sort_order]);
   return orderedModules;
 };
 
