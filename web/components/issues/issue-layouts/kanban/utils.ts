@@ -87,14 +87,17 @@ export const getDestinationFromDropPayload = (payload: IPragmaticDropPayload): K
 const handleSortOrder = (
   destinationIssues: string[],
   destinationIssueId: string | undefined,
-  getIssueById: (issueId: string) => TIssue | undefined
+  getIssueById: (issueId: string) => TIssue | undefined,
+  shouldAddIssueAtTop = false
 ) => {
   const sortOrderDefaultValue = 65535;
   let currentIssueState = {};
 
   const destinationIndex = destinationIssueId
     ? destinationIssues.indexOf(destinationIssueId)
-    : destinationIssues.length;
+    : shouldAddIssueAtTop
+      ? 0
+      : destinationIssues.length;
 
   if (destinationIssues && destinationIssues.length > 0) {
     if (destinationIndex === 0) {
@@ -145,7 +148,8 @@ export const handleDragDrop = async (
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined,
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined,
   groupBy: TIssueGroupByOptions | undefined,
-  subGroupBy: TIssueGroupByOptions | undefined
+  subGroupBy: TIssueGroupByOptions | undefined,
+  shouldAddIssueAtTop = false
 ) => {
   if (!source.id || !groupBy || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
 
@@ -165,7 +169,7 @@ export const handleDragDrop = async (
   // for both horizontal and vertical dnd
   updatedIssue = {
     ...updatedIssue,
-    ...handleSortOrder(destinationIssues, destination.id, getIssueById),
+    ...handleSortOrder(destinationIssues, destination.id, getIssueById, shouldAddIssueAtTop),
   };
 
   if (source.groupId && destination.groupId && source.groupId !== destination.groupId) {

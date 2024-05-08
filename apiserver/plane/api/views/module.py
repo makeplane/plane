@@ -5,6 +5,7 @@ import json
 from django.core import serializers
 from django.db.models import Count, F, Func, OuterRef, Prefetch, Q
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
@@ -28,10 +29,11 @@ from plane.db.models import (
     Project,
 )
 
-from .base import BaseAPIView, WebhookMixin
+from .base import BaseAPIView
+from plane.bgtasks.webhook_task import model_activity
 
 
-class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
+class ModuleAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to module.
@@ -163,6 +165,16 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
                     status=status.HTTP_409_CONFLICT,
                 )
             serializer.save()
+            # Send the model activity
+            model_activity.delay(
+                model_name="module",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
             module = Module.objects.get(pk=serializer.data["id"])
             serializer = ModuleSerializer(module)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -172,6 +184,11 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
         module = Module.objects.get(
             pk=pk, project_id=project_id, workspace__slug=slug
         )
+
+        current_instance = json.dumps(
+            ModuleSerializer(module).data, cls=DjangoJSONEncoder
+        )
+
         if module.archived_at:
             return Response(
                 {"error": "Archived module cannot be edited"},
@@ -204,6 +221,18 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
                     status=status.HTTP_409_CONFLICT,
                 )
             serializer.save()
+
+            # Send the model activity
+            model_activity.delay(
+                model_name="module",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -260,7 +289,7 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
+class ModuleIssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to module issues.

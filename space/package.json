@@ -1,6 +1,6 @@
 {
   "name": "space",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
@@ -29,7 +29,7 @@
     "dotenv": "^16.3.1",
     "js-cookie": "^3.0.1",
     "lowlight": "^2.9.0",
-    "lucide-react": "^0.368.0",
+    "lucide-react": "^0.378.0",
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",
     "next": "^14.0.3",

@@ -33,7 +33,7 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
       <div className="flex justify-center">
         <Avatar
           src={userDetails.avatar}
-          name={isCurrentUser ? "You" : userDetails.display_name}
+          name={userDetails.display_name}
           size={69}
           className="!text-3xl !font-medium"
           showTooltip={false}

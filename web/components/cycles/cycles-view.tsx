@@ -26,7 +26,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
   const { getFilteredCycleIds, getFilteredCompletedCycleIds, loader } = useCycle();
   const { searchQuery } = useCycleFilter();
   // derived values
-  const filteredCycleIds = getFilteredCycleIds(projectId);
+  const filteredCycleIds = getFilteredCycleIds(projectId, layout === "gantt");
   const filteredCompletedCycleIds = getFilteredCompletedCycleIds(projectId);
 
   if (loader || !filteredCycleIds)

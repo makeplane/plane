@@ -72,7 +72,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
     })
       .then(() => {
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "Project updated successfully",
         });

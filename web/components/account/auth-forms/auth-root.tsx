@@ -64,7 +64,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
         )
           setAuthStep(EAuthSteps.UNIQUE_CODE);
 
-        // validating wheather to show alert to banner
+        // validating weather to show alert to banner
         if (errorhandler?.type === EErrorAlertType.TOAST_ALERT) {
           setToast({
             type: TOAST_TYPE.ERROR,

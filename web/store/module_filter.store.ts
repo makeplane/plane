@@ -177,6 +177,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
   clearAllFilters = (projectId: string, state: keyof TModuleFiltersByState = "default") => {
     runInAction(() => {
       this.filters[projectId][state] = {};
+      this.displayFilters[projectId].favorites = false;
     });
   };
 }

@@ -27,8 +27,8 @@ export const ProjectArchivesHeader: FC = observer(() => {
   const { isMobile } = usePlatformOS();
 
   const issueCount = currentProjectDetails
-    ? issueFilters?.displayFilters?.sub_issue
-      ? currentProjectDetails.archived_issues + currentProjectDetails.archived_sub_issues
+    ? !issueFilters?.displayFilters?.sub_issue && currentProjectDetails.archived_sub_issues
+      ? currentProjectDetails.archived_issues - currentProjectDetails.archived_sub_issues
       : currentProjectDetails.archived_issues
     : undefined;
 

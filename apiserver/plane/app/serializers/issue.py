@@ -442,7 +442,7 @@ class IssueLinkSerializer(BaseSerializer):
             raise serializers.ValidationError("Invalid URL format.")
 
         # Check URL scheme
-        if not value.startswith(('http://', 'https://')):
+        if not value.startswith(("http://", "https://")):
             raise serializers.ValidationError("Invalid URL scheme.")
 
         return value
@@ -636,6 +636,7 @@ class IssueInboxSerializer(DynamicBaseSerializer):
             "project_id",
             "created_at",
             "label_ids",
+            "created_by",
         ]
         read_only_fields = fields
 

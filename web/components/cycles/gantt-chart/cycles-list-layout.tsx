@@ -61,7 +61,7 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
         enableBlockLeftResize={false}
         enableBlockRightResize={false}
         enableBlockMove={false}
-        enableReorder={false}
+        enableReorder
       />
     </div>
   );

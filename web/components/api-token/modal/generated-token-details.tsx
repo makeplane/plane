@@ -28,7 +28,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full p-5">
       <div className="w-full space-y-3 text-wrap">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">Key created</h3>
         <p className="text-sm text-custom-text-400">

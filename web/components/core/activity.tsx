@@ -724,6 +724,7 @@ const activityDetails: {
             <IssueLink activity={activity} />
           </>
         )}
+        {activity.verb === "2" && ` from inbox by marking a duplicate issue.`}
       </>
     ),
     icon: <Inbox size={12} color="#6b7280" aria-hidden="true" />,

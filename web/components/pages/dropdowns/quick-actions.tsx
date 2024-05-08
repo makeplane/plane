@@ -104,6 +104,7 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
                 item.action();
               }}
               className="flex items-center gap-2"
+              disabled={item.disabled}
             >
               {item.icon && <item.icon className="h-3 w-3" />}
               {item.title}

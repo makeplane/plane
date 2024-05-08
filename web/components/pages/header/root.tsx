@@ -45,6 +45,8 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
     [filters.filters, updateFilters]
   );
 
+  const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
+
   return (
     <>
       <div className="flex-shrink-0 h-[50px] w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
@@ -59,7 +61,12 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
               if (val.order) updateFilters("sortBy", val.order);
             }}
           />
-          <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+          <FiltersDropdown
+            icon={<ListFilter className="h-3 w-3" />}
+            title="Filters"
+            placement="bottom-end"
+            isFiltersApplied={isFiltersApplied}
+          >
             <PageFiltersSelection
               filters={filters}
               handleFiltersUpdate={updateFilters}

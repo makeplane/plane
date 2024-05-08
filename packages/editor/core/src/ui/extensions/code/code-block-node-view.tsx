@@ -5,6 +5,7 @@ import ts from "highlight.js/lib/languages/typescript";
 import { CopyIcon, CheckIcon } from "lucide-react";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { cn } from "src/lib/utils";
+import { Tooltip } from "@plane/ui";
 
 // we just have ts support for now
 const lowlight = createLowlight(common);
@@ -30,23 +31,25 @@ export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) 
   };
 
   return (
-    <NodeViewWrapper className="code-block relative">
-      <button
-        type="button"
-        className={cn(
-          "group absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 rounded-md bg-custom-background-80 border border-custom-border-200 transition duration-150 ease-in-out",
-          {
-            "bg-green-500/10 hover:bg-green-500/10 active:bg-green-500/10": copied,
-          }
-        )}
-        onClick={copyToClipboard}
-      >
-        {copied ? (
-          <CheckIcon className="h-3 w-3 text-green-500" strokeWidth={3} />
-        ) : (
-          <CopyIcon className="h-3 w-3 text-custom-text-300 group-hover:text-custom-text-100" />
-        )}
-      </button>
+    <NodeViewWrapper className="code-block relative group/code">
+      <Tooltip tooltipContent="Copy code">
+        <button
+          type="button"
+          className={cn(
+            "group/button hidden group-hover/code:flex items-center justify-center absolute top-2 right-2 z-10 size-8 rounded-md bg-custom-background-80 border border-custom-border-200 transition duration-150 ease-in-out",
+            {
+              "bg-green-500/10 hover:bg-green-500/10 active:bg-green-500/10": copied,
+            }
+          )}
+          onClick={copyToClipboard}
+        >
+          {copied ? (
+            <CheckIcon className="h-3 w-3 text-green-500" strokeWidth={3} />
+          ) : (
+            <CopyIcon className="h-3 w-3 text-custom-text-300 group-hover/button:text-custom-text-100" />
+          )}
+        </button>
+      </Tooltip>
 
       <pre className="bg-custom-background-90 text-custom-text-100 rounded-lg p-8 pl-9 pr-4">
         <NodeViewContent as="code" className="whitespace-[pre-wrap]" />
