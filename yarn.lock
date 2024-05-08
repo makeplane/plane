@@ -29,10 +29,10 @@
     jsonpointer "^5.0.0"
     leven "^3.1.0"
 
-"@atlaskit/pragmatic-drag-and-drop-auto-scroll@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@atlaskit/pragmatic-drag-and-drop-auto-scroll/-/pragmatic-drag-and-drop-auto-scroll-1.0.3.tgz#bb088a3d8eb77d9454dfdead433e594c5f793dae"
-  integrity sha512-gfXwzQZRsWSLd/88IRNKwf2e5r3smZlDGLopg5tFkSqsL03VDHgd6wch6OfPhRK2kSCrT1uXv5n9hOpVBu678g==
+"@atlaskit/pragmatic-drag-and-drop-auto-scroll@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/pragmatic-drag-and-drop-auto-scroll/-/pragmatic-drag-and-drop-auto-scroll-1.3.0.tgz#6af382a2d75924f5f0699ebf1b348e2ea8d5a2cd"
+  integrity sha512-8wjKAI5qSrLojt8ZJ2WhoS5P75oBu5g0yMpAnTDgfqFyQnkt5Uc1txCRWpG26SS1mv19nm8ak9XHF2DOugVfpw==
   dependencies:
     "@atlaskit/pragmatic-drag-and-drop" "^1.1.0"
     "@babel/runtime" "^7.0.0"

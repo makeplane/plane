@@ -34,7 +34,7 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
         <h6>Duration</h6>
       </div>
 
-      <div className="min-h-full h-max bg-custom-background-100 overflow-x-hidden overflow-y-auto">
+      <div className="min-h-full h-max bg-custom-background-100 overflow-hidden">
         {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
       </div>
       {quickAdd ? quickAdd : null}
