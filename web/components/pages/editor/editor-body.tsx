@@ -13,11 +13,12 @@ import {
 // types
 import { IUserLite, TPage } from "@plane/types";
 // components
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
+import { IssueEmbedCard, PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { useIssueEmbed } from "@/hooks/use-issue-embed";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
@@ -79,14 +80,22 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+
   // page filters
   const { isFullWidth } = usePageFilters();
+  // issue-embed
+  const { fetchIssues } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
 
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
     updateMarkings(description_html ?? "<p></p>");
   }, [description_html, updateMarkings]);
+
+  const handleIssueSearch = async (searchQuery: string) => {
+    const response = await fetchIssues(searchQuery);
+    return response;
+  };
 
   if (pageDescription === undefined) return <PageContentLoader />;
 
@@ -149,6 +158,24 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                     highlights: mentionHighlights,
                     suggestions: mentionSuggestions,
                   }}
+                  embedHandler={{
+                    issue: {
+                      searchCallback: async (query) =>
+                        new Promise((resolve) => {
+                          setTimeout(async () => {
+                            const response = await handleIssueSearch(query);
+                            resolve(response);
+                          }, 300);
+                        }),
+                      widgetCallback: (issueId) => (
+                        <IssueEmbedCard
+                          issueId={issueId}
+                          projectId={projectId?.toString() ?? ""}
+                          workspaceSlug={workspaceSlug?.toString() ?? ""}
+                        />
+                      ),
+                    },
+                  }}
                 />
               )}
             />
@@ -161,6 +188,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               editorClassName="lg:px-10 pl-8"
               mentionHandler={{
                 highlights: mentionHighlights,
+              }}
+              embedHandler={{
+                issue: {
+                  widgetCallback: (issueId) => (
+                    <IssueEmbedCard
+                      issueId={issueId}
+                      projectId={projectId?.toString() ?? ""}
+                      workspaceSlug={workspaceSlug?.toString() ?? ""}
+                    />
+                  ),
+                },
               }}
             />
           )}
