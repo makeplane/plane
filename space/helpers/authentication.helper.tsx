@@ -2,11 +2,11 @@ import { ReactNode } from "react";
 import Link from "next/link";
 
 export enum EPageTypes {
-  "INIT" = "INIT",
-  "PUBLIC" = "PUBLIC",
-  "NON_AUTHENTICATED" = "NON_AUTHENTICATED",
-  "ONBOARDING" = "ONBOARDING",
-  "AUTHENTICATED" = "AUTHENTICATED",
+  INIT = "INIT",
+  PUBLIC = "PUBLIC",
+  NON_AUTHENTICATED = "NON_AUTHENTICATED",
+  ONBOARDING = "ONBOARDING",
+  AUTHENTICATED = "AUTHENTICATED",
 }
 
 export enum EAuthModes {

@@ -11,6 +11,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
 // helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
@@ -55,8 +56,8 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   // hooks
   const { resolvedTheme } = useTheme();
-
-  const { data: user } = useUser();
+  // hooks
+  const { data: user, handleSetPassword } = useUser();
 
   useEffect(() => {
     if (csrfToken === undefined)
@@ -76,15 +77,12 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
     [passwordFormData]
   );
 
-  const handleSetPassword = async (password: string) => {
-    if (!csrfToken) throw new Error("csrf token not found");
-    await authService.setPassword(csrfToken, { password });
-  };
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
-      await handleSetPassword(passwordFormData.password);
+      if (!csrfToken) throw new Error("csrf token not found");
+      await handleSetPassword(csrfToken, { password: passwordFormData.password });
+      router.push("/");
     } catch (err: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -212,7 +210,7 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
 
 SetPasswordPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AuthenticationWrapper>
+    <AuthenticationWrapper pageType={EPageTypes.SET_PASSWORD}>
       <DefaultLayout>{page}</DefaultLayout>
     </AuthenticationWrapper>
   );

@@ -1,3 +1,4 @@
+import cloneDeep from "lodash/cloneDeep";
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
@@ -33,6 +34,7 @@ export interface IUserStore {
   // actions
   fetchCurrentUser: () => Promise<IUser | undefined>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
+  handleSetPassword: (csrfToken: string, data: { password: string }) => Promise<IUser | undefined>;
   deactivateAccount: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -75,6 +77,7 @@ export class UserStore implements IUserStore {
       // actions
       fetchCurrentUser: action,
       updateCurrentUser: action,
+      handleSetPassword: action,
       deactivateAccount: action,
       signOut: action,
     });
@@ -143,6 +146,32 @@ export class UserStore implements IUserStore {
           if (this.data) set(this.data, userKey, currentUserData[userKey]);
         });
       }
+      runInAction(() => {
+        this.error = {
+          status: "user-update-error",
+          message: "Failed to update current user",
+        };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * @description update the user password
+   * @param data
+   * @returns {Promise<IUser>}
+   */
+  handleSetPassword = async (csrfToken: string, data: { password: string }): Promise<IUser | undefined> => {
+    const currentUserData = cloneDeep(this.data);
+    try {
+      if (currentUserData && currentUserData.is_password_autoset && this.data) {
+        const user = await this.authService.setPassword(csrfToken, { password: data.password });
+        set(this.data, ["is_password_autoset"], false);
+        return user;
+      }
+      return undefined;
+    } catch (error) {
+      if (this.data) set(this.data, ["is_password_autoset"], true);
       runInAction(() => {
         this.error = {
           status: "user-update-error",

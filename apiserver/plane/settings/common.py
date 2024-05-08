@@ -78,6 +78,7 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": (
         "django_filters.rest_framework.DjangoFilterBackend",
     ),
+    "EXCEPTION_HANDLER": "plane.authentication.adapter.exception.auth_exception_handler",
 }
 
 # Django Auth Backend

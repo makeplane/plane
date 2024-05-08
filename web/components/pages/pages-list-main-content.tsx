@@ -8,7 +8,7 @@ import { PageLoader } from "@/components/pages";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useApplication, useProjectPages } from "@/hooks/store";
+import { useCommandPalette, useProjectPages } from "@/hooks/store";
 // assets
 import AllFiltersImage from "public/empty-state/pages/all-filters.svg";
 import NameFilterImage from "public/empty-state/pages/name-filter.svg";
@@ -23,7 +23,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   const { children, pageType, projectId } = props;
   // store hooks
   const { loader, getCurrentProjectFilteredPageIds, getCurrentProjectPageIds, filters } = useProjectPages(projectId);
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreatePageModal } = useCommandPalette();
   // derived values
   const pageIds = getCurrentProjectPageIds(pageType);
   const filteredPageIds = getCurrentProjectFilteredPageIds(pageType);
@@ -36,7 +36,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
         <EmptyState
           type={EmptyStateType.PROJECT_PAGE_PUBLIC}
           primaryButtonOnClick={() => {
-            commandPaletteStore.toggleCreatePageModal(true);
+            toggleCreatePageModal(true);
           }}
         />
       );
@@ -45,7 +45,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
         <EmptyState
           type={EmptyStateType.PROJECT_PAGE_PRIVATE}
           primaryButtonOnClick={() => {
-            commandPaletteStore.toggleCreatePageModal(true);
+            toggleCreatePageModal(true);
           }}
         />
       );

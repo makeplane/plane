@@ -32,13 +32,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="shortcut icon" href={`${prefix}favicon/favicon.ico`} />
       </Head>
       <StoreProvider>
-        <ToastContextProvider>
-          <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+        <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+          <ToastContextProvider>
             <InstanceWrapper>
               <Component {...pageProps} />
             </InstanceWrapper>
-          </ThemeProvider>
-        </ToastContextProvider>
+          </ToastContextProvider>
+        </ThemeProvider>
       </StoreProvider>
     </>
   );
