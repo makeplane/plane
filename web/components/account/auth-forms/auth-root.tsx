@@ -88,7 +88,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
         setAuthStep(EAuthSteps.PASSWORD);
       })
       .catch((error) => {
-        const errorhandler = authErrorHandler(error?.error_code.toString());
+        const errorhandler = authErrorHandler(error?.error_code.toString(), data?.email || undefined);
         if (errorhandler?.type === EErrorAlertType.BANNER_ALERT) {
           setErrorInfo(errorhandler);
           return;
