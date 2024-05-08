@@ -417,6 +417,7 @@ jobs:
         branch_build_push_space,
         branch_build_push_apiserver,
         branch_build_push_proxy,
+        branch_build_push_admin,
       ]
     container:
       image: docker:20.10.7
