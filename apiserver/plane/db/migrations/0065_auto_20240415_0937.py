@@ -257,4 +257,14 @@ class Migration(migrations.Migration):
             model_name="user",
             name="use_case",
         ),
+        migrations.AddField(
+            model_name="globalview",
+            name="logo_props",
+            field=models.JSONField(default=dict),
+        ),
+        migrations.AddField(
+            model_name="page",
+            name="logo_props",
+            field=models.JSONField(default=dict),
+        ),
     ]
