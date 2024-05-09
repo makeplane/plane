@@ -1,19 +1,26 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { Button } from "@plane/ui";
+// helpers
+import { ADMIN_BASE_URL, ADMIN_BASE_PATH } from "@/helpers/common.helper";
+// hooks
+// import { useInstance } from "@/hooks/store";
 // images
 import PlaneTakeOffImage from "@/public/plane-takeoff.png";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
-export const InstanceNotReady: FC = () => {
+export const InstanceNotReady: FC = observer(() => {
+  // hooks
+  // const { instance } = useInstance();
 
-  const planeGodModeUrl = `${process.env.NEXT_PUBLIC_GOD_MODE_URL}/god-mode/setup/?auth_enabled=0`;
+  const GOD_MODE_URL = encodeURI(ADMIN_BASE_URL + ADMIN_BASE_PATH + "setup/?auth_enabled=0");
 
   return (
     <div className="relative h-screen max-h-max w-full overflow-hidden overflow-y-auto flex flex-col">
       <div className="flex-shrink-0 h-[100px]">
         <div className="relative h-full container mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
-        <div className="flex items-center gap-x-2 py-10">
+          <div className="flex items-center gap-x-2 py-10">
             <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" />
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
@@ -30,7 +37,7 @@ export const InstanceNotReady: FC = () => {
               </p>
             </div>
             <div>
-              <a href={planeGodModeUrl}>
+              <a href={GOD_MODE_URL}>
                 <Button size="lg" className="w-full">
                   Get started
                 </Button>
@@ -41,4 +48,4 @@ export const InstanceNotReady: FC = () => {
       </div>
     </div>
   );
-};
+});

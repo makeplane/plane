@@ -19,7 +19,7 @@ from plane.authentication.adapter.error import (
 
 class GoogleOauthInitiateSpaceEndpoint(View):
     def get(self, request):
-        request.session["host"] = base_host(request=request)
+        request.session["host"] = base_host(request=request, is_space=True)
         next_path = request.GET.get("next_path")
         if next_path:
             request.session["next_path"] = str(next_path)
@@ -37,7 +37,7 @@ class GoogleOauthInitiateSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -53,7 +53,7 @@ class GoogleOauthInitiateSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)

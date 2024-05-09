@@ -2,7 +2,6 @@ import uuid
 from urllib.parse import urlencode, urljoin
 
 # Django import
-from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
 from django.views import View
 

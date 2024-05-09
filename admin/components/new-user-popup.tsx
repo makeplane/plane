@@ -8,18 +8,20 @@ import { useTheme as nextUseTheme } from "next-themes";
 import { Button, getButtonStyling } from "@plane/ui";
 // helpers
 import { resolveGeneralTheme } from "helpers/common.helper";
+// hooks
+import { useInstance, useTheme } from "@/hooks";
 // icons
 import TakeoffIconLight from "/public/logos/takeoff-icon-light.svg";
 import TakeoffIconDark from "/public/logos/takeoff-icon-dark.svg";
-import { useTheme } from "@/hooks";
 
 export const NewUserPopup: React.FC = observer(() => {
   // hooks
   const { isNewUserPopup, toggleNewUserPopup } = useTheme();
+  const { instance } = useInstance();
   // theme
   const { resolvedTheme } = nextUseTheme();
 
-  const redirectionLink = `${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : `/god-mode/`}`;
+  const redirectionLink = `${instance?.config?.app_base_url ? `${instance?.config?.app_base_url}/create-workspace` : `/god-mode/`}`;
 
   if (!isNewUserPopup) return <></>;
   return (

@@ -10,7 +10,7 @@ import { IProject } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProjectPublish } from "@/hooks/store";
+import { useInstance, useProjectPublish } from "@/hooks/store";
 // store
 import { IProjectPublishSettings, TProjectPublishViews } from "@/store/project/project-publish.store";
 // types
@@ -54,14 +54,14 @@ const viewOptions: {
 
 export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const { isOpen, project, onClose } = props;
+  // hooks
+  const { instance } = useInstance();
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);
   const [isUpdateRequired, setIsUpdateRequired] = useState(false);
 
-  let plane_deploy_url = process.env.NEXT_PUBLIC_DEPLOY_URL;
+  const plane_deploy_url = instance?.config?.space_base_url || "";
 
-  if (typeof window !== "undefined" && !plane_deploy_url)
-    plane_deploy_url = window.location.protocol + "//" + window.location.host + "/spaces";
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
