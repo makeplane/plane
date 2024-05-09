@@ -16,7 +16,7 @@ export interface IUserStore {
   currentUser: IUser | undefined;
   // fetch actions
   fetchCurrentUser: () => Promise<IUser>;
-  signOut: () => Promise<void>;
+  reset: () => Promise<void>;
 }
 
 export class UserStore implements IUserStore {
@@ -28,8 +28,6 @@ export class UserStore implements IUserStore {
   // services
   userService;
   authService;
-  // rootStore
-  rootStore;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
@@ -40,10 +38,10 @@ export class UserStore implements IUserStore {
       currentUser: observable,
       // action
       fetchCurrentUser: action,
+      reset: action,
     });
     this.userService = new UserService();
     this.authService = new AuthService();
-    this.rootStore = store;
   }
 
   /**
@@ -54,11 +52,20 @@ export class UserStore implements IUserStore {
     try {
       if (this.currentUser === undefined) this.isLoading = true;
       const currentUser = await this.userService.currentUser();
-      runInAction(() => {
-        this.isUserLoggedIn = true;
-        this.currentUser = currentUser;
-        this.isLoading = false;
-      });
+      if (currentUser) {
+        await this.store.instance.fetchInstanceAdmins();
+        runInAction(() => {
+          this.isUserLoggedIn = true;
+          this.currentUser = currentUser;
+          this.isLoading = false;
+        });
+      } else {
+        runInAction(() => {
+          this.isUserLoggedIn = false;
+          this.currentUser = undefined;
+          this.isLoading = false;
+        });
+      }
       return currentUser;
     } catch (error: any) {
       this.isLoading = false;
@@ -77,7 +84,10 @@ export class UserStore implements IUserStore {
     }
   };
 
-  signOut = async () => {
-    this.rootStore.resetOnSignOut();
+  reset = async () => {
+    this.isUserLoggedIn = false;
+    this.currentUser = undefined;
+    this.isLoading = false;
+    this.userStatus = undefined;
   };
 }

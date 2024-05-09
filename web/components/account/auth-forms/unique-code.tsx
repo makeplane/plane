@@ -111,10 +111,9 @@ export const AuthUniqueCodeForm: React.FC<Props> = (props) => {
             type="email"
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
-            // FIXME:
-            // hasError={Boolean(errors.email)}
             placeholder="name@company.com"
             className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+            disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
             <XCircle
@@ -122,6 +121,7 @@ export const AuthUniqueCodeForm: React.FC<Props> = (props) => {
               onClick={handleEmailClear}
             />
           )}
+          <input type="hidden" value={uniqueCodeFormData.email} name="email" />
         </div>
       </div>
       <div className="space-y-1">

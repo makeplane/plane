@@ -1,4 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+// store
+import { rootStore } from "@/lib/store-context";
 
 export abstract class APIService {
   protected baseURL: string;
@@ -18,7 +20,8 @@ export abstract class APIService {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response && error.response.status === 401) window.location.href = "/login";
+        const store = rootStore;
+        if (error.response && error.response.status === 401 && store.user.currentUser) store.user.reset();
         return Promise.reject(error);
       }
     );

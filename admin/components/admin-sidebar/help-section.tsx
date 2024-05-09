@@ -36,7 +36,7 @@ export const HelpSection: FC = () => {
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
-  const redirectionLink = `${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : `${process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX === "1" ? `/god-mode/` : `/`}`}`;
+  const redirectionLink = `${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : `/god-mode/`}`;
 
   return (
     <div

@@ -40,15 +40,22 @@ const authService = new AuthService();
 
 export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   const { email, handleStepChange, handleEmailClear, mode } = props;
-  // states
-  const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
-  const [showPassword, setShowPassword] = useState(false);
-  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
-  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   // hooks
   const { instance } = useInstance();
   const { captureEvent } = useEventTracker();
+  // states
+  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    retypePassword: false,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+
+  const handleShowPassword = (key: keyof typeof showPassword) =>
+    setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
+
   // derived values
   const isSmtpConfigured = instance?.config?.is_smtp_configured;
 
@@ -116,9 +123,9 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             type="email"
             value={passwordFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
-            // hasError={Boolean(errors.email)}
             placeholder="name@company.com"
             className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+            disabled
           />
           {passwordFormData.email.length > 0 && (
             <XCircle
@@ -127,6 +134,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             />
           )}
         </div>
+        <input type="hidden" value={passwordFormData.email} name="email" />
       </div>
       <div className="space-y-1">
         <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
@@ -134,7 +142,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         </label>
         <div className="relative flex items-center rounded-md bg-onboarding-background-200">
           <Input
-            type={showPassword ? "text" : "password"}
+            type={showPassword?.password ? "text" : "password"}
             name="password"
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
@@ -144,15 +152,15 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             onBlur={() => setIsPasswordInputFocused(false)}
             autoFocus
           />
-          {showPassword ? (
+          {showPassword?.password ? (
             <EyeOff
               className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => setShowPassword(false)}
+              onClick={() => handleShowPassword("password")}
             />
           ) : (
             <Eye
               className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => setShowPassword(true)}
+              onClick={() => handleShowPassword("password")}
             />
           )}
         </div>
@@ -165,22 +173,22 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
           </label>
           <div className="relative flex items-center rounded-md bg-onboarding-background-200">
             <Input
-              type={showPassword ? "text" : "password"}
+              type={showPassword?.retypePassword ? "text" : "password"}
               name="confirm_password"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
               className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
             />
-            {showPassword ? (
+            {showPassword?.retypePassword ? (
               <EyeOff
                 className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={() => setShowPassword(false)}
+                onClick={() => handleShowPassword("retypePassword")}
               />
             ) : (
               <Eye
                 className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={() => setShowPassword(true)}
+                onClick={() => handleShowPassword("retypePassword")}
               />
             )}
           </div>
