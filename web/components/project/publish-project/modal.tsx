@@ -9,11 +9,12 @@ import { Dialog, Transition } from "@headlessui/react";
 import { IProject } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
-import { useInstance, useProjectPublish } from "@/hooks/store";
+import { useProjectPublish } from "@/hooks/store";
 // store
 import { IProjectPublishSettings, TProjectPublishViews } from "@/store/project/project-publish.store";
-// types
 // local components
 import { CustomPopover } from "./popover";
 
@@ -55,12 +56,13 @@ const viewOptions: {
 export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const { isOpen, project, onClose } = props;
   // hooks
-  const { instance } = useInstance();
+  // const { instance } = useInstance();
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);
   const [isUpdateRequired, setIsUpdateRequired] = useState(false);
 
-  const plane_deploy_url = instance?.config?.space_base_url || "";
+  // const plane_deploy_url = instance?.config?.space_base_url || "";
+  const SPACE_URL = SPACE_BASE_URL + SPACE_BASE_PATH;
 
   // router
   const router = useRouter();
@@ -320,10 +322,10 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                         <>
                           <div className="relative flex items-center gap-2 rounded-md border border-custom-border-100 bg-custom-background-80 px-3 py-2">
                             <div className="flex-grow truncate text-sm">
-                              {`${plane_deploy_url}/${workspaceSlug}/${project.id}`}
+                              {`${SPACE_URL}/${workspaceSlug}/${project.id}`}
                             </div>
                             <div className="relative flex flex-shrink-0 items-center gap-1">
-                              <CopyLinkToClipboard copy_link={`${plane_deploy_url}/${workspaceSlug}/${project.id}`} />
+                              <CopyLinkToClipboard copy_link={`${SPACE_URL}/${workspaceSlug}/${project.id}`} />
                             </div>
                           </div>
                           <div className="mt-3 flex items-center gap-1 text-custom-primary-100">
