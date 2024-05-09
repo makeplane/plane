@@ -202,14 +202,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   return (
     <>
-      <td ref={cellRef} id={`issue-${issueDetail.id}`} tabIndex={0}>
+      <td id={`issue-${issueId}`} ref={cellRef} tabIndex={0} className="sticky left-0 z-10">
         <ControlLink
-          id={`issue-${issueId}`}
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className={cn(
-            "group clickable cursor-pointer sticky left-0 h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
+            "group clickable cursor-pointer h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
             {
               "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
               "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issueDetail.id),
