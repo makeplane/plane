@@ -43,6 +43,9 @@ export interface IInstance {
     has_openai_configured: boolean;
     file_size_limit: number | undefined;
     is_smtp_configured: boolean;
+    app_base_url: string | undefined;
+    space_base_url: string | undefined;
+    admin_base_url: string | undefined;
   };
 }
 
