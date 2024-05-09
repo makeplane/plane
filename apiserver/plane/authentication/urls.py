@@ -19,6 +19,8 @@ from .views import (
     SignInAuthEndpoint,
     SignOutAuthEndpoint,
     SignUpAuthEndpoint,
+    ForgotPasswordSpaceEndpoint,
+    ResetPasswordSpaceEndpoint,
     # Space
     EmailCheckEndpoint,
     GitHubCallbackSpaceEndpoint,
@@ -175,6 +177,16 @@ urlpatterns = [
     path(
         "reset-password/<uidb64>/<token>/",
         ResetPasswordEndpoint.as_view(),
+        name="forgot-password",
+    ),
+    path(
+        "spaces/forgot-password/",
+        ForgotPasswordSpaceEndpoint.as_view(),
+        name="forgot-password",
+    ),
+    path(
+        "spaces/reset-password/<uidb64>/<token>/",
+        ResetPasswordSpaceEndpoint.as_view(),
         name="forgot-password",
     ),
     path(
