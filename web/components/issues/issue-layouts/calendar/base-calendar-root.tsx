@@ -57,22 +57,20 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   ) => {
     if (!issueId || !destinationDate || !sourceDate) return;
 
-    if (handleDragDrop) {
-      await handleDragDrop(
-        issueId,
-        sourceDate,
-        destinationDate,
-        workspaceSlug?.toString(),
-        projectId?.toString(),
-        updateIssue
-      ).catch((err) => {
-        setToast({
-          title: "Error!",
-          type: TOAST_TYPE.ERROR,
-          message: err?.detail ?? "Failed to perform this action",
-        });
+    await handleDragDrop(
+      issueId,
+      sourceDate,
+      destinationDate,
+      workspaceSlug?.toString(),
+      projectId?.toString(),
+      updateIssue
+    ).catch((err) => {
+      setToast({
+        title: "Error!",
+        type: TOAST_TYPE.ERROR,
+        message: err?.detail ?? "Failed to perform this action",
       });
-    }
+    });
   };
 
   return (
