@@ -644,6 +644,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
 
           <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 px-1.5 py-5">
+            {/* Accessing link outside the disclosure as mobx is not  considering the children inside Disclosure as part of the component hence not observing their state change*/}
+            <div className="hidden">{moduleDetails?.link_module?.length}</div>
             <Disclosure>
               {({ open }) => (
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
