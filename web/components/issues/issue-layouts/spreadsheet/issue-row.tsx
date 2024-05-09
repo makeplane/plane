@@ -202,12 +202,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   return (
     <>
-      <td
-        id={`issue-${issueId}`}
-        ref={cellRef}
-        tabIndex={0}
-        className="sticky left-0 h-11 w-[28rem] border-r-[0.5px] z-10"
-      >
+      <td id={`issue-${issueId}`} ref={cellRef} tabIndex={0} className="sticky left-0 z-10">
         <ControlLink
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
