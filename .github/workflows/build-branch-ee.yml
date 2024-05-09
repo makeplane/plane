@@ -422,10 +422,7 @@ jobs:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
     name: Upload artifacts to S3 Bucket
     runs-on: ubuntu-latest
-    needs:
-      [
-        branch_build_setup
-      ]
+    needs: [branch_build_setup]
     env:
       ARTIFACT_SUFFIX: ${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}
       AWS_ACCESS_KEY_ID: ${{ secrets.SELF_HOST_BUCKET_ACCESS_KEY }}
@@ -446,7 +443,7 @@ jobs:
           fi
           curl "https://awscli.amazonaws.com/awscli-exe-linux-${CPU_ARCH}.zip" -o "awscliv2.zip"
           unzip -q awscliv2.zip
-          ./aws/install
+          ./aws/install --update
 
           mkdir -p ~/${{ env.ARTIFACT_SUFFIX }}
 
