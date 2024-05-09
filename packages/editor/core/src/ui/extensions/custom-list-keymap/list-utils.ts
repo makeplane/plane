@@ -1,6 +1,26 @@
-import { EditorState } from "@tiptap/pm/state";
+import { Command, EditorState, TextSelection } from "@tiptap/pm/state";
 import { Editor, getNodeType, getNodeAtPosition, isAtEndOfNode, isAtStartOfNode, isNodeActive } from "@tiptap/core";
 import { Node, NodeType } from "@tiptap/pm/model";
+import { liftTarget } from "@tiptap/pm/transform";
+
+const isCursorAtFirstListItem = (editor: Editor, typeOrName: string): boolean => {
+  const { $from } = editor.state.selection;
+  // const listItem = getNodeType(typeOrName, editor.state.schema);
+
+  // Check if the current node is a list item
+  // console.log($from.parent.type);
+  // if ($from.parent.type !== listItem) {
+  //   console.log("--------------------");
+  //   return false;
+  // }
+
+  // Check if the cursor is at the start of the list item
+  if ($from.index($from.depth - 1) === 0) {
+    return true;
+  }
+
+  return false;
+};
 
 const findListItemPos = (typeOrName: string | NodeType, state: EditorState) => {
   const { $from } = state.selection;
@@ -29,6 +49,20 @@ const findListItemPos = (typeOrName: string | NodeType, state: EditorState) => {
   return { $pos: state.doc.resolve(currentPos), depth: targetDepth };
 };
 
+const prevListIsHigher = (typeOrName: string, state: EditorState) => {
+  const listDepth = getPrevListDepth(typeOrName, state);
+  const listItemPos = findListItemPos(typeOrName, state);
+
+  if (!listItemPos || !listDepth) {
+    return false;
+  }
+
+  if (listDepth < listItemPos.depth) {
+    return true;
+  }
+
+  return false;
+};
 const nextListIsDeeper = (typeOrName: string, state: EditorState) => {
   const listDepth = getNextListDepth(typeOrName, state);
   const listItemPos = findListItemPos(typeOrName, state);
@@ -57,6 +91,18 @@ const getNextListDepth = (typeOrName: string, state: EditorState) => {
 };
 
 const getPrevListDepth = (typeOrName: string, state: EditorState) => {
+  const listItemPos = findListItemPos(typeOrName, state);
+
+  if (!listItemPos) {
+    return false;
+  }
+
+  const [, depth] = getNodeAtPosition(state, typeOrName, listItemPos.$pos.pos - 4);
+
+  return depth;
+};
+
+const getPrevParentListDepth = (typeOrName: string, state: EditorState) => {
   const listItemPos = findListItemPos(typeOrName, state);
 
   if (!listItemPos) {
@@ -147,9 +193,11 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
     return false;
   }
   const isParaSibling = isCurrentParagraphASibling(editor.state);
-  const isCurrentListItemSublist = prevListIsHigher(name, editor.state);
+  const currentListItemIsSublist = prevParentListIsHigher(name, editor.state);
   const listItemPos = findListItemPos(name, editor.state);
   const nextListItemIsSibling = nextListIsSibling(name, editor.state);
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log("handleBackspace nextListItemIsSibling: %s", nextListItemIsSibling); // __AUTO_GENERATED_PRINT_VAR_END__
 
   if (!listItemPos) {
     return false;
@@ -158,39 +206,117 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
   const currentNode = listItemPos.$pos.node(listItemPos.depth);
   const currentListItemHasSubList = listItemHasSubList(name, editor.state, currentNode);
 
-  if (currentListItemHasSubList && isCurrentListItemSublist && isParaSibling) {
+  const isFirstListItemAtDepth = prevListIsHigher(name, editor.state);
+
+  // current list is sublist and has sublist and the cursor is at a paragraph node is sibling inside a list item
+  if (currentListItemHasSubList && currentListItemIsSublist && isParaSibling) {
+    console.log("1");
     return false;
   }
 
-  if (currentListItemHasSubList && isCurrentListItemSublist) {
-    editor.chain().liftListItem(name).run();
-    return editor.commands.joinItemBackward();
+  if (currentListItemHasSubList && currentListItemIsSublist) {
+    if (isFirstListItemAtDepth) {
+      console.log("2a");
+      editor.chain().liftListItem(name).run();
+
+      return editor.commands.joinItemBackward();
+    }
+
+    console.log("2");
+    return liftListItem(editor.state, editor.view.dispatch);
   }
 
-  if (isCurrentListItemSublist && nextListItemIsSibling) {
-    return false;
-  }
+  // if (currentListItemIsSublist && nextListItemIsSibling) {
+  //   console.log("3");
+  //   return liftListItem(editor.state, editor.view.dispatch);
+  // }
 
-  if (isCurrentListItemSublist) {
+  if (currentListItemIsSublist) {
+    console.log("4");
+    return liftListItem(editor.state, editor.view.dispatch);
     return false;
   }
 
   if (currentListItemHasSubList) {
+    console.log("5");
+    const { $anchor } = editor.state.selection;
+
+    const $listPos = editor.state.doc.resolve($anchor.before() - 1);
+
+    const listDescendants: Array<{ node: Node; pos: number }> = [];
+
+    $listPos.node().descendants((node, pos) => {
+      if (node.type.name === name) {
+        listDescendants.push({ node, pos });
+      }
+    });
+
+    const lastItem = listDescendants.at(-1);
+
+    if (!lastItem) {
+      return false;
+    }
+
+    const $lastItemPos = editor.state.doc.resolve($listPos.start() + lastItem.pos + 1);
+
+    // Check if positions are within the valid range
+    const startPos = $anchor.start() - 1;
+    const endPos = $anchor.end() + 1;
+    if (startPos < 0 || endPos > editor.state.doc.content.size) {
+      return false; // Invalid position, abort operation
+    }
+
+    return editor.chain().cut({ from: startPos, to: endPos }, $lastItemPos.end()).joinForward().run();
     return false;
   }
 
   if (hasListItemBefore(name, editor.state)) {
+    console.log("6");
     return editor.chain().liftListItem(name).run();
   }
 
   if (!currentListItemHasSubList) {
+    console.log("7");
     return false;
   }
-
+  console.log("8");
   // otherwise in the end, a backspace should
   // always just lift the list item if
   // joining / merging is not possible
   return editor.chain().liftListItem(name).run();
+};
+
+/// If the cursor is in a list item (empty or not), attempt to lift the
+/// list item out of its parent list.
+export const liftListItem: Command = (state, dispatch) => {
+  let { $cursor } = state.selection as TextSelection;
+  if (!$cursor) return false;
+
+  // Check if the current node is a list item
+  let listItem = state.schema.nodes.listItem;
+
+  // Find the depth of the list item in the current selection
+  let listItemDepth = $cursor.depth;
+  while (listItemDepth > 0 && $cursor.node(listItemDepth).type !== listItem) {
+    listItemDepth--;
+  }
+
+  // If not inside a list item, return false
+  if ($cursor.node(listItemDepth).type !== listItem) return false;
+
+  // Attempt to lift the list item
+  let range = $cursor.blockRange(),
+    target = range && liftTarget(range);
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log("liftListItem range: %s", range); // __AUTO_GENERATED_PRINT_VAR_END__
+
+  if (target == null) {
+    console.log("==============");
+
+    return false;
+  }
+  if (dispatch) dispatch(state.tr.lift(range!, target).scrollIntoView());
+  return true;
 };
 
 export const handleDelete = (editor: Editor, name: string) => {
@@ -237,8 +363,8 @@ const hasListBefore = (editorState: EditorState, name: string, parentListTypes: 
   return true;
 };
 
-const prevListIsHigher = (typeOrName: string, state: EditorState) => {
-  const listDepth = getPrevListDepth(typeOrName, state);
+const prevParentListIsHigher = (typeOrName: string, state: EditorState) => {
+  const listDepth = getPrevParentListDepth(typeOrName, state);
   const listItemPos = findListItemPos(typeOrName, state);
 
   if (!listItemPos || !listDepth) {
@@ -253,14 +379,16 @@ const prevListIsHigher = (typeOrName: string, state: EditorState) => {
 };
 
 const nextListIsSibling = (typeOrName: string, state: EditorState) => {
-  const listDepth = getNextListDepth(typeOrName, state);
+  const nextListDepth = getNextListDepth(typeOrName, state);
   const listItemPos = findListItemPos(typeOrName, state);
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log("nextListIsSibling listDepth: %s", nextListDepth, listItemPos?.depth); // __AUTO_GENERATED_PRINT_VAR_END__
 
-  if (!listItemPos || !listDepth) {
+  if (!listItemPos || !nextListDepth) {
     return false;
   }
 
-  if (listDepth === listItemPos.depth) {
+  if (nextListDepth === listItemPos.depth) {
     return true;
   }
 
