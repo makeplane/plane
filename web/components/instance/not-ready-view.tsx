@@ -2,17 +2,19 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { Button } from "@plane/ui";
+// helpers
+import { ADMIN_BASE_URL, ADMIN_BASE_PATH } from "@/helpers/common.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+// import { useInstance } from "@/hooks/store";
 // images
 import PlaneTakeOffImage from "@/public/plane-takeoff.png";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 export const InstanceNotReady: FC = observer(() => {
   // hooks
-  const { instance } = useInstance();
+  // const { instance } = useInstance();
 
-  const planeAdminUrl = `${instance?.config?.admin_base_url || "/"}/god-mode/setup/?auth_enabled=0`;
+  const GOD_MODE_URL = encodeURI(ADMIN_BASE_URL + ADMIN_BASE_PATH + "setup/?auth_enabled=0");
 
   return (
     <div className="relative h-screen max-h-max w-full overflow-hidden overflow-y-auto flex flex-col">
@@ -35,7 +37,7 @@ export const InstanceNotReady: FC = observer(() => {
               </p>
             </div>
             <div>
-              <a href={planeAdminUrl}>
+              <a href={GOD_MODE_URL}>
                 <Button size="lg" className="w-full">
                   Get started
                 </Button>

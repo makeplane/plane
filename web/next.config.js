@@ -3,6 +3,10 @@
 require("dotenv").config({ path: ".env" });
 const { withSentryConfig } = require("@sentry/nextjs");
 
+const ADMIN_BASE_URL = process.env.NEXT_PUBLIC_ADMIN_BASE_URL || ""
+const ADMIN_BASE_PATH = process.env.NEXT_PUBLIC_ADMIN_BASE_PATH || ""
+const GOD_MODE_BASE_URL = ADMIN_BASE_URL + ADMIN_BASE_PATH
+
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
@@ -42,7 +46,7 @@ const nextConfig = {
       },
       {
         source: "/god-mode/:path*",
-        destination: `${process.env.NEXT_PUBLIC_GOD_MODE_URL || ""}/:path*`,
+        destination: `${GOD_MODE_BASE_URL}/:path*`,
       },
     ];
   },
