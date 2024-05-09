@@ -24,11 +24,11 @@ class SignOutAuthSpaceEndpoint(View):
             # Log the user out
             logout(request)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "accounts/sign-in?" + urlencode({"success": "true"}),
             )
             return HttpResponseRedirect(url)
         except Exception:
             return HttpResponseRedirect(
-                base_host(request=request), "accounts/sign-in"
+                base_host(request=request, is_space=True), "accounts/sign-in"
             )
