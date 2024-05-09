@@ -27,8 +27,8 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { userId } = router.query;
   // store hooks
+  const { data: currentUser } = useUser();
   const {
-    currentUser,
     membership: { currentWorkspaceRole },
   } = useUser();
 
@@ -54,15 +54,15 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
     currentUser?.id === userId && !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <div className="h-full w-full py-5 flex flex-col overflow-hidden">
+    <div className="flex h-full w-full flex-col overflow-hidden py-5">
       <div className="flex items-center justify-between gap-2 px-5 md:px-9">
         <h3 className="text-lg font-medium">Recent activity</h3>
         {canDownloadActivity && <DownloadActivityButton />}
       </div>
-      <div className="h-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-md px-5 md:px-9">
+      <div className="vertical-scrollbar scrollbar-md flex h-full flex-col overflow-y-auto px-5 md:px-9">
         {activityPages}
         {pageCount < totalPages && resultsCount !== 0 && (
-          <div className="flex items-center justify-center text-xs w-full">
+          <div className="flex w-full items-center justify-center text-xs">
             <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
               Load more
             </Button>

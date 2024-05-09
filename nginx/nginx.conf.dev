@@ -23,8 +23,16 @@ http {
             proxy_set_header Connection "upgrade";
         }
 
+        location /god-mode {
+            proxy_pass http://godmode:3000/;
+        }
+
         location /api/ {
             proxy_pass http://api:8000/api/;
+        }
+
+        location /auth/ {
+            proxy_pass http://api:8000/auth/;
         }
 
         location /spaces/ {

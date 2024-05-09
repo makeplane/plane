@@ -7,8 +7,9 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@pl
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useApplication } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
+
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -34,12 +35,9 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     restore,
   } = pageStore;
   // store hooks
-  const {
-    router: { workspaceSlug, projectId },
-  } = useApplication();
+  const { workspaceSlug, projectId } = useAppRouter();
   // page filters
   const { isFullWidth, handleFullWidth } = usePageFilters();
-
   const handleArchivePage = async () =>
     await archive().catch(() =>
       setToast({

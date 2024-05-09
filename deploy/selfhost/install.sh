@@ -69,7 +69,7 @@ function buildLocalImage() {
             export APP_RELEASE=stable
         fi
 
-        docker compose -f build.yml build --no-cache  >&2
+        /bin/bash -c "$COMPOSE_CMD -f build.yml build --no-cache"  >&2
         # cd $CURR_DIR
         # rm -rf $PLANE_TEMP_CODE_DIR
         echo "build_completed"
@@ -127,7 +127,7 @@ function download() {
             exit 0
         fi
     else
-        docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH pull
+        /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH pull"
     fi
     
     echo ""
@@ -138,7 +138,7 @@ function download() {
 
 }
 function startServices() {
-    docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH up -d --quiet-pull
+    /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH up -d --quiet-pull"
 
     local migrator_container_id=$(docker container ls -aq -f "name=plane-app-migrator")
     if [ -n "$migrator_container_id" ]; then
@@ -188,10 +188,9 @@ function startServices() {
 
 }
 function stopServices() {
-    docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH down
+    /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH down"
 }
 function restartServices() {
-    # docker compose -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH restart
     stopServices
     startServices
 }
@@ -208,13 +207,13 @@ function upgrade() {
 function viewSpecificLogs(){
     local SERVICE_NAME=$1
 
-    if docker-compose -f $DOCKER_FILE_PATH ps | grep -q "$SERVICE_NAME"; then
+    if /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH ps | grep -q '$SERVICE_NAME'"; then
         echo "Service '$SERVICE_NAME' is running."
     else
         echo "Service '$SERVICE_NAME' is not running."
     fi
 
-    docker compose -f $DOCKER_FILE_PATH logs -f $SERVICE_NAME
+    /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH logs -f $SERVICE_NAME"
 }
 function viewLogs(){
     
@@ -282,6 +281,39 @@ function viewLogs(){
         echo "INVALID SERVICE NAME SUPPLIED"
     fi
 }
+
+function backupSingleVolume() {
+    backupFolder=$1
+    selectedVolume=$2
+    # Backup data from Docker volume to the backup folder
+    docker run --rm -v "$selectedVolume":/source -v "$backupFolder":/backup busybox sh -c 'cp -r /source/* /backup/'
+}
+
+function backupData() {
+    local datetime=$(date +"%Y%m%d-%H%M")
+    local BACKUP_FOLDER=$PLANE_INSTALL_DIR/backup/$datetime
+    mkdir -p "$BACKUP_FOLDER"
+
+    volumes=$(docker volume ls -f "name=plane-app" --format "{{.Name}}" | grep -E "_pgdata|_redisdata|_uploads")
+    # Check if there are any matching volumes
+    if [ -z "$volumes" ]; then
+        echo "No volumes found starting with 'plane-app'"
+        exit 1
+    fi
+
+    for vol in $volumes; do
+        # selected_volume=$(echo "$volumes" | sed -n "${volume_number}p")
+        local backup_folder="$BACKUP_FOLDER/$vol"
+        mkdir -p "$backup_folder"
+        echo "Backing Up $vol"
+        backupSingleVolume "$backup_folder" "$vol"
+    done
+
+    echo ""
+    echo "Backup completed successfully. Backup files are stored in $BACKUP_FOLDER"
+    echo ""
+
+}
 function askForAction() {
     local DEFAULT_ACTION=$1
 
@@ -295,10 +327,11 @@ function askForAction() {
         echo "   4) Restart"
         echo "   5) Upgrade"
         echo "   6) View Logs"
-        echo "   7) Exit"
+        echo "   7) Backup Data"
+        echo "   8) Exit"
         echo 
         read -p "Action [2]: " ACTION
-        until [[ -z "$ACTION" || "$ACTION" =~ ^[1-7]$ ]]; do
+        until [[ -z "$ACTION" || "$ACTION" =~ ^[1-8]$ ]]; do
             echo "$ACTION: invalid selection."
             read -p "Action [2]: " ACTION
         done
@@ -334,13 +367,25 @@ function askForAction() {
     then
         viewLogs $@
         askForAction
-    elif [ "$ACTION" == "7" ]
+    elif [ "$ACTION" == "7" ]  || [ "$DEFAULT_ACTION" == "backup" ]
+    then
+        backupData
+        askForAction
+    elif [ "$ACTION" == "8" ]
     then
         exit 0
     else
         echo "INVALID ACTION SUPPLIED"
     fi
 }
+
+# if docker-compose is installed
+if command -v docker-compose &> /dev/null
+then
+    COMPOSE_CMD="docker-compose"
+else
+    COMPOSE_CMD="docker compose"
+fi
 
 # CPU ARCHITECHTURE BASED SETTINGS
 CPU_ARCH=$(uname -m)

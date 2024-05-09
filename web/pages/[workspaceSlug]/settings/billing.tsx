@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { Button } from "@plane/ui";
 import { PageHead } from "@/components/core";

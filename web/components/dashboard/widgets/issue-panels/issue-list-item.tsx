@@ -40,19 +40,19 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
     <ControlLink
       href={`/${workspaceSlug}/projects/${issueDetails.project_id}/issues/${issueDetails.id}`}
       onClick={() => onClick(issueDetails)}
-      className="py-2 px-3 hover:bg-custom-background-80 rounded grid grid-cols-6 gap-1"
+      className="grid grid-cols-6 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
       <div className="col-span-4 flex items-center gap-3">
         <PriorityIcon priority={issueDetails.priority} withContainer />
-        <span className="text-xs font-medium flex-shrink-0">
+        <span className="flex-shrink-0 text-xs font-medium">
           {projectDetails?.identifier} {issueDetails.sequence_id}
         </span>
-        <h6 className="text-sm flex-grow truncate">{issueDetails.name}</h6>
+        <h6 className="flex-grow truncate text-sm">{issueDetails.name}</h6>
       </div>
-      <div className="text-xs text-center">
+      <div className="text-center text-xs">
         {targetDate ? (isToday(targetDate) ? "Today" : renderFormattedDate(targetDate)) : "-"}
       </div>
-      <div className="text-xs text-center">
+      <div className="text-center text-xs">
         {blockedByIssues.length > 0
           ? blockedByIssues.length > 1
             ? `${blockedByIssues.length} blockers`
@@ -87,19 +87,19 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
     <ControlLink
       href={`/${workspaceSlug}/projects/${issueDetails.project_id}/issues/${issueDetails.id}`}
       onClick={() => onClick(issueDetails)}
-      className="py-2 px-3 hover:bg-custom-background-80 rounded grid grid-cols-6 gap-1"
+      className="grid grid-cols-6 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
       <div className="col-span-4 flex items-center gap-3">
         <PriorityIcon priority={issueDetails.priority} withContainer />
-        <span className="text-xs font-medium flex-shrink-0">
+        <span className="flex-shrink-0 text-xs font-medium">
           {projectDetails?.identifier} {issueDetails.sequence_id}
         </span>
-        <h6 className="text-sm flex-grow truncate">{issueDetails.name}</h6>
+        <h6 className="flex-grow truncate text-sm">{issueDetails.name}</h6>
       </div>
-      <div className="text-xs text-center">
+      <div className="text-center text-xs">
         {dueBy} {`day${dueBy > 1 ? "s" : ""}`}
       </div>
-      <div className="text-xs text-center">
+      <div className="text-center text-xs">
         {blockedByIssues.length > 0
           ? blockedByIssues.length > 1
             ? `${blockedByIssues.length} blockers`
@@ -128,14 +128,14 @@ export const AssignedCompletedIssueListItem: React.FC<IssueListItemProps> = obse
     <ControlLink
       href={`/${workspaceSlug}/projects/${issueDetails.project_id}/issues/${issueDetails.id}`}
       onClick={() => onClick(issueDetails)}
-      className="py-2 px-3 hover:bg-custom-background-80 rounded grid grid-cols-6 gap-1"
+      className="grid grid-cols-6 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
       <div className="col-span-6 flex items-center gap-3">
         <PriorityIcon priority={issueDetails.priority} withContainer />
-        <span className="text-xs font-medium flex-shrink-0">
+        <span className="flex-shrink-0 text-xs font-medium">
           {projectDetails?.identifier} {issueDetails.sequence_id}
         </span>
-        <h6 className="text-sm flex-grow truncate">{issueDetails.name}</h6>
+        <h6 className="flex-grow truncate text-sm">{issueDetails.name}</h6>
       </div>
     </ControlLink>
   );
@@ -161,19 +161,19 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
     <ControlLink
       href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
       onClick={() => onClick(issue)}
-      className="py-2 px-3 hover:bg-custom-background-80 rounded grid grid-cols-6 gap-1"
+      className="grid grid-cols-6 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
       <div className="col-span-4 flex items-center gap-3">
         <PriorityIcon priority={issue.priority} withContainer />
-        <span className="text-xs font-medium flex-shrink-0">
+        <span className="flex-shrink-0 text-xs font-medium">
           {projectDetails?.identifier} {issue.sequence_id}
         </span>
-        <h6 className="text-sm flex-grow truncate">{issue.name}</h6>
+        <h6 className="flex-grow truncate text-sm">{issue.name}</h6>
       </div>
-      <div className="text-xs text-center">
+      <div className="text-center text-xs">
         {targetDate ? (isToday(targetDate) ? "Today" : renderFormattedDate(targetDate)) : "-"}
       </div>
-      <div className="text-xs flex justify-center">
+      <div className="flex justify-center text-xs">
         {issue.assignee_ids && issue.assignee_ids?.length > 0 ? (
           <AvatarGroup>
             {issue.assignee_ids?.map((assigneeId) => {
@@ -213,19 +213,19 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
     <ControlLink
       href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
       onClick={() => onClick(issue)}
-      className="py-2 px-3 hover:bg-custom-background-80 rounded grid grid-cols-6 gap-1"
+      className="grid grid-cols-6 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
       <div className="col-span-4 flex items-center gap-3">
         <PriorityIcon priority={issue.priority} withContainer />
-        <span className="text-xs font-medium flex-shrink-0">
+        <span className="flex-shrink-0 text-xs font-medium">
           {projectDetails?.identifier} {issue.sequence_id}
         </span>
-        <h6 className="text-sm flex-grow truncate">{issue.name}</h6>
+        <h6 className="flex-grow truncate text-sm">{issue.name}</h6>
       </div>
-      <div className="text-xs text-center">
+      <div className="text-center text-xs">
         {dueBy} {`day${dueBy > 1 ? "s" : ""}`}
       </div>
-      <div className="text-xs flex justify-center">
+      <div className="flex justify-center text-xs">
         {issue.assignee_ids.length > 0 ? (
           <AvatarGroup>
             {issue.assignee_ids?.map((assigneeId) => {
@@ -263,16 +263,16 @@ export const CreatedCompletedIssueListItem: React.FC<IssueListItemProps> = obser
     <ControlLink
       href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
       onClick={() => onClick(issue)}
-      className="py-2 px-3 hover:bg-custom-background-80 rounded grid grid-cols-6 gap-1"
+      className="grid grid-cols-6 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
       <div className="col-span-5 flex items-center gap-3">
         <PriorityIcon priority={issue.priority} withContainer />
-        <span className="text-xs font-medium flex-shrink-0">
+        <span className="flex-shrink-0 text-xs font-medium">
           {projectDetails?.identifier} {issue.sequence_id}
         </span>
-        <h6 className="text-sm flex-grow truncate">{issue.name}</h6>
+        <h6 className="flex-grow truncate text-sm">{issue.name}</h6>
       </div>
-      <div className="text-xs flex justify-center">
+      <div className="flex justify-center text-xs">
         {issue.assignee_ids.length > 0 ? (
           <AvatarGroup>
             {issue.assignee_ids?.map((assigneeId) => {

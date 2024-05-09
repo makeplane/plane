@@ -6,8 +6,10 @@ import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks
 import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
+// hooks
+import { useAppRouter, useIssueDetail, useProject, useKanbanView } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
@@ -110,9 +112,8 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   } = props;
 
   const cardRef = useRef<HTMLAnchorElement | null>(null);
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  // hooks
+  const { workspaceSlug } = useAppRouter();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   const { isMobile } = usePlatformOS();
 
@@ -136,7 +137,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const isDragAllowed = !isDragDisabled && !issue?.tempId && canEditIssueProperties;
 
   useOutsideClickDetector(cardRef, () => {
-    cardRef?.current?.classList?.remove("highlight");
+    cardRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
   });
 
   // Make Issue block both as as Draggable and,

@@ -1,4 +1,4 @@
-import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
+import React, { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 import { MoreVertical } from "lucide-react";
 // hooks
@@ -17,12 +17,12 @@ import { IGanttBlock } from "../../types";
 type Props = {
   block: IGanttBlock;
   enableReorder: boolean;
-  provided: DraggableProvided;
-  snapshot: DraggableStateSnapshot;
+  isDragging: boolean;
+  dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
 };
 
-export const IssuesSidebarBlock: React.FC<Props> = observer((props) => {
-  const { block, enableReorder, provided, snapshot } = props;
+export const IssuesSidebarBlock = observer((props: Props) => {
+  const { block, enableReorder, isDragging, dragHandleRef } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive } = useGanttChart();
   const { getIsIssuePeeked } = useIssueDetail();
@@ -32,15 +32,13 @@ export const IssuesSidebarBlock: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn({
-        "rounded bg-custom-background-80": snapshot.isDragging,
+        "rounded bg-custom-background-80": isDragging,
         "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(
           block.data.id
         ),
       })}
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}
-      ref={provided.innerRef}
-      {...provided.draggableProps}
     >
       <div
         className={cn("group w-full flex items-center gap-2 pl-2 pr-4", {
@@ -54,7 +52,7 @@ export const IssuesSidebarBlock: React.FC<Props> = observer((props) => {
           <button
             type="button"
             className="flex flex-shrink-0 rounded p-0.5 text-custom-sidebar-text-200 opacity-0 group-hover:opacity-100"
-            {...provided.dragHandleProps}
+            ref={dragHandleRef}
           >
             <MoreVertical className="h-3.5 w-3.5" />
             <MoreVertical className="-ml-5 h-3.5 w-3.5" />

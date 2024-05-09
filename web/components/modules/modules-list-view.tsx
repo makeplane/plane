@@ -4,18 +4,12 @@ import { useRouter } from "next/router";
 // components
 import { ListLayout } from "@/components/core/list";
 import { EmptyState } from "@/components/empty-state";
-import {
-  ModuleCardItem,
-  ModuleListItem,
-  ModulePeekOverview,
-  ModuleViewHeader,
-  ModulesListGanttChartView,
-} from "@/components/modules";
+import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useApplication, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
 import AllFiltersImage from "public/empty-state/module/all-filters.svg";
 import NameFilterImage from "public/empty-state/module/name-filter.svg";
 
@@ -24,7 +18,7 @@ export const ModulesListView: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateModuleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { getProjectModuleIds, getFilteredModuleIds, loader } = useModule();
   const { currentProjectDisplayFilters: displayFilters, searchQuery } = useModuleFilter();
@@ -47,22 +41,22 @@ export const ModulesListView: React.FC = observer(() => {
         type={EmptyStateType.PROJECT_MODULE}
         primaryButtonOnClick={() => {
           setTrackElement("Module empty state");
-          commandPaletteStore.toggleCreateModuleModal(true);
+          toggleCreateModuleModal(true);
         }}
       />
     );
 
   if (filteredModuleIds.length === 0)
     return (
-      <div className="h-full w-full grid place-items-center">
+      <div className="grid h-full w-full place-items-center">
         <div className="text-center">
           <Image
             src={searchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
+            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching modules"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching modules</h5>
-          <p className="text-custom-text-400 text-base">
+          <h5 className="mb-1 mt-7 text-xl font-medium">No matching modules</h5>
+          <p className="text-base text-custom-text-400">
             {searchQuery.trim() === ""
               ? "Remove the filters to see all modules"
               : "Remove the search criteria to see all modules"}
@@ -73,12 +67,6 @@ export const ModulesListView: React.FC = observer(() => {
 
   return (
     <>
-      <div className="h-[50px] flex-shrink-0 w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
-        <div className="flex items-center">
-          <span className="block text-sm font-medium">Module name</span>
-        </div>
-        <ModuleViewHeader />
-      </div>
       {displayFilters?.layout === "list" && (
         <div className="h-full overflow-y-auto">
           <div className="flex h-full w-full justify-between">

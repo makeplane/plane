@@ -1,22 +1,22 @@
 import size from "lodash/size";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// types
 import { IIssueFilterOptions } from "@plane/types";
-// hooks
 // components
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useApplication, useEventTracker, useIssues } from "@/hooks/store";
-// types
+// hooks
+import { useCommandPalette, useEventTracker, useIssues } from "@/hooks/store";
 
 export const ProjectEmptyState: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
 
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
@@ -56,7 +56,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
             ? undefined
             : () => {
                 setTrackElement("Project issue empty state");
-                commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+                toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }
         }
         secondaryButtonOnClick={issueFilterCount > 0 ? handleClearAllFilters : undefined}

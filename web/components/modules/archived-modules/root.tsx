@@ -64,6 +64,7 @@ export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
             handleClearAllFilters={() => clearAllFilters(projectId.toString(), "archived")}
             handleRemoveFilter={handleRemoveFilter}
             alwaysAllowEditing
+            isArchived
           />
         </div>
       )}

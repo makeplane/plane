@@ -1,19 +1,15 @@
 import React from "react";
-
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-// mobx
-// lib
 import { Button } from "@plane/ui";
+// components
 import { CommentCard, AddComment } from "@/components/issues/peek-overview";
 import { Icon } from "@/components/ui";
-import { useMobxStore } from "@/lib/mobx/store-provider";
-// components
-// ui
+// hooks
+import { useMobxStore, useUser } from "@/hooks/store";
 // types
-import { IIssue } from "types/issue";
+import { IIssue } from "@/types/issue";
 
 type Props = {
   issueDetails: IIssue;
@@ -24,11 +20,8 @@ export const PeekOverviewIssueActivity: React.FC<Props> = observer(() => {
   const router = useRouter();
   const { workspace_slug } = router.query;
   // store
-  const {
-    issueDetails: issueDetailStore,
-    project: projectStore,
-    user: { currentUser },
-  } = useMobxStore();
+  const { issueDetails: issueDetailStore, project: projectStore } = useMobxStore();
+  const { data: currentUser } = useUser();
   const comments = issueDetailStore.details[issueDetailStore.peekId || ""]?.comments || [];
 
   return (

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { Tooltip, ContrastIcon } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { useApplication, useCycle } from "@/hooks/store";
+import { useAppRouter, useCycle } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -18,9 +18,7 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { getCycleById } = useCycle();
   // derived values
   const cycleDetails = getCycleById(cycleId);
@@ -67,9 +65,7 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
 export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { cycleId } = props;
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { getCycleById } = useCycle();
   // derived values
   const cycleDetails = getCycleById(cycleId);

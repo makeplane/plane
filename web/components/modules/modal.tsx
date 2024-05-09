@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 // types
 import type { IModule } from "@plane/types";

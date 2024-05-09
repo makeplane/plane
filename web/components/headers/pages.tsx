@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { FileText, Plus } from "lucide-react";
 // hooks
@@ -10,16 +10,14 @@ import { ProjectLogo } from "@/components/project";
 import { EUserProjectRoles } from "@/constants/project";
 // constants
 // components
-import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const PagesHeader = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    commandPalette: { toggleCreatePageModal },
-  } = useApplication();
+  const { toggleCreatePageModal } = useCommandPalette();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -42,7 +40,7 @@ export const PagesHeader = observer(() => {
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
                     currentProjectDetails && (
-                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                      <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                         <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                       </span>
                     )

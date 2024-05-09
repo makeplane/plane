@@ -11,16 +11,14 @@ import { ProjectLogo } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    commandPalette: { toggleCreateCycleModal },
-  } = useApplication();
+  const { toggleCreateCycleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
