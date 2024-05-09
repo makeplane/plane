@@ -346,3 +346,4 @@ CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 # Base URLs
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", "")
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", "")
+APP_BASE_URL = os.environ.get("ADMIN_BASE_URL", "")
