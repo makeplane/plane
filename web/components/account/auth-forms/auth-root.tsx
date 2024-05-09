@@ -88,7 +88,10 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
         if (authMode === EAuthModes.SIGN_IN) {
           if (response.is_password_autoset) setAuthStep(EAuthSteps.UNIQUE_CODE);
           else setAuthStep(EAuthSteps.PASSWORD);
-        } else setAuthStep(EAuthSteps.PASSWORD);
+        } else {
+          if (instance && instance?.config?.is_smtp_configured) setAuthStep(EAuthSteps.UNIQUE_CODE);
+          else setAuthStep(EAuthSteps.PASSWORD);
+        }
       })
       .catch((error) => {
         const errorhandler = authErrorHandler(error?.error_code.toString(), data?.email || undefined);

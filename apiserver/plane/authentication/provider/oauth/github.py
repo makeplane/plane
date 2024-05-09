@@ -46,9 +46,7 @@ class GitHubOAuthProvider(OauthAdapter):
         client_id = GITHUB_CLIENT_ID
         client_secret = GITHUB_CLIENT_SECRET
 
-        redirect_uri = (
-            f"{request.scheme}://{request.get_host()}/auth/github/callback/"
-        )
+        redirect_uri = f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/github/callback/"""
         url_params = {
             "client_id": client_id,
             "redirect_uri": redirect_uri,

@@ -12,7 +12,7 @@ import { InstanceNotReady } from "@/components/instance";
 // hooks
 import { useInstance } from "@/hooks";
 // helpers
-import { EInstancePageType, EInstanceStatus } from "@/helpers";
+import { EInstancePageType } from "@/helpers";
 
 type TInstanceWrapper = {
   children: ReactNode;
@@ -24,23 +24,16 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   const searchparams = useSearchParams();
   const authEnabled = searchparams.get("auth_enabled") || "1";
   // hooks
-  const { isLoading, instanceStatus, instance, fetchInstanceInfo } = useInstance();
+  const { isLoading, instance, fetchInstanceInfo } = useInstance();
 
-  useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
+  const { isLoading: isSWRLoading } = useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
   });
 
-  if (isLoading)
+  if (isSWRLoading || isLoading)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <Spinner />
-      </div>
-    );
-
-  if (instanceStatus && instanceStatus?.status === EInstanceStatus.ERROR)
-    return (
-      <div className="relative flex h-screen w-screen items-center justify-center">
-        Something went wrong. please try again later
       </div>
     );
 

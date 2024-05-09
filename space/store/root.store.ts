@@ -3,7 +3,7 @@ import { enableStaticRendering } from "mobx-react-lite";
 // store imports
 import { IInstanceStore, InstanceStore } from "@/store/instance.store";
 import { IProjectStore, ProjectStore } from "@/store/project";
-import { IUserStore, UserStore } from "@/store/user/index.store";
+import { IUserStore, UserStore } from "@/store/user";
 import { IProfileStore, ProfileStore } from "@/store/user/profile.store";
 
 import IssueStore, { IIssueStore } from "./issue";

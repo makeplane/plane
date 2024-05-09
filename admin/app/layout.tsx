@@ -15,7 +15,7 @@ interface RootLayoutProps {
 }
 
 const RootLayout = ({ children, ...pageProps }: RootLayoutProps) => {
-  const prefix = parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0") === 0 ? "/" : "/god-mode/";
+  const prefix = "/god-mode/";
 
   return (
     <html lang="en">
