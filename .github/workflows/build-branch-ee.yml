@@ -15,7 +15,7 @@ env:
 
 jobs:
   branch_build_setup:
-    name: Build-Push Web/Space/API/Proxy Docker Image
+    name: Build Setup
     runs-on: ubuntu-latest
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
@@ -100,6 +100,7 @@ jobs:
 
   branch_build_push_admin:
     if: ${{ needs.branch_build_setup.outputs.build_admin== 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Admin Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -164,6 +165,7 @@ jobs:
 
   branch_build_push_web:
     if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Web Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -228,6 +230,7 @@ jobs:
 
   branch_build_push_space:
     if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Space Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -292,6 +295,7 @@ jobs:
 
   branch_build_push_apiserver:
     if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push API Server Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -356,6 +360,7 @@ jobs:
 
   branch_build_push_proxy:
     if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Proxy Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -422,10 +427,12 @@ jobs:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
     name: Upload artifacts to S3 Bucket
     runs-on: ubuntu-latest
-    needs:
-      [
-        branch_build_setup
-      ]
+    needs: [branch_build_setup]
+    container:
+      image: docker:20.10.7
+      credentials:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
     env:
       ARTIFACT_SUFFIX: ${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}
       AWS_ACCESS_KEY_ID: ${{ secrets.SELF_HOST_BUCKET_ACCESS_KEY }}
@@ -438,15 +445,8 @@ jobs:
 
       - name: Upload artifacts
         run: |
-          CPU_ARCH=$(uname -m)
-          if [ "${CPU_ARCH}" == "x86_64" ] || [ "${CPU_ARCH}" == "amd64" ]; then
-            CPU_ARCH="x86_64"
-          elif [ "${CPU_ARCH}" == "aarch64" ] || [ "${CPU_ARCH}" == "arm64" ]; then
-            CPU_ARCH="aarch64"
-          fi
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-${CPU_ARCH}.zip" -o "awscliv2.zip"
-          unzip -q awscliv2.zip
-          ./aws/install
+          apk update
+          apk add --no-cache aws-cli
 
           mkdir -p ~/${{ env.ARTIFACT_SUFFIX }}
 
