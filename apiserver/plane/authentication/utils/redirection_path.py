@@ -10,10 +10,13 @@ def get_redirection_path(user):
         return "onboarding"
 
     # Redirect to the last workspace if the user has last workspace
-    if profile.last_workspace_id and Workspace.objects.filter(
-        pk=profile.last_workspace_id,
-        workspace_member__member_id=user.id,
-        workspace_member__is_active=True,
+    if (
+        profile.last_workspace_id
+        and Workspace.objects.filter(
+            pk=profile.last_workspace_id,
+            workspace_member__member_id=user.id,
+            workspace_member__is_active=True,
+        ).exists()
     ):
         workspace = Workspace.objects.filter(
             pk=profile.last_workspace_id,

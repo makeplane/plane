@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance } from "axios";
+// store
+import { rootStore } from "@/lib/store-context";
 
 abstract class APIService {
   protected baseURL: string;
@@ -19,7 +21,8 @@ abstract class APIService {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response && error.response.status === 401) window.location.href = "/";
+        const store = rootStore;
+        if (error.response && error.response.status === 401 && store.user.data) store.user.reset();
         return Promise.reject(error);
       }
     );

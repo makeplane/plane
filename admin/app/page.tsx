@@ -1,20 +1,26 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+// layouts
+import { DefaultLayout } from "@/layouts";
 // components
 import { PageHeader } from "@/components/core";
+import { InstanceSignInForm } from "@/components/login";
+// lib
+import { AuthWrapper, InstanceWrapper } from "@/lib/wrappers";
+// helpers
+import { EAuthenticationPageType, EInstancePageType } from "@/helpers";
 
-const RootPage = () => {
-  const router = useRouter();
+const LoginPage = () => (
+  <>
+    <PageHeader title="Login - God Mode" />
+    <InstanceWrapper pageType={EInstancePageType.POST_SETUP}>
+      <AuthWrapper authType={EAuthenticationPageType.NOT_AUTHENTICATED}>
+        <DefaultLayout>
+          <InstanceSignInForm />
+        </DefaultLayout>
+      </AuthWrapper>
+    </InstanceWrapper>
+  </>
+);
 
-  useEffect(() => router.push("/login"), [router]);
-
-  return (
-    <>
-      <PageHeader title="Plane - God Mode" />
-    </>
-  );
-};
-
-export default RootPage;
+export default LoginPage;

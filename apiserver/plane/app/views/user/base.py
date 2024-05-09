@@ -1,5 +1,7 @@
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
+from django.contrib.auth import logout
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -26,6 +28,7 @@ from plane.db.models import (
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.utils.paginator import BasePaginator
+from plane.authentication.utils.host import user_ip
 
 
 class UserEndpoint(BaseViewSet):
@@ -166,7 +169,14 @@ class UserEndpoint(BaseViewSet):
             "workspace_invite": False,
         }
         profile.save()
+
+        # User log out
+        user.last_logout_ip = user_ip(request=request)
+        user.last_logout_time = timezone.now()
         user.save()
+
+        # Logout the user
+        logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

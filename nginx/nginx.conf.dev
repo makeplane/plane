@@ -15,6 +15,8 @@ http {
         add_header Referrer-Policy           "no-referrer-when-downgrade" always;
         add_header Permissions-Policy        "interest-cohort=()" always;
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header X-Forwarded-Proto         "${dollar}scheme";
+        add_header Host                      "${dollar}host";
 
         location / {
             proxy_pass http://web:3000/;
@@ -23,8 +25,8 @@ http {
             proxy_set_header Connection "upgrade";
         }
 
-        location /god-mode {
-            proxy_pass http://godmode:3000/;
+        location /god-mode/ {
+            proxy_pass http://admin:3000/god-mode/;
         }
 
         location /api/ {

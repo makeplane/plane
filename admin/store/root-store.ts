@@ -18,8 +18,10 @@ export class RootStore {
   }
 
   resetOnSignOut() {
-    this.theme = new ThemeStore(this);
+    localStorage.setItem("theme", "system");
+
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
+    this.theme = new ThemeStore(this);
   }
 }

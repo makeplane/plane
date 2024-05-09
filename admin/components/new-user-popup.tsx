@@ -19,7 +19,7 @@ export const NewUserPopup: React.FC = observer(() => {
   // theme
   const { resolvedTheme } = nextUseTheme();
 
-  const redirectionLink = `${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : `${process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX === "1" ? `/god-mode/` : `/`}`}`;
+  const redirectionLink = `${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : `/god-mode/`}`;
 
   if (!isNewUserPopup) return <></>;
   return (

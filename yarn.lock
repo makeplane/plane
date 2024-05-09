@@ -2658,7 +2658,7 @@
   resolved "https://registry.yarnpkg.com/@types/linkify-it/-/linkify-it-3.0.5.tgz#1e78a3ac2428e6d7e6c05c1665c242023a4601d8"
   integrity sha512-yg6E+u0/+Zjva+buc3EIb+29XEg4wltq7cSmd4Uc2EE/1nUVmxyzpX6gUXD0V8jIrG0r7YeOGVIbYRkxeooCtw==
 
-"@types/lodash@^4.14.202", "@types/lodash@^4.17.0":
+"@types/lodash@^4.14.202", "@types/lodash@^4.17.0", "@types/lodash@^4.17.1":
   version "4.17.1"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.1.tgz#0fabfcf2f2127ef73b119d98452bd317c4a17eb8"
   integrity sha512-X+2qazGS3jxLAIz5JDXDzglAF3KpijdhFxlf/V1+hEsOUc+HnWi81L/uv/EvGuV90WY+7mPGFCUDGfQC3Gj95Q==
@@ -6935,10 +6935,10 @@ postcss@^8.4.21, postcss@^8.4.23, postcss@^8.4.29:
     picocolors "^1.0.0"
     source-map-js "^1.2.0"
 
-posthog-js@^1.105.0:
-  version "1.131.2"
-  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.131.2.tgz#c82b16a4074f773eaf41df47187fb88cc5aef28c"
-  integrity sha512-un5c5CbDhJ1LRBDgy4I1D5a1++P8/mNl4CS9C5A1z95qIF7iY8OuA6XPW7sIA6tKSdda4PGwfa2Gmfz1nvnywQ==
+posthog-js@^1.131.3:
+  version "1.131.3"
+  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.131.3.tgz#bd3e6123dc715f089825a92d3ec62480b7ec0a76"
+  integrity sha512-ds/TADDS+rT/WgUyeW4cJ+X+fX+O1KdkOyssNI/tP90PrFf0IJsck5B42YOLhfz87U2vgTyBaKHkdlMgWuOFog==
   dependencies:
     fflate "^0.4.8"
     preact "^10.19.3"

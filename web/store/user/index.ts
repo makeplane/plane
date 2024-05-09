@@ -36,6 +36,7 @@ export interface IUserStore {
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
   handleSetPassword: (csrfToken: string, data: { password: string }) => Promise<IUser | undefined>;
   deactivateAccount: () => Promise<void>;
+  reset: () => void;
   signOut: () => Promise<void>;
 }
 
@@ -79,6 +80,7 @@ export class UserStore implements IUserStore {
       updateCurrentUser: action,
       handleSetPassword: action,
       deactivateAccount: action,
+      reset: action,
       signOut: action,
     });
   }
@@ -189,6 +191,22 @@ export class UserStore implements IUserStore {
   deactivateAccount = async (): Promise<void> => {
     await this.userService.deactivateAccount();
     this.store.resetOnSignOut();
+  };
+
+  /**
+   * @description resets the user store
+   * @returns {void}
+   */
+  reset = (): void => {
+    runInAction(() => {
+      this.isAuthenticated = false;
+      this.isLoading = false;
+      this.error = undefined;
+      this.data = undefined;
+      this.userProfile = new ProfileStore(this.store);
+      this.userSettings = new UserSettingsStore();
+      this.membership = new UserMembershipStore(this.store);
+    });
   };
 
   /**
