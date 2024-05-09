@@ -6,7 +6,7 @@ def base_host(request):
     return (
         request.META.get("HTTP_ORIGIN")
         or f"{urlsplit(request.META.get('HTTP_REFERER')).scheme}://{urlsplit(request.META.get('HTTP_REFERER')).netloc}"
-        or f"{request.scheme}://{request.get_host()}"
+        or f"""{"https" if request.is_secure() else "http"}://{request.get_host()}"""
     )
 
 

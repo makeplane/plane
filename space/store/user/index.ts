@@ -2,8 +2,6 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { IUser } from "@plane/types";
-// helpers
-// import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { AuthService } from "@/services/authentication.service";
 import { UserService } from "@/services/user.service";
@@ -30,6 +28,7 @@ export interface IUserStore {
   // actions
   fetchCurrentUser: () => Promise<IUser | undefined>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
+  reset: () => void;
   signOut: () => Promise<void>;
 }
 
@@ -65,6 +64,7 @@ export class UserStore implements IUserStore {
       // actions
       fetchCurrentUser: action,
       updateCurrentUser: action,
+      reset: action,
       signOut: action,
     });
   }
@@ -151,6 +151,20 @@ export class UserStore implements IUserStore {
       });
       throw error;
     }
+  };
+
+  /**
+   * @description resets the user store
+   * @returns {void}
+   */
+  reset = (): void => {
+    runInAction(() => {
+      this.isAuthenticated = false;
+      this.isLoading = false;
+      this.error = undefined;
+      this.data = undefined;
+      this.userProfile = new ProfileStore(this.store);
+    });
   };
 
   /**

@@ -11,7 +11,7 @@ import { StoreProvider } from "@/lib/store-context";
 // wrappers
 import { InstanceWrapper } from "@/lib/wrappers";
 
-const prefix = parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0") === 0 ? "/" : "/spaces/";
+const prefix = "/spaces/";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

@@ -1,7 +1,7 @@
 import { useContext } from "react";
 // store
 import { StoreContext } from "@/lib/store-context";
-import { IUserStore } from "@/store/user/index.store";
+import { IUserStore } from "@/store/user";
 
 export const useUser = (): IUserStore => {
   const context = useContext(StoreContext);

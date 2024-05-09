@@ -4,7 +4,7 @@ import { ReactElement, createContext } from "react";
 // mobx store
 import { RootStore } from "@/store/root-store";
 
-let rootStore = new RootStore();
+export let rootStore = new RootStore();
 
 export const StoreContext = createContext<RootStore>(rootStore);
 
