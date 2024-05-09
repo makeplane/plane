@@ -88,7 +88,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     <div
       ref={parentRef}
       className={cn(
-        "group/list-block min-h-[52px] relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 pl-8 text-sm transition-colors",
+        "group/list-block min-h-[52px] relative flex flex-col md:flex-row md:items-center gap-2 bg-custom-background-100 p-3 pl-0 text-sm transition-colors",
         {
           "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
@@ -98,7 +98,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
       )}
     >
       {canEditIssueProperties && (
-        <div className="flex-shrink-0 flex items-center w-5">
+        <div className="flex-shrink-0 grid place-items-center w-3.5 pl-1.5">
           <input
             type="checkbox"
             className={cn(
@@ -114,14 +114,14 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
       )}
       <div className="flex w-full truncate" style={issue.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
-          <div className="flex items-center gap-1.5">
-            <div className="flex h-5 w-5 items-center justify-center">
+          <div className="flex items-center gap-0.5">
+            <div className="size-4 flex items-center justify-center">
               {issue.sub_issues_count > 0 && (
                 <button
-                  className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
+                  className="flex items-center justify-center size-4 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
                   onClick={handleToggleExpand}
                 >
-                  <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
+                  <ChevronRight className={`size-4 ${isExpanded ? "rotate-90" : ""}`} />
                 </button>
               )}
             </div>
@@ -137,20 +137,21 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           </div>
 
           {issue?.is_draft ? (
-            <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+            <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left">
               <p className="truncate">{issue.name}</p>
             </Tooltip>
           ) : (
             <ControlLink
               id={`issue-${issue.id}`}
-              href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id
-                }`}
+              href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
+                issue.id
+              }`}
               target="_blank"
               onClick={() => handleIssuePeekOverview(issue)}
               className="w-full truncate cursor-pointer text-sm text-custom-text-100"
               disabled={!!issue?.tempId}
             >
-              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+              <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left">
                 <p className="truncate">{issue.name}</p>
               </Tooltip>
             </ControlLink>

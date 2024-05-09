@@ -67,7 +67,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     <>
       <div className="group/list-block relative w-full flex-shrink-0 flex items-center gap-2 py-1.5">
         {true && (
-          <div className="flex-shrink-0 flex items-center w-5">
+          <div className="flex-shrink-0 flex items-center w-3.5 pl-1.5">
             <input
               type="checkbox"
               className={cn(

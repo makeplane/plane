@@ -1,5 +1,6 @@
 import React, { FC, MutableRefObject, useState } from "react";
 import { observer } from "mobx-react";
+// types
 import { IIssueDisplayProperties, TIssue, TIssueMap } from "@plane/types";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
@@ -36,7 +37,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     containerRef,
   } = props;
   // states
-  const [isExpanded, setExpanded] = useState<boolean>(false);
+  const [isExpanded, setExpanded] = useState(false);
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail();
 
@@ -67,9 +68,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
       </RenderIfVisible>
 
       {isExpanded &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssueId: string) => (
+        subIssues?.map((subIssueId) => (
           <IssueBlockRoot
             key={`${subIssueId}`}
             issueIds={issueIds}
@@ -80,7 +79,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
             canEditProperties={canEditProperties}
             displayProperties={displayProperties}
             nestingLevel={nestingLevel + 1}
-            spacingLeft={spacingLeft + (displayProperties?.key ? 19 : 0)}
+            spacingLeft={spacingLeft + (displayProperties?.key ? 12 : 0)}
             containerRef={containerRef}
           />
         ))}
