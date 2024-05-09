@@ -44,7 +44,7 @@ class GoogleOAuthProvider(OauthAdapter):
         client_secret = GOOGLE_CLIENT_SECRET
 
         redirect_uri = (
-            f"{request.scheme}://{request.get_host()}/auth/google/callback/"
+            f"{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/google/callback/"
         )
         url_params = {
             "client_id": client_id,
