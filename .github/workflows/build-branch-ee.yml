@@ -424,18 +424,8 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       [
-        branch_build_setup,
-        branch_build_push_web,
-        branch_build_push_space,
-        branch_build_push_apiserver,
-        branch_build_push_proxy,
-        branch_build_push_admin,
+        branch_build_setup
       ]
-    container:
-      image: docker:20.10.7
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
     env:
       ARTIFACT_SUFFIX: ${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}
       AWS_ACCESS_KEY_ID: ${{ secrets.SELF_HOST_BUCKET_ACCESS_KEY }}
@@ -448,8 +438,15 @@ jobs:
 
       - name: Upload artifacts
         run: |
-          apk update
-          apk add --no-cache aws-cli
+          CPU_ARCH=$(uname -m)
+          if [ "${CPU_ARCH}" == "x86_64" ] || [ "${CPU_ARCH}" == "amd64" ]; then
+            CPU_ARCH="x86_64"
+          elif [ "${CPU_ARCH}" == "aarch64" ] || [ "${CPU_ARCH}" == "arm64" ]; then
+            CPU_ARCH="aarch64"
+          fi
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-${CPU_ARCH}.zip" -o "awscliv2.zip"
+          unzip -q awscliv2.zip
+          ./aws/install
 
           mkdir -p ~/${{ env.ARTIFACT_SUFFIX }}
 
