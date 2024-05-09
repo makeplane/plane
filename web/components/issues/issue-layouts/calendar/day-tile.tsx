@@ -1,10 +1,13 @@
-import { Droppable } from "@hello-pangea/dnd";
+import { useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react-lite";
 // types
 import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
 // components
 import { CalendarIssueBlocks, ICalendarDate } from "@/components/issues";
-// constants
+import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
+// helpers
 import { MONTHS_LIST } from "@/constants/calendar";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -24,6 +27,11 @@ type Props = {
   quickActions: TRenderQuickActions;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
+  handleDragAndDrop: (
+    issueId: string | undefined,
+    sourceDate: string | undefined,
+    destinationDate: string | undefined
+  ) => Promise<void>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
@@ -51,12 +59,46 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     viewId,
     readOnly = false,
     selectedDate,
+    handleDragAndDrop,
     setSelectedDate,
   } = props;
+
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [showAllIssues, setShowAllIssues] = useState(false);
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const formattedDatePayload = renderFormattedPayloadDate(date.date);
+
+  const dayTileRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const element = dayTileRef.current;
+
+    if (!element) return;
+
+    return combine(
+      dropTargetForElements({
+        element,
+        getData: () => ({ date: formattedDatePayload }),
+        onDragEnter: () => {
+          setIsDraggingOver(true);
+        },
+        onDragLeave: () => {
+          setIsDraggingOver(false);
+        },
+        onDrop: ({ source, self }) => {
+          setIsDraggingOver(false);
+          const sourceData = source?.data as { id: string; date: string } | undefined;
+          const destinationData = self?.data as { date: string } | undefined;
+          handleDragAndDrop(sourceData?.id, sourceData?.date, destinationData?.date);
+          setShowAllIssues(true);
+          highlightIssueOnDrop(source?.element?.id, false);
+        },
+      })
+    );
+  }, [dayTileRef?.current, formattedDatePayload]);
+
   if (!formattedDatePayload) return null;
   const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : null;
 
@@ -65,13 +107,19 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const isToday = date.date.toDateString() === new Date().toDateString();
   const isSelectedDate = date.date.toDateString() == selectedDate.toDateString();
 
+  const isWeekend = date.date.getDay() === 0 || date.date.getDay() === 6;
+  const isMonthLayout = calendarLayout === "month";
+
+  const normalBackground = isWeekend ? "bg-custom-background-90" : "bg-custom-background-100";
+  const draggingOverBackground = isWeekend ? "bg-custom-background-80" : "bg-custom-background-90";
+
   return (
     <>
-      <div className="group relative flex h-full w-full flex-col bg-custom-background-90">
+      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col bg-custom-background-90">
         {/* header */}
         <div
           className={`hidden flex-shrink-0 items-center justify-end px-2 py-1.5 text-right text-xs md:flex ${
-            calendarLayout === "month" // if month layout, highlight current month days
+            isMonthLayout // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
                 : "text-custom-text-300"
@@ -93,44 +141,38 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         </div>
 
         {/* content */}
-        <div className="hidden h-full w-full md:block">
-          <Droppable droppableId={formattedDatePayload} isDropDisabled={readOnly}>
-            {(provided, snapshot) => (
-              <div
-                className={`h-full w-full select-none ${
-                  snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
-                    ? "bg-custom-background-90"
-                    : "bg-custom-background-100"
-                } ${calendarLayout === "month" ? "min-h-[5rem]" : ""}`}
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                <CalendarIssueBlocks
-                  date={date.date}
-                  issues={issues}
-                  issueIdList={issueIdList}
-                  quickActions={quickActions}
-                  isDragDisabled={readOnly}
-                  addIssuesToView={addIssuesToView}
-                  disableIssueCreation={disableIssueCreation}
-                  enableQuickIssueCreate={enableQuickIssueCreate}
-                  quickAddCallback={quickAddCallback}
-                  viewId={viewId}
-                  readOnly={readOnly}
-                />
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
+        <div className="h-full w-full hidden md:block">
+          <div
+            className={`h-full w-full select-none ${
+              isDraggingOver ? `${draggingOverBackground} opacity-70` : normalBackground
+            } ${isMonthLayout ? "min-h-[5rem]" : ""}`}
+          >
+            <CalendarIssueBlocks
+              date={date.date}
+              issues={issues}
+              issueIdList={issueIdList}
+              showAllIssues={showAllIssues}
+              setShowAllIssues={setShowAllIssues}
+              quickActions={quickActions}
+              isDragDisabled={readOnly}
+              addIssuesToView={addIssuesToView}
+              disableIssueCreation={disableIssueCreation}
+              enableQuickIssueCreate={enableQuickIssueCreate}
+              quickAddCallback={quickAddCallback}
+              viewId={viewId}
+              readOnly={readOnly}
+              isMonthLayout={isMonthLayout}
+            />
+          </div>
         </div>
 
         {/* Mobile view content */}
         <div
           onClick={() => setSelectedDate(date.date)}
           className={cn(
-            "mx-auto flex h-full w-full cursor-pointer flex-col items-center justify-start py-2.5 text-sm font-medium md:hidden",
+            "text-sm py-2.5 h-full w-full font-medium mx-auto flex flex-col justify-start items-center md:hidden cursor-pointer opacity-80",
             {
-              "bg-custom-background-100": date.date.getDay() !== 0 && date.date.getDay() !== 6,
+              "bg-custom-background-100": !isWeekend,
             }
           )}
         >
