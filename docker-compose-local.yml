@@ -73,6 +73,20 @@ services:
       - worker
       - web
 
+  admin:
+    build:
+      context: .
+      dockerfile: ./admin/Dockerfile.dev
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - ./admin:/app/admin
+    depends_on:
+      - api
+      - worker
+      - web
+
   api:
     build:
       context: ./apiserver
@@ -167,3 +181,4 @@ services:
       - web
       - api
       - space
+      - admin
