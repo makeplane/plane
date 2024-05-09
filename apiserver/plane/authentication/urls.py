@@ -7,6 +7,7 @@ from .views import (
     ForgotPasswordEndpoint,
     SetUserPasswordEndpoint,
     ResetPasswordEndpoint,
+    ChangePasswordEndpoint,
     # App
     GitHubCallbackEndpoint,
     GitHubOauthInitiateEndpoint,
@@ -174,6 +175,11 @@ urlpatterns = [
     path(
         "reset-password/<uidb64>/<token>/",
         ResetPasswordEndpoint.as_view(),
+        name="forgot-password",
+    ),
+    path(
+        "change-password/",
+        ChangePasswordEndpoint.as_view(),
         name="forgot-password",
     ),
     path(
