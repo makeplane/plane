@@ -2,7 +2,6 @@
 from urllib.parse import urlencode, urljoin
 
 # Django imports
-from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.views import View

@@ -3,18 +3,17 @@ import uuid
 from urllib.parse import urlencode, urljoin
 
 # Django import
-from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
 from django.views import View
 
+
+# Module imports
 from plane.authentication.provider.oauth.google import GoogleOAuthProvider
 from plane.authentication.utils.login import user_login
 from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
-
-# Module imports
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 from plane.authentication.adapter.error import (
