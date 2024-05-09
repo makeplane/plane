@@ -16,7 +16,8 @@ export interface IUserStore {
   currentUser: IUser | undefined;
   // fetch actions
   fetchCurrentUser: () => Promise<IUser>;
-  reset: () => Promise<void>;
+  reset: () => void;
+  signOut: () => void;
 }
 
 export class UserStore implements IUserStore {
@@ -39,6 +40,7 @@ export class UserStore implements IUserStore {
       // action
       fetchCurrentUser: action,
       reset: action,
+      signOut: action,
     });
     this.userService = new UserService();
     this.authService = new AuthService();
@@ -89,5 +91,9 @@ export class UserStore implements IUserStore {
     this.currentUser = undefined;
     this.isLoading = false;
     this.userStatus = undefined;
+  };
+
+  signOut = async () => {
+    this.store.resetOnSignOut();
   };
 }
