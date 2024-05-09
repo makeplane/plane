@@ -10,7 +10,11 @@
 
 	reverse_proxy /spaces/* space:3000
 
+	reverse_proxy /god-mode/* admin:3000
+
 	reverse_proxy /api/* api:8000
+
+	reverse_proxy /auth/* api:8000
 
 	reverse_proxy /{$BUCKET_NAME}/* plane-minio:9000
 

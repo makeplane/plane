@@ -37,6 +37,18 @@ x-app-env: &app-env
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
 
 services:
+
+  admin:
+    <<: *app-env
+    image: registry.plane.tools/plane/admin-enterprise:${APP_RELEASE_VERSION}
+    restart: unless-stopped
+    command:  node admin/server.js admin
+    deploy:
+      replicas: ${ADMIN_REPLICAS:-1}
+    depends_on:
+      - api
+      - web
+
   web:
     <<: *app-env
     image: registry.plane.tools/plane/web-enterprise:${APP_RELEASE_VERSION}
