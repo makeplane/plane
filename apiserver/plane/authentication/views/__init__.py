@@ -1,8 +1,6 @@
 from .common import (
     ChangePasswordEndpoint,
     CSRFTokenEndpoint,
-    ForgotPasswordEndpoint,
-    ResetPasswordEndpoint,
     SetUserPasswordEndpoint,
 )
 
@@ -50,3 +48,12 @@ from .space.magic import (
 from .space.signout import SignOutAuthSpaceEndpoint
 
 from .space.check import EmailCheckEndpoint
+
+from .space.password_management import (
+    ForgotPasswordSpaceEndpoint,
+    ResetPasswordSpaceEndpoint,
+)
+from .app.password_management import (
+    ForgotPasswordEndpoint,
+    ResetPasswordEndpoint,
+)

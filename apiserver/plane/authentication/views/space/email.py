@@ -37,7 +37,7 @@ class SignInAuthSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -59,7 +59,7 @@ class SignInAuthSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -78,7 +78,7 @@ class SignInAuthSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -93,7 +93,7 @@ class SignInAuthSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -107,7 +107,7 @@ class SignInAuthSpaceEndpoint(View):
             user_login(request=request, user=user)
             # redirect to next path
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 str(next_path) if next_path else "/",
             )
             return HttpResponseRedirect(url)
@@ -116,7 +116,7 @@ class SignInAuthSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -140,7 +140,7 @@ class SignUpAuthSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -161,7 +161,7 @@ class SignUpAuthSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -180,7 +180,7 @@ class SignUpAuthSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -195,7 +195,7 @@ class SignUpAuthSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -209,7 +209,7 @@ class SignUpAuthSpaceEndpoint(View):
             user_login(request=request, user=user)
             # redirect to referer path
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 str(next_path) if next_path else "spaces",
             )
             return HttpResponseRedirect(url)
@@ -218,7 +218,7 @@ class SignUpAuthSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
