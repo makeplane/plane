@@ -294,7 +294,7 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
 
 # Application Envs
 PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)  # For External
-
+SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 # Unsplash Access key
@@ -323,6 +323,9 @@ INSTANCE_KEY = os.environ.get(
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
+# MongoDB Settings
+MONGO_DB_URL = os.environ.get("MONGO_DB_URL", False)
 
 # Cookie Settings
 SESSION_COOKIE_SECURE = secure_origins
