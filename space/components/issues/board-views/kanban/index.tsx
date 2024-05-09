@@ -9,8 +9,8 @@ import { IssueKanBanHeader } from "@/components/issues/board-views/kanban/header
 import { Icon } from "@/components/ui";
 // interfaces
 // mobx hook
-import { useMobxStore } from "@/lib/mobx/store-provider";
-import { RootStore } from "@/store/root";
+import { useMobxStore } from "@/hooks/store";
+import { RootStore } from "@/store/root.store";
 import { IIssueState, IIssue } from "types/issue";
 
 export const IssueKanbanView = observer(() => {

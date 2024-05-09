@@ -8,7 +8,7 @@ import { PageLoader } from "@/components/pages";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useProjectPages } from "@/hooks/store";
+import { useCommandPalette, useProjectPages } from "@/hooks/store";
 // assets
 import AllFiltersImage from "public/empty-state/pages/all-filters.svg";
 import NameFilterImage from "public/empty-state/pages/name-filter.svg";
@@ -23,6 +23,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   const { children, pageType, projectId } = props;
   // store hooks
   const { loader, getCurrentProjectFilteredPageIds, getCurrentProjectPageIds, filters } = useProjectPages(projectId);
+  const { toggleCreatePageModal } = useCommandPalette();
   // derived values
   const pageIds = getCurrentProjectPageIds(pageType);
   const filteredPageIds = getCurrentProjectFilteredPageIds(pageType);
@@ -30,8 +31,24 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   if (loader === "init-loader") return <PageLoader />;
   // if no pages exist in the active page type
   if (pageIds?.length === 0) {
-    if (pageType === "public") return <EmptyState type={EmptyStateType.PROJECT_PAGE_PUBLIC} />;
-    if (pageType === "private") return <EmptyState type={EmptyStateType.PROJECT_PAGE_PRIVATE} />;
+    if (pageType === "public")
+      return (
+        <EmptyState
+          type={EmptyStateType.PROJECT_PAGE_PUBLIC}
+          primaryButtonOnClick={() => {
+            toggleCreatePageModal(true);
+          }}
+        />
+      );
+    if (pageType === "private")
+      return (
+        <EmptyState
+          type={EmptyStateType.PROJECT_PAGE_PRIVATE}
+          primaryButtonOnClick={() => {
+            toggleCreatePageModal(true);
+          }}
+        />
+      );
     if (pageType === "archived") return <EmptyState type={EmptyStateType.PROJECT_PAGE_ARCHIVED} />;
   }
   // if no pages match the filter criteria

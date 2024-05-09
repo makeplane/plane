@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { TGroupedIssues } from "@plane/types";
@@ -51,67 +50,59 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
 
-  const onDragEnd = async (result: DropResult) => {
-    if (!result) return;
+  const handleDragAndDrop = async (
+    issueId: string | undefined,
+    sourceDate: string | undefined,
+    destinationDate: string | undefined
+  ) => {
+    if (!issueId || !destinationDate || !sourceDate) return;
 
-    // return if not dropped on the correct place
-    if (!result.destination) return;
-
-    // return if dropped on the same date
-    if (result.destination.droppableId === result.source.droppableId) return;
-
-    if (handleDragDrop) {
-      await handleDragDrop(
-        result.source,
-        result.destination,
-        workspaceSlug?.toString(),
-        projectId?.toString(),
-        issueMap,
-        groupedIssueIds,
-        updateIssue
-      ).catch((err) => {
-        setToast({
-          title: "Error",
-          type: TOAST_TYPE.ERROR,
-          message: err?.detail ?? "Failed to perform this action",
-        });
+    await handleDragDrop(
+      issueId,
+      sourceDate,
+      destinationDate,
+      workspaceSlug?.toString(),
+      projectId?.toString(),
+      updateIssue
+    ).catch((err) => {
+      setToast({
+        title: "Error!",
+        type: TOAST_TYPE.ERROR,
+        message: err?.detail ?? "Failed to perform this action",
       });
-    }
+    });
   };
 
   return (
     <>
       <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <CalendarChart
-            issuesFilterStore={issuesFilter}
-            issues={issueMap}
-            groupedIssueIds={groupedIssueIds}
-            layout={displayFilters?.calendar?.layout}
-            showWeekends={displayFilters?.calendar?.show_weekends ?? false}
-            quickActions={({ issue, parentRef, customActionButton, placement }) => (
-              <QuickActions
-                parentRef={parentRef}
-                customActionButton={customActionButton}
-                issue={issue}
-                handleDelete={async () => removeIssue(issue.project_id, issue.id)}
-                handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
-                handleRemoveFromView={async () =>
-                  removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)
-                }
-                handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
-                handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-                readOnly={!isEditingAllowed || isCompletedCycle}
-                placements={placement}
-              />
-            )}
-            addIssuesToView={addIssuesToView}
-            quickAddCallback={issues.quickAddIssue}
-            viewId={viewId}
-            readOnly={!isEditingAllowed || isCompletedCycle}
-            updateFilters={updateFilters}
-          />
-        </DragDropContext>
+        <CalendarChart
+          issuesFilterStore={issuesFilter}
+          issues={issueMap}
+          groupedIssueIds={groupedIssueIds}
+          layout={displayFilters?.calendar?.layout}
+          showWeekends={displayFilters?.calendar?.show_weekends ?? false}
+          quickActions={({ issue, parentRef, customActionButton, placement }) => (
+            <QuickActions
+              parentRef={parentRef}
+              customActionButton={customActionButton}
+              issue={issue}
+              handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+              handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+              handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
+              handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+              handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
+              readOnly={!isEditingAllowed || isCompletedCycle}
+              placements={placement}
+            />
+          )}
+          addIssuesToView={addIssuesToView}
+          quickAddCallback={issues.quickAddIssue}
+          viewId={viewId}
+          readOnly={!isEditingAllowed || isCompletedCycle}
+          updateFilters={updateFilters}
+          handleDragAndDrop={handleDragAndDrop}
+        />
       </div>
     </>
   );

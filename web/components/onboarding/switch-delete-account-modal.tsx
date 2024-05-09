@@ -5,7 +5,7 @@ import { mutate } from "swr";
 import { Trash2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { useUser } from "@/hooks/store";
 // ui
 
@@ -22,9 +22,9 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
   // router
   const router = useRouter();
   // store hooks
-  const { deactivateAccount, signOut } = useUser();
+  const { signOut, deactivateAccount } = useUser();
 
-  const { resolvedTheme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
 
   const handleClose = () => {
     setSwitchingAccount(false);
@@ -37,7 +37,6 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
 
     await signOut()
       .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");
         router.push("/");
         handleClose();
@@ -67,7 +66,7 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
         router.push("/");
         handleClose();
       })
-      .catch((err) =>
+      .catch((err: any) =>
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -103,17 +102,11 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel
-                className={`relative transform overflow-hidden rounded-lg bg-onboarding-background-200 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem]`}
-              >
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem]">
                 <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div>
                     <div className="flex items-center gap-x-4">
-                      <div
-                        className={`grid place-items-center rounded-full ${
-                          resolvedTheme === "dark" ? "bg-[#2F3135]" : "bg-red-500/20"
-                        } p-4`}
-                      >
+                      <div className="grid place-items-center rounded-full bg-red-500/20 p-4">
                         <Trash2 className="h-6 w-6 text-red-600" aria-hidden="true" />
                       </div>
                       <Dialog.Title as="h3" className="text-2xl font-medium leading-6 text-onboarding-text-100">
@@ -130,22 +123,12 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
                   </div>
                 </div>
                 <div className="mb-2 flex items-center justify-end gap-3 p-4 sm:px-6">
-                  <button
-                    onClick={handleSwitchAccount}
-                    disabled={switchingAccount}
-                    className={`${resolvedTheme === "dark" ? "bg-[#2F3135]" : ""} rounded-sm px-4 py-1.5 text-sm`}
-                  >
+                  <Button variant="neutral-primary" onClick={handleSwitchAccount} disabled={switchingAccount}>
                     {switchingAccount ? "Switching..." : "Switch account"}
-                  </button>
-                  <button
-                    disabled={isDeactivating}
-                    onClick={handleDeactivateAccount}
-                    className={`${
-                      resolvedTheme === "dark" ? "bg-[#2F3135]" : ""
-                    } rounded-sm border border-red-500 px-4 py-1.5 text-sm text-red-500`}
-                  >
+                  </Button>
+                  <Button variant="outline-danger" onClick={handleDeactivateAccount} loading={isDeactivating}>
                     {isDeactivating ? "Deleting..." : "Delete account"}
-                  </button>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

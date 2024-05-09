@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Crown } from "lucide-react";
@@ -14,12 +14,12 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useApplication, useEventTracker, useUser } from "@/hooks/store";
+import { useAppTheme, useEventTracker, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const WorkspaceSidebarMenu = observer(() => {
   // store hooks
-  const { theme: themeStore } = useApplication();
+  const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
   const {
@@ -33,7 +33,7 @@ export const WorkspaceSidebarMenu = observer(() => {
 
   const handleLinkClick = (itemKey: string) => {
     if (window.innerWidth < 768) {
-      themeStore.toggleSidebar();
+      toggleSidebar();
     }
     captureEvent(SIDEBAR_CLICKED, {
       destination: itemKey,
@@ -51,7 +51,7 @@ export const WorkspaceSidebarMenu = observer(() => {
                   tooltipContent={link.label}
                   position="right"
                   className="ml-2"
-                  disabled={!themeStore?.sidebarCollapsed}
+                  disabled={!sidebarCollapsed}
                   isMobile={isMobile}
                 >
                   <div
@@ -59,7 +59,7 @@ export const WorkspaceSidebarMenu = observer(() => {
                       link.highlight(router.asPath, `/${workspaceSlug}`)
                         ? "bg-custom-primary-100/10 text-custom-primary-100"
                         : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
-                    } ${themeStore?.sidebarCollapsed ? "justify-center" : ""}`}
+                    } ${sidebarCollapsed ? "justify-center" : ""}`}
                   >
                     {
                       <link.Icon
@@ -68,8 +68,8 @@ export const WorkspaceSidebarMenu = observer(() => {
                         })}
                       />
                     }
-                    {!themeStore?.sidebarCollapsed && <p className="leading-5">{link.label}</p>}
-                    {!themeStore?.sidebarCollapsed && link.key === "active-cycles" && (
+                    {!sidebarCollapsed && <p className="leading-5">{link.label}</p>}
+                    {!sidebarCollapsed && link.key === "active-cycles" && (
                       <Crown className="h-3.5 w-3.5 text-amber-400" />
                     )}
                   </div>

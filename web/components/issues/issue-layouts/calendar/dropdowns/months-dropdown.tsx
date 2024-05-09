@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";

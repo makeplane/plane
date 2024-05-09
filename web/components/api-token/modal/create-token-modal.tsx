@@ -76,7 +76,7 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error",
+          title: "Error!",
           message: err.message,
         });
 

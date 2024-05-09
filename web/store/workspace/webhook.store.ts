@@ -1,8 +1,8 @@
 // mobx
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { WebhookService } from "@/services/webhook.service";
 import { IWebhook } from "@plane/types";
+import { WebhookService } from "@/services/webhook.service";
 import { RootStore } from "../root.store";
 
 export interface IWebhookStore {
@@ -69,7 +69,7 @@ export class WebhookStore implements IWebhookStore {
    * computed value of current webhook based on webhook id saved in the query store
    */
   get currentWebhook() {
-    const webhookId = this.rootStore.app.router.webhookId;
+    const webhookId = this.rootStore.router.webhookId;
     if (!webhookId) return null;
     const currentWebhook = this.webhooks?.[webhookId] ?? null;
     return currentWebhook;

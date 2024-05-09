@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { Pencil, X } from "lucide-react";
 // hooks
@@ -66,7 +66,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
+        title: "Error!",
         message: "Something went wrong",
       });
     }

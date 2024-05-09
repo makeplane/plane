@@ -1,5 +1,5 @@
 import { useEffect, useState, FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -75,7 +75,7 @@ export const WorkspaceDetails: FC = observer(() => {
           },
         });
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "Workspace updated successfully",
         });

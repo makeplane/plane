@@ -1,16 +1,16 @@
 import { Command } from "cmdk";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
 import { TIssue } from "@plane/types";
 // hooks
 import { DoubleCircleIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
 import { EIssuesStoreType } from "@/constants/issue";
-import { copyTextToClipboard } from "@/helpers/string.helper";
-import { useApplication, useUser, useIssues } from "@/hooks/store";
-// ui
 // helpers
-// types
+import { copyTextToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useCommandPalette, useIssues, useUser } from "@/hooks/store";
 
 type Props = {
   closePalette: () => void;
@@ -23,17 +23,15 @@ type Props = {
 
 export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const { closePalette, issueDetails, pages, setPages, setPlaceholder, setSearchTerm } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // hooks
   const {
     issues: { updateIssue },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const {
-    commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
-  } = useApplication();
-  const { currentUser } = useUser();
+  const { toggleCommandPaletteModal, toggleDeleteIssueModal } = useCommandPalette();
+  const { data: currentUser } = useUser();
 
   const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issueDetails) return;

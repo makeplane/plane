@@ -59,7 +59,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
   const {
     getUserDetails,

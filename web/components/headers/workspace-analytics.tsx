@@ -7,28 +7,28 @@ import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { cn } from "@/helpers/common.helper";
-import { useApplication } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store";
 
 export const WorkspaceAnalyticsHeader = observer(() => {
   const router = useRouter();
   const { analytics_tab } = router.query;
-
-  const { theme: themeStore } = useApplication();
+  // store hooks
+  const { workspaceAnalyticsSidebarCollapsed, toggleWorkspaceAnalyticsSidebar } = useAppTheme();
 
   useEffect(() => {
     const handleToggleWorkspaceAnalyticsSidebar = () => {
       if (window && window.innerWidth < 768) {
-        themeStore.toggleWorkspaceAnalyticsSidebar(true);
+        toggleWorkspaceAnalyticsSidebar(true);
       }
-      if (window && themeStore.workspaceAnalyticsSidebarCollapsed && window.innerWidth >= 768) {
-        themeStore.toggleWorkspaceAnalyticsSidebar(false);
+      if (window && workspaceAnalyticsSidebarCollapsed && window.innerWidth >= 768) {
+        toggleWorkspaceAnalyticsSidebar(false);
       }
     };
 
     window.addEventListener("resize", handleToggleWorkspaceAnalyticsSidebar);
     handleToggleWorkspaceAnalyticsSidebar();
     return () => window.removeEventListener("resize", handleToggleWorkspaceAnalyticsSidebar);
-  }, [themeStore]);
+  }, [toggleWorkspaceAnalyticsSidebar, workspaceAnalyticsSidebarCollapsed]);
 
   return (
     <>
@@ -36,7 +36,7 @@ export const WorkspaceAnalyticsHeader = observer(() => {
         className={`relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4`}
       >
         <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-          <div className="flex items-center justify-between w-full">
+          <div className="flex w-full items-center justify-between">
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
@@ -49,13 +49,13 @@ export const WorkspaceAnalyticsHeader = observer(() => {
               <button
                 className="block md:hidden"
                 onClick={() => {
-                  themeStore.toggleWorkspaceAnalyticsSidebar();
+                  toggleWorkspaceAnalyticsSidebar();
                 }}
               >
                 <PanelRight
                   className={cn(
-                    "w-4 h-4 block md:hidden",
-                    !themeStore.workspaceAnalyticsSidebarCollapsed ? "text-custom-primary-100" : "text-custom-text-200"
+                    "block h-4 w-4 md:hidden",
+                    !workspaceAnalyticsSidebarCollapsed ? "text-custom-primary-100" : "text-custom-text-200"
                   )}
                 />
               </button>

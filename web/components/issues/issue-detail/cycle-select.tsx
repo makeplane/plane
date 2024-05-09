@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 // components
 import { CycleDropdown } from "@/components/dropdowns";
@@ -34,7 +34,7 @@ export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) =>
   const handleIssueCycleChange = async (cycleId: string | null) => {
     if (!issue || issue.cycle_id === cycleId) return;
     setIsUpdating(true);
-    if (cycleId) await issueOperations.addIssueToCycle?.(workspaceSlug, projectId, cycleId, [issueId]);
+    if (cycleId) await issueOperations.addCycleToIssue?.(workspaceSlug, projectId, cycleId, issueId);
     else await issueOperations.removeIssueFromCycle?.(workspaceSlug, projectId, issue.cycle_id ?? "", issueId);
     setIsUpdating(false);
   };

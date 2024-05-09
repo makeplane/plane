@@ -59,7 +59,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
     this.rootStore = _rootStore;
     // initialize display filters of the current project
     reaction(
-      () => this.rootStore.app.router.projectId,
+      () => this.rootStore.router.projectId,
       (projectId) => {
         if (!projectId) return;
         this.initProjectModuleFilters(projectId);
@@ -72,7 +72,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
    * @description get display filters of the current project
    */
   get currentProjectDisplayFilters() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId) return;
     return this.displayFilters[projectId];
   }
@@ -81,7 +81,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
    * @description get filters of the current project
    */
   get currentProjectFilters() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId) return;
     return this.filters[projectId]?.default ?? {};
   }
@@ -90,7 +90,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
    * @description get archived filters of the current project
    */
   get currentProjectArchivedFilters() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId) return;
     return this.filters[projectId].archived;
   }
@@ -177,6 +177,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
   clearAllFilters = (projectId: string, state: keyof TModuleFiltersByState = "default") => {
     runInAction(() => {
       this.filters[projectId][state] = {};
+      this.displayFilters[projectId].favorites = false;
     });
   };
 }

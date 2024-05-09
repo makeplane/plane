@@ -11,8 +11,8 @@ import { IssueSpreadsheetView } from "@/components/issues/board-views/spreadshee
 import { IssueAppliedFilters } from "@/components/issues/filters/applied-filters/root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // mobx store
-import { useMobxStore } from "@/lib/mobx/store-provider";
-import { RootStore } from "@/store/root";
+import { useMobxStore, useUser } from "@/hooks/store";
+import { RootStore } from "@/store/root.store";
 // assets
 import SomethingWentWrongImage from "public/something-went-wrong.svg";
 
@@ -20,18 +20,14 @@ export const ProjectDetailsView = observer(() => {
   const router = useRouter();
   const { workspace_slug, project_slug, states, labels, priorities, peekId } = router.query;
 
-  const {
-    issue: issueStore,
-    project: projectStore,
-    issueDetails: issueDetailStore,
-    user: userStore,
-  }: RootStore = useMobxStore();
+  const { issue: issueStore, project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
+  const { data: currentUser, fetchCurrentUser } = useUser();
 
   useEffect(() => {
-    if (!userStore.currentUser) {
-      userStore.fetchCurrentUser();
+    if (!currentUser) {
+      fetchCurrentUser();
     }
-  }, [userStore]);
+  }, [currentUser, fetchCurrentUser]);
 
   useEffect(() => {
     if (workspace_slug && project_slug) {

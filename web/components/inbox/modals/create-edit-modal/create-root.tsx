@@ -94,7 +94,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${TOAST_TYPE.SUCCESS}!`,
+          title: `Success!`,
           message: "Issue created successfully.",
         });
       })
@@ -111,7 +111,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
         });
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: `${TOAST_TYPE.ERROR}!`,
+          title: `Error!`,
           message: "Some error occurred. Please try again.",
         });
       });

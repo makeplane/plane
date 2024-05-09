@@ -1,32 +1,34 @@
 import { useCallback, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// icons
 import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-// hooks
+// ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
+// components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 import { ProjectLogo } from "@/components/project";
+// constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+// hooks
 import {
-  useApplication,
   useEventTracker,
   useLabel,
   useProject,
   useProjectState,
   useUser,
   useMember,
+  useCommandPalette,
 } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
-// components
-// ui
-// types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// constants
-// helper
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
   // states
@@ -41,9 +43,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
@@ -108,6 +108,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
       ? currentProjectDetails?.total_issues - currentProjectDetails?.sub_issues
       : currentProjectDetails?.total_issues
     : undefined;
+
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <>
@@ -180,7 +182,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
             onChange={(layout) => handleLayoutChange(layout)}
             selectedLayout={activeLayout}
           />
-          <FiltersDropdown title="Filters" placement="bottom-end">
+          <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
             <FilterSelection
               filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}

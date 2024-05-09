@@ -10,7 +10,19 @@ services:
     command: /usr/local/bin/start.sh web/server.js web
     depends_on:
       - api
-      - worker
+
+  admin:
+    container_name: admin
+    build:
+      context: .
+      dockerfile: ./admin/Dockerfile.admin
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: node admin/server.js admin
+    depends_on:
+      - api
+      - web
 
   space:
     container_name: space
@@ -23,7 +35,6 @@ services:
     command: /usr/local/bin/start.sh space/server.js space
     depends_on:
       - api
-      - worker
       - web
 
   api:
@@ -73,6 +84,23 @@ services:
       - plane-db
       - plane-redis
 
+  migrator:
+    container_name: plane-migrator
+    build:
+      context: ./apiserver
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: no
+    command: >
+      sh -c "python manage.py wait_for_db &&
+           python manage.py migrate"
+    env_file:
+      - ./apiserver/.env
+    depends_on:
+      - plane-db
+      - plane-redis
+
   plane-db:
     container_name: plane-db
     image: postgres:15.2-alpine
@@ -83,9 +111,9 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${PGUSER}
-      POSTGRES_DB: ${PGDATABASE}
-      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data
 
   plane-redis:
@@ -106,6 +134,7 @@ services:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
 
+
   # Comment this if you already have a reverse proxy running
   proxy:
     container_name: proxy
@@ -122,6 +151,7 @@ services:
       - web
       - api
       - space
+      - admin
 
 volumes:
   pgdata:

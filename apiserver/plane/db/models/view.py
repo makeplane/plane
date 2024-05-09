@@ -1,9 +1,11 @@
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 # Module import
-from . import ProjectBaseModel, BaseModel, WorkspaceBaseModel
+from .base import BaseModel
+from .project import ProjectBaseModel
+from .workspace import WorkspaceBaseModel
 
 
 def get_default_filters():
@@ -62,6 +64,7 @@ class GlobalView(BaseModel):
     )
     query_data = models.JSONField(default=dict)
     sort_order = models.FloatField(default=65535)
+    logo_props = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Global View"
@@ -84,6 +87,7 @@ class GlobalView(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
 
+# DEPRECATED TODO: - Remove in next release
 class IssueView(WorkspaceBaseModel):
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)

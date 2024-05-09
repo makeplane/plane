@@ -34,7 +34,7 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
 
   // derived values
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  // @ts-expect-error key types are not compatible
+
   const totalFilters = calculateTotalFilters(view.filters ?? {});
 
   // handlers

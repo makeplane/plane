@@ -1,14 +1,13 @@
 import React from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// ui
 import { Tooltip } from "@plane/ui";
+// ui
 import { ReactionSelector } from "@/components/ui";
 // helpers
 import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
-import { useMobxStore } from "@/lib/mobx/store-provider";
+// hooks
+import { useMobxStore, useUser } from "@/hooks/store";
 
 type Props = {
   commentId: string;
@@ -20,12 +19,11 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
 
   const router = useRouter();
   const { workspace_slug } = router.query;
-
-  const { issueDetails: issueDetailsStore, user: userStore } = useMobxStore();
+  // hooks
+  const { issueDetails: issueDetailsStore } = useMobxStore();
+  const { data: user } = useUser();
 
   const peekId = issueDetailsStore.peekId;
-  const user = userStore.currentUser;
-
   const commentReactions = peekId
     ? issueDetailsStore.details[peekId].comments.find((c) => c.id === commentId)?.comment_reactions
     : [];
@@ -64,13 +62,13 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
     else handleAddReaction(reactionHex);
   };
 
+  // TODO: on onclick redirect to login page if the user is not logged in
   return (
     <div className="mt-2 flex items-center gap-1.5">
       <ReactionSelector
         onSelect={(value) => {
-          userStore.requiredLogin(() => {
-            handleReactionClick(value);
-          });
+          if (user) handleReactionClick(value);
+          // userStore.requiredLogin(() => {});
         }}
         position="top"
         selected={userReactions?.map((r) => r.reaction)}
@@ -98,14 +96,11 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
               <button
                 type="button"
                 onClick={() => {
-                  userStore.requiredLogin(() => {
-                    handleReactionClick(reaction);
-                  });
+                  if (user) handleReactionClick(reaction);
+                  // userStore.requiredLogin(() => {});
                 }}
                 className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
-                  commentReactions?.some(
-                    (r) => r.actor_detail.id === userStore.currentUser?.id && r.reaction === reaction
-                  )
+                  commentReactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
                     ? "bg-custom-primary-100/10"
                     : "bg-custom-background-80"
                 }`}
@@ -113,9 +108,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
                 <span>{renderEmoji(reaction)}</span>
                 <span
                   className={
-                    commentReactions?.some(
-                      (r) => r.actor_detail.id === userStore.currentUser?.id && r.reaction === reaction
-                    )
+                    commentReactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
                       ? "text-custom-primary-100"
                       : ""
                   }
