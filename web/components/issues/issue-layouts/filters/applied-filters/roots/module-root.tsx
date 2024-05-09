@@ -76,7 +76,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId || Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <div className="flex items-center justify-between p-4 gap-2.5">
+    <div className="flex justify-between p-4 gap-2.5">
       <AppliedFiltersList
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}
