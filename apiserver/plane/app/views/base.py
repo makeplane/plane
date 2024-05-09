@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 # Module imports
+from plane.authentication.session import BaseSessionAuthentication
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 
@@ -48,6 +49,10 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
         DjangoFilterBackend,
         SearchFilter,
     )
+
+    authentication_classes = [
+        BaseSessionAuthentication,
+    ]
 
     filterset_fields = []
 
@@ -160,6 +165,10 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         DjangoFilterBackend,
         SearchFilter,
     )
+
+    authentication_classes = [
+        BaseSessionAuthentication,
+    ]
 
     filterset_fields = []
 

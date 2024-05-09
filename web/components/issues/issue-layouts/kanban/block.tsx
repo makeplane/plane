@@ -8,7 +8,8 @@ import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plan
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
+// hooks
+import { useAppRouter, useIssueDetail, useProject, useKanbanView } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
@@ -109,9 +110,8 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   } = props;
 
   const cardRef = useRef<HTMLAnchorElement | null>(null);
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  // hooks
+  const { workspaceSlug } = useAppRouter();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>

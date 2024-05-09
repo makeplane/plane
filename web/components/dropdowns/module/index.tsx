@@ -73,7 +73,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
     return (
       <>
         {showCount ? (
-          <div className="relative flex items-center gap-1 max-w-full">
+          <div className="relative flex max-w-full items-center gap-1">
             {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
             {(value.length > 0 || !!placeholder) && (
               <div className="max-w-40 flex-grow truncate">

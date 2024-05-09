@@ -125,7 +125,7 @@ export class CycleStore implements ICycleStore {
    * returns all cycle ids for a project
    */
   get currentProjectCycleIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let allCycles = Object.values(this.cycleMap ?? {}).filter((c) => c?.project_id === projectId && !c?.archived_at);
     allCycles = sortBy(allCycles, [(c) => c.sort_order]);
@@ -137,7 +137,7 @@ export class CycleStore implements ICycleStore {
    * returns all completed cycle ids for a project
    */
   get currentProjectCompletedCycleIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let completedCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const endDate = getDate(c.end_date);
@@ -154,7 +154,7 @@ export class CycleStore implements ICycleStore {
    * returns all upcoming cycle ids for a project
    */
   get currentProjectUpcomingCycleIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let upcomingCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const startDate = getDate(c.start_date);
@@ -170,7 +170,7 @@ export class CycleStore implements ICycleStore {
    * returns all incomplete cycle ids for a project
    */
   get currentProjectIncompleteCycleIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let incompleteCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const endDate = getDate(c.end_date);
@@ -186,7 +186,7 @@ export class CycleStore implements ICycleStore {
    * returns all draft cycle ids for a project
    */
   get currentProjectDraftCycleIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let draftCycles = Object.values(this.cycleMap ?? {}).filter(
       (c) => c.project_id === projectId && !c.start_date && !c.end_date && !c?.archived_at
@@ -200,7 +200,7 @@ export class CycleStore implements ICycleStore {
    * returns active cycle id for a project
    */
   get currentProjectActiveCycleId() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId) return null;
     const activeCycle = Object.keys(this.activeCycleIdMap ?? {}).find(
       (cycleId) => this.cycleMap?.[cycleId]?.project_id === projectId
@@ -212,7 +212,7 @@ export class CycleStore implements ICycleStore {
    * returns all archived cycle ids for a project
    */
   get currentProjectArchivedCycleIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let archivedCycles = Object.values(this.cycleMap ?? {}).filter(
       (c) => c.project_id === projectId && !!c.archived_at

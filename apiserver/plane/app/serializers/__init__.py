@@ -7,6 +7,8 @@ from .user import (
     UserAdminLiteSerializer,
     UserMeSerializer,
     UserMeSettingsSerializer,
+    ProfileSerializer,
+    AccountSerializer,
 )
 from .workspace import (
     WorkSpaceSerializer,

@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
+// icons
 import { History, MessageSquare } from "lucide-react";
 import { IUserActivityResponse } from "@plane/types";
 // hooks
@@ -11,8 +12,8 @@ import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/ric
 import { ActivitySettingsLoader } from "@/components/ui";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
+// hooks
 import { useUser } from "@/hooks/store";
-// types
 
 type Props = {
   activity: IUserActivityResponse | undefined;
@@ -21,7 +22,7 @@ type Props = {
 export const ActivityList: React.FC<Props> = observer((props) => {
   const { activity } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
 
   // TODO: refactor this component
   return (
@@ -45,7 +46,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                           className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white"
                         />
                       ) : (
-                        <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white capitalize">
+                        <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 capitalize text-white">
                           {activityItem.actor_detail.display_name?.[0]}
                         </div>
                       )}
@@ -118,7 +119,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                                     className="h-full w-full rounded-full object-cover"
                                   />
                                 ) : (
-                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white capitalize">
+                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs capitalize text-white">
                                     {activityItem.actor_detail.display_name?.[0]}
                                   </div>
                                 )}

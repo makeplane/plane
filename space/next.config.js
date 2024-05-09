@@ -4,6 +4,7 @@ require("dotenv").config({ path: ".env" });
 const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
+  trailingSlash: true,
   async headers() {
     return [
       {
@@ -12,7 +13,7 @@ const nextConfig = {
       },
     ];
   },
-  basePath: process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX === "1" ? "/spaces" : "",
+  basePath: "/spaces",
   reactStrictMode: false,
   swcMinify: true,
   images: {
@@ -28,7 +29,8 @@ const nextConfig = {
 };
 
 if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0", 10)) {
-  module.exports = withSentryConfig(nextConfig,
+  module.exports = withSentryConfig(
+    nextConfig,
     { silent: true, authToken: process.env.SENTRY_AUTH_TOKEN },
     { hideSourceMaps: true }
   );

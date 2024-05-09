@@ -10,6 +10,7 @@ module.exports = {
       "./constants/**/*.{js,ts,jsx,tsx}",
       "./layouts/**/*.tsx",
       "./pages/**/*.tsx",
+      "./app/**/*.tsx",
       "./ui/**/*.tsx",
       "../packages/ui/**/*.{js,ts,jsx,tsx}",
       "../packages/editor/**/src/**/*.{js,ts,jsx,tsx}",

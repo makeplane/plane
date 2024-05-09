@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 
 // constants
 import { DAYS_LIST } from "@/constants/calendar";

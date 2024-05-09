@@ -7,7 +7,7 @@ import { TIssue } from "@plane/types";
 import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useAppRouter, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
 // types
@@ -29,9 +29,7 @@ export const CalendarIssueBlock = observer(
     const blockRef = useRef(null);
     const menuActionRef = useRef<HTMLDivElement | null>(null);
     // hooks
-    const {
-      router: { workspaceSlug, projectId },
-    } = useApplication();
+    const { workspaceSlug, projectId } = useAppRouter();
     const { getProjectIdentifierById } = useProject();
     const { getProjectStates } = useProjectState();
     const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();

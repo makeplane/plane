@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 // services
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 
+import { API_BASE_URL } from "@/helpers/common.helper";
 import DefaultLayout from "@/layouts/default-layout";
 import { AuthService } from "@/services/auth.service";
 // layouts
@@ -18,7 +19,7 @@ const CustomErrorComponent = () => {
 
   const handleSignOut = async () => {
     await authService
-      .signOut()
+      .signOut(API_BASE_URL)
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,

@@ -11,7 +11,7 @@ declare global {
 
 export interface ICrispWrapper {
   children: ReactNode;
-  user: IUser | null;
+  user: IUser | undefined;
 }
 
 const CrispWrapper: FC<ICrispWrapper> = (props) => {

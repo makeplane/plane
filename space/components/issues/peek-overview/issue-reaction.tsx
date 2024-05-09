@@ -1,5 +1,5 @@
 import { IssueEmojiReactions, IssueVotes } from "@/components/issues/peek-overview";
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import { useMobxStore } from "@/hooks/store";
 
 export const IssueReactions: React.FC = () => {
   const { project: projectStore } = useMobxStore();

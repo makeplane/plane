@@ -42,7 +42,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     ...rest
   } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const {
     getUserDetails,
     project: { getProjectMemberIds },

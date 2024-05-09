@@ -25,8 +25,15 @@ http {
         }
 
         location /spaces/ {
-            rewrite ^/spaces/?$ /spaces/login break;
             proxy_pass http://space:3000/spaces/;
+        }
+        
+        location /god-mode/ {
+            proxy_pass http://admin:3000/god-mode/;
+        }
+
+        location /auth/ {
+            proxy_pass http://api:8000/auth/;
         }
 
         location /${BUCKET_NAME}/ {

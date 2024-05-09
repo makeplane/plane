@@ -1,6 +1,6 @@
 import { useContext } from "react";
 // mobx store
-import { StoreContext } from "contexts/store-context";
+import { StoreContext } from "@/lib/store-context";
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
 export const useInboxIssues = (inboxIssueId: string): IInboxIssueStore => {

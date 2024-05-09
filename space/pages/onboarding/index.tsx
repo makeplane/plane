@@ -1,45 +1,131 @@
-import React, { useEffect } from "react";
-// mobx
+import React from "react";
 import { observer } from "mobx-react-lite";
-import { OnBoardingForm } from "@/components/accounts/onboarding-form";
-import { useMobxStore } from "@/lib/mobx/store-provider";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
+// ui
+import { Avatar } from "@plane/ui";
 // components
+import { OnBoardingForm } from "@/components/accounts/onboarding-form";
+// helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
+// hooks
+import { useUser, useUserProfile } from "@/hooks/store";
+// wrappers
+import { AuthWrapper } from "@/lib/wrappers";
+// assets
+import ProfileSetupDark from "public/onboarding/profile-setup-dark.svg";
+import ProfileSetup from "public/onboarding/profile-setup.svg";
 
 const imagePrefix = Boolean(parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0")) ? "/spaces" : "";
 
-const OnBoardingPage = () => {
-  const { user: userStore } = useMobxStore();
+const OnBoardingPage = observer(() => {
+  // router
+  const router = useRouter();
+  const { next_path } = router.query;
 
-  const user = userStore?.currentUser;
+  // hooks
+  const { resolvedTheme } = useTheme();
 
-  useEffect(() => {
-    const user = userStore?.currentUser;
+  const { data: user } = useUser();
+  const { data: currentUserProfile, updateUserProfile } = useUserProfile();
 
-    if (!user) {
-      userStore.fetchCurrentUser();
-    }
-  }, [userStore]);
+  if (!user) {
+    router.push("/");
+    return <></>;
+  }
+
+  // complete onboarding
+  const finishOnboarding = async () => {
+    if (!user) return;
+
+    await updateUserProfile({
+      onboarding_step: {
+        ...currentUserProfile?.onboarding_step,
+        profile_complete: true,
+      },
+    }).catch(() => {
+      console.log("Failed to update onboarding status");
+    });
+
+    if (next_path) router.replace(next_path.toString());
+    router.replace("/");
+  };
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-custom-background-100">
-      <div className="flex h-full w-full flex-col gap-y-2 overflow-hidden sm:flex-row sm:gap-y-0">
-        <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
-          <div className="absolute left-0 top-1/2 z-10 h-[0.5px] w-full -translate-y-1/2 border-b-[0.5px] border-custom-border-200 sm:left-1/2 sm:top-0 sm:h-screen sm:w-[0.5px] sm:-translate-x-1/2 sm:translate-y-0 sm:border-r-[0.5px] md:left-1/3" />
-          <div className="absolute left-2 top-1/2 z-10 grid -translate-y-1/2 place-items-center bg-custom-background-100 px-3 py-5 sm:left-1/2 sm:top-12 sm:-translate-x-1/2 sm:translate-y-0 sm:px-0 md:left-1/3">
-            <div className="h-[30px] w-[30px]">
-              <img src={`${imagePrefix}/plane-logos/blue-without-text.png`} alt="Plane logo" />
+    <AuthWrapper pageType={EPageTypes.ONBOARDING}>
+      <div className="flex h-full w-full">
+        <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
+          <div className="flex items-center justify-between">
+            <div className="flex w-full items-center justify-between font-semibold ">
+              <div className="flex items-center gap-x-2">
+                <Image
+                  src={`${imagePrefix}/plane-logos/blue-without-text.png`}
+                  height={30}
+                  width={30}
+                  alt="Plane Logo"
+                />
+              </div>
+            </div>
+            <div className="shrink-0 lg:hidden">
+              <div className="flex w-full shrink-0 justify-end">
+                <div className="flex items-center gap-x-2 pr-4">
+                  {user?.avatar && (
+                    <Avatar
+                      name={user?.first_name ? `${user?.first_name} ${user?.last_name ?? ""}` : user?.email}
+                      src={user?.avatar}
+                      size={24}
+                      shape="square"
+                      fallbackBackgroundColor="#FCBE1D"
+                      className="!text-base capitalize"
+                    />
+                  )}
+                  <span className="text-sm font-medium text-custom-text-200">
+                    {user?.first_name ? `${user?.first_name} ${user?.last_name ?? ""}` : user?.email}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm font-medium text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
-            {user?.email}
+          <div className="flex flex-col w-full items-center justify-center p-8 mt-14">
+            <div className="text-center space-y-1 py-4 mx-auto">
+              <h3 className="text-3xl font-bold text-onboarding-text-100">Welcome to Plane!</h3>
+              <p className="font-medium text-onboarding-text-400">
+                Let’s setup your profile, tell us a bit about yourself.
+              </p>
+            </div>
+            <OnBoardingForm user={user} finishOnboarding={finishOnboarding} />
           </div>
         </div>
-        <div className="relative flex h-full justify-center overflow-hidden px-8 pb-0 sm:w-10/12 sm:items-center sm:px-0 sm:py-12 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
-          <OnBoardingForm user={user} />
+        <div className="hidden lg:block relative w-2/5 h-screen overflow-hidden px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
+          <div className="flex w-full shrink-0 justify-end">
+            <div className="flex items-center gap-x-2 pr-4 z-10">
+              {user?.avatar && (
+                <Avatar
+                  name={user?.first_name ? `${user?.first_name} ${user?.last_name ?? ""}` : user?.email}
+                  src={user?.avatar}
+                  size={24}
+                  shape="square"
+                  fallbackBackgroundColor="#FCBE1D"
+                  className="!text-base capitalize"
+                />
+              )}
+              <span className="text-sm font-medium text-custom-text-200">
+                {user?.first_name ? `${user?.first_name} ${user?.last_name ?? ""}` : user?.email}
+              </span>
+            </div>
+          </div>
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={resolvedTheme === "dark" ? ProfileSetupDark : ProfileSetup}
+              className="h-screen w-auto float-end object-cover"
+              alt="Profile setup"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </AuthWrapper>
   );
-};
+});
 
-export default observer(OnBoardingPage);
+export default OnBoardingPage;

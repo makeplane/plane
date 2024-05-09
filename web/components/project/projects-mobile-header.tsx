@@ -10,7 +10,7 @@ import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/pr
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useApplication, useMember, useProjectFilter } from "@/hooks/store";
+import { useAppRouter, useMember, useProjectFilter } from "@/hooks/store";
 
 const ProjectsMobileHeader = observer(() => {
   const {
@@ -20,9 +20,7 @@ const ProjectsMobileHeader = observer(() => {
     updateFilters,
   } = useProjectFilter();
 
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
 
   const {
     workspace: { workspaceMemberIds },

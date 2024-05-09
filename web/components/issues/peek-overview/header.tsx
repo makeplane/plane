@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { MoveRight, MoveDiagonal, Link2, Trash2, ArchiveRestoreIcon } from "lucide-react";
+import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
 // ui
 import {
   ArchiveIcon,
@@ -9,8 +9,8 @@ import {
   CustomSelect,
   FullScreenPanelIcon,
   SidePanelIcon,
-  Tooltip,
   TOAST_TYPE,
+  Tooltip,
   setToast,
 } from "@plane/ui";
 // components
@@ -23,7 +23,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [
@@ -75,7 +74,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     isSubmitting,
   } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
   } = useIssueDetail();

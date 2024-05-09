@@ -1,5 +1,5 @@
 import { FC, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // ui
 import { Spinner } from "@plane/ui";
 // components
@@ -41,7 +41,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const {
     setPeekIssue,
     isAnyModalOpen,

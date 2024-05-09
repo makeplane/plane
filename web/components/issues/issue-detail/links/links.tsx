@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // computed
 import { useIssueDetail, useUser } from "@/hooks/store";
 import { IssueLinkDetail } from "./link-detail";

@@ -1,28 +1,27 @@
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-// hooks
+// icons
 import { RefreshCw } from "lucide-react";
+// types
 import { IImporterService } from "@plane/types";
+// ui
 import { Button } from "@plane/ui";
+// components
 import { EmptyState } from "@/components/empty-state";
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
 import { ImportExportSettingsLoader } from "@/components/ui";
+// constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 import { IMPORTERS_LIST } from "@/constants/workspace";
+// hooks
 import { useUser } from "@/hooks/store";
-import useUserAuth from "@/hooks/use-user-auth";
 // services
 import { IntegrationService } from "@/services/integrations";
-// components
-// ui
-// icons
-// types
-// constants
 
 // services
 const integrationService = new IntegrationService();
@@ -36,9 +35,7 @@ const IntegrationGuide = observer(() => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
   // store hooks
-  const { currentUser, currentUserLoader } = useUser();
-  // custom hooks
-  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
+  const { data: currentUser } = useUser();
 
   const { data: importerServices } = useSWR(
     workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
@@ -56,7 +53,7 @@ const IntegrationGuide = observer(() => {
         isOpen={deleteImportModal}
         handleClose={() => setDeleteImportModal(false)}
         data={importToDelete}
-        user={currentUser}
+        user={currentUser || null}
       />
       <div className="h-full">
         {(!provider || provider === "csv") && (
@@ -136,7 +133,7 @@ const IntegrationGuide = observer(() => {
                       </div>
                     </div>
                   ) : (
-                    <div className="h-full w-full flex items-center justify-center">
+                    <div className="flex h-full w-full items-center justify-center">
                       <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" />
                     </div>
                   )
