@@ -17,7 +17,7 @@ import { AuthWrapper } from "@/lib/wrappers";
 import ProfileSetupDark from "public/onboarding/profile-setup-dark.svg";
 import ProfileSetup from "public/onboarding/profile-setup.svg";
 
-const imagePrefix = Boolean(parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0")) ? "/spaces" : "";
+const imagePrefix = process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "";
 
 const OnBoardingPage = observer(() => {
   // router
