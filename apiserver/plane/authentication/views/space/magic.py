@@ -48,7 +48,7 @@ class MagicGenerateSpaceEndpoint(APIView):
                 exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST
             )
 
-        origin = base_host(request=request)
+        origin = base_host(request=request, is_space=True)
         email = request.data.get("email", False)
         try:
             # Clean up the email
@@ -86,7 +86,7 @@ class MagicSignInSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -99,7 +99,7 @@ class MagicSignInSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -118,7 +118,7 @@ class MagicSignInSpaceEndpoint(View):
             else:
                 # Get the redirection path
                 path = str(next_path) if next_path else "spaces"
-            url = urljoin(base_host(request=request), path)
+            url = urljoin(base_host(request=request, is_space=True), path)
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
@@ -126,7 +126,7 @@ class MagicSignInSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -152,7 +152,7 @@ class MagicSignUpSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -166,7 +166,7 @@ class MagicSignUpSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -180,7 +180,7 @@ class MagicSignUpSpaceEndpoint(View):
             user_login(request=request, user=user)
             # redirect to referer path
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 str(next_path) if next_path else "spaces",
             )
             return HttpResponseRedirect(url)
@@ -190,7 +190,7 @@ class MagicSignUpSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "spaces/accounts/sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)

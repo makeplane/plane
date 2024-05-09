@@ -106,7 +106,7 @@ class InstanceAdminSignUpEndpoint(View):
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/setup?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -118,7 +118,7 @@ class InstanceAdminSignUpEndpoint(View):
                 error_message="ADMIN_ALREADY_EXIST",
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/setup?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -147,7 +147,7 @@ class InstanceAdminSignUpEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/setup?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -169,7 +169,7 @@ class InstanceAdminSignUpEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/setup?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -191,7 +191,7 @@ class InstanceAdminSignUpEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/setup?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -213,7 +213,7 @@ class InstanceAdminSignUpEndpoint(View):
                     },
                 )
                 url = urljoin(
-                    base_host(request=request),
+                    base_host(request=request, is_admin=True),
                     "god-mode/setup?" + urlencode(exc.get_error_dict()),
                 )
                 return HttpResponseRedirect(url)
@@ -248,7 +248,9 @@ class InstanceAdminSignUpEndpoint(View):
 
             # get tokens for user
             user_login(request=request, user=user)
-            url = urljoin(base_host(request=request), "god-mode/general")
+            url = urljoin(
+                base_host(request=request, is_admin=True), "god-mode/general"
+            )
             return HttpResponseRedirect(url)
 
 
@@ -269,7 +271,7 @@ class InstanceAdminSignInEndpoint(View):
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/login?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -290,7 +292,7 @@ class InstanceAdminSignInEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/login?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -308,7 +310,7 @@ class InstanceAdminSignInEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/login?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -328,7 +330,7 @@ class InstanceAdminSignInEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/login?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -345,7 +347,7 @@ class InstanceAdminSignInEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/login?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -362,7 +364,7 @@ class InstanceAdminSignInEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "god-mode/login?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -377,7 +379,9 @@ class InstanceAdminSignInEndpoint(View):
 
         # get tokens for user
         user_login(request=request, user=user)
-        url = urljoin(base_host(request=request), "god-mode/general")
+        url = urljoin(
+            base_host(request=request, is_admin=True), "god-mode/general"
+        )
         return HttpResponseRedirect(url)
 
 
@@ -411,11 +415,11 @@ class InstanceAdminSignOutEndpoint(View):
             # Log the user out
             logout(request)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_admin=True),
                 "accounts/sign-in?" + urlencode({"success": "true"}),
             )
             return HttpResponseRedirect(url)
         except Exception:
             return HttpResponseRedirect(
-                base_host(request=request), "accounts/sign-in"
+                base_host(request=request, is_admin=True), "accounts/sign-in"
             )
