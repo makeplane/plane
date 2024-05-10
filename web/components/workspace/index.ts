@@ -9,3 +9,6 @@ export * from "./sidebar-dropdown";
 export * from "./sidebar-menu";
 export * from "./sidebar-quick-action";
 export * from "./workspace-active-cycles-upgrade";
+
+// ee imports
+export * from "./workspace-active-cycles-list";

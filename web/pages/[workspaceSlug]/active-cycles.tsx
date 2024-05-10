@@ -3,13 +3,12 @@ import { observer } from "mobx-react";
 // components
 import { PageHead } from "@/components/core";
 import { WorkspaceActiveCycleHeader } from "@/components/headers";
-import { WorkspaceActiveCyclesUpgrade } from "@/components/workspace";
+import { WorkspaceActiveCyclesList } from "@/components/workspace";
 // layouts
 import { useWorkspace } from "@/hooks/store";
 import { AppLayout } from "@/layouts/app-layout";
 // types
 import { NextPageWithLayout } from "@/lib/types";
-// hooks
 
 const WorkspaceActiveCyclesPage: NextPageWithLayout = observer(() => {
   const { currentWorkspace } = useWorkspace();
@@ -19,7 +18,7 @@ const WorkspaceActiveCyclesPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <WorkspaceActiveCyclesUpgrade />
+      <WorkspaceActiveCyclesList />
     </>
   );
 });
