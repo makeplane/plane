@@ -2,7 +2,6 @@ import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { IEmailCheckData } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   AuthHeader,
@@ -43,6 +42,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
+  const [isPasswordAutoset, setIsPasswordAutoset] = useState(true);
   // hooks
   const { instance } = useInstance();
 
@@ -63,52 +63,57 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
           )
         )
           setAuthStep(EAuthSteps.UNIQUE_CODE);
-
-        // validating weather to show alert to banner
-        if (errorhandler?.type === EErrorAlertType.TOAST_ALERT) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: errorhandler?.title,
-            message: errorhandler?.message as string,
-          });
-        } else setErrorInfo(errorhandler);
+        setErrorInfo(errorhandler);
       }
     }
   }, [error_code, authMode]);
 
-  // step 1 submit handler- email verification
+  // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
-
     const emailCheckRequest =
       authMode === EAuthModes.SIGN_IN ? authService.signInEmailCheck(data) : authService.signUpEmailCheck(data);
 
     await emailCheckRequest
-      .then((response) => {
+      .then(async (response) => {
         if (authMode === EAuthModes.SIGN_IN) {
-          if (response.is_password_autoset) setAuthStep(EAuthSteps.UNIQUE_CODE);
-          else setAuthStep(EAuthSteps.PASSWORD);
+          if (response.is_password_autoset) {
+            setAuthStep(EAuthSteps.UNIQUE_CODE);
+            generateEmailUniqueCode(data.email);
+          } else {
+            setIsPasswordAutoset(false);
+            setAuthStep(EAuthSteps.PASSWORD);
+          }
         } else {
-          if (instance && instance?.config?.is_smtp_configured) setAuthStep(EAuthSteps.UNIQUE_CODE);
-          else setAuthStep(EAuthSteps.PASSWORD);
+          if (instance && instance?.config?.is_smtp_configured) {
+            setAuthStep(EAuthSteps.UNIQUE_CODE);
+            generateEmailUniqueCode(data.email);
+          } else setAuthStep(EAuthSteps.PASSWORD);
         }
       })
       .catch((error) => {
         const errorhandler = authErrorHandler(error?.error_code.toString(), data?.email || undefined);
-        if (errorhandler?.type === EErrorAlertType.BANNER_ALERT) {
-          setErrorInfo(errorhandler);
-          return;
-        } else if (errorhandler?.type === EErrorAlertType.TOAST_ALERT)
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: errorhandler?.title,
-            message: (errorhandler?.message as string) || "Something went wrong. Please try again.",
-          });
+        if (errorhandler?.type) setErrorInfo(errorhandler);
+      });
+  };
+
+  // generating the unique code
+  const generateEmailUniqueCode = async (email: string): Promise<{ code: string } | undefined> => {
+    const payload = { email: email };
+    return await authService
+      .generateUniqueCode(payload)
+      .then(() => ({ code: "" }))
+      .catch((error) => {
+        const errorhandler = authErrorHandler(error?.error_code.toString());
+        if (errorhandler?.type) setErrorInfo(errorhandler);
+        throw error;
       });
   };
 
   const isOAuthEnabled =
-    instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled);
+    (instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled)) || false;
+
+  const isSMTPConfigured = (instance?.config && instance?.config?.is_smtp_configured) || false;
 
   return (
     <div className="relative flex flex-col space-y-6">
@@ -125,24 +130,29 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
         {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
         {authStep === EAuthSteps.UNIQUE_CODE && (
           <AuthUniqueCodeForm
+            mode={authMode}
             email={email}
             handleEmailClear={() => {
               setEmail("");
               setAuthStep(EAuthSteps.EMAIL);
             }}
-            submitButtonText="Continue"
-            mode={authMode}
+            generateEmailUniqueCode={generateEmailUniqueCode}
           />
         )}
         {authStep === EAuthSteps.PASSWORD && (
           <AuthPasswordForm
+            mode={authMode}
+            isPasswordAutoset={isPasswordAutoset}
+            isSMTPConfigured={isSMTPConfigured}
             email={email}
             handleEmailClear={() => {
               setEmail("");
               setAuthStep(EAuthSteps.EMAIL);
             }}
-            handleStepChange={(step) => setAuthStep(step)}
-            mode={authMode}
+            handleAuthStep={(step: EAuthSteps) => {
+              if (step === EAuthSteps.UNIQUE_CODE) generateEmailUniqueCode(email);
+              setAuthStep(step);
+            }}
           />
         )}
         {isOAuthEnabled && <OAuthOptions />}

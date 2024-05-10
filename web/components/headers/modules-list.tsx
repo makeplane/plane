@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { Breadcrumbs, Button, DiceIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+import { ModuleViewHeader } from "@/components/modules";
 import { ProjectLogo } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
@@ -57,6 +58,7 @@ export const ModulesListHeader: React.FC = observer(() => {
         </div>
       </div>
       <div className="flex items-center gap-2">
+        <ModuleViewHeader />
         {canUserCreateModule && (
           <Button
             variant="primary"

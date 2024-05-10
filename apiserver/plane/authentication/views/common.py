@@ -70,7 +70,7 @@ class ChangePasswordEndpoint(APIView):
             user.set_password(serializer.data.get("new_password"))
             user.is_password_autoset = False
             user.save()
-            user_login(user=user, request=request)
+            user_login(user=user, request=request, is_app=True)
             return Response(
                 {"message": "Password updated successfully"},
                 status=status.HTTP_200_OK,
@@ -131,7 +131,7 @@ class SetUserPasswordEndpoint(APIView):
         user.is_password_autoset = False
         user.save()
         # Login the user as the session is invalidated
-        user_login(user=user, request=request)
+        user_login(user=user, request=request, is_app=True)
         # Return the user
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)

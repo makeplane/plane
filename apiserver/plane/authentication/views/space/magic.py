@@ -86,7 +86,7 @@ class MagicSignInSpaceEndpoint(View):
                 params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request, is_space=True),
-                "spaces/accounts/sign-in?" + urlencode(params),
+                "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
@@ -99,7 +99,7 @@ class MagicSignInSpaceEndpoint(View):
                 params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request, is_space=True),
-                "accounts/sign-in?" + urlencode(params),
+                "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
@@ -109,14 +109,14 @@ class MagicSignInSpaceEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_space=True)
             # redirect to referer path
             profile = Profile.objects.get(user=user)
             if user.is_password_autoset and profile.is_onboarded:
-                path = "spaces/accounts/set-password"
+                path = "accounts/set-password"
             else:
                 # Get the redirection path
-                path = str(next_path) if next_path else "spaces"
+                path = str(next_path) if next_path else ""
             url = urljoin(base_host(request=request, is_space=True), path)
             return HttpResponseRedirect(url)
 
@@ -126,7 +126,7 @@ class MagicSignInSpaceEndpoint(View):
                 params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request, is_space=True),
-                "spaces/accounts/sign-in?" + urlencode(params),
+                "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
@@ -152,7 +152,7 @@ class MagicSignUpSpaceEndpoint(View):
                 params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request, is_space=True),
-                "spaces/accounts/sign-in?" + urlencode(params),
+                "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
@@ -176,7 +176,7 @@ class MagicSignUpSpaceEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_space=True)
             # redirect to referer path
             url = urljoin(
                 base_host(request=request, is_space=True),
@@ -190,6 +190,6 @@ class MagicSignUpSpaceEndpoint(View):
                 params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request, is_space=True),
-                "spaces/accounts/sign-in?" + urlencode(params),
+                "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)

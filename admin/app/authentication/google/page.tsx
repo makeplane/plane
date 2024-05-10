@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/core";
 import { AuthenticationMethodCard } from "../components";
 import { InstanceGoogleConfigForm } from "./components";
 // hooks
-import { useInstance } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 // icons
 import GoogleLogo from "@/public/logos/google-logo.svg";
 

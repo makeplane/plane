@@ -9,15 +9,14 @@ import { Avatar } from "@plane/ui";
 import { OnBoardingForm } from "@/components/accounts/onboarding-form";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
+import { ASSET_PREFIX } from "@/helpers/common.helper";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store";
 // wrappers
 import { AuthWrapper } from "@/lib/wrappers";
 // assets
 import ProfileSetupDark from "public/onboarding/profile-setup-dark.svg";
-import ProfileSetup from "public/onboarding/profile-setup.svg";
-
-const imagePrefix = process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "";
+import ProfileSetup from "public/onboarding/profile-setup-light.svg";
 
 const OnBoardingPage = observer(() => {
   // router
@@ -48,8 +47,8 @@ const OnBoardingPage = observer(() => {
       console.log("Failed to update onboarding status");
     });
 
-    if (next_path) router.replace(next_path.toString());
-    router.replace("/");
+    if (next_path) router.push(next_path.toString());
+    router.push("/");
   };
 
   return (
@@ -60,7 +59,7 @@ const OnBoardingPage = observer(() => {
             <div className="flex w-full items-center justify-between font-semibold ">
               <div className="flex items-center gap-x-2">
                 <Image
-                  src={`${imagePrefix}/plane-logos/blue-without-text.png`}
+                  src={`${ASSET_PREFIX}/plane-logos/blue-without-text.png`}
                   height={30}
                   width={30}
                   alt="Plane Logo"

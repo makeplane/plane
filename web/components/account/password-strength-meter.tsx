@@ -24,9 +24,9 @@ export const PasswordStrengthMeter: React.FC<Props> = (props: Props) => {
     text = "Password is too short";
     textColor = `text-[#DC3E42]`;
   } else if (strength < 3) {
-    bars = [`bg-[#FFBA18]`, `bg-[#FFBA18]`, `bg-[#F0F0F3]`];
+    bars = [`bg-[#DC3E42]`, `bg-[#F0F0F3]`, `bg-[#F0F0F3]`];
     text = "Password is weak";
-    textColor = `text-[#FFBA18]`;
+    textColor = `text-[#F0F0F3]`;
   } else {
     bars = [`bg-[#3E9B4F]`, `bg-[#3E9B4F]`, `bg-[#3E9B4F]`];
     text = "Password is strong";

@@ -4,7 +4,6 @@ import { enableStaticRendering } from "mobx-react-lite";
 import { IInstanceStore, InstanceStore } from "@/store/instance.store";
 import { IProjectStore, ProjectStore } from "@/store/project";
 import { IUserStore, UserStore } from "@/store/user";
-import { IProfileStore, ProfileStore } from "@/store/user/profile.store";
 
 import IssueStore, { IIssueStore } from "./issue";
 import IssueDetailStore, { IIssueDetailStore } from "./issue_details";
@@ -16,7 +15,6 @@ enableStaticRendering(typeof window === "undefined");
 export class RootStore {
   instance: IInstanceStore;
   user: IUserStore;
-  profile: IProfileStore;
   project: IProjectStore;
 
   issue: IIssueStore;
@@ -27,9 +25,8 @@ export class RootStore {
   constructor() {
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
-    this.profile = new ProfileStore(this);
-    this.project = new ProjectStore(this);
 
+    this.project = new ProjectStore(this);
     this.issue = new IssueStore(this);
     this.issueDetails = new IssueDetailStore(this);
     this.mentionsStore = new MentionsStore(this);
@@ -41,7 +38,6 @@ export class RootStore {
 
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
-    this.profile = new ProfileStore(this);
     this.project = new ProjectStore(this);
 
     this.issue = new IssueStore(this);

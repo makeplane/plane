@@ -148,7 +148,10 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
       </div>
       <form className="w-full mx-auto mt-2 space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>
         <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="name">
+          <label
+            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="name"
+          >
             Workspace name
           </label>
           <Controller
@@ -187,7 +190,10 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
           {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
         </div>
         <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="slug">
+          <label
+            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="slug"
+          >
             Workspace URL
           </label>
           <Controller
@@ -224,7 +230,10 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
         </div>
         <hr className="w-full border-onboarding-border-100" />
         <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="organization_size">
+          <label
+            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="organization_size"
+          >
             Company size
           </label>
           <div className="w-full">

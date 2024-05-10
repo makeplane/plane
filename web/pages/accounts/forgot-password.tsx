@@ -176,7 +176,7 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
               >
                 {resendTimerCode > 0 ? `Resend in ${resendTimerCode} seconds` : "Send reset link"}
               </Button>
-              <Link href="/accounts/sign-in" className={cn("w-full", getButtonStyling("link-neutral", "lg"))}>
+              <Link href="/sign-in" className={cn("w-full", getButtonStyling("link-neutral", "lg"))}>
                 Back to sign in
               </Link>
             </form>

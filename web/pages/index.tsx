@@ -48,7 +48,7 @@ const HomePage: NextPageWithLayout = observer(() => {
           <div className="text-center text-sm font-medium text-onboarding-text-300">
             Already have an account?{" "}
             <Link
-              href="/accounts/sign-in"
+              href="/sign-in"
               onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
               className="font-semibold text-custom-primary-100 hover:underline"
             >
