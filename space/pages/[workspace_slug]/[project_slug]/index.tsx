@@ -33,7 +33,7 @@ const WorkspaceProjectPage = (props: any) => {
   });
 
   return (
-    <AuthWrapper pageType={EPageTypes.AUTHENTICATED}>
+    <AuthWrapper pageType={EPageTypes.PUBLIC}>
       <ProjectLayout>
         <Head>
           <title>{SITE_TITLE}</title>

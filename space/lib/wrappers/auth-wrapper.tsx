@@ -26,7 +26,7 @@ export const AuthWrapper: FC<TAuthWrapper> = observer((props) => {
     revalidateOnFocus: false,
   });
 
-  if (isSWRLoading || isLoading)
+  if (isSWRLoading || (isLoading && pageType === EPageTypes.AUTHENTICATED))
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <Spinner />
