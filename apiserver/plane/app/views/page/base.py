@@ -1,5 +1,6 @@
 # Python imports
 import json
+import y_py as Y
 import base64
 from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
@@ -9,7 +10,7 @@ from django.db import connection
 from django.db.models import Exists, OuterRef, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.http import StreamingHttpResponse, HttpResponse
+from django.http import StreamingHttpResponse
 
 # Third party imports
 from rest_framework import status
@@ -417,11 +418,34 @@ class PagesDescriptionViewSet(BaseViewSet):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
         )
+
         base64_data = request.data.get("description_yjs")
 
         if base64_data:
-            binary_data = base64.b64decode(base64_data)
-            page.description_yjs = binary_data
+            # Decode the base64 data to bytes
+            new_binary_data = base64.b64decode(base64_data)
+
+            # Load the existing data into a YDoc
+            existing_doc = Y.YDoc()
+            if page.description_yjs:
+                Y.apply_update(existing_doc, page.description_yjs)
+
+            # Load the new data into a separate YDoc
+            new_doc = Y.YDoc()
+            Y.apply_update(new_doc, new_binary_data)
+
+            # Merge the new data into the existing data
+            # This will automatically resolve any conflicts
+            new_state_vector = Y.encode_state_vector(new_doc)
+            diff = Y.encode_state_as_update(existing_doc, new_state_vector)
+            Y.apply_update(existing_doc, diff)
+
+            # Encode the updated state as binary data
+            updated_binary_data = Y.encode_state_as_update(existing_doc)
+
+            # Store the updated binary data
+            page.description_yjs = updated_binary_data
+            page.description_html = request.data.get("description_html")
             page.save()
             return Response({"message": "Updated successfully"})
         else:
