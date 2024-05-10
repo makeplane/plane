@@ -21,6 +21,7 @@ from rest_framework.viewsets import ModelViewSet
 # Module imports
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
+from plane.authentication.session import BaseSessionAuthentication
 
 
 class TimezoneMixin:
@@ -48,6 +49,10 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
         DjangoFilterBackend,
         SearchFilter,
     )
+
+    authentication_classes = [
+        BaseSessionAuthentication,
+    ]
 
     filterset_fields = []
 
