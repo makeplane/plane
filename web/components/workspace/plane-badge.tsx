@@ -24,18 +24,21 @@ export const PlaneBadge: React.FC = () => {
   return (
     <>
       <ProPlanModal isOpen={isProPlanModalOpen} handleClose={() => setIsProPlanModalOpen(false)} />
-      <Button
-        variant="outline-primary"
-        className="w-1/2 cursor-pointer rounded-2xl px-2.5 py-1.5 text-center text-sm font-medium outline-none"
-        onClick={handleProPlanModalOpen}
-      >
-        Plane Pro
-      </Button>
-      <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
-        <div className="w-1/2 cursor-default rounded-md bg-green-500/10 px-2 py-1 text-center text-xs font-medium text-green-500 outline-none leading-6">
-          Community
-        </div>
-      </Tooltip>
+      {process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_REDIRECT_URL || process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_REDIRECT_URL ? (
+        <Button
+          variant="outline-primary"
+          className="w-1/2 cursor-pointer rounded-2xl px-2.5 py-1.5 text-center text-sm font-medium outline-none"
+          onClick={handleProPlanModalOpen}
+        >
+          Plane Pro
+        </Button>
+      ) : (
+        <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
+          <div className="w-1/2 cursor-default rounded-md bg-green-500/10 px-2 py-1 text-center text-xs font-medium text-green-500 outline-none leading-6">
+            Enterprise Edition
+          </div>
+        </Tooltip>
+      )}
     </>
   );
 };
