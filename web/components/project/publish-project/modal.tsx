@@ -139,13 +139,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const handlePublishProject = async (payload: IProjectPublishSettings) => {
     if (!workspaceSlug) return;
 
-    return publishProject(workspaceSlug.toString(), project.id, payload)
-      .then((res) => {
-        handleClose();
-        // window.open(`${plane_deploy_url}/${workspaceSlug}/${project.id}`, "_blank");
-        return res;
-      })
-      .catch((err) => err);
+    return publishProject(workspaceSlug.toString(), project.id, payload);
   };
 
   const handleUpdatePublishSettings = async (payload: IProjectPublishSettings) => {
@@ -174,10 +168,6 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     setIsUnPublishing(true);
 
     await unPublishProject(workspaceSlug.toString(), project.id, publishId)
-      .then((res) => {
-        handleClose();
-        return res;
-      })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
