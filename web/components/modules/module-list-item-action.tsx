@@ -2,11 +2,11 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
-import { User2 } from "lucide-react";
+import { CalendarCheck2, CalendarClock, MoveRight, User2 } from "lucide-react";
 // types
 import { IModule } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, Tooltip, setPromiseToast } from "@plane/ui";
+import { Tooltip, setPromiseToast } from "@plane/ui";
 // components
 import { FavoriteStar } from "@/components/core";
 import { ModuleQuickActions } from "@/components/modules";
@@ -18,7 +18,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useEventTracker, useMember, useModule, useUser } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {
   moduleId: string;
@@ -38,7 +38,6 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
   const { addModuleToFavorites, removeModuleFromFavorites } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
-  const { isMobile } = usePlatformOS();
 
   // derived values
   const endDate = getDate(moduleDetails.target_date);
@@ -109,11 +108,23 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
     });
   };
 
+  const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
+
   return (
     <>
+      {renderDate && (
+        <div className="h-6 flex items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs px-2 cursor-default">
+          <CalendarClock className="h-3 w-3 flex-shrink-0" />
+          <span className="flex-grow truncate">{renderFormattedDate(startDate)}</span>
+          <MoveRight className="h-3 w-3 flex-shrink-0" />
+          <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />
+          <span className="flex-grow truncate">{renderFormattedDate(endDate)}</span>
+        </div>
+      )}
+
       {moduleStatus && (
         <span
-          className="flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
+          className="flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs cursor-default"
           style={{
             color: moduleStatus.color,
             backgroundColor: `${moduleStatus.color}20`,
@@ -123,28 +134,17 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
         </span>
       )}
 
-      {renderDate && (
-        <span className=" text-xs text-custom-text-300">
-          {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
+      {moduleLeadDetails ? (
+        <span className="cursor-default">
+          <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
         </span>
+      ) : (
+        <Tooltip tooltipContent="No lead">
+          <span className="cursor-default flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
+            <User2 className="h-4 w-4 text-custom-text-400" />
+          </span>
+        </Tooltip>
       )}
-
-      <Tooltip tooltipContent={`${moduleDetails?.member_ids?.length || 0} Members`} isMobile={isMobile}>
-        <div className="flex w-10 cursor-default items-center justify-center gap-1">
-          {moduleDetails.member_ids.length > 0 ? (
-            <AvatarGroup showTooltip={false}>
-              {moduleDetails.member_ids.map((member_id) => {
-                const member = getUserDetails(member_id);
-                return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
-              })}
-            </AvatarGroup>
-          ) : (
-            <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
-              <User2 className="h-4 w-4 text-custom-text-400" />
-            </span>
-          )}
-        </div>
-      </Tooltip>
 
       {isEditingAllowed && !moduleDetails.archived_at && (
         <FavoriteStar
