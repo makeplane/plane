@@ -229,7 +229,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
               size="sm"
-              prependIcon={<Plus />}
             >
               <div className="hidden sm:block">Add</div> Issue
             </Button>

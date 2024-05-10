@@ -134,8 +134,8 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
             </FiltersDropdown>
           </>
           {isAuthorizedUser && (
-            <Button variant="primary" size="sm" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
-              New View
+            <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
+              Add View
             </Button>
           )}
         </div>
