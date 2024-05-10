@@ -16,7 +16,7 @@ import { useUser, useUserProfile } from "@/hooks/store";
 import { AuthWrapper } from "@/lib/wrappers";
 // assets
 import ProfileSetupDark from "public/onboarding/profile-setup-dark.svg";
-import ProfileSetup from "public/onboarding/profile-setup.svg";
+import ProfileSetup from "public/onboarding/profile-setup-light.svg";
 
 const OnBoardingPage = observer(() => {
   // router
@@ -47,8 +47,8 @@ const OnBoardingPage = observer(() => {
       console.log("Failed to update onboarding status");
     });
 
-    if (next_path) router.replace(next_path.toString());
-    router.replace("/");
+    if (next_path) router.push(next_path.toString());
+    router.push("/");
   };
 
   return (
