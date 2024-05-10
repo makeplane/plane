@@ -64,24 +64,31 @@ function absoluteRect(node: Element) {
 }
 
 function nodeDOMAtCoords(coords: { x: number; y: number }) {
-  return document.elementsFromPoint(coords.x, coords.y).find(
-    (elem: Element) =>
-      elem.parentElement?.matches?.(".ProseMirror") ||
-      elem.matches(
-        [
-          "li",
-          "p:not(:first-child)",
-          // allow p tag hovering and selection but only for direct children of table cells
-          "td > p:first-child",
-          "th > p:first-child",
-          ".code-block",
-          "blockquote",
-          "h1, h2, h3",
-          ".table-wrapper",
-          "[data-type=horizontalRule]",
-        ].join(", ")
-      )
-  );
+  const elements = document.elementsFromPoint(coords.x, coords.y);
+  const generalSelectors = [
+    "li",
+    "p:not(:first-child)",
+    ".code-block",
+    "blockquote",
+    "h1, h2, h3",
+    ".table-wrapper",
+    "[data-type=horizontalRule]",
+  ].join(", ");
+
+  for (const elem of elements) {
+    // if the element is a <p> tag that is the first child of a td or th
+    if (
+      (elem.matches("td > p:first-child") || elem.matches("th > p:first-child")) &&
+      elem?.textContent?.trim() !== ""
+    ) {
+      return elem; // Return only if p tag is not empty
+    }
+    // apply general selector
+    if (elem.matches(generalSelectors)) {
+      return elem;
+    }
+  }
+  return null;
 }
 
 function nodePosAtDOM(node: Element, view: EditorView, options: DragHandleOptions) {
