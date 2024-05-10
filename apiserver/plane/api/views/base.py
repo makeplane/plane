@@ -1,5 +1,4 @@
 # Python imports
-from urllib.parse import urlparse
 
 import zoneinfo
 
