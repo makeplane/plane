@@ -333,7 +333,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="first_name">
+                    <label
+                      className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                      htmlFor="first_name"
+                    >
                       First name
                     </label>
                     <Controller
@@ -364,7 +367,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                     {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="last_name">
+                    <label
+                      className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                      htmlFor="last_name"
+                    >
                       Last name
                     </label>
                     <Controller
@@ -485,7 +491,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
             {profileSetupStep !== EProfileSetupSteps.USER_DETAILS && (
               <>
                 <div className="space-y-1">
-                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="role">
+                  <label
+                    className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    htmlFor="role"
+                  >
                     What role are you working on? Choose one.
                   </label>
                   <Controller
@@ -513,7 +522,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                   {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="use_case">
+                  <label
+                    className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    htmlFor="use_case"
+                  >
                     What is your domain expertise? Choose one.
                   </label>
                   <Controller
