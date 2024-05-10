@@ -103,7 +103,7 @@ class GoogleCallbackSpaceEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_space=True)
             # redirect to referer path
             url = urljoin(
                 base_host, str(next_path) if next_path else "/spaces"

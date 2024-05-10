@@ -5,7 +5,7 @@ from urllib.parse import urlsplit
 from django.conf import settings
 
 
-def base_host(request, is_admin=False, is_space=False):
+def base_host(request, is_admin=False, is_space=False, is_app=False):
     """Utility function to return host / origin from the request"""
 
     if is_admin and settings.ADMIN_BASE_URL:
@@ -13,6 +13,9 @@ def base_host(request, is_admin=False, is_space=False):
 
     if is_space and settings.SPACE_BASE_URL:
         return settings.SPACE_BASE_URL
+
+    if is_app and settings.APP_BASE_URL:
+        return settings.APP_BASE_URL
 
     return (
         request.META.get("HTTP_ORIGIN")

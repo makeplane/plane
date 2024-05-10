@@ -109,7 +109,7 @@ class MagicSignInSpaceEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_space=True)
             # redirect to referer path
             profile = Profile.objects.get(user=user)
             if user.is_password_autoset and profile.is_onboarded:
@@ -176,7 +176,7 @@ class MagicSignUpSpaceEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_space=True)
             # redirect to referer path
             url = urljoin(
                 base_host(request=request, is_space=True),

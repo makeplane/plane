@@ -146,7 +146,7 @@ class ResetPasswordEndpoint(View):
                 )
                 params = exc.get_error_dict()
                 url = urljoin(
-                    base_host(request=request),
+                    base_host(request=request, is_app=True),
                     "accounts/reset-password?" + urlencode(params),
                 )
                 return HttpResponseRedirect(url)
@@ -159,7 +159,7 @@ class ResetPasswordEndpoint(View):
                     error_message="INVALID_PASSWORD",
                 )
                 url = urljoin(
-                    base_host(request=request),
+                    base_host(request=request, is_app=True),
                     "accounts/reset-password?"
                     + urlencode(exc.get_error_dict()),
                 )
@@ -173,7 +173,7 @@ class ResetPasswordEndpoint(View):
                     error_message="INVALID_PASSWORD",
                 )
                 url = urljoin(
-                    base_host(request=request),
+                    base_host(request=request, is_app=True),
                     "accounts/reset-password?"
                     + urlencode(exc.get_error_dict()),
                 )
@@ -185,7 +185,7 @@ class ResetPasswordEndpoint(View):
             user.save()
 
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "sign-in?" + urlencode({"success": True}),
             )
             return HttpResponseRedirect(url)
@@ -197,7 +197,7 @@ class ResetPasswordEndpoint(View):
                 error_message="EXPIRED_PASSWORD_TOKEN",
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "accounts/reset-password?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)

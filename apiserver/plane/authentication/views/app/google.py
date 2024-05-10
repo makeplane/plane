@@ -24,7 +24,7 @@ from plane.authentication.adapter.error import (
 
 class GoogleOauthInitiateEndpoint(View):
     def get(self, request):
-        request.session["host"] = base_host(request=request)
+        request.session["host"] = base_host(request=request, is_app=True)
         next_path = request.GET.get("next_path")
         if next_path:
             request.session["next_path"] = str(next_path)
@@ -42,7 +42,7 @@ class GoogleOauthInitiateEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -58,7 +58,7 @@ class GoogleOauthInitiateEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -108,7 +108,7 @@ class GoogleCallbackEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_app=True)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
             # Get the redirection path
