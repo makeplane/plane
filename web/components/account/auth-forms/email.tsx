@@ -20,6 +20,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState(defaultEmail);
+  const [isFocused, setFocused] = useState(false);
 
   const emailError = useMemo(
     () => (email && !checkEmailValidity(email) ? { email: "Email is invalid" } : undefined),
@@ -47,7 +48,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
         <div
           className={cn(
             `relative flex items-center rounded-md bg-onboarding-background-200 border`,
-            Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
+            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
           )}
         >
           <Input
@@ -57,7 +58,9 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className={`h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
+            className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
             autoFocus
           />
           {email.length > 0 && (
@@ -66,7 +69,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             </div>
           )}
         </div>
-        {emailError?.email && (
+        {emailError?.email && !isFocused && (
           <p className="flex items-center gap-1 text-xs text-red-600 px-0.5">
             <CircleAlert height={12} width={12} />
             {emailError.email}
