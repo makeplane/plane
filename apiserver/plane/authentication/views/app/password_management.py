@@ -146,7 +146,7 @@ class ResetPasswordEndpoint(View):
                 )
                 params = exc.get_error_dict()
                 url = urljoin(
-                    base_host(request=request),
+                    base_host(request=request, is_app=True),
                     "accounts/reset-password?" + urlencode(params),
                 )
                 return HttpResponseRedirect(url)
@@ -159,8 +159,9 @@ class ResetPasswordEndpoint(View):
                     error_message="INVALID_PASSWORD",
                 )
                 url = urljoin(
-                    base_host(request=request),
-                    "?" + urlencode(exc.get_error_dict()),
+                    base_host(request=request, is_app=True),
+                    "accounts/reset-password?"
+                    + urlencode(exc.get_error_dict()),
                 )
                 return HttpResponseRedirect(url)
 
@@ -172,7 +173,7 @@ class ResetPasswordEndpoint(View):
                     error_message="INVALID_PASSWORD",
                 )
                 url = urljoin(
-                    base_host(request=request),
+                    base_host(request=request, is_app=True),
                     "accounts/reset-password?"
                     + urlencode(exc.get_error_dict()),
                 )
@@ -184,8 +185,8 @@ class ResetPasswordEndpoint(View):
             user.save()
 
             url = urljoin(
-                base_host(request=request),
-                "accounts/sign-in?" + urlencode({"success": True}),
+                base_host(request=request, is_app=True),
+                "sign-in?" + urlencode({"success": True}),
             )
             return HttpResponseRedirect(url)
         except DjangoUnicodeDecodeError:
@@ -196,7 +197,7 @@ class ResetPasswordEndpoint(View):
                 error_message="EXPIRED_PASSWORD_TOKEN",
             )
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "accounts/reset-password?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)

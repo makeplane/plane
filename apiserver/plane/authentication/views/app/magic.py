@@ -90,8 +90,8 @@ class MagicSignInEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True),
+                "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
@@ -104,8 +104,8 @@ class MagicSignInEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True),
+                "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
@@ -116,7 +116,7 @@ class MagicSignInEndpoint(View):
             user = provider.authenticate()
             profile = Profile.objects.get(user=user)
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_app=True)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
             if user.is_password_autoset and profile.is_onboarded:
@@ -129,7 +129,7 @@ class MagicSignInEndpoint(View):
                     else str(process_workspace_project_invitations(user=user))
                 )
             # redirect to referer path
-            url = urljoin(base_host(request=request), path)
+            url = urljoin(base_host(request=request, is_app=True), path)
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
@@ -137,8 +137,8 @@ class MagicSignInEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True),
+                "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
@@ -163,7 +163,7 @@ class MagicSignUpEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -177,7 +177,7 @@ class MagicSignUpEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -188,7 +188,7 @@ class MagicSignUpEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_app=True)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
             # Get the redirection path
@@ -197,7 +197,7 @@ class MagicSignUpEndpoint(View):
             else:
                 path = get_redirection_path(user=user)
             # redirect to referer path
-            url = urljoin(base_host(request=request), path)
+            url = urljoin(base_host(request=request, is_app=True), path)
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
@@ -205,7 +205,7 @@ class MagicSignUpEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)

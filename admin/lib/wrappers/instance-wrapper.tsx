@@ -13,6 +13,7 @@ import { InstanceNotReady } from "@/components/instance";
 import { useInstance } from "@/hooks/store";
 // helpers
 import { EInstancePageType } from "@/helpers";
+import { EmptyState } from "@/components/common";
 
 type TInstanceWrapper = {
   children: ReactNode;
@@ -41,7 +42,12 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
     );
 
   if (!instance) {
-    return <>Something went wrong</>;
+    return (
+      <EmptyState
+        title="Your instance wasn't configured successfully."
+        description="Please try re-installing Plane to fix the problem. If the issue still persists please reach out to support@plane.so."
+      />
+    );
   }
 
   if (instance?.instance?.is_setup_done === false && authEnabled === "1")
