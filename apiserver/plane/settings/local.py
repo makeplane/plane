@@ -30,19 +30,6 @@ INTERNAL_IPS = ("127.0.0.1",)
 MEDIA_URL = "/uploads/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")  # noqa
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost",
-    "http://127.0.0.1",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
-    "http://localhost:3002",
-    "http://127.0.0.1:3002",
-]
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
-CORS_ALLOW_ALL_ORIGINS = True
-
 LOG_DIR = os.path.join(BASE_DIR, "logs")  # noqa
 
 if not os.path.exists(LOG_DIR):
