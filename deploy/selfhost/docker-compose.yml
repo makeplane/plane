@@ -38,6 +38,7 @@ services:
   web:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-frontend:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: /usr/local/bin/start.sh web/server.js web
@@ -50,6 +51,7 @@ services:
   space:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-space:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: /usr/local/bin/start.sh space/server.js space
@@ -62,7 +64,8 @@ services:
   
   admin:
     <<: *app-env
-    image: ${DOCKERHUB_USER:-makeplane}/plane-space:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-makeplane}/plane-admin:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command:  node admin/server.js admin
@@ -75,6 +78,7 @@ services:
   api:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: ./bin/takeoff
@@ -89,6 +93,7 @@ services:
   worker:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: ./bin/worker
@@ -102,6 +107,7 @@ services:
   beat-worker:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: ./bin/beat
@@ -115,6 +121,7 @@ services:
   migrator:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: no
     command: >
@@ -134,6 +141,7 @@ services:
     command: postgres -c 'max_connections=1000'
     volumes:
       - pgdata:/var/lib/postgresql/data
+  
   plane-redis:
     <<: *app-env
     image: redis:7.2.4-alpine
@@ -144,7 +152,7 @@ services:
 
   plane-minio:
     <<: *app-env
-    image: minio/minio
+    image: minio/minio:latest
     pull_policy: if_not_present
     restart: unless-stopped
     command: server /export --console-address ":9090"
@@ -155,6 +163,7 @@ services:
   proxy:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-proxy:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     ports:
       - ${NGINX_PORT}:80

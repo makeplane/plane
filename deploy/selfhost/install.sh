@@ -2,7 +2,8 @@
 
 BRANCH=master
 SCRIPT_DIR=$PWD
-PLANE_INSTALL_DIR=$PWD/plane-app
+SERVICE_FOLDER=plane-app
+PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
 export APP_RELEASE=$BRANCH
 export DOCKERHUB_USER=makeplane
 export PULL_POLICY=always
@@ -140,7 +141,7 @@ function download() {
 function startServices() {
     /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH up -d --quiet-pull"
 
-    local migrator_container_id=$(docker container ls -aq -f "name=plane-app-migrator")
+    local migrator_container_id=$(docker container ls -aq -f "name=$SERVICE_FOLDER-migrator")
     if [ -n "$migrator_container_id" ]; then
         local idx=0
         while docker inspect --format='{{.State.Status}}' $migrator_container_id | grep -q "running"; do
@@ -168,7 +169,7 @@ function startServices() {
         fi
     fi
 
-    local api_container_id=$(docker container ls -q -f "name=plane-app-api")
+    local api_container_id=$(docker container ls -q -f "name=$SERVICE_FOLDER-api")
     local idx2=0
     while ! docker logs $api_container_id 2>&1 | grep -m 1 -i "Application startup complete" | grep -q ".";
     do
@@ -408,7 +409,8 @@ fi
 # REMOVE SPECIAL CHARACTERS FROM BRANCH NAME
 if [ "$BRANCH" != "master" ];
 then
-    PLANE_INSTALL_DIR=$PWD/plane-app-$(echo $BRANCH | sed -r 's@(\/|" "|\.)@-@g')
+    SERVICE_FOLDER=plane-app-$(echo $BRANCH | sed -r 's@(\/|" "|\.)@-@g')
+    PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
 fi
 mkdir -p $PLANE_INSTALL_DIR/archive
 
