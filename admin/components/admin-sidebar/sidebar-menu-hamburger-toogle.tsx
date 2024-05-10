@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useTheme } from "@/hooks";
+import { useTheme } from "@/hooks/store";
 // icons
 import { Menu } from "lucide-react";
 

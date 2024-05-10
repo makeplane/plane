@@ -1,20 +1,14 @@
 import { FC } from "react";
-import { observer } from "mobx-react";
 import Image from "next/image";
 import { Button } from "@plane/ui";
 // helpers
 import { ADMIN_BASE_URL, ADMIN_BASE_PATH } from "@/helpers/common.helper";
-// hooks
-// import { useInstance } from "@/hooks/store";
 // images
 import PlaneTakeOffImage from "@/public/plane-takeoff.png";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
-export const InstanceNotReady: FC = observer(() => {
-  // hooks
-  // const { instance } = useInstance();
-
-  const GOD_MODE_URL = encodeURI(ADMIN_BASE_URL + ADMIN_BASE_PATH + "setup/?auth_enabled=0");
+export const InstanceNotReady: FC = () => {
+  const GOD_MODE_URL = encodeURI(ADMIN_BASE_URL + ADMIN_BASE_PATH + "/setup/?auth_enabled=0");
 
   return (
     <div className="relative h-screen max-h-max w-full overflow-hidden overflow-y-auto flex flex-col">
@@ -48,4 +42,4 @@ export const InstanceNotReady: FC = observer(() => {
       </div>
     </div>
   );
-});
+};

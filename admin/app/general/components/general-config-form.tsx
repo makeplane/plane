@@ -6,7 +6,7 @@ import { Button, Input, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ControllerInput } from "components/common";
 // hooks
-import { useInstance } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 
 export interface IGeneralConfigurationForm {
   instance: IInstance["instance"];

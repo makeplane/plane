@@ -4,11 +4,11 @@ import { FC, ReactNode, useEffect, Suspense } from "react";
 import { observer } from "mobx-react-lite";
 import { SWRConfig } from "swr";
 // hooks
-import { useTheme, useUser } from "@/hooks";
+import { useTheme, useUser } from "@/hooks/store";
 // ui
 import { Toast } from "@plane/ui";
 // constants
-import { SWR_CONFIG } from "constants/swr-config";
+import { SWR_CONFIG } from "@/constants/swr-config";
 // helpers
 import { resolveGeneralTheme } from "helpers/common.helper";
 

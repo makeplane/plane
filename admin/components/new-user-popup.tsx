@@ -9,7 +9,7 @@ import { Button, getButtonStyling } from "@plane/ui";
 // helpers
 import { resolveGeneralTheme } from "helpers/common.helper";
 // hooks
-import { useInstance, useTheme } from "@/hooks";
+import { useInstance, useTheme } from "@/hooks/store";
 // icons
 import TakeoffIconLight from "/public/logos/takeoff-icon-light.svg";
 import TakeoffIconDark from "/public/logos/takeoff-icon-dark.svg";

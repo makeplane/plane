@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Pencil, Trash2, UserPlus } from "lucide-react";
+import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
 // types
 import type { IProject } from "@plane/types";
 // ui
@@ -105,10 +105,10 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {
-      key: "edit",
+      key: "settings",
       action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
-      title: "Edit",
-      icon: Pencil,
+      title: "Settings",
+      icon: Settings,
       shouldRender: !isArchived && (isOwner || isMember),
     },
     {
@@ -322,7 +322,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                       }}
                       href={`/${workspaceSlug}/projects/${project.id}/settings`}
                     >
-                      <Pencil className="h-3.5 w-3.5" />
+                      <Settings className="h-3.5 w-3.5" />
                     </Link>
                   ) : (
                     <span className="flex items-center gap-1 text-custom-text-400 text-sm">

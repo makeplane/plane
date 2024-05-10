@@ -50,7 +50,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     containerRef,
     issueIds,
     spreadsheetColumnsList,
-    spacingLeft = 14,
+    spacingLeft = 6,
   } = props;
 
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -96,7 +96,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             quickActions={quickActions}
             canEditProperties={canEditProperties}
             nestingLevel={nestingLevel + 1}
-            spacingLeft={spacingLeft + (displayProperties.key ? 16 : 28)}
+            spacingLeft={spacingLeft + (displayProperties.key ? 12 : 28)}
             isEstimateEnabled={isEstimateEnabled}
             updateIssue={updateIssue}
             portalElement={portalElement}
@@ -140,7 +140,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     isExpanded,
     setExpanded,
     spreadsheetColumnsList,
-    spacingLeft = 14,
+    spacingLeft = 6,
   } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -218,18 +218,22 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           disabled={!!issueDetail?.tempId}
         >
           <div
-            className="flex min-w-min items-center gap-1 px-4 py-2.5 pr-0"
+            className="flex min-w-min items-center gap-0.5 px-4 py-2.5 pl-1.5 pr-0"
             style={issueDetail.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}
           >
-            <div className="flex h-5 w-5 items-center justify-center">
-              {issueDetail.sub_issues_count > 0 && (
-                <button
-                  className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400 hover:text-custom-text-300"
-                  onClick={handleToggleExpand}
-                >
-                  <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
-                </button>
-              )}
+            <div className="flex items-center">
+              {/* bulk ops */}
+              <span className="size-3.5" />
+              <div className="flex size-4 items-center justify-center">
+                {issueDetail.sub_issues_count > 0 && (
+                  <button
+                    className="flex items-center justify-center size-4 cursor-pointer rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                    onClick={handleToggleExpand}
+                  >
+                    <ChevronRight className={`size-4 ${isExpanded ? "rotate-90" : ""}`} />
+                  </button>
+                )}
+              </div>
             </div>
 
             <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">

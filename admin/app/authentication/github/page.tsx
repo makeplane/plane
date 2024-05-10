@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/core";
 import { AuthenticationMethodCard } from "../components";
 import { InstanceGithubConfigForm } from "./components";
 // hooks
-import { useInstance } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 // helpers
 import { resolveGeneralTheme } from "@/helpers/common.helper";
 // icons

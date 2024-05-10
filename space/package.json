@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
-    "develop": "next dev -p 4000",
+    "develop": "next dev -p 3002",
     "build": "next build",
-    "start": "next start -p 4000",
+    "start": "next start",
     "lint": "next lint",
     "export": "next export"
   },
