@@ -5,17 +5,18 @@ const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
   trailingSlash: true,
+  output: "standalone",
+  basePath: process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "",
+  reactStrictMode: false,
+  swcMinify: true,
   async headers() {
     return [
       {
         source: "/",
-        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
+        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }], // clickjacking protection
       },
     ];
   },
-  basePath: "/spaces",
-  reactStrictMode: false,
-  swcMinify: true,
   images: {
     remotePatterns: [
       {
@@ -25,7 +26,6 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  output: "standalone",
 };
 
 if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0", 10)) {

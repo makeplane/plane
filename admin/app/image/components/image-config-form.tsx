@@ -5,7 +5,7 @@ import { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from
 // components
 import { ControllerInput } from "components/common";
 // hooks
-import { useInstance } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 
 type IInstanceImageConfigForm = {
   config: IFormattedInstanceConfiguration;

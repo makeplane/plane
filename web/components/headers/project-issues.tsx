@@ -16,6 +16,7 @@ import { ProjectLogo } from "@/components/project";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import {
@@ -99,7 +100,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, updateFilters]
   );
 
-  const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
+  const DEPLOY_URL = SPACE_BASE_URL + SPACE_BASE_PATH;
+
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
@@ -163,9 +165,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </Tooltip>
             ) : null}
           </div>
-          {currentProjectDetails?.is_deployed && deployUrl && (
+          {currentProjectDetails?.is_deployed && DEPLOY_URL && (
             <a
-              href={`${deployUrl}/${workspaceSlug}/${currentProjectDetails?.id}`}
+              href={`${DEPLOY_URL}/${workspaceSlug}/${currentProjectDetails?.id}`}
               className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
               target="_blank"
               rel="noopener noreferrer"

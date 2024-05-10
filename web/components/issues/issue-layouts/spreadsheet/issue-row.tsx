@@ -50,7 +50,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     containerRef,
     issueIds,
     spreadsheetColumnsList,
-    spacingLeft = 14,
+    spacingLeft = 6,
   } = props;
 
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -96,7 +96,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             quickActions={quickActions}
             canEditProperties={canEditProperties}
             nestingLevel={nestingLevel + 1}
-            spacingLeft={spacingLeft + (displayProperties.key ? 16 : 28)}
+            spacingLeft={spacingLeft + (displayProperties.key ? 12 : 28)}
             isEstimateEnabled={isEstimateEnabled}
             updateIssue={updateIssue}
             portalElement={portalElement}
@@ -140,7 +140,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     isExpanded,
     setExpanded,
     spreadsheetColumnsList,
-    spacingLeft = 14,
+    spacingLeft = 6,
   } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -205,14 +205,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   return (
     <>
-      <td ref={cellRef} id={`issue-${issueDetail.id}`} tabIndex={0}>
+      <td id={`issue-${issueId}`} ref={cellRef} tabIndex={0} className="sticky left-0 z-10">
         <ControlLink
-          id={`issue-${issueId}`}
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className={cn(
-            "group clickable cursor-pointer sticky left-0 h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
+            "group clickable cursor-pointer h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
             {
               "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
               "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issueDetail.id),
@@ -222,18 +221,22 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           disabled={!!issueDetail?.tempId}
         >
           <div
-            className="flex min-w-min items-center gap-1 px-4 py-2.5 pr-0"
+            className="flex min-w-min items-center gap-0.5 px-4 py-2.5 pl-1.5 pr-0"
             style={nestingLevel !== 0 ? { paddingLeft } : {}}
           >
-            <div className="flex h-5 w-5 items-center justify-center">
-              {subIssuesCount > 0 && (
-                <button
-                  className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400 hover:text-custom-text-300"
-                  onClick={handleToggleExpand}
-                >
-                  <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
-                </button>
-              )}
+            <div className="flex items-center">
+              {/* bulk ops */}
+              <span className="size-3.5" />
+              <div className="flex size-4 items-center justify-center">
+                {subIssuesCount > 0 && (
+                  <button
+                    className="flex items-center justify-center size-4 cursor-pointer rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                    onClick={handleToggleExpand}
+                  >
+                    <ChevronRight className={`size-4 ${isExpanded ? "rotate-90" : ""}`} />
+                  </button>
+                )}
+              </div>
             </div>
 
             <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">

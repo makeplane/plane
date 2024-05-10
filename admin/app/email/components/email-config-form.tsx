@@ -1,7 +1,7 @@
 import React, { FC, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // hooks
-import { useInstance } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 // ui
 import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // components

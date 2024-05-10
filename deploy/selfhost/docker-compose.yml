@@ -33,6 +33,10 @@ x-app-env: &app-env
     - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-"secret-key"}
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+    # Admin and Space URLs
+    - ADMIN_BASE_URL=${ADMIN_BASE_URL}
+    - SPACE_BASE_URL=${SPACE_BASE_URL}
+    - APP_BASE_URL=${APP_BASE_URL}
 
 services:
   web:
@@ -40,7 +44,7 @@ services:
     image: ${DOCKERHUB_USER:-makeplane}/plane-frontend:${APP_RELEASE:-stable}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: /usr/local/bin/start.sh web/server.js web
+    command: node web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
     depends_on:
@@ -52,20 +56,20 @@ services:
     image: ${DOCKERHUB_USER:-makeplane}/plane-space:${APP_RELEASE:-stable}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: /usr/local/bin/start.sh space/server.js space
+    command: node space/server.js space
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
     depends_on:
       - api
       - worker
       - web
-  
+
   admin:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-space:${APP_RELEASE:-stable}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command:  node admin/server.js admin
+    command: node admin/server.js admin
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
     depends_on:
