@@ -7,6 +7,7 @@ import { IEmailCheckData } from "@plane/types";
 // ui
 import { Button, Input, Spinner } from "@plane/ui";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { checkEmailValidity } from "@/helpers/string.helper";
 
 type TAuthEmailForm = {
@@ -38,28 +39,31 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   const isButtonDisabled = email.length === 0 || Boolean(emailError?.email) || isSubmitting;
 
   return (
-    <form onSubmit={handleFormSubmit} className="mt-8 space-y-4">
+    <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
       <div className="space-y-1">
         <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
           Email
         </label>
-        <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+        <div
+          className={cn(
+            `relative flex items-center rounded-md bg-onboarding-background-200 border`,
+            Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
+          )}
+        >
           <Input
             id="email"
             name="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            hasError={Boolean(emailError?.email)}
             placeholder="name@company.com"
-            className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+            className={`h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
             autoFocus
           />
           {email.length > 0 && (
-            <XCircle
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => setEmail("")}
-            />
+            <div className="flex-shrink-0 h-5 w-5 mr-2 bg-onboarding-background-200 hover:cursor-pointer">
+              <XCircle className="h-5 w-5 stroke-custom-text-400" onClick={() => setEmail("")} />
+            </div>
           )}
         </div>
         {emailError?.email && (
