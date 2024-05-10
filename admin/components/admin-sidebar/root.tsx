@@ -3,7 +3,7 @@
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useTheme } from "@/hooks";
+import { useTheme } from "@/hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { HelpSection, SidebarMenu, SidebarDropdown } from "@/components/admin-sidebar";
