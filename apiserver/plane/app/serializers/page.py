@@ -105,9 +105,13 @@ class PageSerializer(BaseSerializer):
 
 class PageDetailSerializer(PageSerializer):
     description_html = serializers.CharField()
+    description_yjs = serializers.CharField()
 
     class Meta(PageSerializer.Meta):
-        fields = PageSerializer.Meta.fields + ["description_html"]
+        fields = PageSerializer.Meta.fields + [
+            "description_html",
+            "description_yjs",
+        ]
 
 
 class SubPageSerializer(BaseSerializer):

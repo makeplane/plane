@@ -177,6 +177,7 @@ from .page.base import (
     PageFavoriteViewSet,
     PageLogEndpoint,
     SubPagesEndpoint,
+    PagesDescriptionViewSet,
 )
 
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint
