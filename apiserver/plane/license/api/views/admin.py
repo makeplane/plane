@@ -410,12 +410,9 @@ class InstanceAdminSignOutEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = urljoin(
-                base_host(request=request, is_admin=True),
-                "accounts/sign-in?" + urlencode({"success": "true"}),
-            )
+            url = urljoin(base_host(request=request, is_admin=True))
             return HttpResponseRedirect(url)
         except Exception:
             return HttpResponseRedirect(
-                base_host(request=request, is_admin=True), "accounts/sign-in"
+                base_host(request=request, is_admin=True)
             )
