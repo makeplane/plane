@@ -160,7 +160,8 @@ class ResetPasswordEndpoint(View):
                 )
                 url = urljoin(
                     base_host(request=request),
-                    "?" + urlencode(exc.get_error_dict()),
+                    "accounts/reset-password?"
+                    + urlencode(exc.get_error_dict()),
                 )
                 return HttpResponseRedirect(url)
 
@@ -185,7 +186,7 @@ class ResetPasswordEndpoint(View):
 
             url = urljoin(
                 base_host(request=request),
-                "accounts/sign-in?" + urlencode({"success": True}),
+                "sign-in?" + urlencode({"success": True}),
             )
             return HttpResponseRedirect(url)
         except DjangoUnicodeDecodeError:

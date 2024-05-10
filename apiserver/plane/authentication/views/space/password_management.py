@@ -183,11 +183,9 @@ class ResetPasswordSpaceEndpoint(View):
             user.is_password_autoset = False
             user.save()
 
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "accounts/sign-in?" + urlencode({"success": True}),
+            return HttpResponseRedirect(
+                base_host(request=request, is_space=True)
             )
-            return HttpResponseRedirect(url)
         except DjangoUnicodeDecodeError:
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[

@@ -91,7 +91,7 @@ class MagicSignInEndpoint(View):
                 params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
+                "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
@@ -105,7 +105,7 @@ class MagicSignInEndpoint(View):
                 params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
+                "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 
@@ -138,7 +138,7 @@ class MagicSignInEndpoint(View):
                 params["next_path"] = str(next_path)
             url = urljoin(
                 base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
+                "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
 

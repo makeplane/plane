@@ -111,7 +111,7 @@ class GitHubCallbackSpaceEndpoint(View):
             user_login(request=request, user=user)
             # Process workspace and project invitations
             # redirect to referer path
-            url = urljoin(base_host, str(next_path) if next_path else "/")
+            url = urljoin(base_host, str(next_path) if next_path else "")
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()

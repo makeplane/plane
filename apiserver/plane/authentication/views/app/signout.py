@@ -25,10 +25,8 @@ class SignOutAuthEndpoint(View):
             logout(request)
             url = urljoin(
                 base_host(request=request),
-                "accounts/sign-in?" + urlencode({"success": "true"}),
+                "sign-in?" + urlencode({"success": "true"}),
             )
             return HttpResponseRedirect(url)
         except Exception:
-            return HttpResponseRedirect(
-                base_host(request=request), "accounts/sign-in"
-            )
+            return HttpResponseRedirect(base_host(request=request), "sign-in")
