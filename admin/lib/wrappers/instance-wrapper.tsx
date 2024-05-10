@@ -10,7 +10,7 @@ import { DefaultLayout } from "@/layouts";
 // components
 import { InstanceNotReady } from "@/components/instance";
 // hooks
-import { useInstance } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 // helpers
 import { EInstancePageType } from "@/helpers";
 
@@ -28,6 +28,9 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
 
   const { isLoading: isSWRLoading } = useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
+    revalidateIfStale: false,
+    revalidateOnReconnect: false,
+    errorRetryCount: 0,
   });
 
   if (isSWRLoading || isLoading)
@@ -36,6 +39,10 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
         <Spinner />
       </div>
     );
+
+  if (!instance) {
+    return <>Something went wrong</>;
+  }
 
   if (instance?.instance?.is_setup_done === false && authEnabled === "1")
     return (

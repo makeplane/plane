@@ -173,7 +173,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       <div className="w-full space-y-2.5 overflow-hidden">
         <div className="flex items-start">
           {!notification.message ? (
-            <div className="w-full break-words text-sm">
+            <div className="w-full break-all text-sm group-hover:pr-24 line-clamp-2">
               <span className="font-semibold">
                 {notificationTriggeredBy.is_bot
                   ? notificationTriggeredBy.first_name

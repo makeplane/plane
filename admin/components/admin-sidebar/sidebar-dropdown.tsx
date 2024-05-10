@@ -7,7 +7,7 @@ import { LogOut, UserCog2, Palette } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 import { Avatar } from "@plane/ui";
 // hooks
-import { useTheme, useUser } from "@/hooks";
+import { useTheme, useUser } from "@/hooks/store";
 // helpers
 import { API_BASE_URL, cn } from "@/helpers/common.helper";
 // services

@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { PageHeader } from "@/components/core";
 import { GeneralConfigurationForm } from "./components";
 // hooks
-import { useInstance } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 
 const GeneralPage = observer(() => {
   const { instance, instanceAdmins } = useInstance();
