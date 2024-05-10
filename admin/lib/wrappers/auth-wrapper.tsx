@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // hooks
-import { useInstance, useUser } from "@/hooks";
+import { useInstance, useUser } from "@/hooks/store";
 // helpers
 import { EAuthenticationPageType } from "@/helpers";
 

@@ -247,7 +247,7 @@ class InstanceAdminSignUpEndpoint(View):
             instance.save()
 
             # get tokens for user
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_admin=True)
             url = urljoin(base_host(request=request, is_admin=True), "general")
             return HttpResponseRedirect(url)
 
@@ -376,7 +376,7 @@ class InstanceAdminSignInEndpoint(View):
         user.save()
 
         # get tokens for user
-        user_login(request=request, user=user)
+        user_login(request=request, user=user, is_admin=True)
         url = urljoin(base_host(request=request, is_admin=True), "general")
         return HttpResponseRedirect(url)
 
@@ -410,12 +410,9 @@ class InstanceAdminSignOutEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = urljoin(
-                base_host(request=request, is_admin=True),
-                "accounts/sign-in?" + urlencode({"success": "true"}),
-            )
+            url = urljoin(base_host(request=request, is_admin=True))
             return HttpResponseRedirect(url)
         except Exception:
             return HttpResponseRedirect(
-                base_host(request=request, is_admin=True), "accounts/sign-in"
+                base_host(request=request, is_admin=True)
             )
