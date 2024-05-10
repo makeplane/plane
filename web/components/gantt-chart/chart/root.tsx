@@ -172,7 +172,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
         handleChartView={(key) => updateCurrentViewRenderPayload(null, key)}
         handleToday={handleToday}
         loaderTitle={loaderTitle}
-        title={title}
       />
       <GanttChartMainContent
         blocks={blocks}
