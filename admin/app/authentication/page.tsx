@@ -14,7 +14,7 @@ import { GoogleConfiguration } from "./google/components";
 import { GithubConfiguration } from "./github/components";
 import { PageHeader } from "@/components/core";
 // hooks
-import { useInstance } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 // helpers
 import { resolveGeneralTheme } from "@/helpers/common.helper";
 // images

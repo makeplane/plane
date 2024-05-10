@@ -6,7 +6,7 @@ import { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@
 // components
 import { ControllerInput, TControllerInputFormField } from "components/common";
 // hooks
-import { useInstance } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 
 type IInstanceAIForm = {
   config: IFormattedInstanceConfiguration;

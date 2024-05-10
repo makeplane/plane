@@ -7,7 +7,7 @@ import { Loader } from "@plane/ui";
 import { PageHeader } from "@/components/core";
 import { InstanceEmailForm } from "./components";
 // hooks
-import { useInstance } from "@/hooks";
+import { useInstance } from "@/hooks/store";
 
 const InstanceEmailPage = observer(() => {
   // store

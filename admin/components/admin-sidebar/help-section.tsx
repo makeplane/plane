@@ -7,7 +7,7 @@ import { Transition } from "@headlessui/react";
 import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
-import { useInstance, useTheme } from "@/hooks";
+import { useInstance, useTheme } from "@/hooks/store";
 // assets
 import packageJson from "package.json";
 
