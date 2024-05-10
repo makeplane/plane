@@ -7,6 +7,7 @@ import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // helpers
 import { ProjectLogo } from "@/components/project";
+import { ViewListHeader } from "@/components/views";
 import { EUserProjectRoles } from "@/constants/project";
 // constants
 import { useCommandPalette, useProject, useUser } from "@/hooks/store";
@@ -58,6 +59,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
         </div>
         {canUserCreateIssue && (
           <div className="flex flex-shrink-0 items-center gap-2">
+            <ViewListHeader />
             <div>
               <Button
                 variant="primary"
