@@ -42,7 +42,7 @@ class SignInAuthEndpoint(View):
                 params["next_path"] = str(next_path)
             # Base URL join
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -66,7 +66,7 @@ class SignInAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -85,7 +85,7 @@ class SignInAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -100,7 +100,7 @@ class SignInAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -111,7 +111,7 @@ class SignInAuthEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_app=True)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
             # Get the redirection path
@@ -121,14 +121,14 @@ class SignInAuthEndpoint(View):
                 path = get_redirection_path(user=user)
 
             # redirect to referer path
-            url = urljoin(base_host(request=request), path)
+            url = urljoin(base_host(request=request, is_app=True), path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "sign-in?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -152,7 +152,7 @@ class SignUpAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -173,7 +173,7 @@ class SignUpAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -192,7 +192,7 @@ class SignUpAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -207,7 +207,7 @@ class SignUpAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -218,7 +218,7 @@ class SignUpAuthEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_app=True)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
             # Get the redirection path
@@ -227,14 +227,14 @@ class SignUpAuthEndpoint(View):
             else:
                 path = get_redirection_path(user=user)
             # redirect to referer path
-            url = urljoin(base_host(request=request), path)
+            url = urljoin(base_host(request=request, is_app=True), path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
