@@ -14,6 +14,21 @@ export interface DragHandleOptions {
   };
 }
 
+export const DragAndDrop = (setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void) =>
+  Extension.create({
+    name: "dragAndDrop",
+
+    addProseMirrorPlugins() {
+      return [
+        DragHandle({
+          dragHandleWidth: 24,
+          scrollThreshold: { up: 300, down: 100 },
+          setHideDragHandle,
+        }),
+      ];
+    },
+  });
+
 function createDragHandleElement(): HTMLElement {
   const dragHandleElement = document.createElement("div");
   dragHandleElement.draggable = true;
@@ -49,23 +64,24 @@ function absoluteRect(node: Element) {
 }
 
 function nodeDOMAtCoords(coords: { x: number; y: number }) {
-  return document
-    .elementsFromPoint(coords.x, coords.y)
-    .find(
-      (elem: Element) =>
-        elem.parentElement?.matches?.(".ProseMirror") ||
-        elem.matches(
-          [
-            "li",
-            "p:not(:first-child)",
-            ".code-block",
-            "blockquote",
-            "h1, h2, h3",
-            "table",
-            "[data-type=horizontalRule]",
-          ].join(", ")
-        )
-    );
+  return document.elementsFromPoint(coords.x, coords.y).find(
+    (elem: Element) =>
+      elem.parentElement?.matches?.(".ProseMirror") ||
+      elem.matches(
+        [
+          "li",
+          "p:not(:first-child)",
+          // allow p tag hovering and selection but only for direct children of table cells
+          "td > p:first-child",
+          "th > p:first-child",
+          ".code-block",
+          "blockquote",
+          "h1, h2, h3",
+          ".table-wrapper",
+          "[data-type=horizontalRule]",
+        ].join(", ")
+      )
+  );
 }
 
 function nodePosAtDOM(node: Element, view: EditorView, options: DragHandleOptions) {
@@ -86,15 +102,19 @@ function nodePosAtDOMForBlockquotes(node: Element, view: EditorView) {
   })?.inside;
 }
 
-function calcNodePos(pos: number, view: EditorView) {
+function calcNodePos(pos: number, view: EditorView, node: Element) {
   const maxPos = view.state.doc.content.size;
   const safePos = Math.max(0, Math.min(pos, maxPos));
   const $pos = view.state.doc.resolve(safePos);
 
   if ($pos.depth > 1) {
-    const newPos = $pos.before($pos.depth);
-    return Math.max(0, Math.min(newPos, maxPos));
+    if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
+      // only for nested lists
+      const newPos = $pos.before($pos.depth);
+      return Math.max(0, Math.min(newPos, maxPos));
+    }
   }
+
   return safePos;
 }
 
@@ -114,12 +134,12 @@ function DragHandle(options: DragHandleOptions) {
 
     let draggedNodePos = nodePosAtDOM(node, view, options);
     if (draggedNodePos == null || draggedNodePos < 0) return;
-    draggedNodePos = calcNodePos(draggedNodePos, view);
+    draggedNodePos = calcNodePos(draggedNodePos, view, node);
 
     const { from, to } = view.state.selection;
     const diff = from - to;
 
-    const fromSelectionPos = calcNodePos(from, view);
+    const fromSelectionPos = calcNodePos(from, view, node);
     let differentNodeSelected = false;
 
     const nodePos = view.state.doc.resolve(fromSelectionPos);
@@ -146,6 +166,19 @@ function DragHandle(options: DragHandleOptions) {
     // If the selected node is a list item, we need to save the type of the wrapping list e.g. OL or UL
     if (view.state.selection instanceof NodeSelection && view.state.selection.node.type.name === "listItem") {
       listType = node.parentElement!.tagName;
+    }
+
+    if (node.matches("blockquote")) {
+      let nodePosForBlockquotes = nodePosAtDOMForBlockquotes(node, view);
+      if (nodePosForBlockquotes === null || nodePosForBlockquotes === undefined) return;
+
+      const docSize = view.state.doc.content.size;
+      nodePosForBlockquotes = Math.max(0, Math.min(nodePosForBlockquotes, docSize));
+
+      if (nodePosForBlockquotes >= 0 && nodePosForBlockquotes <= docSize) {
+        const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockquotes);
+        view.dispatch(view.state.tr.setSelection(nodeSelection));
+      }
     }
 
     const slice = view.state.selection.content();
@@ -190,7 +223,7 @@ function DragHandle(options: DragHandleOptions) {
     if (nodePos === null || nodePos === undefined) return;
 
     // Adjust the nodePos to point to the start of the node, ensuring NodeSelection can be applied
-    nodePos = calcNodePos(nodePos, view);
+    nodePos = calcNodePos(nodePos, view, node);
 
     // Use NodeSelection to select the node at the calculated position
     const nodeSelection = NodeSelection.create(view.state.doc, nodePos);
@@ -279,8 +312,10 @@ function DragHandle(options: DragHandleOptions) {
 
           // Li markers
           if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
-            rect.top += 4;
             rect.left -= 18;
+          }
+          if (node.matches(".table-wrapper")) {
+            rect.top += 8;
           }
 
           rect.width = options.dragHandleWidth;
@@ -352,18 +387,3 @@ function DragHandle(options: DragHandleOptions) {
     },
   });
 }
-
-export const DragAndDrop = (setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void) =>
-  Extension.create({
-    name: "dragAndDrop",
-
-    addProseMirrorPlugins() {
-      return [
-        DragHandle({
-          dragHandleWidth: 24,
-          scrollThreshold: { up: 300, down: 100 },
-          setHideDragHandle,
-        }),
-      ];
-    },
-  });
