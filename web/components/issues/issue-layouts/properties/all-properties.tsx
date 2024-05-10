@@ -49,7 +49,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { labelMap } = useLabel();
   const { captureIssueEvent } = useEventTracker();
   const {
-    issues: { addModulesToIssue, removeModulesFromIssue },
+    issues: { changeModulesInIssue },
   } = useIssues(EIssuesStoreType.MODULE);
   const {
     issues: { addIssueToCycle, removeIssueFromCycle },
@@ -69,11 +69,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     () => ({
       addModulesToIssue: async (moduleIds: string[]) => {
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        await addModulesToIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds);
+        await changeModulesInIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds, []);
       },
       removeModulesFromIssue: async (moduleIds: string[]) => {
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        await removeModulesFromIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds);
+        await changeModulesInIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, [], moduleIds);
       },
       addIssueToCycle: async (cycleId: string) => {
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
@@ -84,7 +84,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         await removeIssueFromCycle?.(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
       },
     }),
-    [workspaceSlug, issue, addModulesToIssue, removeModulesFromIssue, addIssueToCycle, removeIssueFromCycle]
+    [workspaceSlug, issue, changeModulesInIssue, addIssueToCycle, removeIssueFromCycle]
   );
 
   const handleState = (stateId: string) => {

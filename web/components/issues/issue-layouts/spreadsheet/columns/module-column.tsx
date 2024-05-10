@@ -26,7 +26,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
   // hooks
   const { captureIssueEvent } = useEventTracker();
   const {
-    issues: { addModulesToIssue, removeModulesFromIssue },
+    issues: { changeModulesInIssue },
   } = useIssues(EIssuesStoreType.MODULE);
 
   const handleModule = useCallback(
@@ -36,13 +36,11 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
       const updatedModuleIds = xor(issue.module_ids, moduleIds);
       const modulesToAdd: string[] = [];
       const modulesToRemove: string[] = [];
-      for (const moduleId of updatedModuleIds)
+      for (const moduleId of updatedModuleIds) {
         if (issue.module_ids.includes(moduleId)) modulesToRemove.push(moduleId);
         else modulesToAdd.push(moduleId);
-      if (modulesToAdd.length > 0)
-        addModulesToIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToAdd);
-      if (modulesToRemove.length > 0)
-        removeModulesFromIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToRemove);
+      }
+      changeModulesInIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToAdd, modulesToRemove);
 
       captureIssueEvent({
         eventName: "Issue updated",
@@ -55,7 +53,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
         path: router.asPath,
       });
     },
-    [workspaceSlug, issue, addModulesToIssue, removeModulesFromIssue, captureIssueEvent, router.asPath]
+    [workspaceSlug, issue, changeModulesInIssue, captureIssueEvent, router.asPath]
   );
 
   return (
