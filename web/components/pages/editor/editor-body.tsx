@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Control, Controller } from "react-hook-form";
@@ -22,6 +22,8 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
+import { PageService } from "@/services/page.service";
+const pageService = new PageService();
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -31,7 +33,6 @@ type Props = {
   control: Control<TPage, any>;
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  swrPageDetails: TPage | undefined;
   handleSubmit: () => void;
   markings: IMarking[];
   pageStore: IPageStore;
@@ -49,12 +50,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     editorRef,
     markings,
     readOnlyEditorRef,
-    handleSubmit,
+    // handleSubmit,
     pageStore,
-    swrPageDetails,
     sidePeekVisible,
     updateMarkings,
   } = props;
+  // states
+  const [descriptionYJS, setDescriptionYJS] = useState<Uint8Array | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -67,6 +69,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = useMember();
   // derived values
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
+  const pageId = pageStore?.id ?? "";
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html;
   const { description_html, isContentEditable, updateTitle, isSubmitting, setIsSubmitting } = pageStore;
@@ -82,13 +85,70 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   // page filters
   const { isFullWidth } = usePageFilters();
 
-  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
+  useReloadConfirmations(isSubmitting === "submitting");
+
+  // const { data: pageDescriptionYJS } = useSWR(
+  //   workspaceSlug && projectId && pageId ? `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}` : null,
+  //   workspaceSlug && projectId && pageId
+  //     ? () => pageService.fetchDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString())
+  //     : null
+  // );
+
+  const handleDescriptionChange = useCallback(
+    (binaryString: string, descriptionHTML: string) => {
+      if (!workspaceSlug || !projectId || !pageId) return;
+      pageService.updateDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString(), {
+        description_yjs: binaryString,
+        description_html: descriptionHTML,
+      });
+      // setIsSubmitting("submitting");
+      // setShowAlert(true);
+      // onChange(description_html);
+      // handleSubmit();
+    },
+    [pageId, projectId, workspaceSlug]
+  );
+
+  useEffect(() => {
+    const fetchDescription = async () => {
+      if (!workspaceSlug || !projectId || !pageId) return;
+      console.log("fetching...");
+
+      const response = await fetch(
+        `http://localhost:8000/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`,
+        {
+          credentials: "include",
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
+      const data = await response.arrayBuffer();
+      setDescriptionYJS(new Uint8Array(data));
+      // __AUTO_GENERATED_PRINT_VAR_START__
+      console.log("fetchById data: %s", data); // __AUTO_GENERATED_PRINT_VAR_END__
+      // if (data.byteLength === 0) {
+      //   const yjs = await fetchByIdIfExists(workspaceSlug, projectId, pageId);
+      //   if (yjs) {
+      //     console.log("not found in db:", yjs, yjs instanceof Uint8Array);
+      //     return yjs;
+      //   }
+      // }
+    };
+
+    const interval = setInterval(() => {
+      fetchDescription();
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [pageId, projectId, workspaceSlug]);
 
   useEffect(() => {
     updateMarkings(description_html ?? "<p></p>");
   }, [description_html, updateMarkings]);
 
-  if (pageDescription === undefined) return <PageContentLoader />;
+  if (pageDescription === undefined || pageId === undefined || !descriptionYJS) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -125,8 +185,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             <Controller
               name="description_html"
               control={control}
-              render={({ field: { onChange } }) => (
+              render={() => (
                 <DocumentEditorWithRef
+                  id={pageId}
                   fileHandler={{
                     cancel: fileService.cancelUpload,
                     delete: fileService.getDeleteImageFunction(workspaceId),
@@ -134,17 +195,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                     upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
                   }}
                   handleEditorReady={handleEditorReady}
-                  initialValue={pageDescription ?? "<p></p>"}
-                  value={swrPageDetails?.description_html ?? "<p></p>"}
+                  value={descriptionYJS}
                   ref={editorRef}
                   containerClassName="p-0 pb-64"
                   editorClassName="lg:px-10 pl-8"
-                  onChange={(_description_json, description_html) => {
-                    setIsSubmitting("submitting");
-                    setShowAlert(true);
-                    onChange(description_html);
-                    handleSubmit();
-                  }}
+                  onChange={handleDescriptionChange}
                   mentionHandler={{
                     highlights: mentionHighlights,
                     suggestions: mentionSuggestions,

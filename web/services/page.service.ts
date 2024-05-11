@@ -119,4 +119,24 @@ export class PageService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async fetchDescriptionYJS(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, {
+      headers: {
+        "Content-Type": "application/octet-stream",
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateDescriptionYJS(workspaceSlug: string, projectId: string, pageId: string, data: any): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

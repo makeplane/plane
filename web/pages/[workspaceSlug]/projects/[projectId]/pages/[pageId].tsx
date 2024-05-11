@@ -50,7 +50,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   // fetching page details
   const {
-    data: swrPageDetails,
     isValidating,
     error: pageDetailsError,
   } = useSWR(pageId ? `PAGE_DETAILS_${pageId}` : null, pageId ? () => getPageById(pageId.toString()) : null, {
@@ -145,7 +144,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
             />
           )}
           <PageEditorBody
-            swrPageDetails={swrPageDetails}
             control={control}
             editorRef={editorRef}
             handleEditorReady={(val) => setEditorReady(val)}

@@ -12,18 +12,17 @@ import { insertContentAtSavedSelection } from "src/helpers/insert-content-at-cur
 import { EditorMenuItemNames, getEditorMenuItems } from "src/ui/menus/menu-items";
 import { EditorRefApi } from "src/types/editor-ref-api";
 import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
-
-interface CustomEditorProps {
+export interface CustomEditorProps {
   id?: string;
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
   deleteFile: DeleteImage;
   cancelUploadImage?: () => void;
-  initialValue: string;
+  initialValue?: string;
   editorClassName: string;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
-  value: string | null | undefined;
+  value?: string | null | undefined;
   onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;

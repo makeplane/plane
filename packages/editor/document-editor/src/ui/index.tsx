@@ -4,17 +4,16 @@ import {
   DeleteImage,
   RestoreImage,
   getEditorClassNames,
-  useEditor,
   EditorRefApi,
   IMentionHighlight,
   IMentionSuggestion,
 } from "@plane/editor-core";
-import { DocumentEditorExtensions } from "src/ui/extensions";
 import { PageRenderer } from "src/ui/components/page-renderer";
+import { useDocumentEditor } from "src/hooks/use-document-editor";
 
 interface IDocumentEditor {
-  initialValue: string;
-  value?: string;
+  id: string;
+  value: Uint8Array;
   fileHandler: {
     cancel: () => void;
     delete: DeleteImage;
@@ -24,7 +23,7 @@ interface IDocumentEditor {
   handleEditorReady?: (value: boolean) => void;
   containerClassName?: string;
   editorClassName?: string;
-  onChange: (json: object, html: string) => void;
+  onChange: (binaryString: string, html: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
@@ -37,8 +36,9 @@ interface IDocumentEditor {
 const DocumentEditor = (props: IDocumentEditor) => {
   const {
     onChange,
-    initialValue,
+    id,
     value,
+    // value,
     fileHandler,
     containerClassName,
     editorClassName = "",
@@ -56,26 +56,22 @@ const DocumentEditor = (props: IDocumentEditor) => {
   const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
-  // use editor
-  const editor = useEditor({
-    onChange(json, html) {
-      onChange(json, html);
-    },
+
+  // use document editor
+  const editor = useDocumentEditor({
+    id,
     editorClassName,
     restoreFile: fileHandler.restore,
     uploadFile: fileHandler.upload,
     deleteFile: fileHandler.delete,
     cancelUploadImage: fileHandler.cancel,
-    initialValue,
     value,
+    onChange,
     handleEditorReady,
     forwardedRef,
     mentionHandler,
-    extensions: DocumentEditorExtensions({
-      uploadFile: fileHandler.upload,
-      setHideDragHandle: setHideDragHandleFunction,
-    }),
     placeholder,
+    setHideDragHandleFunction,
     tabIndex,
   });
 
