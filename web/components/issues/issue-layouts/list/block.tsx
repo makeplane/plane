@@ -93,7 +93,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         }
       )}
     >
-      <div className="flex w-full truncate" style={issue.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
+      <div className="flex w-full truncate" style={issue?.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
           <div className="flex items-center gap-0.5">
             <div className="flex items-center group">
