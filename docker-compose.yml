@@ -51,7 +51,7 @@ services:
     depends_on:
       - plane-db
       - plane-redis
-  
+
   mongodb:
     image: "mongo"
     restart: unless-stopped

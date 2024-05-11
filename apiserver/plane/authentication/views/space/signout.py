@@ -1,5 +1,4 @@
 # Python imports
-from urllib.parse import urlencode, urljoin
 
 # Django imports
 from django.views import View

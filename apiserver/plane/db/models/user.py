@@ -23,7 +23,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 # Module imports
-from ..mixins import TimeAuditModel
+from plane.db.mixins import TimeAuditModel
 
 
 def get_default_onboarding():
