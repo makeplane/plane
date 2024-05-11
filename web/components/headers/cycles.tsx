@@ -61,7 +61,6 @@ export const CyclesHeader: FC = observer(() => {
           <Button
             variant="primary"
             size="sm"
-            prependIcon={<Plus />}
             onClick={() => {
               setTrackElement("Cycles page");
               toggleCreateCycleModal(true);

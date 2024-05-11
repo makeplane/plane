@@ -281,7 +281,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
                     size="sm"
-                    prependIcon={<Plus />}
                   >
                     Add Issue
                   </Button>

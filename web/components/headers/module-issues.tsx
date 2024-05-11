@@ -288,7 +288,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                   }}
                   size="sm"
-                  prependIcon={<Plus />}
                 >
                   Add Issue
                 </Button>

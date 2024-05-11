@@ -50,24 +50,16 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   return (
     <>
       {/* page details */}
-      <div className="flex items-center gap-2 text-custom-text-400">
-        {/* <span className="text-xs">Labels</span>
-           <Circle className="h-1 w-1 fill-custom-text-300" /> */}
-        <div className="cursor-default">
-          <Tooltip tooltipHeading="Owned by" tooltipContent={ownerDetails?.display_name}>
-            <Avatar src={ownerDetails?.avatar} name={ownerDetails?.display_name} />
-          </Tooltip>
-        </div>
-        <Circle className="h-1 w-1 fill-custom-text-300" />
-        {/* <span className="text-xs cursor-default">10m read</span>
-           <Circle className="h-1 w-1 fill-custom-text-300" /> */}
-        <div className="cursor-default">
-          <Tooltip tooltipContent={access === 0 ? "Public" : "Private"}>
-            {access === 0 ? <Earth className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
-          </Tooltip>
-        </div>
+      <div className="cursor-default">
+        <Tooltip tooltipHeading="Owned by" tooltipContent={ownerDetails?.display_name}>
+          <Avatar src={ownerDetails?.avatar} name={ownerDetails?.display_name} />
+        </Tooltip>
       </div>
-
+      <div className="cursor-default text-custom-text-300">
+        <Tooltip tooltipContent={access === 0 ? "Public" : "Private"}>
+          {access === 0 ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+        </Tooltip>
+      </div>
       {/* vertical divider */}
       <Minus className="h-5 w-5 text-custom-text-400 rotate-90 -mx-3" strokeWidth={1} />
 

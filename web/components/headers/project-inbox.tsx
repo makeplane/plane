@@ -70,7 +70,7 @@ export const ProjectInboxHeader: FC = observer(() => {
             issue={undefined}
           />
 
-          <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
+          <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
             Add Issue
           </Button>
         </div>

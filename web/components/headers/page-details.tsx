@@ -79,8 +79,8 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
       </div>
       {showButton && (
         <div className="flex items-center gap-2">
-          <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => toggleCreatePageModal(true)}>
-            Create Page
+          <Button variant="primary" size="sm" onClick={() => toggleCreatePageModal(true)}>
+            Add Page
           </Button>
         </div>
       )}

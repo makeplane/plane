@@ -241,7 +241,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             size="sm"
-            prependIcon={<Plus />}
           >
             Add Issue
           </Button>

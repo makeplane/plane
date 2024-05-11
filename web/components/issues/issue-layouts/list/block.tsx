@@ -86,25 +86,28 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     <div
       ref={parentRef}
       className={cn(
-        "min-h-[52px] relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 pl-8 text-sm",
+        "min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 pl-1.5 text-sm",
         {
           "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
         }
       )}
     >
-      <div className="flex w-full truncate" style={nestingLevel !== 0 ? { paddingLeft } : {}}>
+      <div className="flex w-full truncate" style={issue.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
-          <div className="flex items-center gap-1.5">
-            <div className="flex h-5 w-5 items-center justify-center">
-              {subIssuesCount > 0 && (
-                <button
-                  className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
-                  onClick={handleToggleExpand}
-                >
-                  <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
-                </button>
-              )}
+          <div className="flex items-center gap-0.5">
+            <div className="flex items-center group">
+              <span className="size-3.5" />
+              <div className="flex h-4 w-4 items-center justify-center">
+                {issue.sub_issues_count > 0 && (
+                  <button
+                    className="flex items-center justify-center h-4 w-4 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
+                    onClick={handleToggleExpand}
+                  >
+                    <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
+                  </button>
+                )}
+              </div>
             </div>
             {displayProperties && displayProperties?.key && (
               <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
@@ -118,7 +121,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           </div>
 
           {issue?.is_draft ? (
-            <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+            <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left">
               <p className="truncate">{issue.name}</p>
             </Tooltip>
           ) : (
@@ -132,7 +135,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
               className="w-full truncate cursor-pointer text-sm text-custom-text-100"
               disabled={!!issue?.tempId}
             >
-              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+              <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left">
                 <p className="truncate">{issue.name}</p>
               </Tooltip>
             </ControlLink>
@@ -151,7 +154,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         {!issue?.tempId ? (
           <>
             <IssueProperties
-              className="relative flex flex-wrap items-center gap-2 whitespace-nowrap md:flex-shrink-0 md:flex-grow"
+              className="relative flex flex-wrap md:flex-grow md:flex-shrink-0 items-center gap-2 whitespace-nowrap"
               issue={issue}
               isReadOnly={!canEditIssueProperties}
               updateIssue={updateIssue}
