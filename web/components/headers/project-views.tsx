@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Plus } from "lucide-react";
 // hooks
 // components
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";

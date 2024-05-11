@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Plus, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components

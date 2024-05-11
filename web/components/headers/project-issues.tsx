@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
-import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+import { Briefcase, Circle, ExternalLink } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
