@@ -1,10 +1,9 @@
-import Image from "next/image";
-
-// mobx
 import { observer } from "mobx-react-lite";
-import planeLogo from "public/plane-logo.svg";
+import Image from "next/image";
 // components
 import IssueNavbar from "@/components/issues/navbar";
+// logo
+import planeLogo from "public/plane-logo.svg";
 
 const ProjectLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
@@ -12,7 +11,6 @@ const ProjectLayout = ({ children }: { children: React.ReactNode }) => (
       <IssueNavbar />
     </div>
     <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
-
     <a
       href="https://plane.so"
       className="fixed bottom-2.5 right-5 !z-[999999] flex items-center gap-1 rounded border border-custom-border-200 bg-custom-background-100 px-2 py-1 shadow-custom-shadow-2xs"
