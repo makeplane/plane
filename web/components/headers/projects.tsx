@@ -167,7 +167,6 @@ export const ProjectsHeader = observer(() => {
         </div>
         {isAuthorizedUser && (
           <Button
-            prependIcon={<Plus />}
             size="sm"
             onClick={() => {
               setTrackElement("Projects page");

@@ -63,7 +63,6 @@ export const ModulesListHeader: React.FC = observer(() => {
           <Button
             variant="primary"
             size="sm"
-            prependIcon={<Plus />}
             onClick={() => {
               setTrackElement("Modules page");
               toggleCreateModuleModal(true);

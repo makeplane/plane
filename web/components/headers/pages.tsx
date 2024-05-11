@@ -59,14 +59,13 @@ export const PagesHeader = observer(() => {
         <div className="flex items-center gap-2">
           <Button
             variant="primary"
-            prependIcon={<Plus />}
             size="sm"
             onClick={() => {
               setTrackElement("Project pages page");
               toggleCreatePageModal(true);
             }}
           >
-            Create Page
+            Add Page
           </Button>
         </div>
       )}
