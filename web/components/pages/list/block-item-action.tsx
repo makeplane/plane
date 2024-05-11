@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { Circle, Earth, Info, Lock, Minus } from "lucide-react";
+import { Earth, Info, Lock, Minus } from "lucide-react";
 // ui
 import { Avatar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components

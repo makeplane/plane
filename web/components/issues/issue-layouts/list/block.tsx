@@ -57,14 +57,14 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const issue = issuesMap[issueId];
-  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+  // const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   const { isMobile } = usePlatformOS();
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
   // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
-  const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
+  // const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
 
   const paddingLeft = `${spacingLeft}px`;
 

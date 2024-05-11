@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
+import { Search, Briefcase, X, ListFilter } from "lucide-react";
 // types
 import { TProjectFilters } from "@plane/types";
 // ui
