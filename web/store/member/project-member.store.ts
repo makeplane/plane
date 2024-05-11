@@ -89,7 +89,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
     if (!projectId) return null;
     let members = Object.values(this.projectMemberMap?.[projectId] ?? {});
     members = sortBy(members, [
-      (m) => m.member !== this.userStore.data?.id,
+      (m) => m.member !== this.userStore?.data?.id,
       (m) => this.memberRoot.memberMap?.[m.member]?.display_name.toLowerCase(),
     ]);
     const memberIds = members.map((m) => m.member);
@@ -122,7 +122,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
     if (!this.projectMemberMap?.[projectId]) return null;
     let members = Object.values(this.projectMemberMap?.[projectId]);
     members = sortBy(members, [
-      (m) => m.member !== this.userStore.data?.id,
+      (m) => m.member !== this.userStore?.data?.id,
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
     ]);
     const memberIds = members.map((m) => m.member);
