@@ -137,11 +137,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       // }
     };
 
-    const interval = setInterval(() => {
-      fetchDescription();
-    }, 15000);
+    // Fetch the description immediately
+    fetchDescription();
 
-    return () => clearInterval(interval);
+    // Then fetch the description every 10 seconds
+    const intervalId = setInterval(fetchDescription, 10000);
+
+    // Clear the interval when the component is unmounted
+    return () => clearInterval(intervalId);
   }, [pageId, projectId, workspaceSlug]);
 
   useEffect(() => {
