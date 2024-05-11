@@ -32,6 +32,7 @@ export const AuthWrapper: FC<TAuthWrapper> = observer((props) => {
         <Spinner />
       </div>
     );
+
   if (pageType === EPageTypes.PUBLIC) return <>{children}</>;
 
   if (pageType === EPageTypes.INIT) {

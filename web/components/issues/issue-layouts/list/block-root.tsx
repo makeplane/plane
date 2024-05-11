@@ -80,7 +80,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
             canEditProperties={canEditProperties}
             displayProperties={displayProperties}
             nestingLevel={nestingLevel + 1}
-            spacingLeft={spacingLeft + (displayProperties?.key ? 19 : 0)}
+            spacingLeft={spacingLeft + (displayProperties?.key ? 12 : 0)}
             containerRef={containerRef}
           />
         ))}

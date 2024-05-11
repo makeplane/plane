@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Plus } from "lucide-react";
 // hooks
 // components
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
@@ -61,13 +60,8 @@ export const ProjectViewsHeader: React.FC = observer(() => {
           <div className="flex flex-shrink-0 items-center gap-2">
             <ViewListHeader />
             <div>
-              <Button
-                variant="primary"
-                size="sm"
-                prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
-                onClick={() => toggleCreateViewModal(true)}
-              >
-                Create View
+              <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
+                Add View
               </Button>
             </div>
           </div>

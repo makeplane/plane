@@ -1,8 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// icons
-import { Plus } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // components
@@ -61,7 +59,6 @@ export const CyclesHeader: FC = observer(() => {
           <Button
             variant="primary"
             size="sm"
-            prependIcon={<Plus />}
             onClick={() => {
               setTrackElement("Cycles page");
               toggleCreateCycleModal(true);
