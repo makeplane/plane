@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Control, Controller } from "react-hook-form";
+import useSWR from "swr";
 // document editor
 import {
   DocumentEditorWithRef,
@@ -55,8 +56,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     sidePeekVisible,
     updateMarkings,
   } = props;
-  // states
-  const [descriptionYJS, setDescriptionYJS] = useState<Uint8Array | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -87,12 +86,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   useReloadConfirmations(isSubmitting === "submitting");
 
-  // const { data: pageDescriptionYJS } = useSWR(
-  //   workspaceSlug && projectId && pageId ? `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}` : null,
-  //   workspaceSlug && projectId && pageId
-  //     ? () => pageService.fetchDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString())
-  //     : null
-  // );
+  const { data: descriptionYJS } = useSWR(
+    workspaceSlug && projectId && pageId ? `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}` : null,
+    workspaceSlug && projectId && pageId
+      ? () => pageService.fetchDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString())
+      : null,
+    {
+      refreshInterval: 20000,
+    }
+  );
+  const pageDescriptionYJS = new Uint8Array(descriptionYJS);
 
   const handleDescriptionChange = useCallback(
     (binaryString: string, descriptionHTML: string) => {
@@ -110,48 +113,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   );
 
   useEffect(() => {
-    const fetchDescription = async () => {
-      if (!workspaceSlug || !projectId || !pageId) return;
-      console.log("fetching...");
-
-      const response = await fetch(
-        `http://localhost:8000/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`,
-        {
-          credentials: "include",
-          method: "GET",
-          headers: {
-            "Content-Type": "application/octet-stream",
-          },
-        }
-      );
-      const data = await response.arrayBuffer();
-      setDescriptionYJS(new Uint8Array(data));
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log("fetchById data: %s", data); // __AUTO_GENERATED_PRINT_VAR_END__
-      // if (data.byteLength === 0) {
-      //   const yjs = await fetchByIdIfExists(workspaceSlug, projectId, pageId);
-      //   if (yjs) {
-      //     console.log("not found in db:", yjs, yjs instanceof Uint8Array);
-      //     return yjs;
-      //   }
-      // }
-    };
-
-    // Fetch the description immediately
-    fetchDescription();
-
-    // Then fetch the description every 10 seconds
-    const intervalId = setInterval(fetchDescription, 10000);
-
-    // Clear the interval when the component is unmounted
-    return () => clearInterval(intervalId);
-  }, [pageId, projectId, workspaceSlug]);
-
-  useEffect(() => {
     updateMarkings(description_html ?? "<p></p>");
   }, [description_html, updateMarkings]);
 
-  if (pageDescription === undefined || pageId === undefined || !descriptionYJS) return <PageContentLoader />;
+  if (pageDescription === undefined || pageId === undefined || !pageDescriptionYJS) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -198,7 +163,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                     upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
                   }}
                   handleEditorReady={handleEditorReady}
-                  value={descriptionYJS}
+                  value={pageDescriptionYJS}
                   ref={editorRef}
                   containerClassName="p-0 pb-64"
                   editorClassName="lg:px-10 pl-8"

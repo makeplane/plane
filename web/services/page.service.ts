@@ -125,6 +125,7 @@ export class PageService extends APIService {
       headers: {
         "Content-Type": "application/octet-stream",
       },
+      responseType: "arraybuffer",
     })
       .then((response) => response?.data)
       .catch((error) => {
