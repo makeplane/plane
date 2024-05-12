@@ -62,4 +62,4 @@ pytz==2024.1
 # jwt
 PyJWT==2.8.0
 # real-time
-y-py==0.6.2
+y-py==0.6.0
