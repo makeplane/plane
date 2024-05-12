@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 // ui
@@ -17,7 +19,7 @@ export const AuthView = observer(() => {
   // hooks
   const { resolvedTheme } = useTheme();
   // store
-  const { data: currentUser, fetchCurrentUser, isLoading } = useUser();
+  const { fetchCurrentUser, isLoading, isAuthenticated } = useUser();
 
   // fetching user information
   const { isLoading: isSWRLoading } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
@@ -33,7 +35,7 @@ export const AuthView = observer(() => {
         </div>
       ) : (
         <>
-          {currentUser ? (
+          {isAuthenticated ? (
             <UserLoggedIn />
           ) : (
             <div className="relative w-screen h-screen overflow-hidden">

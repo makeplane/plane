@@ -13,7 +13,7 @@ module.exports = {
   plugins: ["react", "@typescript-eslint", "import"],
   settings: {
     next: {
-      rootDir: ["web/", "space/", "packages/*/"],
+      rootDir: ["web/", "space/", "admin/", "packages/*/"],
     },
   },
   rules: {
