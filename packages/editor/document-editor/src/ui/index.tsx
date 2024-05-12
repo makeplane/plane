@@ -1,25 +1,21 @@
 import React, { useState } from "react";
+// editor-core
 import {
-  UploadImage,
-  DeleteImage,
-  RestoreImage,
   getEditorClassNames,
   EditorRefApi,
   IMentionHighlight,
   IMentionSuggestion,
+  TFileHandler,
 } from "@plane/editor-core";
+// components
 import { PageRenderer } from "src/ui/components/page-renderer";
+// hooks
 import { useDocumentEditor } from "src/hooks/use-document-editor";
 
 interface IDocumentEditor {
   id: string;
   value: Uint8Array;
-  fileHandler: {
-    cancel: () => void;
-    delete: DeleteImage;
-    upload: UploadImage;
-    restore: RestoreImage;
-  };
+  fileHandler: TFileHandler;
   handleEditorReady?: (value: boolean) => void;
   containerClassName?: string;
   editorClassName?: string;
@@ -61,10 +57,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
   const editor = useDocumentEditor({
     id,
     editorClassName,
-    restoreFile: fileHandler.restore,
-    uploadFile: fileHandler.upload,
-    deleteFile: fileHandler.delete,
-    cancelUploadImage: fileHandler.cancel,
+    fileHandler,
     value,
     onChange,
     handleEditorReady,

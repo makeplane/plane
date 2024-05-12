@@ -12,12 +12,17 @@ import { insertContentAtSavedSelection } from "src/helpers/insert-content-at-cur
 import { EditorMenuItemNames, getEditorMenuItems } from "src/ui/menus/menu-items";
 import { EditorRefApi } from "src/types/editor-ref-api";
 import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
+
+export type TFileHandler = {
+  cancel: () => void;
+  delete: DeleteImage;
+  upload: UploadImage;
+  restore: RestoreImage;
+};
+
 export interface CustomEditorProps {
   id?: string;
-  uploadFile: UploadImage;
-  restoreFile: RestoreImage;
-  deleteFile: DeleteImage;
-  cancelUploadImage?: () => void;
+  fileHandler: TFileHandler;
   initialValue?: string;
   editorClassName: string;
   // undefined when prop is not passed, null if intentionally passed to stop
@@ -37,19 +42,16 @@ export interface CustomEditorProps {
 }
 
 export const useEditor = ({
-  uploadFile,
   id = "",
-  deleteFile,
-  cancelUploadImage,
   editorProps = {},
   initialValue,
   editorClassName,
   value,
   extensions = [],
+  fileHandler,
   onChange,
   forwardedRef,
   tabIndex,
-  restoreFile,
   handleEditorReady,
   mentionHandler,
   placeholder,
@@ -66,10 +68,10 @@ export const useEditor = ({
           mentionHighlights: mentionHandler.highlights ?? [],
         },
         fileConfig: {
-          deleteFile,
-          restoreFile,
-          cancelUploadImage,
-          uploadFile,
+          uploadFile: fileHandler.upload,
+          deleteFile: fileHandler.delete,
+          restoreFile: fileHandler.restore,
+          cancelUploadImage: fileHandler.cancel,
         },
         placeholder,
         tabIndex,
@@ -138,7 +140,7 @@ export const useEditor = ({
         }
       },
       executeMenuItemCommand: (itemName: EditorMenuItemNames) => {
-        const editorItems = getEditorMenuItems(editorRef.current, uploadFile);
+        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
 
         const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
 
@@ -154,7 +156,7 @@ export const useEditor = ({
         }
       },
       isMenuItemActive: (itemName: EditorMenuItemNames): boolean => {
-        const editorItems = getEditorMenuItems(editorRef.current, uploadFile);
+        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
 
         const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
         const item = getEditorMenuItem(itemName);
@@ -198,7 +200,7 @@ export const useEditor = ({
         }
       },
     }),
-    [editorRef, savedSelection, uploadFile]
+    [editorRef, savedSelection, fileHandler.upload]
   );
 
   if (!editor) {

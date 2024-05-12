@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Control, Controller } from "react-hook-form";
 import useSWR from "swr";
 // document editor
 import {
@@ -12,7 +11,7 @@ import {
   IMarking,
 } from "@plane/document-editor";
 // types
-import { IUserLite, TPage } from "@plane/types";
+import { IUserLite } from "@plane/types";
 // components
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
@@ -31,7 +30,6 @@ import { IPageStore } from "@/store/pages/page.store";
 const fileService = new FileService();
 
 type Props = {
-  control: Control<TPage, any>;
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleDescriptionUpdate: (binaryString: string, descriptionHTML: string) => Promise<void>;
@@ -45,7 +43,6 @@ type Props = {
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
-    control,
     handleReadOnlyEditorReady,
     handleDescriptionUpdate,
     handleEditorReady,
@@ -135,30 +132,24 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             />
           </div>
           {isContentEditable ? (
-            <Controller
-              name="description_html"
-              control={control}
-              render={() => (
-                <DocumentEditorWithRef
-                  id={pageId}
-                  fileHandler={{
-                    cancel: fileService.cancelUpload,
-                    delete: fileService.getDeleteImageFunction(workspaceId),
-                    restore: fileService.getRestoreImageFunction(workspaceId),
-                    upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
-                  }}
-                  handleEditorReady={handleEditorReady}
-                  value={pageDescriptionYJS}
-                  ref={editorRef}
-                  containerClassName="p-0 pb-64"
-                  editorClassName="lg:px-10 pl-8"
-                  onChange={handleDescriptionUpdate}
-                  mentionHandler={{
-                    highlights: mentionHighlights,
-                    suggestions: mentionSuggestions,
-                  }}
-                />
-              )}
+            <DocumentEditorWithRef
+              id={pageId}
+              fileHandler={{
+                cancel: fileService.cancelUpload,
+                delete: fileService.getDeleteImageFunction(workspaceId),
+                restore: fileService.getRestoreImageFunction(workspaceId),
+                upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
+              }}
+              handleEditorReady={handleEditorReady}
+              value={pageDescriptionYJS}
+              ref={editorRef}
+              containerClassName="p-0 pb-64"
+              editorClassName="pl-10"
+              onChange={handleDescriptionUpdate}
+              mentionHandler={{
+                highlights: mentionHighlights,
+                suggestions: mentionSuggestions,
+              }}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
@@ -166,7 +157,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
-              editorClassName="lg:px-10 pl-8"
+              editorClassName="pl-10"
               mentionHandler={{
                 highlights: mentionHighlights,
               }}

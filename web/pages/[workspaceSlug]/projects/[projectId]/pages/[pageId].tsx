@@ -2,7 +2,6 @@ import { ReactElement, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
 import useSWR from "swr";
 // document-editor
 import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
@@ -41,15 +40,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const { description_html, id, name, setIsSubmitting, updateDescription } = pageStore;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
-  // form info
-  const { getValues, control } = useForm<TPage>({
-    defaultValues: {
-      name: "",
-      description_html: "",
-    },
-  });
-
-  // fetching page details
+  // fetch page details
   const { error: pageDetailsError } = useSWR(
     pageId ? `PAGE_DETAILS_${pageId}` : null,
     pageId ? () => getPageById(pageId.toString()) : null,
@@ -70,7 +61,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   if ((!pageStore || !id) && !pageDetailsError)
     return (
-      <div className="h-full w-full grid place-items-center">
+      <div className="size-full grid place-items-center">
         <Spinner />
       </div>
     );
@@ -94,13 +85,9 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const handleCreatePage = async (payload: Partial<TPage>) => await createPage(payload);
 
   const handleDuplicatePage = async () => {
-    const currentPageValues = getValues();
-
-    if (!currentPageValues?.description_html) currentPageValues.description_html = description_html;
-
     const formData: Partial<TPage> = {
       name: "Copy of " + name,
-      description_html: currentPageValues.description_html,
+      description_html: description_html ?? "<p></p>",
     };
 
     await handleCreatePage(formData)
@@ -134,7 +121,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
             />
           )}
           <PageEditorBody
-            control={control}
             editorRef={editorRef}
             handleEditorReady={(val) => setEditorReady(val)}
             readOnlyEditorRef={readOnlyEditorRef}

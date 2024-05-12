@@ -26,11 +26,7 @@ export class CollaborationProvider {
     onChange: () => {},
   };
 
-  intervals: any = {
-    forceSync: null,
-  };
-
-  timeoutId: any;
+  timeoutId: NodeJS.Timeout | null;
 
   constructor(configuration: CollaborationProviderConfiguration) {
     this.setConfiguration(configuration);
@@ -53,6 +49,7 @@ export class CollaborationProvider {
   }
 
   documentUpdateHandler(update: Uint8Array, origin: any) {
+    // return if the update is from the provider itself
     if (origin === this) return;
 
     // debounce onChange call

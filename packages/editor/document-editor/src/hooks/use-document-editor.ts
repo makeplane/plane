@@ -1,25 +1,17 @@
 import { useLayoutEffect, useMemo } from "react";
-import {
-  DeleteImage,
-  EditorRefApi,
-  IMentionHighlight,
-  IMentionSuggestion,
-  RestoreImage,
-  UploadImage,
-  useEditor,
-} from "@plane/editor-core";
-import * as Y from "yjs";
-import { CollaborationProvider } from "src/providers/collaboration-provider";
-import { DocumentEditorExtensions } from "src/ui/extensions";
-import { IndexeddbPersistence } from "y-indexeddb";
 import { EditorProps } from "@tiptap/pm/view";
+import { IndexeddbPersistence } from "y-indexeddb";
+import * as Y from "yjs";
+// editor-core
+import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TFileHandler, useEditor } from "@plane/editor-core";
+// custom provider
+import { CollaborationProvider } from "src/providers/collaboration-provider";
+// extensions
+import { DocumentEditorExtensions } from "src/ui/extensions";
 
 type DocumentEditorProps = {
   id?: string;
-  uploadFile: UploadImage;
-  restoreFile: RestoreImage;
-  deleteFile: DeleteImage;
-  cancelUploadImage?: () => void;
+  fileHandler: TFileHandler;
   value: Uint8Array;
   editorClassName: string;
   onChange: (binaryString: string, html: string) => void;
@@ -37,17 +29,14 @@ type DocumentEditorProps = {
 };
 
 export const useDocumentEditor = ({
-  uploadFile,
   id = "",
-  deleteFile,
-  cancelUploadImage,
   editorProps = {},
   value,
   editorClassName,
+  fileHandler,
   onChange,
   forwardedRef,
   tabIndex,
-  restoreFile,
   handleEditorReady,
   mentionHandler,
   placeholder,
@@ -81,15 +70,12 @@ export const useDocumentEditor = ({
     id,
     editorProps,
     editorClassName,
-    restoreFile,
-    uploadFile,
-    deleteFile,
-    cancelUploadImage,
+    fileHandler,
     handleEditorReady,
     forwardedRef,
     mentionHandler,
     extensions: DocumentEditorExtensions({
-      uploadFile,
+      uploadFile: fileHandler.upload,
       setHideDragHandle: setHideDragHandleFunction,
       provider,
     }),
