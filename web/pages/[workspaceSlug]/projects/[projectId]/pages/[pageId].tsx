@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { ReactElement, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -38,10 +38,11 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { createPage, getPageById } = useProjectPages(projectId?.toString() ?? "");
   const pageStore = usePage(pageId?.toString() ?? "");
+  const { description_html, id, name, setIsSubmitting, updateDescription } = pageStore;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
   // form info
-  const { handleSubmit, getValues, control } = useForm<TPage>({
+  const { getValues, control } = useForm<TPage>({
     defaultValues: {
       name: "",
       description_html: "",
@@ -49,23 +50,25 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   });
 
   // fetching page details
-  const {
-    isValidating,
-    error: pageDetailsError,
-  } = useSWR(pageId ? `PAGE_DETAILS_${pageId}` : null, pageId ? () => getPageById(pageId.toString()) : null, {
-    revalidateIfStale: false,
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-  });
-
-  useEffect(
-    () => () => {
-      if (pageStore.cleanup) pageStore.cleanup();
-    },
-    [pageStore]
+  const { error: pageDetailsError } = useSWR(
+    pageId ? `PAGE_DETAILS_${pageId}` : null,
+    pageId ? () => getPageById(pageId.toString()) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
-  if ((!pageStore || !pageStore.id) && !pageDetailsError)
+  const handleDescriptionChange = useCallback(
+    async (binaryString: string, descriptionHTML: string) => {
+      setIsSubmitting("submitting");
+      await updateDescription(binaryString, descriptionHTML).finally(() => setIsSubmitting("saved"));
+    },
+    [setIsSubmitting, updateDescription]
+  );
+
+  if ((!pageStore || !id) && !pageDetailsError)
     return (
       <div className="h-full w-full grid place-items-center">
         <Spinner />
@@ -88,27 +91,15 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       </div>
     );
 
-  // we need to get the values of title and description from the page store but we don't have to subscribe to those values
-  const pageTitle = pageStore?.name;
-
   const handleCreatePage = async (payload: Partial<TPage>) => await createPage(payload);
-
-  const handleUpdatePage = async (formData: TPage) => {
-    let updatedDescription = formData.description_html;
-    if (!updatedDescription || updatedDescription.trim() === "") updatedDescription = "<p></p>";
-    pageStore.updateDescription(updatedDescription);
-  };
 
   const handleDuplicatePage = async () => {
     const currentPageValues = getValues();
 
-    if (!currentPageValues?.description_html) {
-      // TODO: We need to get latest data the above variable will give us stale data
-      currentPageValues.description_html = pageStore.description_html;
-    }
+    if (!currentPageValues?.description_html) currentPageValues.description_html = description_html;
 
     const formData: Partial<TPage> = {
-      name: "Copy of " + pageStore.name,
+      name: "Copy of " + name,
       description_html: currentPageValues.description_html,
     };
 
@@ -125,7 +116,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
-      <PageHead title={pageTitle} />
+      <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
         <div className="h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
           {projectId && (
@@ -135,7 +126,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               editorReady={editorReady}
               readOnlyEditorReady={readOnlyEditorReady}
               handleDuplicatePage={handleDuplicatePage}
-              isSyncing={isValidating}
               markings={markings}
               pageStore={pageStore}
               projectId={projectId.toString()}
@@ -149,7 +139,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
             handleEditorReady={(val) => setEditorReady(val)}
             readOnlyEditorRef={readOnlyEditorRef}
             handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
-            handleSubmit={() => handleSubmit(handleUpdatePage)()}
+            handleDescriptionUpdate={handleDescriptionChange}
             markings={markings}
             pageStore={pageStore}
             sidePeekVisible={sidePeekVisible}

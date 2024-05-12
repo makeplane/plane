@@ -13,7 +13,6 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleDuplicatePage: () => void;
-  isSyncing: boolean;
   markings: IMarking[];
   pageStore: IPageStore;
   projectId: string;
@@ -31,7 +30,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     markings,
     readOnlyEditorReady,
     handleDuplicatePage,
-    isSyncing,
     pageStore,
     projectId,
     sidePeekVisible,
@@ -67,7 +65,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
         <PageExtraOptions
           editorRef={editorRef}
           handleDuplicatePage={handleDuplicatePage}
-          isSyncing={isSyncing}
           pageStore={pageStore}
           projectId={projectId}
           readOnlyEditorRef={readOnlyEditorRef}
@@ -81,7 +78,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           readOnlyEditorReady={readOnlyEditorReady}
           markings={markings}
           handleDuplicatePage={handleDuplicatePage}
-          isSyncing={isSyncing}
           pageStore={pageStore}
           projectId={projectId}
           sidePeekVisible={sidePeekVisible}

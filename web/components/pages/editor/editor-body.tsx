@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Control, Controller } from "react-hook-form";
@@ -34,7 +34,7 @@ type Props = {
   control: Control<TPage, any>;
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  handleSubmit: () => void;
+  handleDescriptionUpdate: (binaryString: string, descriptionHTML: string) => Promise<void>;
   markings: IMarking[];
   pageStore: IPageStore;
   sidePeekVisible: boolean;
@@ -47,11 +47,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
     control,
     handleReadOnlyEditorReady,
+    handleDescriptionUpdate,
     handleEditorReady,
     editorRef,
     markings,
     readOnlyEditorRef,
-    // handleSubmit,
     pageStore,
     sidePeekVisible,
     updateMarkings,
@@ -71,7 +71,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const pageId = pageStore?.id ?? "";
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html;
-  const { description_html, isContentEditable, updateTitle, isSubmitting, setIsSubmitting } = pageStore;
+  const { description_html, isContentEditable, isSubmitting, updateTitle, setIsSubmitting } = pageStore;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
@@ -96,21 +96,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   );
   const pageDescriptionYJS = new Uint8Array(descriptionYJS);
-
-  const handleDescriptionChange = useCallback(
-    (binaryString: string, descriptionHTML: string) => {
-      if (!workspaceSlug || !projectId || !pageId) return;
-      pageService.updateDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString(), {
-        description_yjs: binaryString,
-        description_html: descriptionHTML,
-      });
-      // setIsSubmitting("submitting");
-      // setShowAlert(true);
-      // onChange(description_html);
-      // handleSubmit();
-    },
-    [pageId, projectId, workspaceSlug]
-  );
 
   useEffect(() => {
     updateMarkings(description_html ?? "<p></p>");
@@ -167,7 +152,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                   ref={editorRef}
                   containerClassName="p-0 pb-64"
                   editorClassName="lg:px-10 pl-8"
-                  onChange={handleDescriptionChange}
+                  onChange={handleDescriptionUpdate}
                   mentionHandler={{
                     highlights: mentionHighlights,
                     suggestions: mentionSuggestions,
