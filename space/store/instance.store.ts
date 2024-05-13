@@ -19,7 +19,7 @@ export interface IInstanceStore {
   // issues
   isLoading: boolean;
   data: IInstance | NonNullable<unknown>;
-  config: Record<string, unknown>;
+  config: Record<string, any>;
   error: TError | undefined;
   // action
   fetchInstanceInfo: () => Promise<void>;
@@ -28,7 +28,7 @@ export interface IInstanceStore {
 
 export class InstanceStore implements IInstanceStore {
   isLoading: boolean = true;
-  data: IInstance | Record<string, unknown> = {};
+  data: IInstance | Record<string, any> = {};
   config: Record<string, unknown> = {};
   error: TError | undefined = undefined;
   // services

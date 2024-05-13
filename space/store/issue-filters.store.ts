@@ -1,15 +1,16 @@
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
-// types
+// constants
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// store
 import { RootStore } from "@/store/root.store";
-import { IIssueFilterOptions, TIssueParams } from "./types";
-import { handleIssueQueryParamsByLayout } from "./helpers";
-import { IssueFilterBaseStore } from "./base-issue-filter.store";
+// types
+import { TIssueBoardKeys, IIssueFilterOptions, TIssueParams } from "@/types/issue";
 
 interface IFiltersOptions {
   filters: IIssueFilterOptions;
 }
 
-export interface IIssuesFilterStore {
+export interface IIssueFilterStore {
   // observables
   projectIssueFilters: { [projectId: string]: IFiltersOptions } | undefined;
   // computed
@@ -21,15 +22,13 @@ export interface IIssuesFilterStore {
   updateFilters: (projectId: string, filters: IIssueFilterOptions) => Promise<IFiltersOptions>;
 }
 
-export class IssuesFilterStore extends IssueFilterBaseStore implements IIssuesFilterStore {
+export class IssueFilterStore implements IIssueFilterStore {
   // observables
   projectIssueFilters: { [projectId: string]: IFiltersOptions } | undefined = undefined;
   // root store
   rootStore;
 
   constructor(_rootStore: RootStore) {
-    super(_rootStore);
-
     makeObservable(this, {
       // observables
       projectIssueFilters: observable.ref,
@@ -43,35 +42,61 @@ export class IssuesFilterStore extends IssueFilterBaseStore implements IIssuesFi
     this.rootStore = _rootStore;
   }
 
+  // helper methods
+  computedFilter = (filters: any, filteredParams: any) => {
+    const computedFilters: any = {};
+    Object.keys(filters).map((key) => {
+      if (filters[key] != undefined && filteredParams.includes(key))
+        computedFilters[key] =
+          typeof filters[key] === "string" || typeof filters[key] === "boolean" ? filters[key] : filters[key].join(",");
+    });
+
+    return computedFilters;
+  };
+
   // helpers
   issueDisplayFilters = (projectId: string) => {
     if (!projectId) return undefined;
     return this.projectIssueFilters?.[projectId] || undefined;
   };
 
-  // actions
+  handleIssueQueryParamsByLayout = (layout: TIssueBoardKeys | undefined, viewType: "issues"): TIssueParams[] | null => {
+    const queryParams: TIssueParams[] = [];
 
+    if (!layout) return null;
+
+    const layoutOptions = ISSUE_DISPLAY_FILTERS_BY_LAYOUT[viewType][layout];
+
+    // add filters query params
+    layoutOptions.filters.forEach((option: any) => {
+      queryParams.push(option);
+    });
+
+    return queryParams;
+  };
+
+  // actions
   updateFilters = async (projectId: string, filters: IIssueFilterOptions) => {
     try {
-      let _projectIssueFilters = { ...this.projectIssueFilters };
-      if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[projectId]) _projectIssueFilters[projectId] = { filters: {} };
+      let issueFilters = { ...this.projectIssueFilters };
+      if (!issueFilters) issueFilters = {};
+      if (!issueFilters[projectId]) issueFilters[projectId] = { filters: {} };
 
-      const _filters = {
-        filters: { ..._projectIssueFilters[projectId].filters },
+      const newFilters = {
+        filters: { ...issueFilters[projectId].filters },
       };
 
-      _filters.filters = { ..._filters.filters, ...filters };
+      newFilters.filters = { ...newFilters.filters, ...filters };
 
-      _projectIssueFilters[projectId] = {
-        filters: _filters.filters,
+      issueFilters[projectId] = {
+        filters: newFilters.filters,
       };
 
       runInAction(() => {
-        this.projectIssueFilters = _projectIssueFilters;
+        this.projectIssueFilters = issueFilters;
       });
 
-      return _filters;
+      return newFilters;
     } catch (error) {
       throw error;
     }
@@ -89,7 +114,7 @@ export class IssuesFilterStore extends IssueFilterBaseStore implements IIssuesFi
 
   get appliedFilters() {
     const userFilters = this.issueFilters;
-    const layout = this.rootStore.project?.activeBoard;
+    const layout = this.rootStore.project?.activeLayout;
     if (!userFilters || !layout) return undefined;
 
     let filteredRouteParams: any = {
@@ -98,7 +123,7 @@ export class IssuesFilterStore extends IssueFilterBaseStore implements IIssuesFi
       labels: userFilters?.filters?.labels || undefined,
     };
 
-    const filteredParams = handleIssueQueryParamsByLayout(layout, "issues");
+    const filteredParams = this.handleIssueQueryParamsByLayout(layout, "issues");
     if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
 
     return filteredRouteParams;

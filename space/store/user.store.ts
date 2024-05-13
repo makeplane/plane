@@ -3,11 +3,11 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // types
 import { IUser } from "@plane/types";
 // services
-import { AuthService } from "@/services/authentication.service";
+import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // stores
 import { RootStore } from "@/store/root.store";
-import { ProfileStore, IProfileStore } from "@/store/user/profile.store";
+import { ProfileStore, IProfileStore } from "@/store/profile.store";
 import { ActorDetail } from "@/types/issue";
 
 type TUserErrorStatus = {

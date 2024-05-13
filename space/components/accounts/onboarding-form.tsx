@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
@@ -8,7 +10,7 @@ import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { UserImageUploadModal } from "@/components/accounts";
 // hooks
-import { useMobxStore } from "@/hooks/store";
+import { useUser } from "@/hooks/store";
 // services
 import fileService from "@/services/file.service";
 
@@ -35,9 +37,7 @@ export const OnBoardingForm: React.FC<Props> = observer((props) => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
-  const {
-    user: { updateCurrentUser },
-  } = useMobxStore();
+  const { updateCurrentUser } = useUser();
   // form info
   const {
     getValues,

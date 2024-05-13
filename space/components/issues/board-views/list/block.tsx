@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // components
 import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
 import { IssueBlockLabels } from "@/components/issues/board-views/block-labels";

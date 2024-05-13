@@ -1,7 +1,8 @@
 import { useContext } from "react";
-// store
+// lib
 import { StoreContext } from "@/lib/app-providers";
-import { IProfileStore } from "@/store/user/profile.store";
+// store
+import { IProfileStore } from "@/store/profile.store";
 
 export const useUserProfile = (): IProfileStore => {
   const context = useContext(StoreContext);

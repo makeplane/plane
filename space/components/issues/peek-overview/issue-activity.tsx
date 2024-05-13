@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Button } from "@plane/ui";
 // components
 import { CommentCard, AddComment } from "@/components/issues/peek-overview";

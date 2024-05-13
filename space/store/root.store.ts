@@ -1,42 +1,32 @@
 import { enableStaticRendering } from "mobx-react-lite";
 // store imports
 import { IInstanceStore, InstanceStore } from "@/store/instance.store";
+import { IssueDetailStore, IIssueDetailStore } from "@/store/issue-detail.store";
+import { IssueStore, IIssueStore } from "@/store/issue.store";
+import { IProjectStore, ProjectStore } from "@/store/project.store";
 import { IUserStore, UserStore } from "@/store/user.store";
-
-// import { IProjectStore, ProjectStore } from "@/store/project";
-// import { IProfileStore, ProfileStore } from "@/store/user/profile.store";
-
-// import IssueStore, { IIssueStore } from "./issue";
-// import IssueDetailStore, { IIssueDetailStore } from "./issue_details";
-// import { IIssuesFilterStore, IssuesFilterStore } from "./issues/issue-filters.store";
-// import { IMentionsStore, MentionsStore } from "./mentions.store";
+import { IssueFilterStore, IIssueFilterStore } from "./issue-filters.store";
+import { IMentionsStore, MentionsStore } from "./mentions.store";
 
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
   instance: IInstanceStore;
   user: IUserStore;
-  // profile: IProfileStore;
-  // project: IProjectStore;
-
-  // issue: IIssueStore;
-  // issueDetails: IIssueDetailStore;
-  // mentionsStore: IMentionsStore;
-  // issuesFilter: IIssuesFilterStore;
+  project: IProjectStore;
+  issue: IIssueStore;
+  issueDetail: IIssueDetailStore;
+  mentionStore: IMentionsStore;
+  issueFilter: IIssueFilterStore;
 
   constructor() {
-    // makeObservable(this, {
-    //   instance: observable,
-    // });
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
-    // this.profile = new ProfileStore(this);
-    // this.project = new ProjectStore(this);
-
-    // this.issue = new IssueStore(this);
-    // this.issueDetails = new IssueDetailStore(this);
-    // this.mentionsStore = new MentionsStore(this);
-    // this.issuesFilter = new IssuesFilterStore(this);
+    this.project = new ProjectStore(this);
+    this.issue = new IssueStore(this);
+    this.issueDetail = new IssueDetailStore(this);
+    this.mentionStore = new MentionsStore(this);
+    this.issueFilter = new IssueFilterStore(this);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,11 +40,10 @@ export class RootStore {
     localStorage.setItem("theme", "system");
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
-    // this.profile = new ProfileStore(this);
-    // this.project = new ProjectStore(this);
-    // this.issue = new IssueStore(this);
-    // this.issueDetails = new IssueDetailStore(this);
-    // this.mentionsStore = new MentionsStore(this);
-    // this.issuesFilter = new IssuesFilterStore(this);
+    this.project = new ProjectStore(this);
+    this.issue = new IssueStore(this);
+    this.issueDetail = new IssueDetailStore(this);
+    this.mentionStore = new MentionsStore(this);
+    this.issueFilter = new IssueFilterStore(this);
   };
 }
