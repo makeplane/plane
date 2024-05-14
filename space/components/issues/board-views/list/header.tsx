@@ -1,18 +1,15 @@
-// mobx react lite
 import { observer } from "mobx-react-lite";
-// interfaces
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // constants
 import { issueGroupFilter } from "@/constants/data";
 // mobx hook
-import { useMobxStore } from "@/hooks/store";
-import { RootStore } from "@/store/root.store";
-import { IIssueState } from "types/issue";
+import { useIssue } from "@/hooks/store";
+// types
+import { IIssueState } from "@/types/issue";
 
 export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
-  const store: RootStore = useMobxStore();
-
+  const { getCountOfIssuesByState } = useIssue();
   const stateGroup = issueGroupFilter(state.group);
 
   if (stateGroup === null) return <></>;
@@ -23,7 +20,7 @@ export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
         <StateGroupIcon stateGroup={state.group} color={state.color} height="14" width="14" />
       </div>
       <div className="mr-1 font-medium capitalize">{state?.name}</div>
-      <div className="text-sm font-medium text-custom-text-200">{store.issue.getCountOfIssuesByState(state.id)}</div>
+      <div className="text-sm font-medium text-custom-text-200">{getCountOfIssuesByState(state.id)}</div>
     </div>
   );
 });

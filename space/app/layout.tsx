@@ -1,14 +1,8 @@
 import { Metadata } from "next";
 // styles
 import "@/styles/globals.css";
-// components
-import { InstanceNotReady } from "@/components/instance";
-// lib
-import { AppProvider } from "@/lib/app-providers";
-// services
-import { InstanceService } from "@/services/instance.service";
-
-const instanceService = new InstanceService();
+// helpers
+import { ASSET_PREFIX } from "@/helpers/common.helper";
 
 export const metadata: Metadata = {
   title: "Plane Deploy | Make your Plane boards public with one-click",
@@ -26,24 +20,16 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const instanceDetails = await instanceService.getInstanceInfo();
-
   return (
     <html lang="en">
       <head>
-        {/* <link rel="apple-touch-icon" sizes="180x180" href={`${prefix}favicon/apple-touch-icon.png`} />
-        <link rel="icon" type="image/png" sizes="32x32" href={`${prefix}favicon/favicon-32x32.png`} />
-        <link rel="icon" type="image/png" sizes="16x16" href={`${prefix}favicon/favicon-16x16.png`} />
-        <link rel="manifest" href={`${prefix}site.webmanifest.json`} />
-        <link rel="shortcut icon" href={`${prefix}favicon/favicon.ico`} /> */}
+        <link rel="apple-touch-icon" sizes="180x180" href={`${ASSET_PREFIX}favicon/apple-touch-icon.png`} />
+        <link rel="icon" type="image/png" sizes="32x32" href={`${ASSET_PREFIX}favicon/favicon-32x32.png`} />
+        <link rel="icon" type="image/png" sizes="16x16" href={`${ASSET_PREFIX}favicon/favicon-16x16.png`} />
+        <link rel="manifest" href={`${ASSET_PREFIX}site.webmanifest.json`} />
+        <link rel="shortcut icon" href={`${ASSET_PREFIX}favicon/favicon.ico`} />
       </head>
-      <body>
-        {!instanceDetails?.instance?.is_setup_done ? (
-          <InstanceNotReady />
-        ) : (
-          <AppProvider initialState={{ instance: instanceDetails.instance }}>{children}</AppProvider>
-        )}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
