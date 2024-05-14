@@ -395,6 +395,30 @@ class InstanceAdminUserMeEndpoint(BaseAPIView):
         )
 
 
+class InstanceAdminUserSessionEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request):
+        if (
+            request.user.is_authenticated
+            and InstanceAdmin.objects.filter(user=request.user).exists()
+        ):
+            serializer = InstanceAdminMeSerializer(request.user)
+            data = {"is_authenticated": True}
+            data["user"] = serializer.data
+            return Response(
+                data,
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"is_authenticated": False}, status=status.HTTP_200_OK
+            )
+
+
 class InstanceAdminSignOutEndpoint(View):
 
     permission_classes = [
