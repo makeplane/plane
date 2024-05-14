@@ -30,32 +30,42 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
 
             {upcomingCycleIds && (
               <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
-                <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-7 py-1 cursor-pointer">
-                  <CycleListGroupHeader
-                    title="Upcoming cycle"
-                    type="upcoming"
-                    count={upcomingCycleIds.length}
-                    showCount
-                  />
-                </Disclosure.Button>
-                <Disclosure.Panel>
-                  <CyclesListMap cycleIds={upcomingCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
-                </Disclosure.Panel>
+                {({ open }) => (
+                  <>
+                    <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-7 py-1 cursor-pointer">
+                      <CycleListGroupHeader
+                        title="Upcoming cycle"
+                        type="upcoming"
+                        count={upcomingCycleIds.length}
+                        showCount
+                        isExpanded={open}
+                      />
+                    </Disclosure.Button>
+                    <Disclosure.Panel>
+                      <CyclesListMap cycleIds={upcomingCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
+                    </Disclosure.Panel>
+                  </>
+                )}
               </Disclosure>
             )}
 
             <Disclosure as="div" className="flex flex-shrink-0 flex-col pb-7">
-              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-7 py-1 cursor-pointer">
-                <CycleListGroupHeader
-                  title="Completed cycle"
-                  type="completed"
-                  count={completedCycleIds.length}
-                  showCount
-                />
-              </Disclosure.Button>
-              <Disclosure.Panel>
-                <CyclesListMap cycleIds={completedCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
-              </Disclosure.Panel>
+              {({ open }) => (
+                <>
+                  <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-7 py-1 cursor-pointer">
+                    <CycleListGroupHeader
+                      title="Completed cycle"
+                      type="completed"
+                      count={completedCycleIds.length}
+                      showCount
+                      isExpanded={open}
+                    />
+                  </Disclosure.Button>
+                  <Disclosure.Panel>
+                    <CyclesListMap cycleIds={completedCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
+                  </Disclosure.Panel>
+                </>
+              )}
             </Disclosure>
           </>
         )}

@@ -46,32 +46,36 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
   return (
     <>
       <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
-        <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-7 py-1 cursor-pointer">
-          <CycleListGroupHeader title="Active cycle" type="current" />
-        </Disclosure.Button>
-        <Disclosure.Panel>
-          {!activeCycle ? (
-            <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
-          ) : (
-            <div className="flex flex-col bg-custom-background-90 border-b">
-              {currentProjectActiveCycleId && (
-                <CyclesListItem
-                  key={currentProjectActiveCycleId}
-                  cycleId={currentProjectActiveCycleId}
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                />
-              )}
-              <div className="bg-custom-background-90 py-6 px-8">
-                <div className="grid grid-cols-1 bg-custom-background-90 gap-3 lg:grid-cols-2 xl:grid-cols-3">
-                  <ActiveCycleProgress cycle={activeCycle} />
-                  <ActiveCycleProductivity cycle={activeCycle} />
-                  <ActiveCycleStats cycle={activeCycle} workspaceSlug={workspaceSlug} projectId={projectId} />
+        {({ open }) => (
+          <>
+            <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-7 py-1 cursor-pointer">
+              <CycleListGroupHeader title="Active cycle" type="current" isExpanded={open} />
+            </Disclosure.Button>
+            <Disclosure.Panel>
+              {!activeCycle ? (
+                <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
+              ) : (
+                <div className="flex flex-col bg-custom-background-90 border-b">
+                  {currentProjectActiveCycleId && (
+                    <CyclesListItem
+                      key={currentProjectActiveCycleId}
+                      cycleId={currentProjectActiveCycleId}
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                    />
+                  )}
+                  <div className="bg-custom-background-90 py-6 px-8">
+                    <div className="grid grid-cols-1 bg-custom-background-90 gap-3 lg:grid-cols-2 xl:grid-cols-3">
+                      <ActiveCycleProgress cycle={activeCycle} />
+                      <ActiveCycleProductivity cycle={activeCycle} />
+                      <ActiveCycleStats cycle={activeCycle} workspaceSlug={workspaceSlug} projectId={projectId} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
-        </Disclosure.Panel>
+              )}
+            </Disclosure.Panel>
+          </>
+        )}
       </Disclosure>
     </>
   );
