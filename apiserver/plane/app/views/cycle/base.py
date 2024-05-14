@@ -566,6 +566,7 @@ class CycleViewSet(BaseViewSet):
                 "backlog_issues",
                 "assignee_ids",
                 "status",
+                "created_by",
             )
             .first()
         )
