@@ -52,8 +52,9 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   );
 
   const handleDescriptionChange = useCallback(
-    async (binaryString: string, descriptionHTML: string) => {
+    async (binaryString: string) => {
       setIsSubmitting("submitting");
+      const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
       await updateDescription(binaryString, descriptionHTML).finally(() => setIsSubmitting("saved"));
     },
     [setIsSubmitting, updateDescription]

@@ -19,7 +19,7 @@ interface IDocumentEditor {
   handleEditorReady?: (value: boolean) => void;
   containerClassName?: string;
   editorClassName?: string;
-  onChange: (binaryString: string, html: string) => void;
+  onChange: (binaryString: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
@@ -46,7 +46,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
   } = props;
   // states
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
-
   // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
   // loads such that we can invoke it from react when the cursor leaves the container
   const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {

@@ -12,7 +12,7 @@ export interface CompleteCollaboratorProviderConfiguration {
   /**
    * onChange callback
    */
-  onChange: (binaryString: string, html: string) => void;
+  onChange: (binaryString: string) => void;
 }
 
 export type CollaborationProviderConfiguration = Required<Pick<CompleteCollaboratorProviderConfiguration, "name">> &
@@ -60,7 +60,7 @@ export class CollaborationProvider {
       const base64Doc = Buffer.from(docAsUint8Array).toString("base64");
       // const base64Doc = Buffer.from(update).toString("base64");
 
-      this.configuration.onChange?.(base64Doc, "<p></p>");
+      this.configuration.onChange?.(base64Doc);
       this.timeoutId = null;
     }, 2000);
   }

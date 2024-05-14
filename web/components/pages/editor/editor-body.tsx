@@ -32,7 +32,7 @@ const fileService = new FileService();
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  handleDescriptionUpdate: (binaryString: string, descriptionHTML: string) => Promise<void>;
+  handleDescriptionUpdate: (binaryString: string) => Promise<void>;
   markings: IMarking[];
   pageStore: IPageStore;
   sidePeekVisible: boolean;
@@ -98,7 +98,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(description_html ?? "<p></p>");
   }, [description_html, updateMarkings]);
 
-  if (pageDescription === undefined || pageId === undefined || !pageDescriptionYJS) return <PageContentLoader />;
+  if (pageId === undefined || !descriptionYJS || !pageDescriptionYJS) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">

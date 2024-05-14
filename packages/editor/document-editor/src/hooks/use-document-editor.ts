@@ -14,7 +14,7 @@ type DocumentEditorProps = {
   fileHandler: TFileHandler;
   value: Uint8Array;
   editorClassName: string;
-  onChange: (binaryString: string, html: string) => void;
+  onChange: (binaryString: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -53,7 +53,7 @@ export const useDocumentEditor = ({
   );
 
   const yDoc = useMemo(() => {
-    if (value.byteLength !== 0) Y.applyUpdate(provider.document, value);
+    if (value.byteLength > 0) Y.applyUpdate(provider.document, value);
     return provider.document;
   }, [value, provider.document]);
   console.log("yDoc", yDoc);
