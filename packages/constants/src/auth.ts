@@ -41,6 +41,7 @@ export enum EAuthErrorCodes {
   // Password strength
   INVALID_PASSWORD = "5020",
   // Sign Up
+  USER_ACCOUNT_DEACTIVATED = "5019",
   USER_ALREADY_EXIST = "5030",
   AUTHENTICATION_FAILED_SIGN_UP = "5035",
   REQUIRED_EMAIL_PASSWORD_SIGN_UP = "5040",
@@ -68,6 +69,7 @@ export enum EAuthErrorCodes {
   EXPIRED_PASSWORD_TOKEN = "5130",
   // Change password
   INCORRECT_OLD_PASSWORD = "5135",
+  MISSING_PASSWORD= "5138",
   INVALID_NEW_PASSWORD = "5140",
   // set passowrd
   PASSWORD_ALREADY_SET = "5145",
@@ -158,6 +160,10 @@ const errorCodeMessages: {
   },
 
   // sign in
+  [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
+    title: `User account deactivated`,
+    message: () => <div>Your account is deactivated. Contact support@plane.so.</div>,
+  },
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
     title: `User does not exist`,
     message: (email = undefined) => (
@@ -237,6 +243,11 @@ const errorCodeMessages: {
   },
 
   // Change password
+
+  [EAuthenticationErrorCodes.MISSING_PASSWORD]: {
+    title: `Password required`,
+    message: () => `Password required. Please try again.`,
+  },
   [EAuthenticationErrorCodes.INCORRECT_OLD_PASSWORD]: {
     title: `Incorrect old password`,
     message: () => `Incorrect old password. Please try again.`,
