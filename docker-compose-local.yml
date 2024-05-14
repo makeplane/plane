@@ -6,7 +6,7 @@ volumes:
   redisdata:
   uploads:
   pgdata:
-  
+  mongodbdata:
 
 services:
   plane-redis:
@@ -16,7 +16,7 @@ services:
       - dev_env
     volumes:
       - redisdata:/data
- 
+
   plane-minio:
     image: minio/minio
     restart: unless-stopped
@@ -30,7 +30,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
- 
+
   plane-db:
     image: postgres:15.2-alpine
     restart: unless-stopped
@@ -43,6 +43,16 @@ services:
       - .env
     environment:
       PGDATA: /var/lib/postgresql/data
+
+  plane-mongodb:
+    image: mongo:7.0.5
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - mongodbdata:/data/db
+    env_file:
+      - .env
 
   web:
     build:
@@ -104,7 +114,7 @@ services:
     depends_on:
       - plane-db
       - plane-redis
-  
+
   worker:
     build:
       context: ./apiserver
@@ -155,8 +165,8 @@ services:
     volumes:
       - ./apiserver:/code
     command: >
-        sh -c "python manage.py wait_for_db --settings=plane.settings.local &&
-             python manage.py migrate --settings=plane.settings.local"
+      sh -c "python manage.py wait_for_db --settings=plane.settings.local &&
+           python manage.py migrate --settings=plane.settings.local"
     env_file:
       - ./apiserver/.env
     depends_on:
