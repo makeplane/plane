@@ -2,7 +2,7 @@
 import type { IProjectMember, IProjectMembership } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
-import APIService from "@/services/api.service";
+import { APIService } from "@/services/api.service";
 
 export class ProjectMemberService extends APIService {
   constructor() {
