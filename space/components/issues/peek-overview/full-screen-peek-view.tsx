@@ -13,7 +13,7 @@ import { IIssue } from "@/types/issue";
 type Props = {
   handleClose: () => void;
   issueDetails: IIssue | undefined;
-  workspace_slug: string;
+  workspaceSlug: string;
 };
 
 export const FullScreenPeekView: React.FC<Props> = observer((props) => {

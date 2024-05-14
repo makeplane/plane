@@ -1,33 +1,31 @@
+"use client";
+
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
-// components
+import { useRouter } from "next/navigation";
+// hooks
+import { useIssue, useProject, useIssueFilter } from "@/hooks/store";
 // store
-import { useMobxStore } from "@/hooks/store";
-import { IIssueFilterOptions } from "@/store/issues/types";
-import { RootStore } from "@/store/root.store";
+import { IIssueFilterOptions } from "@/types/issue";
+// components
 import { AppliedFiltersList } from "./filters-list";
 
-export const IssueAppliedFilters: FC = observer(() => {
+// TODO: fix component types
+export const IssueAppliedFilters: FC = observer((props: any) => {
   const router = useRouter();
-  const { workspace_slug: workspaceSlug, project_slug: projectId } = router.query as {
-    workspace_slug: string;
-    project_slug: string;
-  };
-
-  const {
-    issuesFilter: { issueFilters, updateFilters },
-    issue: { states, labels },
-    project: { activeBoard },
-  }: RootStore = useMobxStore();
+  const { workspaceSlug, projectId } = props;
+  const { states, labels } = useIssue();
+  const { activeLayout } = useProject();
+  const { issueFilters, updateFilters } = useIssueFilter();
 
   const userFilters = issueFilters?.filters || {};
 
-  const appliedFilters: IIssueFilterOptions = {};
+  const appliedFilters: any = {};
+
   Object.entries(userFilters).forEach(([key, value]) => {
     if (!value) return;
     if (Array.isArray(value) && value.length === 0) return;
-    appliedFilters[key as keyof IIssueFilterOptions] = value;
+    appliedFilters[key] = value;
   });
 
   const updateRouteParams = useCallback(
@@ -36,16 +34,17 @@ export const IssueAppliedFilters: FC = observer(() => {
       const priority = key === "priority" ? value || [] : issueFilters?.filters?.priority ?? [];
       const labels = key === "labels" ? value || [] : issueFilters?.filters?.labels ?? [];
 
-      let params: any = { board: activeBoard || "list" };
+      let params: any = { board: activeLayout || "list" };
       if (!clearFields) {
         if (priority.length > 0) params = { ...params, priorities: priority.join(",") };
         if (state.length > 0) params = { ...params, states: state.join(",") };
         if (labels.length > 0) params = { ...params, labels: labels.join(",") };
       }
-
-      router.push({ pathname: `/${workspaceSlug}/${projectId}`, query: { ...params } }, undefined, { shallow: true });
+      console.log("params", params);
+      // TODO: fix this redirection
+      // router.push({ pathname: `/${workspaceSlug}/${projectId}`, query: { ...params } }, undefined, { shallow: true });
     },
-    [workspaceSlug, projectId, activeBoard, issueFilters, router]
+    [workspaceSlug, projectId, activeLayout, issueFilters, router]
   );
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
@@ -80,7 +79,7 @@ export const IssueAppliedFilters: FC = observer(() => {
     <div className="border-b border-custom-border-200 p-5 py-3">
       <AppliedFiltersList
         appliedFilters={appliedFilters || {}}
-        handleRemoveFilter={handleRemoveFilter}
+        handleRemoveFilter={handleRemoveFilter as any}
         handleRemoveAllFilters={handleRemoveAllFilters}
         labels={labels ?? []}
         states={states ?? []}

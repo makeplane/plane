@@ -1,13 +1,11 @@
-// mobx lite
 import { enableStaticRendering } from "mobx-react-lite";
 // store imports
 import { IInstanceStore, InstanceStore } from "@/store/instance.store";
-import { IProjectStore, ProjectStore } from "@/store/project";
-import { IUserStore, UserStore } from "@/store/user";
-
-import IssueStore, { IIssueStore } from "./issue";
-import IssueDetailStore, { IIssueDetailStore } from "./issue_details";
-import { IIssuesFilterStore, IssuesFilterStore } from "./issues/issue-filters.store";
+import { IssueDetailStore, IIssueDetailStore } from "@/store/issue-detail.store";
+import { IssueStore, IIssueStore } from "@/store/issue.store";
+import { IProjectStore, ProjectStore } from "@/store/project.store";
+import { IUserStore, UserStore } from "@/store/user.store";
+import { IssueFilterStore, IIssueFilterStore } from "./issue-filters.store";
 import { IMentionsStore, MentionsStore } from "./mentions.store";
 
 enableStaticRendering(typeof window === "undefined");
@@ -16,33 +14,36 @@ export class RootStore {
   instance: IInstanceStore;
   user: IUserStore;
   project: IProjectStore;
-
   issue: IIssueStore;
-  issueDetails: IIssueDetailStore;
-  mentionsStore: IMentionsStore;
-  issuesFilter: IIssuesFilterStore;
+  issueDetail: IIssueDetailStore;
+  mentionStore: IMentionsStore;
+  issueFilter: IIssueFilterStore;
 
   constructor() {
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
-
     this.project = new ProjectStore(this);
     this.issue = new IssueStore(this);
-    this.issueDetails = new IssueDetailStore(this);
-    this.mentionsStore = new MentionsStore(this);
-    this.issuesFilter = new IssuesFilterStore(this);
+    this.issueDetail = new IssueDetailStore(this);
+    this.mentionStore = new MentionsStore(this);
+    this.issueFilter = new IssueFilterStore(this);
   }
 
-  resetOnSignOut = () => {
-    localStorage.setItem("theme", "system");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  hydrate = (data: any) => {
+    if (!data) return;
+    this.instance.hydrate(data?.instance || {}, data?.config || {});
+    this.user.hydrate(data?.user || {});
+  };
 
+  reset = () => {
+    localStorage.setItem("theme", "system");
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
     this.project = new ProjectStore(this);
-
     this.issue = new IssueStore(this);
-    this.issueDetails = new IssueDetailStore(this);
-    this.mentionsStore = new MentionsStore(this);
-    this.issuesFilter = new IssuesFilterStore(this);
+    this.issueDetail = new IssueDetailStore(this);
+    this.mentionStore = new MentionsStore(this);
+    this.issueFilter = new IssueFilterStore(this);
   };
 }

@@ -1,6 +1,6 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // components
 import { useMobxStore } from "@/hooks/store";
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/store/issues/helpers";
