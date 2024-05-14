@@ -1,14 +1,14 @@
 import React, { FC, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // hooks
+import { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
+import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 import { useInstance } from "@/hooks/store";
 // ui
-import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ControllerInput, TControllerInputFormField } from "components/common";
 import { SendTestEmailModal } from "./test-email-modal";
 // types
-import { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
 
 type IInstanceEmailForm = {
   config: IFormattedInstanceConfiguration;

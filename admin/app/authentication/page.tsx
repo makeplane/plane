@@ -1,26 +1,31 @@
 "use client";
 
 import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-import { observer } from "mobx-react-lite";
 import { Mails, KeyRound } from "lucide-react";
-import { Loader, setPromiseToast } from "@plane/ui";
 import { TInstanceConfigurationKeys } from "@plane/types";
+import { Loader, setPromiseToast } from "@plane/ui";
 // components
-import { AuthenticationMethodCard, EmailCodesConfiguration, PasswordLoginConfiguration } from "./components";
-import { GoogleConfiguration } from "./google/components";
-import { GithubConfiguration } from "./github/components";
 import { PageHeader } from "@/components/core";
 // hooks
-import { useInstance } from "@/hooks/store";
 // helpers
 import { resolveGeneralTheme } from "@/helpers/common.helper";
+import { useInstance } from "@/hooks/store";
 // images
-import GoogleLogo from "@/public/logos/google-logo.svg";
 import githubLightModeImage from "@/public/logos/github-black.png";
 import githubDarkModeImage from "@/public/logos/github-white.png";
+import GoogleLogo from "@/public/logos/google-logo.svg";
+// local components
+import {
+  AuthenticationMethodCard,
+  EmailCodesConfiguration,
+  PasswordLoginConfiguration,
+  GithubConfiguration,
+  GoogleConfiguration,
+} from "./components";
 
 type TInstanceAuthenticationMethodCard = {
   key: string;

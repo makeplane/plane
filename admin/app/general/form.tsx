@@ -1,10 +1,14 @@
+"use client";
 import { FC } from "react";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Telescope } from "lucide-react";
+// types
 import { IInstance, IInstanceAdmin } from "@plane/types";
+// ui
 import { Button, Input, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
-import { ControllerInput } from "components/common";
+import { ControllerInput } from "@/components/common";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -13,7 +17,7 @@ export interface IGeneralConfigurationForm {
   instanceAdmins: IInstanceAdmin[];
 }
 
-export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = (props) => {
+export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = observer((props) => {
   const { instance, instanceAdmins } = props;
   // hooks
   const { updateInstanceInfo } = useInstance();
@@ -24,8 +28,8 @@ export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = (props) =
     formState: { errors, isSubmitting },
   } = useForm<Partial<IInstance["instance"]>>({
     defaultValues: {
-      instance_name: instance.instance_name,
-      is_telemetry_enabled: instance.is_telemetry_enabled,
+      instance_name: instance?.instance_name,
+      is_telemetry_enabled: instance?.is_telemetry_enabled,
     },
   });
 
@@ -133,4 +137,4 @@ export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = (props) =
       </div>
     </div>
   );
-};
+});

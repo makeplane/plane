@@ -1,8 +1,8 @@
 "use client";
 
 import { FC } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@plane/ui";
 // assets
 import PlaneTakeOffImage from "@/public/images/plane-takeoff.png";

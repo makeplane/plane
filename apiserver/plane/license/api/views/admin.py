@@ -243,6 +243,7 @@ class InstanceAdminSignUpEndpoint(View):
             )
             # Make the setup flag True
             instance.is_setup_done = True
+            instance.instance_name = company_name
             instance.is_telemetry_enabled = is_telemetry_enabled
             instance.save()
 

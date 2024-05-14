@@ -1,16 +1,19 @@
+import { Metadata } from "next";
 // layouts
-import { DefaultLayout } from "@/layouts";
+import { DefaultLayout } from "@/layouts/default-layout";
 // components
-import { PageHeader } from "@/components/core";
 import { InstanceSignUpForm } from "./components";
 
-const SetupPage = () => (
-  <>
-    <PageHeader title="Setup - God Mode" />
-    <DefaultLayout>
-      <InstanceSignUpForm />
-    </DefaultLayout>
-  </>
-);
+export const metadata: Metadata = {
+  title: "Setup - God Mode",
+};
 
-export default SetupPage;
+export default function SetupPage() {
+  return (
+    <>
+      <DefaultLayout>
+        <InstanceSignUpForm />
+      </DefaultLayout>
+    </>
+  );
+}
