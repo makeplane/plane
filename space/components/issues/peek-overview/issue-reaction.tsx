@@ -1,13 +1,15 @@
+import { useParams } from "next/navigation";
 import { IssueEmojiReactions, IssueVotes } from "@/components/issues/peek-overview";
 import { useProject } from "@/hooks/store";
 
-type IssueReactionsProps = {
-  workspaceSlug: string;
-  projectId: string;
-};
+// type IssueReactionsProps = {
+//   workspaceSlug: string;
+//   projectId: string;
+// };
 
-export const IssueReactions: React.FC<IssueReactionsProps> = (props) => {
-  const { workspaceSlug, projectId } = props;
+export const IssueReactions: React.FC = () => {
+  const { workspace_slug: workspaceSlug, project_id: projectId } = useParams<any>();
+
   const { canVote, canReact } = useProject();
 
   return (

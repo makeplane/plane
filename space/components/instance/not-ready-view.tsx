@@ -4,7 +4,7 @@ import { FC } from "react";
 import Image from "next/image";
 // ui
 import { Button } from "@plane/ui";
-// helpers
+// helper
 import { ADMIN_BASE_URL, ADMIN_BASE_PATH } from "@/helpers/common.helper";
 // images
 import PlaneTakeOffImage from "@/public/instance/plane-takeoff.png";

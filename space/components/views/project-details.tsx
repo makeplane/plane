@@ -3,6 +3,7 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { IssueCalendarView } from "@/components/issues/board-views/calendar";
@@ -20,12 +21,13 @@ import SomethingWentWrongImage from "public/something-went-wrong.svg";
 type ProjectDetailsViewProps = {
   workspaceSlug: string;
   projectId: string;
-  params: any;
+  peekId: string;
 };
 
 export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) => {
-  const { workspaceSlug, projectId, params } = props;
-  const { states, labels, priorities, peekId } = params;
+  const { workspaceSlug, projectId, peekId } = props;
+  // router
+  const params = useParams();
   // store hooks
   const { fetchPublicIssues } = useIssue();
   const { activeLayout } = useProject();
@@ -34,7 +36,7 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
     workspaceSlug && projectId ? "PROJECT_PUBLIC_ISSUES" : null,
     workspaceSlug && projectId ? () => fetchPublicIssues(workspaceSlug, projectId, params) : null
   );
-
+  // store hooks
   const issueStore = useIssue();
   const issueDetailStore = useIssueDetails();
   const { data: currentUser, fetchCurrentUser } = useUser();
@@ -79,12 +81,12 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
 
                 {activeLayout === "list" && (
                   <div className="relative h-full w-full overflow-y-auto">
-                    <IssueListView />
+                    <IssueListView workspaceSlug={workspaceSlug} projectId={projectId} />
                   </div>
                 )}
                 {activeLayout === "kanban" && (
                   <div className="relative mx-auto h-full w-full p-5">
-                    <IssueKanbanView />
+                    <IssueKanbanView workspaceSlug={workspaceSlug} projectId={projectId} />
                   </div>
                 )}
                 {activeLayout === "calendar" && <IssueCalendarView />}

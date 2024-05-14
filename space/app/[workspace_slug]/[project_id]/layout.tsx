@@ -1,8 +1,6 @@
 import Image from "next/image";
 // components
 import IssueNavbar from "@/components/issues/navbar";
-// hooks
-import { useProject } from "@/hooks/store";
 // services
 import ProjectService from "@/services/project.service";
 // assets
@@ -17,7 +15,7 @@ export default async function ProjectLayout({ children, params }: { children: Re
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
       <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-custom-border-300 bg-custom-sidebar-background-100">
-        <IssueNavbar projectSettings={projectSettings} />
+        <IssueNavbar projectSettings={projectSettings} workspaceSlug={workspace_slug} projectId={project_id} />
       </div>
       <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
       <a

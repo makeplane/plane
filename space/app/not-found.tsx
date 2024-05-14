@@ -1,5 +1,4 @@
 "use client";
-
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Button } from "@plane/ui";
@@ -7,7 +6,7 @@ import { Button } from "@plane/ui";
 import InstanceFailureDarkImage from "@/public/instance/instance-failure-dark.svg";
 import InstanceFailureImage from "@/public/instance/instance-failure.svg";
 
-export default function InstanceError() {
+export default function InstanceNotFound() {
   const { resolvedTheme } = useTheme();
 
   const instanceImage = resolvedTheme === "dark" ? InstanceFailureDarkImage : InstanceFailureImage;

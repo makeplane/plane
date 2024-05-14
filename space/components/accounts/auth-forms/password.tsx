@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 // icons
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // ui
 import { Button, Input, Spinner } from "@plane/ui";
@@ -47,8 +47,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
   // hooks
   const { data: instance, config: instanceConfig } = useInstance();
   // router
-  const router = useRouter();
-  const { next_path } = router.query;
+  const { next_path } = useParams<any>();
   // derived values
   const isSmtpConfigured = instanceConfig?.is_smtp_configured;
 
