@@ -54,6 +54,8 @@ class InstanceEndpoint(BaseAPIView):
         (
             IS_GOOGLE_ENABLED,
             IS_GITHUB_ENABLED,
+            IS_OIDC_ENABLED,
+            IS_SAML_ENABLED,
             GITHUB_APP_NAME,
             EMAIL_HOST,
             EMAIL_HOST_USER,
@@ -74,6 +76,14 @@ class InstanceEndpoint(BaseAPIView):
                 {
                     "key": "IS_GITHUB_ENABLED",
                     "default": os.environ.get("IS_GITHUB_ENABLED", "0"),
+                },
+                {
+                    "key": "IS_OIDC_ENABLED",
+                    "default": os.environ.get("IS_OIDC_ENABLED", "0"),
+                },
+                {
+                    "key": "IS_SAML_ENABLED",
+                    "default": os.environ.get("IS_SAML_ENABLED", "0"),
                 },
                 {
                     "key": "GITHUB_APP_NAME",
@@ -128,6 +138,8 @@ class InstanceEndpoint(BaseAPIView):
         data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
+        data["is_oidc_enabled"] = IS_OIDC_ENABLED == "1"
+        data["is_saml_enabled"] = IS_SAML_ENABLED == "1"
 
         # Github app name
         data["github_app_name"] = str(GITHUB_APP_NAME)
