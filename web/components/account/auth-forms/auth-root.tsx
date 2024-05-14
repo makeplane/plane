@@ -92,7 +92,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
         }
       })
       .catch((error) => {
-        const errorhandler = authErrorHandler(error?.error_code.toString(), data?.email || undefined);
+        const errorhandler = authErrorHandler(error?.error_code?.toString(), data?.email || undefined);
         if (errorhandler?.type) setErrorInfo(errorhandler);
       });
   };
