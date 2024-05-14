@@ -17,6 +17,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --concurrency=13",
+    "nginx-local": "nginx -c nginx/local.conf -p .",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
