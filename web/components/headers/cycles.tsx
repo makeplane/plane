@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+import { CyclesViewHeader } from "@/components/cycles";
 import { ProjectLogo } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
@@ -54,8 +55,9 @@ export const CyclesHeader: FC = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
-      {canUserCreateCycle && (
+      {canUserCreateCycle && currentProjectDetails && (
         <div className="flex items-center gap-3">
+          <CyclesViewHeader projectId={currentProjectDetails.id} />
           <Button
             variant="primary"
             size="sm"
