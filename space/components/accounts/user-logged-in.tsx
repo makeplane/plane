@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 // hooks
 import { useUser } from "@/hooks/store";

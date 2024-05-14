@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react-lite";
 // components
 import { GithubOAuthButton, GoogleOAuthButton } from "@/components/accounts";
@@ -6,7 +8,7 @@ import { useInstance } from "@/hooks/store";
 
 export const OAuthOptions: React.FC = observer(() => {
   // hooks
-  const { instance } = useInstance();
+  const { config: instanceConfig } = useInstance();
 
   return (
     <>
@@ -16,12 +18,12 @@ export const OAuthOptions: React.FC = observer(() => {
         <hr className="w-full border-onboarding-border-100" />
       </div>
       <div className={`mx-auto mt-7 grid gap-4 overflow-hidden sm:w-96`}>
-        {instance?.config?.is_google_enabled && (
+        {instanceConfig?.is_google_enabled && (
           <div className="flex h-[42px] items-center !overflow-hidden">
             <GoogleOAuthButton text="SignIn with Google" />
           </div>
         )}
-        {instance?.config?.is_github_enabled && <GithubOAuthButton text="SignIn with Github" />}
+        {instanceConfig?.is_github_enabled && <GithubOAuthButton text="SignIn with Github" />}
       </div>
     </>
   );

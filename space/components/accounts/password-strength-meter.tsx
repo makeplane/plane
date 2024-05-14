@@ -1,3 +1,5 @@
+"use client";
+
 // icons
 import { CircleCheck } from "lucide-react";
 // helpers

@@ -2,10 +2,10 @@ import { useContext } from "react";
 // lib
 import { StoreContext } from "@/lib/app-providers";
 // store
-import { IInstanceStore } from "@/store/instance.store";
+import { IIssueDetailStore } from "@/store/issue-detail.store";
 
-export const useInstance = (): IInstanceStore => {
+export const useIssueDetails = (): IIssueDetailStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useUserProfile must be used within StoreProvider");
-  return context.instance;
+  return context.issueDetail;
 };

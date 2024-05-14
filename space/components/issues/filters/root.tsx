@@ -1,29 +1,29 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
+// constants
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// hooks
+import { useIssue, useIssueFilter, useProject } from "@/hooks/store";
+// types
+import { IIssueFilterOptions } from "@/types/issue";
 // components
-import { useMobxStore } from "@/hooks/store";
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/store/issues/helpers";
-import { IIssueFilterOptions } from "@/store/issues/types";
-import { RootStore } from "@/store/root.store";
 import { FiltersDropdown } from "./helpers/dropdown";
 import { FilterSelection } from "./selection";
-// types
-// helpers
-// store
 
-export const IssueFiltersDropdown: FC = observer(() => {
+type IssueFiltersDropdownProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((props) => {
+  const { workspaceSlug, projectId } = props;
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const { workspace_slug: workspaceSlug, project_slug: projectId } = router.query as {
-    workspace_slug: string;
-    project_slug: string;
-  };
-
-  const {
-    project: { activeBoard },
-    issue: { states, labels },
-    issuesFilter: { issueFilters, updateFilters },
-  }: RootStore = useMobxStore();
+  // store hooks
+  const { activeLayout } = useProject();
+  const { states, labels } = useIssue();
+  const { issueFilters, updateFilters } = useIssueFilter();
 
   const updateRouteParams = useCallback(
     (key: keyof IIssueFilterOptions, value: string[]) => {
@@ -31,14 +31,14 @@ export const IssueFiltersDropdown: FC = observer(() => {
       const priority = key === "priority" ? value : issueFilters?.filters?.priority ?? [];
       const labels = key === "labels" ? value : issueFilters?.filters?.labels ?? [];
 
-      let params: any = { board: activeBoard || "list" };
+      let params: any = { board: activeLayout || "list" };
       if (priority.length > 0) params = { ...params, priorities: priority.join(",") };
       if (state.length > 0) params = { ...params, states: state.join(",") };
       if (labels.length > 0) params = { ...params, labels: labels.join(",") };
-
-      router.push({ pathname: `/${workspaceSlug}/${projectId}`, query: { ...params } }, undefined, { shallow: true });
+      console.log("params", params);
+      router.push(`/${workspaceSlug}/${projectId}?${searchParams}`);
     },
-    [workspaceSlug, projectId, activeBoard, issueFilters, router]
+    [workspaceSlug, projectId, activeLayout, issueFilters, router]
   );
 
   const handleFilters = useCallback(
@@ -66,8 +66,8 @@ export const IssueFiltersDropdown: FC = observer(() => {
       <FiltersDropdown title="Filters" placement="bottom-end">
         <FilterSelection
           filters={issueFilters?.filters ?? {}}
-          handleFilters={handleFilters}
-          layoutDisplayFiltersOptions={activeBoard ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeBoard] : undefined}
+          handleFilters={handleFilters as any}
+          layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
           states={states ?? undefined}
           labels={labels ?? undefined}
         />

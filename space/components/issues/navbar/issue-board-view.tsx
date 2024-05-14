@@ -1,47 +1,49 @@
+"use client";
+
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
 // constants
 import { issueViews } from "@/constants/data";
+// hooks
+import { useProject } from "@/hooks/store";
 // mobx
-import { useMobxStore } from "@/hooks/store";
-import { RootStore } from "@/store/root.store";
-import { TIssueBoardKeys } from "types/issue";
+import { TIssueBoardKeys } from "@/types/issue";
 
-export const NavbarIssueBoardView = observer(() => {
-  const {
-    project: { viewOptions, setActiveBoard, activeBoard },
-  }: RootStore = useMobxStore();
-  // router
-  const router = useRouter();
-  const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
+type NavbarIssueBoardViewProps = {
+  layouts: Record<TIssueBoardKeys, boolean>;
+};
+
+export const NavbarIssueBoardView: FC<NavbarIssueBoardViewProps> = observer((props) => {
+  const { layouts } = props;
+
+  const { activeLayout, setActiveLayout } = useProject();
 
   const handleCurrentBoardView = (boardView: string) => {
-    setActiveBoard(boardView as TIssueBoardKeys);
-    router.push(`/${workspace_slug}/${project_slug}?board=${boardView}`);
+    setActiveLayout(boardView as TIssueBoardKeys);
   };
 
   return (
     <>
-      {viewOptions &&
-        Object.keys(viewOptions).map((viewKey: string) => {
-          if (viewOptions[viewKey]) {
+      {layouts &&
+        Object.keys(layouts).map((layoutKey: string) => {
+          if (layouts[layoutKey as TIssueBoardKeys]) {
             return (
               <div
-                key={viewKey}
+                key={layoutKey}
                 className={`flex h-[28px] w-[28px] cursor-pointer items-center justify-center rounded-sm ${
-                  viewKey === activeBoard
+                  layoutKey === activeLayout
                     ? `bg-custom-background-80 text-custom-text-200`
                     : `text-custom-text-300 hover:bg-custom-background-80`
                 }`}
-                onClick={() => handleCurrentBoardView(viewKey)}
-                title={viewKey}
+                onClick={() => handleCurrentBoardView(layoutKey)}
+                title={layoutKey}
               >
                 <span
                   className={`material-symbols-rounded text-[18px] ${
-                    issueViews[viewKey]?.className ? issueViews[viewKey]?.className : ``
+                    issueViews[layoutKey]?.className ? issueViews[layoutKey]?.className : ``
                   }`}
                 >
-                  {issueViews[viewKey]?.icon}
+                  {issueViews[layoutKey]?.icon}
                 </span>
               </div>
             );
