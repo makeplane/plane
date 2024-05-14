@@ -105,7 +105,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     });
   };
 
-  const createdByDetails = cycleDetails.owned_by_id ? getUserDetails(cycleDetails.owned_by_id) : undefined;
+  const createdByDetails = cycleDetails.created_by ? getUserDetails(cycleDetails.created_by) : undefined;
 
   return (
     <>
