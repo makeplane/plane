@@ -390,7 +390,7 @@ fi
 
 # CPU ARCHITECHTURE BASED SETTINGS
 CPU_ARCH=$(uname -m)
-if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ( $BRANCH == "master" && ( $CPU_ARCH == "arm64" || $CPU_ARCH == "aarch64" ) ) ]]; 
+if [[ $FORCE_CPU == "amd64" || $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ( $BRANCH == "master" && ( $CPU_ARCH == "arm64" || $CPU_ARCH == "aarch64" ) ) ]]; 
 then
     USE_GLOBAL_IMAGES=1
     DOCKERHUB_USER=makeplane
