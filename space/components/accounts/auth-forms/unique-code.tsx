@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // icons
 import { CircleCheck, XCircle } from "lucide-react";
 // ui
@@ -45,8 +45,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // router
-  const router = useRouter();
-  const { next_path } = router.query;
+  const { next_path } = useParams<any>();
   // toast alert
   const { setToastAlert } = useToast();
   // timer

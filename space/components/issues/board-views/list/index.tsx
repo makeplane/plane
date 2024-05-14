@@ -1,3 +1,4 @@
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { IssueListBlock } from "@/components/issues/board-views/list/block";
@@ -7,7 +8,14 @@ import { useIssue } from "@/hooks/store";
 // types
 import { IIssueState, IIssue } from "@/types/issue";
 
-export const IssueListView = observer(() => {
+type IssueListViewProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueListView: FC<IssueListViewProps> = observer((props) => {
+  const { workspaceSlug, projectId } = props;
+  // store hooks
   const { states, getFilteredIssuesByState } = useIssue();
 
   return (
@@ -20,7 +28,7 @@ export const IssueListView = observer(() => {
             {getFilteredIssuesByState(_state.id) && getFilteredIssuesByState(_state.id).length > 0 ? (
               <div className="divide-y divide-custom-border-200">
                 {getFilteredIssuesByState(_state.id).map((_issue: IIssue) => (
-                  <IssueListBlock key={_issue.id} issue={_issue} />
+                  <IssueListBlock key={_issue.id} issue={_issue} workspaceSlug={workspaceSlug} projectId={projectId} />
                 ))}
               </div>
             ) : (
