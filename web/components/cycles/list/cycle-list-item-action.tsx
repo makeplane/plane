@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
-import { User2 } from "lucide-react";
+import { CalendarCheck2, CalendarClock, MoveRight, User2 } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
@@ -106,9 +106,15 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="text-xs text-custom-text-300 flex-shrink-0">
-        {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
-      </div>
+      {renderDate && (
+        <div className="h-6 flex items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs px-2 cursor-default">
+          <CalendarClock className="h-3 w-3 flex-shrink-0" />
+          <span className="flex-grow truncate">{renderFormattedDate(startDate)}</span>
+          <MoveRight className="h-3 w-3 flex-shrink-0" />
+          <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />
+          <span className="flex-grow truncate">{renderFormattedDate(endDate)}</span>
+        </div>
+      )}
 
       {currentCycle && (
         <div

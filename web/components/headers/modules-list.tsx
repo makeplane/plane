@@ -1,7 +1,5 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// icons
-import { Plus } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, DiceIcon } from "@plane/ui";
 // components
@@ -63,7 +61,6 @@ export const ModulesListHeader: React.FC = observer(() => {
           <Button
             variant="primary"
             size="sm"
-            prependIcon={<Plus />}
             onClick={() => {
               setTrackElement("Modules page");
               toggleCreateModuleModal(true);

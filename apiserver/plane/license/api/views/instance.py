@@ -38,6 +38,8 @@ class InstanceEndpoint(BaseAPIView):
     @cache_response(60 * 60 * 2, user=False)
     def get(self, request):
         instance = Instance.objects.first()
+
+        print("Instance: ", instance)
         # get the instance
         if instance is None:
             return Response(
