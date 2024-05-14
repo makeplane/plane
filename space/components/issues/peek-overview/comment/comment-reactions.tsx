@@ -1,58 +1,38 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
 import { Tooltip } from "@plane/ui";
 // ui
 import { ReactionSelector } from "@/components/ui";
 // helpers
 import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
 // hooks
-import { useMobxStore, useUser } from "@/hooks/store";
+import { useIssueDetails, useUser } from "@/hooks/store";
 
 type Props = {
   commentId: string;
   projectId: string;
+  workspaceSlug: string;
 };
 
 export const CommentReactions: React.FC<Props> = observer((props) => {
-  const { commentId, projectId } = props;
-
-  const router = useRouter();
-  const { workspace_slug } = router.query;
+  const { commentId, projectId, workspaceSlug } = props;
   // hooks
-  const { issueDetails: issueDetailsStore } = useMobxStore();
+  const { addCommentReaction, removeCommentReaction, details, peekId } = useIssueDetails();
   const { data: user } = useUser();
 
-  const peekId = issueDetailsStore.peekId;
-  const commentReactions = peekId
-    ? issueDetailsStore.details[peekId].comments.find((c) => c.id === commentId)?.comment_reactions
-    : [];
+  const commentReactions = peekId ? details[peekId].comments.find((c) => c.id === commentId)?.comment_reactions : [];
   const groupedReactions = peekId ? groupReactions(commentReactions ?? [], "reaction") : {};
 
   const userReactions = commentReactions?.filter((r) => r.actor_detail.id === user?.id);
 
   const handleAddReaction = (reactionHex: string) => {
-    if (!workspace_slug || !projectId || !peekId) return;
-
-    issueDetailsStore.addCommentReaction(
-      workspace_slug.toString(),
-      projectId.toString(),
-      peekId,
-      commentId,
-      reactionHex
-    );
+    if (!workspaceSlug || !projectId || !peekId) return;
+    addCommentReaction(workspaceSlug, projectId, peekId, commentId, reactionHex);
   };
 
   const handleRemoveReaction = (reactionHex: string) => {
-    if (!workspace_slug || !projectId || !peekId) return;
-
-    issueDetailsStore.removeCommentReaction(
-      workspace_slug.toString(),
-      projectId.toString(),
-      peekId,
-      commentId,
-      reactionHex
-    );
+    if (!workspaceSlug || !projectId || !peekId) return;
+    removeCommentReaction(workspaceSlug, projectId, peekId, commentId, reactionHex);
   };
 
   const handleReactionClick = (reactionHex: string) => {

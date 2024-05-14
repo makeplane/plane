@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { CircleCheck, XCircle } from "lucide-react";
 // ui
@@ -10,7 +12,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 import useTimer from "@/hooks/use-timer";
 import useToast from "@/hooks/use-toast";
 // services
-import { AuthService } from "@/services/authentication.service";
+import { AuthService } from "@/services/auth.service";
 // types
 import { IEmailCheckData } from "@/types/auth";
 import { EAuthModes } from "./root";
@@ -43,8 +45,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // router
-  const router = useRouter();
-  const { next_path } = router.query;
+  const { next_path } = useParams<any>();
   // toast alert
   const { setToastAlert } = useToast();
   // timer

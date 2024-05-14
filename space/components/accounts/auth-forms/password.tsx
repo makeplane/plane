@@ -1,7 +1,9 @@
+"use client";
+
 import React, { useEffect, useMemo, useState } from "react";
 // icons
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // ui
 import { Button, Input, Spinner } from "@plane/ui";
@@ -12,7 +14,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
-import { AuthService } from "@/services/authentication.service";
+import { AuthService } from "@/services/auth.service";
 
 type Props = {
   email: string;
@@ -43,12 +45,11 @@ export const PasswordForm: React.FC<Props> = (props) => {
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // hooks
-  const { instance } = useInstance();
+  const { data: instance, config: instanceConfig } = useInstance();
   // router
-  const router = useRouter();
-  const { next_path } = router.query;
+  const { next_path } = useParams<any>();
   // derived values
-  const isSmtpConfigured = instance?.config?.is_smtp_configured;
+  const isSmtpConfigured = instanceConfig?.is_smtp_configured;
 
   const handleFormChange = (key: keyof TPasswordFormValues, value: string) =>
     setPasswordFormData((prev) => ({ ...prev, [key]: value }));

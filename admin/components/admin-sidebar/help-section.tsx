@@ -7,9 +7,10 @@ import { Transition } from "@headlessui/react";
 import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
-import { useInstance, useTheme } from "@/hooks/store";
+import { useTheme } from "@/hooks/store";
 // assets
 import packageJson from "package.json";
+import { WEB_BASE_URL } from "@/helpers/common.helper";
 
 const helpOptions = [
   {
@@ -30,8 +31,6 @@ const helpOptions = [
 ];
 
 export const HelpSection: FC = observer(() => {
-  // hooks
-  const { instance } = useInstance();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store
@@ -39,7 +38,7 @@ export const HelpSection: FC = observer(() => {
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
-  const redirectionLink = `${instance?.config?.app_base_url ? `${instance?.config?.app_base_url}/create-workspace` : `/god-mode/`}`;
+  const redirectionLink = encodeURI(WEB_BASE_URL + "/create-workspace");
 
   return (
     <div
