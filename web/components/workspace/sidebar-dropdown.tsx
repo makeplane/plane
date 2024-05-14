@@ -12,7 +12,7 @@ import { IWorkspace } from "@plane/types";
 // plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { WorkspaceLogo } from "./logo";
 // types
 // Static Data
@@ -56,10 +56,12 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser } = useUser();
   const {
-    updateCurrentUser,
+    // updateCurrentUser,
     // isUserInstanceAdmin,
     signOut,
   } = useUser();
+  const { updateUserProfile } = useUserProfile();
+
   const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
   // popper-js refs
@@ -78,7 +80,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
     ],
   });
   const handleWorkspaceNavigation = (workspace: IWorkspace) =>
-    updateCurrentUser({
+    updateUserProfile({
       last_workspace_id: workspace?.id,
     });
   const handleSignOut = async () => {
