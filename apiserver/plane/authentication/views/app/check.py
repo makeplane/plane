@@ -24,61 +24,58 @@ class EmailCheckSignUpEndpoint(APIView):
     ]
 
     def post(self, request):
-        # Check instance configuration
-        instance = Instance.objects.first()
-        if instance is None or not instance.is_setup_done:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
-                error_message="INSTANCE_NOT_CONFIGURED",
-            )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        email = request.data.get("email", False)
-
-        # Return error if email is not present
-        if not email:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["EMAIL_REQUIRED"],
-                error_message="EMAIL_REQUIRED",
-            )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Validate email
         try:
+            # Check instance configuration
+            instance = Instance.objects.first()
+            if instance is None or not instance.is_setup_done:
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "INSTANCE_NOT_CONFIGURED"
+                    ],
+                    error_message="INSTANCE_NOT_CONFIGURED",
+                )
+            email = request.data.get("email", False)
+
+            # Return error if email is not present
+            if not email:
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["EMAIL_REQUIRED"],
+                    error_message="EMAIL_REQUIRED",
+                )
+
+            # Validate email
             validate_email(email)
+
+            existing_user = User.objects.filter(email=email).first()
+
+            if existing_user:
+                # check if the account is the deactivated
+                if not existing_user.is_active:
+                    raise AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES[
+                            "USER_ACCOUNT_DEACTIVATED"
+                        ],
+                        error_message="USER_ACCOUNT_DEACTIVATED",
+                    )
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "USER_ALREADY_EXIST"
+                    ],
+                    error_message="USER_ALREADY_EXIST",
+                )
+            return Response(
+                {"status": True},
+                status=status.HTTP_200_OK,
+            )
         except ValidationError:
-            exc = AuthenticationException(
+            raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
                 error_message="INVALID_EMAIL",
             )
+        except AuthenticationException as e:
             return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
+                e.get_error_dict(), status=status.HTTP_400_BAD_REQUEST
             )
-
-        existing_user = User.objects.filter(email=email).first()
-
-        if existing_user:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["USER_ALREADY_EXIST"],
-                error_message="USER_ALREADY_EXIST",
-            )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        return Response(
-            {"status": True},
-            status=status.HTTP_200_OK,
-        )
 
 
 class EmailCheckSignInEndpoint(APIView):
@@ -88,61 +85,59 @@ class EmailCheckSignInEndpoint(APIView):
     ]
 
     def post(self, request):
-        # Check instance configuration
-        instance = Instance.objects.first()
-        if instance is None or not instance.is_setup_done:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
-                error_message="INSTANCE_NOT_CONFIGURED",
-            )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        email = request.data.get("email", False)
-
-        # Return error if email is not present
-        if not email:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["EMAIL_REQUIRED"],
-                error_message="EMAIL_REQUIRED",
-            )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Validate email
         try:
+            # Check instance configuration
+            instance = Instance.objects.first()
+            if instance is None or not instance.is_setup_done:
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "INSTANCE_NOT_CONFIGURED"
+                    ],
+                    error_message="INSTANCE_NOT_CONFIGURED",
+                )
+
+            email = request.data.get("email", False)
+
+            # Return error if email is not present
+            if not email:
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["EMAIL_REQUIRED"],
+                    error_message="EMAIL_REQUIRED",
+                )
+
+            # Validate email
             validate_email(email)
+
+            existing_user = User.objects.filter(email=email).first()
+
+            # If existing user
+            if existing_user:
+                # Raise different exception when user is not active
+                if not existing_user.is_active:
+                    raise AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES[
+                            "USER_ACCOUNT_DEACTIVATED"
+                        ],
+                        error_message="USER_ACCOUNT_DEACTIVATED",
+                    )
+
+                return Response(
+                    {
+                        "status": True,
+                        "is_password_autoset": existing_user.is_password_autoset,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
+                error_message="USER_DOES_NOT_EXIST",
+            )
         except ValidationError:
-            exc = AuthenticationException(
+            raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
                 error_message="INVALID_EMAIL",
             )
+        except AuthenticationException as e:
             return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
+                e.get_error_dict(), status=status.HTTP_400_BAD_REQUEST
             )
-
-        existing_user = User.objects.filter(email=email).first()
-
-        if existing_user:
-            return Response(
-                {
-                    "status": True,
-                    "is_password_autoset": existing_user.is_password_autoset,
-                },
-                status=status.HTTP_200_OK,
-            )
-        exc = AuthenticationException(
-            error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
-            error_message="USER_DOES_NOT_EXIST",
-        )
-        return Response(
-            exc.get_error_dict(),
-            status=status.HTTP_400_BAD_REQUEST,
-        )
