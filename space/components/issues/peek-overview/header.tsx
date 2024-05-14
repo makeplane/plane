@@ -1,5 +1,7 @@
 import React from "react";
+import useToast from "hooks/use-toast";
 import { observer } from "mobx-react-lite";
+import { IIssue } from "types/issue";
 import { MoveRight } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // hooks
@@ -12,9 +14,7 @@ import { useMobxStore } from "@/hooks/store";
 import { IPeekMode } from "@/store/issue_details";
 import { RootStore } from "@/store/root.store";
 // lib
-import useToast from "hooks/use-toast";
 // types
-import { IIssue } from "types/issue";
 
 type Props = {
   handleClose: () => void;

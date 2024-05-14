@@ -2,8 +2,8 @@ import pull from "lodash/pull";
 import set from "lodash/set";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
-import { UserService } from "@/services/user.service";
 import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
+import { UserService } from "@/services/user.service";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
 // types

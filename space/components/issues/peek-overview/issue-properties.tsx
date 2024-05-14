@@ -1,5 +1,7 @@
 // hooks
 // ui
+import useToast from "hooks/use-toast";
+import { IIssue } from "types/issue";
 import { StateGroupIcon } from "@plane/ui";
 // icons
 import { Icon } from "@/components/ui";
@@ -10,8 +12,6 @@ import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helpe
 // types
 import { IPeekMode } from "@/store/issue_details";
 // constants
-import useToast from "hooks/use-toast";
-import { IIssue } from "types/issue";
 import { dueDateIconDetails } from "../board-views/block-due-date";
 
 type Props = {

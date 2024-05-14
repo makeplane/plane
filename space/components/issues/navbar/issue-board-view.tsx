@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // constants
+import { TIssueBoardKeys } from "types/issue";
 import { issueViews } from "@/constants/data";
 // mobx
 import { useMobxStore } from "@/hooks/store";
 import { RootStore } from "@/store/root.store";
-import { TIssueBoardKeys } from "types/issue";
 
 export const NavbarIssueBoardView = observer(() => {
   const {

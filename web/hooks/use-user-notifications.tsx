@@ -4,13 +4,13 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 // services
+import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "@/constants/fetch-keys";
 import { NotificationService } from "@/services/notification.service";
 // fetch-keys
 // type
-import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 
 const PER_PAGE = 30;
 
@@ -79,6 +79,7 @@ const useUserNotification = (): any => {
     }, false);
   };
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   const mutateNotification = (notificationId: string, value: Object) => {
     notificationMutate((previousNotifications: any) => {
       if (!previousNotifications) return previousNotifications;

@@ -1,9 +1,8 @@
-// @ts-nocheck
 import { Button } from "@plane/ui";
 import { NodeViewWrapper } from "@tiptap/react";
 import { Crown } from "lucide-react";
 
-export const IssueWidgetCard = (props) => (
+export const IssueWidgetCard = (props: any) => (
   <NodeViewWrapper className="issue-embed-component m-2">
     <div
       className={`${

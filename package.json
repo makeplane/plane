@@ -20,11 +20,13 @@
     "start": "turbo run start",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "prepare": "husky"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.15",
     "eslint-config-custom": "*",
+    "husky": "^9.0.11",
     "postcss": "^8.4.29",
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",

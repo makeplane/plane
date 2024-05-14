@@ -19,7 +19,7 @@ export const LinearProgressIndicator: React.FC<Props> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let progress = 0;
 
-  const bars = data.map((item: any) => {
+  const bars = data.map((item: any, index: number) => {
     const width = `${(item.value / total) * 100}%`;
     if (width === "0%") return <></>;
     const style = {
@@ -27,7 +27,7 @@ export const LinearProgressIndicator: React.FC<Props> = ({
       backgroundColor: item.color,
     };
     progress += item.value;
-    if (noTooltip) return <div style={style} />;
+    if (noTooltip) return <div style={style} key={index} />;
     else
       return (
         <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}${inPercentage ? "%" : ""}`}>

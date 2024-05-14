@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-types */
+// @todo we are defining id as an object, and using it as a primitive.
+// Use correct types for id.
 import { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";

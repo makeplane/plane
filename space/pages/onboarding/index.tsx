@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 // ui
+import ProfileSetupDark from "public/onboarding/profile-setup-dark.svg";
 import { Avatar } from "@plane/ui";
 // components
 import { OnBoardingForm } from "@/components/accounts/onboarding-form";
@@ -14,7 +15,6 @@ import { useUser, useUserProfile } from "@/hooks/store";
 // wrappers
 import { AuthWrapper } from "@/lib/wrappers";
 // assets
-import ProfileSetupDark from "public/onboarding/profile-setup-dark.svg";
 import ProfileSetup from "public/onboarding/profile-setup.svg";
 
 const imagePrefix = process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "";

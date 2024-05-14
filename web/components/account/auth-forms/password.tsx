@@ -109,7 +109,6 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       method="POST"
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
       onSubmit={() => setIsSubmitting(true)}
-      onError={() => setIsSubmitting(false)}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <div className="space-y-1">

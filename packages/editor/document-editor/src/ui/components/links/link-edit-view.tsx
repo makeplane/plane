@@ -50,7 +50,7 @@ export const LinkEditView = ({
   };
 
   const isValidUrl = (urlString: string) => {
-    var urlPattern = new RegExp(
+    const urlPattern = new RegExp(
       "^(https?:\\/\\/)?" + // validate protocol
         "([\\w-]+\\.)+[\\w-]{2,}" + // validate domain name
         "|((\\d{1,3}\\.){3}\\d{1,3})" + // validate IP (v4) address

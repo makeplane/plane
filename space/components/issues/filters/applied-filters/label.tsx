@@ -1,6 +1,6 @@
+import { IIssueLabel } from "types/issue";
 import { X } from "lucide-react";
 // types
-import { IIssueLabel } from "types/issue";
 
 type Props = {
   handleRemove: (val: string) => void;

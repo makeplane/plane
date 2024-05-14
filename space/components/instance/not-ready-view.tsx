@@ -2,13 +2,13 @@ import { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // icons
-import { UserCog2 } from "lucide-react";
 // ui
-import { getButtonStyling } from "@plane/ui";
 // images
 import instanceNotReady from "public/instance/plane-instance-not-ready.webp";
 import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import { UserCog2 } from "lucide-react";
+import { getButtonStyling } from "@plane/ui";
 
 export const InstanceNotReady: FC = () => {
   const { resolvedTheme } = useTheme();

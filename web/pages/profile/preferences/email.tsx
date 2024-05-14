@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 import useSWR from "swr";
 // layouts
 import { PageHead } from "@/components/core";

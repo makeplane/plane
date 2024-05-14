@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 // components
+import { IIssueState, IIssue } from "types/issue";
 import { IssueListBlock } from "@/components/issues/board-views/list/block";
 import { IssueListHeader } from "@/components/issues/board-views/list/header";
 // interfaces
@@ -7,7 +8,6 @@ import { IssueListHeader } from "@/components/issues/board-views/list/header";
 import { useMobxStore } from "@/hooks/store";
 // store
 import { RootStore } from "@/store/root.store";
-import { IIssueState, IIssue } from "types/issue";
 
 export const IssueListView = observer(() => {
   const { issue: issueStore }: RootStore = useMobxStore();

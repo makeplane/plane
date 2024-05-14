@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { TextSelection } from "@tiptap/pm/state";
 
 import { callOrReturn, getExtensionField, mergeAttributes, Node, ParentConfig } from "@tiptap/core";
@@ -206,7 +207,7 @@ export const Table = Node.create({
           if (dispatch) {
             const selection = CellSelection.create(tr.doc, position.anchorCell, position.headCell);
 
-            // @ts-ignore
+            // @ts-expect-error
             tr.setSelection(selection);
           }
 
@@ -263,7 +264,7 @@ export const Table = Node.create({
           cellMinWidth: this.options.cellMinWidth,
           // View: TableView,
 
-          // @ts-ignore
+          // @ts-expect-error
           lastColumnResizable: this.options.lastColumnResizable,
         })
       );

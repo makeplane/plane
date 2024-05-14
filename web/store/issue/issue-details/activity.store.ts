@@ -5,9 +5,9 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
+import { TIssueActivityComment, TIssueActivity, TIssueActivityMap, TIssueActivityIdMap } from "@plane/types";
 import { IssueActivityService } from "@/services/issue";
 // types
-import { TIssueActivityComment, TIssueActivity, TIssueActivityMap, TIssueActivityIdMap } from "@plane/types";
 import { IIssueDetail } from "./root.store";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;

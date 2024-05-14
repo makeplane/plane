@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-types */
+// @todo remove eslint-disable later, and fix the types
 // api services
+import { IWebhook } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // helpers
 // types
-import { IWebhook } from "@plane/types";
 
 export class WebhookService extends APIService {
   constructor() {

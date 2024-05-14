@@ -1,7 +1,7 @@
+import { IIssueState } from "types/issue";
 import { X } from "lucide-react";
 import { StateGroupIcon } from "@plane/ui";
 // icons
-import { IIssueState } from "types/issue";
 // types
 
 type Props = {

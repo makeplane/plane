@@ -2,13 +2,13 @@
 import { observer } from "mobx-react-lite";
 // interfaces
 // constants
+import { IIssueState } from "types/issue";
 import { StateGroupIcon } from "@plane/ui";
 import { issueGroupFilter } from "@/constants/data";
 // ui
 // mobx hook
 import { useMobxStore } from "@/hooks/store";
 import { RootStore } from "@/store/root.store";
-import { IIssueState } from "types/issue";
 
 export const IssueKanBanHeader = observer(({ state }: { state: IIssueState }) => {
   const store: RootStore = useMobxStore();

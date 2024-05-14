@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 // components
 // ui
+import { IIssueState } from "types/issue";
 import { Loader, StateGroupIcon } from "@plane/ui";
 // types
-import { IIssueState } from "types/issue";
 import { FilterHeader, FilterOption } from "./helpers";
 
 type Props = {

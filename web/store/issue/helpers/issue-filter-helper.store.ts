@@ -1,9 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 // types
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-// lib
-import { storage } from "@/lib/local-storage";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -14,6 +11,9 @@ import {
   TIssueParams,
   TStaticViewTypes,
 } from "@plane/types";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+// lib
+import { storage } from "@/lib/local-storage";
 
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;

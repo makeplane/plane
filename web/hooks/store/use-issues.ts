@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import merge from "lodash/merge";
 // mobx store
+import { TIssueMap } from "@plane/types";
 import { EIssuesStoreType } from "@/constants/issue";
 import { StoreContext } from "@/lib/store-context";
 // types
@@ -12,7 +13,6 @@ import { IProfileIssues, IProfileIssuesFilter } from "@/store/issue/profile";
 import { IProjectIssues, IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { IWorkspaceIssues, IWorkspaceIssuesFilter } from "@/store/issue/workspace";
-import { TIssueMap } from "@plane/types";
 // constants
 
 type defaultIssueStore = {

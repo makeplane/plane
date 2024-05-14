@@ -2,9 +2,9 @@ import React, { useState } from "react";
 
 // components
 // ui
+import { IIssueLabel } from "types/issue";
 import { Loader } from "@plane/ui";
 // types
-import { IIssueLabel } from "types/issue";
 import { FilterHeader, FilterOption } from "./helpers";
 
 const LabelIcons = ({ color }: { color: string }) => (

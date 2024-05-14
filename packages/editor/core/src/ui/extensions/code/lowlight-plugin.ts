@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { findChildren } from "@tiptap/core";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
@@ -117,15 +118,15 @@ export function LowlightPlugin({
             // Such transactions can happen during collab syncing via y-prosemirror, for example.
             transaction.steps.some(
               (step) =>
-                // @ts-ignore
+                // @ts-expect-error
                 step.from !== undefined &&
-                // @ts-ignore
+                // @ts-expect-error
                 step.to !== undefined &&
                 oldNodes.some(
                   (node) =>
-                    // @ts-ignore
+                    // @ts-expect-error
                     node.pos >= step.from &&
-                    // @ts-ignore
+                    // @ts-expect-error
                     node.pos + node.node.nodeSize <= step.to
                 )
             ))

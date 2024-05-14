@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export type IssueEventProps = {
   eventName: string;
   payload: any;

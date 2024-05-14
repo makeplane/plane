@@ -34,7 +34,7 @@ export const IssueWidget = Node.create({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer((props: Object) => <IssueWidgetCard {...props} />);
+    return ReactNodeViewRenderer((props: object) => <IssueWidgetCard {...props} />);
   },
 
   parseHTML() {

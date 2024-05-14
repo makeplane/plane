@@ -1,10 +1,10 @@
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 
 // mobx
-import { observer } from "mobx-react-lite";
+import IssueNavbar from "@/components/issues/navbar";
 import planeLogo from "public/plane-logo.svg";
 // components
-import IssueNavbar from "@/components/issues/navbar";
 
 const ProjectLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">

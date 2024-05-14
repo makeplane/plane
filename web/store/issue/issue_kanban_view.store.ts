@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
-import { IssueRootStore } from "./root.store";
 import { TIssueGroupByOptions } from "@plane/types";
+import { IssueRootStore } from "./root.store";
 // types
 
 export interface IIssueKanBanViewStore {

@@ -2,13 +2,13 @@
 import { observer } from "mobx-react-lite";
 // interfaces
 // ui
+import { IIssueState } from "types/issue";
 import { StateGroupIcon } from "@plane/ui";
 // constants
 import { issueGroupFilter } from "@/constants/data";
 // mobx hook
 import { useMobxStore } from "@/hooks/store";
 import { RootStore } from "@/store/root.store";
-import { IIssueState } from "types/issue";
 
 export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
   const store: RootStore = useMobxStore();

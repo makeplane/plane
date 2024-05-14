@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { cn } from "@plane/editor-core";
 import { Editor } from "@tiptap/core";
 import tippy from "tippy.js";
@@ -197,10 +198,10 @@ export const IssueListRenderer = () => {
       const container = document.querySelector(".frame-renderer") as HTMLElement;
       component = new ReactRenderer(IssueSuggestionList, {
         props,
-        // @ts-ignore
+        // @ts-expect-error
         editor: props.editor,
       });
-      // @ts-ignore
+      // @ts-expect-error
       popup = tippy(".frame-renderer", {
         flipbehavior: ["bottom", "top"],
         appendTo: () => document.querySelector(".frame-renderer") as HTMLElement,
@@ -234,13 +235,13 @@ export const IssueListRenderer = () => {
 
       const navigationKeys = ["ArrowUp", "ArrowDown", "Enter", "Tab"];
       if (navigationKeys.includes(props.event.key)) {
-        // @ts-ignore
+        // @ts-expect-error
         component?.ref?.onKeyDown(props);
         return true;
       }
       return false;
     },
-    onExit: (e) => {
+    onExit: () => {
       const container = document.querySelector(".frame-renderer") as HTMLElement;
       if (container) {
         container.removeEventListener("scroll", () => {});

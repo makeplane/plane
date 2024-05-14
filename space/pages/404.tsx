@@ -2,9 +2,9 @@
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 // hooks
+import notFoundImage from "public/404.svg";
 import { useInstance } from "@/hooks/store";
 // images
-import notFoundImage from "public/404.svg";
 
 const Custom404Error = observer(() => {
   // hooks

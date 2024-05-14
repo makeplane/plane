@@ -63,7 +63,7 @@ export const Tooltip: React.FC<Props> = ({
         </div>
       }
       position={position}
-      renderTarget={({ isOpen: isTooltipOpen, ref: eleReference, ...tooltipProps }) =>
+      renderTarget={({ ref: eleReference, ...tooltipProps }) =>
         React.cloneElement(children, {
           ref: eleReference,
           ...tooltipProps,

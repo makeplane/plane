@@ -1,8 +1,8 @@
 // services
+import type { CycleDateCheckData, ICycle, TIssue } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // types
-import type { CycleDateCheckData, ICycle, TIssue } from "@plane/types";
 // helpers
 
 export class CycleService extends APIService {

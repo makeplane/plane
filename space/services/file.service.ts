@@ -4,6 +4,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import APIService from "@/services/api.service";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface UnSplashImage {
   id: string;
   created_at: Date;

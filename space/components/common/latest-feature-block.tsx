@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // icons
+import latestFeatures from "public/onboarding/onboarding-pages.svg";
 import { Lightbulb } from "lucide-react";
 // images
-import latestFeatures from "public/onboarding/onboarding-pages.svg";
 
 export const LatestFeatureBlock = () => {
   const { resolvedTheme } = useTheme();

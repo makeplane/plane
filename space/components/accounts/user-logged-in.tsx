@@ -1,8 +1,8 @@
 import Image from "next/image";
 // hooks
+import PlaneLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import { useUser } from "@/hooks/store";
 // assets
-import PlaneLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import UserLoggedInImage from "public/user-logged-in.svg";
 
 export const UserLoggedIn = () => {

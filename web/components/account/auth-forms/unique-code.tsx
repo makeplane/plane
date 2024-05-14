@@ -97,7 +97,6 @@ export const AuthUniqueCodeForm: React.FC<Props> = (props) => {
       method="POST"
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "magic-sign-in" : "magic-sign-up"}/`}
       onSubmit={() => setIsSubmitting(true)}
-      onError={() => setIsSubmitting(false)}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <div className="space-y-1">

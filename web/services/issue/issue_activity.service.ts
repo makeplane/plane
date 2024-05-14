@@ -1,7 +1,7 @@
+import { TIssueActivity } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // types
-import { TIssueActivity } from "@plane/types";
 // helper
 
 export class IssueActivityService extends APIService {
@@ -13,11 +13,7 @@ export class IssueActivityService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    params:
-      | {
-          created_at__gt: string;
-        }
-      | {} = {}
+    params: { created_at__gt?: string } = {}
   ): Promise<TIssueActivity[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/history/`, {
       params: {

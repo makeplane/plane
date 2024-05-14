@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 // components
+import { IIssue } from "types/issue";
 import { Loader } from "@plane/ui";
 import {
   PeekOverviewHeader,
@@ -8,7 +9,6 @@ import {
   PeekOverviewIssueProperties,
 } from "@/components/issues/peek-overview";
 
-import { IIssue } from "types/issue";
 
 type Props = {
   handleClose: () => void;

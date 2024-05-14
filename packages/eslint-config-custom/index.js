@@ -4,6 +4,7 @@ module.exports = {
     "turbo",
     "prettier",
     "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -32,11 +33,14 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
     "@typescript-eslint/prefer-ts-expect-error": "error",
+    "react/react-in-jsx-scope": "off", // Review and enable this rule
+    "react/prop-types": "off",
     "@typescript-eslint/naming-convention": [
       "error",
       {
         selector: ["function", "variable"],
         format: ["camelCase", "snake_case", "UPPER_CASE", "PascalCase"],
+        leadingUnderscore: "allow",
       },
     ],
   },

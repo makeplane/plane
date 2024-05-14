@@ -4,6 +4,9 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 // icons
 import { useTheme } from "next-themes";
+import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import { Eye, EyeOff } from "lucide-react";
 // ui
 import { Button, Input } from "@plane/ui";
@@ -18,9 +21,6 @@ import { AuthWrapper } from "@/lib/wrappers";
 // services
 import { AuthService } from "@/services/authentication.service";
 // images
-import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 type TResetPasswordFormValues = {
   email: string;

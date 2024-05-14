@@ -16,6 +16,7 @@ const useReloadConfirmations = (isActive = true) => {
   );
 
   const handleRouteChangeStart = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (url: string) => {
       if (!isActive || !showAlert) return;
       const leave = confirm("Are you sure you want to leave? Changes you made may not be saved.");

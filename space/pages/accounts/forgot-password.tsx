@@ -3,6 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
+import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
@@ -19,9 +22,6 @@ import { AuthWrapper } from "@/lib/wrappers";
 // services
 import { AuthService } from "@/services/authentication.service";
 // images
-import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 type TForgotPasswordFormValues = {
   email: string;

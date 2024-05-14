@@ -1,6 +1,7 @@
 import { linearGradientDef } from "@nivo/core";
 // assets
 import { BarChart2, Briefcase, CheckCircle, Home } from "lucide-react";
+import { TIssuesListTypes, TStateGroups } from "@plane/types";
 import { ContrastIcon } from "@plane/ui";
 import { Props } from "@/components/icons/types";
 import CompletedIssuesDark from "public/empty-state/dashboard/dark/completed-issues.svg";
@@ -10,7 +11,6 @@ import CompletedIssuesLight from "public/empty-state/dashboard/light/completed-i
 import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
 import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
 // types
-import { TIssuesListTypes, TStateGroups } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "./workspace";
 // icons

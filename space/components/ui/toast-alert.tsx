@@ -1,7 +1,7 @@
 import React from "react";
+import useToast from "hooks/use-toast";
 import { AlertTriangle, CheckCircle, Info, X, XCircle } from "lucide-react";
 // hooks
-import useToast from "hooks/use-toast";
 // icons
 
 const ToastAlerts = () => {

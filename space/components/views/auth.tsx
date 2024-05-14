@@ -2,6 +2,8 @@ import { observer } from "mobx-react-lite";
 import Image from "next/image";
 // ui
 import { useTheme } from "next-themes";
+import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // components
@@ -9,8 +11,6 @@ import { AuthRoot, UserLoggedIn } from "@/components/accounts";
 // hooks
 import { useUser } from "@/hooks/store";
 // images
-import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text-new.png";
 
 export const AuthView = observer(() => {

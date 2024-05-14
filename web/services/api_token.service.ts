@@ -1,5 +1,5 @@
-import { API_BASE_URL } from "@/helpers/common.helper";
 import { IApiToken } from "@plane/types";
+import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "./api.service";
 
 export class APITokenService extends APIService {
@@ -15,7 +15,7 @@ export class APITokenService extends APIService {
       });
   }
 
-  async retrieveApiToken(workspaceSlug: string, tokenId: String): Promise<IApiToken> {
+  async retrieveApiToken(workspaceSlug: string, tokenId: string): Promise<IApiToken> {
     return this.get(`/api/workspaces/${workspaceSlug}/api-tokens/${tokenId}`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -31,7 +31,7 @@ export class APITokenService extends APIService {
       });
   }
 
-  async deleteApiToken(workspaceSlug: string, tokenId: String): Promise<IApiToken> {
+  async deleteApiToken(workspaceSlug: string, tokenId: string): Promise<IApiToken> {
     return this.delete(`/api/workspaces/${workspaceSlug}/api-tokens/${tokenId}`)
       .then((response) => response?.data)
       .catch((error) => {

@@ -2,9 +2,9 @@ import pull from "lodash/pull";
 import set from "lodash/set";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
+import { TIssue, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueService, IssueArchiveService } from "@/services/issue";
 import { WorkspaceService } from "@/services/workspace.service";
-import { TIssue, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
 // types

@@ -2,6 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // components
+import { IIssue } from "types/issue";
 import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
 import { IssueBlockLabels } from "@/components/issues/board-views/block-labels";
 import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
@@ -10,7 +11,6 @@ import { IssueBlockState } from "@/components/issues/board-views/block-state";
 import { useMobxStore } from "@/hooks/store";
 // interfaces
 import { RootStore } from "@/store/root.store";
-import { IIssue } from "types/issue";
 // store
 
 export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {

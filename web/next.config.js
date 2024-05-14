@@ -1,8 +1,12 @@
+/* eslint-disable turbo/no-undeclared-env-vars */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import("next").NextConfig} */
+const withBundleAnalyzer = require("@next/bundle-analyzer")();
 require("dotenv").config({ path: ".env" });
 const { withSentryConfig } = require("@sentry/nextjs");
-
+const withStatoscope = require("next-statoscope")({
+  enabled: process.env.ANALYZE === "true",
+});
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
@@ -42,13 +46,13 @@ const nextConfig = {
       },
     ];
     if (process.env.NEXT_PUBLIC_ADMIN_BASE_URL || process.env.NEXT_PUBLIC_ADMIN_BASE_PATH) {
-      const ADMIN_BASE_URL = process.env.NEXT_PUBLIC_ADMIN_BASE_URL || ""
-      const ADMIN_BASE_PATH = process.env.NEXT_PUBLIC_ADMIN_BASE_PATH || ""
-      const GOD_MODE_BASE_URL = ADMIN_BASE_URL + ADMIN_BASE_PATH
+      const ADMIN_BASE_URL = process.env.NEXT_PUBLIC_ADMIN_BASE_URL || "";
+      const ADMIN_BASE_PATH = process.env.NEXT_PUBLIC_ADMIN_BASE_PATH || "";
+      const GOD_MODE_BASE_URL = ADMIN_BASE_URL + ADMIN_BASE_PATH;
       rewrites.push({
         source: "/god-mode/:path*",
         destination: `${GOD_MODE_BASE_URL}/:path*`,
-      })
+      });
     }
     return rewrites;
   },
@@ -61,5 +65,5 @@ if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0", 10)) {
     { hideSourceMaps: true }
   );
 } else {
-  module.exports = nextConfig;
+  module.exports = process.env.ANALYZE === "true" ? withStatoscope(withBundleAnalyzer(nextConfig)) : nextConfig;
 }

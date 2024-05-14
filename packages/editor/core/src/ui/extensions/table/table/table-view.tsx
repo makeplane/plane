@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { h } from "jsx-dom-cjs";
 import { Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
 import { Decoration, NodeView } from "@tiptap/pm/view";
@@ -146,7 +147,7 @@ const columnsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "", // No icon needed for color picker
-    action: (args: any) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: () => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete column",
@@ -174,7 +175,7 @@ const rowsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "",
-    action: (args: any) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: () => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete row",
@@ -214,6 +215,7 @@ function createToolbox({
             h(
               "div",
               { className: "grid grid-cols-6 gap-x-1 gap-y-2.5 mt-2" },
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               Object.entries(colors).map(([colorName, colorValue]) =>
                 h("div", {
                   className: "grid place-items-center size-6 rounded cursor-pointer",
