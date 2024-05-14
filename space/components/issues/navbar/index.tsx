@@ -40,7 +40,7 @@ const IssueNavbar: FC<IssueNavbarProps> = observer((props) => {
   useEffect(() => {
     if (workspaceSlug && projectId && settings) {
       const viewsAcceptable: string[] = [];
-      let currentBoard: TIssueBoardKeys | null = null;
+      const currentBoard: TIssueBoardKeys | null = null;
 
       if (settings?.views?.list) viewsAcceptable.push("list");
       if (settings?.views?.kanban) viewsAcceptable.push("kanban");
@@ -48,19 +48,19 @@ const IssueNavbar: FC<IssueNavbarProps> = observer((props) => {
       if (settings?.views?.gantt) viewsAcceptable.push("gantt");
       if (settings?.views?.spreadsheet) viewsAcceptable.push("spreadsheet");
 
-      if (board) {
-        if (viewsAcceptable.includes(board.toString())) {
-          currentBoard = board.toString() as TIssueBoardKeys;
-        } else {
-          if (viewsAcceptable && viewsAcceptable.length > 0) {
-            currentBoard = viewsAcceptable[0] as TIssueBoardKeys;
-          }
-        }
-      } else {
-        if (viewsAcceptable && viewsAcceptable.length > 0) {
-          currentBoard = viewsAcceptable[0] as TIssueBoardKeys;
-        }
-      }
+      //     if (board) {
+      //       if (viewsAcceptable.includes(board.toString())) {
+      //         currentBoard = board.toString() as TIssueBoardKeys;
+      //       } else {
+      //         if (viewsAcceptable && viewsAcceptable.length > 0) {
+      //           currentBoard = viewsAcceptable[0] as TIssueBoardKeys;
+      //         }
+      //       }
+      //     } else {
+      //       if (viewsAcceptable && viewsAcceptable.length > 0) {
+      //         currentBoard = viewsAcceptable[0] as TIssueBoardKeys;
+      //       }
+      //     }
 
       if (currentBoard) {
         if (activeLayout === null || activeLayout !== currentBoard) {

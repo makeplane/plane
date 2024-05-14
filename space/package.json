@@ -22,6 +22,7 @@
     "@plane/rich-text-editor": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
+    "@plane/constants": "*",
     "@sentry/nextjs": "^7.108.0",
     "axios": "^1.3.4",
     "clsx": "^2.0.0",

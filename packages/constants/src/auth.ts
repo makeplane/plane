@@ -20,6 +20,7 @@ export enum EAuthSteps {
   UNIQUE_CODE = "UNIQUE_CODE",
 }
 
+// TODO: remove this
 export enum EErrorAlertType {
   BANNER_ALERT = "BANNER_ALERT",
   INLINE_FIRST_NAME = "INLINE_FIRST_NAME",
@@ -28,16 +29,19 @@ export enum EErrorAlertType {
   INLINE_EMAIL_CODE = "INLINE_EMAIL_CODE",
 }
 
-export enum EAuthenticationErrorCodes {
+export enum EAuthErrorCodes {
   // Global
   INSTANCE_NOT_CONFIGURED = "5000",
   INVALID_EMAIL = "5005",
   EMAIL_REQUIRED = "5010",
   SIGNUP_DISABLED = "5015",
+  MAGIC_LINK_LOGIN_DISABLED = "5017",
+  PASSWORD_LOGIN_DISABLED = "5019",
+  SMTP_NOT_CONFIGURED = "5025",
   // Password strength
   INVALID_PASSWORD = "5020",
-  SMTP_NOT_CONFIGURED = "5025",
   // Sign Up
+  USER_ACCOUNT_DEACTIVATED = "5019",
   USER_ALREADY_EXIST = "5030",
   AUTHENTICATION_FAILED_SIGN_UP = "5035",
   REQUIRED_EMAIL_PASSWORD_SIGN_UP = "5040",
@@ -45,7 +49,6 @@ export enum EAuthenticationErrorCodes {
   INVALID_EMAIL_MAGIC_SIGN_UP = "5050",
   MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED = "5055",
   // Sign In
-  USER_ACCOUNT_DEACTIVATED = "5019",
   USER_DOES_NOT_EXIST = "5060",
   AUTHENTICATION_FAILED_SIGN_IN = "5065",
   REQUIRED_EMAIL_PASSWORD_SIGN_IN = "5070",
@@ -66,7 +69,7 @@ export enum EAuthenticationErrorCodes {
   EXPIRED_PASSWORD_TOKEN = "5130",
   // Change password
   INCORRECT_OLD_PASSWORD = "5135",
-  MISSING_PASSWORD = "5138",
+  MISSING_PASSWORD= "5138",
   INVALID_NEW_PASSWORD = "5140",
   // set passowrd
   PASSWORD_ALREADY_SET = "5145",
@@ -83,34 +86,34 @@ export enum EAuthenticationErrorCodes {
 
 export type TAuthErrorInfo = {
   type: EErrorAlertType;
-  code: EAuthenticationErrorCodes;
+  code: EAuthErrorCodes;
   title: string;
   message: ReactNode;
 };
 
 const errorCodeMessages: {
-  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
 } = {
   // global
-  [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {
+  [EAuthErrorCodes.INSTANCE_NOT_CONFIGURED]: {
     title: `Instance not configured`,
     message: () => `Instance not configured. Please contact your administrator.`,
   },
-  [EAuthenticationErrorCodes.SIGNUP_DISABLED]: {
+  [EAuthErrorCodes.SIGNUP_DISABLED]: {
     title: `Sign up disabled`,
     message: () => `Sign up disabled. Please contact your administrator.`,
   },
-  [EAuthenticationErrorCodes.INVALID_PASSWORD]: {
+  [EAuthErrorCodes.INVALID_PASSWORD]: {
     title: `Invalid password`,
     message: () => `Invalid password. Please try again.`,
   },
-  [EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED]: {
+  [EAuthErrorCodes.SMTP_NOT_CONFIGURED]: {
     title: `SMTP not configured`,
     message: () => `SMTP not configured. Please contact your administrator.`,
   },
 
   // email check in both sign up and sign in
-  [EAuthenticationErrorCodes.INVALID_EMAIL]: {
+  [EAuthErrorCodes.INVALID_EMAIL]: {
     title: `Invalid email`,
     message: () => `Invalid email. Please try again.`,
   },
@@ -161,7 +164,6 @@ const errorCodeMessages: {
     title: `User account deactivated`,
     message: () => <div>Your account is deactivated. Contact support@plane.so.</div>,
   },
-
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
     title: `User does not exist`,
     message: (email = undefined) => (
@@ -241,6 +243,7 @@ const errorCodeMessages: {
   },
 
   // Change password
+
   [EAuthenticationErrorCodes.MISSING_PASSWORD]: {
     title: `Password required`,
     message: () => `Password required. Please try again.`,
@@ -354,7 +357,6 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.ADMIN_AUTHENTICATION_FAILED,
     EAuthenticationErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
-    EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED,
   ];
 
   if (bannerAlertErrorCodes.includes(errorCode))

@@ -63,23 +63,13 @@ class ForgotPasswordEndpoint(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        (EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD) = (
-            get_configuration_value(
-                [
-                    {
-                        "key": "EMAIL_HOST",
-                        "default": os.environ.get("EMAIL_HOST"),
-                    },
-                    {
-                        "key": "EMAIL_HOST_USER",
-                        "default": os.environ.get("EMAIL_HOST_USER"),
-                    },
-                    {
-                        "key": "EMAIL_HOST_PASSWORD",
-                        "default": os.environ.get("EMAIL_HOST_PASSWORD"),
-                    },
-                ]
-            )
+        (EMAIL_HOST,) = get_configuration_value(
+            [
+                {
+                    "key": "EMAIL_HOST",
+                    "default": os.environ.get("EMAIL_HOST"),
+                },
+            ]
         )
 
         if not (EMAIL_HOST):

@@ -316,6 +316,20 @@ class InstanceAdminSignInEndpoint(View):
         # Fetch the user
         user = User.objects.filter(email=email).first()
 
+        # is_active
+        if not user.is_active:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "ADMIN_USER_DEACTIVATED"
+                ],
+                error_message="ADMIN_USER_DEACTIVATED",
+            )
+            url = urljoin(
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
+            )
+            return HttpResponseRedirect(url)
+
         # Error out if the user is not present
         if not user:
             exc = AuthenticationException(
@@ -393,6 +407,30 @@ class InstanceAdminUserMeEndpoint(BaseAPIView):
             serializer.data,
             status=status.HTTP_200_OK,
         )
+
+
+class InstanceAdminUserSessionEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request):
+        if (
+            request.user.is_authenticated
+            and InstanceAdmin.objects.filter(user=request.user).exists()
+        ):
+            serializer = InstanceAdminMeSerializer(request.user)
+            data = {"is_authenticated": True}
+            data["user"] = serializer.data
+            return Response(
+                data,
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"is_authenticated": False}, status=status.HTTP_200_OK
+            )
 
 
 class InstanceAdminSignOutEndpoint(View):

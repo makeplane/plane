@@ -100,6 +100,12 @@ class Adapter:
             user.save()
             Profile.objects.create(user=user)
 
+        if not user.is_active:
+            raise AuthenticationException(
+                AUTHENTICATION_ERROR_CODES["USER_ACCOUNT_DEACTIVATED"],
+                error_message="USER_ACCOUNT_DEACTIVATED",
+            )
+
         # Update user details
         user.last_login_medium = self.provider
         user.last_active = timezone.now()

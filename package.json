@@ -12,7 +12,8 @@
     "packages/tailwind-config-custom",
     "packages/tsconfig",
     "packages/ui",
-    "packages/types"
+    "packages/types",
+    "packages/constants"
   ],
   "scripts": {
     "build": "turbo run build",
@@ -25,7 +26,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.15",
     "eslint-config-custom": "*",
-    "postcss": "^8.4.38",
+    "postcss": "^8.4.29",
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
     "tailwindcss": "^3.3.3",
