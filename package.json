@@ -27,6 +27,7 @@
     "autoprefixer": "^10.4.15",
     "eslint-config-custom": "*",
     "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
     "postcss": "^8.4.29",
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
