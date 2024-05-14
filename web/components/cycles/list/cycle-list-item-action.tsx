@@ -8,6 +8,7 @@ import { Avatar, AvatarGroup, Tooltip, setPromiseToast } from "@plane/ui";
 // components
 import { FavoriteStar } from "@/components/core";
 import { CycleQuickActions } from "@/components/cycles";
+import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
@@ -104,6 +105,8 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     });
   };
 
+  const createdByDetails = cycleDetails.created_by ? getUserDetails(cycleDetails.created_by) : undefined;
+
   return (
     <>
       {renderDate && (
@@ -129,6 +132,9 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
             : `${currentCycle.label}`}
         </div>
       )}
+
+      {/* created by */}
+      {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
 
       <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
         <div className="flex w-10 cursor-default items-center justify-center">
