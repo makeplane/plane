@@ -1,11 +1,11 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction } from "mobx";
 // services
 import IssueService from "@/services/issue.service";
+// types
+import { IIssue, IIssueState, IIssueLabel } from "@/types/issue";
 // store
 import { RootStore } from "./root.store";
-// types
 // import { IssueDetailType, TIssueBoardKeys } from "types/issue";
-import { IIssue, IIssueState, IIssueLabel } from "types/issue";
 
 export interface IIssueStore {
   loader: boolean;
@@ -26,7 +26,7 @@ export interface IIssueStore {
   getFilteredIssuesByState: (state: string) => IIssue[];
 }
 
-class IssueStore implements IIssueStore {
+export class IssueStore implements IIssueStore {
   loader: boolean = false;
   error: any | null = null;
 
@@ -75,13 +75,13 @@ class IssueStore implements IIssueStore {
       const response = await this.issueService.getPublicIssues(workspaceSlug, projectId, params);
 
       if (response) {
-        const _states: IIssueState[] = [...response?.states];
-        const _labels: IIssueLabel[] = [...response?.labels];
-        const _issues: IIssue[] = [...response?.issues];
+        const states: IIssueState[] = [...response?.states];
+        const labels: IIssueLabel[] = [...response?.labels];
+        const issues: IIssue[] = [...response?.issues];
         runInAction(() => {
-          this.states = _states;
-          this.labels = _labels;
-          this.issues = _issues;
+          this.states = states;
+          this.labels = labels;
+          this.issues = issues;
           this.loader = false;
         });
       }
@@ -99,5 +99,3 @@ class IssueStore implements IIssueStore {
   getFilteredIssuesByState = (state_id: string): IIssue[] | [] =>
     this.issues?.filter((issue) => issue.state == state_id) || [];
 }
-
-export default IssueStore;

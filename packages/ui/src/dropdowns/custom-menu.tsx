@@ -68,6 +68,13 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     if (closeOnSelect) closeDropdown();
   };
 
+  const handleMenuButtonClick = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>)=>{
+    e.stopPropagation();
+    e.preventDefault()
+    isOpen ? closeDropdown() : openDropdown();
+    if (menuButtonOnClick) menuButtonOnClick();
+  }
+
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   let menuItems = (
@@ -112,11 +119,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
               <button
                 ref={setReferenceElement}
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  isOpen ? closeDropdown() : openDropdown();
-                  if (menuButtonOnClick) menuButtonOnClick();
-                }}
+                onClick={handleMenuButtonClick}
                 className={customButtonClassName}
                 tabIndex={customButtonTabIndex}
               >
@@ -130,12 +133,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                   <button
                     ref={setReferenceElement}
                     type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      isOpen ? closeDropdown() : openDropdown();
-                      if (menuButtonOnClick) menuButtonOnClick();
-                    }}
+                    onClick={handleMenuButtonClick}
                     disabled={disabled}
                     className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none hover:text-custom-text-100 ${
                       disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
@@ -157,12 +155,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                         ? "cursor-not-allowed text-custom-text-200"
                         : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      isOpen ? closeDropdown() : openDropdown();
-                      if (menuButtonOnClick) menuButtonOnClick();
-                    }}
+                    onClick={handleMenuButtonClick}
                     tabIndex={customButtonTabIndex}
                   >
                     {label}

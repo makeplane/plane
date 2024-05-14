@@ -3,11 +3,11 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // types
 import { IUser } from "@plane/types";
 // services
-import { AuthService } from "@/services/authentication.service";
+import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // stores
 import { RootStore } from "@/store/root.store";
-import { ProfileStore, IProfileStore } from "@/store/user/profile.store";
+import { ProfileStore, IProfileStore } from "@/store/profile.store";
 import { ActorDetail } from "@/types/issue";
 
 type TUserErrorStatus = {
@@ -22,12 +22,13 @@ export interface IUserStore {
   error: TUserErrorStatus | undefined;
   data: IUser | undefined;
   // store observables
-  userProfile: IProfileStore;
+  profile: IProfileStore;
   // computed
   currentActor: ActorDetail;
   // actions
   fetchCurrentUser: () => Promise<IUser | undefined>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
+  hydrate: (data: IUser) => void;
   reset: () => void;
   signOut: () => Promise<void>;
 }
@@ -39,14 +40,14 @@ export class UserStore implements IUserStore {
   error: TUserErrorStatus | undefined = undefined;
   data: IUser | undefined = undefined;
   // store observables
-  userProfile: IProfileStore;
+  profile: IProfileStore;
   // service
   userService: UserService;
   authService: AuthService;
 
   constructor(private store: RootStore) {
     // stores
-    this.userProfile = new ProfileStore(store);
+    this.profile = new ProfileStore(store);
     // service
     this.userService = new UserService();
     this.authService = new AuthService();
@@ -58,7 +59,7 @@ export class UserStore implements IUserStore {
       error: observable,
       // model observables
       data: observable,
-      userProfile: observable,
+      profile: observable,
       // computed
       currentActor: computed,
       // actions
@@ -94,7 +95,7 @@ export class UserStore implements IUserStore {
       });
       const user = await this.userService.currentUser();
       if (user && user?.id) {
-        await this.userProfile.fetchUserProfile();
+        await this.profile.fetchUserProfile();
         runInAction(() => {
           this.data = user;
           this.isLoading = false;
@@ -153,6 +154,10 @@ export class UserStore implements IUserStore {
     }
   };
 
+  hydrate = (data: IUser): void => {
+    this.data = { ...this.data, ...data };
+  };
+
   /**
    * @description resets the user store
    * @returns {void}
@@ -163,7 +168,7 @@ export class UserStore implements IUserStore {
       this.isLoading = false;
       this.error = undefined;
       this.data = undefined;
-      this.userProfile = new ProfileStore(this.store);
+      this.profile = new ProfileStore(this.store);
     });
   };
 

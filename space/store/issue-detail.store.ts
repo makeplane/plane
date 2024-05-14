@@ -55,7 +55,7 @@ export interface IIssueDetailStore {
   removeIssueVote: (workspaceId: string, projectId: string, issueId: string) => Promise<void>;
 }
 
-class IssueDetailStore implements IIssueDetailStore {
+export class IssueDetailStore implements IIssueDetailStore {
   loader: boolean = false;
   error: any = null;
   peekId: string | null = null;
@@ -431,5 +431,3 @@ class IssueDetailStore implements IIssueDetailStore {
     }
   };
 }
-
-export default IssueDetailStore;

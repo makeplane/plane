@@ -1,3 +1,4 @@
+"use client";
 import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { X } from "lucide-react";

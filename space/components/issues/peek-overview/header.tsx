@@ -2,19 +2,17 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { MoveRight } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
-// hooks
 // ui
 import { Icon } from "@/components/ui";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useIssueDetails } from "@/hooks/store";
+import useToast from "@/hooks/use-toast";
 // store
-import { useMobxStore } from "@/hooks/store";
-import { IPeekMode } from "@/store/issue_details";
-import { RootStore } from "@/store/root.store";
-// lib
-import useToast from "hooks/use-toast";
+import { IPeekMode } from "@/store/issue-detail.store";
 // types
-import { IIssue } from "types/issue";
+import { IIssue } from "@/types/issue";
 
 type Props = {
   handleClose: () => void;
@@ -42,7 +40,7 @@ const peekModes: {
 export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
   const { handleClose } = props;
 
-  const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
+  const { peekMode, setPeekMode } = useIssueDetails();
 
   const { setToastAlert } = useToast();
 
@@ -62,21 +60,19 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
     <>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          {issueDetailStore.peekMode === "side" && (
+          {peekMode === "side" && (
             <button type="button" onClick={handleClose}>
               <MoveRight className="h-3.5 w-3.5" strokeWidth={2} />
             </button>
           )}
           <Listbox
             as="div"
-            value={issueDetailStore.peekMode}
-            onChange={(val) => issueDetailStore.setPeekMode(val)}
+            value={peekMode}
+            onChange={(val) => setPeekMode(val)}
             className="relative flex-shrink-0 text-left"
           >
-            <Listbox.Button
-              className={`grid place-items-center ${issueDetailStore.peekMode === "full" ? "rotate-45" : ""}`}
-            >
-              <Icon iconName={peekModes.find((m) => m.key === issueDetailStore.peekMode)?.icon ?? ""} />
+            <Listbox.Button className={`grid place-items-center ${peekMode === "full" ? "rotate-45" : ""}`}>
+              <Icon iconName={peekModes.find((m) => m.key === peekMode)?.icon ?? ""} />
             </Listbox.Button>
 
             <Transition
@@ -121,7 +117,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
             </Transition>
           </Listbox>
         </div>
-        {(issueDetailStore.peekMode === "side" || issueDetailStore.peekMode === "modal") && (
+        {(peekMode === "side" || peekMode === "modal") && (
           <div className="flex flex-shrink-0 items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45 focus:outline-none" tabIndex={1}>
               <Icon iconName="link" />
