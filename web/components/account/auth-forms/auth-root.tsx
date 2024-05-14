@@ -68,6 +68,10 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
     }
   }, [error_code, authMode]);
 
+  const isSMTPConfigured = instance?.config?.is_smtp_configured || false;
+  const isMagicLoginEnabled = instance?.config?.is_magic_login_enabled || false;
+  const isEmailPasswordEnabled = instance?.config?.is_email_password_enabled || false;
+
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
@@ -80,15 +84,17 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
           if (response.is_password_autoset) {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
             generateEmailUniqueCode(data.email);
-          } else {
+          } else if (isEmailPasswordEnabled) {
             setIsPasswordAutoset(false);
             setAuthStep(EAuthSteps.PASSWORD);
           }
         } else {
-          if (instance && instance?.config?.is_smtp_configured) {
+          if (isSMTPConfigured && isMagicLoginEnabled) {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
             generateEmailUniqueCode(data.email);
-          } else setAuthStep(EAuthSteps.PASSWORD);
+          } else if (isEmailPasswordEnabled) {
+            setAuthStep(EAuthSteps.PASSWORD);
+          }
         }
       })
       .catch((error) => {
@@ -112,8 +118,6 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
 
   const isOAuthEnabled =
     (instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled)) || false;
-
-  const isSMTPConfigured = (instance?.config && instance?.config?.is_smtp_configured) || false;
 
   return (
     <div className="relative flex flex-col space-y-6">

@@ -65,6 +65,8 @@ export const AuthRoot = observer(() => {
   const { config: instanceConfig } = useInstance();
   // derived values
   const isSmtpConfigured = instanceConfig?.is_smtp_configured;
+  const isMagicLoginEnabled = instanceConfig?.is_magic_login_enabled;
+  const isEmailPasswordEnabled = instanceConfig?.is_email_password_enabled;
 
   const { header, subHeader } = getHeaderSubHeader(authMode);
 
@@ -87,9 +89,9 @@ export const AuthRoot = observer(() => {
           setAuthStep(EAuthSteps.PASSWORD);
         } else {
           // Else if SMTP is configured, move to unique code sign-in/ sign-up.
-          if (isSmtpConfigured) {
+          if (isSmtpConfigured && isMagicLoginEnabled) {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
-          } else {
+          } else if (isEmailPasswordEnabled) {
             // Else show error message if SMTP is not configured and password is not set.
             if (res.existing) {
               setAuthMode(null);
