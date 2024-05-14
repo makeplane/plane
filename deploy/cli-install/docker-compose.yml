@@ -54,7 +54,7 @@ services:
     image: registry.plane.tools/plane/web-enterprise:${APP_RELEASE_VERSION}
     pull_policy: if_not_present
     restart: unless-stopped
-    command: /usr/local/bin/start.sh web/server.js web
+    command: node web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
     depends_on:
@@ -66,7 +66,7 @@ services:
     image: registry.plane.tools/plane/space-enterprise:${APP_RELEASE_VERSION}
     pull_policy: if_not_present
     restart: unless-stopped
-    command: /usr/local/bin/start.sh space/server.js space
+    command: node space/server.js space
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
     depends_on:
@@ -82,8 +82,8 @@ services:
     command: ./bin/takeoff
     deploy:
       replicas: ${API_REPLICAS:-1}
-    # volumes:
-    #   - ${INSTALL_DIR}/logs/api:/code/plane/logs
+    volumes:
+      - ${INSTALL_DIR}/logs/api:/code/plane/logs
     depends_on:
       - plane-db
       - plane-redis
@@ -94,8 +94,8 @@ services:
     pull_policy: if_not_present
     restart: unless-stopped
     command: ./bin/worker
-    # volumes:
-    #   - ${INSTALL_DIR}/logs/worker:/code/plane/logs
+    volumes:
+      - ${INSTALL_DIR}/logs/worker:/code/plane/logs
     depends_on:
       - api
       - plane-db
@@ -107,8 +107,8 @@ services:
     pull_policy: if_not_present
     restart: unless-stopped
     command: ./bin/beat
-    # volumes:
-    #   - ${INSTALL_DIR}/logs/beat-worker:/code/plane/logs
+    volumes:
+      - ${INSTALL_DIR}/logs/beat-worker:/code/plane/logs
     depends_on:
       - api
       - plane-db
@@ -122,8 +122,8 @@ services:
     command: >
       sh -c "python manage.py wait_for_db &&
            python manage.py migrate"
-    # volumes:
-    #   - ${INSTALL_DIR}/logs/migrator:/code/plane/logs
+    volumes:
+      - ${INSTALL_DIR}/logs/migrator:/code/plane/logs
     depends_on:
       - plane-db
       - plane-redis
