@@ -96,7 +96,7 @@ This will prompt you with the below options.
 
 ```bash
 Select a Action you want to perform:
-   1) Install (arm64)
+   1) Install (x86_64)
    2) Start
    3) Stop
    4) Restart
@@ -344,7 +344,7 @@ Similarly, you can view the logs of other services.
 
 There would a time when you might want to backup your data from docker volumes to external storage like S3 or drives.
 
-Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `8` to view logs.
+Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `7` to Backup the data.
 
 ```bash
 Select a Action you want to perform:
