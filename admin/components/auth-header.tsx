@@ -1,16 +1,16 @@
 "use client";
 
 import { FC } from "react";
+import { observer } from "mobx-react-lite";
 import { usePathname } from "next/navigation";
 // mobx
-import { observer } from "mobx-react-lite";
 // ui
 import { Settings } from "lucide-react";
 // icons
 import { Breadcrumbs } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "@/components/admin-sidebar";
+import { BreadcrumbLink } from "components/common";
 
 export const InstanceHeader: FC = observer(() => {
   const pathName = usePathname();

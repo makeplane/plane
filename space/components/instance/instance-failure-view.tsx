@@ -1,3 +1,4 @@
+"use client";
 import { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -7,14 +8,17 @@ import InstanceFailureDarkImage from "public/instance/instance-failure-dark.svg"
 import InstanceFailureImage from "public/instance/instance-failure.svg";
 
 type InstanceFailureViewProps = {
-  mutate: () => void;
+  // mutate: () => void;
 };
 
-export const InstanceFailureView: FC<InstanceFailureViewProps> = (props) => {
-  const { mutate } = props;
+export const InstanceFailureView: FC<InstanceFailureViewProps> = () => {
   const { resolvedTheme } = useTheme();
 
   const instanceImage = resolvedTheme === "dark" ? InstanceFailureDarkImage : InstanceFailureImage;
+
+  const handleRetry = () => {
+    window.location.reload();
+  };
 
   return (
     <div className="h-full w-full relative container px-5 mx-auto flex justify-center items-center mt-10">
@@ -28,7 +32,7 @@ export const InstanceFailureView: FC<InstanceFailureViewProps> = (props) => {
           </p>
         </div>
         <div className="flex justify-center">
-          <Button size="md" onClick={mutate}>
+          <Button size="md" onClick={handleRetry}>
             Retry
           </Button>
         </div>

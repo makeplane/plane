@@ -21,14 +21,13 @@ import { ROLE } from "@/constants/workspace";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
-import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import DefaultLayout from "@/layouts/default-layout";
 // types
 import { NextPageWithLayout } from "@/lib/types";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
-import { UserService } from "@/services/user.service";
 import { WorkspaceService } from "@/services/workspace.service";
 // images
 import emptyInvitation from "public/empty-state/invitation.svg";
@@ -36,7 +35,6 @@ import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-l
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 
 const workspaceService = new WorkspaceService();
-const userService = new UserService();
 
 const UserInvitationsPage: NextPageWithLayout = observer(() => {
   // states
@@ -47,6 +45,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { captureEvent, joinWorkspaceMetricGroup } = useEventTracker();
   const { data: currentUser } = useUser();
+  const { updateUserProfile } = useUserProfile();
+
   const { fetchWorkspaces } = useWorkspace();
   // next-themes
   const { theme } = useTheme();
@@ -95,8 +95,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
           state: "SUCCESS",
           element: "Workspace invitations page",
         });
-        userService
-          .updateUser({ last_workspace_id: redirectWorkspace?.id })
+        updateUserProfile({ last_workspace_id: redirectWorkspace?.id })
           .then(() => {
             setIsJoiningWorkspaces(false);
             fetchWorkspaces().then(() => {

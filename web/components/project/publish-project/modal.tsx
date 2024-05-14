@@ -62,7 +62,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const [isUpdateRequired, setIsUpdateRequired] = useState(false);
 
   // const plane_deploy_url = instance?.config?.space_base_url || "";
-  const SPACE_URL = SPACE_BASE_URL + SPACE_BASE_PATH;
+  const SPACE_URL = (SPACE_BASE_URL === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
 
   // router
   const router = useRouter();

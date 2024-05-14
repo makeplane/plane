@@ -3,10 +3,10 @@ import { IUser } from "@plane/types";
 // helpers
 import { EUserStatus, TUserStatus } from "@/helpers";
 // services
+import { AuthService } from "@/services";
 import { UserService } from "@/services/user.service";
 // root store
-import { RootStore } from "@/store/root-store";
-import { AuthService } from "@/services";
+import { RootStore } from "@/store/root.store";
 
 export interface IUserStore {
   // observables
@@ -15,6 +15,7 @@ export interface IUserStore {
   isUserLoggedIn: boolean | undefined;
   currentUser: IUser | undefined;
   // fetch actions
+  hydrate: (data: any) => void;
   fetchCurrentUser: () => Promise<IUser>;
   reset: () => void;
   signOut: () => void;
@@ -45,6 +46,10 @@ export class UserStore implements IUserStore {
     this.userService = new UserService();
     this.authService = new AuthService();
   }
+
+  hydrate = (data: any) => {
+    if (data) this.currentUser = data;
+  };
 
   /**
    * @description Fetches the current user

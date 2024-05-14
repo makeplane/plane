@@ -8,7 +8,7 @@ import { IWorkspace } from "@plane/types";
 // hooks
 import { PageHead } from "@/components/core";
 import { CreateWorkspaceForm } from "@/components/workspace";
-import { useUser } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // components
@@ -25,7 +25,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   // store hooks
   const { data: currentUser } = useUser();
-  const { updateCurrentUser } = useUser();
+  const { updateUserProfile } = useUserProfile();
   // states
   const [defaultValues, setDefaultValues] = useState({
     name: "",
@@ -36,7 +36,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   const { theme } = useTheme();
 
   const onSubmit = async (workspace: IWorkspace) => {
-    await updateCurrentUser({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
+    await updateUserProfile({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
   };
 
   return (

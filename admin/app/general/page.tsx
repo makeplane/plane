@@ -1,18 +1,15 @@
 "use client";
-
 import { observer } from "mobx-react-lite";
-// components
-import { PageHeader } from "@/components/core";
-import { GeneralConfigurationForm } from "./components";
 // hooks
 import { useInstance } from "@/hooks/store";
+// components
+import { GeneralConfigurationForm } from "./form";
 
-const GeneralPage = observer(() => {
+function GeneralPage() {
   const { instance, instanceAdmins } = useInstance();
-
+  console.log("instance", instanceAdmins);
   return (
     <>
-      <PageHeader title="General Settings - God Mode" />
       <div className="relative container mx-auto w-full h-full p-8 py-4 space-y-6 flex flex-col">
         <div className="border-b border-custom-border-100 pb-3 space-y-1 flex-shrink-0">
           <div className="text-xl font-medium text-custom-text-100">General settings</div>
@@ -22,13 +19,13 @@ const GeneralPage = observer(() => {
           </div>
         </div>
         <div className="flex-grow overflow-hidden overflow-y-auto">
-          {instance?.instance && instanceAdmins && instanceAdmins?.length > 0 && (
-            <GeneralConfigurationForm instance={instance?.instance} instanceAdmins={instanceAdmins} />
+          {instance?.instance && instanceAdmins && (
+            <GeneralConfigurationForm instance={instance.instance} instanceAdmins={instanceAdmins} />
           )}
         </div>
       </div>
     </>
   );
-});
+}
 
-export default GeneralPage;
+export default observer(GeneralPage);

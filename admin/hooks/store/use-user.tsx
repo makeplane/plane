@@ -1,6 +1,6 @@
 import { useContext } from "react";
 // store
-import { StoreContext } from "@/lib/store-context";
+import { StoreContext } from "@/lib/app-providers";
 import { IUserStore } from "@/store/user.store";
 
 export const useUser = (): IUserStore => {

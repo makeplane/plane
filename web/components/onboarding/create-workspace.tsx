@@ -8,7 +8,7 @@ import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@pla
 import { WORKSPACE_CREATED } from "@/constants/event-tracker";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useUserProfile, useWorkspace } from "@/hooks/store";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 
@@ -28,7 +28,8 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
   // store hooks
-  const { updateCurrentUser } = useUser();
+  const { updateUserProfile } = useUserProfile();
+
   const { createWorkspace, fetchWorkspaces, workspaces } = useWorkspace();
   const { captureWorkspaceEvent } = useEventTracker();
   // form info
@@ -111,7 +112,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
     };
 
     await stepChange(payload);
-    await updateCurrentUser({
+    await updateUserProfile({
       last_workspace_id: firstWorkspace?.id,
     });
   };

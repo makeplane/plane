@@ -1,22 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
 import { PageHeader } from "@/components/core";
-import { AuthenticationMethodCard } from "../components";
-import { InstanceGithubConfigForm } from "./components";
-// hooks
-import { useInstance } from "@/hooks/store";
 // helpers
 import { resolveGeneralTheme } from "@/helpers/common.helper";
+// hooks
+import { useInstance } from "@/hooks/store";
 // icons
 import githubLightModeImage from "@/public/logos/github-black.png";
 import githubDarkModeImage from "@/public/logos/github-white.png";
+// local components
+import { AuthenticationMethodCard } from "../components";
+import { InstanceGithubConfigForm } from "./form";
 
 const InstanceGithubAuthenticationPage = observer(() => {
   // store

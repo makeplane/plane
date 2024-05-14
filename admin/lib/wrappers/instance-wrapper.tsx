@@ -1,19 +1,19 @@
 "use client";
 
 import { FC, ReactNode } from "react";
-import { redirect, useSearchParams } from "next/navigation";
 import { observer } from "mobx-react-lite";
+import { redirect, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
-// layouts
-import { DefaultLayout } from "@/layouts";
 // components
+import { EmptyState } from "@/components/common";
 import { InstanceNotReady } from "@/components/instance";
-// hooks
-import { useInstance } from "@/hooks/store";
 // helpers
 import { EInstancePageType } from "@/helpers";
-import { EmptyState } from "@/components/common";
+// hooks
+import { useInstance } from "@/hooks/store";
+// layouts
+import { DefaultLayout } from "@/layouts/default-layout";
 
 type TInstanceWrapper = {
   children: ReactNode;

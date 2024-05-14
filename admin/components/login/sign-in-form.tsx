@@ -3,15 +3,15 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 // services
-import { AuthService } from "@/services/auth.service";
-// ui
+import { Eye, EyeOff } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";
 // components
-import { Banner } from "components/common";
-// icons
-import { Eye, EyeOff } from "lucide-react";
+import { Banner } from "@/components/common";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+import { AuthService } from "@/services/auth.service";
+// ui
+// icons
 
 // service initialization
 const authService = new AuthService();
@@ -56,6 +56,8 @@ export const InstanceSignInForm: FC = (props) => {
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
+
+  console.log("csrfToken", csrfToken);
 
   useEffect(() => {
     if (csrfToken === undefined)
@@ -119,7 +121,7 @@ export const InstanceSignInForm: FC = (props) => {
               Email <span className="text-red-500">*</span>
             </label>
             <Input
-              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
               id="email"
               name="email"
               type="email"
@@ -137,7 +139,7 @@ export const InstanceSignInForm: FC = (props) => {
             </label>
             <div className="relative">
               <Input
-                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}

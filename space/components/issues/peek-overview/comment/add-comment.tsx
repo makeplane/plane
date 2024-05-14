@@ -1,12 +1,11 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 // components
 import { EditorRefApi } from "@plane/lite-text-editor";
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks
-import { useMobxStore, useUser } from "@/hooks/store";
+import { useIssueDetails, useProject, useUser } from "@/hooks/store";
 import useToast from "@/hooks/use-toast";
 // types
 import { Comment } from "@/types/issue";
@@ -17,22 +16,21 @@ const defaultValues: Partial<Comment> = {
 
 type Props = {
   disabled?: boolean;
+  workspaceSlug: string;
+  projectId: string;
 };
 
-export const AddComment: React.FC<Props> = observer(() => {
+export const AddComment: React.FC<Props> = observer((props) => {
   // const { disabled = false } = props;
+  const { workspaceSlug, projectId } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
-  // router
-  const router = useRouter();
-  const { workspace_slug, project_slug } = router.query;
   // store hooks
-  const { project } = useMobxStore();
-  const { issueDetails: issueDetailStore } = useMobxStore();
+  const { workspace } = useProject();
+  const { peekId: issueId, addIssueComment } = useIssueDetails();
   const { data: currentUser } = useUser();
   // derived values
-  const workspaceId = project.workspace?.id;
-  const issueId = issueDetailStore.peekId;
+  const workspaceId = workspace?.id;
   // form info
   const {
     handleSubmit,
@@ -45,10 +43,9 @@ export const AddComment: React.FC<Props> = observer(() => {
   const { setToastAlert } = useToast();
 
   const onSubmit = async (formData: Comment) => {
-    if (!workspace_slug || !project_slug || !issueId || isSubmitting || !formData.comment_html) return;
+    if (!workspaceSlug || !projectId || !issueId || isSubmitting || !formData.comment_html) return;
 
-    await issueDetailStore
-      .addIssueComment(workspace_slug.toString(), project_slug.toString(), issueId, formData)
+    await addIssueComment(workspaceSlug, projectId, issueId, formData)
       .then(() => {
         reset(defaultValues);
         editorRef.current?.clearEditor();
@@ -75,7 +72,7 @@ export const AddComment: React.FC<Props> = observer(() => {
                 if (currentUser) handleSubmit(onSubmit)(e);
               }}
               workspaceId={workspaceId as string}
-              workspaceSlug={workspace_slug as string}
+              workspaceSlug={workspaceSlug}
               ref={editorRef}
               initialValue={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)

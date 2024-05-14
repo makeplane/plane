@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 // layouts
-import { AdminLayout } from "@/layouts";
+import { AdminLayout } from "@/layouts/admin-layout";
 // lib
 import { AuthWrapper, InstanceWrapper } from "@/lib/wrappers";
 

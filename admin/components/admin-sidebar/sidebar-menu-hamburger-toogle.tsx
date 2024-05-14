@@ -3,9 +3,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { Menu } from "lucide-react";
 import { useTheme } from "@/hooks/store";
 // icons
-import { Menu } from "lucide-react";
 
 export const SidebarHamburgerToggle: FC = observer(() => {
   const { isSidebarCollapsed, toggleSidebar } = useTheme();

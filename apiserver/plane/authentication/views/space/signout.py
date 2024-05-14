@@ -1,5 +1,3 @@
-# Python imports
-
 # Django imports
 from django.views import View
 from django.contrib.auth import logout
