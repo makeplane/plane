@@ -23,9 +23,9 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // store
-  const { getProjectById, workspaceProjectIds } = useProject();
+  const { getProjectById, joinedProjectIds } = useProject();
   // derived values
-  const projects = workspaceProjectIds?.map((projectId) => getProjectById(projectId)!) ?? null;
+  const projects = joinedProjectIds?.map((projectId) => getProjectById(projectId)!) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const sortedOptions = useMemo(() => {

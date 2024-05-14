@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
-    "develop": "next dev --port 3333",
+    "develop": "next dev --port 3001",
     "build": "next build",
     "preview": "next build && next start",
     "start": "next start",
@@ -25,7 +25,7 @@
     "mobx-react-lite": "^4.0.5",
     "next": "^14.2.3",
     "next-themes": "^0.2.1",
-    "postcss": "8.4.23",
+    "postcss": "^8.4.38",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.51.0",

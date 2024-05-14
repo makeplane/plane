@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // icons
-import { ArrowRight, Plus, PanelRight } from "lucide-react";
+import { ArrowRight, PanelRight } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
@@ -281,7 +281,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
                     size="sm"
-                    prependIcon={<Plus />}
                   >
                     Add Issue
                   </Button>

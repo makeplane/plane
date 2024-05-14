@@ -77,7 +77,13 @@ class MagicCodeProvider(CredentialAdapter):
             current_attempt = data["current_attempt"] + 1
 
             if data["current_attempt"] > 2:
-                return key, ""
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "EMAIL_CODE_ATTEMPT_EXHAUSTED"
+                    ],
+                    error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED",
+                    payload={"email": self.key},
+                )
 
             value = {
                 "current_attempt": current_attempt,

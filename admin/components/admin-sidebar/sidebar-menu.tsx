@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 import { Tooltip } from "@plane/ui";
 // hooks
-import { useTheme } from "@/hooks";
+import { useTheme } from "@/hooks/store";
 // helpers
 import { cn } from "@/helpers/common.helper";
 

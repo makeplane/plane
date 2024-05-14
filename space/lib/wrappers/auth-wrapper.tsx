@@ -38,7 +38,12 @@ export const AuthWrapper: FC<TAuthWrapper> = observer((props) => {
   if (pageType === EPageTypes.INIT) {
     if (!currentUser?.id) return <>{children}</>;
     else {
-      if (currentUserProfile?.id && currentUserProfile?.onboarding_step?.profile_complete) return <>{children}</>;
+      if (
+        currentUserProfile &&
+        currentUserProfile?.id &&
+        Boolean(currentUserProfile?.onboarding_step?.profile_complete)
+      )
+        return <>{children}</>;
       else {
         router.push(`/onboarding`);
         return <></>;

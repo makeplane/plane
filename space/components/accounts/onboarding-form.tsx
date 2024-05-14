@@ -140,8 +140,11 @@ export const OnBoardingForm: React.FC<Props> = observer((props) => {
         </button>
       </div>
       <div className="flex gap-4">
-        <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="first_name">
+        <div className="space-y-1 w-full">
+          <label
+            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="first_name"
+          >
             First name
           </label>
           <Controller
@@ -171,8 +174,11 @@ export const OnBoardingForm: React.FC<Props> = observer((props) => {
           />
           {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
         </div>
-        <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="last_name">
+        <div className="space-y-1 w-full">
+          <label
+            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="last_name"
+          >
             Last name
           </label>
           <Controller

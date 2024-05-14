@@ -1,8 +1,6 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// icons
-import { PlusIcon } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -134,8 +132,8 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
             </FiltersDropdown>
           </>
           {isAuthorizedUser && (
-            <Button variant="primary" size="sm" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
-              New View
+            <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
+              Add View
             </Button>
           )}
         </div>
