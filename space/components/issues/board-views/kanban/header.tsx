@@ -1,3 +1,4 @@
+"use client";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // ui
@@ -5,12 +6,12 @@ import { StateGroupIcon } from "@plane/ui";
 // constants
 import { issueGroupFilter } from "@/constants/data";
 // mobx hook
-import { useIssue } from "@/hooks/store";
+// import { useIssue } from "@/hooks/store";
 // interfaces
 import { IIssueState } from "@/types/issue";
 
 export const IssueKanBanHeader = observer(({ state }: { state: IIssueState }) => {
-  const { getCountOfIssuesByState } = useIssue();
+  // const { getCountOfIssuesByState } = useIssue();
   const stateGroup = issueGroupFilter(state.group);
 
   if (stateGroup === null) return <></>;
@@ -21,7 +22,7 @@ export const IssueKanBanHeader = observer(({ state }: { state: IIssueState }) =>
         <StateGroupIcon stateGroup={state.group} color={state.color} height="14" width="14" />
       </div>
       <div className="mr-1 truncate font-semibold capitalize text-custom-text-200">{state?.name}</div>
-      <span className="flex-shrink-0 rounded-full text-custom-text-300">{getCountOfIssuesByState(state.id)}</span>
+      {/* <span className="flex-shrink-0 rounded-full text-custom-text-300">{getCountOfIssuesByState(state.id)}</span> */}
     </div>
   );
 });

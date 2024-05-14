@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { notFound } from "next/navigation";
 // components
 import IssueNavbar from "@/components/issues/navbar";
 // services
@@ -10,7 +11,11 @@ const projectService = new ProjectService();
 
 export default async function ProjectLayout({ children, params }: { children: React.ReactNode; params: any }) {
   const { workspace_slug, project_id } = params;
-  const projectSettings = await projectService.getProjectSettings(workspace_slug, project_id);
+  const projectSettings = await projectService.getProjectSettings(workspace_slug, project_id).catch(() => null);
+
+  if (!projectSettings) {
+    notFound();
+  }
 
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
