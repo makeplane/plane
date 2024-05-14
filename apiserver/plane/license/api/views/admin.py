@@ -316,6 +316,20 @@ class InstanceAdminSignInEndpoint(View):
         # Fetch the user
         user = User.objects.filter(email=email).first()
 
+        # is_active
+        if not user.is_active:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "ADMIN_USER_DEACTIVATED"
+                ],
+                error_message="ADMIN_USER_DEACTIVATED",
+            )
+            url = urljoin(
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
+            )
+            return HttpResponseRedirect(url)
+
         # Error out if the user is not present
         if not user:
             exc = AuthenticationException(
