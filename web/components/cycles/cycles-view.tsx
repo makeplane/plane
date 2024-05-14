@@ -1,12 +1,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
-// types
-import { TCycleLayoutOptions } from "@plane/types";
 // components
-import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "@/components/cycles";
+import { CyclesList } from "@/components/cycles";
 // ui
-import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
+import { CycleModuleListLayout } from "@/components/ui";
 // hooks
 import { useCycle, useCycleFilter } from "@/hooks/store";
 // assets
@@ -14,29 +12,23 @@ import AllFiltersImage from "public/empty-state/cycle/all-filters.svg";
 import NameFilterImage from "public/empty-state/cycle/name-filter.svg";
 
 export interface ICyclesView {
-  layout: TCycleLayoutOptions;
   workspaceSlug: string;
   projectId: string;
-  peekCycle: string | undefined;
 }
 
 export const CyclesView: FC<ICyclesView> = observer((props) => {
-  const { layout, workspaceSlug, projectId, peekCycle } = props;
+  const { workspaceSlug, projectId } = props;
   // store hooks
-  const { getFilteredCycleIds, getFilteredCompletedCycleIds, loader } = useCycle();
+  const { getFilteredCycleIds, getFilteredCompletedCycleIds, loader, currentProjectActiveCycleId } = useCycle();
   const { searchQuery } = useCycleFilter();
   // derived values
-  const filteredCycleIds = getFilteredCycleIds(projectId, layout === "gantt");
+  const filteredCycleIds = getFilteredCycleIds(projectId, false);
   const filteredCompletedCycleIds = getFilteredCompletedCycleIds(projectId);
+  const filteredUpcomingCycleIds = (filteredCycleIds ?? []).filter(
+    (cycleId) => cycleId !== currentProjectActiveCycleId
+  );
 
-  if (loader || !filteredCycleIds)
-    return (
-      <>
-        {layout === "list" && <CycleModuleListLayout />}
-        {layout === "board" && <CycleModuleBoardLayout />}
-        {layout === "gantt" && <GanttLayoutLoader />}
-      </>
-    );
+  if (loader || !filteredCycleIds) return <CycleModuleListLayout />;
 
   if (filteredCycleIds.length === 0 && filteredCompletedCycleIds?.length === 0)
     return (
@@ -59,24 +51,13 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
 
   return (
     <>
-      {layout === "list" && (
-        <CyclesList
-          completedCycleIds={filteredCompletedCycleIds ?? []}
-          cycleIds={filteredCycleIds}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-        />
-      )}
-      {layout === "board" && (
-        <CyclesBoard
-          completedCycleIds={filteredCompletedCycleIds ?? []}
-          cycleIds={filteredCycleIds}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          peekCycle={peekCycle}
-        />
-      )}
-      {layout === "gantt" && <CyclesListGanttChartView cycleIds={filteredCycleIds} workspaceSlug={workspaceSlug} />}
+      <CyclesList
+        completedCycleIds={filteredCompletedCycleIds ?? []}
+        upcomingCycleIds={filteredUpcomingCycleIds}
+        cycleIds={filteredCycleIds}
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+      />
     </>
   );
 });
