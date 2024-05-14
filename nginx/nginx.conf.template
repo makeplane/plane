@@ -16,13 +16,17 @@ http {
         add_header Permissions-Policy        "interest-cohort=()" always;
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
         add_header X-Forwarded-Proto         "${dollar}scheme";
-        add_header Host                      "${dollar}host";
+        add_header X-Forwarded-Host          "${dollar}host";
+        add_header X-Forwarded-For           "${dollar}proxy_add_x_forwarded_for";
+        add_header Host                      "${dollar}http_host";
 
         location / {
             proxy_pass http://web:3000/;
         }
 
         location /api/ {
+            proxy_set_header X-Forwarded-For "${dollar}proxy_add_x_forwarded_for";
+            proxy_set_header Host            "${dollar}http_host";
             proxy_pass http://api:8000/api/;
         }
 
@@ -35,6 +39,8 @@ http {
         }
 
         location /auth/ {
+            proxy_set_header X-Forwarded-For "${dollar}proxy_add_x_forwarded_for";
+            proxy_set_header Host            "${dollar}http_host";
             proxy_pass http://api:8000/auth/;
         }
 
