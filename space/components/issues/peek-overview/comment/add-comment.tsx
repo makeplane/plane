@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 // components
 import { EditorRefApi } from "@plane/lite-text-editor";

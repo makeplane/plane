@@ -9,7 +9,7 @@ import { Icon } from "@/components/ui";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // store
 import { useMobxStore } from "@/hooks/store";
-import { IPeekMode } from "@/store/issue_details";
+import { IPeekMode } from "@/store/issue-detail.store";
 import { RootStore } from "@/store/root.store";
 // lib
 import useToast from "hooks/use-toast";

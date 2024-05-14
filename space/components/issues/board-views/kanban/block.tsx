@@ -2,7 +2,7 @@
 
 // mobx react lite
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
 import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
 import { IssueBlockState } from "@/components/issues/board-views/block-state";

@@ -18,15 +18,18 @@ type TError = {
 export interface IInstanceStore {
   // issues
   isLoading: boolean;
-  instance: IInstance | undefined;
+  data: IInstance | NonNullable<unknown>;
+  config: Record<string, any>;
   error: TError | undefined;
   // action
   fetchInstanceInfo: () => Promise<void>;
+  hydrate: (data: Record<string, unknown>, config: Record<string, unknown>) => void;
 }
 
 export class InstanceStore implements IInstanceStore {
   isLoading: boolean = true;
-  instance: IInstance | undefined = undefined;
+  data: IInstance | Record<string, any> = {};
+  config: Record<string, unknown> = {};
   error: TError | undefined = undefined;
   // services
   instanceService;
@@ -35,14 +38,21 @@ export class InstanceStore implements IInstanceStore {
     makeObservable(this, {
       // observable
       isLoading: observable.ref,
-      instance: observable,
+      data: observable,
+      config: observable,
       error: observable,
       // actions
       fetchInstanceInfo: action,
+      hydrate: action,
     });
     // services
     this.instanceService = new InstanceService();
   }
+
+  hydrate = (data: Record<string, unknown>, config: Record<string, unknown>) => {
+    this.data = { ...this.data, ...data };
+    this.config = { ...this.config, ...config };
+  };
 
   /**
    * @description fetching instance information
@@ -51,10 +61,11 @@ export class InstanceStore implements IInstanceStore {
     try {
       this.isLoading = true;
       this.error = undefined;
-      const instance = await this.instanceService.getInstanceInfo();
+      const instanceDetails = await this.instanceService.getInstanceInfo();
       runInAction(() => {
         this.isLoading = false;
-        this.instance = instance;
+        this.data = instanceDetails.instance;
+        this.config = instanceDetails.config;
       });
     } catch (error) {
       runInAction(() => {
