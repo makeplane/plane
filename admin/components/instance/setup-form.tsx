@@ -69,6 +69,7 @@ export const InstanceSetupForm: FC = (props) => {
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -276,6 +277,8 @@ export const InstanceSetupForm: FC = (props) => {
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder="Confirm password"
                 className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                onFocus={() => setIsRetryPasswordInputFocused(true)}
+                onBlur={() => setIsRetryPasswordInputFocused(false)}
               />
               {showPassword ? (
                 <button
@@ -297,9 +300,9 @@ export const InstanceSetupForm: FC = (props) => {
                 </button>
               )}
             </div>
-            {!!formData.confirm_password && formData.password !== formData.confirm_password && (
-              <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
-            )}
+            {!!formData.confirm_password &&
+              formData.password !== formData.confirm_password &&
+              !isRetryPasswordInputFocused && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
           </div>
 
           <div className="relative flex items-center pt-2 gap-2">
