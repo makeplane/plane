@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, FC } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter, useParams, useSearchParams, usePathname } from "next/navigation";
+import useSWR from "swr";
 // ui
 import { Avatar, Button } from "@plane/ui";
 // components
@@ -21,7 +23,7 @@ export type NavbarControlsProps = {
   projectSettings: any;
 };
 
-export const NavbarControls: FC<NavbarControlsProps> = (props) => {
+export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   const { workspaceSlug, projectId, projectSettings } = props;
   const { views } = projectSettings;
   // router
@@ -34,7 +36,11 @@ export const NavbarControls: FC<NavbarControlsProps> = (props) => {
   const { settings, activeLayout, hydrate, setActiveLayout } = useProject();
   hydrate(projectSettings);
 
-  const { data: user } = useUser();
+  const { data: user, fetchCurrentUser } = useUser();
+
+  useSWR("CURRENT_USER", () => fetchCurrentUser(), { errorRetryCount: 2 });
+
+  console.log("user", user);
 
   useEffect(() => {
     if (workspaceSlug && projectId && settings) {
@@ -126,4 +132,4 @@ export const NavbarControls: FC<NavbarControlsProps> = (props) => {
       )}
     </>
   );
-};
+});
