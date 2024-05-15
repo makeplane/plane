@@ -4,9 +4,10 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
 // ui
-import { Button, Input, Spinner, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
+import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar";
 import { getPasswordStrength } from "@/helpers/password.helper";
@@ -133,7 +134,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   if (isPageLoading)
     return (
       <div className="grid h-screen w-full place-items-center">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 
