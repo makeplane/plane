@@ -52,7 +52,7 @@ const defaultFromData: TFormData = {
   is_telemetry_enabled: true,
 };
 
-export const InstanceSignUpForm: FC = (props) => {
+export const InstanceSetupForm: FC = (props) => {
   const {} = props;
   // search params
   const searchParams = useSearchParams();
@@ -122,7 +122,7 @@ export const InstanceSignUpForm: FC = (props) => {
   );
 
   return (
-    <div className="relative w-full h-full overflow-hidden container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 flex flex-col justify-center items-center">
+    <div className="max-w-lg px-10 lg:max-w-md lg:px-5">
       <div className="relative flex flex-col space-y-6">
         <div className="text-center space-y-1">
           <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">

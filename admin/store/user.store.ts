@@ -3,7 +3,7 @@ import { IUser } from "@plane/types";
 // helpers
 import { EUserStatus, TUserStatus } from "@/helpers";
 // services
-import { AuthService } from "@/services";
+import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // root store
 import { RootStore } from "@/store/root.store";
