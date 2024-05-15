@@ -44,6 +44,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
     retypePassword: false,
   });
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+  const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
 
   // router
   const router = useRouter();
@@ -150,7 +151,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
           <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
           <h3 className="text-xl font-medium">Change password</h3>
-          <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
+          <div className="flex flex-col gap-10 w-full max-w-96">
             <div className="flex flex-col gap-1 ">
               <h4 className="text-sm">Current password</h4>
               <div className="relative flex items-center rounded-md">
@@ -244,6 +245,8 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
                       onChange={onChange}
                       className="w-full"
                       hasError={Boolean(errors.confirm_password)}
+                      onFocus={() => setIsRetryPasswordInputFocused(true)}
+                      onBlur={() => setIsRetryPasswordInputFocused(false)}
                     />
                   )}
                 />
@@ -259,7 +262,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
                   />
                 )}
               </div>
-              {!!retypePassword && password !== retypePassword && (
+              {!!retypePassword && password !== retypePassword && !isRetryPasswordInputFocused && (
                 <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
               )}
             </div>
