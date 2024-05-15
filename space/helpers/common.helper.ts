@@ -10,6 +10,8 @@ export const SPACE_BASE_PATH = process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "";
 
 export const WEB_BASE_URL = process.env.NEXT_PUBLIC_WEB_BASE_URL || "";
 
+export const GOD_MODE_URL = encodeURI(`${ADMIN_BASE_URL}${ADMIN_BASE_PATH}`);
+
 export const ASSET_PREFIX = SPACE_BASE_PATH;
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
