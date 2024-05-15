@@ -21,7 +21,7 @@ type IssueListBlockProps = {
 
 export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
   const { workspaceSlug, projectId, issue } = props;
-  const { board, states, priorities, labels } = useParams<any>();
+  const { board, states, priority, labels } = useParams<any>();
   const searchParams = useSearchParams();
   // store
   const { project } = useProject();
@@ -33,7 +33,7 @@ export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
     setPeekId(issue.id);
     const params: any = { board: board, peekId: issue.id };
     if (states && states.length > 0) params.states = states;
-    if (priorities && priorities.length > 0) params.priorities = priorities;
+    if (priority && priority.length > 0) params.priority = priority;
     if (labels && labels.length > 0) params.labels = labels;
     router.push(`/${workspaceSlug}/${projectId}?${searchParams}`);
     // router.push(`/${workspace_slug?.toString()}/${project_slug}?board=${board?.toString()}&peekId=${issue.id}`);

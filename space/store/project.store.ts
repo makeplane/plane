@@ -2,50 +2,40 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // service
 import ProjectService from "@/services/project.service";
+// store types
+import { RootStore } from "@/store/root.store";
 // types
-import { TIssueBoardKeys } from "@/types/issue";
 import { IWorkspace, IProject, IProjectSettings } from "@/types/project";
 
 export interface IProjectStore {
+  // observables
   loader: boolean;
   error: any | null;
   workspace: IWorkspace | null;
   project: IProject | null;
   settings: IProjectSettings | null;
-  activeLayout: TIssueBoardKeys;
-  layoutOptions: Record<TIssueBoardKeys, boolean>;
   canReact: boolean;
   canComment: boolean;
   canVote: boolean;
+  // actions
   fetchProjectSettings: (workspace_slug: string, project_slug: string) => Promise<void>;
-  setActiveLayout: (value: TIssueBoardKeys) => void;
   hydrate: (projectSettings: any) => void;
 }
 
 export class ProjectStore implements IProjectStore {
+  // observables
   loader: boolean = false;
   error: any | null = null;
-  // data
   workspace: IWorkspace | null = null;
   project: IProject | null = null;
   settings: IProjectSettings | null = null;
-  activeLayout: TIssueBoardKeys = "list";
-  layoutOptions: Record<TIssueBoardKeys, boolean> = {
-    list: true,
-    kanban: true,
-    calendar: false,
-    gantt: false,
-    spreadsheet: false,
-  };
   canReact: boolean = false;
   canComment: boolean = false;
   canVote: boolean = false;
-  // root store
-  rootStore;
   // service
   projectService;
 
-  constructor(_rootStore: any | null = null) {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // loaders and error observables
       loader: observable,
@@ -54,34 +44,27 @@ export class ProjectStore implements IProjectStore {
       workspace: observable,
       project: observable,
       settings: observable,
-      layoutOptions: observable,
-      activeLayout: observable.ref,
       canReact: observable.ref,
       canComment: observable.ref,
       canVote: observable.ref,
       // actions
       fetchProjectSettings: action,
-      setActiveLayout: action,
+
       hydrate: action,
       // computed
     });
 
-    this.rootStore = _rootStore;
+    // services
     this.projectService = new ProjectService();
   }
 
   hydrate = (projectSettings: any) => {
-    const { workspace_detail, project_details, views, votes, comments, reactions } = projectSettings;
+    const { workspace_detail, project_details, votes, comments, reactions } = projectSettings;
     this.workspace = workspace_detail;
     this.project = project_details;
-    this.layoutOptions = views;
     this.canComment = comments;
     this.canVote = votes;
     this.canReact = reactions;
-  };
-
-  setActiveLayout = (boardValue: TIssueBoardKeys) => {
-    this.activeLayout = boardValue;
   };
 
   fetchProjectSettings = async (workspace_slug: string, project_slug: string) => {
@@ -94,12 +77,11 @@ export class ProjectStore implements IProjectStore {
       if (response) {
         const currentProject: IProject = { ...response?.project_details };
         const currentWorkspace: IWorkspace = { ...response?.workspace_detail };
-        const currentViewOptions = { ...response?.views };
         const currentDeploySettings = { ...response };
+        this.store.issueFilter.updateLayoutOptions(response?.views);
         runInAction(() => {
           this.project = currentProject;
           this.workspace = currentWorkspace;
-          this.layoutOptions = currentViewOptions;
           this.settings = currentDeploySettings;
           this.loader = false;
         });

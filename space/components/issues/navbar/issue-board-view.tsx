@@ -2,31 +2,39 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/navigation";
 // constants
-import { issueViews } from "@/constants/data";
+import { issueLayoutViews } from "@/constants/issue";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useIssueFilter } from "@/hooks/store";
 // mobx
-import { TIssueBoardKeys } from "@/types/issue";
+import { TIssueLayout } from "@/types/issue";
 
 type NavbarIssueBoardViewProps = {
-  layouts: Record<TIssueBoardKeys, boolean>;
+  workspaceSlug: string;
+  projectId: string;
 };
 
 export const NavbarIssueBoardView: FC<NavbarIssueBoardViewProps> = observer((props) => {
-  const { layouts } = props;
+  const router = useRouter();
+  const { workspaceSlug, projectId } = props;
+  // hooks
+  const { layoutOptions, issueFilters, updateIssueFilters } = useIssueFilter();
 
-  const { activeLayout, setActiveLayout } = useProject();
+  // derived values
+  const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
-  const handleCurrentBoardView = (boardView: string) => {
-    setActiveLayout(boardView as TIssueBoardKeys);
+  const handleCurrentBoardView = (boardView: TIssueLayout) => {
+    updateIssueFilters(projectId, "display_filters", "layout", boardView);
+    router.push(`/${workspaceSlug}/${projectId}?${`board=${boardView}`}`);
   };
 
   return (
     <>
-      {layouts &&
-        Object.keys(layouts).map((layoutKey: string) => {
-          if (layouts[layoutKey as TIssueBoardKeys]) {
+      {issueLayoutViews &&
+        Object.keys(issueLayoutViews).map((key: string) => {
+          const layoutKey = key as TIssueLayout;
+          if (layoutOptions[layoutKey]) {
             return (
               <div
                 key={layoutKey}
@@ -40,10 +48,10 @@ export const NavbarIssueBoardView: FC<NavbarIssueBoardViewProps> = observer((pro
               >
                 <span
                   className={`material-symbols-rounded text-[18px] ${
-                    issueViews[layoutKey]?.className ? issueViews[layoutKey]?.className : ``
+                    issueLayoutViews[layoutKey]?.className ? issueLayoutViews[layoutKey]?.className : ``
                   }`}
                 >
-                  {issueViews[layoutKey]?.icon}
+                  {issueLayoutViews[layoutKey]?.icon}
                 </span>
               </div>
             );

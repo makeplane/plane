@@ -29,7 +29,7 @@ export abstract class APIService {
   }
 
   get(url: string, params = {}) {
-    return this.axiosInstance.get(url, { params });
+    return this.axiosInstance.get(url, params);
   }
 
   post(url: string, data: any, config = {}) {

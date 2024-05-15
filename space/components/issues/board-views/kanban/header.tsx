@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // constants
-import { issueGroupFilter } from "@/constants/data";
+import { issueGroupFilter } from "@/constants/issue";
 // mobx hook
 // import { useIssue } from "@/hooks/store";
 // interfaces
