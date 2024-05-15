@@ -1,7 +1,5 @@
 "use client";
-
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
 import { Briefcase } from "lucide-react";
 // components
 import { ProjectLogo } from "@/components/common";
@@ -13,7 +11,7 @@ type IssueNavbarProps = {
   projectId: string;
 };
 
-const IssueNavbar: FC<IssueNavbarProps> = observer((props) => {
+const IssueNavbar: FC<IssueNavbarProps> = (props) => {
   const { projectSettings, workspaceSlug, projectId } = props;
   const { project_details } = projectSettings;
 
@@ -40,6 +38,6 @@ const IssueNavbar: FC<IssueNavbarProps> = observer((props) => {
       </div>
     </div>
   );
-});
+};
 
 export default IssueNavbar;

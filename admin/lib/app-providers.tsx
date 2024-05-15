@@ -2,10 +2,10 @@
 
 import { ReactNode, createContext } from "react";
 import { ThemeProvider } from "next-themes";
-// ui
-import { AppWrapper } from "@/lib/wrappers";
 // store
 import { RootStore } from "@/store/root.store";
+// store initialization
+import { AppWrapper } from "./app-wrapper";
 
 let rootStore = new RootStore();
 
@@ -16,7 +16,6 @@ function initializeStore(initialData = {}) {
   // If your page has Next.js data fetching methods that use a Mobx store, it will
   // get hydrated here, check `pages/ssg.js` and `pages/ssr.js` for more details
   if (initialData) {
-    console.log("initialState", initialData);
     singletonRootStore.hydrate(initialData);
   }
   // For SSG and SSR always create a new store

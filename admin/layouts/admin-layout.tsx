@@ -3,11 +3,10 @@ import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-// ui
-import { Spinner } from "@plane/ui";
 // components
 import { InstanceSidebar } from "@/components/admin-sidebar";
 import { InstanceHeader } from "@/components/auth-header";
+import { LogoSpinner } from "@/components/common";
 import { NewUserPopup } from "@/components/new-user-popup";
 // hooks
 import { useInstance, useUser } from "@/hooks/store";
@@ -39,7 +38,7 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
   if (isUserLoggedIn === undefined) {
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
   }

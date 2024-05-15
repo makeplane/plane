@@ -4,13 +4,13 @@ import axios, { AxiosInstance } from "axios";
 // import { rootStore } from "@/lib/store-context";
 
 export abstract class APIService {
-  protected baseURL: string;
+  protected baseURL: string | undefined;
   private axiosInstance: AxiosInstance;
 
-  constructor(baseURL: string) {
+  constructor(baseURL: string | undefined) {
     this.baseURL = baseURL;
     this.axiosInstance = axios.create({
-      baseURL,
+      baseURL: baseURL || "",
       withCredentials: true,
     });
 

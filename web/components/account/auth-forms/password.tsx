@@ -53,6 +53,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+  const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
 
   const handleShowPassword = (key: keyof typeof showPassword) =>
     setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -183,6 +184,8 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
               className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              onFocus={() => setIsRetryPasswordInputFocused(true)}
+              onBlur={() => setIsRetryPasswordInputFocused(false)}
             />
             {showPassword?.retypePassword ? (
               <EyeOff
@@ -196,9 +199,9 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               />
             )}
           </div>
-          {!!passwordFormData.confirm_password && passwordFormData.password !== passwordFormData.confirm_password && (
-            <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
-          )}
+          {!!passwordFormData.confirm_password &&
+            passwordFormData.password !== passwordFormData.confirm_password &&
+            !isRetryPasswordInputFocused && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
         </div>
       )}
 

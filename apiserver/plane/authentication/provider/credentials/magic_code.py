@@ -135,8 +135,10 @@ class MagicCodeProvider(CredentialAdapter):
                     payload={"email": str(email)},
                 )
         else:
+            magic_key = str(self.key)
+            email = magic_key.replace("magic_", "", 1)
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE"],
                 error_message="EXPIRED_MAGIC_CODE",
-                payload={"email": str(self.key)},
+                payload={"email": str(email)},
             )
