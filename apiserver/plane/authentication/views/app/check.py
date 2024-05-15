@@ -57,6 +57,8 @@ class EmailCheckSignUpEndpoint(APIView):
                         ],
                         error_message="USER_ACCOUNT_DEACTIVATED",
                     )
+
+                # Raise user already exist
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES[
                         "USER_ALREADY_EXIST"
@@ -120,7 +122,7 @@ class EmailCheckSignInEndpoint(APIView):
                         ],
                         error_message="USER_ACCOUNT_DEACTIVATED",
                     )
-
+                # Return true
                 return Response(
                     {
                         "status": True,
@@ -128,6 +130,8 @@ class EmailCheckSignInEndpoint(APIView):
                     },
                     status=status.HTTP_200_OK,
                 )
+
+            # Raise error
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
                 error_message="USER_DOES_NOT_EXIST",
