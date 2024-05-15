@@ -11,7 +11,7 @@ import { API_BASE_URL, cn } from "@/helpers/common.helper";
 import { useTheme, useUser } from "@/hooks/store";
 // helpers
 // services
-import { AuthService } from "@/services";
+import { AuthService } from "@/services/auth.service";
 
 // service initialization
 const authService = new AuthService();
