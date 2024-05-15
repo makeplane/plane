@@ -91,7 +91,7 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
             activeLayout && (
               <div className="relative flex h-full w-full flex-col overflow-hidden">
                 {/* applied filters */}
-                <IssueAppliedFilters />
+                <IssueAppliedFilters workspaceSlug={workspaceSlug} projectId={projectId} />
 
                 {activeLayout === "list" && (
                   <div className="relative h-full w-full overflow-y-auto">

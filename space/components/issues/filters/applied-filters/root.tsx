@@ -7,12 +7,16 @@ import { useRouter } from "next/navigation";
 // hooks
 import { useIssue, useIssueFilter } from "@/hooks/store";
 // store
-import { IIssueFilterOptions } from "@/types/issue";
+import { TIssueQueryFilters } from "@/types/issue";
 // components
 import { AppliedFiltersList } from "./filters-list";
 
-// TODO: fix component types
-export const IssueAppliedFilters: FC = observer((props: any) => {
+type TIssueAppliedFilters = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) => {
   const router = useRouter();
   // props
   const { workspaceSlug, projectId } = props;
@@ -31,7 +35,7 @@ export const IssueAppliedFilters: FC = observer((props: any) => {
   });
 
   const updateRouteParams = useCallback(
-    (key: keyof IIssueFilterOptions, value: string[]) => {
+    (key: keyof TIssueQueryFilters, value: string[]) => {
       const state = key === "state" ? value : issueFilters?.filters?.state ?? [];
       const priority = key === "priority" ? value : issueFilters?.filters?.priority ?? [];
       const labels = key === "labels" ? value : issueFilters?.filters?.labels ?? [];
@@ -48,13 +52,13 @@ export const IssueAppliedFilters: FC = observer((props: any) => {
   );
 
   const handleFilters = useCallback(
-    (key: keyof IIssueFilterOptions, value: string) => {
-      if (!projectId || !value) return;
+    (key: keyof TIssueQueryFilters, value: string | null) => {
+      if (!projectId) return;
 
-      const newValues = cloneDeep(issueFilters?.filters?.[key]) ?? [];
+      let newValues = cloneDeep(issueFilters?.filters?.[key]) ?? [];
 
-      if (newValues.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-      else newValues.push(value);
+      if (value === null) newValues = [];
+      else if (newValues.includes(value)) newValues.splice(newValues.indexOf(value), 1);
 
       updateIssueFilters(projectId, "filters", key, newValues);
       updateRouteParams(key, newValues);

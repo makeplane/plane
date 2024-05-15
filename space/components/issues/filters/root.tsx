@@ -9,7 +9,7 @@ import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // hooks
 import { useIssue, useIssueFilter } from "@/hooks/store";
 // types
-import { IIssueFilterOptions } from "@/types/issue";
+import { TIssueQueryFilters } from "@/types/issue";
 // components
 import { FiltersDropdown } from "./helpers/dropdown";
 import { FilterSelection } from "./selection";
@@ -29,7 +29,7 @@ export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((pro
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
   const updateRouteParams = useCallback(
-    (key: keyof IIssueFilterOptions, value: string[]) => {
+    (key: keyof TIssueQueryFilters, value: string[]) => {
       const state = key === "state" ? value : issueFilters?.filters?.state ?? [];
       const priority = key === "priority" ? value : issueFilters?.filters?.priority ?? [];
       const labels = key === "labels" ? value : issueFilters?.filters?.labels ?? [];
@@ -46,7 +46,7 @@ export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((pro
   );
 
   const handleFilters = useCallback(
-    (key: keyof IIssueFilterOptions, value: string) => {
+    (key: keyof TIssueQueryFilters, value: string) => {
       if (!projectId || !value) return;
 
       const newValues = cloneDeep(issueFilters?.filters?.[key]) ?? [];

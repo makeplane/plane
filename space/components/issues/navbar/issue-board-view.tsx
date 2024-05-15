@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 // constants
 import { issueLayoutViews } from "@/constants/issue";
 // hooks
@@ -17,6 +17,13 @@ type NavbarIssueBoardViewProps = {
 
 export const NavbarIssueBoardView: FC<NavbarIssueBoardViewProps> = observer((props) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // query params
+  const labels = searchParams.get("labels") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const peekId = searchParams.get("peekId") || undefined;
+  // props
   const { workspaceSlug, projectId } = props;
   // hooks
   const { layoutOptions, issueFilters, updateIssueFilters } = useIssueFilter();
@@ -26,7 +33,14 @@ export const NavbarIssueBoardView: FC<NavbarIssueBoardViewProps> = observer((pro
 
   const handleCurrentBoardView = (boardView: TIssueLayout) => {
     updateIssueFilters(projectId, "display_filters", "layout", boardView);
-    router.push(`/${workspaceSlug}/${projectId}?${`board=${boardView}`}`);
+
+    let queryParams: any = { board: boardView };
+    if (peekId && peekId.length > 0) queryParams = { ...queryParams, peekId: peekId };
+    if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
+    if (state && state.length > 0) queryParams = { ...queryParams, state: state };
+    if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
+    queryParams = new URLSearchParams(queryParams).toString();
+    router.push(`/${workspaceSlug}/${projectId}?${queryParams}`);
   };
 
   return (
