@@ -145,7 +145,7 @@ class MagicSignInEndpoint(View):
                 path = (
                     str(next_path)
                     if next_path
-                    else str(process_workspace_project_invitations(user=user))
+                    else str(get_redirection_path(user=user))
                 )
             # redirect to referer path
             url = urljoin(base_host(request=request, is_app=True), path)
