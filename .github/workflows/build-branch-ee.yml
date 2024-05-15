@@ -2,6 +2,12 @@ name: Branch Build Enterprise
 
 on:
   workflow_dispatch:
+    inputs:
+      arm64:
+        description: 'Build for ARM64 architecture'
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       - master
@@ -12,6 +18,7 @@ on:
 
 env:
   TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
+  ARM64_BUILD: ${{ github.event.inputs.arm64 }}
 
 jobs:
   branch_build_setup:
@@ -35,7 +42,7 @@ jobs:
       - id: set_env_variables
         name: Set Environment Variables
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ github.event_name }}" == "release" ] || [ "${{ env.ARM64_BUILD }}" == "true" ] ; then
             echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
