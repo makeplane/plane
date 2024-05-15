@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // components
@@ -7,7 +9,7 @@ import { EmailForm, UniqueCodeForm, PasswordForm, OAuthOptions, TermsAndConditio
 import { useInstance } from "@/hooks/store";
 import useToast from "@/hooks/use-toast";
 // services
-import { AuthService } from "@/services/authentication.service";
+import { AuthService } from "@/services/auth.service";
 
 export enum EAuthSteps {
   EMAIL = "EMAIL",
@@ -60,9 +62,11 @@ export const AuthRoot = observer(() => {
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState("");
   // hooks
-  const { instance } = useInstance();
+  const { config: instanceConfig } = useInstance();
   // derived values
-  const isSmtpConfigured = instance?.config?.is_smtp_configured;
+  const isSmtpConfigured = instanceConfig?.is_smtp_configured;
+  const isMagicLoginEnabled = instanceConfig?.is_magic_login_enabled;
+  const isEmailPasswordEnabled = instanceConfig?.is_email_password_enabled;
 
   const { header, subHeader } = getHeaderSubHeader(authMode);
 
@@ -85,9 +89,9 @@ export const AuthRoot = observer(() => {
           setAuthStep(EAuthSteps.PASSWORD);
         } else {
           // Else if SMTP is configured, move to unique code sign-in/ sign-up.
-          if (isSmtpConfigured) {
+          if (isSmtpConfigured && isMagicLoginEnabled) {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
-          } else {
+          } else if (isEmailPasswordEnabled) {
             // Else show error message if SMTP is not configured and password is not set.
             if (res.existing) {
               setAuthMode(null);
@@ -112,8 +116,8 @@ export const AuthRoot = observer(() => {
       );
   };
 
-  const isOAuthEnabled =
-    instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled);
+  const isOAuthEnabled = instanceConfig && (instanceConfig?.is_google_enabled || instanceConfig?.is_github_enabled);
+
   return (
     <div className="relative flex flex-col space-y-6">
       <div className="space-y-1 text-center">
@@ -149,7 +153,7 @@ export const AuthRoot = observer(() => {
           )}
         </>
       )}
-      {isOAuthEnabled && <OAuthOptions />}
+      {isOAuthEnabled !== undefined && <OAuthOptions />}
       <TermsAndConditions mode={authMode} />
     </div>
   );

@@ -6,6 +6,7 @@ from django.utils import timezone
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 # Module imports
 from plane.app.serializers import (
@@ -178,6 +179,25 @@ class UserEndpoint(BaseViewSet):
         # Logout the user
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserSessionEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            user = User.objects.get(pk=request.user.id)
+            serializer = UserMeSerializer(user)
+            data = {"is_authenticated": True}
+            data["user"] = serializer.data
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"is_authenticated": False}, status=status.HTTP_200_OK
+            )
 
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):

@@ -7,16 +7,18 @@ import {
   PeekOverviewIssueDetails,
   PeekOverviewIssueProperties,
 } from "@/components/issues/peek-overview";
-
-import { IIssue } from "types/issue";
+// types
+import { IIssue } from "@/types/issue";
 
 type Props = {
   handleClose: () => void;
   issueDetails: IIssue | undefined;
+  workspaceSlug: string;
+  projectId: string;
 };
 
 export const SidePeekView: React.FC<Props> = observer((props) => {
-  const { handleClose, issueDetails } = props;
+  const { handleClose, issueDetails, workspaceSlug, projectId } = props;
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -37,7 +39,11 @@ export const SidePeekView: React.FC<Props> = observer((props) => {
           <div className="my-5 h-[1] w-full border-t border-custom-border-200" />
           {/* issue activity/comments */}
           <div className="w-full pb-5">
-            <PeekOverviewIssueActivity issueDetails={issueDetails} />
+            <PeekOverviewIssueActivity
+              issueDetails={issueDetails}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+            />
           </div>
         </div>
       ) : (

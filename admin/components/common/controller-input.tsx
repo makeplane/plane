@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { Controller, Control } from "react-hook-form";
 // ui
+import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@plane/ui";
 // icons
-import { Eye, EyeOff } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
@@ -62,6 +62,7 @@ export const ControllerInput: React.FC<Props> = (props) => {
         {type === "password" &&
           (showPassword ? (
             <button
+              tabIndex={-1}
               className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
               onClick={() => setShowPassword(false)}
             >
@@ -69,6 +70,7 @@ export const ControllerInput: React.FC<Props> = (props) => {
             </button>
           ) : (
             <button
+              tabIndex={-1}
               className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
               onClick={() => setShowPassword(true)}
             >

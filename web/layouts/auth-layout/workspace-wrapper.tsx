@@ -95,7 +95,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     membership.hasPermissionToCurrentWorkspace === undefined
   ) {
     return (
-      <div className="relative flex h-full w-full flex-col items-center justify-center bg-custom-background-90">
+      <div className="relative flex h-screen w-full flex-col items-center justify-center bg-custom-background-90 ">
         <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
           <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
             <div className="z-10 flex-shrink-0 bg-custom-background-90 py-4">

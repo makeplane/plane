@@ -1,5 +1,4 @@
 # Python imports
-
 import zoneinfo
 
 # Django imports

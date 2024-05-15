@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { FileText, Plus } from "lucide-react";
+import { FileText } from "lucide-react";
 // hooks
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
@@ -59,14 +59,13 @@ export const PagesHeader = observer(() => {
         <div className="flex items-center gap-2">
           <Button
             variant="primary"
-            prependIcon={<Plus />}
             size="sm"
             onClick={() => {
               setTrackElement("Project pages page");
               toggleCreatePageModal(true);
             }}
           >
-            Create Page
+            Add Page
           </Button>
         </div>
       )}

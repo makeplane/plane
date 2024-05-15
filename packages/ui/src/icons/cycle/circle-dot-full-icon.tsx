@@ -3,8 +3,8 @@ import * as React from "react";
 import { ISvgIcons } from "../type";
 
 export const CircleDotFullIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...rest }) => (
-  <svg viewBox="0 0 16 16" className={`${className} stroke-1`} fill="none" xmlns="http://www.w3.org/2000/svg" {...rest}>
-    <circle cx="8.33333" cy="8.33333" r="5.33333" stroke="currentColor" strokeLinecap="round" />
-    <circle cx="8.33333" cy="8.33333" r="4.33333" fill="currentColor" />
+  <svg viewBox="0 0 24 24" className={`${className} stroke-1`} fill="none" xmlns="http://www.w3.org/2000/svg" {...rest}>
+    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" strokeLinecap="round" />
+    <circle cx="12" cy="12" r="6.25" fill="currentColor" stroke-width="0.5" />
   </svg>
 );

@@ -1,10 +1,10 @@
 "use client";
 
 // helpers
+import { CircleCheck } from "lucide-react";
 import { cn } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // icons
-import { CircleCheck } from "lucide-react";
 
 type Props = {
   password: string;

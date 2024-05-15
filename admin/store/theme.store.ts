@@ -1,6 +1,6 @@
 import { action, observable, makeObservable } from "mobx";
 // root store
-import { RootStore } from "@/store/root-store";
+import { RootStore } from "@/store/root.store";
 
 type TTheme = "dark" | "light";
 export interface IThemeStore {
@@ -9,6 +9,7 @@ export interface IThemeStore {
   theme: string | undefined;
   isSidebarCollapsed: boolean | undefined;
   // actions
+  hydrate: (data: any) => void;
   toggleNewUserPopup: () => void;
   toggleSidebar: (collapsed: boolean) => void;
   setTheme: (currentTheme: TTheme) => void;
@@ -32,6 +33,10 @@ export class ThemeStore implements IThemeStore {
       setTheme: action,
     });
   }
+
+  hydrate = (data: any) => {
+    if (data) this.theme = data;
+  };
 
   /**
    * @description Toggle the new user popup modal

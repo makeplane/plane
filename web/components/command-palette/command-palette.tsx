@@ -22,6 +22,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssues, useUser, useAppTheme, useCommandPalette } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -35,6 +36,7 @@ export const CommandPalette: FC = observer(() => {
   // store hooks
   const { toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
+  const { platform } = usePlatformOS();
   const {
     membership: { currentWorkspaceRole, currentProjectRole },
     data: currentUser,
@@ -210,7 +212,7 @@ export const CommandPalette: FC = observer(() => {
         return;
 
       if (cmdClicked) {
-        if (keyPressed === "c" && altKey) {
+        if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
           e.preventDefault();
           copyIssueUrlToClipboard();
         } else if (keyPressed === "b") {

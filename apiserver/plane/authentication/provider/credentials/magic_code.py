@@ -26,29 +26,35 @@ class MagicCodeProvider(CredentialAdapter):
         code=None,
     ):
 
-        (EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD) = (
-            get_configuration_value(
-                [
-                    {
-                        "key": "EMAIL_HOST",
-                        "default": os.environ.get("EMAIL_HOST"),
-                    },
-                    {
-                        "key": "EMAIL_HOST_USER",
-                        "default": os.environ.get("EMAIL_HOST_USER"),
-                    },
-                    {
-                        "key": "EMAIL_HOST_PASSWORD",
-                        "default": os.environ.get("EMAIL_HOST_PASSWORD"),
-                    },
-                ]
-            )
+        (
+            EMAIL_HOST,
+            ENABLE_MAGIC_LINK_LOGIN,
+        ) = get_configuration_value(
+            [
+                {
+                    "key": "EMAIL_HOST",
+                    "default": os.environ.get("EMAIL_HOST"),
+                },
+                {
+                    "key": "ENABLE_MAGIC_LINK_LOGIN",
+                    "default": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "1"),
+                },
+            ]
         )
 
         if not (EMAIL_HOST):
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
                 error_message="SMTP_NOT_CONFIGURED",
+                payload={"email": str(self.key)},
+            )
+
+        if ENABLE_MAGIC_LINK_LOGIN == "0":
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "MAGIC_LINK_LOGIN_DISABLED"
+                ],
+                error_message="MAGIC_LINK_LOGIN_DISABLED",
                 payload={"email": str(self.key)},
             )
 
@@ -77,7 +83,13 @@ class MagicCodeProvider(CredentialAdapter):
             current_attempt = data["current_attempt"] + 1
 
             if data["current_attempt"] > 2:
-                return key, ""
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "EMAIL_CODE_ATTEMPT_EXHAUSTED"
+                    ],
+                    error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED",
+                    payload={"email": self.key},
+                )
 
             value = {
                 "current_attempt": current_attempt,

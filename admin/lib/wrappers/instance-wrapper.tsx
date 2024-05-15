@@ -1,18 +1,19 @@
 "use client";
 
 import { FC, ReactNode } from "react";
-import { redirect, useSearchParams } from "next/navigation";
 import { observer } from "mobx-react-lite";
+import { redirect, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
-// layouts
-import { DefaultLayout } from "@/layouts";
 // components
+import { EmptyState } from "@/components/common";
 import { InstanceNotReady } from "@/components/instance";
-// hooks
-import { useInstance } from "@/hooks";
 // helpers
 import { EInstancePageType } from "@/helpers";
+// hooks
+import { useInstance } from "@/hooks/store";
+// layouts
+import { DefaultLayout } from "@/layouts/default-layout";
 
 type TInstanceWrapper = {
   children: ReactNode;
@@ -28,6 +29,9 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
 
   const { isLoading: isSWRLoading } = useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
+    revalidateIfStale: false,
+    revalidateOnReconnect: false,
+    errorRetryCount: 0,
   });
 
   if (isSWRLoading || isLoading)
@@ -36,6 +40,15 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
         <Spinner />
       </div>
     );
+
+  if (!instance) {
+    return (
+      <EmptyState
+        title="Your instance wasn't configured successfully."
+        description="Please try re-installing Plane to fix the problem. If the issue still persists please reach out to support@plane.so."
+      />
+    );
+  }
 
   if (instance?.instance?.is_setup_done === false && authEnabled === "1")
     return (

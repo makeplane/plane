@@ -1,11 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// icons
-import { Plus } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, DiceIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+import { ModuleViewHeader } from "@/components/modules";
 import { ProjectLogo } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
@@ -57,11 +56,11 @@ export const ModulesListHeader: React.FC = observer(() => {
         </div>
       </div>
       <div className="flex items-center gap-2">
+        <ModuleViewHeader />
         {canUserCreateModule && (
           <Button
             variant="primary"
             size="sm"
-            prependIcon={<Plus />}
             onClick={() => {
               setTrackElement("Modules page");
               toggleCreateModuleModal(true);

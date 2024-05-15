@@ -84,7 +84,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
-      router.push("/accounts/sign-in");
+      router.push("/sign-in");
       return <></>;
     } else {
       if (currentUser && currentUserProfile?.id && currentUserProfile?.is_onboarded) {
@@ -97,7 +97,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.SET_PASSWORD) {
     if (!currentUser?.id) {
-      router.push("/accounts/sign-in");
+      router.push("/sign-in");
       return <></>;
     } else {
       if (
@@ -121,7 +121,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
         return <></>;
       }
     } else {
-      router.push("/accounts/sign-in");
+      router.push("/sign-in");
       return <></>;
     }
   }

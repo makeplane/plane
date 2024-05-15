@@ -1,6 +1,3 @@
-# Python imports
-from urllib.parse import urlencode, urljoin
-
 # Django imports
 from django.views import View
 from django.contrib.auth import logout
@@ -23,12 +20,10 @@ class SignOutAuthSpaceEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = urljoin(
-                base_host(request=request),
-                "accounts/sign-in?" + urlencode({"success": "true"}),
+            return HttpResponseRedirect(
+                base_host(request=request, is_space=True)
             )
-            return HttpResponseRedirect(url)
         except Exception:
             return HttpResponseRedirect(
-                base_host(request=request), "accounts/sign-in"
+                base_host(request=request, is_space=True)
             )

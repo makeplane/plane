@@ -1,44 +1,48 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { Button } from "@plane/ui";
 // components
 import { CommentCard, AddComment } from "@/components/issues/peek-overview";
 import { Icon } from "@/components/ui";
 // hooks
-import { useMobxStore, useUser } from "@/hooks/store";
+import { useIssueDetails, useProject, useUser } from "@/hooks/store";
 // types
 import { IIssue } from "@/types/issue";
 
 type Props = {
   issueDetails: IIssue;
+  workspaceSlug: string;
+  projectId: string;
 };
 
-export const PeekOverviewIssueActivity: React.FC<Props> = observer(() => {
+export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
+  const { workspaceSlug, projectId } = props;
   // router
-  const router = useRouter();
-  const { workspace_slug } = router.query;
+  const pathname = usePathname();
   // store
-  const { issueDetails: issueDetailStore, project: projectStore } = useMobxStore();
+  const { canComment } = useProject();
+  const { details, peekId } = useIssueDetails();
   const { data: currentUser } = useUser();
-  const comments = issueDetailStore.details[issueDetailStore.peekId || ""]?.comments || [];
+
+  const comments = details[peekId || ""]?.comments || [];
 
   return (
     <div className="pb-10">
       <h4 className="font-medium">Activity</h4>
-      {workspace_slug && (
+      {workspaceSlug && (
         <div className="mt-4">
           <div className="space-y-4">
             {comments.map((comment: any) => (
-              <CommentCard key={comment.id} comment={comment} workspaceSlug={workspace_slug?.toString()} />
+              <CommentCard key={comment.id} comment={comment} workspaceSlug={workspaceSlug?.toString()} />
             ))}
           </div>
           {currentUser ? (
             <>
-              {projectStore.deploySettings?.comments && (
+              {canComment && (
                 <div className="mt-4">
-                  <AddComment disabled={!currentUser} />
+                  <AddComment disabled={!currentUser} workspaceSlug={workspaceSlug} projectId={projectId} />
                 </div>
               )}
             </>
@@ -48,7 +52,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = observer(() => {
                 <Icon iconName="lock" className="!text-sm" />
                 Sign in to add your comment
               </p>
-              <Link href={`/?next_path=${router.asPath}`}>
+              <Link href={`/?next_path=${pathname}`}>
                 <Button variant="primary">Sign in</Button>
               </Link>
             </div>

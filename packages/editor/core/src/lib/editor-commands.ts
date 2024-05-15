@@ -97,6 +97,9 @@ const replaceCodeBlockWithContent = (editor: Editor) => {
         const startPos = pos;
         const endPos = pos + node.nodeSize;
         const textContent = node.textContent;
+        if (textContent.length === 0) {
+          editor.chain().focus().toggleCodeBlock().run();
+        }
         replaceCodeBlock(startPos, endPos, textContent);
         return false;
       }

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
@@ -8,7 +10,7 @@ import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { UserImageUploadModal } from "@/components/accounts";
 // hooks
-import { useMobxStore } from "@/hooks/store";
+import { useUser } from "@/hooks/store";
 // services
 import fileService from "@/services/file.service";
 
@@ -35,9 +37,7 @@ export const OnBoardingForm: React.FC<Props> = observer((props) => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
-  const {
-    user: { updateCurrentUser },
-  } = useMobxStore();
+  const { updateCurrentUser } = useUser();
   // form info
   const {
     getValues,
@@ -140,8 +140,11 @@ export const OnBoardingForm: React.FC<Props> = observer((props) => {
         </button>
       </div>
       <div className="flex gap-4">
-        <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="first_name">
+        <div className="space-y-1 w-full">
+          <label
+            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="first_name"
+          >
             First name
           </label>
           <Controller
@@ -171,8 +174,11 @@ export const OnBoardingForm: React.FC<Props> = observer((props) => {
           />
           {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
         </div>
-        <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="last_name">
+        <div className="space-y-1 w-full">
+          <label
+            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="last_name"
+          >
             Last name
           </label>
           <Controller

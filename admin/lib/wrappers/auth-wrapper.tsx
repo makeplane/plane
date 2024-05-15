@@ -1,14 +1,14 @@
 "use client";
 
 import { FC, ReactNode } from "react";
-import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // hooks
-import { useInstance, useUser } from "@/hooks";
-// helpers
 import { EAuthenticationPageType } from "@/helpers";
+import { useInstance, useUser } from "@/hooks/store";
+// helpers
 
 export interface IAuthWrapper {
   children: ReactNode;

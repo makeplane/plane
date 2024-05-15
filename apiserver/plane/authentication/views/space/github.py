@@ -21,7 +21,7 @@ class GitHubOauthInitiateSpaceEndpoint(View):
 
     def get(self, request):
         # Get host and next path
-        request.session["host"] = base_host(request=request)
+        request.session["host"] = base_host(request=request, is_space=True)
         next_path = request.GET.get("next_path")
         if next_path:
             request.session["next_path"] = str(next_path)
@@ -39,7 +39,7 @@ class GitHubOauthInitiateSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -55,7 +55,7 @@ class GitHubOauthInitiateSpaceEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_space=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -108,10 +108,10 @@ class GitHubCallbackSpaceEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_space=True)
             # Process workspace and project invitations
             # redirect to referer path
-            url = urljoin(base_host, str(next_path) if next_path else "/")
+            url = urljoin(base_host, str(next_path) if next_path else "")
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()

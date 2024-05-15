@@ -1,21 +1,12 @@
-"use client";
-
 import { ReactNode } from "react";
-// layouts
-import { AdminLayout } from "@/layouts";
-// lib
-import { AuthWrapper, InstanceWrapper } from "@/lib/wrappers";
+import { Metadata } from "next";
+// components
+import { AdminLayout } from "@/layouts/admin-layout";
 
-interface GeneralLayoutProps {
-  children: ReactNode;
+export const metadata: Metadata = {
+  title: "General Settings - God Mode",
+};
+
+export default function GeneralLayout({ children }: { children: ReactNode }) {
+  return <AdminLayout>{children}</AdminLayout>;
 }
-
-const GeneralLayout = ({ children }: GeneralLayoutProps) => (
-  <InstanceWrapper>
-    <AuthWrapper>
-      <AdminLayout>{children}</AdminLayout>
-    </AuthWrapper>
-  </InstanceWrapper>
-);
-
-export default GeneralLayout;
