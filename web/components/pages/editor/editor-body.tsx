@@ -1,17 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-// editor
+// document-editor
 import {
   DocumentEditorWithRef,
   DocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
-  proseMirrorJSONToBinaryString,
 } from "@plane/document-editor";
-import { generateJSONfromHTML } from "@plane/editor-core";
 // types
 import { IUserLite } from "@plane/types";
 // components
@@ -20,12 +17,11 @@ import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/compon
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { usePageDescription } from "@/hooks/use-page-description";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
-import { PageService } from "@/services/page.service";
-const pageService = new PageService();
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -55,8 +51,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     sidePeekVisible,
     updateMarkings,
   } = props;
-  // states
-  const [isDescriptionReady, setIsDescriptionReady] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -72,9 +66,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const pageId = pageStore?.id;
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html;
-  const { isContentEditable, isSubmitting, updateTitle, updateDescription, setIsSubmitting } = pageStore;
+  const { isContentEditable, isSubmitting, updateTitle, setIsSubmitting } = pageStore;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
+  // project-description
+  const { isDescriptionReady, pageDescriptionYJS } = usePageDescription({
+    pageStore,
+    projectId,
+    workspaceSlug,
+  });
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -86,36 +86,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { isFullWidth } = usePageFilters();
 
   useReloadConfirmations(isSubmitting === "submitting");
-
-  const { data: descriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
-    workspaceSlug && projectId && pageId ? `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}` : null,
-    workspaceSlug && projectId && pageId
-      ? () => pageService.fetchDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString())
-      : null,
-    {
-      refreshInterval: 15000,
-      revalidateOnFocus: true,
-      revalidateOnReconnect: true,
-    }
-  );
-  const pageDescriptionYJS = useMemo(
-    () => (descriptionYJS ? new Uint8Array(descriptionYJS) : undefined),
-    [descriptionYJS]
-  );
-
-  // if description_yjs field is empty, convert description_html to yDoc and update the DB
-  // TODO: this is a one-time operation, and needs to be removed once all the pages are updated
-  useEffect(() => {
-    if (!pageDescriptionYJS || !pageDescription) return;
-    if (pageDescriptionYJS.byteLength === 0) {
-      const { contentJSON, editorSchema } = generateJSONfromHTML(pageDescription ?? "<p></p>");
-      const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
-      updateDescription(yDocBinaryString, pageDescription ?? "<p></p>").then(async () => {
-        await mutateDescriptionYJS();
-        setIsDescriptionReady(true);
-      });
-    } else setIsDescriptionReady(true);
-  }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");

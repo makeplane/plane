@@ -330,7 +330,7 @@ export class PageStore implements IPageStore {
 
     try {
       await this.pageService.updateDescriptionYJS(workspaceSlug, projectId, this.id, {
-        description_yjs: binaryString,
+        description_binary: binaryString,
         description_html: descriptionHTML,
       });
     } catch (error) {

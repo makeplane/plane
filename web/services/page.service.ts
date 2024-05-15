@@ -133,7 +133,15 @@ export class PageService extends APIService {
       });
   }
 
-  async updateDescriptionYJS(workspaceSlug: string, projectId: string, pageId: string, data: any): Promise<any> {
+  async updateDescriptionYJS(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    data: {
+      description_binary: string;
+      description_html: string;
+    }
+  ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, data)
       .then((response) => response?.data)
       .catch((error) => {
