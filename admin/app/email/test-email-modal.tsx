@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, Input } from "@plane/ui";
 // services
-import { InstanceService } from "services/instance.service";
+import { InstanceService } from "@/services/instance.service";
 
 type Props = {
   isOpen: boolean;

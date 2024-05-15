@@ -2,10 +2,10 @@
 
 import { ReactNode, createContext } from "react";
 import { ThemeProvider } from "next-themes";
-// ui
-import { AppWrapper } from "@/lib/wrappers";
 // store
 import { RootStore } from "@/store/root.store";
+// store initialization
+import { AppWrapper } from "./app-wrapper";
 
 let rootStore = new RootStore();
 
