@@ -166,7 +166,6 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
   const issueDetail = issue.getIssueById(issueId);
-  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
 
   const paddingLeft = `${spacingLeft}px`;
 
@@ -200,8 +199,6 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   };
 
   const disableUserActions = !canEditProperties(issueDetail.project_id);
-  // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
-  const subIssuesCount = subIssues ? subIssues.length : issueDetail.sub_issues_count;
 
   return (
     <>
@@ -222,13 +219,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         >
           <div
             className="flex min-w-min items-center gap-0.5 px-4 py-2.5 pl-1.5 pr-0"
-            style={nestingLevel !== 0 ? { paddingLeft } : {}}
+            style={issueDetail?.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}
           >
             <div className="flex items-center">
               {/* bulk ops */}
               <span className="size-3.5" />
               <div className="flex size-4 items-center justify-center">
-                {subIssuesCount > 0 && (
+                {issueDetail.sub_issues_count > 0 && (
                   <button
                     className="flex items-center justify-center size-4 cursor-pointer rounded-sm text-custom-text-400 hover:text-custom-text-300"
                     onClick={handleToggleExpand}
