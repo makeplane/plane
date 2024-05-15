@@ -398,7 +398,7 @@ class PagesDescriptionViewSet(BaseViewSet):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
         )
-        binary_data = page.description_yjs
+        binary_data = page.description_binary
 
         def stream_data():
             if binary_data:
@@ -419,7 +419,7 @@ class PagesDescriptionViewSet(BaseViewSet):
             pk=pk, workspace__slug=slug, project_id=project_id
         )
 
-        base64_data = request.data.get("description_yjs")
+        base64_data = request.data.get("description_binary")
 
         if base64_data:
             # Decode the base64 data to bytes
@@ -427,8 +427,8 @@ class PagesDescriptionViewSet(BaseViewSet):
 
             # Load the existing data into a YDoc
             existing_doc = Y.YDoc()
-            if page.description_yjs:
-                Y.apply_update(existing_doc, page.description_yjs)
+            if page.description_binary:
+                Y.apply_update(existing_doc, page.description_binary)
 
             # # Load the new data into a separate YDoc
             # new_doc = Y.YDoc()
@@ -444,7 +444,7 @@ class PagesDescriptionViewSet(BaseViewSet):
             updated_binary_data = Y.encode_state_as_update(existing_doc)
 
             # Store the updated binary data
-            page.description_yjs = updated_binary_data
+            page.description_binary = updated_binary_data
             page.description_html = request.data.get("description_html")
             page.save()
             return Response({"message": "Updated successfully"})

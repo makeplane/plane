@@ -18,7 +18,7 @@ def get_view_props():
 class Page(ProjectBaseModel):
     name = models.CharField(max_length=255)
     description = models.JSONField(default=dict, blank=True)
-    description_yjs = models.BinaryField(null=True)
+    description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     owned_by = models.ForeignKey(
