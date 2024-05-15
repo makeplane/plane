@@ -430,15 +430,8 @@ class PagesDescriptionViewSet(BaseViewSet):
             if page.description_binary:
                 Y.apply_update(existing_doc, page.description_binary)
 
-            # # Load the new data into a separate YDoc
-            # new_doc = Y.YDoc()
+            # Load the new data into a separate YDoc
             Y.apply_update(existing_doc, new_binary_data)
-
-            # # Merge the new data into the existing data
-            # # This will automatically resolve any conflicts
-            # new_state_vector = Y.encode_state_vector(new_doc)
-            # diff = Y.encode_state_as_update(existing_doc, new_state_vector)
-            # Y.apply_update(existing_doc, diff)
 
             # # Encode the updated state as binary data
             updated_binary_data = Y.encode_state_as_update(existing_doc)
