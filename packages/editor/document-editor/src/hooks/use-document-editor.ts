@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo } from "react";
 import { EditorProps } from "@tiptap/pm/view";
 import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
@@ -10,12 +10,11 @@ import { CollaborationProvider } from "src/providers/collaboration-provider";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 
 type DocumentEditorProps = {
-  id?: string;
+  id: string;
   fileHandler: TFileHandler;
   value: Uint8Array;
   editorClassName: string;
   onChange: (binaryString: string) => void;
-  extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: {
@@ -29,7 +28,7 @@ type DocumentEditorProps = {
 };
 
 export const useDocumentEditor = ({
-  id = "",
+  id,
   editorProps = {},
   value,
   editorClassName,
@@ -52,11 +51,10 @@ export const useDocumentEditor = ({
     [id]
   );
 
-  const yDoc = useMemo(() => {
+  // update document on value change
+  useEffect(() => {
     if (value.byteLength > 0) Y.applyUpdate(provider.document, value);
-    return provider.document;
   }, [value, provider.document]);
-  console.log("yDoc", yDoc);
 
   // indexedDB provider
   useLayoutEffect(() => {

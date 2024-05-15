@@ -35,6 +35,7 @@ export class CollaborationProvider {
 
     this.configuration.document = configuration.document ?? new Y.Doc();
     this.document.on("update", this.documentUpdateHandler.bind(this));
+    this.document.on("destroy", this.documentDestroyHandler.bind(this));
   }
 
   public setConfiguration(configuration: Partial<CompleteCollaboratorProviderConfiguration> = {}): void {
@@ -63,5 +64,11 @@ export class CollaborationProvider {
       this.configuration.onChange?.(base64Doc);
       this.timeoutId = null;
     }, 2000);
+  }
+
+  documentDestroyHandler() {
+    if (this.timeoutId !== null) clearTimeout(this.timeoutId);
+    this.document.off("update", this.documentUpdateHandler);
+    this.document.off("destroy", this.documentDestroyHandler);
   }
 }

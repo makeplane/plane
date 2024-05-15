@@ -34,7 +34,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
     onChange,
     id,
     value,
-    // value,
     fileHandler,
     containerClassName,
     editorClassName = "",

@@ -1,15 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// document editor
+// editor
 import {
   DocumentEditorWithRef,
   DocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
+  proseMirrorJSONToBinaryString,
 } from "@plane/document-editor";
+import { generateJSONfromHTML } from "@plane/editor-core";
 // types
 import { IUserLite } from "@plane/types";
 // components
@@ -53,6 +55,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     sidePeekVisible,
     updateMarkings,
   } = props;
+  // states
+  const [isDescriptionReady, setIsDescriptionReady] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -65,10 +69,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = useMember();
   // derived values
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
-  const pageId = pageStore?.id ?? "";
+  const pageId = pageStore?.id;
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html;
-  const { description_html, isContentEditable, isSubmitting, updateTitle, setIsSubmitting } = pageStore;
+  const { isContentEditable, isSubmitting, updateTitle, updateDescription, setIsSubmitting } = pageStore;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
@@ -83,22 +87,41 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   useReloadConfirmations(isSubmitting === "submitting");
 
-  const { data: descriptionYJS } = useSWR(
+  const { data: descriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}` : null,
     workspaceSlug && projectId && pageId
       ? () => pageService.fetchDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString())
       : null,
     {
-      refreshInterval: 20000,
+      refreshInterval: 15000,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
     }
   );
-  const pageDescriptionYJS = new Uint8Array(descriptionYJS);
+  const pageDescriptionYJS = useMemo(
+    () => (descriptionYJS ? new Uint8Array(descriptionYJS) : undefined),
+    [descriptionYJS]
+  );
+
+  // if description_yjs field is empty, convert description_html to yDoc and update the DB
+  // TODO: this is a one-time operation, and needs to be removed once all the pages are updated
+  useEffect(() => {
+    if (!pageDescriptionYJS || !pageDescription) return;
+    if (pageDescriptionYJS.byteLength === 0) {
+      const { contentJSON, editorSchema } = generateJSONfromHTML(pageDescription ?? "<p></p>");
+      const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
+      updateDescription(yDocBinaryString, pageDescription ?? "<p></p>").then(async () => {
+        await mutateDescriptionYJS();
+        setIsDescriptionReady(true);
+      });
+    } else setIsDescriptionReady(true);
+  }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
   useEffect(() => {
-    updateMarkings(description_html ?? "<p></p>");
-  }, [description_html, updateMarkings]);
+    updateMarkings(pageDescription ?? "<p></p>");
+  }, [pageDescription, updateMarkings]);
 
-  if (pageId === undefined || !descriptionYJS || !pageDescriptionYJS) return <PageContentLoader />;
+  if (pageId === undefined || !pageDescriptionYJS || !isDescriptionReady) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
