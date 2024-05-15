@@ -5,9 +5,10 @@ import { IUser } from "@plane/types";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
-// stores
-import { RootStore } from "@/store/root.store";
+// store types
 import { ProfileStore, IProfileStore } from "@/store/profile.store";
+import { RootStore } from "@/store/root.store";
+// types
 import { ActorDetail } from "@/types/issue";
 
 type TUserErrorStatus = {

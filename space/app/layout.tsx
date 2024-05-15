@@ -46,8 +46,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           ) : (
             <>{instanceDetails.instance.is_setup_done ? <>{children}</> : <InstanceNotReady />}</>
           )}
-
-          {children}
         </AppProvider>
       </body>
     </html>
