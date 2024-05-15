@@ -2,17 +2,17 @@
 
 import { FC, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-// services
-import { AuthService } from "@/services/auth.service";
+// icons
+import { Eye, EyeOff } from "lucide-react";
 // ui
 import { Button, Checkbox, Input, Spinner } from "@plane/ui";
 // components
-import { Banner, PasswordStrengthMeter } from "components/common";
-// icons
-import { Eye, EyeOff } from "lucide-react";
+import { Banner, PasswordStrengthMeter } from "@/components/common";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
+// services
+import { AuthService } from "@/services/auth.service";
 
 // service initialization
 const authService = new AuthService();
@@ -154,7 +154,7 @@ export const InstanceSignUpForm: FC = (props) => {
                 First name <span className="text-red-500">*</span>
               </label>
               <Input
-                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
                 id="first_name"
                 name="first_name"
                 type="text"
@@ -167,10 +167,10 @@ export const InstanceSignUpForm: FC = (props) => {
             </div>
             <div className="w-full space-y-1">
               <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="last_name">
-                Last name
+                Last name <span className="text-red-500">*</span>
               </label>
               <Input
-                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
                 id="last_name"
                 name="last_name"
                 type="text"
@@ -187,7 +187,7 @@ export const InstanceSignUpForm: FC = (props) => {
               Email <span className="text-red-500">*</span>
             </label>
             <Input
-              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
               id="email"
               name="email"
               type="email"
@@ -204,10 +204,10 @@ export const InstanceSignUpForm: FC = (props) => {
 
           <div className="w-full space-y-1">
             <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="company_name">
-              Company name
+              Company name <span className="text-red-500">*</span>
             </label>
             <Input
-              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
               id="company_name"
               name="company_name"
               type="text"
@@ -224,7 +224,7 @@ export const InstanceSignUpForm: FC = (props) => {
             </label>
             <div className="relative">
               <Input
-                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -239,6 +239,7 @@ export const InstanceSignUpForm: FC = (props) => {
               {showPassword ? (
                 <button
                   type="button"
+                  tabIndex={-1}
                   className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
                   onClick={() => setShowPassword(false)}
                 >
@@ -247,6 +248,7 @@ export const InstanceSignUpForm: FC = (props) => {
               ) : (
                 <button
                   type="button"
+                  tabIndex={-1}
                   className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
                   onClick={() => setShowPassword(true)}
                 >
@@ -262,7 +264,7 @@ export const InstanceSignUpForm: FC = (props) => {
 
           <div className="w-full space-y-1">
             <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
-              Confirm password
+              Confirm password <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Input
@@ -278,6 +280,7 @@ export const InstanceSignUpForm: FC = (props) => {
               {showPassword ? (
                 <button
                   type="button"
+                  tabIndex={-1}
                   className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
                   onClick={() => setShowPassword(false)}
                 >
@@ -286,6 +289,7 @@ export const InstanceSignUpForm: FC = (props) => {
               ) : (
                 <button
                   type="button"
+                  tabIndex={-1}
                   className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
                   onClick={() => setShowPassword(true)}
                 >
@@ -314,7 +318,13 @@ export const InstanceSignUpForm: FC = (props) => {
             >
               Allow Plane to anonymously collect usage events.
             </label>
-            <a href="https://docs.plane.so/telemetry" className="text-sm font-medium text-blue-500 hover:text-blue-600">
+            <a
+              tabIndex={-1}
+              href="https://docs.plane.so/telemetry"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-blue-500 hover:text-blue-600"
+            >
               See More
             </a>
           </div>

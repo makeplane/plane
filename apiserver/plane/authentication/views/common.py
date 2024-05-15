@@ -36,54 +36,59 @@ class CSRFTokenEndpoint(APIView):
 
 class ChangePasswordEndpoint(APIView):
     def post(self, request):
-        serializer = ChangePasswordSerializer(data=request.data)
         user = User.objects.get(pk=request.user.id)
-        if serializer.is_valid():
-            if not user.check_password(serializer.data.get("old_password")):
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "INCORRECT_OLD_PASSWORD"
-                    ],
-                    error_message="INCORRECT_OLD_PASSWORD",
-                    payload={"error": "Old password is not correct"},
-                )
-                return Response(
-                    exc.get_error_dict(),
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
 
-            # check the password score
-            results = zxcvbn(serializer.data.get("new_password"))
-            if results["score"] < 3:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "INVALID_NEW_PASSWORD"
-                    ],
-                    error_message="INVALID_NEW_PASSWORD",
-                )
-                return Response(
-                    exc.get_error_dict(),
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        old_password = request.data.get("old_password", False)
+        new_password = request.data.get("new_password", False)
 
-            # set_password also hashes the password that the user will get
-            user.set_password(serializer.data.get("new_password"))
-            user.is_password_autoset = False
-            user.save()
-            user_login(user=user, request=request, is_app=True)
-            return Response(
-                {"message": "Password updated successfully"},
-                status=status.HTTP_200_OK,
+        if not old_password or not new_password:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["MISSING_PASSWORD"],
+                error_message="MISSING_PASSWORD",
+                payload={"error": "Old or new password is missing"},
             )
-        exc = AuthenticationException(
-            error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-            error_message="INVALID_PASSWORD",
-        )
-        return Response(
-            exc.get_error_dict(),
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+            return Response(
+                exc.get_error_dict(),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
+
+        if not user.check_password(old_password):
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "INCORRECT_OLD_PASSWORD"
+                ],
+                error_message="INCORRECT_OLD_PASSWORD",
+                payload={"error": "Old password is not correct"},
+            )
+            return Response(
+                exc.get_error_dict(),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # check the password score
+        results = zxcvbn(new_password)
+        if results["score"] < 3:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "INVALID_NEW_PASSWORD"
+                ],
+                error_message="INVALID_NEW_PASSWORD",
+            )
+            return Response(
+                exc.get_error_dict(),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # set_password also hashes the password that the user will get
+        user.set_password(new_password)
+        user.is_password_autoset = False
+        user.save()
+        user_login(user=user, request=request, is_app=True)
+        return Response(
+            {"message": "Password updated successfully"},
+            status=status.HTTP_200_OK,
+        )
 
 class SetUserPasswordEndpoint(APIView):
     def post(self, request):

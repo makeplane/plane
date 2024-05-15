@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Lightbulb } from "lucide-react";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ControllerInput, TControllerInputFormField } from "components/common";
+import { ControllerInput, TControllerInputFormField } from "@/components/common";
 // hooks
 import { useInstance } from "@/hooks/store";
 

@@ -96,6 +96,7 @@ class WorkSpaceViewSet(BaseViewSet):
 
     @invalidate_cache(path="/api/workspaces/", user=False)
     @invalidate_cache(path="/api/users/me/workspaces/")
+    @invalidate_cache(path="/api/instances/", user=False)
     def create(self, request):
         try:
             serializer = WorkSpaceSerializer(data=request.data)
@@ -151,8 +152,12 @@ class WorkSpaceViewSet(BaseViewSet):
         return super().partial_update(request, *args, **kwargs)
 
     @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/", multiple=True, user=False)
-    @invalidate_cache(path="/api/users/me/settings/", multiple=True, user=False)
+    @invalidate_cache(
+        path="/api/users/me/workspaces/", multiple=True, user=False
+    )
+    @invalidate_cache(
+        path="/api/users/me/settings/", multiple=True, user=False
+    )
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 

@@ -3,7 +3,7 @@ import axios, { AxiosInstance } from "axios";
 // store
 // import { rootStore } from "@/lib/store-context";
 
-abstract class APIService {
+export abstract class APIService {
   protected baseURL: string;
   private axiosInstance: AxiosInstance;
 
@@ -52,5 +52,3 @@ abstract class APIService {
     return this.axiosInstance(config);
   }
 }
-
-export default APIService;

@@ -1,13 +1,14 @@
 "use client";
 
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import useSWR from "swr";
 import { Loader } from "@plane/ui";
 // components
 import { PageHeader } from "@/components/core";
-import { InstanceAIForm } from "./components";
 // hooks
 import { useInstance } from "@/hooks/store";
+// components
+import { InstanceAIForm } from "./form";
 
 const InstanceAIPage = observer(() => {
   // store

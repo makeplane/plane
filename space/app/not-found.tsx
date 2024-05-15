@@ -1,36 +1,21 @@
 "use client";
 import Image from "next/image";
-import { useTheme } from "next-themes";
-import { Button } from "@plane/ui";
 // assets
-import InstanceFailureDarkImage from "@/public/instance/instance-failure-dark.svg";
-import InstanceFailureImage from "@/public/instance/instance-failure.svg";
+import UserLoggedInImage from "public/user-logged-in.svg";
 
 export default function InstanceNotFound() {
-  const { resolvedTheme } = useTheme();
-
-  const instanceImage = resolvedTheme === "dark" ? InstanceFailureDarkImage : InstanceFailureImage;
-
-  const handleRetry = () => {
-    window.location.reload();
-  };
-
   return (
     <div>
-      <div className="h-full w-full relative container px-5 mx-auto flex justify-center items-center mt-10">
-        <div className="w-auto max-w-2xl relative space-y-8 py-10">
-          <div className="relative flex flex-col justify-center items-center space-y-4">
-            <Image src={instanceImage} alt="Plane Logo" />
-            <h3 className="font-medium text-2xl text-white ">Unable to fetch instance details.</h3>
-            <p className="font-medium text-base text-center">
-              We were unable to fetch the details of the instance. <br />
-              Fret not, it might just be a connectivity issue.
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <Button size="md" onClick={handleRetry}>
-              Retry
-            </Button>
+      <div className="flex h-screen w-screen flex-col">
+        <div className="grid h-full w-full place-items-center p-6">
+          <div className="text-center">
+            <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-custom-background-80">
+              <div className="h-32 w-32">
+                <Image src={UserLoggedInImage} alt="User already logged in" />
+              </div>
+            </div>
+            <h1 className="mt-12 text-3xl font-semibold">Not Found</h1>
+            <p className="mt-4">Please enter the appropriate project URL to view the issue board.</p>
           </div>
         </div>
       </div>

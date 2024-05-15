@@ -39,12 +39,12 @@ export enum EAuthenticationErrorCodes {
   INVALID_EMAIL = "5012",
   EMAIL_REQUIRED = "5013",
   // Sign Up
+  USER_ACCOUNT_DEACTIVATED = "5019",
   USER_ALREADY_EXIST = "5003",
   REQUIRED_EMAIL_PASSWORD_SIGN_UP = "5015",
   AUTHENTICATION_FAILED_SIGN_UP = "5006",
   INVALID_EMAIL_SIGN_UP = "5017",
   MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED = "5023",
-  INVALID_EMAIL_MAGIC_SIGN_UP = "5019",
   // Sign In
   USER_DOES_NOT_EXIST = "5004",
   REQUIRED_EMAIL_PASSWORD_SIGN_IN = "5014",
@@ -140,12 +140,14 @@ const errorCodeMessages: {
     title: `Email and code required`,
     message: () => `Email and code required. Please try again.`,
   },
-  [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP]: {
-    title: `Invalid email`,
-    message: () => `Invalid email. Please try again.`,
-  },
 
   // sign in
+
+  [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
+    title: `User account deactivated`,
+    message: () => <div>Your account is deactivated. Please reach out to support@plane.so</div>,
+  },
+
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
     title: `User does not exist`,
     message: (email = undefined) => (
@@ -250,7 +252,6 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP,
     EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_UP,
     EAuthenticationErrorCodes.MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED,
-    EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP,
     EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN,
     EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_IN,
     EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
@@ -273,6 +274,7 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_UP,
     EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_IN,
     EAuthenticationErrorCodes.MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED,
+    EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED,
   ];
 
   if (toastAlertErrorCodes.includes(errorCode))

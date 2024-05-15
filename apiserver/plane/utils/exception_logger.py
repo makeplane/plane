@@ -6,6 +6,7 @@ from sentry_sdk import capture_exception
 
 
 def log_exception(e):
+    print(e)
     # Log the error
     logger = logging.getLogger("plane")
     logger.error(e)

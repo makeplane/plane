@@ -1,14 +1,14 @@
 "use client";
 
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { observer } from "mobx-react-lite";
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 import { Tooltip } from "@plane/ui";
 // hooks
+import { cn } from "@/helpers/common.helper";
 import { useTheme } from "@/hooks/store";
 // helpers
-import { cn } from "@/helpers/common.helper";
 
 const INSTANCE_ADMIN_LINKS = [
   {

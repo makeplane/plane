@@ -1,8 +1,9 @@
 import { FC, useState } from "react";
-import { useForm } from "react-hook-form";
+import isEmpty from "lodash/isEmpty";
 import Link from "next/link";
-// hooks
-import { useInstance } from "@/hooks/store";
+import { useForm } from "react-hook-form";
+// types
+import { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 // components
@@ -12,12 +13,11 @@ import {
   CopyField,
   TControllerInputFormField,
   TCopyField,
-} from "components/common";
-// types
-import { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
+} from "@/components/common";
 // helpers
-import { API_BASE_URL, cn } from "helpers/common.helper";
-import isEmpty from "lodash/isEmpty";
+import { API_BASE_URL, cn } from "@/helpers/common.helper";
+// hooks
+import { useInstance } from "@/hooks/store";
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -46,7 +46,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
 
-  const githubFormFields: TControllerInputFormField[] = [
+  const GITHUB_FORM_FIELDS: TControllerInputFormField[] = [
     {
       key: "GITHUB_CLIENT_ID",
       type: "text",
@@ -55,6 +55,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
         <>
           You will get this from your{" "}
           <a
+            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-custom-primary-100 hover:underline"
@@ -76,6 +77,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
         <>
           Your client secret is also found in your{" "}
           <a
+            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-custom-primary-100 hover:underline"
@@ -91,7 +93,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
     },
   ];
 
-  const githubCopyFields: TCopyField[] = [
+  const GITHUB_SERVICE_FIELD: TCopyField[] = [
     {
       key: "Origin_URL",
       label: "Origin URL",
@@ -100,6 +102,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
         <>
           We will auto-generate this. Paste this into the Authorized origin URL field{" "}
           <a
+            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-custom-primary-100 hover:underline"
@@ -118,6 +121,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
         <>
           We will auto-generate this. Paste this into your Authorized Callback URI field{" "}
           <a
+            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-custom-primary-100 hover:underline"
@@ -134,13 +138,16 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
     const payload: Partial<GithubConfigFormValues> = { ...formData };
 
     await updateInstanceConfigurations(payload)
-      .then(() => {
+      .then((response = []) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success",
           message: "Github Configuration Settings updated successfully",
         });
-        reset();
+        reset({
+          GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
+          GITHUB_CLIENT_SECRET: response.find((item) => item.key === "GITHUB_CLIENT_SECRET")?.value,
+        });
       })
       .catch((err) => console.error(err));
   };
@@ -163,7 +170,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1">
             <div className="pt-2 text-xl font-medium">Configuration</div>
-            {githubFormFields.map((field) => (
+            {GITHUB_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
                 control={control}
@@ -194,7 +201,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
           <div className="col-span-2 md:col-span-1">
             <div className="flex flex-col gap-y-4 px-6 py-4 my-2 bg-custom-background-80/60 rounded-lg">
               <div className="pt-2 text-xl font-medium">Service provider details</div>
-              {githubCopyFields.map((field) => (
+              {GITHUB_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
               ))}
             </div>

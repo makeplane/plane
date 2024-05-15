@@ -1,16 +1,16 @@
 "use client";
 
 import { FC, useState, useRef } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { Transition } from "@headlessui/react";
+import Link from "next/link";
 import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
+import { Transition } from "@headlessui/react";
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
+import { WEB_BASE_URL } from "@/helpers/common.helper";
 import { useTheme } from "@/hooks/store";
 // assets
 import packageJson from "package.json";
-import { WEB_BASE_URL } from "@/helpers/common.helper";
 
 const helpOptions = [
   {

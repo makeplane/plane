@@ -1,19 +1,23 @@
 "use client";
 
 import { ReactNode } from "react";
-// lib
-import { AuthWrapper, InstanceWrapper } from "@/lib/wrappers";
 // helpers
 import { EAuthenticationPageType, EInstancePageType } from "@/helpers";
+// lib
+import { AuthWrapper, InstanceWrapper } from "@/lib/wrappers";
 
 interface SetupLayoutProps {
   children: ReactNode;
+  params: any;
 }
 
-const SetupLayout = ({ children }: SetupLayoutProps) => (
-  <InstanceWrapper pageType={EInstancePageType.PRE_SETUP}>
-    <AuthWrapper authType={EAuthenticationPageType.NOT_AUTHENTICATED}>{children}</AuthWrapper>
-  </InstanceWrapper>
-);
-
-export default SetupLayout;
+export default function SetupLayout(props: SetupLayoutProps) {
+  const { children, params } = props;
+  const { error_code } = params;
+  console.log("error_code", error_code);
+  return (
+    <InstanceWrapper pageType={EInstancePageType.PRE_SETUP}>
+      <AuthWrapper authType={EAuthenticationPageType.NOT_AUTHENTICATED}>{children}</AuthWrapper>
+    </InstanceWrapper>
+  );
+}
