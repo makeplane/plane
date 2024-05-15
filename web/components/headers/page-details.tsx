@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { FileText, Plus } from "lucide-react";
+import { FileText } from "lucide-react";
 // hooks
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
@@ -79,13 +79,8 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
       </div>
       {showButton && (
         <div className="flex items-center gap-2">
-          <Button
-            variant="primary"
-            prependIcon={<Plus />}
-            size="sm"
-            onClick={() => commandPaletteStore.toggleCreatePageModal(true)}
-          >
-            Create Page
+          <Button variant="primary" size="sm" onClick={() => commandPaletteStore.toggleCreatePageModal(true)}>
+            Add Page
           </Button>
         </div>
       )}

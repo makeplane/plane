@@ -57,7 +57,7 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
         placeholder="Select cycle"
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full relative flex items-center p-2"
-        buttonClassName="relative border-[0.5px] border-custom-border-400 h-4.5"
+        buttonClassName="relative leading-4 h-4.5 bg-transparent"
         onClose={onClose}
       />
     </div>

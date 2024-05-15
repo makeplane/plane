@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 // icons
-import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
+import { Search, Briefcase, X, ListFilter } from "lucide-react";
 // types
 import { TProjectFilters } from "@plane/types";
 // ui
@@ -170,7 +170,6 @@ export const ProjectsHeader = observer(() => {
         </div>
         {isAuthorizedUser && (
           <Button
-            prependIcon={<Plus />}
             size="sm"
             onClick={() => {
               setTrackElement("Projects page");

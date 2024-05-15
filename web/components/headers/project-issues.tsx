@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // icons
-import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+import { Briefcase, Circle, ExternalLink } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
@@ -229,7 +229,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
               size="sm"
-              prependIcon={<Plus />}
             >
               <div className="hidden sm:block">Add</div> Issue
             </Button>
