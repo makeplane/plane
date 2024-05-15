@@ -10,42 +10,44 @@ import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-// import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
+import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useCommandPalette, useAppRouter, useUserProfile,  useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
+import {
+  useCommandPalette,
+  useAppRouter,
+  useUserProfile,
+  useEventTracker,
+  useDashboard,
+  useProject,
+  useUser,
+} from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
-  const {
-    //  captureEven
-    setTrackElement,
-  } = useEventTracker();
+  const { captureEvent, setTrackElement } = useEventTracker();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { workspaceSlug } = useAppRouter();
   const { data: currentUser } = useUser();
-  // const { currentUser, updateTourCompleted } = useUser();
-  const { data: currentUserProfile,
-    // updateTourCompleted
-  } = useUserProfile();
+  const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds } = useProject();
 
   const [windowWidth] = useSize();
 
   const handleTourCompleted = () => {
-    // updateTourCompleted()
-    //   .then(() => {
-    //     captureEvent(PRODUCT_TOUR_COMPLETED, {
-    //       user_id: currentUser?.id,
-    //       state: "SUCCESS",
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
+    updateTourCompleted()
+      .then(() => {
+        captureEvent(PRODUCT_TOUR_COMPLETED, {
+          user_id: currentUser?.id,
+          state: "SUCCESS",
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   // fetch home dashboard widgets on workspace change
