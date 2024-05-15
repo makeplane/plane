@@ -176,23 +176,8 @@ class MagicSignUpSpaceEndpoint(View):
             return HttpResponseRedirect(url)
         # Existing User
         existing_user = User.objects.filter(email=email).first()
+        # Already existing
         if existing_user:
-            if not existing_user.is_active:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "USER_ACCOUNT_DEACTIVATED"
-                    ],
-                    error_message="USER_ACCOUNT_DEACTIVATED",
-                )
-                params = exc.get_error_dict()
-                if next_path:
-                    params["next_path"] = str(next_path)
-                url = urljoin(
-                    base_host(request=request, is_space=True),
-                    "?" + urlencode(params),
-                )
-                return HttpResponseRedirect(url)
-
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["USER_ALREADY_EXIST"],
                 error_message="USER_ALREADY_EXIST",

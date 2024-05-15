@@ -4,6 +4,7 @@ import { useEffect, FC } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+// ui
 import { Avatar, Button } from "@plane/ui";
 // components
 import { IssueFiltersDropdown } from "@/components/issues/filters";
@@ -20,6 +21,9 @@ export type NavbarControlsProps = {
 };
 
 export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
+  // props
+  const { workspaceSlug, projectId } = props;
+  // router
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
@@ -29,14 +33,11 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   const state = searchParams.get("state") || undefined;
   const priority = searchParams.get("priority") || undefined;
   const peekId = searchParams.get("peekId") || undefined;
-  // props
-  const { workspaceSlug, projectId } = props;
   // hooks
   const { issueFilters, isIssueFiltersUpdated, initIssueFilters } = useIssueFilter();
   const { settings } = useProject();
   const { data: user } = useUser();
   const { setPeekId } = useIssueDetails();
-
   // derived values
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
@@ -105,6 +106,7 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
     setPeekId,
     isIssueFiltersUpdated,
   ]);
+
   return (
     <>
       {/* issue views */}

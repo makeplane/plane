@@ -5,8 +5,9 @@ import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IWorkspace } from "@plane/types";
 // ui
-import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
 import { DeleteWorkspaceModal } from "@/components/workspace";
 // constants
@@ -145,7 +146,7 @@ export const WorkspaceDetails: FC = observer(() => {
   if (!currentWorkspace)
     return (
       <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 

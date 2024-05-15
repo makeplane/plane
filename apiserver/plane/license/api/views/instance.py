@@ -39,7 +39,6 @@ class InstanceEndpoint(BaseAPIView):
     def get(self, request):
         instance = Instance.objects.first()
 
-        print("Instance: ", instance)
         # get the instance
         if instance is None:
             return Response(
@@ -56,8 +55,6 @@ class InstanceEndpoint(BaseAPIView):
             IS_GITHUB_ENABLED,
             GITHUB_APP_NAME,
             EMAIL_HOST,
-            EMAIL_HOST_USER,
-            EMAIL_HOST_PASSWORD,
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
             SLACK_CLIENT_ID,
@@ -82,14 +79,6 @@ class InstanceEndpoint(BaseAPIView):
                 {
                     "key": "EMAIL_HOST",
                     "default": os.environ.get("EMAIL_HOST", ""),
-                },
-                {
-                    "key": "EMAIL_HOST_USER",
-                    "default": os.environ.get("EMAIL_HOST_USER", ""),
-                },
-                {
-                    "key": "EMAIL_HOST_PASSWORD",
-                    "default": os.environ.get("EMAIL_HOST_PASSWORD", ""),
                 },
                 {
                     "key": "ENABLE_MAGIC_LINK_LOGIN",

@@ -1,15 +1,17 @@
 import { ReactNode } from "react";
 import { Metadata } from "next";
 // components
-import { InstanceFailureView, InstanceNotReady } from "@/components/instance";
+import { InstanceFailureView, InstanceSetupForm } from "@/components/instance";
 // helpers
 import { ASSET_PREFIX } from "@/helpers/common.helper";
+// layout
+import { DefaultLayout } from "@/layouts/default-layout";
 // lib
 import { AppProvider } from "@/lib/app-providers";
 // styles
 import "./globals.css";
 // services
-import { InstanceService } from "@/services";
+import { InstanceService } from "@/services/instance.service";
 
 const instanceService = new InstanceService();
 
@@ -45,9 +47,23 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body className={`antialiased`}>
         <AppProvider initialState={{ instance: instanceDetails }}>
           {instanceDetails ? (
-            <>{instanceDetails?.instance?.is_setup_done ? <>{children}</> : <InstanceNotReady />}</>
+            <>
+              {instanceDetails?.instance?.is_setup_done ? (
+                <>{children}</>
+              ) : (
+                <DefaultLayout>
+                  <div className="relative w-screen min-h-screen overflow-y-auto px-5 py-10 mx-auto flex justify-center items-center">
+                    <InstanceSetupForm />
+                  </div>
+                </DefaultLayout>
+              )}
+            </>
           ) : (
-            <InstanceFailureView />
+            <DefaultLayout>
+              <div className="relative w-screen min-h-[500px] overflow-y-auto px-5 mx-auto flex justify-center items-center">
+                <InstanceFailureView />
+              </div>
+            </DefaultLayout>
           )}
         </AppProvider>
       </body>

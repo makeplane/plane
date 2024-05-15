@@ -7,7 +7,8 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { LogOut } from "lucide-react";
 // hooks
-import { Button, Spinner, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
+import { LogoSpinner } from "@/components/common";
 import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // images
@@ -82,7 +83,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <Spinner />
+          <LogoSpinner />
         </div>
       </div>
     );
