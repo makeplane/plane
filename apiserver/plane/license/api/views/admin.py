@@ -107,7 +107,7 @@ class InstanceAdminSignUpEndpoint(View):
             )
             url = urljoin(
                 base_host(request=request, is_admin=True),
-                "setup?" + urlencode(exc.get_error_dict()),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
@@ -119,7 +119,7 @@ class InstanceAdminSignUpEndpoint(View):
             )
             url = urljoin(
                 base_host(request=request, is_admin=True),
-                "setup?" + urlencode(exc.get_error_dict()),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
@@ -148,7 +148,7 @@ class InstanceAdminSignUpEndpoint(View):
             )
             url = urljoin(
                 base_host(request=request, is_admin=True),
-                "setup?" + urlencode(exc.get_error_dict()),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
@@ -170,7 +170,7 @@ class InstanceAdminSignUpEndpoint(View):
             )
             url = urljoin(
                 base_host(request=request, is_admin=True),
-                "setup?" + urlencode(exc.get_error_dict()),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
@@ -192,7 +192,7 @@ class InstanceAdminSignUpEndpoint(View):
             )
             url = urljoin(
                 base_host(request=request, is_admin=True),
-                "setup?" + urlencode(exc.get_error_dict()),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
         else:
@@ -214,7 +214,7 @@ class InstanceAdminSignUpEndpoint(View):
                 )
                 url = urljoin(
                     base_host(request=request, is_admin=True),
-                    "setup?" + urlencode(exc.get_error_dict()),
+                    "?" + urlencode(exc.get_error_dict()),
                 )
                 return HttpResponseRedirect(url)
 
