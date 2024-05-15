@@ -9,7 +9,6 @@ import { Button, InputColorPicker, setPromiseToast } from "@plane/ui";
 import { useUserProfile } from "@/hooks/store";
 
 const inputRules = {
-  required: "Background color is required",
   minLength: {
     value: 7,
     message: "Enter a valid hex code of 6 characters",
@@ -96,14 +95,14 @@ export const CustomThemeSelector: React.FC = observer(() => {
                 <Controller
                   control={control}
                   name="background"
-                  rules={inputRules}
+                  rules={{ ...inputRules, required: "Background color is required" }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
                       name="background"
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#0d101b"
-                      className="w-full"
+                      className="w-full placeholder:text-custom-text-400/60"
                       style={{
                         backgroundColor: watch("background"),
                         color: watch("text"),
@@ -122,14 +121,14 @@ export const CustomThemeSelector: React.FC = observer(() => {
                 <Controller
                   control={control}
                   name="text"
-                  rules={inputRules}
+                  rules={{ ...inputRules, required: "Text color is required" }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
                       name="text"
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#c5c5c5"
-                      className="w-full"
+                      className="w-full placeholder:text-custom-text-400/60"
                       style={{
                         backgroundColor: watch("text"),
                         color: watch("background"),
@@ -148,14 +147,14 @@ export const CustomThemeSelector: React.FC = observer(() => {
                 <Controller
                   control={control}
                   name="primary"
-                  rules={inputRules}
+                  rules={{ ...inputRules, required: "Primary color is required" }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
                       name="primary"
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#3f76ff"
-                      className="w-full"
+                      className="w-full placeholder:text-custom-text-400/60"
                       style={{
                         backgroundColor: watch("primary"),
                         color: watch("text"),
@@ -174,14 +173,14 @@ export const CustomThemeSelector: React.FC = observer(() => {
                 <Controller
                   control={control}
                   name="sidebarBackground"
-                  rules={inputRules}
+                  rules={{ ...inputRules, required: "Sidebar background color is required" }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
                       name="sidebarBackground"
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#0d101b"
-                      className="w-full"
+                      className="w-full placeholder:text-custom-text-400/60"
                       style={{
                         backgroundColor: watch("sidebarBackground"),
                         color: watch("sidebarText"),
@@ -202,14 +201,14 @@ export const CustomThemeSelector: React.FC = observer(() => {
                 <Controller
                   control={control}
                   name="sidebarText"
-                  rules={inputRules}
+                  rules={{ ...inputRules, required: "Sidebar text color is required" }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
                       name="sidebarText"
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#c5c5c5"
-                      className="w-full"
+                      className="w-full placeholder:text-custom-text-400/60"
                       style={{
                         backgroundColor: watch("sidebarText"),
                         color: watch("sidebarBackground"),
