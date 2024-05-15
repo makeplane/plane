@@ -13,8 +13,7 @@ export class InstanceService extends APIService {
     return this.get<IInstance>("/api/instances/")
       .then((response) => response.data)
       .catch((error) => {
-        console.log("error", error);
-        throw error;
+        throw error?.response?.data;
       });
   }
 
