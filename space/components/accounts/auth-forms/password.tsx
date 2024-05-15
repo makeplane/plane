@@ -40,7 +40,10 @@ export const PasswordForm: React.FC<Props> = (props) => {
   const { email, mode, handleEmailClear, handleStepChange } = props;
   // states
   const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    retypePassword: false,
+  });
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,6 +54,9 @@ export const PasswordForm: React.FC<Props> = (props) => {
   const { next_path } = useParams<any>();
   // derived values
   const isSmtpConfigured = instanceConfig?.is_smtp_configured;
+
+  const handleShowPassword = (key: keyof typeof showPassword) =>
+    setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const handleFormChange = (key: keyof TPasswordFormValues, value: string) =>
     setPasswordFormData((prev) => ({ ...prev, [key]: value }));
@@ -134,7 +140,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
         </label>
         <div className="relative flex items-center rounded-md bg-onboarding-background-200">
           <Input
-            type={showPassword ? "text" : "password"}
+            type={showPassword.password ? "text" : "password"}
             name="password"
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
@@ -144,15 +150,15 @@ export const PasswordForm: React.FC<Props> = (props) => {
             onBlur={() => setIsPasswordInputFocused(false)}
             autoFocus
           />
-          {showPassword ? (
+          {showPassword.password ? (
             <EyeOff
               className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => setShowPassword(false)}
+              onClick={() => handleShowPassword("password")}
             />
           ) : (
             <Eye
               className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => setShowPassword(true)}
+              onClick={() => handleShowPassword("password")}
             />
           )}
         </div>
@@ -165,7 +171,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
           </label>
           <div className="relative flex items-center rounded-md bg-onboarding-background-200">
             <Input
-              type={showPassword ? "text" : "password"}
+              type={showPassword.retypePassword ? "text" : "password"}
               name="confirm_password"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
@@ -174,15 +180,15 @@ export const PasswordForm: React.FC<Props> = (props) => {
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
             />
-            {showPassword ? (
+            {showPassword.retypePassword ? (
               <EyeOff
                 className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={() => setShowPassword(false)}
+                onClick={() => handleShowPassword("retypePassword")}
               />
             ) : (
               <Eye
                 className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={() => setShowPassword(true)}
+                onClick={() => handleShowPassword("retypePassword")}
               />
             )}
           </div>
