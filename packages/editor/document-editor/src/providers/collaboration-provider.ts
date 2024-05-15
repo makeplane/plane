@@ -25,13 +25,16 @@ export class CollaborationProvider {
     document: undefined,
     onChange: () => {},
   };
-
+  // timeout for debounce
   timeoutId: NodeJS.Timeout | null;
+  // array to merge updates into one single UInt8Array
+  updates: Uint8Array[];
 
   constructor(configuration: CollaborationProviderConfiguration) {
     this.setConfiguration(configuration);
 
     this.timeoutId = null;
+    this.updates = [];
 
     this.configuration.document = configuration.document ?? new Y.Doc();
     this.document.on("update", this.documentUpdateHandler.bind(this));
@@ -53,15 +56,20 @@ export class CollaborationProvider {
     // return if the update is from the provider itself
     if (origin === this) return;
 
+    // store the update in an array
+    this.updates.push(update);
+
     // debounce onChange call
     if (this.timeoutId !== null) clearTimeout(this.timeoutId);
 
     this.timeoutId = setTimeout(() => {
-      const docAsUint8Array = Y.encodeStateAsUpdate(this.document);
-      const base64Doc = Buffer.from(docAsUint8Array).toString("base64");
-      // const base64Doc = Buffer.from(update).toString("base64");
-
-      this.configuration.onChange?.(base64Doc);
+      // merge updates
+      const combinedUpdates = Y.mergeUpdates(this.updates);
+      const base64Updates = Buffer.from(combinedUpdates).toString("base64");
+      // call onChange with the merged updates
+      this.configuration.onChange?.(base64Updates);
+      // reset variables
+      this.updates = [];
       this.timeoutId = null;
     }, 2000);
   }
