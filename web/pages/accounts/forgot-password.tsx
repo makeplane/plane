@@ -155,7 +155,7 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
                       hasError={Boolean(errors.email)}
                       placeholder="name@company.com"
                       className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-                      disabled
+                      disabled={resendTimerCode > 0}
                     />
                   )}
                 />
