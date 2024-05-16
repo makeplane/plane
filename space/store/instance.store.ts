@@ -1,3 +1,4 @@
+import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
 import { IInstance } from "@plane/types";
@@ -16,20 +17,18 @@ type TError = {
 };
 
 export interface IInstanceStore {
-  // issues
+  // observables
   isLoading: boolean;
-  data: IInstance | NonNullable<unknown>;
-  config: Record<string, any>;
+  instance: IInstance | undefined;
   error: TError | undefined;
   // action
   fetchInstanceInfo: () => Promise<void>;
-  hydrate: (data: Record<string, unknown>, config: Record<string, unknown>) => void;
+  hydrate: (data: IInstance) => void;
 }
 
 export class InstanceStore implements IInstanceStore {
   isLoading: boolean = true;
-  data: IInstance | Record<string, any> = {};
-  config: Record<string, unknown> = {};
+  instance: IInstance | undefined = undefined;
   error: TError | undefined = undefined;
   // services
   instanceService;
@@ -38,8 +37,7 @@ export class InstanceStore implements IInstanceStore {
     makeObservable(this, {
       // observable
       isLoading: observable.ref,
-      data: observable,
-      config: observable,
+      instance: observable,
       error: observable,
       // actions
       fetchInstanceInfo: action,
@@ -49,10 +47,7 @@ export class InstanceStore implements IInstanceStore {
     this.instanceService = new InstanceService();
   }
 
-  hydrate = (data: Record<string, unknown>, config: Record<string, unknown>) => {
-    this.data = { ...this.data, ...data };
-    this.config = { ...this.config, ...config };
-  };
+  hydrate = (data: IInstance) => set(this, "instance", data);
 
   /**
    * @description fetching instance information
@@ -61,11 +56,10 @@ export class InstanceStore implements IInstanceStore {
     try {
       this.isLoading = true;
       this.error = undefined;
-      const instanceDetails = await this.instanceService.getInstanceInfo();
+      const instance = await this.instanceService.getInstanceInfo();
       runInAction(() => {
         this.isLoading = false;
-        this.data = instanceDetails.instance;
-        this.config = instanceDetails.config;
+        this.instance = instance;
       });
     } catch (error) {
       runInAction(() => {

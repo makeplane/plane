@@ -1,26 +1,26 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-// icons
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
-// ui
 import { Button, Input, Spinner } from "@plane/ui";
-import { EAuthModes, EAuthSteps, ForgotPasswordPopover, PasswordStrengthMeter } from "@/components/accounts";
+// components
+import { PasswordStrengthMeter } from "@/components/account";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-// services
 import { getPasswordStrength } from "@/helpers/password.helper";
-// hooks
-import { useInstance } from "@/hooks/store";
+// services
 import { AuthService } from "@/services/auth.service";
+// types
+import { EAuthModes, EAuthSteps } from "@/types/auth";
 
 type Props = {
   email: string;
+  isPasswordAutoset: boolean;
+  isSMTPConfigured: boolean;
   mode: EAuthModes;
   handleEmailClear: () => void;
-  handleStepChange: (step: EAuthSteps) => void;
+  handleAuthStep: (step: EAuthSteps) => void;
 };
 
 type TPasswordFormValues = {
@@ -36,21 +36,21 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const PasswordForm: React.FC<Props> = (props) => {
-  const { email, mode, handleEmailClear, handleStepChange } = props;
+export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
+  const { email, isSMTPConfigured, handleAuthStep, handleEmailClear, mode } = props;
   // states
-  const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
-  const [showPassword, setShowPassword] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
-  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+  const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    retypePassword: false,
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
-  // hooks
-  const { data: instance, config: instanceConfig } = useInstance();
-  // router
-  const { next_path } = useParams<any>();
-  // derived values
-  const isSmtpConfigured = instanceConfig?.is_smtp_configured;
+
+  const handleShowPassword = (key: keyof typeof showPassword) =>
+    setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const handleFormChange = (key: keyof TPasswordFormValues, value: string) =>
     setPasswordFormData((prev) => ({ ...prev, [key]: value }));
@@ -60,26 +60,13 @@ export const PasswordForm: React.FC<Props> = (props) => {
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
 
-  const redirectToUniqueCodeLogin = () => {
-    handleStepChange(EAuthSteps.UNIQUE_CODE);
+  const redirectToUniqueCodeSignIn = async () => {
+    handleAuthStep(EAuthSteps.UNIQUE_CODE);
   };
 
-  const passwordSupport =
-    mode === EAuthModes.SIGN_IN ? (
-      <div className="mt-2 w-full pb-3">
-        {isSmtpConfigured ? (
-          <Link
-            href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
-            className="text-xs font-medium text-custom-primary-100"
-          >
-            Forgot your password?
-          </Link>
-        ) : (
-          <ForgotPasswordPopover />
-        )}
-      </div>
-    ) : (
-      isPasswordInputFocused && <PasswordStrengthMeter password={passwordFormData.password} />
+  const passwordSupport = passwordFormData.password.length > 0 &&
+    (getPasswordStrength(passwordFormData.password) < 3 || isPasswordInputFocused) && (
+      <PasswordStrengthMeter password={passwordFormData.password} />
     );
 
   const isButtonDisabled = useMemo(
@@ -104,60 +91,63 @@ export const PasswordForm: React.FC<Props> = (props) => {
       onError={() => setIsSubmitting(false)}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-      <input type="hidden" name="next_path" value={next_path} />
+      <input type="hidden" value={passwordFormData.email} name="email" />
       <div className="space-y-1">
-        <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
           Email
         </label>
-        <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+        <div
+          className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-onboarding-border-100`}
+        >
           <Input
             id="email"
             name="email"
             type="email"
             value={passwordFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
-            // hasError={Boolean(errors.email)}
             placeholder="name@company.com"
-            className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+            className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
+            disabled
           />
           {passwordFormData.email.length > 0 && (
-            <XCircle
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={handleEmailClear}
-            />
+            <div className="flex-shrink-0 h-5 w-5 mr-2 bg-onboarding-background-200 hover:cursor-pointer">
+              <XCircle className="h-5 w-5 stroke-custom-text-400" onClick={handleEmailClear} />
+            </div>
           )}
         </div>
       </div>
+
       <div className="space-y-1">
         <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
           {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
         </label>
         <div className="relative flex items-center rounded-md bg-onboarding-background-200">
           <Input
-            type={showPassword ? "text" : "password"}
+            type={showPassword?.password ? "text" : "password"}
             name="password"
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
             placeholder="Enter password"
-            className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+            className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
             autoFocus
           />
-          {showPassword ? (
+          {showPassword?.password ? (
             <EyeOff
               className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => setShowPassword(false)}
+              onClick={() => handleShowPassword("password")}
             />
           ) : (
             <Eye
               className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => setShowPassword(true)}
+              onClick={() => handleShowPassword("password")}
             />
           )}
         </div>
         {passwordSupport}
       </div>
+
       {mode === EAuthModes.SIGN_UP && (
         <div className="space-y-1">
           <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
@@ -165,24 +155,24 @@ export const PasswordForm: React.FC<Props> = (props) => {
           </label>
           <div className="relative flex items-center rounded-md bg-onboarding-background-200">
             <Input
-              type={showPassword ? "text" : "password"}
+              type={showPassword?.retypePassword ? "text" : "password"}
               name="confirm_password"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
-              className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
             />
-            {showPassword ? (
+            {showPassword?.retypePassword ? (
               <EyeOff
                 className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={() => setShowPassword(false)}
+                onClick={() => handleShowPassword("retypePassword")}
               />
             ) : (
               <Eye
                 className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={() => setShowPassword(true)}
+                onClick={() => handleShowPassword("retypePassword")}
               />
             )}
           </div>
@@ -191,16 +181,23 @@ export const PasswordForm: React.FC<Props> = (props) => {
             !isRetryPasswordInputFocused && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
         </div>
       )}
+
       <div className="space-y-2.5">
         {mode === EAuthModes.SIGN_IN ? (
           <>
             <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-              {isSubmitting ? <Spinner height="20px" width="20px" /> : "Go to board"}
+              {isSubmitting ? (
+                <Spinner height="20px" width="20px" />
+              ) : isSMTPConfigured ? (
+                "Continue"
+              ) : (
+                "Go to workspace"
+              )}
             </Button>
-            {instance && isSmtpConfigured && (
+            {isSMTPConfigured && (
               <Button
                 type="button"
-                onClick={redirectToUniqueCodeLogin}
+                onClick={redirectToUniqueCodeSignIn}
                 variant="outline-primary"
                 className="w-full"
                 size="lg"
@@ -217,4 +214,4 @@ export const PasswordForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+});

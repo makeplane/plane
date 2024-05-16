@@ -1,24 +1,23 @@
-"use client";
-
 import { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // images
-import GoogleLogo from "/public/logos/google-logo.svg";
+import githubLightModeImage from "/public/logos/github-black.png";
+import githubDarkModeImage from "/public/logos/github-dark.svg";
 
-export type GoogleOAuthButtonProps = {
+export type GithubOAuthButtonProps = {
   text: string;
 };
 
-export const GoogleOAuthButton: FC<GoogleOAuthButtonProps> = (props) => {
+export const GithubOAuthButton: FC<GithubOAuthButtonProps> = (props) => {
   const { text } = props;
   // hooks
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    window.location.assign(`${API_BASE_URL}/auth/spaces/google/`);
+    window.location.assign(`${API_BASE_URL}/auth/spaces/github/`);
   };
 
   return (
@@ -28,8 +27,13 @@ export const GoogleOAuthButton: FC<GoogleOAuthButtonProps> = (props) => {
       }`}
       onClick={handleSignIn}
     >
-      <Image src={GoogleLogo} height={18} width={18} alt="Google Logo" />
-      {text}
+      <Image
+        src={resolvedTheme === "dark" ? githubDarkModeImage : githubLightModeImage}
+        height={20}
+        width={20}
+        alt="GitHub Logo"
+      />
+      <span className="text-onboarding-text-200">{text}</span>
     </button>
   );
 };
