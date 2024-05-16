@@ -307,6 +307,11 @@ class Migration(migrations.Migration):
                 ],
             ),
         ),
+        # workspace user properties
+        migrations.AlterModelTable(
+            name="workspaceuserproperties",
+            table="workspace_user_properties",
+        ),
         # Favorites
         migrations.CreateModel(
             name="UserFavorite",
