@@ -36,8 +36,7 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
   // hooks
   const { fetchProjectSettings } = useProject();
   const { issueFilters } = useIssueFilter();
-  const { loader, issues, error } = useIssue();
-  const { fetchPublicIssues } = useIssue();
+  const { loader, issues, error, fetchPublicIssues } = useIssue();
   const issueDetailStore = useIssueDetails();
   const { data: currentUser, fetchCurrentUser } = useUser();
 
@@ -51,12 +50,10 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
       ? () => fetchPublicIssues(workspaceSlug, projectId, { states, priority, labels })
       : null
   );
-
-  useEffect(() => {
-    if (!currentUser) {
-      fetchCurrentUser();
-    }
-  }, [currentUser, fetchCurrentUser]);
+  useSWR(
+    workspaceSlug && projectId && !currentUser ? "WORKSPACE_PROJECT_CURRENT_USER" : null,
+    workspaceSlug && projectId && !currentUser ? () => fetchCurrentUser() : null
+  );
 
   useEffect(() => {
     if (peekId && workspaceSlug && projectId) {

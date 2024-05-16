@@ -29,7 +29,7 @@ export interface IUserStore {
   // actions
   fetchCurrentUser: () => Promise<IUser | undefined>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
-  hydrate: (data: IUser) => void;
+  hydrate: (data: IUser | undefined) => void;
   reset: () => void;
   signOut: () => Promise<void>;
 }
@@ -91,7 +91,7 @@ export class UserStore implements IUserStore {
   fetchCurrentUser = async (): Promise<IUser> => {
     try {
       runInAction(() => {
-        this.isLoading = true;
+        if (this.data === undefined) this.isLoading = true;
         this.error = undefined;
       });
       const user = await this.userService.currentUser();
@@ -155,7 +155,8 @@ export class UserStore implements IUserStore {
     }
   };
 
-  hydrate = (data: IUser): void => {
+  hydrate = (data: IUser | undefined): void => {
+    if (!data) return;
     this.data = { ...this.data, ...data };
   };
 

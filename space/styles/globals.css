@@ -329,3 +329,11 @@
   height: 0 !important;
   width: 0 !important;
 }
+
+/* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */
+.disable-autofill-style:-webkit-autofill,
+.disable-autofill-style:-webkit-autofill:hover,
+.disable-autofill-style:-webkit-autofill:focus,
+.disable-autofill-style:-webkit-autofill:active {
+  -webkit-background-clip: text;
+}

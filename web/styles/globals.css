@@ -668,7 +668,6 @@ div.web-view-spinner div.bar12 {
 }
 
 /* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */
-
 .disable-autofill-style:-webkit-autofill,
 .disable-autofill-style:-webkit-autofill:hover,
 .disable-autofill-style:-webkit-autofill:focus,
