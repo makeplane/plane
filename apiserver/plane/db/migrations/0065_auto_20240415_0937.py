@@ -364,6 +364,23 @@ class Migration(migrations.Migration):
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_%(class)s",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_%(class)s",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
                 "verbose_name": "User Favorite",

@@ -4,10 +4,10 @@ from django.conf import settings
 from django.db import models
 
 # Module imports
-from .base import BaseModel
+from .workspace import WorkspaceBaseModel
 
 
-class UserFavorite(BaseModel):
+class UserFavorite(WorkspaceBaseModel):
     """_summary_
     UserFavorite (model): To store all the favorites of the user
     """
