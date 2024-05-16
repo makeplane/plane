@@ -19,9 +19,9 @@ import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/issue-helper.st
 // types
 import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
+import { GroupDropLocation, handleGroupDragDrop, getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { KanbanDropLocation, handleDragDrop, getSourceFromDropPayload } from "./utils";
 
 
 export type KanbanStoreType =
@@ -160,7 +160,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
    * @param data
    * @param issueUpdates
    */
-  const updateIssueOnDrop = (
+  const updateIssueOnDrop = async (
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
@@ -171,6 +171,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       };
     }
   ) => {
+
+    const errorToastProps = {
+      type: TOAST_TYPE.ERROR,
+      title: "Error!",
+      message: "Error while updating issue"
+    }
     const moduleKey = ISSUE_FILTER_DEFAULT_DATA["module"];
     const cycleKey = ISSUE_FILTER_DEFAULT_DATA["cycle"];
 
@@ -178,8 +184,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     const isCycleChanged = Object.keys(data).includes(cycleKey);
 
     if (isCycleChanged && workspaceSlug) {
-      if(data[cycleKey])addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey], issueId);
-      else removeCycleFromIssue(workspaceSlug.toString(), projectId, issueId)
+      if(data[cycleKey])addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey], issueId).catch(() => setToast(errorToastProps));
+      else removeCycleFromIssue(workspaceSlug.toString(), projectId, issueId).catch(() => setToast(errorToastProps))
       delete data[cycleKey];
     }
 
@@ -190,14 +196,14 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         issueId,
         issueUpdates[moduleKey].ADD,
         issueUpdates[moduleKey].REMOVE
-      );
+      ).catch(() => setToast(errorToastProps));
       delete data[moduleKey];
     }
 
-    updateIssue && updateIssue(projectId, issueId, data);
+    updateIssue && updateIssue(projectId, issueId, data).catch(() => setToast(errorToastProps));
   };
 
-  const handleOnDrop = async (source: KanbanDropLocation, destination: KanbanDropLocation) => {
+  const handleOnDrop = async (source: GroupDropLocation, destination: GroupDropLocation) => {
     if (
       source.columnId &&
       destination.columnId &&
@@ -206,7 +212,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     )
       return;
 
-    await handleDragDrop(
+    await handleGroupDragDrop(
       source,
       destination,
       getIssueById,

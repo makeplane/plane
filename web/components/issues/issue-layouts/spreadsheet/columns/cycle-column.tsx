@@ -25,14 +25,14 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
   // hooks
   const { captureIssueEvent } = useEventTracker();
   const {
-    issues: { addIssueToCycle, removeIssueFromCycle },
+    issues: { addCycleToIssue, removeCycleFromIssue },
   } = useIssues(EIssuesStoreType.CYCLE);
 
   const handleCycle = useCallback(
     async (cycleId: string | null) => {
       if (!workspaceSlug || !issue || issue.cycle_id === cycleId) return;
-      if (cycleId) await addIssueToCycle(workspaceSlug.toString(), issue.project_id, cycleId, [issue.id]);
-      else await removeIssueFromCycle(workspaceSlug.toString(), issue.project_id, issue.cycle_id ?? "", issue.id);
+      if (cycleId) await addCycleToIssue(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
+      else await removeCycleFromIssue(workspaceSlug.toString(), issue.project_id, issue.id);
       captureIssueEvent({
         eventName: "Issue updated",
         payload: {
@@ -44,7 +44,7 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
         path: router.asPath,
       });
     },
-    [workspaceSlug, issue, addIssueToCycle, removeIssueFromCycle, captureIssueEvent, router.asPath]
+    [workspaceSlug, issue, addCycleToIssue, removeCycleFromIssue, captureIssueEvent, router.asPath]
   );
 
   return (

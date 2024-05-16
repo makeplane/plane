@@ -412,20 +412,15 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       }
 
       //Perform API calls
-      const promises = [];
       if (!isEmpty(addModuleIds)) {
-        promises.push(
-          this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
-            modules: addModuleIds,
-          })
-        );
+        await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
+          modules: addModuleIds,
+        });
       }
       if (!isEmpty(removeModuleIds)) {
-        promises.push(
-          this.moduleService.removeModulesFromIssueBulk(workspaceSlug, projectId, issueId, removeModuleIds)
-        );
+        await this.moduleService.removeModulesFromIssueBulk(workspaceSlug, projectId, issueId, removeModuleIds);
       }
-      await Promise.all([promises]);
+
     } catch (error) {
       // revert the issue back to its original module ids
       set(this.rootStore.issues.issuesMap, [issueId, "module_ids"], originalModuleIds);

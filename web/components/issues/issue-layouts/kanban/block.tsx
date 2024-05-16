@@ -16,7 +16,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { getIssueBlockId } from "./utils";
+import { getIssueBlockId } from "../utils";
 // ui
 // types
 // helper
