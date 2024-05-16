@@ -188,7 +188,7 @@ class MagicSignUpEndpoint(View):
             return HttpResponseRedirect(url)
         # Existing user
         existing_user = User.objects.filter(email=email).first()
-        if not existing_user:
+        if existing_user:
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["USER_ALREADY_EXIST"],
                 error_message="USER_ALREADY_EXIST",

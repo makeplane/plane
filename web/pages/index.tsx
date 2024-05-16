@@ -45,7 +45,7 @@ const HomePage: NextPageWithLayout = observer(() => {
             <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" />
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
-          <div className="text-center text-sm font-medium text-onboarding-text-300">
+          <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row text-center text-sm font-medium text-onboarding-text-300">
             Already have an account?{" "}
             <Link
               href="/sign-in"
