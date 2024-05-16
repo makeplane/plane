@@ -184,8 +184,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     const isCycleChanged = Object.keys(data).includes(cycleKey);
 
     if (isCycleChanged && workspaceSlug) {
-      if(data[cycleKey])addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey], issueId).catch(() => setToast(errorToastProps));
-      else removeCycleFromIssue(workspaceSlug.toString(), projectId, issueId).catch(() => setToast(errorToastProps))
+      if(data[cycleKey]) {
+        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey], issueId).catch(() => setToast(errorToastProps));
+      } else {
+        removeCycleFromIssue(workspaceSlug.toString(), projectId, issueId).catch(() => setToast(errorToastProps))
+      }
       delete data[cycleKey];
     }
 
@@ -267,8 +270,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const handleKanbanFilters = (toggle: "group_by" | "sub_group_by", value: string) => {
     if (workspaceSlug && projectId) {
       let kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (kanbanFilters.includes(value)) kanbanFilters = kanbanFilters.filter((_value) => _value != value);
-      else kanbanFilters.push(value);
+      if (kanbanFilters.includes(value)) {
+        kanbanFilters = kanbanFilters.filter((_value) => _value != value);
+      } else {
+        kanbanFilters.push(value);
+      }
       updateFilters(projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
         [toggle]: kanbanFilters,
       });
