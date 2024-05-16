@@ -46,7 +46,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   // hooks
   const { workspaceSlug } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
+  const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -54,7 +54,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     issue.project_id &&
     issue.id &&
     !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
 
   const issue = issuesMap[issueId];
   // const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
@@ -88,7 +88,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
       className={cn(
         "min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 pl-1.5 text-sm",
         {
-          "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+          "border border-custom-primary-70 hover:border-custom-primary-70":
+            getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
         }
       )}
