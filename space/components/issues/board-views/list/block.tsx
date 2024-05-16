@@ -1,7 +1,7 @@
 "use client";
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 // components
 import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
 import { IssueBlockLabels } from "@/components/issues/board-views/block-labels";
@@ -21,8 +21,12 @@ type IssueListBlockProps = {
 
 export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
   const { workspaceSlug, projectId, issue } = props;
-  const { board, states, priority, labels } = useParams<any>();
   const searchParams = useSearchParams();
+  // query params
+  const board = searchParams.get("board") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
   // store
   const { project } = useProject();
   const { setPeekId } = useIssueDetails();
@@ -31,12 +35,12 @@ export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
 
   const handleBlockClick = () => {
     setPeekId(issue.id);
-    const params: any = { board: board, peekId: issue.id };
-    if (states && states.length > 0) params.states = states;
-    if (priority && priority.length > 0) params.priority = priority;
-    if (labels && labels.length > 0) params.labels = labels;
-    router.push(`/${workspaceSlug}/${projectId}?${searchParams}`);
-    // router.push(`/${workspace_slug?.toString()}/${project_slug}?board=${board?.toString()}&peekId=${issue.id}`);
+    let queryParams: any = { board: board, peekId: issue.id };
+    if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
+    if (state && state.length > 0) queryParams = { ...queryParams, state: state };
+    if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
+    queryParams = new URLSearchParams(queryParams).toString();
+    router.push(`/${workspaceSlug}/${projectId}?${queryParams}`);
   };
 
   return (

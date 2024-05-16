@@ -69,7 +69,9 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      {workspaceSlug && <IssuePeekOverview />}
+      {workspaceSlug && projectId && peekId && (
+        <IssuePeekOverview workspaceSlug={workspaceSlug} projectId={projectId} peekId={peekId} />
+      )}
 
       {loader && !issues ? (
         <div className="py-10 text-center text-sm text-custom-text-100">Loading...</div>
