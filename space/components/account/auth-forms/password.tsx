@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";
 // components
