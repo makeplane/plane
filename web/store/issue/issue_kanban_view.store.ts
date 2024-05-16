@@ -22,6 +22,8 @@ export interface IIssueKanBanViewStore {
   setIsDragging: (isDragging: boolean) => void;
 }
 
+const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = ["state", "priority", "assignees", "labels", "module", "cycle"];
+
 export class IssueKanBanViewStore implements IIssueKanBanViewStore {
   kanBanToggle: {
     groupByHeaderMinMax: string[];
@@ -53,9 +55,9 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
 
   getCanUserDragDrop = computedFn(
     (group_by: TIssueGroupByOptions | undefined, sub_group_by: TIssueGroupByOptions | undefined) => {
-      if (group_by && ["state", "priority"].includes(group_by)) {
+      if (group_by && DRAG_ALLOWED_GROUPS.includes(group_by)) {
         if (!sub_group_by) return true;
-        if (sub_group_by && ["state", "priority"].includes(sub_group_by)) return true;
+        if (sub_group_by && DRAG_ALLOWED_GROUPS.includes(sub_group_by)) return true;
       }
       return false;
     }

@@ -10,6 +10,8 @@ import { Avatar, Button } from "@plane/ui";
 import { IssueFiltersDropdown } from "@/components/issues/filters";
 import { NavbarIssueBoardView } from "@/components/issues/navbar/issue-board-view";
 import { NavbarTheme } from "@/components/issues/navbar/theme";
+// helpers
+import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useProject, useUser, useIssueFilter, useIssueDetails } from "@/hooks/store";
 // types
@@ -63,30 +65,19 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
 
       if (currentBoard) {
         if (activeLayout === undefined || activeLayout !== currentBoard) {
-          let queryParams: any = { board: currentBoard };
-          const params: any = { display_filters: { layout: currentBoard }, filters: {} };
-
-          if (peekId && peekId.length > 0) {
-            queryParams = { ...queryParams, peekId: peekId };
-            setPeekId(peekId);
-          }
-          if (priority && priority.length > 0) {
-            queryParams = { ...queryParams, priority: priority };
-            params.filters = { ...params.filters, priority: priority.split(",") };
-          }
-          if (state && state.length > 0) {
-            queryParams = { ...queryParams, state: state };
-            params.filters = { ...params.filters, state: state.split(",") };
-          }
-          if (labels && labels.length > 0) {
-            queryParams = { ...queryParams, labels: labels };
-            params.filters = { ...params.filters, labels: labels.split(",") };
-          }
+          const { query, queryParam } = queryParamGenerator({ board: currentBoard, peekId, priority, state, labels });
+          const params: any = {
+            display_filters: { layout: (query?.board as string[])[0] },
+            filters: {
+              priority: query?.priority ?? undefined,
+              state: query?.state ?? undefined,
+              labels: query?.labels ?? undefined,
+            },
+          };
 
           if (!isIssueFiltersUpdated(params)) {
             initIssueFilters(projectId, params);
-            queryParams = new URLSearchParams(queryParams).toString();
-            router.push(`/${workspaceSlug}/${projectId}?${queryParams}`);
+            router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
           }
         }
       }

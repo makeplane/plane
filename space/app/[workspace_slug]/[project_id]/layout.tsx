@@ -19,7 +19,7 @@ export default async function ProjectLayout({
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
       <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-custom-border-300 bg-custom-sidebar-background-100">
-        <IssueNavbar workspaceSlug={workspace_slug?.toString()} projectId={project_id?.toString()} />
+        <IssueNavbar workspaceSlug={workspace_slug} projectId={project_id} />
       </div>
       <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
       <a

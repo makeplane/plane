@@ -60,6 +60,7 @@ export interface ICycleIssues {
   ) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
+  removeCycleFromIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>
   transferIssuesFromCycle: (
     workspaceSlug: string,
     projectId: string,
@@ -273,7 +274,13 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       const response = await this.createIssue(workspaceSlug, projectId, data, cycleId);
 
       if (data.module_ids && data.module_ids.length > 0)
-        await this.rootStore.moduleIssues.addModulesToIssue(workspaceSlug, projectId, response.id, data.module_ids);
+        await this.rootStore.moduleIssues.changeModulesInIssue(
+          workspaceSlug,
+          projectId,
+          response.id,
+          data.module_ids,
+          []
+        );
 
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
 
@@ -323,6 +330,36 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
     } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * Remove a cycle from issue
+   * @param workspaceSlug 
+   * @param projectId 
+   * @param issueId 
+   * @returns 
+   */
+  removeCycleFromIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
+    if(!issueCycleId) return;
+    try {
+      // perform optimistic update, update store
+      runInAction(() => {
+        pull(this.issues[issueCycleId], issueId);
+      });
+      this.rootStore.issues.updateIssue(issueId, { cycle_id: null });
+
+      // make API call
+      await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, issueCycleId, issueId);
+      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, issueCycleId);
+    } catch (error) {
+      // revert back changes if fails
+      runInAction(() => {
+        update(this.issues, issueCycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, [issueId])));
+      });
+      this.rootStore.issues.updateIssue(issueId, { cycle_id: issueCycleId });
       throw error;
     }
   };

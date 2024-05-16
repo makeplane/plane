@@ -5,6 +5,8 @@ import { observer } from "mobx-react-lite";
 import { useRouter, useSearchParams } from "next/navigation";
 // constants
 import { issueLayoutViews } from "@/constants/issue";
+// helpers
+import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueFilter } from "@/hooks/store";
 // mobx
@@ -33,14 +35,8 @@ export const NavbarIssueBoardView: FC<NavbarIssueBoardViewProps> = observer((pro
 
   const handleCurrentBoardView = (boardView: TIssueLayout) => {
     updateIssueFilters(projectId, "display_filters", "layout", boardView);
-
-    let queryParams: any = { board: boardView };
-    if (peekId && peekId.length > 0) queryParams = { ...queryParams, peekId: peekId };
-    if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
-    if (state && state.length > 0) queryParams = { ...queryParams, state: state };
-    if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
-    queryParams = new URLSearchParams(queryParams).toString();
-    router.push(`/${workspaceSlug}/${projectId}?${queryParams}`);
+    const { queryParam } = queryParamGenerator({ board: boardView, peekId, priority, state, labels });
+    router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
   };
 
   return (
