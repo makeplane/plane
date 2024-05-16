@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { differenceInCalendarDays } from "date-fns";
 import { observer } from "mobx-react-lite";
 // types
 import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CalendarIssueBlocks, ICalendarDate } from "@/components/issues";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
@@ -91,6 +94,23 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
           setIsDraggingOver(false);
           const sourceData = source?.data as { id: string; date: string } | undefined;
           const destinationData = self?.data as { date: string } | undefined;
+          if (!sourceData || !destinationData) return;
+
+          const issueDetails = issues?.[sourceData?.id];
+          if (issueDetails?.start_date) {
+            const issueStartDate = new Date(issueDetails.start_date);
+            const targetDate = new Date(destinationData?.date);
+            const diffInDays = differenceInCalendarDays(targetDate, issueStartDate);
+            if (diffInDays < 0) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: "Error!",
+                message: "Due date cannot be before the start date of the issue.",
+              });
+              return;
+            }
+          }
+
           handleDragAndDrop(sourceData?.id, sourceData?.date, destinationData?.date);
           setShowAllIssues(true);
           highlightIssueOnDrop(source?.element?.id, false);
@@ -107,7 +127,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const isToday = date.date.toDateString() === new Date().toDateString();
   const isSelectedDate = date.date.toDateString() == selectedDate.toDateString();
 
-  const isWeekend = date.date.getDay() === 0 || date.date.getDay() === 6;
+  const isWeekend = [0, 6].includes(date.date.getDay());
   const isMonthLayout = calendarLayout === "month";
 
   const normalBackground = isWeekend ? "bg-custom-background-90" : "bg-custom-background-100";
@@ -124,11 +144,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 ? "font-medium"
                 : "text-custom-text-300"
               : "font-medium" // if week layout, highlight all days
-          } ${
-            date.date.getDay() === 0 || date.date.getDay() === 6
-              ? "bg-custom-background-90"
-              : "bg-custom-background-100"
-          } `}
+          } ${isWeekend ? "bg-custom-background-90" : "bg-custom-background-100"} `}
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
           {isToday ? (
@@ -143,9 +159,12 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         {/* content */}
         <div className="h-full w-full hidden md:block">
           <div
-            className={`h-full w-full select-none ${
-              isDraggingOver ? `${draggingOverBackground} opacity-70` : normalBackground
-            } ${isMonthLayout ? "min-h-[5rem]" : ""}`}
+            className={cn(
+              `h-full w-full select-none ${isDraggingOver ? `${draggingOverBackground} opacity-70` : normalBackground}`,
+              {
+                "min-h-[5rem]": isMonthLayout,
+              }
+            )}
           >
             <CalendarIssueBlocks
               date={date.date}
@@ -177,7 +196,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
           )}
         >
           <div
-            className={cn("flex h-6  w-6 items-center justify-center rounded-full ", {
+            className={cn("size-6 flex items-center justify-center rounded-full", {
               "bg-custom-primary-100 text-white": isSelectedDate,
               "bg-custom-primary-100/10 text-custom-primary-100 ": isToday && !isSelectedDate,
             })}
@@ -185,7 +204,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
             {date.date.getDate()}
           </div>
 
-          {totalIssues > 0 && <div className="mt-1 flex h-1.5 w-1.5 flex-shrink-0 rounded bg-custom-primary-100" />}
+          {totalIssues > 0 && <div className="mt-1 size-1.5 flex flex-shrink-0 rounded bg-custom-primary-100" />}
         </div>
       </div>
     </>
