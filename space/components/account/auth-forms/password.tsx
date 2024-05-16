@@ -5,11 +5,12 @@ import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 // helpers
-import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // services
 import { AuthService } from "@/services/auth.service";
+// types
+import { EAuthModes, EAuthSteps } from "@/types/auth";
 
 type Props = {
   email: string;
