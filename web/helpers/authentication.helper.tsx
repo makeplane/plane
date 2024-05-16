@@ -127,7 +127,7 @@ const errorCodeMessages: {
         Your account is already registered.&nbsp;
         <Link
           className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/sign-in${email ? `?email=${email}` : ``}`}
+          href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Sign In
         </Link>
@@ -169,7 +169,7 @@ const errorCodeMessages: {
         No account found.&nbsp;
         <Link
           className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/${email ? `?email=${email}` : ``}`}
+          href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Create one
         </Link>

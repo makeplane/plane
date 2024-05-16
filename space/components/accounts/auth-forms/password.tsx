@@ -69,7 +69,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
       <div className="mt-2 w-full pb-3">
         {isSmtpConfigured ? (
           <Link
-            href={`/accounts/forgot-password?email=${email}`}
+            href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
             className="text-xs font-medium text-custom-primary-100"
           >
             Forgot your password?
