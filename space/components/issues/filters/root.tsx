@@ -4,15 +4,17 @@ import { FC, useCallback } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/navigation";
+// components
+import { FiltersDropdown } from "@/components/issues/filters/helpers/dropdown";
+import { FilterSelection } from "@/components/issues/filters/selection";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// helpers
+import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssue, useIssueFilter } from "@/hooks/store";
 // types
 import { TIssueQueryFilters } from "@/types/issue";
-// components
-import { FiltersDropdown } from "./helpers/dropdown";
-import { FilterSelection } from "./selection";
 
 type IssueFiltersDropdownProps = {
   workspaceSlug: string;
@@ -34,13 +36,8 @@ export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((pro
       const priority = key === "priority" ? value : issueFilters?.filters?.priority ?? [];
       const labels = key === "labels" ? value : issueFilters?.filters?.labels ?? [];
 
-      let params: any = { board: activeLayout || "list" };
-      if (priority.length > 0) params = { ...params, priority: priority.join(",") };
-      if (state.length > 0) params = { ...params, state: state.join(",") };
-      if (labels.length > 0) params = { ...params, labels: labels.join(",") };
-      params = new URLSearchParams(params).toString();
-
-      router.push(`/${workspaceSlug}/${projectId}?${params}`);
+      const { queryParam } = queryParamGenerator({ board: activeLayout, priority, state, labels });
+      router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
     },
     [workspaceSlug, projectId, activeLayout, issueFilters, router]
   );

@@ -7,7 +7,9 @@ import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-dat
 import { IssueBlockLabels } from "@/components/issues/board-views/block-labels";
 import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
 import { IssueBlockState } from "@/components/issues/board-views/block-state";
-// mobx hook
+// helpers
+import { queryParamGenerator } from "@/helpers/query-param-generator";
+// hook
 import { useIssueDetails, useProject } from "@/hooks/store";
 // interfaces
 import { IIssue } from "@/types/issue";
@@ -35,12 +37,9 @@ export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
 
   const handleBlockClick = () => {
     setPeekId(issue.id);
-    let queryParams: any = { board: board, peekId: issue.id };
-    if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
-    if (state && state.length > 0) queryParams = { ...queryParams, state: state };
-    if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
-    queryParams = new URLSearchParams(queryParams).toString();
-    router.push(`/${workspaceSlug}/${projectId}?${queryParams}`);
+
+    const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
+    router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
   };
 
   return (

@@ -197,11 +197,12 @@ export class IssueStore implements IIssueStore {
   };
 
   addModulesToIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.addModulesToIssue(
+    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.changeModulesInIssue(
       workspaceSlug,
       projectId,
       issueId,
-      moduleIds
+      moduleIds,
+      []
     );
     if (moduleIds && moduleIds.length > 0)
       await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
@@ -209,10 +210,11 @@ export class IssueStore implements IIssueStore {
   };
 
   removeModulesFromIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeModulesFromIssue(
+    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.changeModulesInIssue(
       workspaceSlug,
       projectId,
       issueId,
+      [],
       moduleIds
     );
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
