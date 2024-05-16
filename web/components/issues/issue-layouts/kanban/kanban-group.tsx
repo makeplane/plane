@@ -21,7 +21,7 @@ import { cn } from "@/helpers/common.helper";
 import { useProjectState } from "@/hooks/store";
 //components
 import { TRenderQuickActions } from "../list/list-view-types";
-import { KanbanDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload } from "./utils";
+import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {
@@ -33,6 +33,8 @@ interface IKanbanGroup {
   group_by: TIssueGroupByOptions | undefined;
   sub_group_id: string;
   isDragDisabled: boolean;
+  isDropDisabled: boolean;
+  dropErrorMessage: string | undefined;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   enableQuickIssueCreate?: boolean;
@@ -47,7 +49,7 @@ interface IKanbanGroup {
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle?: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   orderBy: TIssueOrderByOptions | undefined;
 }
 
@@ -62,6 +64,8 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     displayProperties,
     issueIds,
     isDragDisabled,
+    isDropDisabled,
+    dropErrorMessage,
     updateIssue,
     quickActions,
     canEditProperties,
@@ -103,18 +107,21 @@ export const KanbanGroup = (props: IKanbanGroup) => {
           const source = getSourceFromDropPayload(payload);
           const destination = getDestinationFromDropPayload(payload);
 
-          if (!source || !destination) return;
+          if (!source || !destination || isDropDisabled) return;
 
           handleOnDrop(source, destination);
 
-          highlightIssueOnDrop(payload.source.element.id, orderBy !== "sort_order");
+          highlightIssueOnDrop(
+            getIssueBlockId(source.id, destination?.groupId, destination?.subGroupId),
+            orderBy !== "sort_order"
+          );
         },
       }),
       autoScrollForElements({
         element,
       })
     );
-  }, [columnRef?.current, groupId, sub_group_id, setIsDraggingOverColumn, orderBy]);
+  }, [columnRef?.current, groupId, sub_group_id, setIsDraggingOverColumn, orderBy, isDropDisabled, handleOnDrop]);
 
   const prePopulateQuickAddData = (
     groupByKey: string | undefined,
@@ -168,7 +175,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     return preloadedData;
   };
 
-  const shouldOverlay = isDraggingOverColumn && orderBy !== "sort_order";
+  const shouldOverlay = isDraggingOverColumn && (orderBy !== "sort_order" || isDropDisabled);
   const readableOrderBy = ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.title;
 
   return (
@@ -184,20 +191,38 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       <div
         //column overlay when issues are not sorted by manual
         className={cn(
-          "absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded",
+          "absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded transparent",
           {
-            "flex flex-col bg-custom-background-80 border-[1px] border-custom-border-300 z-[2]": shouldOverlay,
+            "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlay,
           },
           { hidden: !shouldOverlay },
           { "justify-center": !sub_group_by }
         )}
       >
-        {readableOrderBy && <span className="pt-6">The layout is ordered by {readableOrderBy}.</span>}
-        <span>Drop here to move the issue.</span>
+        <div
+          className={cn(
+            "p-3 mt-6 flex flex-col border-[1px] rounded items-center",
+            {
+              "bg-custom-background-primary border-custom-border-primary text-custom-text-primary": shouldOverlay,
+            },
+            {
+              "bg-custom-background-error border-custom-border-error text-custom-text-error": isDropDisabled,
+            }
+          )}
+        >
+          {dropErrorMessage ? (
+            <span>{dropErrorMessage}</span>
+          ) : (
+            <>
+              {readableOrderBy && <span>The layout is ordered by {readableOrderBy}.</span>}
+              <span>Drop here to move the issue.</span>
+            </>
+          )}
+        </div>
       </div>
       <KanbanIssueBlocksList
         sub_group_id={sub_group_id}
-        columnId={groupId}
+        groupId={groupId}
         issuesMap={issuesMap}
         issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
         displayProperties={displayProperties}
