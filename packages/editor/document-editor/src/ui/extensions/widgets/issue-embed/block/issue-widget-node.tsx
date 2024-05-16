@@ -19,6 +19,9 @@ export const IssueWidget = (props: Props) =>
         id: {
           default: undefined,
         },
+        entity_name: {
+          default: undefined,
+        },
       };
     },
 
@@ -32,19 +35,6 @@ export const IssueWidget = (props: Props) =>
       return [
         {
           tag: "issue-embed-component",
-          getAttrs: (node: string | HTMLElement) => {
-            if (typeof node === "string") {
-              return null;
-            }
-            return {
-              id: node.getAttribute("id") || "",
-              title: node.getAttribute("title") || "",
-              entity_name: node.getAttribute("entity_name") || "",
-              entity_identifier: node.getAttribute("entity_identifier") || "",
-              project_identifier: node.getAttribute("project_identifier") || "",
-              sequence_id: node.getAttribute("sequence_id") || "",
-            };
-          },
         },
       ];
     },

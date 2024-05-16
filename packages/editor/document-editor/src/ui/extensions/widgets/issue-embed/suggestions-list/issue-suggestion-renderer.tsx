@@ -36,6 +36,7 @@ const IssueSuggestionList = (props: TSuggestionsListProps) => {
             attrs: {
               entity_identifier: item?.id,
               id: transactionId,
+              entity_name: "issue",
             },
           })
           .run();
