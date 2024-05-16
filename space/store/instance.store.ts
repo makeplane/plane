@@ -1,3 +1,4 @@
+import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
 import { IInstance } from "@plane/types";
@@ -16,12 +17,13 @@ type TError = {
 };
 
 export interface IInstanceStore {
-  // issues
+  // observables
   isLoading: boolean;
   instance: IInstance | undefined;
   error: TError | undefined;
   // action
   fetchInstanceInfo: () => Promise<void>;
+  hydrate: (data: IInstance) => void;
 }
 
 export class InstanceStore implements IInstanceStore {
@@ -39,10 +41,13 @@ export class InstanceStore implements IInstanceStore {
       error: observable,
       // actions
       fetchInstanceInfo: action,
+      hydrate: action,
     });
     // services
     this.instanceService = new InstanceService();
   }
+
+  hydrate = (data: IInstance) => set(this, "instance", data);
 
   /**
    * @description fetching instance information

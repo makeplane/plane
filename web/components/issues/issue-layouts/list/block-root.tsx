@@ -50,7 +50,6 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         defaultHeight="3rem"
         root={containerRef}
         classNames="relative border-b border-b-custom-border-200 last:border-b-transparent"
-        changingReference={issueIds}
       >
         <IssueBlock
           issueId={issueId}
@@ -80,7 +79,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
             canEditProperties={canEditProperties}
             displayProperties={displayProperties}
             nestingLevel={nestingLevel + 1}
-            spacingLeft={spacingLeft + (displayProperties?.key ? 19 : 0)}
+            spacingLeft={spacingLeft + (displayProperties?.key ? 12 : 0)}
             containerRef={containerRef}
           />
         ))}

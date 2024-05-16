@@ -328,17 +328,22 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 SESSION_COOKIE_SECURE = secure_origins
 SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = "plane.db.models.session"
-SESSION_COOKIE_AGE = 604800
+SESSION_COOKIE_AGE = os.environ.get("SESSION_COOKIE_AGE", 604800)
 SESSION_COOKIE_NAME = "plane-session-id"
 SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 SESSION_SAVE_EVERY_REQUEST = True
 
 # Admin Cookie
 ADMIN_SESSION_COOKIE_NAME = "plane-admin-session-id"
-ADMIN_SESSION_COOKIE_AGE = 3600
+ADMIN_SESSION_COOKIE_AGE = os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600)
 
 # CSRF cookies
 CSRF_COOKIE_SECURE = secure_origins
 CSRF_COOKIE_HTTPONLY = True
 CSRF_TRUSTED_ORIGINS = cors_allowed_origins
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
+
+# Base URLs
+ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
+SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
+APP_BASE_URL = os.environ.get("APP_BASE_URL") or os.environ.get("WEB_URL")

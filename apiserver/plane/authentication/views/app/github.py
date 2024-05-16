@@ -2,7 +2,6 @@ import uuid
 from urllib.parse import urlencode, urljoin
 
 # Django import
-from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
 from django.views import View
 
@@ -25,7 +24,7 @@ class GitHubOauthInitiateEndpoint(View):
 
     def get(self, request):
         # Get host and next path
-        request.session["host"] = base_host(request=request)
+        request.session["host"] = base_host(request=request, is_app=True)
         next_path = request.GET.get("next_path")
         if next_path:
             request.session["next_path"] = str(next_path)
@@ -43,7 +42,7 @@ class GitHubOauthInitiateEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -58,7 +57,7 @@ class GitHubOauthInitiateEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -111,7 +110,7 @@ class GitHubCallbackEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_app=True)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
             # Get the redirection path

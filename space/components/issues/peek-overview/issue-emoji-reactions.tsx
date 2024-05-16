@@ -1,20 +1,22 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
 // lib
 import { Tooltip } from "@plane/ui";
 import { ReactionSelector } from "@/components/ui";
 // helpers
 import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
 // hooks
-import { useMobxStore, useUser } from "@/hooks/store";
+import { useIssueDetails, useUser } from "@/hooks/store";
 
-export const IssueEmojiReactions: React.FC = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspace_slug, project_slug } = router.query;
+type IssueEmojiReactionsProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer((props) => {
+  const { workspaceSlug, projectId } = props;
   // store
-  const { issueDetails: issueDetailsStore } = useMobxStore();
+  const issueDetailsStore = useIssueDetails();
   const { data: user, fetchCurrentUser } = useUser();
 
   const issueId = issueDetailsStore.peekId;
@@ -24,20 +26,17 @@ export const IssueEmojiReactions: React.FC = observer(() => {
   const userReactions = reactions?.filter((r) => r.actor_detail.id === user?.id);
 
   const handleAddReaction = (reactionHex: string) => {
-    if (!workspace_slug || !project_slug || !issueId) return;
-
-    issueDetailsStore.addIssueReaction(workspace_slug.toString(), project_slug.toString(), issueId, reactionHex);
+    if (!workspaceSlug || !projectId || !issueId) return;
+    issueDetailsStore.addIssueReaction(workspaceSlug.toString(), projectId.toString(), issueId, reactionHex);
   };
 
   const handleRemoveReaction = (reactionHex: string) => {
-    if (!workspace_slug || !project_slug || !issueId) return;
-
-    issueDetailsStore.removeIssueReaction(workspace_slug.toString(), project_slug.toString(), issueId, reactionHex);
+    if (!workspaceSlug || !projectId || !issueId) return;
+    issueDetailsStore.removeIssueReaction(workspaceSlug.toString(), projectId.toString(), issueId, reactionHex);
   };
 
   const handleReactionClick = (reactionHex: string) => {
     const userReaction = userReactions?.find((r) => r.actor_detail.id === user?.id && r.reaction === reactionHex);
-
     if (userReaction) handleRemoveReaction(reactionHex);
     else handleAddReaction(reactionHex);
   };

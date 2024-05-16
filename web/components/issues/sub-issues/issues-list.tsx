@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import { TIssue } from "@plane/types";
 // hooks
@@ -45,7 +45,7 @@ export const IssueList: FC<IIssueList> = observer((props) => {
         {subIssueIds &&
           subIssueIds.length > 0 &&
           subIssueIds.map((issueId) => (
-            <>
+            <Fragment key={issueId}>
               <IssueListItem
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
@@ -56,7 +56,7 @@ export const IssueList: FC<IIssueList> = observer((props) => {
                 handleIssueCrudState={handleIssueCrudState}
                 subIssueOperations={subIssueOperations}
               />
-            </>
+            </Fragment>
           ))}
 
         <div

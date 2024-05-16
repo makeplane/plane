@@ -12,7 +12,8 @@
     "packages/tailwind-config-custom",
     "packages/tsconfig",
     "packages/ui",
-    "packages/types"
+    "packages/types",
+    "packages/constants"
   ],
   "scripts": {
     "build": "turbo run build",

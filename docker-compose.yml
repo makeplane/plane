@@ -7,7 +7,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: /usr/local/bin/start.sh web/server.js web
+    command: node web/server.js web
     depends_on:
       - api
 
@@ -32,7 +32,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: /usr/local/bin/start.sh space/server.js space
+    command: node space/server.js space
     depends_on:
       - api
       - web
@@ -133,7 +133,6 @@ services:
     environment:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
-
 
   # Comment this if you already have a reverse proxy running
   proxy:

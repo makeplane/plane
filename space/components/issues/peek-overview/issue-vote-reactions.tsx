@@ -1,18 +1,17 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
 import { Tooltip } from "@plane/ui";
 // hooks
-import { useMobxStore, useUser } from "@/hooks/store";
+import { useIssueDetails, useUser } from "@/hooks/store";
 
-export const IssueVotes: React.FC = observer(() => {
+export const IssueVotes: React.FC = observer((props: any) => {
+  const { workspaceSlug, projectId } = props;
+  // states
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const router = useRouter();
-
-  const { workspace_slug, project_slug } = router.query;
-
-  const { issueDetails: issueDetailsStore } = useMobxStore();
+  const issueDetailsStore = useIssueDetails();
   const { data: user, fetchCurrentUser } = useUser();
 
   const issueId = issueDetailsStore.peekId;
@@ -26,16 +25,16 @@ export const IssueVotes: React.FC = observer(() => {
   const isDownVotedByUser = allDownVotes?.some((vote) => vote.actor === user?.id);
 
   const handleVote = async (e: any, voteValue: 1 | -1) => {
-    if (!workspace_slug || !project_slug || !issueId) return;
+    if (!workspaceSlug || !projectId || !issueId) return;
 
     setIsSubmitting(true);
 
     const actionPerformed = votes?.find((vote) => vote.actor === user?.id && vote.vote === voteValue);
 
     if (actionPerformed)
-      await issueDetailsStore.removeIssueVote(workspace_slug.toString(), project_slug.toString(), issueId);
+      await issueDetailsStore.removeIssueVote(workspaceSlug.toString(), projectId.toString(), issueId);
     else
-      await issueDetailsStore.addIssueVote(workspace_slug.toString(), project_slug.toString(), issueId, {
+      await issueDetailsStore.addIssueVote(workspaceSlug.toString(), projectId.toString(), issueId, {
         vote: voteValue,
       });
 

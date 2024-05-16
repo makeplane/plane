@@ -2,8 +2,9 @@ import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // ui
-import { Spinner, setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/ui";
 // components
+import { LogoSpinner } from "@/components/common";
 import { CustomThemeSelector, ThemeSwitch, PageHead } from "@/components/core";
 // constants
 import { I_THEME_OPTION, THEME_OPTIONS } from "@/constants/themes";
@@ -68,7 +69,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
         </div>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-          <Spinner />
+          <LogoSpinner />
         </div>
       )}
     </>

@@ -2,7 +2,8 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Spinner } from "@plane/ui";
+// components
+import { LogoSpinner } from "@/components/common";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -62,7 +63,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   if (isUserSWRLoading || isUserLoading)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 
@@ -84,7 +85,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
-      router.push("/accounts/sign-in");
+      router.push("/sign-in");
       return <></>;
     } else {
       if (currentUser && currentUserProfile?.id && currentUserProfile?.is_onboarded) {
@@ -97,7 +98,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.SET_PASSWORD) {
     if (!currentUser?.id) {
-      router.push("/accounts/sign-in");
+      router.push("/sign-in");
       return <></>;
     } else {
       if (
@@ -121,7 +122,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
         return <></>;
       }
     } else {
-      router.push("/accounts/sign-in");
+      router.push("/sign-in");
       return <></>;
     }
   }

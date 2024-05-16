@@ -1,21 +1,11 @@
-"use client";
-
 import { ReactNode } from "react";
 // layouts
-import { AdminLayout } from "@/layouts";
-// lib
-import { AuthWrapper, InstanceWrapper } from "@/lib/wrappers";
+import { AdminLayout } from "@/layouts/admin-layout";
 
 interface ImageLayoutProps {
   children: ReactNode;
 }
 
-const ImageLayout = ({ children }: ImageLayoutProps) => (
-  <InstanceWrapper>
-    <AuthWrapper>
-      <AdminLayout>{children}</AdminLayout>
-    </AuthWrapper>
-  </InstanceWrapper>
-);
+const ImageLayout = ({ children }: ImageLayoutProps) => <AdminLayout>{children}</AdminLayout>;
 
 export default ImageLayout;

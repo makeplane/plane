@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
-import { Spinner } from "@plane/ui";
 // components
+import { LogoSpinner } from "@/components/common";
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
 // constants
 import { WORKSPACE_INVITATION } from "@/constants/fetch-keys";
@@ -119,7 +119,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
         </EmptySpace>
       ) : (
         <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
+          <LogoSpinner />
         </div>
       )}
     </div>

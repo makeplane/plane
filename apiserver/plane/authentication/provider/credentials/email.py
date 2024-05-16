@@ -1,3 +1,6 @@
+# Python imports
+import os
+
 # Module imports
 from plane.authentication.adapter.credential import CredentialAdapter
 from plane.db.models import User
@@ -5,6 +8,7 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
+from plane.license.utils.instance_value import get_configuration_value
 
 
 class EmailProvider(CredentialAdapter):
@@ -22,6 +26,21 @@ class EmailProvider(CredentialAdapter):
         self.key = key
         self.code = code
         self.is_signup = is_signup
+
+        (ENABLE_EMAIL_PASSWORD,) = get_configuration_value(
+            [
+                {
+                    "key": "ENABLE_EMAIL_PASSWORD",
+                    "default": os.environ.get("ENABLE_EMAIL_PASSWORD"),
+                },
+            ]
+        )
+
+        if ENABLE_EMAIL_PASSWORD == "0":
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["ENABLE_EMAIL_PASSWORD"],
+                error_message="ENABLE_EMAIL_PASSWORD",
+            )
 
     def set_user_data(self):
         if self.is_signup:

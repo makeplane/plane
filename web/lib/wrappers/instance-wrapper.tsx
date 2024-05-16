@@ -1,9 +1,8 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// ui
-import { Spinner } from "@plane/ui";
 // components
+import { LogoSpinner } from "@/components/common";
 import { InstanceNotReady } from "@/components/instance";
 // hooks
 import { useInstance } from "@/hooks/store";
@@ -25,7 +24,7 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   if (isLoading)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 
