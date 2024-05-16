@@ -118,7 +118,9 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
       {user?.id ? (
         <div className="flex items-center gap-2 rounded border border-custom-border-200 p-2">
           <Avatar name={user?.display_name} src={user?.avatar ?? undefined} shape="square" size="sm" />
-          <h6 className="text-xs font-medium">{user.display_name}</h6>
+          <h6 className="text-xs font-medium">
+            {user?.display_name || `${user?.first_name} ${user?.first_name}` || user?.email || "User"}
+          </h6>
         </div>
       ) : (
         <div className="flex-shrink-0">
