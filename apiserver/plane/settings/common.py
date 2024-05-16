@@ -331,6 +331,7 @@ SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = os.environ.get("SESSION_COOKIE_AGE", 604800)
 SESSION_COOKIE_NAME = "plane-session-id"
 SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
+SESSION_SAVE_EVERY_REQUEST = True
 
 # Admin Cookie
 ADMIN_SESSION_COOKIE_NAME = "plane-admin-session-id"
