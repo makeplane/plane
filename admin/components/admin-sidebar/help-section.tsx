@@ -1,12 +1,14 @@
 "use client";
 
 import { FC, useState, useRef } from "react";
-import { Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
+import { Transition } from "@headlessui/react";
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
-import { useTheme } from "@/hooks";
+import { WEB_BASE_URL } from "@/helpers/common.helper";
+import { useTheme } from "@/hooks/store";
 // assets
 import packageJson from "package.json";
 
@@ -28,7 +30,7 @@ const helpOptions = [
   },
 ];
 
-export const HelpSection: FC = () => {
+export const HelpSection: FC = observer(() => {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store
@@ -36,7 +38,7 @@ export const HelpSection: FC = () => {
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
-  const redirectionLink = `${process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/create-workspace` : `${process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX === "1" ? `/god-mode/` : `/`}`}`;
+  const redirectionLink = encodeURI(WEB_BASE_URL + "/create-workspace");
 
   return (
     <div
@@ -128,4 +130,4 @@ export const HelpSection: FC = () => {
       </div>
     </div>
   );
-};
+});

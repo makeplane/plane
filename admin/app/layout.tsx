@@ -1,48 +1,72 @@
-"use client";
-
 import { ReactNode } from "react";
-import { ThemeProvider } from "next-themes";
+import { Metadata } from "next";
+// components
+import { InstanceFailureView, InstanceSetupForm } from "@/components/instance";
+// helpers
+import { ASSET_PREFIX } from "@/helpers/common.helper";
+// layout
+import { DefaultLayout } from "@/layouts/default-layout";
 // lib
-import { StoreProvider } from "@/lib/store-context";
-import { AppWrapper } from "@/lib/wrappers";
-// constants
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, TWITTER_USER_NAME, SITE_KEYWORDS, SITE_TITLE } from "@/constants/seo";
+import { AppProvider } from "@/lib/app-providers";
 // styles
 import "./globals.css";
+// services
+import { InstanceService } from "@/services/instance.service";
 
-interface RootLayoutProps {
-  children: ReactNode;
-}
+const instanceService = new InstanceService();
 
-const RootLayout = ({ children, ...pageProps }: RootLayoutProps) => {
-  const prefix = parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0") === 0 ? "/" : "/god-mode/";
+export const metadata: Metadata = {
+  title: "Plane | Simple, extensible, open-source project management tool.",
+  description:
+    "Open-source project management tool to manage issues, sprints, and product roadmaps with peace of mind.",
+  openGraph: {
+    title: "Plane | Simple, extensible, open-source project management tool.",
+    description:
+      "Open-source project management tool to manage issues, sprints, and product roadmaps with peace of mind.",
+    url: "https://plane.so/",
+  },
+  keywords:
+    "software development, customer feedback, software, accelerate, code management, release management, project management, issue tracking, agile, scrum, kanban, collaboration",
+  twitter: {
+    site: "@planepowers",
+  },
+};
+
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const instanceDetails = await instanceService.getInstanceInfo().catch(() => null);
 
   return (
     <html lang="en">
       <head>
-        <title>{SITE_TITLE}</title>
-        <meta property="og:site_name" content={SITE_NAME} />
-        <meta property="og:title" content={SITE_TITLE} />
-        <meta property="og:url" content={SITE_URL} />
-        <meta name="description" content={SITE_DESCRIPTION} />
-        <meta property="og:description" content={SITE_DESCRIPTION} />
-        <meta name="keywords" content={SITE_KEYWORDS} />
-        <meta name="twitter:site" content={`@${TWITTER_USER_NAME}`} />
-        <link rel="apple-touch-icon" sizes="180x180" href={`${prefix}favicon/apple-touch-icon.png`} />
-        <link rel="icon" type="image/png" sizes="32x32" href={`${prefix}favicon/favicon-32x32.png`} />
-        <link rel="icon" type="image/png" sizes="16x16" href={`${prefix}favicon/favicon-16x16.png`} />
-        <link rel="manifest" href={`${prefix}site.webmanifest.json`} />
-        <link rel="shortcut icon" href={`${prefix}favicon/favicon.ico`} />
+        <link rel="apple-touch-icon" sizes="180x180" href={`${ASSET_PREFIX}/favicon/apple-touch-icon.png`} />
+        <link rel="icon" type="image/png" sizes="32x32" href={`${ASSET_PREFIX}/favicon/favicon-32x32.png`} />
+        <link rel="icon" type="image/png" sizes="16x16" href={`${ASSET_PREFIX}/favicon/favicon-16x16.png`} />
+        <link rel="manifest" href={`${ASSET_PREFIX}/site.webmanifest.json`} />
+        <link rel="shortcut icon" href={`${ASSET_PREFIX}/favicon/favicon.ico`} />
       </head>
       <body className={`antialiased`}>
-        <StoreProvider {...pageProps}>
-          <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-            <AppWrapper>{children}</AppWrapper>
-          </ThemeProvider>
-        </StoreProvider>
+        <AppProvider initialState={{ instance: instanceDetails }}>
+          {instanceDetails ? (
+            <>
+              {instanceDetails?.instance?.is_setup_done ? (
+                <>{children}</>
+              ) : (
+                <DefaultLayout>
+                  <div className="relative w-screen min-h-screen overflow-y-auto px-5 py-10 mx-auto flex justify-center items-center">
+                    <InstanceSetupForm />
+                  </div>
+                </DefaultLayout>
+              )}
+            </>
+          ) : (
+            <DefaultLayout>
+              <div className="relative w-screen min-h-[500px] overflow-y-auto px-5 mx-auto flex justify-center items-center">
+                <InstanceFailureView />
+              </div>
+            </DefaultLayout>
+          )}
+        </AppProvider>
       </body>
     </html>
   );
-};
-
-export default RootLayout;
+}

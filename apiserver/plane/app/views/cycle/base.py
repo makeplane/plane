@@ -241,6 +241,7 @@ class CycleViewSet(BaseViewSet):
                 "backlog_issues",
                 "assignee_ids",
                 "status",
+                "created_by"
             )
 
             if data:
@@ -365,6 +366,7 @@ class CycleViewSet(BaseViewSet):
             "backlog_issues",
             "assignee_ids",
             "status",
+            "created_by",
         )
         return Response(data, status=status.HTTP_200_OK)
 
@@ -564,6 +566,7 @@ class CycleViewSet(BaseViewSet):
                 "backlog_issues",
                 "assignee_ids",
                 "status",
+                "created_by",
             )
             .first()
         )

@@ -1,20 +1,11 @@
-"use client";
+import { InstanceSignInForm } from "@/components/login";
+// layouts
+import { DefaultLayout } from "@/layouts/default-layout";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-// components
-import { PageHeader } from "@/components/core";
-
-const RootPage = () => {
-  const router = useRouter();
-
-  useEffect(() => router.push("/login"), [router]);
-
+export default async function LoginPage() {
   return (
-    <>
-      <PageHeader title="Plane - God Mode" />
-    </>
+    <DefaultLayout>
+      <InstanceSignInForm />
+    </DefaultLayout>
   );
-};
-
-export default RootPage;
+}

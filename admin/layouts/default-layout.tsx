@@ -17,6 +17,7 @@ export const DefaultLayout: FC<TDefaultLayout> = (props) => {
   const { children, withoutBackground = false } = props;
   // hooks
   const { resolvedTheme } = useTheme();
+  const patternBackground = resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern;
 
   return (
     <div className="relative">
@@ -29,11 +30,7 @@ export const DefaultLayout: FC<TDefaultLayout> = (props) => {
         </div>
         {!withoutBackground && (
           <div className="absolute inset-0 z-0">
-            <Image
-              src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
-              className="w-screen h-full object-cover"
-              alt="Plane background pattern"
-            />
+            <Image src={patternBackground} className="w-screen h-full object-cover" alt="Plane background pattern" />
           </div>
         )}
         <div className="relative z-10 mb-[110px] flex-grow">{children}</div>

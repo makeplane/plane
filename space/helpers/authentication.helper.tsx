@@ -9,17 +9,6 @@ export enum EPageTypes {
   AUTHENTICATED = "AUTHENTICATED",
 }
 
-export enum EAuthModes {
-  SIGN_IN = "SIGN_IN",
-  SIGN_UP = "SIGN_UP",
-}
-
-export enum EAuthSteps {
-  EMAIL = "EMAIL",
-  PASSWORD = "PASSWORD",
-  UNIQUE_CODE = "UNIQUE_CODE",
-}
-
 export enum EErrorAlertType {
   BANNER_ALERT = "BANNER_ALERT",
   TOAST_ALERT = "TOAST_ALERT",
@@ -39,12 +28,12 @@ export enum EAuthenticationErrorCodes {
   INVALID_EMAIL = "5012",
   EMAIL_REQUIRED = "5013",
   // Sign Up
+  USER_ACCOUNT_DEACTIVATED = "5019",
   USER_ALREADY_EXIST = "5003",
   REQUIRED_EMAIL_PASSWORD_SIGN_UP = "5015",
   AUTHENTICATION_FAILED_SIGN_UP = "5006",
   INVALID_EMAIL_SIGN_UP = "5017",
   MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED = "5023",
-  INVALID_EMAIL_MAGIC_SIGN_UP = "5019",
   // Sign In
   USER_DOES_NOT_EXIST = "5004",
   REQUIRED_EMAIL_PASSWORD_SIGN_IN = "5014",
@@ -116,7 +105,7 @@ const errorCodeMessages: {
         Your account is already registered.&nbsp;
         <Link
           className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/accounts/sign-in${email ? `?email=${email}` : ``}`}
+          href={`/accounts/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Sign In
         </Link>
@@ -140,12 +129,14 @@ const errorCodeMessages: {
     title: `Email and code required`,
     message: () => `Email and code required. Please try again.`,
   },
-  [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP]: {
-    title: `Invalid email`,
-    message: () => `Invalid email. Please try again.`,
-  },
 
   // sign in
+
+  [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
+    title: `User account deactivated`,
+    message: () => <div>Your account is deactivated. Please reach out to support@plane.so</div>,
+  },
+
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
     title: `User does not exist`,
     message: (email = undefined) => (
@@ -153,7 +144,7 @@ const errorCodeMessages: {
         No account found.&nbsp;
         <Link
           className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/${email ? `?email=${email}` : ``}`}
+          href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Create one
         </Link>
@@ -250,7 +241,6 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP,
     EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_UP,
     EAuthenticationErrorCodes.MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED,
-    EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP,
     EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN,
     EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_IN,
     EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
@@ -273,6 +263,7 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_UP,
     EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_IN,
     EAuthenticationErrorCodes.MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED,
+    EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED,
   ];
 
   if (toastAlertErrorCodes.includes(errorCode))

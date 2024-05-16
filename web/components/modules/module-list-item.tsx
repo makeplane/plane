@@ -77,7 +77,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
           ) : progress === 100 ? (
             <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
           ) : (
-            <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
+            <span className="text-[9px] text-custom-text-300">{`${progress}%`}</span>
           )}
         </CircularProgressIndicator>
       }
@@ -89,9 +89,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
           <Info className="h-4 w-4 text-custom-text-400" />
         </button>
       }
-      actionableItems={
-        <ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />
-      }
+      actionableItems={<ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />}
       isMobile={isMobile}
       parentRef={parentRef}
     />

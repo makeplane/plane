@@ -1,9 +1,12 @@
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
+from django.contrib.auth import logout
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 # Module imports
 from plane.app.serializers import (
@@ -26,6 +29,7 @@ from plane.db.models import (
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.utils.paginator import BasePaginator
+from plane.authentication.utils.host import user_ip
 
 
 class UserEndpoint(BaseViewSet):
@@ -166,8 +170,34 @@ class UserEndpoint(BaseViewSet):
             "workspace_invite": False,
         }
         profile.save()
+
+        # User log out
+        user.last_logout_ip = user_ip(request=request)
+        user.last_logout_time = timezone.now()
         user.save()
+
+        # Logout the user
+        logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserSessionEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            user = User.objects.get(pk=request.user.id)
+            serializer = UserMeSerializer(user)
+            data = {"is_authenticated": True}
+            data["user"] = serializer.data
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"is_authenticated": False}, status=status.HTTP_200_OK
+            )
 
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
@@ -239,6 +269,7 @@ class ProfileEndpoint(BaseAPIView):
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_cache("/api/users/me/settings/")
     def patch(self, request):
         profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(

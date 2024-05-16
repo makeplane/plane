@@ -1,1 +1,0 @@
-export * from "./general-config-form";

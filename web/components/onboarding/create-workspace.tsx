@@ -8,7 +8,7 @@ import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@pla
 import { WORKSPACE_CREATED } from "@/constants/event-tracker";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useUserProfile, useWorkspace } from "@/hooks/store";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 
@@ -28,7 +28,8 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
   // store hooks
-  const { updateCurrentUser } = useUser();
+  const { updateUserProfile } = useUserProfile();
+
   const { createWorkspace, fetchWorkspaces, workspaces } = useWorkspace();
   const { captureWorkspaceEvent } = useEventTracker();
   // form info
@@ -111,7 +112,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
     };
 
     await stepChange(payload);
-    await updateCurrentUser({
+    await updateUserProfile({
       last_workspace_id: firstWorkspace?.id,
     });
   };
@@ -148,7 +149,10 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
       </div>
       <form className="w-full mx-auto mt-2 space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>
         <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="name">
+          <label
+            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="name"
+          >
             Workspace name
           </label>
           <Controller
@@ -187,7 +191,10 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
           {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
         </div>
         <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="slug">
+          <label
+            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="slug"
+          >
             Workspace URL
           </label>
           <Controller
@@ -224,7 +231,10 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
         </div>
         <hr className="w-full border-onboarding-border-100" />
         <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="organization_size">
+          <label
+            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="organization_size"
+          >
             Company size
           </label>
           <div className="w-full">

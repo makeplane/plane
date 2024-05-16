@@ -7,7 +7,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: "/god-mode",
+  basePath: process.env.NEXT_PUBLIC_ADMIN_BASE_PATH || "",
 };
 
 module.exports = nextConfig;
