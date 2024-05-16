@@ -21,7 +21,7 @@ type IssueKanBanBlockProps = {
 
 export const IssueKanBanBlock: FC<IssueKanBanBlockProps> = observer((props) => {
   const { workspaceSlug, projectId, params, issue } = props;
-  const { board, priorities, states, labels } = params;
+  const { board, priority, states, labels } = params;
   // store
   const { project } = useProject();
   const { setPeekId } = useIssueDetails();
@@ -33,7 +33,7 @@ export const IssueKanBanBlock: FC<IssueKanBanBlockProps> = observer((props) => {
     setPeekId(issue.id);
     const params: any = { board: board, peekId: issue.id };
     if (states && states.length > 0) params.states = states;
-    if (priorities && priorities.length > 0) params.priorities = priorities;
+    if (priority && priority.length > 0) params.priority = priority;
     if (labels && labels.length > 0) params.labels = labels;
     router.push(`/${workspaceSlug}/${projectId}?${searchParams}`);
   };

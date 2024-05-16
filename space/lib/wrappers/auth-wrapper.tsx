@@ -20,8 +20,6 @@ export const AuthWrapper: FC<TAuthWrapper> = observer((props) => {
   const { isLoading, data: currentUser, fetchCurrentUser } = useUser();
   const { data: currentUserProfile } = useUserProfile();
 
-  console;
-
   const { isLoading: isSWRLoading } = useSWR("INSTANCE_INFORMATION", () => fetchCurrentUser(), {
     revalidateOnFocus: false,
   });

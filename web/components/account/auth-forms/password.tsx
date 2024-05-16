@@ -76,7 +76,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         {isSMTPConfigured ? (
           <Link
             onClick={() => captureEvent(FORGOT_PASSWORD)}
-            href={`/accounts/forgot-password?email=${email}`}
+            href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
             className="text-xs font-medium text-custom-primary-100"
           >
             Forgot your password?

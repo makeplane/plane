@@ -3,49 +3,48 @@
 import { useEffect, FC } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
-import { useRouter, useParams, useSearchParams, usePathname } from "next/navigation";
-import useSWR from "swr";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 // ui
 import { Avatar, Button } from "@plane/ui";
 // components
 import { IssueFiltersDropdown } from "@/components/issues/filters";
+import { NavbarIssueBoardView } from "@/components/issues/navbar/issue-board-view";
+import { NavbarTheme } from "@/components/issues/navbar/theme";
 // hooks
-import { useProject, useUser, useIssueFilter } from "@/hooks/store";
+import { useProject, useUser, useIssueFilter, useIssueDetails } from "@/hooks/store";
 // types
-import { TIssueBoardKeys } from "@/types/issue";
-// components
-import { NavbarIssueBoardView } from "./issue-board-view";
-import { NavbarTheme } from "./theme";
+import { TIssueLayout } from "@/types/issue";
 
 export type NavbarControlsProps = {
   workspaceSlug: string;
   projectId: string;
-  projectSettings: any;
 };
 
 export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
-  const { workspaceSlug, projectId, projectSettings } = props;
-  const { views } = projectSettings;
+  // props
+  const { workspaceSlug, projectId } = props;
   // router
   const router = useRouter();
-  const { board, labels, states, priorities, peekId } = useParams<any>();
-  const searchParams = useSearchParams();
   const pathName = usePathname();
-  // store
-  const { updateFilters } = useIssueFilter();
-  const { settings, activeLayout, hydrate, setActiveLayout } = useProject();
-  hydrate(projectSettings);
-
-  const { data: user, fetchCurrentUser } = useUser();
-
-  useSWR("CURRENT_USER", () => fetchCurrentUser(), { errorRetryCount: 2 });
-
-  console.log("user", user);
+  const searchParams = useSearchParams();
+  // query params
+  const board = searchParams.get("board") || undefined;
+  const labels = searchParams.get("labels") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const peekId = searchParams.get("peekId") || undefined;
+  // hooks
+  const { issueFilters, isIssueFiltersUpdated, initIssueFilters } = useIssueFilter();
+  const { settings } = useProject();
+  const { data: user } = useUser();
+  const { setPeekId } = useIssueDetails();
+  // derived values
+  const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
   useEffect(() => {
     if (workspaceSlug && projectId && settings) {
       const viewsAcceptable: string[] = [];
-      const currentBoard: TIssueBoardKeys | null = null;
+      let currentBoard: TIssueLayout | null = null;
 
       if (settings?.views?.list) viewsAcceptable.push("list");
       if (settings?.views?.kanban) viewsAcceptable.push("kanban");
@@ -53,59 +52,66 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
       if (settings?.views?.gantt) viewsAcceptable.push("gantt");
       if (settings?.views?.spreadsheet) viewsAcceptable.push("spreadsheet");
 
-      //     if (board) {
-      //       if (viewsAcceptable.includes(board.toString())) {
-      //         currentBoard = board.toString() as TIssueBoardKeys;
-      //       } else {
-      //         if (viewsAcceptable && viewsAcceptable.length > 0) {
-      //           currentBoard = viewsAcceptable[0] as TIssueBoardKeys;
-      //         }
-      //       }
-      //     } else {
-      //       if (viewsAcceptable && viewsAcceptable.length > 0) {
-      //         currentBoard = viewsAcceptable[0] as TIssueBoardKeys;
-      //       }
-      //     }
+      if (board) {
+        if (viewsAcceptable.includes(board.toString())) currentBoard = board.toString() as TIssueLayout;
+        else {
+          if (viewsAcceptable && viewsAcceptable.length > 0) currentBoard = viewsAcceptable[0] as TIssueLayout;
+        }
+      } else {
+        if (viewsAcceptable && viewsAcceptable.length > 0) currentBoard = viewsAcceptable[0] as TIssueLayout;
+      }
 
       if (currentBoard) {
-        if (activeLayout === null || activeLayout !== currentBoard) {
-          let params: any = { board: currentBoard };
-          if (peekId && peekId.length > 0) params = { ...params, peekId: peekId };
-          if (priorities && priorities.length > 0) params = { ...params, priorities: priorities };
-          if (states && states.length > 0) params = { ...params, states: states };
-          if (labels && labels.length > 0) params = { ...params, labels: labels };
-          console.log("params", params);
-          let storeParams: any = {};
-          if (priorities && priorities.length > 0) storeParams = { ...storeParams, priority: priorities.split(",") };
-          if (states && states.length > 0) storeParams = { ...storeParams, state: states.split(",") };
-          if (labels && labels.length > 0) storeParams = { ...storeParams, labels: labels.split(",") };
+        if (activeLayout === undefined || activeLayout !== currentBoard) {
+          let queryParams: any = { board: currentBoard };
+          const params: any = { display_filters: { layout: currentBoard }, filters: {} };
 
-          if (storeParams) updateFilters(projectId, storeParams);
-          setActiveLayout(currentBoard);
-          router.push(`/${workspaceSlug}/${projectId}?${searchParams}`);
+          if (peekId && peekId.length > 0) {
+            queryParams = { ...queryParams, peekId: peekId };
+            setPeekId(peekId);
+          }
+          if (priority && priority.length > 0) {
+            queryParams = { ...queryParams, priority: priority };
+            params.filters = { ...params.filters, priority: priority.split(",") };
+          }
+          if (state && state.length > 0) {
+            queryParams = { ...queryParams, state: state };
+            params.filters = { ...params.filters, state: state.split(",") };
+          }
+          if (labels && labels.length > 0) {
+            queryParams = { ...queryParams, labels: labels };
+            params.filters = { ...params.filters, labels: labels.split(",") };
+          }
+
+          if (!isIssueFiltersUpdated(params)) {
+            initIssueFilters(projectId, params);
+            queryParams = new URLSearchParams(queryParams).toString();
+            router.push(`/${workspaceSlug}/${projectId}?${queryParams}`);
+          }
         }
       }
     }
   }, [
-    board,
     workspaceSlug,
     projectId,
-    router,
-    updateFilters,
+    board,
     labels,
-    states,
-    priorities,
+    state,
+    priority,
     peekId,
     settings,
     activeLayout,
-    setActiveLayout,
-    searchParams,
+    router,
+    initIssueFilters,
+    setPeekId,
+    isIssueFiltersUpdated,
   ]);
+
   return (
     <>
       {/* issue views */}
       <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
-        <NavbarIssueBoardView layouts={views} />
+        <NavbarIssueBoardView workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
 
       {/* issue filters */}

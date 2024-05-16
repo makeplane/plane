@@ -44,7 +44,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {!instanceDetails ? (
             <InstanceFailureView />
           ) : (
-            <>{instanceDetails.instance.is_setup_done ? <>{children}</> : <InstanceNotReady />}</>
+            <>
+              {instanceDetails.instance.is_setup_done ? (
+                <>{children}</>
+              ) : (
+                <div className="h-screen w-screen">
+                  <InstanceNotReady />
+                </div>
+              )}
+            </>
           )}
         </AppProvider>
       </body>

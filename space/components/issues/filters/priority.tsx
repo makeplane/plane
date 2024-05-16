@@ -1,9 +1,11 @@
+"use client";
+
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // ui
 import { PriorityIcon } from "@plane/ui";
 // components
-import { issuePriorityFilters } from "@/constants/data";
+import { issuePriorityFilters } from "@/constants/issue";
 import { FilterHeader, FilterOption } from "./helpers";
 // constants
 
