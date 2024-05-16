@@ -21,7 +21,7 @@ export interface IIssueStore {
   // service
   issueService: any;
   // actions
-  fetchPublicIssues: (workspace_slug: string, project_slug: string, params: any) => void;
+  fetchPublicIssues: (workspace_slug: string, project_slug: string, params: any) => Promise<void>;
   getCountOfIssuesByState: (state: string) => number;
   getFilteredIssuesByState: (state: string) => IIssue[];
 }

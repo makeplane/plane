@@ -9,8 +9,9 @@ import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
 // types
 import { TPage } from "@plane/types";
 // ui
-import { Spinner, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 // components
+import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { PageDetailsHeader } from "@/components/headers";
 import { IssuePeekOverview } from "@/components/issues";
@@ -69,7 +70,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   if ((!pageStore || !pageStore.id) && !pageDetailsError)
     return (
       <div className="h-full w-full grid place-items-center">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 

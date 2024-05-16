@@ -4,7 +4,7 @@ import { StateGroupIcon } from "@plane/ui";
 // icons
 import { Icon } from "@/components/ui";
 // helpers
-import { issueGroupFilter, issuePriorityFilter } from "@/constants/data";
+import { issueGroupFilter, issuePriorityFilter } from "@/constants/issue";
 import { renderFullDate } from "@/helpers/date-time.helper";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
 // types

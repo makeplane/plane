@@ -11,6 +11,7 @@ export const UserLoggedIn = () => {
   const { data: user } = useUser();
 
   if (!user) return null;
+
   return (
     <div className="flex h-screen w-screen flex-col">
       <div className="relative flex w-full items-center justify-between gap-4 border-b border-custom-border-200 px-6 py-5">

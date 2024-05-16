@@ -62,6 +62,7 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
           message: "Account deleted successfully.",
         });
         mutate("CURRENT_USER_DETAILS", null);
+        signOut();
         setTheme("system");
         router.push("/");
         handleClose();
