@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { LogoSpinner } from "@/components/common";
 import { DashboardWidgets } from "@/components/dashboard";
 import { EmptyState } from "@/components/empty-state";
 import { IssuePeekOverview } from "@/components/issues";
