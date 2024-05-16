@@ -3,7 +3,7 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { IssueCalendarView } from "@/components/issues/board-views/calendar";
@@ -14,32 +14,43 @@ import { IssueSpreadsheetView } from "@/components/issues/board-views/spreadshee
 import { IssueAppliedFilters } from "@/components/issues/filters/applied-filters/root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // mobx store
-import { useIssue, useUser, useProject, useIssueDetails } from "@/hooks/store";
+import { useIssue, useUser, useIssueDetails, useIssueFilter, useProject } from "@/hooks/store";
 // assets
 import SomethingWentWrongImage from "public/something-went-wrong.svg";
 
 type ProjectDetailsViewProps = {
   workspaceSlug: string;
   projectId: string;
-  peekId: string;
+  peekId: string | undefined;
 };
 
 export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) => {
-  const { workspaceSlug, projectId, peekId } = props;
   // router
-  const params = useParams();
-  // store hooks
+  const searchParams = useSearchParams();
+  // query params
+  const states = searchParams.get("states") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
+
+  const { workspaceSlug, projectId, peekId } = props;
+  // hooks
+  const { fetchProjectSettings } = useProject();
+  const { issueFilters } = useIssueFilter();
+  const { loader, issues, error } = useIssue();
   const { fetchPublicIssues } = useIssue();
-  const { activeLayout } = useProject();
-  // fetching public issues
-  useSWR(
-    workspaceSlug && projectId ? "PROJECT_PUBLIC_ISSUES" : null,
-    workspaceSlug && projectId ? () => fetchPublicIssues(workspaceSlug, projectId, params) : null
-  );
-  // store hooks
-  const issueStore = useIssue();
   const issueDetailStore = useIssueDetails();
   const { data: currentUser, fetchCurrentUser } = useUser();
+
+  useSWR(
+    workspaceSlug && projectId ? "WORKSPACE_PROJECT_SETTINGS" : null,
+    workspaceSlug && projectId ? () => fetchProjectSettings(workspaceSlug, projectId) : null
+  );
+  useSWR(
+    (workspaceSlug && projectId) || states || priority || labels ? "WORKSPACE_PROJECT_PUBLIC_ISSUES" : null,
+    (workspaceSlug && projectId) || states || priority || labels
+      ? () => fetchPublicIssues(workspaceSlug, projectId, { states, priority, labels })
+      : null
+  );
 
   useEffect(() => {
     if (!currentUser) {
@@ -53,15 +64,18 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
     }
   }, [peekId, issueDetailStore, projectId, workspaceSlug]);
 
+  // derived values
+  const activeLayout = issueFilters?.display_filters?.layout || undefined;
+
   return (
     <div className="relative h-full w-full overflow-hidden">
       {workspaceSlug && <IssuePeekOverview />}
 
-      {issueStore?.loader && !issueStore.issues ? (
+      {loader && !issues ? (
         <div className="py-10 text-center text-sm text-custom-text-100">Loading...</div>
       ) : (
         <>
-          {issueStore?.error ? (
+          {error ? (
             <div className="grid h-full w-full place-items-center p-6">
               <div className="text-center">
                 <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-custom-background-80">
@@ -77,7 +91,7 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
             activeLayout && (
               <div className="relative flex h-full w-full flex-col overflow-hidden">
                 {/* applied filters */}
-                <IssueAppliedFilters />
+                <IssueAppliedFilters workspaceSlug={workspaceSlug} projectId={projectId} />
 
                 {activeLayout === "list" && (
                   <div className="relative h-full w-full overflow-y-auto">

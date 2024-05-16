@@ -10,7 +10,7 @@ import { FullScreenPeekView, SidePeekView } from "@/components/issues/peek-overv
 import { useIssue, useIssueDetails } from "@/hooks/store";
 
 export const IssuePeekOverview: React.FC = observer((props: any) => {
-  const { workspaceSlug, projectId, peekId, board, priorities, states, labels } = props;
+  const { workspaceSlug, projectId, peekId, board, priority, states, labels } = props;
   // states
   const [isSidePeekOpen, setIsSidePeekOpen] = useState(false);
   const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
@@ -33,7 +33,7 @@ export const IssuePeekOverview: React.FC = observer((props: any) => {
 
     const params: any = { board: board };
     if (states && states.length > 0) params.states = states;
-    if (priorities && priorities.length > 0) params.priorities = priorities;
+    if (priority && priority.length > 0) params.priority = priority;
     if (labels && labels.length > 0) params.labels = labels;
     // TODO: fix this redirection
     // router.push( encodeURI(`/${workspaceSlug?.toString()}/${projectId}`, )  { pathname: `/${workspaceSlug?.toString()}/${projectId}`, query: { ...params } });
