@@ -32,8 +32,8 @@ export class RootStore {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   hydrate = (data: any) => {
     if (!data) return;
-    this.instance.hydrate(data?.instance || {});
-    this.user.hydrate(data?.user || {});
+    this.instance.hydrate(data?.instance || undefined);
+    this.user.hydrate(data?.user || undefined);
   };
 
   reset = () => {
