@@ -262,9 +262,44 @@ class Migration(migrations.Migration):
             name="logo_props",
             field=models.JSONField(default=dict),
         ),
+        # Pages
         migrations.AddField(
             model_name="page",
             name="logo_props",
             field=models.JSONField(default=dict),
+        ),
+        migrations.AddField(
+            model_name="page",
+            name="description_binary",
+            field=models.BinaryField(null=True),
+        ),
+        # Estimates
+        migrations.AddField(
+            model_name="estimate",
+            name="type",
+            field=models.CharField(default="Categories", max_length=255),
+        ),
+        migrations.AlterField(
+            model_name="estimatepoint",
+            name="key",
+            field=models.IntegerField(
+                default=0,
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    django.core.validators.MaxValueValidator(12),
+                ],
+            ),
+        ),
+        migrations.AlterField(
+            model_name="issue",
+            name="estimate_point",
+            field=models.IntegerField(
+                blank=True,
+                null=True,
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    django.core.validators.MaxValueValidator(12),
+                ],
+            ),
         ),
     ]
