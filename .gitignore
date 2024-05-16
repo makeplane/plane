@@ -82,3 +82,6 @@ tmp/
 dist
 .temp/
 deploy/selfhost/plane-app/
+*storybook.log
+
+output.css
