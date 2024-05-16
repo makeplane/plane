@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { useSearchParams } from "next/navigation";
 import { IEmailCheckData } from "@plane/types";
 // components

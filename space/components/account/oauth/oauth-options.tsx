@@ -1,4 +1,4 @@
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 // components
 import { GithubOAuthButton, GoogleOAuthButton } from "@/components/account";
 // hooks
