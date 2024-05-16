@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, FormEvent, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 // icons

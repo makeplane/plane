@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import { Info, X } from "lucide-react";
 // helpers

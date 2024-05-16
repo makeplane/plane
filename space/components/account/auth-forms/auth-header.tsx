@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 // helpers
 import { EAuthModes } from "@/types/auth";
