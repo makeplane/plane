@@ -1,15 +1,17 @@
-import { ReactElement, useEffect, useMemo, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
 // ui
-import { Button, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar";
+// helpers
+import { authErrorHandler } from "@/helpers/authentication.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useAppTheme, useUser } from "@/hooks/store";
@@ -36,23 +38,23 @@ const defaultValues: FormValues = {
 export const userService = new UserService();
 export const authService = new AuthService();
 
+const defaultShowPassword = {
+  oldPassword: false,
+  password: false,
+  confirmPassword: false,
+};
+
 const ChangePasswordPage: NextPageWithLayout = observer(() => {
-  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  // states
   const [isPageLoading, setIsPageLoading] = useState(true);
-  const [showPassword, setShowPassword] = useState({
-    oldPassword: false,
-    password: false,
-    retypePassword: false,
-  });
+  const [showPassword, setShowPassword] = useState(defaultShowPassword);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
-
   // router
   const router = useRouter();
   // store hooks
   const { toggleSidebar } = useAppTheme();
   const { data: currentUser } = useUser();
-
   // use form
   const {
     control,
@@ -61,50 +63,44 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
     formState: { errors, isSubmitting },
     reset,
   } = useForm<FormValues>({ defaultValues });
-
+  // derived values
   const oldPassword = watch("old_password");
   const password = watch("new_password");
-  const retypePassword = watch("confirm_password");
+  const confirmPassword = watch("confirm_password");
 
   const handleShowPassword = (key: keyof typeof showPassword) =>
     setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const handleChangePassword = async (formData: FormValues) => {
+    const { old_password, new_password } = formData;
     try {
+      const csrfToken = await authService.requestCSRFToken().then((data) => data?.csrf_token);
       if (!csrfToken) throw new Error("csrf token not found");
-      const changePasswordPromise = userService
-        .changePassword(csrfToken, {
-          old_password: formData.old_password,
-          new_password: formData.new_password,
-        })
-        .then(() => {
-          reset(defaultValues);
-        });
-      setPromiseToast(changePasswordPromise, {
-        loading: "Changing password...",
-        success: {
-          title: "Success!",
-          message: () => "Password changed successfully.",
-        },
-        error: {
-          title: "Error!",
-          message: () => "Something went wrong. Please try again 1.",
-        },
+
+      await userService.changePassword(csrfToken, {
+        old_password,
+        new_password,
+      });
+
+      reset(defaultValues);
+      setShowPassword(defaultShowPassword);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Password changed successfully.",
       });
     } catch (err: any) {
+      const errorInfo = authErrorHandler(err.error_code?.toString());
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: err?.error ?? "Something went wrong. Please try again 2.",
+        title: errorInfo?.title ?? "Error!",
+        message:
+          typeof errorInfo?.message === "string" ? errorInfo.message : "Something went wrong. Please try again 2.",
       });
     }
   };
 
-  useEffect(() => {
-    if (csrfToken === undefined)
-      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
-  }, [csrfToken]);
-
+  // if the user doesn't have a password set, redirect to the profile page
   useEffect(() => {
     if (!currentUser) return;
 
@@ -112,20 +108,13 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
     else setIsPageLoading(false);
   }, [currentUser, router]);
 
-  const isButtonDisabled = useMemo(
-    () =>
-      !isSubmitting &&
-      !!oldPassword &&
-      !!password &&
-      !!retypePassword &&
-      getPasswordStrength(password) >= 3 &&
-      password === retypePassword &&
-      password !== oldPassword
-        ? false
-        : true,
-
-    [isSubmitting, oldPassword, password, retypePassword]
-  );
+  const isButtonDisabled =
+    getPasswordStrength(password) < 3 ||
+    oldPassword.trim() === "" ||
+    password.trim() === "" ||
+    confirmPassword.trim() === "" ||
+    password !== confirmPassword ||
+    password === oldPassword;
 
   const passwordSupport = password.length > 0 && (getPasswordStrength(password) < 3 || isPasswordInputFocused) && (
     <PasswordStrengthMeter password={password} />
@@ -149,11 +138,9 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
           onSubmit={handleSubmit(handleChangePassword)}
           className="mx-auto md:mt-16 mt-10 flex h-full w-full flex-col gap-8 px-4 md:px-8 pb-8 lg:w-3/5"
         >
-          <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-
           <h3 className="text-xl font-medium">Change password</h3>
           <div className="flex flex-col gap-10 w-full max-w-96">
-            <div className="flex flex-col gap-1 ">
+            <div className="space-y-1">
               <h4 className="text-sm">Current password</h4>
               <div className="relative flex items-center rounded-md">
                 <Controller
@@ -169,7 +156,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
                       value={value}
                       onChange={onChange}
                       placeholder="Old password"
-                      className="w-full rounded-md font-medium"
+                      className="w-full"
                       hasError={Boolean(errors.old_password)}
                     />
                   )}
@@ -186,11 +173,9 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
                   />
                 )}
               </div>
-
               {errors.old_password && <span className="text-xs text-red-500">{errors.old_password.message}</span>}
             </div>
-
-            <div className="flex flex-col gap-1 ">
+            <div className="space-y-1">
               <h4 className="text-sm">New password</h4>
               <div className="relative flex items-center rounded-md">
                 <Controller
@@ -227,8 +212,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
               </div>
               {passwordSupport}
             </div>
-
-            <div className="flex flex-col gap-1 ">
+            <div className="space-y-1">
               <h4 className="text-sm">Confirm password</h4>
               <div className="relative flex items-center rounded-md">
                 <Controller
@@ -240,7 +224,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
                   render={({ field: { value, onChange } }) => (
                     <Input
                       id="confirm_password"
-                      type={showPassword?.retypePassword ? "text" : "password"}
+                      type={showPassword?.confirmPassword ? "text" : "password"}
                       placeholder="Confirm password"
                       value={value}
                       onChange={onChange}
@@ -251,19 +235,19 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
                     />
                   )}
                 />
-                {showPassword?.retypePassword ? (
+                {showPassword?.confirmPassword ? (
                   <EyeOff
                     className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => handleShowPassword("retypePassword")}
+                    onClick={() => handleShowPassword("confirmPassword")}
                   />
                 ) : (
                   <Eye
                     className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => handleShowPassword("retypePassword")}
+                    onClick={() => handleShowPassword("confirmPassword")}
                   />
                 )}
               </div>
-              {!!retypePassword && password !== retypePassword && !isRetryPasswordInputFocused && (
+              {!!confirmPassword && password !== confirmPassword && !isRetryPasswordInputFocused && (
                 <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
               )}
             </div>
