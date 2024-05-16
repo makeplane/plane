@@ -1,20 +1,27 @@
+"use client";
+import { observer } from "mobx-react-lite";
+import useSWR from "swr";
 // components
 import { UserLoggedIn } from "@/components/accounts";
+import { LogoSpinner } from "@/components/common";
 import { AuthView } from "@/components/views";
-// services
-import { UserService } from "@/services/user.service";
+// hooks
+import { useUser } from "@/hooks/store";
 
-const userServices = new UserService();
+function HomePage() {
+  const { fetchCurrentUser, isAuthenticated, isLoading } = useUser();
 
-export default async function HomePage() {
-  const user = await userServices
-    .currentUser()
-    .then((user) => ({ ...user, isAuthenticated: true }))
-    .catch(() => ({ isAuthenticated: false }));
+  useSWR("CURRENT_USER", () => fetchCurrentUser(), { errorRetryCount: 0 });
 
-  if (user.isAuthenticated) {
+  if (isLoading) {
+    return <LogoSpinner />;
+  }
+
+  if (isAuthenticated) {
     return <UserLoggedIn />;
   }
 
   return <AuthView />;
 }
+
+export default observer(HomePage);

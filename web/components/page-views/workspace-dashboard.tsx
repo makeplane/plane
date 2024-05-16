@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { Spinner } from "@plane/ui";
-// components
+import { LogoSpinner } from "@/components/common";
 import { DashboardWidgets } from "@/components/dashboard";
 import { EmptyState } from "@/components/empty-state";
 import { IssuePeekOverview } from "@/components/issues";
@@ -14,7 +13,15 @@ import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useCommandPalette, useAppRouter, useUserProfile,  useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
+import {
+  useCommandPalette,
+  useAppRouter,
+  useUserProfile,
+  useEventTracker,
+  useDashboard,
+  useProject,
+  useUser,
+} from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
 
 export const WorkspaceDashboardView = observer(() => {
@@ -90,7 +97,7 @@ export const WorkspaceDashboardView = observer(() => {
         </>
       ) : (
         <div className="grid h-full w-full place-items-center">
-          <Spinner />
+          <LogoSpinner />
         </div>
       )}
     </>

@@ -7,6 +7,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
+import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar";
 // helpers
@@ -122,7 +123,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   if (isPageLoading)
     return (
       <div className="grid h-screen w-full place-items-center">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 

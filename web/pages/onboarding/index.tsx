@@ -4,9 +4,8 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // types
 import { TOnboardingSteps, TUserProfile } from "@plane/types";
-// ui
-import { Spinner } from "@plane/ui";
 // components
+import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { InviteMembers, CreateOrJoinWorkspaces, ProfileSetup } from "@/components/onboarding";
 // constants
@@ -177,7 +176,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         </div>
       ) : (
         <div className="grid h-screen w-full place-items-center">
-          <Spinner />
+          <LogoSpinner />
         </div>
       )}
     </>

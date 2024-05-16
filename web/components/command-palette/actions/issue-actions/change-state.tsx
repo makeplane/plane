@@ -4,7 +4,8 @@ import { useRouter } from "next/router";
 // hooks
 import { Check } from "lucide-react";
 import { TIssue } from "@plane/types";
-import { Spinner, StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon } from "@plane/ui";
+import { LogoSpinner } from "@/components/common";
 import { EIssuesStoreType } from "@/constants/issue";
 import { useProjectState, useIssues } from "@/hooks/store";
 // ui
@@ -58,7 +59,7 @@ export const ChangeIssueState: React.FC<Props> = observer((props) => {
           <div className="text-center">No states found</div>
         )
       ) : (
-        <Spinner />
+        <LogoSpinner />
       )}
     </>
   );

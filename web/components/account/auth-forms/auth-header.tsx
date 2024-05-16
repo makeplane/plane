@@ -1,8 +1,8 @@
 import { FC, ReactNode } from "react";
 import useSWR from "swr";
 import { IWorkspaceMemberInvitation } from "@plane/types";
-import { Spinner } from "@plane/ui";
 // components
+import { LogoSpinner } from "@/components/common";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
@@ -92,7 +92,7 @@ export const AuthHeader: FC<TAuthHeader> = (props) => {
   if (isLoading)
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 
