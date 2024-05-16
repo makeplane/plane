@@ -67,7 +67,7 @@ export const WorkspaceDashboardView = observer(() => {
           <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}
-      {homeDashboardId && joinedProjectIds ? (
+      {homeDashboardId && joinedProjectIds && (
         <>
           {joinedProjectIds.length > 0 ? (
             <>
@@ -95,10 +95,6 @@ export const WorkspaceDashboardView = observer(() => {
             />
           )}
         </>
-      ) : (
-        <div className="grid h-full w-full place-items-center">
-          <LogoSpinner />
-        </div>
       )}
     </>
   );
