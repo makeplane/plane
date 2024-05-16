@@ -36,8 +36,8 @@ export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((pro
       const priority = key === "priority" ? value : issueFilters?.filters?.priority ?? [];
       const labels = key === "labels" ? value : issueFilters?.filters?.labels ?? [];
 
-      const queryGenerated = queryParamGenerator({ board: activeLayout, priority, state, labels });
-      router.push(`/${workspaceSlug}/${projectId}?${queryGenerated?.queryParam}`);
+      const { queryParam } = queryParamGenerator({ board: activeLayout, priority, state, labels });
+      router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
     },
     [workspaceSlug, projectId, activeLayout, issueFilters, router]
   );

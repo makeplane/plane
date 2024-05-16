@@ -65,19 +65,19 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
 
       if (currentBoard) {
         if (activeLayout === undefined || activeLayout !== currentBoard) {
-          const queryGenerated = queryParamGenerator({ board: currentBoard, peekId, priority, state, labels });
+          const { query, queryParam } = queryParamGenerator({ board: currentBoard, peekId, priority, state, labels });
           const params: any = {
-            display_filters: { layout: (queryGenerated?.query?.board as string[])[0] },
+            display_filters: { layout: (query?.board as string[])[0] },
             filters: {
-              priority: queryGenerated ? queryGenerated?.query?.priority : undefined,
-              state: queryGenerated ? queryGenerated?.query?.state : undefined,
-              labels: queryGenerated ? queryGenerated?.query?.labels : undefined,
+              priority: query?.priority ?? undefined,
+              state: query?.state ?? undefined,
+              labels: query?.labels ?? undefined,
             },
           };
 
           if (!isIssueFiltersUpdated(params)) {
             initIssueFilters(projectId, params);
-            router.push(`/${workspaceSlug}/${projectId}?${queryGenerated?.queryParam}`);
+            router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
           }
         }
       }

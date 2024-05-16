@@ -38,8 +38,8 @@ export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
   const handleBlockClick = () => {
     setPeekId(issue.id);
 
-    const queryGenerated = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
-    router.push(`/${workspaceSlug}/${projectId}?${queryGenerated?.queryParam}`);
+    const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
+    router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
   };
 
   return (

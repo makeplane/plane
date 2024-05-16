@@ -35,8 +35,8 @@ export const NavbarIssueBoardView: FC<NavbarIssueBoardViewProps> = observer((pro
 
   const handleCurrentBoardView = (boardView: TIssueLayout) => {
     updateIssueFilters(projectId, "display_filters", "layout", boardView);
-    const queryGenerated = queryParamGenerator({ board: boardView, peekId, priority, state, labels });
-    router.push(`/${workspaceSlug}/${projectId}?${queryGenerated?.queryParam}`);
+    const { queryParam } = queryParamGenerator({ board: boardView, peekId, priority, state, labels });
+    router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
   };
 
   return (
