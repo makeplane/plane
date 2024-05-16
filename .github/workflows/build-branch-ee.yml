@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       arm64:
-        description: 'Build for ARM64 architecture'
+        description: "Build for ARM64 architecture"
         required: false
         default: false
         type: boolean
@@ -23,7 +23,7 @@ env:
 jobs:
   branch_build_setup:
     name: Build Setup
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
       gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
@@ -108,7 +108,7 @@ jobs:
   branch_build_push_admin:
     if: ${{ needs.branch_build_setup.outputs.build_admin== 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Admin Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     needs: [branch_build_setup]
     env:
       ADMIN_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/admin-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
@@ -173,7 +173,7 @@ jobs:
   branch_build_push_web:
     if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Web Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     needs: [branch_build_setup]
     env:
       WEB_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/web-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
@@ -238,7 +238,7 @@ jobs:
   branch_build_push_space:
     if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Space Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     needs: [branch_build_setup]
     env:
       SPACE_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/space-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
@@ -303,7 +303,7 @@ jobs:
   branch_build_push_apiserver:
     if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push API Server Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     needs: [branch_build_setup]
     env:
       BACKEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/backend-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
@@ -368,7 +368,7 @@ jobs:
   branch_build_push_proxy:
     if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Proxy Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     needs: [branch_build_setup]
     env:
       PROXY_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/proxy-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
@@ -433,7 +433,7 @@ jobs:
   upload_artifacts_s3:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
     name: Upload artifacts to S3 Bucket
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [branch_build_setup]
     container:
       image: docker:20.10.7
