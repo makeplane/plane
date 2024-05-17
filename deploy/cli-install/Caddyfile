@@ -1,9 +1,4 @@
-{
-	email {$CERT_EMAIL} 
-	{$CERT_ACME_DNS}
-}
-
-{$APP_PROTOCOL}://{$DOMAIN_NAME} {
+(plane_proxy) {
 	request_body {
 		max_size {$FILE_SIZE_LIMIT}
 	}
@@ -19,4 +14,18 @@
 	reverse_proxy /{$BUCKET_NAME}/* plane-minio:9000
 
 	reverse_proxy /* web:3000
+}
+
+{
+	email {$CERT_EMAIL:admin@example.com}
+	acme_ca {$CERT_ACME_CA} 
+	{$CERT_ACME_DNS}
+	servers {
+		max_header_size 5MB
+		client_ip_headers X-Forwarded-For X-Real-IP
+	}
+}
+
+{$SITE_ADDRESS} {
+	import plane_proxy
 }

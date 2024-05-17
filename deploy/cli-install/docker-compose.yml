@@ -2,7 +2,7 @@
 
 x-app-env: &app-env
   environment:
-    - NGINX_PORT=${NGINX_PORT:-80}
+    - LISTEN_HTTP_PORT=${LISTEN_HTTP_PORT:-80}
     - WEB_URL=${WEB_URL:-http://localhost}
     - DEBUG=${DEBUG:-0}
     - SENTRY_DSN=${SENTRY_DSN:-""}
@@ -161,7 +161,7 @@ services:
     pull_policy: if_not_present
     restart: unless-stopped
     ports:
-      - ${NGINX_PORT}:80
+      - ${LISTEN_HTTP_PORT}:80
     depends_on:
       - web
       - api

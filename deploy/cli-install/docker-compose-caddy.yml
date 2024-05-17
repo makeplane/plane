@@ -1,13 +1,12 @@
 x-proxy-env: &proxy-env
   environment:
-    - DOMAIN_NAME=${DOMAIN_NAME:-localhost}
-    - CERT_EMAIL=${CERT_EMAIL:-admin@localhost}
-    - APP_PROTOCOL=${APP_PROTOCOL:-http}
+    - SITE_ADDRESS=${SITE_ADDRESS:-localhost:80}
+    - CERT_EMAIL=${CERT_EMAIL:-admin@example.com}
+    - CERT_ACME_CA=${CERT_ACME_CA:-}
     - CERT_ACME_DNS=${CERT_ACME_DNS:-}
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
     - LISTEN_HTTP_PORT=${LISTEN_HTTP_PORT:-80}
-    - LISTEN_HTTPS_PORT=${LISTEN_HTTPS_PORT:-443}
 
 x-app-env: &app-env
   environment:
@@ -160,8 +159,7 @@ services:
     image: registry.plane.tools/plane/caddy:latest
     restart: unless-stopped
     ports:
-      - ${LISTEN_HTTP_PORT:-80}:80
-      - ${LISTEN_HTTPS_PORT:-443}:443
+      - ${LISTEN_HTTP_PORT:-80}:${LISTEN_HTTP_PORT:-80}
     volumes:
       - ${INSTALL_DIR}/Caddyfile:/etc/caddy/Caddyfile
       - ${INSTALL_DIR}/caddy/config:/config
