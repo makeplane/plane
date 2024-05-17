@@ -1,8 +1,8 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { AlertCircle } from "lucide-react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
+import { AlertCircle } from "lucide-react";
 //types
 import {
   TGroupedIssues,
