@@ -21,7 +21,7 @@ class UserFavorite(WorkspaceBaseModel):
     entity_identifier = models.UUIDField(null=True, blank=True)
     name = models.CharField(max_length=255, blank=True, null=True)
     is_folder = models.BooleanField(default=False)
-    sequence = models.IntegerField(default=0)
+    sequence = models.IntegerField(default=65535)
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -36,6 +36,16 @@ class UserFavorite(WorkspaceBaseModel):
         verbose_name_plural = "User Favorites"
         db_table = "user_favorites"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            largest_sort_order = UserFavorite.objects.filter(
+                workspace=self.workspace
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            if largest_sort_order is not None:
+                self.sort_order = largest_sort_order + 10000
+
+        super(UserFavorite, self).save(*args, **kwargs)
 
     def __str__(self):
         """Return user and the entity type"""

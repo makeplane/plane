@@ -391,7 +391,7 @@ class Migration(migrations.Migration):
                     models.CharField(blank=True, max_length=255, null=True),
                 ),
                 ("is_folder", models.BooleanField(default=False)),
-                ("sequence", models.IntegerField(default=0)),
+                ("sequence", models.IntegerField(default=65535)),
                 (
                     "created_by",
                     models.ForeignKey(
