@@ -45,6 +45,51 @@ def migrate_user_profile(apps, schema_editor):
     )
 
 
+def user_favorite_migration(apps, schema_editor):
+    # Import the models
+    CycleFavorite = apps.get_model("db", "CycleFavorite")
+    ModuleFavorite = apps.get_model("db", "ModuleFavorite")
+    ProjectFavorite = apps.get_model("db", "ProjectFavorite")
+    PageFavorite = apps.get_model("db", "PageFavorite")
+    IssueViewFavorite = apps.get_model("db", "IssueViewFavorite")
+    UserFavorite = apps.get_model("db", "UserFavorite")
+
+    # List of source models
+    source_models = [
+        CycleFavorite,
+        ModuleFavorite,
+        ProjectFavorite,
+        PageFavorite,
+        IssueViewFavorite,
+    ]
+
+    entity_mapper = {
+        "CycleFavorite": "cycle",
+        "ModuleFavorite": "module",
+        "ProjectFavorite": "project",
+        "PageFavorite": "page",
+        "IssueViewFavorite": "view",
+    }
+
+    for source_model in source_models:
+        entity_type = entity_mapper[source_model.__name__]
+        UserFavorite.objects.bulk_create(
+            [
+                UserFavorite(
+                    user_id=obj.user_id,
+                    entity_type=entity_type,
+                    entity_identifier=str(getattr(obj, entity_type).id),
+                    project_id=obj.project_id,
+                    workspace_id=obj.workspace_id,
+                    created_by_id=obj.created_by_id,
+                    updated_by_id=obj.updated_by_id,
+                )
+                for obj in source_model.objects.all().iterator()
+            ],
+            batch_size=1000,
+        )
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -262,9 +307,156 @@ class Migration(migrations.Migration):
             name="logo_props",
             field=models.JSONField(default=dict),
         ),
+        # Pages
         migrations.AddField(
             model_name="page",
             name="logo_props",
             field=models.JSONField(default=dict),
         ),
+        migrations.AddField(
+            model_name="page",
+            name="description_binary",
+            field=models.BinaryField(null=True),
+        ),
+        migrations.AlterField(
+            model_name="page",
+            name="name",
+            field=models.CharField(blank=True, max_length=255),
+        ),
+        # Estimates
+        migrations.AddField(
+            model_name="estimate",
+            name="type",
+            field=models.CharField(default="Categories", max_length=255),
+        ),
+        migrations.AlterField(
+            model_name="estimatepoint",
+            name="key",
+            field=models.IntegerField(
+                default=0,
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    django.core.validators.MaxValueValidator(12),
+                ],
+            ),
+        ),
+        migrations.AlterField(
+            model_name="issue",
+            name="estimate_point",
+            field=models.IntegerField(
+                blank=True,
+                null=True,
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    django.core.validators.MaxValueValidator(12),
+                ],
+            ),
+        ),
+        # workspace user properties
+        migrations.AlterModelTable(
+            name="workspaceuserproperties",
+            table="workspace_user_properties",
+        ),
+        # Favorites
+        migrations.CreateModel(
+            name="UserFavorite",
+            fields=[
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("entity_type", models.CharField(max_length=100)),
+                ("entity_identifier", models.UUIDField(blank=True, null=True)),
+                (
+                    "name",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
+                ("is_folder", models.BooleanField(default=False)),
+                ("sequence", models.IntegerField(default=65535)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "parent",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="parent_folder",
+                        to="db.userfavorite",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_%(class)s",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="favorites",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_%(class)s",
+                        to="db.workspace",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "User Favorite",
+                "verbose_name_plural": "User Favorites",
+                "db_table": "user_favorites",
+                "ordering": ("-created_at",),
+                "unique_together": {
+                    ("entity_type", "user", "entity_identifier")
+                },
+            },
+        ),
+        migrations.RunPython(user_favorite_migration),
     ]

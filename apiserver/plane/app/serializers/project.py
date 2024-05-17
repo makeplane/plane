@@ -13,7 +13,6 @@ from plane.db.models import (
     ProjectMember,
     ProjectMemberInvite,
     ProjectIdentifier,
-    ProjectFavorite,
     ProjectDeployBoard,
     ProjectPublicMember,
 )
@@ -195,16 +194,6 @@ class ProjectIdentifierSerializer(BaseSerializer):
     class Meta:
         model = ProjectIdentifier
         fields = "__all__"
-
-
-class ProjectFavoriteSerializer(BaseSerializer):
-    class Meta:
-        model = ProjectFavorite
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "user",
-        ]
 
 
 class ProjectMemberLiteSerializer(BaseSerializer):
