@@ -1,13 +1,14 @@
-import { Editor } from "@tiptap/core";
-import { EditorView } from "@tiptap/pm/view";
-import { UploadImage } from "src/types/upload-image";
-import { uploadKey } from "./constants";
-import { uploadAndValidateImage } from "./image-upload-handler";
+import { type UploadImage } from "src/types/upload-image";
 
 // utilities
 import { v4 as uuidv4 } from "uuid";
-import { removePlaceholder, findPlaceholder } from "src/ui/plugins/image/utils/placeholder";
+
+// types
 import { isFileValid } from "src/ui/plugins/image/utils/validate-file";
+import { Editor } from "@tiptap/core";
+import { EditorView } from "@tiptap/pm/view";
+import { uploadKey } from "./constants";
+import { removePlaceholder, findPlaceholder } from "./utils/placeholder";
 
 export async function startImageUpload(
   editor: Editor,
@@ -77,7 +78,35 @@ export async function startImageUpload(
     if (view.hasFocus()) view.focus();
     editor.storage.image.uploadInProgress = false;
   } catch (error) {
-    console.log("Error in uploading and inserting image: ", error);
+    console.error("Error in uploading and inserting image: ", error);
     removePlaceholder(editor, view, id);
+  }
+}
+
+async function uploadAndValidateImage(file: File, uploadFile: UploadImage): Promise<string | undefined> {
+  try {
+    const imageUrl = await uploadFile(file);
+
+    if (imageUrl == null) {
+      throw new Error("Image URL is undefined.");
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      const image = new Image();
+      image.src = imageUrl;
+      image.onload = () => {
+        resolve();
+      };
+      image.onerror = (error) => {
+        console.error("Error in loading image: ", error);
+        reject(error);
+      };
+    });
+
+    return imageUrl;
+  } catch (error) {
+    console.error("Error in uploading image: ", error);
+    // throw error to remove the placeholder
+    throw error;
   }
 }
