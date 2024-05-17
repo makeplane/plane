@@ -1,10 +1,12 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Tooltip } from "@plane/ui";
 // ui
 import { ReactionSelector } from "@/components/ui";
 // helpers
 import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
+import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails, useUser } from "@/hooks/store";
 
@@ -15,6 +17,15 @@ type Props = {
 };
 
 export const CommentReactions: React.FC<Props> = observer((props) => {
+  const router = useRouter();
+  const pathName = usePathname();
+  const searchParams = useSearchParams();
+  // query params
+  const board = searchParams.get("board") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
+
   const { commentId, projectId, workspaceSlug } = props;
   // hooks
   const { addCommentReaction, removeCommentReaction, details, peekId } = useIssueDetails();
@@ -23,7 +34,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
   const commentReactions = peekId ? details[peekId].comments.find((c) => c.id === commentId)?.comment_reactions : [];
   const groupedReactions = peekId ? groupReactions(commentReactions ?? [], "reaction") : {};
 
-  const userReactions = commentReactions?.filter((r) => r.actor_detail.id === user?.id);
+  const userReactions = commentReactions?.filter((r) => r?.actor_detail?.id === user?.id);
 
   const handleAddReaction = (reactionHex: string) => {
     if (!workspaceSlug || !projectId || !peekId) return;
@@ -42,13 +53,15 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
     else handleAddReaction(reactionHex);
   };
 
-  // TODO: on onclick redirect to login page if the user is not logged in
+  // derived values
+  const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
+
   return (
     <div className="mt-2 flex items-center gap-1.5">
       <ReactionSelector
         onSelect={(value) => {
           if (user) handleReactionClick(value);
-          // userStore.requiredLogin(() => {});
+          else router.push(`/?next_path=${pathName}?${queryParam}`);
         }}
         position="top"
         selected={userReactions?.map((r) => r.reaction)}
@@ -66,7 +79,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
               tooltipContent={
                 <div>
                   {reactions
-                    .map((r) => r.actor_detail.display_name)
+                    .map((r) => r?.actor_detail?.display_name)
                     .splice(0, REACTIONS_LIMIT)
                     .join(", ")}
                   {reactions.length > REACTIONS_LIMIT && " and " + (reactions.length - REACTIONS_LIMIT) + " more"}
@@ -77,10 +90,10 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
                 type="button"
                 onClick={() => {
                   if (user) handleReactionClick(reaction);
-                  // userStore.requiredLogin(() => {});
+                  else router.push(`/?next_path=${pathName}?${queryParam}`);
                 }}
                 className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
-                  commentReactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
+                  commentReactions?.some((r) => r?.actor_detail?.id === user?.id && r.reaction === reaction)
                     ? "bg-custom-primary-100/10"
                     : "bg-custom-background-80"
                 }`}
@@ -88,7 +101,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
                 <span>{renderEmoji(reaction)}</span>
                 <span
                   className={
-                    commentReactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
+                    commentReactions?.some((r) => r?.actor_detail?.id === user?.id && r.reaction === reaction)
                       ? "text-custom-primary-100"
                       : ""
                   }

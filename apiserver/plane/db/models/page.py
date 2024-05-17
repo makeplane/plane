@@ -16,7 +16,7 @@ def get_view_props():
 
 
 class Page(ProjectBaseModel):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True)
     description = models.JSONField(default=dict, blank=True)
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")

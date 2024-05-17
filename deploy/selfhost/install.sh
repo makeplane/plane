@@ -287,7 +287,17 @@ function backupSingleVolume() {
     backupFolder=$1
     selectedVolume=$2
     # Backup data from Docker volume to the backup folder
-    docker run --rm -v "$selectedVolume":/source -v "$backupFolder":/backup busybox sh -c 'cp -r /source/* /backup/'
+    # docker run --rm -v "$selectedVolume":/source -v "$backupFolder":/backup busybox sh -c 'cp -r /source/* /backup/'
+    local tobereplaced="plane-app_"
+    local replacewith=""
+
+    local svcName="${selectedVolume//$tobereplaced/$replacewith}"
+
+    docker run --rm \
+        -e TAR_NAME="$svcName" \
+        -v "$selectedVolume":/"$svcName" \
+        -v "$backupFolder":/backup \
+        busybox sh -c 'tar -czf "/backup/${TAR_NAME}.tar.gz" /${TAR_NAME}'
 }
 
 function backupData() {
@@ -303,11 +313,8 @@ function backupData() {
     fi
 
     for vol in $volumes; do
-        # selected_volume=$(echo "$volumes" | sed -n "${volume_number}p")
-        local backup_folder="$BACKUP_FOLDER/$vol"
-        mkdir -p "$backup_folder"
         echo "Backing Up $vol"
-        backupSingleVolume "$backup_folder" "$vol"
+        backupSingleVolume "$BACKUP_FOLDER" "$vol"
     done
 
     echo ""
@@ -371,7 +378,6 @@ function askForAction() {
     elif [ "$ACTION" == "7" ]  || [ "$DEFAULT_ACTION" == "backup" ]
     then
         backupData
-        askForAction
     elif [ "$ACTION" == "8" ]
     then
         exit 0

@@ -18,6 +18,7 @@ const authService = new AuthService();
 type TAuthUniqueCodeForm = {
   mode: EAuthModes;
   email: string;
+  nextPath: string | undefined;
   handleEmailClear: () => void;
   generateEmailUniqueCode: (email: string) => Promise<{ code: string } | undefined>;
 };
@@ -33,7 +34,7 @@ const defaultValues: TUniqueCodeFormValues = {
 };
 
 export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
-  const { mode, email, handleEmailClear, generateEmailUniqueCode } = props;
+  const { mode, email, nextPath, handleEmailClear, generateEmailUniqueCode } = props;
   // hooks
   // const { captureEvent } = useEventTracker();
   // derived values
@@ -81,6 +82,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
+      <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
           Email
