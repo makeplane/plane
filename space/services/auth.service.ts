@@ -1,9 +1,9 @@
-// types
-import { ICsrfTokenData, IEmailCheckData, IEmailCheckResponse } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
+// types
+import { ICsrfTokenData, IEmailCheckData, IEmailCheckResponse } from "@/types/auth";
 
 export class AuthService extends APIService {
   constructor() {
@@ -26,14 +26,6 @@ export class AuthService extends APIService {
       });
   }
 
-  async sendResetPasswordLink(data: { email: string }): Promise<void> {
-    return this.post(`/auth/forgot-password/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
   async generateUniqueCode(data: { email: string }): Promise<void> {
     return this.post("/auth/spaces/magic-generate/", data, { headers: {} })
       .then((response) => response?.data)
@@ -41,6 +33,4 @@ export class AuthService extends APIService {
         throw error?.response?.data;
       });
   }
-
-  async signOut() {}
 }

@@ -289,6 +289,7 @@ class IssueSearchEndpoint(BaseAPIView):
             issues.values(
                 "name",
                 "id",
+                "start_date",
                 "sequence_id",
                 "project__name",
                 "project__identifier",

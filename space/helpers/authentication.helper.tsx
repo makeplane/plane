@@ -9,17 +9,6 @@ export enum EPageTypes {
   AUTHENTICATED = "AUTHENTICATED",
 }
 
-export enum EAuthModes {
-  SIGN_IN = "SIGN_IN",
-  SIGN_UP = "SIGN_UP",
-}
-
-export enum EAuthSteps {
-  EMAIL = "EMAIL",
-  PASSWORD = "PASSWORD",
-  UNIQUE_CODE = "UNIQUE_CODE",
-}
-
 export enum EErrorAlertType {
   BANNER_ALERT = "BANNER_ALERT",
   TOAST_ALERT = "TOAST_ALERT",

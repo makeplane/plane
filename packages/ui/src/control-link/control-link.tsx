@@ -38,3 +38,5 @@ export const ControlLink = React.forwardRef<HTMLAnchorElement, TControlLink>((pr
     </a>
   );
 });
+
+ControlLink.displayName = "ControlLink";

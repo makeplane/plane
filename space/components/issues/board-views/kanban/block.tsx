@@ -7,6 +7,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
 import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
 import { IssueBlockState } from "@/components/issues/board-views/block-state";
+// helpers
+import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails, useProject } from "@/hooks/store";
 // interfaces
@@ -20,22 +22,23 @@ type IssueKanBanBlockProps = {
 };
 
 export const IssueKanBanBlock: FC<IssueKanBanBlockProps> = observer((props) => {
-  const { workspaceSlug, projectId, params, issue } = props;
-  const { board, priority, states, labels } = params;
-  // store
-  const { project } = useProject();
-  const { setPeekId } = useIssueDetails();
-  // router
   const router = useRouter();
   const searchParams = useSearchParams();
+  // query params
+  const board = searchParams.get("board") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
+  // props
+  const { workspaceSlug, projectId, issue } = props;
+  // hooks
+  const { project } = useProject();
+  const { setPeekId } = useIssueDetails();
 
   const handleBlockClick = () => {
     setPeekId(issue.id);
-    const params: any = { board: board, peekId: issue.id };
-    if (states && states.length > 0) params.states = states;
-    if (priority && priority.length > 0) params.priority = priority;
-    if (labels && labels.length > 0) params.labels = labels;
-    router.push(`/${workspaceSlug}/${projectId}?${searchParams}`);
+    const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
+    router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
   };
 
   return (

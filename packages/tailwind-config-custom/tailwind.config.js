@@ -87,6 +87,8 @@ module.exports = {
             800: convertToRGB("--color-background-800"),
             900: convertToRGB("--color-background-900"),
             1000: "rgb(0, 0, 0)",
+            primary: convertToRGB(" --color-background-primary"),
+            error: convertToRGB(" --color-background-error"),
             DEFAULT: convertToRGB("--color-background-100"),
           },
           text: {
@@ -110,6 +112,8 @@ module.exports = {
             800: convertToRGB("--color-text-800"),
             900: convertToRGB("--color-text-900"),
             1000: "rgb(0, 0, 0)",
+            primary: convertToRGB("--color-text-primary"),
+            error: convertToRGB("--color-text-error"),
             DEFAULT: convertToRGB("--color-text-100"),
           },
           border: {
@@ -119,7 +123,17 @@ module.exports = {
             300: convertToRGB("--color-border-300"),
             400: convertToRGB("--color-border-400"),
             1000: "rgb(0, 0, 0)",
+            primary: convertToRGB("--color-border-primary"),
+            error: convertToRGB("--color-border-error"),
             DEFAULT: convertToRGB("--color-border-200"),
+          },
+          error: {
+            10: convertToRGB("--color-error-10"),
+            20: convertToRGB("--color-error-20"),
+            30: convertToRGB("--color-error-30"),
+            100: convertToRGB("--color-error-100"),
+            200: convertToRGB("--color-error-200"),
+            500: convertToRGB("--color-error-500"),
           },
           sidebar: {
             background: {

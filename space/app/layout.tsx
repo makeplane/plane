@@ -40,7 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="shortcut icon" href={`${ASSET_PREFIX}/favicon/favicon.ico`} />
       </head>
       <body>
-        <AppProvider initialState={{ instance: instanceDetails?.instance }}>
+        <AppProvider initialState={{ instance: instanceDetails }}>
           {!instanceDetails ? (
             <InstanceFailureView />
           ) : (

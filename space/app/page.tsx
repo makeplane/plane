@@ -2,7 +2,7 @@
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // components
-import { UserLoggedIn } from "@/components/accounts";
+import { UserLoggedIn } from "@/components/account";
 import { LogoSpinner } from "@/components/common";
 import { AuthView } from "@/components/views";
 // hooks

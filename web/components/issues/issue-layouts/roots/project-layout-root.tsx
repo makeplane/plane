@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
-import { LogoSpinner } from "@/components/common";
+import { Spinner } from "@plane/ui";
 import {
   ListLayout,
   CalendarLayout,
@@ -61,8 +61,8 @@ export const ProjectLayoutRoot: FC = observer(() => {
           <div className="relative h-full w-full overflow-auto bg-custom-background-90">
             {/* mutation loader */}
             {issues?.loader === "mutation" && (
-              <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
-                <LogoSpinner />
+              <div className="fixed w-[40px] h-[40px] z-50 right-[16px] top-[64px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
+                <Spinner className="w-4 h-4" />
               </div>
             )}
             {activeLayout === "list" ? (
