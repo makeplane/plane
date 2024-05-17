@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // lib
 import { Tooltip } from "@plane/ui";
 import { ReactionSelector } from "@/components/ui";
 // helpers
 import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
+import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails, useUser } from "@/hooks/store";
 
@@ -14,6 +16,16 @@ type IssueEmojiReactionsProps = {
 };
 
 export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer((props) => {
+  const router = useRouter();
+  const pathName = usePathname();
+  const searchParams = useSearchParams();
+  // query params
+  const peekId = searchParams.get("peekId") || undefined;
+  const board = searchParams.get("board") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
+
   const { workspaceSlug, projectId } = props;
   // store
   const issueDetailsStore = useIssueDetails();
@@ -46,13 +58,15 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
     fetchCurrentUser();
   }, [user, fetchCurrentUser]);
 
-  // TODO: on onclick of reaction, if user not logged in redirect to login page
+  // derived values
+  const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
+
   return (
     <>
       <ReactionSelector
         onSelect={(value) => {
           if (user) handleReactionClick(value);
-          // userStore.requiredLogin(() => {});
+          else router.push(`/?next_path=${pathName}?${queryParam}`);
         }}
         selected={userReactions?.map((r) => r.reaction)}
         size="md"
@@ -80,7 +94,7 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
                   type="button"
                   onClick={() => {
                     if (user) handleReactionClick(reaction);
-                    // userStore.requiredLogin(() => {});
+                    else router.push(`/?next_path=${pathName}?${queryParam}`);
                   }}
                   className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
                     reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)

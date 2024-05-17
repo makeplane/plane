@@ -18,10 +18,10 @@ export const OAuthOptions: React.FC = observer(() => {
       <div className={`mt-7 grid gap-4 overflow-hidden`}>
         {instance?.config?.is_google_enabled && (
           <div className="flex h-[42px] items-center !overflow-hidden">
-            <GoogleOAuthButton text="SignIn with Google" />
+            <GoogleOAuthButton text="Sign in with Google" />
           </div>
         )}
-        {instance?.config?.is_github_enabled && <GithubOAuthButton text="SignIn with Github" />}
+        {instance?.config?.is_github_enabled && <GithubOAuthButton text="Sign in with Github" />}
       </div>
     </>
   );
