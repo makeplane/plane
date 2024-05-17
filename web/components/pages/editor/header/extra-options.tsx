@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Lock, RefreshCw, Sparkle } from "lucide-react";
+import { Lock, Sparkle } from "lucide-react";
 // editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
 // ui
@@ -9,7 +9,6 @@ import { ArchiveIcon } from "@plane/ui";
 import { GptAssistantPopover } from "@/components/core";
 import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
@@ -31,7 +30,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
   // store hooks
   const { instance } = useInstance();
   // derived values
-  const { archived_at, isContentEditable, isSubmitting, is_locked } = pageStore;
+  const { archived_at, isContentEditable, is_locked } = pageStore;
 
   const handleAiAssistance = async (response: string) => {
     if (!editorRef) return;
@@ -40,16 +39,6 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
 
   return (
     <div className="flex flex-grow items-center justify-end gap-3">
-      {isContentEditable && (
-        <div
-          className={cn("fade-in flex items-center gap-x-2 transition-all duration-300", {
-            "fade-out": isSubmitting === "saved",
-          })}
-        >
-          {isSubmitting === "submitting" && <RefreshCw className="h-4 w-4 stroke-custom-text-300" />}
-          <span className="text-sm text-custom-text-300">{isSubmitting === "submitting" ? "Saving..." : "Saved"}</span>
-        </div>
-      )}
       {is_locked && (
         <div className="flex h-7 items-center gap-2 rounded-full bg-custom-background-80 px-3 py-0.5 text-xs font-medium text-custom-text-300">
           <Lock className="h-3 w-3" />
