@@ -7,7 +7,7 @@ import { GeneralConfigurationForm } from "./form";
 
 function GeneralPage() {
   const { instance, instanceAdmins } = useInstance();
-  console.log("instance", instanceAdmins);
+  console.log("instance", instance);
   return (
     <>
       <div className="relative container mx-auto w-full h-full p-8 py-4 space-y-6 flex flex-col">
@@ -19,8 +19,8 @@ function GeneralPage() {
           </div>
         </div>
         <div className="flex-grow overflow-hidden overflow-y-auto">
-          {instance?.instance && instanceAdmins && (
-            <GeneralConfigurationForm instance={instance.instance} instanceAdmins={instanceAdmins} />
+          {instance && instanceAdmins && (
+            <GeneralConfigurationForm instance={instance} instanceAdmins={instanceAdmins} />
           )}
         </div>
       </div>
