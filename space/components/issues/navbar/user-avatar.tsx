@@ -98,6 +98,7 @@ export const UserAvatar: FC = observer(() => {
                   {csrfToken && (
                     <form method="POST" action={`${API_BASE_URL}/auth/spaces/sign-out/`} onSubmit={signOut}>
                       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+                      <input type="hidden" name="next_path" value={`${pathName}?${queryParam}`} />
                       <button
                         type="submit"
                         className="flex items-center gap-2 rounded p-2 whitespace-nowrap hover:bg-custom-background-80 text-sm min-w-36 cursor-pointer"
