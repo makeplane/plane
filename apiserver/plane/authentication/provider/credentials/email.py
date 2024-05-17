@@ -21,6 +21,7 @@ class EmailProvider(CredentialAdapter):
         key=None,
         code=None,
         is_signup=False,
+        callback=None,
     ):
         super().__init__(request, self.provider)
         self.key = key

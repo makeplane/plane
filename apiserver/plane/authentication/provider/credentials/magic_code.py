@@ -24,6 +24,7 @@ class MagicCodeProvider(CredentialAdapter):
         request,
         key,
         code=None,
+        callback=None,
     ):
 
         (

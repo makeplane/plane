@@ -23,8 +23,9 @@ class OauthAdapter(Adapter):
         userinfo_url,
         client_secret=None,
         code=None,
+        callback=None,
     ):
-        super().__init__(request, provider)
+        super().__init__(request, provider, callback=callback)
         self.client_id = client_id
         self.scope = scope
         self.redirect_uri = redirect_uri
