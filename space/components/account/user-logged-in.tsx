@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+// components
+import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 // hooks
 import { useUser } from "@/hooks/store";
 // assets
@@ -18,19 +20,7 @@ export const UserLoggedIn = () => {
         <div>
           <Image src={PlaneLogo} alt="User already logged in" />
         </div>
-        <div className="flex items-center gap-2 rounded border border-custom-border-200 p-2">
-          {user.avatar && user.avatar !== "" ? (
-            <div className="h-5 w-5 rounded-full">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={user.avatar} alt={user.display_name ?? ""} className="rounded-full" />
-            </div>
-          ) : (
-            <div className="grid h-5 w-5 place-items-center rounded-full bg-custom-background-80 text-[10px] capitalize">
-              {(user.display_name ?? "U")[0]}
-            </div>
-          )}
-          <h6 className="text-xs font-medium">{user.display_name}</h6>
-        </div>
+        <UserAvatar />
       </div>
 
       <div className="grid h-full w-full place-items-center p-6">

@@ -2,18 +2,16 @@
 
 import { useEffect, FC } from "react";
 import { observer } from "mobx-react-lite";
-import Link from "next/link";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
-// ui
-import { Avatar, Button } from "@plane/ui";
+import { useRouter, useSearchParams } from "next/navigation";
 // components
 import { IssueFiltersDropdown } from "@/components/issues/filters";
 import { NavbarIssueBoardView } from "@/components/issues/navbar/issue-board-view";
 import { NavbarTheme } from "@/components/issues/navbar/theme";
+import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useProject, useUser, useIssueFilter, useIssueDetails } from "@/hooks/store";
+import { useProject, useIssueFilter, useIssueDetails } from "@/hooks/store";
 // types
 import { TIssueLayout } from "@/types/issue";
 
@@ -27,7 +25,6 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // router
   const router = useRouter();
-  const pathName = usePathname();
   const searchParams = useSearchParams();
   // query params
   const board = searchParams.get("board") || undefined;
@@ -38,7 +35,6 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   // hooks
   const { issueFilters, isIssueFiltersUpdated, initIssueFilters } = useIssueFilter();
   const { settings } = useProject();
-  const { data: user } = useUser();
   const { setPeekId } = useIssueDetails();
   // derived values
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
@@ -115,20 +111,7 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
         <NavbarTheme />
       </div>
 
-      {user?.id ? (
-        <div className="flex items-center gap-2 rounded border border-custom-border-200 p-2">
-          <Avatar name={user?.display_name} src={user?.avatar ?? undefined} shape="square" size="sm" />
-          <h6 className="text-xs font-medium">
-            {user?.display_name || `${user?.first_name} ${user?.first_name}` || user?.email || "User"}
-          </h6>
-        </div>
-      ) : (
-        <div className="flex-shrink-0">
-          <Link href={`/?next_path=${pathName}`}>
-            <Button variant="outline-primary">Sign in</Button>
-          </Link>
-        </div>
-      )}
+      <UserAvatar />
     </>
   );
 });
