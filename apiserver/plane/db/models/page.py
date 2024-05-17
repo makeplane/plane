@@ -44,7 +44,6 @@ class Page(ProjectBaseModel):
     is_locked = models.BooleanField(default=False)
     view_props = models.JSONField(default=get_view_props)
     logo_props = models.JSONField(default=dict)
-    description_binary = models.BinaryField(null=True)
 
     class Meta:
         verbose_name = "Page"
