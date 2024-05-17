@@ -34,7 +34,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
   const commentReactions = peekId ? details[peekId].comments.find((c) => c.id === commentId)?.comment_reactions : [];
   const groupedReactions = peekId ? groupReactions(commentReactions ?? [], "reaction") : {};
 
-  const userReactions = commentReactions?.filter((r) => r.actor_detail.id === user?.id);
+  const userReactions = commentReactions?.filter((r) => r?.actor_detail?.id === user?.id);
 
   const handleAddReaction = (reactionHex: string) => {
     if (!workspaceSlug || !projectId || !peekId) return;
@@ -79,7 +79,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
               tooltipContent={
                 <div>
                   {reactions
-                    .map((r) => r.actor_detail.display_name)
+                    .map((r) => r?.actor_detail?.display_name)
                     .splice(0, REACTIONS_LIMIT)
                     .join(", ")}
                   {reactions.length > REACTIONS_LIMIT && " and " + (reactions.length - REACTIONS_LIMIT) + " more"}
@@ -93,7 +93,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
                   else router.push(`/?next_path=${pathName}?${queryParam}`);
                 }}
                 className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
-                  commentReactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
+                  commentReactions?.some((r) => r?.actor_detail?.id === user?.id && r.reaction === reaction)
                     ? "bg-custom-primary-100/10"
                     : "bg-custom-background-80"
                 }`}
@@ -101,7 +101,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
                 <span>{renderEmoji(reaction)}</span>
                 <span
                   className={
-                    commentReactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
+                    commentReactions?.some((r) => r?.actor_detail?.id === user?.id && r.reaction === reaction)
                       ? "text-custom-primary-100"
                       : ""
                   }
