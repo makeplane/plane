@@ -125,6 +125,8 @@ class MagicCodeProvider(CredentialAdapter):
                         },
                     }
                 )
+                # Delete the token from redis if the code match is successful
+                ri.delete(self.key)
                 return
             else:
                 raise AuthenticationException(
