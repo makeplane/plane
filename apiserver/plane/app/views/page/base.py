@@ -392,6 +392,9 @@ class SubPagesEndpoint(BaseAPIView):
 
 
 class PagesDescriptionViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
 
     def retrieve(self, request, slug, project_id, pk):
         page = Page.objects.get(
