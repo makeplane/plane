@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { IUserEmailNotificationSettings } from "@plane/types";
 // ui
@@ -22,6 +22,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
     watch,
     control,
     setValue,
+    reset,
     formState: { isSubmitting, isDirty, dirtyFields },
   } = useForm<IUserEmailNotificationSettings>({
     defaultValues: {
@@ -49,6 +50,10 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
       )
       .catch((err) => console.error(err));
   };
+
+  useEffect(() => {
+    reset(data);
+  }, [reset, data]);
 
   return (
     <>

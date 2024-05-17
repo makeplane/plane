@@ -269,6 +269,7 @@ class ProfileEndpoint(BaseAPIView):
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_cache("/api/users/me/settings/")
     def patch(self, request):
         profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(

@@ -9,17 +9,6 @@ export enum EPageTypes {
   AUTHENTICATED = "AUTHENTICATED",
 }
 
-export enum EAuthModes {
-  SIGN_IN = "SIGN_IN",
-  SIGN_UP = "SIGN_UP",
-}
-
-export enum EAuthSteps {
-  EMAIL = "EMAIL",
-  PASSWORD = "PASSWORD",
-  UNIQUE_CODE = "UNIQUE_CODE",
-}
-
 export enum EErrorAlertType {
   BANNER_ALERT = "BANNER_ALERT",
   TOAST_ALERT = "TOAST_ALERT",
@@ -116,7 +105,7 @@ const errorCodeMessages: {
         Your account is already registered.&nbsp;
         <Link
           className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/accounts/sign-in${email ? `?email=${email}` : ``}`}
+          href={`/accounts/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Sign In
         </Link>
@@ -155,7 +144,7 @@ const errorCodeMessages: {
         No account found.&nbsp;
         <Link
           className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/${email ? `?email=${email}` : ``}`}
+          href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Create one
         </Link>

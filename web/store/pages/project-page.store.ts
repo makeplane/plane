@@ -5,7 +5,7 @@ import { computedFn } from "mobx-utils";
 // types
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
-import { filterPagesByPageType, orderPages, shouldFilterPage } from "@/helpers/page.helper";
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // services
 import { PageService } from "@/services/page.service";
 // store
@@ -105,7 +105,7 @@ export class ProjectPageStore implements IProjectPageStore {
     let filteredPages = pagesByType.filter(
       (p) =>
         p.project === projectId &&
-        p.name?.toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        getPageName(p.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
         shouldFilterPage(p, this.filters.filters)
     );
     filteredPages = orderPages(filteredPages, this.filters.sortKey, this.filters.sortBy);

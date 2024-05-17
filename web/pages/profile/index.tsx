@@ -8,17 +8,9 @@ import { Disclosure, Transition } from "@headlessui/react";
 // layouts
 // components
 import type { IUser } from "@plane/types";
-import {
-  Button,
-  CustomSelect,
-  CustomSearchSelect,
-  Input,
-  Spinner,
-  TOAST_TYPE,
-  setPromiseToast,
-  setToast,
-} from "@plane/ui";
+import { Button, CustomSelect, CustomSearchSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { DeactivateAccountModal } from "@/components/account";
+import { LogoSpinner } from "@/components/common";
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components/core";
 // ui
 // icons
@@ -134,7 +126,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   if (!currentUser)
     return (
       <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 

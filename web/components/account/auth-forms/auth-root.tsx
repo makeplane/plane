@@ -116,9 +116,6 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
       });
   };
 
-  const isOAuthEnabled =
-    (instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled)) || false;
-
   return (
     <div className="relative flex flex-col space-y-6">
       <AuthHeader
@@ -159,8 +156,8 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
             }}
           />
         )}
-        {isOAuthEnabled && <OAuthOptions />}
-        <TermsAndConditions isSignUp={false} />
+        <OAuthOptions isSignUp={authMode === EAuthModes.SIGN_UP} />
+        <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP} />
       </AuthHeader>
     </div>
   );
