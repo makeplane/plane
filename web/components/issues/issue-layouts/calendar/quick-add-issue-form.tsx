@@ -1,25 +1,24 @@
 import { useEffect, useRef, useState } from "react";
+import { differenceInCalendarDays } from "date-fns";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-// components
 import { PlusIcon } from "lucide-react";
+// types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
+// ui
 import { TOAST_TYPE, setPromiseToast, setToast, CustomMenu } from "@plane/ui";
+// components
 import { ExistingIssuesListModal } from "@/components/core";
-// hooks
+// constants
 import { ISSUE_CREATED } from "@/constants/event-tracker";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { createIssuePayload } from "@/helpers/issue.helper";
+// hooks
 import { useEventTracker, useIssueDetail, useProject } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-// helpers
-// icons
-// ui
-// types
-// constants
-// helper
 
 type Props = {
   formKey: keyof TIssue;
@@ -182,9 +181,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
           updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, prePopulatedData ?? {})
         )
       );
-      if (addIssuesToView) {
-        await addIssuesToView(issueIds);
-      }
+      await addIssuesToView?.(issueIds);
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -212,6 +209,15 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
           handleClose={() => setIsExistingIssueModalOpen(false)}
           searchParams={ExistingIssuesListModalPayload}
           handleOnSubmit={handleAddIssuesToView}
+          shouldHideIssue={(issue) => {
+            if (issue.start_date && prePopulatedData?.target_date) {
+              const issueStartDate = new Date(issue.start_date);
+              const targetDate = new Date(prePopulatedData.target_date);
+              const diffInDays = differenceInCalendarDays(targetDate, issueStartDate);
+              if (diffInDays < 0) return true;
+            }
+            return false;
+          }}
         />
       )}
       {isOpen && (
