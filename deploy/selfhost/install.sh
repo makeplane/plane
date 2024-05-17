@@ -295,7 +295,7 @@ function backupSingleVolume() {
 
     docker run --rm \
         -e TAR_NAME="$svcName" \
-        -v "$selectedVolume":/$svcName \
+        -v "$selectedVolume":/"$svcName" \
         -v "$backupFolder":/backup \
         busybox sh -c 'tar -czf "/backup/${TAR_NAME}.tar.gz" /${TAR_NAME}'
 }
