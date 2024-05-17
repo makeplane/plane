@@ -215,6 +215,7 @@ class SignUpAuthEndpoint(View):
             )
             return HttpResponseRedirect(url)
 
+        # Existing user
         existing_user = User.objects.filter(email=email).first()
 
         if existing_user:

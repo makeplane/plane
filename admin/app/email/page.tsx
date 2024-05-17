@@ -5,9 +5,10 @@ import useSWR from "swr";
 import { Loader } from "@plane/ui";
 // components
 import { PageHeader } from "@/components/core";
-import { useInstance } from "@/hooks/store";
-import { InstanceEmailForm } from "./components";
 // hooks
+import { useInstance } from "@/hooks/store";
+// components
+import { InstanceEmailForm } from "./email-config-form";
 
 const InstanceEmailPage = observer(() => {
   // store

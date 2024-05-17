@@ -5,8 +5,6 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 // types
 import { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
-// ui
-import { Spinner } from "@plane/ui";
 // components
 import { Invitations, OnboardingHeader, SwitchOrDeleteAccountDropdown, CreateWorkspace } from "@/components/onboarding";
 // hooks
@@ -14,6 +12,7 @@ import { useUser } from "@/hooks/store";
 // assets
 import CreateJoinWorkspaceDark from "public/onboarding/create-join-workspace-dark.svg";
 import CreateJoinWorkspace from "public/onboarding/create-join-workspace.svg";
+import { LogoSpinner } from "../common";
 
 export enum ECreateOrJoinWorkspaceViews {
   WORKSPACE_CREATE = "WORKSPACE_CREATE",
@@ -74,7 +73,7 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
             />
           ) : (
             <div className="flex h-96 w-full items-center justify-center">
-              <Spinner />
+              <LogoSpinner />
             </div>
           )}
         </div>

@@ -2,7 +2,8 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Spinner } from "@plane/ui";
+// components
+import { LogoSpinner } from "@/components/common";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -62,7 +63,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   if (isUserSWRLoading || isUserLoading)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 

@@ -4,21 +4,25 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// hooks
+import { TIssue } from "@plane/types";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { DeleteIssueModal } from "@/components/issues";
 import { ISSUE_DELETED } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUser } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+// store
+import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/issue-helper.store";
 // ui
 // types
 import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
+import { GroupDropLocation, handleGroupDragDrop, getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { KanbanDropLocation, handleDragDrop, getSourceFromDropPayload } from "./utils";
+
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT
@@ -61,6 +65,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   } = useIssueDetail();
   const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
     useIssuesActions(storeType);
+  const {
+    issues: { addCycleToIssue, removeCycleFromIssue },
+  } = useIssues(EIssuesStoreType.CYCLE);
+  const {
+    issues: { changeModulesInIssue },
+  } = useIssues(EIssuesStoreType.MODULE);
 
   const deleteAreaRef = useRef<HTMLDivElement | null>(null);
   const [isDragOverDelete, setIsDragOverDelete] = useState(false);
@@ -143,7 +153,60 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     );
   }, [deleteAreaRef?.current, setIsDragOverDelete, setDraggedIssueId, setDeleteIssueModal]);
 
-  const handleOnDrop = async (source: KanbanDropLocation, destination: KanbanDropLocation) => {
+  /**
+   * update Issue on Drop, checks if modules or cycles are changed and then calls appropriate functions
+   * @param projectId
+   * @param issueId
+   * @param data
+   * @param issueUpdates
+   */
+  const updateIssueOnDrop = async (
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>,
+    issueUpdates: {
+      [groupKey: string]: {
+        ADD: string[];
+        REMOVE: string[];
+      };
+    }
+  ) => {
+
+    const errorToastProps = {
+      type: TOAST_TYPE.ERROR,
+      title: "Error!",
+      message: "Error while updating issue"
+    }
+    const moduleKey = ISSUE_FILTER_DEFAULT_DATA["module"];
+    const cycleKey = ISSUE_FILTER_DEFAULT_DATA["cycle"];
+
+    const isModuleChanged = Object.keys(data).includes(moduleKey);
+    const isCycleChanged = Object.keys(data).includes(cycleKey);
+
+    if (isCycleChanged && workspaceSlug) {
+      if(data[cycleKey]) {
+        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey], issueId).catch(() => setToast(errorToastProps));
+      } else {
+        removeCycleFromIssue(workspaceSlug.toString(), projectId, issueId).catch(() => setToast(errorToastProps))
+      }
+      delete data[cycleKey];
+    }
+
+    if (isModuleChanged && workspaceSlug && issueUpdates[moduleKey]) {
+      changeModulesInIssue(
+        workspaceSlug.toString(),
+        projectId,
+        issueId,
+        issueUpdates[moduleKey].ADD,
+        issueUpdates[moduleKey].REMOVE
+      ).catch(() => setToast(errorToastProps));
+      delete data[moduleKey];
+    }
+
+    updateIssue && updateIssue(projectId, issueId, data).catch(() => setToast(errorToastProps));
+  };
+
+  const handleOnDrop = async (source: GroupDropLocation, destination: GroupDropLocation) => {
     if (
       source.columnId &&
       destination.columnId &&
@@ -152,12 +215,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     )
       return;
 
-    await handleDragDrop(
+    await handleGroupDragDrop(
       source,
       destination,
       getIssueById,
       issues.getIssueIds,
-      updateIssue,
+      updateIssueOnDrop,
       group_by,
       sub_group_by,
       orderBy !== "sort_order"
@@ -207,8 +270,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const handleKanbanFilters = (toggle: "group_by" | "sub_group_by", value: string) => {
     if (workspaceSlug && projectId) {
       let kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (kanbanFilters.includes(value)) kanbanFilters = kanbanFilters.filter((_value) => _value != value);
-      else kanbanFilters.push(value);
+      if (kanbanFilters.includes(value)) {
+        kanbanFilters = kanbanFilters.filter((_value) => _value != value);
+      } else {
+        kanbanFilters.push(value);
+      }
       updateFilters(projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
         [toggle]: kanbanFilters,
       });

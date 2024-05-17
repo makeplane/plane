@@ -217,6 +217,8 @@ export interface IGroupByColumn {
   name: string;
   icon: ReactElement | undefined;
   payload: Partial<TIssue>;
+  isDropDisabled?: boolean;
+  dropErrorMessage?: string;
 }
 
 export interface IIssueMap {

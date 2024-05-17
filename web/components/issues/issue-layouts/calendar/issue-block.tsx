@@ -71,7 +71,7 @@ export const CalendarIssueBlock = observer(
         target="_blank"
         onClick={() => handleIssuePeekOverview(issue)}
         className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-custom-border-200 hover:border-custom-border-400"
-        disabled={!!issue?.tempId}
+        disabled={!!issue?.tempId || isMobile}
         ref={ref}
       >
         <>
@@ -105,9 +105,10 @@ export const CalendarIssueBlock = observer(
               </Tooltip>
             </div>
             <div
-              className={`flex-shrink-0 md:hidden h-5 w-5 group-hover/calendar-block:block ${
-                isMenuActive ? "!block" : ""
-              }`}
+              className={cn("flex-shrink-0 size-5", {
+                "hidden group-hover/calendar-block:block": !isMobile,
+                block: isMenuActive,
+              })}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

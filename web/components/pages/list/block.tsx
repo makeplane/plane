@@ -3,6 +3,8 @@ import { observer } from "mobx-react";
 // components
 import { ListItem } from "@/components/core/list";
 import { BlockItemAction } from "@/components/pages/list";
+// helpers
+import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePage } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -23,9 +25,11 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
 
   return (
     <ListItem
-      title={name ?? ""}
+      title={getPageName(name)}
       itemLink={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
-      actionableItems={<BlockItemAction workspaceSlug={workspaceSlug} projectId={projectId} pageId={pageId} parentRef={parentRef} />}
+      actionableItems={
+        <BlockItemAction workspaceSlug={workspaceSlug} projectId={projectId} pageId={pageId} parentRef={parentRef} />
+      }
       isMobile={isMobile}
       parentRef={parentRef}
     />

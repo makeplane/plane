@@ -5,3 +5,4 @@ export * from "./copy-field";
 export * from "./password-strength-meter";
 export * from "./banner";
 export * from "./empty-state";
+export * from "./logo-spinner";

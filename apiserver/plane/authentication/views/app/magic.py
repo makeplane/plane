@@ -99,25 +99,25 @@ class MagicSignInEndpoint(View):
         existing_user = User.objects.filter(email=email).first()
 
         if not existing_user:
-            if not existing_user.is_active:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "USER_ACCOUNT_DEACTIVATED"
-                    ],
-                    error_message="USER_ACCOUNT_DEACTIVATED",
-                )
-                params = exc.get_error_dict()
-                if next_path:
-                    params["next_path"] = str(next_path)
-                url = urljoin(
-                    base_host(request=request, is_app=True),
-                    "sign-in?" + urlencode(params),
-                )
-                return HttpResponseRedirect(url)
-
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
                 error_message="USER_DOES_NOT_EXIST",
+            )
+            params = exc.get_error_dict()
+            if next_path:
+                params["next_path"] = str(next_path)
+            url = urljoin(
+                base_host(request=request, is_app=True),
+                "sign-in?" + urlencode(params),
+            )
+            return HttpResponseRedirect(url)
+
+        if not existing_user.is_active:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "USER_ACCOUNT_DEACTIVATED"
+                ],
+                error_message="USER_ACCOUNT_DEACTIVATED",
             )
             params = exc.get_error_dict()
             if next_path:
@@ -145,7 +145,7 @@ class MagicSignInEndpoint(View):
                 path = (
                     str(next_path)
                     if next_path
-                    else str(process_workspace_project_invitations(user=user))
+                    else str(get_redirection_path(user=user))
                 )
             # redirect to referer path
             url = urljoin(base_host(request=request, is_app=True), path)
@@ -188,23 +188,7 @@ class MagicSignUpEndpoint(View):
             return HttpResponseRedirect(url)
         # Existing user
         existing_user = User.objects.filter(email=email).first()
-        if not existing_user:
-            if not existing_user.is_active:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "USER_ACCOUNT_DEACTIVATED"
-                    ],
-                    error_message="USER_ACCOUNT_DEACTIVATED",
-                )
-                params = exc.get_error_dict()
-                if next_path:
-                    params["next_path"] = str(next_path)
-                url = urljoin(
-                    base_host(request=request, is_app=True),
-                    "?" + urlencode(params),
-                )
-                return HttpResponseRedirect(url)
-
+        if existing_user:
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["USER_ALREADY_EXIST"],
                 error_message="USER_ALREADY_EXIST",

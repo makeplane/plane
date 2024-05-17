@@ -2,11 +2,10 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// hooks
 // components
-import { Spinner } from "@plane/ui";
 import { JoinProject } from "@/components/auth-screens";
-import { EmptyState } from "@/components/common";
+import { EmptyState, LogoSpinner } from "@/components/common";
+// hooks
 import {
   useEventTracker,
   useCycle,
@@ -109,7 +108,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <Spinner />
+          <LogoSpinner />
         </div>
       </div>
     );
