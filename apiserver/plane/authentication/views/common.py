@@ -16,6 +16,7 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from django.middleware.csrf import get_token
+from plane.utils.cache import invalidate_cache
 
 
 class CSRFTokenEndpoint(APIView):
@@ -51,7 +52,6 @@ class ChangePasswordEndpoint(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-
         if not user.check_password(old_password):
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[
@@ -69,9 +69,7 @@ class ChangePasswordEndpoint(APIView):
         results = zxcvbn(new_password)
         if results["score"] < 3:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INVALID_NEW_PASSWORD"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_NEW_PASSWORD"],
                 error_message="INVALID_NEW_PASSWORD",
             )
             return Response(
@@ -89,7 +87,10 @@ class ChangePasswordEndpoint(APIView):
             status=status.HTTP_200_OK,
         )
 
+
 class SetUserPasswordEndpoint(APIView):
+
+    @invalidate_cache("/api/users/me/")
     def post(self, request):
         user = User.objects.get(pk=request.user.id)
         password = request.data.get("password", False)
