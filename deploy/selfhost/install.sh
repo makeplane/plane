@@ -2,7 +2,8 @@
 
 BRANCH=master
 SCRIPT_DIR=$PWD
-PLANE_INSTALL_DIR=$PWD/plane-app
+SERVICE_FOLDER=plane-app
+PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
 export APP_RELEASE=$BRANCH
 export DOCKERHUB_USER=makeplane
 export PULL_POLICY=always
@@ -140,7 +141,7 @@ function download() {
 function startServices() {
     /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH up -d --quiet-pull"
 
-    local migrator_container_id=$(docker container ls -aq -f "name=plane-app-migrator")
+    local migrator_container_id=$(docker container ls -aq -f "name=$SERVICE_FOLDER-migrator")
     if [ -n "$migrator_container_id" ]; then
         local idx=0
         while docker inspect --format='{{.State.Status}}' $migrator_container_id | grep -q "running"; do
@@ -168,7 +169,7 @@ function startServices() {
         fi
     fi
 
-    local api_container_id=$(docker container ls -q -f "name=plane-app-api")
+    local api_container_id=$(docker container ls -q -f "name=$SERVICE_FOLDER-api")
     local idx2=0
     while ! docker logs $api_container_id 2>&1 | grep -m 1 -i "Application startup complete" | grep -q ".";
     do
@@ -286,7 +287,17 @@ function backupSingleVolume() {
     backupFolder=$1
     selectedVolume=$2
     # Backup data from Docker volume to the backup folder
-    docker run --rm -v "$selectedVolume":/source -v "$backupFolder":/backup busybox sh -c 'cp -r /source/* /backup/'
+    # docker run --rm -v "$selectedVolume":/source -v "$backupFolder":/backup busybox sh -c 'cp -r /source/* /backup/'
+    local tobereplaced="plane-app_"
+    local replacewith=""
+
+    local svcName="${selectedVolume//$tobereplaced/$replacewith}"
+
+    docker run --rm \
+        -e TAR_NAME="$svcName" \
+        -v "$selectedVolume":/"$svcName" \
+        -v "$backupFolder":/backup \
+        busybox sh -c 'tar -czf "/backup/${TAR_NAME}.tar.gz" /${TAR_NAME}'
 }
 
 function backupData() {
@@ -302,11 +313,8 @@ function backupData() {
     fi
 
     for vol in $volumes; do
-        # selected_volume=$(echo "$volumes" | sed -n "${volume_number}p")
-        local backup_folder="$BACKUP_FOLDER/$vol"
-        mkdir -p "$backup_folder"
         echo "Backing Up $vol"
-        backupSingleVolume "$backup_folder" "$vol"
+        backupSingleVolume "$BACKUP_FOLDER" "$vol"
     done
 
     echo ""
@@ -370,7 +378,6 @@ function askForAction() {
     elif [ "$ACTION" == "7" ]  || [ "$DEFAULT_ACTION" == "backup" ]
     then
         backupData
-        askForAction
     elif [ "$ACTION" == "8" ]
     then
         exit 0
@@ -389,7 +396,7 @@ fi
 
 # CPU ARCHITECHTURE BASED SETTINGS
 CPU_ARCH=$(uname -m)
-if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ( $BRANCH == "master" && ( $CPU_ARCH == "arm64" || $CPU_ARCH == "aarch64" ) ) ]]; 
+if [[ $FORCE_CPU == "amd64" || $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ( $BRANCH == "master" && ( $CPU_ARCH == "arm64" || $CPU_ARCH == "aarch64" ) ) ]]; 
 then
     USE_GLOBAL_IMAGES=1
     DOCKERHUB_USER=makeplane
@@ -408,7 +415,8 @@ fi
 # REMOVE SPECIAL CHARACTERS FROM BRANCH NAME
 if [ "$BRANCH" != "master" ];
 then
-    PLANE_INSTALL_DIR=$PWD/plane-app-$(echo $BRANCH | sed -r 's@(\/|" "|\.)@-@g')
+    SERVICE_FOLDER=plane-app-$(echo $BRANCH | sed -r 's@(\/|" "|\.)@-@g')
+    PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
 fi
 mkdir -p $PLANE_INSTALL_DIR/archive
 

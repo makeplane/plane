@@ -157,6 +157,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
                 hasError={Boolean(errors.emails?.[index]?.email)}
                 placeholder={placeholderEmails[index % placeholderEmails.length]}
                 className="w-full border-onboarding-border-100 text-xs placeholder:text-onboarding-text-400 sm:text-sm"
+                autoComplete="off"
               />
             )}
           />

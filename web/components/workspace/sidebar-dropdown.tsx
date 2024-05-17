@@ -11,10 +11,10 @@ import { Menu, Transition } from "@headlessui/react";
 import { IWorkspace } from "@plane/types";
 // plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { GOD_MODE_URL } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { WorkspaceLogo } from "./logo";
-// types
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
   {
@@ -56,10 +56,12 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser } = useUser();
   const {
-    updateCurrentUser,
+    // updateCurrentUser,
     // isUserInstanceAdmin,
     signOut,
   } = useUser();
+  const { updateUserProfile } = useUserProfile();
+
   const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
   // popper-js refs
@@ -78,7 +80,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
     ],
   });
   const handleWorkspaceNavigation = (workspace: IWorkspace) =>
-    updateCurrentUser({
+    updateUserProfile({
       last_workspace_id: workspace?.id,
     });
   const handleSignOut = async () => {
@@ -304,7 +306,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
               </div>
               {isUserInstanceAdmin && (
                 <div className="p-2 pb-0">
-                  <Link href="/god-mode">
+                  <Link href={GOD_MODE_URL}>
                     <Menu.Item as="button" type="button" className="w-full">
                       <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
                         Enter God Mode

@@ -11,7 +11,6 @@ from plane.db.models import (
     ModuleMember,
     ModuleIssue,
     ModuleLink,
-    ModuleFavorite,
     ModuleUserProperties,
 )
 
@@ -221,19 +220,6 @@ class ModuleDetailSerializer(ModuleSerializer):
 
     class Meta(ModuleSerializer.Meta):
         fields = ModuleSerializer.Meta.fields + ["link_module", "sub_issues"]
-
-
-class ModuleFavoriteSerializer(BaseSerializer):
-    module_detail = ModuleFlatSerializer(source="module", read_only=True)
-
-    class Meta:
-        model = ModuleFavorite
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "user",
-        ]
 
 
 class ModuleUserPropertiesSerializer(BaseSerializer):

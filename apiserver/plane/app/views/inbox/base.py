@@ -467,12 +467,7 @@ class InboxIssueViewSet(BaseViewSet):
                 )
 
                 inbox_issue = (
-                    InboxIssue.objects.filter(
-                        inbox_id=inbox_id.id,
-                        issue_id=serializer.data["id"],
-                        project_id=project_id,
-                    )
-                    .select_related("issue")
+                    InboxIssue.objects.select_related("issue")
                     .prefetch_related(
                         "issue__labels",
                         "issue__assignees",
@@ -484,10 +479,7 @@ class InboxIssueViewSet(BaseViewSet):
                                 distinct=True,
                                 filter=~Q(issue__labels__id__isnull=True),
                             ),
-                            Value(
-                                [],
-                                output_field=ArrayField(UUIDField()),
-                            ),
+                            Value([], output_field=ArrayField(UUIDField())),
                         ),
                         assignee_ids=Coalesce(
                             ArrayAgg(
@@ -495,13 +487,14 @@ class InboxIssueViewSet(BaseViewSet):
                                 distinct=True,
                                 filter=~Q(issue__assignees__id__isnull=True),
                             ),
-                            Value(
-                                [],
-                                output_field=ArrayField(UUIDField()),
-                            ),
+                            Value([], output_field=ArrayField(UUIDField())),
                         ),
                     )
-                    .first()
+                    .get(
+                        inbox_id=inbox_id.id,
+                        issue_id=issue_id,
+                        project_id=project_id,
+                    )
                 )
                 serializer = InboxIssueDetailSerializer(inbox_issue).data
                 return Response(serializer, status=status.HTTP_200_OK)

@@ -2,6 +2,7 @@
 import os
 
 # Django imports
+from django.conf import settings
 
 # Third party imports
 from rest_framework import status
@@ -37,6 +38,7 @@ class InstanceEndpoint(BaseAPIView):
     @cache_response(60 * 60 * 2, user=False)
     def get(self, request):
         instance = Instance.objects.first()
+
         # get the instance
         if instance is None:
             return Response(
@@ -53,8 +55,6 @@ class InstanceEndpoint(BaseAPIView):
             IS_GITHUB_ENABLED,
             GITHUB_APP_NAME,
             EMAIL_HOST,
-            EMAIL_HOST_USER,
-            EMAIL_HOST_PASSWORD,
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
             SLACK_CLIENT_ID,
@@ -79,14 +79,6 @@ class InstanceEndpoint(BaseAPIView):
                 {
                     "key": "EMAIL_HOST",
                     "default": os.environ.get("EMAIL_HOST", ""),
-                },
-                {
-                    "key": "EMAIL_HOST_USER",
-                    "default": os.environ.get("EMAIL_HOST_USER", ""),
-                },
-                {
-                    "key": "EMAIL_HOST_PASSWORD",
-                    "default": os.environ.get("EMAIL_HOST_PASSWORD", ""),
                 },
                 {
                     "key": "ENABLE_MAGIC_LINK_LOGIN",
@@ -148,9 +140,13 @@ class InstanceEndpoint(BaseAPIView):
         )
 
         # is smtp configured
-        data["is_smtp_configured"] = (
-            bool(EMAIL_HOST)
-        )
+        data["is_smtp_configured"] = bool(EMAIL_HOST)
+
+        # Base URL
+        data["admin_base_url"] = settings.ADMIN_BASE_URL
+        data["space_base_url"] = settings.SPACE_BASE_URL
+        data["app_base_url"] = settings.APP_BASE_URL
+
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() > 1
 

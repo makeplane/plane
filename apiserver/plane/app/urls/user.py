@@ -11,6 +11,7 @@ from plane.app.views import (
     UserEndpoint,
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
+    UserSessionEndpoint,
     ## End User
     ## Workspaces
     UserWorkSpacesEndpoint,
@@ -28,6 +29,11 @@ urlpatterns = [
             }
         ),
         name="users",
+    ),
+    path(
+        "users/session/",
+        UserSessionEndpoint.as_view(),
+        name="user-session",
     ),
     path(
         "users/me/settings/",

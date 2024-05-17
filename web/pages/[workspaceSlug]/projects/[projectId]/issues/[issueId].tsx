@@ -17,8 +17,8 @@ import { AppLayout } from "@/layouts/app-layout";
 // types
 import { NextPageWithLayout } from "@/lib/types";
 // assets
-import emptyIssueDark from "public/empty-state/search/issue-dark.webp";
-import emptyIssueLight from "public/empty-state/search/issues-light.webp";
+import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
+import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
 const IssueDetailsPage: NextPageWithLayout = observer(() => {
   // router

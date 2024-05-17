@@ -2,7 +2,7 @@ import axios from "axios";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
-import APIService from "@/services/api.service";
+import { APIService } from "@/services/api.service";
 
 interface UnSplashImage {
   id: string;

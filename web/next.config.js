@@ -31,7 +31,7 @@ const nextConfig = {
     unoptimized: true,
   },
   async rewrites() {
-    return [
+    const rewrites = [
       {
         source: "/ingest/static/:path*",
         destination: "https://us-assets.i.posthog.com/static/:path*",
@@ -40,11 +40,17 @@ const nextConfig = {
         source: "/ingest/:path*",
         destination: "https://us.i.posthog.com/:path*",
       },
-      {
-        source: "/god-mode/:path*",
-        destination: `${process.env.NEXT_PUBLIC_GOD_MODE_URL || ""}/:path*`,
-      },
     ];
+    if (process.env.NEXT_PUBLIC_ADMIN_BASE_URL || process.env.NEXT_PUBLIC_ADMIN_BASE_PATH) {
+      const ADMIN_BASE_URL = process.env.NEXT_PUBLIC_ADMIN_BASE_URL || ""
+      const ADMIN_BASE_PATH = process.env.NEXT_PUBLIC_ADMIN_BASE_PATH || ""
+      const GOD_MODE_BASE_URL = ADMIN_BASE_URL + ADMIN_BASE_PATH
+      rewrites.push({
+        source: "/god-mode/:path*",
+        destination: `${GOD_MODE_BASE_URL}/:path*`,
+      })
+    }
+    return rewrites;
   },
 };
 

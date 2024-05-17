@@ -1,5 +1,5 @@
 # Python imports
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urlencode
 
 # Django imports
 from django.core.exceptions import ValidationError
@@ -36,10 +36,7 @@ class SignInAuthSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "accounts/sign-in?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
         # set the referer as session to redirect after login
@@ -58,10 +55,7 @@ class SignInAuthSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "spaces/accounts/sign-in?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
         # Validate email
@@ -77,13 +71,13 @@ class SignInAuthSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "spaces/accounts/sign-in?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
-        if not User.objects.filter(email=email).exists():
+        # Existing User
+        existing_user = User.objects.filter(email=email).first()
+
+        if not existing_user:
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
                 error_message="USER_DOES_NOT_EXIST",
@@ -92,10 +86,20 @@ class SignInAuthSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "spaces/accounts/sign-in?" + urlencode(params),
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            return HttpResponseRedirect(url)
+
+        if not existing_user.is_active:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "USER_ACCOUNT_DEACTIVATED"
+                ],
+                error_message="USER_ACCOUNT_DEACTIVATED",
             )
+            params = exc.get_error_dict()
+            if next_path:
+                params["next_path"] = str(next_path)
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
         try:
@@ -104,21 +108,15 @@ class SignInAuthSpaceEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_space=True)
             # redirect to next path
-            url = urljoin(
-                base_host(request=request),
-                str(next_path) if next_path else "/",
-            )
+            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "spaces/accounts/sign-in?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
 
@@ -139,10 +137,7 @@ class SignUpAuthSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "spaces?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
         email = request.POST.get("email", False)
@@ -160,10 +155,7 @@ class SignUpAuthSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "spaces?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
         # Validate the email
         email = email.strip().lower()
@@ -179,13 +171,26 @@ class SignUpAuthSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "spaces?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
-        if User.objects.filter(email=email).exists():
+        # Existing User
+        existing_user = User.objects.filter(email=email).first()
+
+        if existing_user:
+            if not existing_user.is_active:
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "USER_ACCOUNT_DEACTIVATED"
+                    ],
+                    error_message="USER_ACCOUNT_DEACTIVATED",
+                )
+                params = exc.get_error_dict()
+                if next_path:
+                    params["next_path"] = str(next_path)
+                url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+                return HttpResponseRedirect(url)
+
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["USER_ALREADY_EXIST"],
                 error_message="USER_ALREADY_EXIST",
@@ -194,10 +199,7 @@ class SignUpAuthSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "spaces?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
         try:
@@ -206,19 +208,13 @@ class SignUpAuthSpaceEndpoint(View):
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
+            user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            url = urljoin(
-                base_host(request=request),
-                str(next_path) if next_path else "spaces",
-            )
+            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request),
-                "spaces?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)

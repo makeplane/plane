@@ -2,7 +2,6 @@ import uuid
 from urllib.parse import urlencode, urljoin
 
 # Django import
-from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
 from django.views import View
 
@@ -10,8 +9,8 @@ from django.views import View
 from plane.authentication.provider.oauth.github import GitHubOAuthProvider
 from plane.authentication.utils.login import user_login
 from plane.authentication.utils.redirection_path import get_redirection_path
-from plane.authentication.utils.workspace_project_join import (
-    process_workspace_project_invitations,
+from plane.authentication.utils.user_auth_workflow import (
+    post_user_auth_workflow,
 )
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
@@ -25,7 +24,7 @@ class GitHubOauthInitiateEndpoint(View):
 
     def get(self, request):
         # Get host and next path
-        request.session["host"] = base_host(request=request)
+        request.session["host"] = base_host(request=request, is_app=True)
         next_path = request.GET.get("next_path")
         if next_path:
             request.session["next_path"] = str(next_path)
@@ -43,7 +42,7 @@ class GitHubOauthInitiateEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -58,7 +57,7 @@ class GitHubOauthInitiateEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request),
+                base_host(request=request, is_app=True),
                 "?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
@@ -108,12 +107,11 @@ class GitHubCallbackEndpoint(View):
             provider = GitHubOAuthProvider(
                 request=request,
                 code=code,
+                callback=post_user_auth_workflow,
             )
             user = provider.authenticate()
             # Login the user and record his device info
-            user_login(request=request, user=user)
-            # Process workspace and project invitations
-            process_workspace_project_invitations(user=user)
+            user_login(request=request, user=user, is_app=True)
             # Get the redirection path
             if next_path:
                 path = next_path

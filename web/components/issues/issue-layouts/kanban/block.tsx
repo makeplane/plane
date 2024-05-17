@@ -16,21 +16,24 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { getIssueBlockId } from "../utils";
 // ui
 // types
 // helper
 
 interface IssueBlockProps {
   issueId: string;
+  groupId: string;
+  subGroupId: string;
   issuesMap: IIssueMap;
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   draggableId: string;
+  canDropOverIssue: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  issueIds: string[]; //DO NOT REMOVE< needed to force render for virtualization
 }
 
 interface IssueDetailsBlockProps {
@@ -61,7 +64,9 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
             {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
           <div
-            className="absolute -top-1 right-0 hidden group-hover/kanban-block:block"
+            className={cn("absolute -top-1 right-0", {
+              "hidden group-hover/kanban-block:block": !isMobile,
+            })}
             onClick={handleEventPropagation}
           >
             {quickActions({
@@ -99,20 +104,23 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const {
     issueId,
+    groupId,
+    subGroupId,
     issuesMap,
     displayProperties,
     isDragDisabled,
+    canDropOverIssue,
     updateIssue,
     quickActions,
     canEditProperties,
     scrollableContainerRef,
-    issueIds,
   } = props;
 
   const cardRef = useRef<HTMLAnchorElement | null>(null);
   // hooks
   const { workspaceSlug } = useAppRouter();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -161,6 +169,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       }),
       dropTargetForElements({
         element,
+        canDrop: () => canDropOverIssue,
         getData: () => ({ id: issue?.id, type: "ISSUE" }),
         onDragEnter: () => {
           setIsDraggingOverBlock(true);
@@ -194,7 +203,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
         }}
       >
         <ControlLink
-          id={`issue-${issue.id}`}
+          id={getIssueBlockId(issueId, groupId, subGroupId)}
           href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
             issue.id
           }`}
@@ -207,14 +216,13 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
           )}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
-          disabled={!!issue?.tempId}
+          disabled={!!issue?.tempId || isMobile}
         >
           <RenderIfVisible
             classNames="space-y-2 px-3 py-2"
             root={scrollableContainerRef}
             defaultHeight="100px"
             horizontalOffset={50}
-            changingReference={issueIds}
           >
             <KanbanIssueDetailsBlock
               cardRef={cardRef}

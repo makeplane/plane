@@ -111,7 +111,7 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
             <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" />
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
-          <div className="text-center text-sm font-medium text-onboarding-text-300">
+          <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row text-center text-sm font-medium text-onboarding-text-300">
             New to Plane?{" "}
             <Link
               href="/"
@@ -176,7 +176,7 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
               >
                 {resendTimerCode > 0 ? `Resend in ${resendTimerCode} seconds` : "Send reset link"}
               </Button>
-              <Link href="/accounts/sign-in" className={cn("w-full", getButtonStyling("link-neutral", "lg"))}>
+              <Link href="/sign-in" className={cn("w-full", getButtonStyling("link-neutral", "lg"))}>
                 Back to sign in
               </Link>
             </form>

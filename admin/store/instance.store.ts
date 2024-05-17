@@ -1,12 +1,12 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import set from "lodash/set";
+import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import { IInstance, IInstanceAdmin, IInstanceConfiguration, IFormattedInstanceConfiguration } from "@plane/types";
 // helpers
 import { EInstanceStatus, TInstanceStatus } from "@/helpers";
 // services
 import { InstanceService } from "@/services/instance.service";
 // root store
-import { RootStore } from "@/store/root-store";
+import { RootStore } from "@/store/root.store";
 
 export interface IInstanceStore {
   // issues
@@ -18,11 +18,12 @@ export interface IInstanceStore {
   // computed
   formattedConfig: IFormattedInstanceConfiguration | undefined;
   // action
+  hydrate: (data: any) => void;
   fetchInstanceInfo: () => Promise<IInstance | undefined>;
   updateInstanceInfo: (data: Partial<IInstance["instance"]>) => Promise<IInstance["instance"] | undefined>;
   fetchInstanceAdmins: () => Promise<IInstanceAdmin[] | undefined>;
   fetchInstanceConfigurations: () => Promise<IInstanceConfiguration[] | undefined>;
-  updateInstanceConfigurations: (data: Partial<IFormattedInstanceConfiguration>) => Promise<void>;
+  updateInstanceConfigurations: (data: Partial<IFormattedInstanceConfiguration>) => Promise<IInstanceConfiguration[]>;
 }
 
 export class InstanceStore implements IInstanceStore {
@@ -45,6 +46,7 @@ export class InstanceStore implements IInstanceStore {
       // computed
       formattedConfig: computed,
       // actions
+      hydrate: action,
       fetchInstanceInfo: action,
       fetchInstanceAdmins: action,
       updateInstanceInfo: action,
@@ -54,6 +56,10 @@ export class InstanceStore implements IInstanceStore {
 
     this.instanceService = new InstanceService();
   }
+
+  hydrate = (data: any) => {
+    if (data) this.instance = data;
+  };
 
   /**
    * computed value for instance configurations data for forms.
@@ -148,13 +154,15 @@ export class InstanceStore implements IInstanceStore {
    */
   updateInstanceConfigurations = async (data: Partial<IFormattedInstanceConfiguration>) => {
     try {
-      await this.instanceService.updateInstanceConfigurations(data).then((response) => {
-        runInAction(() => {
-          this.instanceConfigurations = this.instanceConfigurations
-            ? [...this.instanceConfigurations, ...response]
-            : response;
+      const response = await this.instanceService.updateInstanceConfigurations(data);
+      runInAction(() => {
+        this.instanceConfigurations = this.instanceConfigurations?.map((config) => {
+          const item = response.find((item) => item.key === config.key);
+          if (item) return item;
+          return config;
         });
       });
+      return response;
     } catch (error) {
       console.error("Error updating the instance configurations");
       throw error;

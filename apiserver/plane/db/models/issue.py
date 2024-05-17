@@ -120,7 +120,7 @@ class Issue(ProjectBaseModel):
         related_name="state_issue",
     )
     estimate_point = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(7)],
+        validators=[MinValueValidator(0), MaxValueValidator(12)],
         null=True,
         blank=True,
     )

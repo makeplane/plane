@@ -1,8 +1,10 @@
+"use client";
+
+import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 import { StateGroupIcon } from "@plane/ui";
-// icons
-import { IIssueState } from "types/issue";
 // types
+import { IIssueState } from "@/types/issue";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -10,7 +12,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedStateFilters: React.FC<Props> = (props) => {
+export const AppliedStateFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, states, values } = props;
 
   return (
@@ -36,4 +38,4 @@ export const AppliedStateFilters: React.FC<Props> = (props) => {
       })}
     </>
   );
-};
+});

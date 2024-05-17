@@ -47,7 +47,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   // hooks
   const { workspaceSlug } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
+  const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -55,9 +55,10 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     issue.project_id &&
     issue.id &&
     !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
 
   const issue = issuesMap[issueId];
+  // const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   const { isMobile } = usePlatformOS();
 
   const { getIsIssueSelected } = useBulkIssueOperations();
@@ -67,6 +68,9 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   const canEditIssueProperties = canEditProperties(issue.project_id);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
   const isIssueSelected = getIsIssueSelected(issueId);
+
+  // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
+  // const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
 
   const paddingLeft = `${spacingLeft}px`;
 
@@ -88,42 +92,45 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     <div
       ref={parentRef}
       className={cn(
-        "group/list-block min-h-[52px] relative flex flex-col md:flex-row md:items-center gap-2 bg-custom-background-100 p-3 pl-0 text-sm transition-colors",
+        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 pl-1.5 text-sm transition-colors",
         {
-          "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+          "border border-custom-primary-70 hover:border-custom-primary-70":
+            getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
           "hover:bg-custom-background-90": !isIssueSelected,
           "bg-custom-primary-100/5": isIssueSelected,
         }
       )}
     >
-      {canEditIssueProperties && (
-        <div className="flex-shrink-0 grid place-items-center w-3.5 pl-1.5">
-          <input
-            type="checkbox"
-            className={cn(
-              "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto cursor-pointer transition-opacity outline-none",
-              {
-                "opacity-100 pointer-events-auto": isIssueSelected,
-              }
-            )}
-            onClick={(e) => handleClick(e, issueId)}
-            checked={isIssueSelected}
-          />
-        </div>
-      )}
-      <div className="flex w-full truncate" style={issue.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
+      <div className="flex w-full truncate" style={issue?.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
           <div className="flex items-center gap-0.5">
-            <div className="size-4 flex items-center justify-center">
-              {issue.sub_issues_count > 0 && (
-                <button
-                  className="flex items-center justify-center size-4 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
-                  onClick={handleToggleExpand}
-                >
-                  <ChevronRight className={`size-4 ${isExpanded ? "rotate-90" : ""}`} />
-                </button>
+            <div className="flex items-center group">
+              {canEditIssueProperties && (
+                <div className="flex-shrink-0 grid place-items-center w-3.5 pl-1.5">
+                  <input
+                    type="checkbox"
+                    className={cn(
+                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto cursor-pointer transition-opacity outline-none",
+                      {
+                        "opacity-100 pointer-events-auto": isIssueSelected,
+                      }
+                    )}
+                    onClick={(e) => handleClick(e, issueId)}
+                    checked={isIssueSelected}
+                  />
+                </div>
               )}
+              <div className="flex h-4 w-4 items-center justify-center">
+                {issue.sub_issues_count > 0 && (
+                  <button
+                    className="flex items-center justify-center h-4 w-4 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
+                    onClick={handleToggleExpand}
+                  >
+                    <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
+                  </button>
+                )}
+              </div>
             </div>
             {displayProperties && displayProperties?.key && (
               <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
@@ -170,7 +177,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         {!issue?.tempId ? (
           <>
             <IssueProperties
-              className="relative flex flex-wrap items-center gap-2 whitespace-nowrap md:flex-shrink-0 md:flex-grow"
+              className="relative flex flex-wrap md:flex-grow md:flex-shrink-0 items-center gap-2 whitespace-nowrap"
               issue={issue}
               isReadOnly={!canEditIssueProperties}
               updateIssue={updateIssue}

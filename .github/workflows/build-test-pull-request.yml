@@ -14,10 +14,10 @@ jobs:
       space_changed: ${{ steps.changed-files.outputs.space_any_changed }}
       web_changed: ${{ steps.changed-files.outputs.web_any_changed }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@v44
         with:
           files_yaml: |
             apiserver:
@@ -49,9 +49,9 @@ jobs:
     runs-on: ubuntu-latest
     if: needs.get-changed-files.outputs.apiserver_changed == 'true'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.x" # Specify the Python version you need
       - name: Install Pylint
@@ -66,9 +66,9 @@ jobs:
     if: needs.get-changed-files.outputs.admin_changed == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - run: yarn install
@@ -79,9 +79,9 @@ jobs:
     if: needs.get-changed-files.outputs.space_changed == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - run: yarn install
@@ -92,9 +92,9 @@ jobs:
     if: needs.get-changed-files.outputs.web_changed == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - run: yarn install
@@ -104,9 +104,9 @@ jobs:
     needs: lint-admin
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - run: yarn install
@@ -116,9 +116,9 @@ jobs:
     needs: lint-space
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - run: yarn install
@@ -128,9 +128,9 @@ jobs:
     needs: lint-web
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - run: yarn install

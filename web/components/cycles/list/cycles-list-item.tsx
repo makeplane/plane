@@ -94,7 +94,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
           ) : progress === 100 ? (
             <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
           ) : (
-            <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
+            <span className="text-[9px] text-custom-text-300">{`${progress}%`}</span>
           )}
         </CircularProgressIndicator>
       }

@@ -33,7 +33,7 @@ export const GithubOAuthButton: FC<GithubOAuthButtonProps> = (props) => {
         width={20}
         alt="GitHub Logo"
       />
-      <span className="text-onboarding-text-200">{text}</span>
+      {text}
     </button>
   );
 };

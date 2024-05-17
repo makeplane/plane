@@ -3,7 +3,7 @@ import type { IInstance } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
-import APIService from "@/services/api.service";
+import { APIService } from "@/services/api.service";
 
 export class InstanceService extends APIService {
   constructor() {

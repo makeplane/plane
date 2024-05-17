@@ -218,15 +218,21 @@ export const Table = Node.create({
   addKeyboardShortcuts() {
     return {
       Tab: () => {
-        if (this.editor.commands.goToNextCell()) {
-          return true;
-        }
+        if (this.editor.isActive("table")) {
+          if (this.editor.isActive("listItem") || this.editor.isActive("taskItem")) {
+            return false;
+          }
+          if (this.editor.commands.goToNextCell()) {
+            return true;
+          }
 
-        if (!this.editor.can().addRowAfter()) {
-          return false;
-        }
+          if (!this.editor.can().addRowAfter()) {
+            return false;
+          }
 
-        return this.editor.chain().addRowAfter().goToNextCell().run();
+          return this.editor.chain().addRowAfter().goToNextCell().run();
+        }
+        return false;
       },
       "Shift-Tab": () => this.editor.commands.goToPreviousCell(),
       Backspace: deleteTableWhenAllCellsSelected,
