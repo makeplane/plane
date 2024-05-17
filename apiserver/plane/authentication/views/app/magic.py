@@ -18,8 +18,8 @@ from plane.authentication.provider.credentials.magic_code import (
 )
 from plane.authentication.utils.login import user_login
 from plane.authentication.utils.redirection_path import get_redirection_path
-from plane.authentication.utils.workspace_project_join import (
-    process_workspace_project_invitations,
+from plane.authentication.utils.user_auth_workflow import (
+    post_user_auth_workflow,
 )
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
@@ -130,14 +130,15 @@ class MagicSignInEndpoint(View):
 
         try:
             provider = MagicCodeProvider(
-                request=request, key=f"magic_{email}", code=code
+                request=request,
+                key=f"magic_{email}",
+                code=code,
+                callback=post_user_auth_workflow,
             )
             user = provider.authenticate()
             profile = Profile.objects.get(user=user)
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
-            # Process workspace and project invitations
-            process_workspace_project_invitations(user=user)
             if user.is_password_autoset and profile.is_onboarded:
                 path = "accounts/set-password"
             else:
@@ -204,13 +205,14 @@ class MagicSignUpEndpoint(View):
 
         try:
             provider = MagicCodeProvider(
-                request=request, key=f"magic_{email}", code=code
+                request=request,
+                key=f"magic_{email}",
+                code=code,
+                callback=post_user_auth_workflow,
             )
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
-            # Process workspace and project invitations
-            process_workspace_project_invitations(user=user)
             # Get the redirection path
             if next_path:
                 path = str(next_path)
