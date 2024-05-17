@@ -30,8 +30,8 @@ const IssueSuggestionList = (props: TSuggestionsListProps) => {
         const transactionId = uuidv4();
         editor
           .chain()
-          .focus()
-          .insertContentAt(range, {
+          .deleteRange(range)
+          .insertContentAt(range.from, {
             type: "issue-embed-component",
             attrs: {
               entity_identifier: item?.id,
@@ -39,6 +39,17 @@ const IssueSuggestionList = (props: TSuggestionsListProps) => {
               entity_name: "issue",
             },
           })
+          .run();
+
+        // new document state and calculate the new position
+        const newDoc = editor.state.doc;
+        const newPositionToInsertEmptyParaAt = range.from + (newDoc?.nodeAt(range.from)?.nodeSize ?? 0);
+
+        // insert an empty paragraph at the position after the issue embed
+        editor
+          .chain()
+          .insertContentAt(newPositionToInsertEmptyParaAt, { type: "paragraph" })
+          .setTextSelection(newPositionToInsertEmptyParaAt + 1)
           .run();
       } catch (error) {
         console.log("Error inserting issue embed", error);

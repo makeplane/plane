@@ -10,6 +10,8 @@ export const IssueWidget = (props: Props) =>
     name: "issue-embed-component",
     group: "block",
     atom: true,
+    selectable: true,
+    draggable: true,
 
     addAttributes() {
       return {
