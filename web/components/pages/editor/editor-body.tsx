@@ -19,7 +19,6 @@ import { cn } from "@/helpers/common.helper";
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageDescription } from "@/hooks/use-page-description";
 import { usePageFilters } from "@/hooks/use-page-filters";
-import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { FileService } from "@/services/file.service";
 // store
@@ -30,7 +29,6 @@ const fileService = new FileService();
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  handleDescriptionUpdate: (binaryString: string) => Promise<void>;
   markings: IMarking[];
   pageStore: IPageStore;
   sidePeekVisible: boolean;
@@ -42,7 +40,6 @@ type Props = {
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
     handleReadOnlyEditorReady,
-    handleDescriptionUpdate,
     handleEditorReady,
     editorRef,
     markings,
@@ -66,11 +63,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const pageId = pageStore?.id;
   const pageTitle = pageStore?.name ?? "";
   const pageDescription = pageStore?.description_html;
-  const { isContentEditable, isSubmitting, updateTitle, setIsSubmitting } = pageStore;
+  const { isContentEditable, updateTitle, setIsSubmitting } = pageStore;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // project-description
-  const { isDescriptionReady, pageDescriptionYJS } = usePageDescription({
+  const { handleDescriptionChange, isDescriptionReady, pageDescriptionYJS } = usePageDescription({
+    editorRef,
     pageStore,
     projectId,
     workspaceSlug,
@@ -84,8 +82,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   });
   // page filters
   const { isFullWidth } = usePageFilters();
-
-  useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
@@ -138,7 +134,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               ref={editorRef}
               containerClassName="p-0 pb-64"
               editorClassName="pl-10"
-              onChange={handleDescriptionUpdate}
+              onChange={handleDescriptionChange}
               mentionHandler={{
                 highlights: mentionHighlights,
                 suggestions: mentionSuggestions,

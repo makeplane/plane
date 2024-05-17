@@ -1,30 +1,26 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { FileText } from "lucide-react";
-// hooks
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
-// helpers
-import { BreadcrumbLink } from "@/components/common";
 // components
+import { BreadcrumbLink } from "@/components/common";
 import { ProjectLogo } from "@/components/project";
-import { useCommandPalette, usePage, useProject } from "@/hooks/store";
+// hooks
+import { usePage, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
-export interface IPagesHeaderProps {
-  showButton?: boolean;
-}
-
-export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
-  const { showButton = false } = props;
+export const PageDetailsHeader = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, pageId } = router.query;
   // store hooks
-  const { toggleCreatePageModal } = useCommandPalette();
   const { currentProjectDetails } = useProject();
-
-  const { name } = usePage(pageId?.toString() ?? "");
+  const { isContentEditable, isSubmitting, name } = usePage(pageId?.toString() ?? "");
+  // use platform
+  const { platform } = usePlatformOS();
+  // derived values
+  const isMac = platform === "MacOS";
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -77,12 +73,24 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
           </Breadcrumbs>
         </div>
       </div>
-      {showButton && (
-        <div className="flex items-center gap-2">
-          <Button variant="primary" size="sm" onClick={() => toggleCreatePageModal(true)}>
-            Add Page
-          </Button>
-        </div>
+      {isContentEditable && (
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => {
+            // ctrl/cmd + s to save the changes
+            const event = new KeyboardEvent("keydown", {
+              key: "s",
+              ctrlKey: !isMac,
+              metaKey: isMac,
+            });
+            window.dispatchEvent(event);
+          }}
+          className="flex-shrink-0"
+          loading={isSubmitting === "submitting"}
+        >
+          {isSubmitting === "submitting" ? "Saving" : "Save changes"}
+        </Button>
       )}
     </div>
   );

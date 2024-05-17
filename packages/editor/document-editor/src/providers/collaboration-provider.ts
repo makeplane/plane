@@ -12,8 +12,10 @@ export interface CompleteCollaboratorProviderConfiguration {
   /**
    * onChange callback
    */
-  onChange: (binaryString: string) => void;
+  onChange: (updates: Uint8Array) => void;
 }
+
+const DEBOUNCE_TIME = 0;
 
 export type CollaborationProviderConfiguration = Required<Pick<CompleteCollaboratorProviderConfiguration, "name">> &
   Partial<CompleteCollaboratorProviderConfiguration>;
@@ -65,13 +67,13 @@ export class CollaborationProvider {
     this.timeoutId = setTimeout(() => {
       // merge updates
       const combinedUpdates = Y.mergeUpdates(this.updates);
-      const base64Updates = Buffer.from(combinedUpdates).toString("base64");
+      // const base64Updates = Buffer.from(combinedUpdates).toString("base64");
       // call onChange with the merged updates
-      this.configuration.onChange?.(base64Updates);
+      this.configuration.onChange?.(combinedUpdates);
       // reset variables
       this.updates = [];
       this.timeoutId = null;
-    }, 2000);
+    }, DEBOUNCE_TIME);
   }
 
   documentDestroyHandler() {

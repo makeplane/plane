@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useRef, useState } from "react";
+import { ReactElement, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -38,7 +38,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { createPage, getPageById } = useProjectPages(projectId?.toString() ?? "");
   const pageStore = usePage(pageId?.toString() ?? "");
-  const { description_html, id, name, setIsSubmitting, updateDescription } = pageStore;
+  const { description_html, id, name } = pageStore;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
   // fetch page details
@@ -50,15 +50,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     }
-  );
-
-  const handleDescriptionChange = useCallback(
-    async (binaryString: string) => {
-      setIsSubmitting("submitting");
-      const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
-      await updateDescription(binaryString, descriptionHTML).finally(() => setIsSubmitting("saved"));
-    },
-    [setIsSubmitting, updateDescription]
   );
 
   if ((!pageStore || !id) && !pageDetailsError)
@@ -127,7 +118,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
             handleEditorReady={(val) => setEditorReady(val)}
             readOnlyEditorRef={readOnlyEditorRef}
             handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
-            handleDescriptionUpdate={handleDescriptionChange}
             markings={markings}
             pageStore={pageStore}
             sidePeekVisible={sidePeekVisible}
