@@ -105,9 +105,7 @@ export class ProjectPageStore implements IProjectPageStore {
     let filteredPages = pagesByType.filter(
       (p) =>
         p.project === projectId &&
-        getPageName(p.name ?? "")
-          .toLowerCase()
-          .includes(this.filters.searchQuery.toLowerCase()) &&
+        getPageName(p.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
         shouldFilterPage(p, this.filters.filters)
     );
     filteredPages = orderPages(filteredPages, this.filters.sortKey, this.filters.sortBy);
