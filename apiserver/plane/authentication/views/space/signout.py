@@ -12,6 +12,8 @@ from plane.db.models import User
 class SignOutAuthSpaceEndpoint(View):
 
     def post(self, request):
+        next_path = request.POST.get("next_path")
+
         # Get user
         try:
             user = User.objects.get(pk=request.user.id)
@@ -20,10 +22,8 @@ class SignOutAuthSpaceEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            return HttpResponseRedirect(
-                base_host(request=request, is_space=True)
-            )
+            url = f"{base_host(request=request, is_space=True)}{next_path}"
+            return HttpResponseRedirect(url)
         except Exception:
-            return HttpResponseRedirect(
-                base_host(request=request, is_space=True)
-            )
+            url = f"{base_host(request=request, is_space=True)}{next_path}"
+            return HttpResponseRedirect(url)
