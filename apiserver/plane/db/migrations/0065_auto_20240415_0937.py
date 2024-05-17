@@ -45,6 +45,51 @@ def migrate_user_profile(apps, schema_editor):
     )
 
 
+def user_favorite_migration(apps, schema_editor):
+    # Import the models
+    CycleFavorite = apps.get_model("db", "CycleFavorite")
+    ModuleFavorite = apps.get_model("db", "ModuleFavorite")
+    ProjectFavorite = apps.get_model("db", "ProjectFavorite")
+    PageFavorite = apps.get_model("db", "PageFavorite")
+    IssueViewFavorite = apps.get_model("db", "IssueViewFavorite")
+    UserFavorite = apps.get_model("db", "UserFavorite")
+
+    # List of source models
+    source_models = [
+        CycleFavorite,
+        ModuleFavorite,
+        ProjectFavorite,
+        PageFavorite,
+        IssueViewFavorite,
+    ]
+
+    entity_mapper = {
+        "CycleFavorite": "cycle",
+        "ModuleFavorite": "module",
+        "ProjectFavorite": "project",
+        "PageFavorite": "page",
+        "IssueViewFavorite": "view",
+    }
+
+    for source_model in source_models:
+        entity_type = entity_mapper[source_model.__name__]
+        UserFavorite.objects.bulk_create(
+            [
+                UserFavorite(
+                    user_id=obj.user_id,
+                    entity_type=entity_type,
+                    entity_identifier=str(getattr(obj, entity_type).id),
+                    project_id=obj.project_id,
+                    workspace_id=obj.workspace_id,
+                    created_by_id=obj.created_by_id,
+                    updated_by_id=obj.updated_by_id,
+                )
+                for obj in source_model.objects.all().iterator()
+            ],
+            batch_size=1000,
+        )
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -339,8 +384,14 @@ class Migration(migrations.Migration):
                         unique=True,
                     ),
                 ),
-                ("entity_name", models.CharField(max_length=100)),
-                ("entity_identifier", models.UUIDField()),
+                ("entity_type", models.CharField(max_length=100)),
+                ("entity_identifier", models.UUIDField(blank=True, null=True)),
+                (
+                    "name",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
+                ("is_folder", models.BooleanField(default=False)),
+                ("sequence", models.IntegerField(default=0)),
                 (
                     "created_by",
                     models.ForeignKey(
@@ -349,6 +400,25 @@ class Migration(migrations.Migration):
                         related_name="%(class)s_created_by",
                         to=settings.AUTH_USER_MODEL,
                         verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "parent",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="parent_folder",
+                        to="db.userfavorite",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_%(class)s",
+                        to="db.project",
                     ),
                 ),
                 (
@@ -370,15 +440,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "project",
-                    models.ForeignKey(
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="project_%(class)s",
-                        to="db.project",
-                    ),
-                ),
-                (
                     "workspace",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
@@ -393,8 +454,9 @@ class Migration(migrations.Migration):
                 "db_table": "user_favorites",
                 "ordering": ("-created_at",),
                 "unique_together": {
-                    ("entity_name", "user", "entity_identifier")
+                    ("entity_type", "user", "entity_identifier")
                 },
             },
         ),
+        migrations.RunPython(user_favorite_migration),
     ]

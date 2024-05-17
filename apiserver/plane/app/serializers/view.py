@@ -5,7 +5,7 @@ from rest_framework import serializers
 from .base import BaseSerializer, DynamicBaseSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
-from plane.db.models import GlobalView, IssueView, IssueViewFavorite
+from plane.db.models import GlobalView, IssueView
 from plane.utils.issue_filters import issue_filters
 
 
@@ -72,16 +72,3 @@ class IssueViewSerializer(DynamicBaseSerializer):
             validated_data["query"] = {}
         validated_data["query"] = issue_filters(query_params, "PATCH")
         return super().update(instance, validated_data)
-
-
-class IssueViewFavoriteSerializer(BaseSerializer):
-    view_detail = IssueViewSerializer(source="issue_view", read_only=True)
-
-    class Meta:
-        model = IssueViewFavorite
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "user",
-        ]
