@@ -1,21 +1,21 @@
+"use client";
+
 import React, { FC, useEffect, useState } from "react";
-import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+import { useSearchParams } from "next/navigation";
 import { IEmailCheckData } from "@plane/types";
 // components
 import {
   AuthHeader,
   AuthBanner,
   AuthEmailForm,
+  AuthUniqueCodeForm,
   AuthPasswordForm,
   OAuthOptions,
   TermsAndConditions,
-  AuthUniqueCodeForm,
 } from "@/components/account";
 // helpers
 import {
-  EAuthModes,
-  EAuthSteps,
   EAuthenticationErrorCodes,
   EErrorAlertType,
   TAuthErrorInfo,
@@ -25,20 +25,18 @@ import {
 import { useInstance } from "@/hooks/store";
 // services
 import { AuthService } from "@/services/auth.service";
+// types
+import { EAuthModes, EAuthSteps } from "@/types/auth";
 
 const authService = new AuthService();
 
-type TAuthRoot = {
-  authMode: EAuthModes;
-};
-
-export const AuthRoot: FC<TAuthRoot> = observer((props) => {
-  //router
-  const router = useRouter();
-  const { email: emailParam, invitation_id, slug: workspaceSlug, error_code } = router.query;
-  // props
-  const { authMode } = props;
+export const AuthRoot: FC = observer(() => {
+  // router params
+  const searchParams = useSearchParams();
+  const emailParam = searchParams.get("email") || undefined;
+  const error_code = searchParams.get("error_code") || undefined;
   // states
+  const [authMode, setAuthMode] = useState<EAuthModes>(EAuthModes.SIGN_UP);
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
@@ -66,27 +64,40 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
         setErrorInfo(errorhandler);
       }
     }
-  }, [error_code, authMode]);
+  }, [error_code]);
 
   const isSMTPConfigured = instance?.config?.is_smtp_configured || false;
   const isMagicLoginEnabled = instance?.config?.is_magic_login_enabled || false;
   const isEmailPasswordEnabled = instance?.config?.is_email_password_enabled || false;
+  const isOAuthEnabled =
+    (instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled)) || false;
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
-    const emailCheckRequest =
-      authMode === EAuthModes.SIGN_IN ? authService.signInEmailCheck(data) : authService.signUpEmailCheck(data);
 
-    await emailCheckRequest
+    await authService
+      .emailCheck(data)
       .then(async (response) => {
-        if (authMode === EAuthModes.SIGN_IN) {
-          if (response.is_password_autoset) {
+        let currentAuthMode: EAuthModes = EAuthModes.SIGN_UP;
+        if (response.existing) {
+          currentAuthMode = EAuthModes.SIGN_IN;
+          setAuthMode(() => EAuthModes.SIGN_IN);
+        } else {
+          currentAuthMode = EAuthModes.SIGN_UP;
+          setAuthMode(() => EAuthModes.SIGN_UP);
+        }
+
+        if (currentAuthMode === EAuthModes.SIGN_IN) {
+          if (response.is_password_autoset && isSMTPConfigured && isMagicLoginEnabled) {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
             generateEmailUniqueCode(data.email);
           } else if (isEmailPasswordEnabled) {
             setIsPasswordAutoset(false);
             setAuthStep(EAuthSteps.PASSWORD);
+          } else {
+            const errorhandler = authErrorHandler("5005" as EAuthenticationErrorCodes);
+            setErrorInfo(errorhandler);
           }
         } else {
           if (isSMTPConfigured && isMagicLoginEnabled) {
@@ -94,6 +105,9 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
             generateEmailUniqueCode(data.email);
           } else if (isEmailPasswordEnabled) {
             setAuthStep(EAuthSteps.PASSWORD);
+          } else {
+            const errorhandler = authErrorHandler("5006" as EAuthenticationErrorCodes);
+            setErrorInfo(errorhandler);
           }
         }
       })
@@ -118,13 +132,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
 
   return (
     <div className="relative flex flex-col space-y-6">
-      <AuthHeader
-        workspaceSlug={workspaceSlug?.toString() || undefined}
-        invitationId={invitation_id?.toString() || undefined}
-        invitationEmail={email || undefined}
-        authMode={authMode}
-        currentAuthStep={authStep}
-      >
+      <AuthHeader authMode={authMode}>
         {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
           <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
         )}
@@ -156,8 +164,8 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
             }}
           />
         )}
-        <OAuthOptions isSignUp={authMode === EAuthModes.SIGN_UP} />
-        <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP} />
+        {isOAuthEnabled && <OAuthOptions />}
+        <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP ? true : false} />
       </AuthHeader>
     </div>
   );

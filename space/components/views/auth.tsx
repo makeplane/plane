@@ -2,14 +2,13 @@
 
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
-// ui
 import { useTheme } from "next-themes";
 // components
-import { AuthRoot } from "@/components/accounts";
+import { AuthRoot } from "@/components/account";
 // images
-import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text-new.png";
+import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
+import BluePlaneLogoWithoutText from "@/public/plane-logos/blue-without-text-new.png";
 
 export const AuthView = observer(() => {
   // hooks
@@ -31,7 +30,7 @@ export const AuthView = observer(() => {
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
         </div>
-        <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10">
+        <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 lg:pt-28 transition-all">
           <AuthRoot />
         </div>
       </div>

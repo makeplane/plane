@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { LogoSpinner } from "@/components/common";
 import { DashboardWidgets } from "@/components/dashboard";
 import { EmptyState } from "@/components/empty-state";
 import { IssuePeekOverview } from "@/components/issues";
@@ -67,7 +66,7 @@ export const WorkspaceDashboardView = observer(() => {
           <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}
-      {homeDashboardId && joinedProjectIds ? (
+      {homeDashboardId && joinedProjectIds && (
         <>
           {joinedProjectIds.length > 0 ? (
             <>
@@ -95,10 +94,6 @@ export const WorkspaceDashboardView = observer(() => {
             />
           )}
         </>
-      ) : (
-        <div className="grid h-full w-full place-items-center">
-          <LogoSpinner />
-        </div>
       )}
     </>
   );
