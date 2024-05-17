@@ -20,7 +20,7 @@ class GoogleOAuthProvider(OauthAdapter):
     scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
     provider = "google"
 
-    def __init__(self, request, code=None, state=None):
+    def __init__(self, request, code=None, state=None, callback=None):
         (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET) = get_configuration_value(
             [
                 {
@@ -66,6 +66,7 @@ class GoogleOAuthProvider(OauthAdapter):
             self.userinfo_url,
             client_secret,
             code,
+            callback=callback,
         )
 
     def set_token_data(self):
