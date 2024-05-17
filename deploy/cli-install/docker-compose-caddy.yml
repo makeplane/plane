@@ -7,6 +7,7 @@ x-proxy-env: &proxy-env
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
     - LISTEN_HTTP_PORT=${LISTEN_HTTP_PORT:-80}
+    - LISTEN_HTTPS_PORT=${LISTEN_HTTPS_PORT:-443}
 
 x-app-env: &app-env
   environment:
@@ -160,6 +161,7 @@ services:
     restart: unless-stopped
     ports:
       - ${LISTEN_HTTP_PORT:-80}:${LISTEN_HTTP_PORT:-80}
+      - ${LISTEN_HTTPS_PORT:-443}:${LISTEN_HTTPS_PORT:-443}
     volumes:
       - ${INSTALL_DIR}/Caddyfile:/etc/caddy/Caddyfile
       - ${INSTALL_DIR}/caddy/config:/config
