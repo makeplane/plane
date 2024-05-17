@@ -7,7 +7,6 @@ from zxcvbn import zxcvbn
 
 ## Module imports
 from plane.app.serializers import (
-    ChangePasswordSerializer,
     UserSerializer,
 )
 from plane.authentication.utils.login import user_login

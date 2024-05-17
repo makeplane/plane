@@ -64,12 +64,18 @@ export const InstanceSetupForm: FC = (props) => {
   const errorCode = searchParams.get("error_code") || undefined;
   const errorMessage = searchParams.get("error_message") || undefined;
   // state
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    retypePassword: false,
+  });
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
+
+  const handleShowPassword = (key: keyof typeof showPassword) =>
+    setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -228,7 +234,7 @@ export const InstanceSetupForm: FC = (props) => {
                 className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
                 id="password"
                 name="password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword.password ? "text" : "password"}
                 inputSize="md"
                 placeholder="New password..."
                 value={formData.password}
@@ -237,12 +243,12 @@ export const InstanceSetupForm: FC = (props) => {
                 onFocus={() => setIsPasswordInputFocused(true)}
                 onBlur={() => setIsPasswordInputFocused(false)}
               />
-              {showPassword ? (
+              {showPassword.password ? (
                 <button
                   type="button"
                   tabIndex={-1}
                   className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
-                  onClick={() => setShowPassword(false)}
+                  onClick={() => handleShowPassword("password")}
                 >
                   <EyeOff className="h-4 w-4" />
                 </button>
@@ -251,7 +257,7 @@ export const InstanceSetupForm: FC = (props) => {
                   type="button"
                   tabIndex={-1}
                   className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
-                  onClick={() => setShowPassword(true)}
+                  onClick={() => handleShowPassword("password")}
                 >
                   <Eye className="h-4 w-4" />
                 </button>
@@ -269,7 +275,7 @@ export const InstanceSetupForm: FC = (props) => {
             </label>
             <div className="relative">
               <Input
-                type={showPassword ? "text" : "password"}
+                type={showPassword.retypePassword ? "text" : "password"}
                 id="confirm_password"
                 name="confirm_password"
                 inputSize="md"
@@ -280,12 +286,12 @@ export const InstanceSetupForm: FC = (props) => {
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
               />
-              {showPassword ? (
+              {showPassword.retypePassword ? (
                 <button
                   type="button"
                   tabIndex={-1}
                   className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
-                  onClick={() => setShowPassword(false)}
+                  onClick={() => handleShowPassword("retypePassword")}
                 >
                   <EyeOff className="h-4 w-4" />
                 </button>
@@ -294,7 +300,7 @@ export const InstanceSetupForm: FC = (props) => {
                   type="button"
                   tabIndex={-1}
                   className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
-                  onClick={() => setShowPassword(true)}
+                  onClick={() => handleShowPassword("retypePassword")}
                 >
                   <Eye className="h-4 w-4" />
                 </button>

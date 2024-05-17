@@ -28,7 +28,6 @@ from .project import (
     ProjectMemberSerializer,
     ProjectMemberInviteSerializer,
     ProjectIdentifierSerializer,
-    ProjectFavoriteSerializer,
     ProjectLiteSerializer,
     ProjectMemberLiteSerializer,
     ProjectDeployBoardSerializer,
@@ -40,7 +39,6 @@ from .state import StateSerializer, StateLiteSerializer
 from .view import (
     GlobalViewSerializer,
     IssueViewSerializer,
-    IssueViewFavoriteSerializer,
 )
 
 from .active_cycle import ActiveCycleSerializer
@@ -48,7 +46,6 @@ from .active_cycle import ActiveCycleSerializer
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,
-    CycleFavoriteSerializer,
     CycleWriteSerializer,
     CycleUserPropertiesSerializer,
 )
@@ -86,7 +83,6 @@ from .module import (
     ModuleSerializer,
     ModuleIssueSerializer,
     ModuleLinkSerializer,
-    ModuleFavoriteSerializer,
     ModuleUserPropertiesSerializer,
 )
 
@@ -99,7 +95,6 @@ from .page import (
     PageLogSerializer,
     SubPageSerializer,
     PageDetailSerializer,
-    PageFavoriteSerializer,
 )
 
 from .estimate import (
