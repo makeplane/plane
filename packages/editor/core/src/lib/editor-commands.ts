@@ -194,7 +194,7 @@ export const insertImageCommand = (
   if (range) editor.chain().focus().deleteRange(range).run();
   const input = document.createElement("input");
   input.type = "file";
-  input.accept = "image/*";
+  input.accept = ".jpeg, .jpg, .png, .webp, .svg";
   input.onchange = async () => {
     if (input.files?.length) {
       const file = input.files[0];
