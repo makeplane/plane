@@ -7,9 +7,9 @@ import { v4 as uuidv4 } from "uuid";
 
 // types
 import { type UploadImage } from "src/types/upload-image";
-import { findPlaceholder, removePlaceholder } from "src/ui/plugins/image/utils/placeholder";
-import { isFileValid } from "src/ui/plugins/image/utils/validate-file";
-import { uploadAndValidateImage } from "src/ui/plugins/image/upload-validate-image-handler";
+import { findPlaceholder, , removePlaceholder } from "src/ui/plugins/image/utils/placeholder";
+import { isFileValid } from "src/ui/plugins/image/utils/validate-image";
+import { uploadImageHandler } from "./image/upload-image-handler";
 
 // Plugin key for the upload image plugin
 const uploadKey = new PluginKey("upload-image");
@@ -137,7 +137,7 @@ export async function startImageUpload(
   };
 
   try {
-    const src = await uploadAndValidateImage(file, uploadFile);
+    const src = await uploadImageHandler(file, uploadFile);
 
     if (src == null) {
       throw new Error("Resolved image URL is undefined.");

@@ -1,5 +1,5 @@
 import { Editor, Range } from "@tiptap/core";
-import { startImageUpload } from "src/ui/plugins/upload-image";
+import { startImageUpload } from "src/ui/plugins/image/start-image-upload";
 import { findTableAncestor } from "src/lib/utils";
 import { Selection } from "@tiptap/pm/state";
 import { UploadImage } from "src/types/upload-image";

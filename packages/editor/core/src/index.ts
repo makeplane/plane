@@ -9,7 +9,7 @@ export { isCellSelection } from "src/ui/extensions/table/table/utilities/is-cell
 // utils
 export * from "src/lib/utils";
 export * from "src/ui/extensions/table/table";
-export { startImageUpload } from "src/ui/plugins/upload-image";
+export { startImageUpload } from "src/ui/plugins/image/start-image-upload";
 
 // components
 export { EditorContainer } from "src/ui/components/editor-container";
