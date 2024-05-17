@@ -170,11 +170,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         path: router.asPath,
       });
       !createMore && handleClose();
-      if (createMore) {
-        issueTitleRef && issueTitleRef?.current?.focus();
-        setDescription("<p></p>");
-        setChangesMade(null);
-      }
+      if (createMore) issueTitleRef && issueTitleRef?.current?.focus();
+      setDescription("<p></p>");
+      setChangesMade(null);
       return response;
     } catch (error) {
       setToast({
