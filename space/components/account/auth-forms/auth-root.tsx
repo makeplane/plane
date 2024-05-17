@@ -35,6 +35,7 @@ export const AuthRoot: FC = observer(() => {
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
   const error_code = searchParams.get("error_code") || undefined;
+  const nextPath = searchParams.get("next_path") || undefined;
   // states
   const [authMode, setAuthMode] = useState<EAuthModes>(EAuthModes.SIGN_UP);
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
@@ -141,6 +142,7 @@ export const AuthRoot: FC = observer(() => {
           <AuthUniqueCodeForm
             mode={authMode}
             email={email}
+            nextPath={nextPath}
             handleEmailClear={() => {
               setEmail("");
               setAuthStep(EAuthSteps.EMAIL);
@@ -154,6 +156,7 @@ export const AuthRoot: FC = observer(() => {
             isPasswordAutoset={isPasswordAutoset}
             isSMTPConfigured={isSMTPConfigured}
             email={email}
+            nextPath={nextPath}
             handleEmailClear={() => {
               setEmail("");
               setAuthStep(EAuthSteps.EMAIL);
