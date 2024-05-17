@@ -66,9 +66,8 @@ export const usePageDescription = (props: Props) => {
   }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
   const handleSaveDescription = useCallback(async () => {
-    const descriptionAutoSave = async (latestDescription: any, updates: Uint8Array) => {
+    const applyUpdatesAndSave = async (latestDescription: any, updates: Uint8Array) => {
       if (!workspaceSlug || !projectId || !pageId || !latestDescription) return;
-      setIsSubmitting("submitting");
       // convert description to Uint8Array
       const descriptionArray = new Uint8Array(latestDescription);
       // apply the updates to the description
@@ -79,13 +78,17 @@ export const usePageDescription = (props: Props) => {
       await updateDescription(combinedBinaryString, descriptionHTML).finally(() => setIsSubmitting("saved"));
     };
 
+    setIsSubmitting("submitting");
     // fetch the latest description
     const latestDescription = await mutateDescriptionYJS();
     // return if there are no updates
-    if (descriptionUpdates.length <= 0) return;
+    if (descriptionUpdates.length <= 0) {
+      setIsSubmitting("saved");
+      return;
+    }
     // merge the updates array into one single update
     const mergedUpdates = mergeUpdates(descriptionUpdates);
-    await descriptionAutoSave(latestDescription, mergedUpdates);
+    await applyUpdatesAndSave(latestDescription, mergedUpdates);
     // reset the updates array to empty
     setDescriptionUpdates([]);
   }, [
@@ -108,7 +111,7 @@ export const usePageDescription = (props: Props) => {
     };
   }, [handleSaveDescription]);
 
-  // handle Ctrl/Cmd + S to save the description
+  // handle ctrl/cmd + S to save the description
   useEffect(() => {
     const handleSave = (e: KeyboardEvent) => {
       const { ctrlKey, metaKey, key } = e;
