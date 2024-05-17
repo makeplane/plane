@@ -198,9 +198,11 @@ class ModuleIssueViewSet(BaseViewSet):
         ]
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
-    # create multiple module inside an issue
+    # add multiple module inside an issue and remove multiple modules from an issue
     def create_issue_modules(self, request, slug, project_id, issue_id):
         modules = request.data.get("modules", [])
+        removed_modules = request.data.get("removed_modules", [])
+
         if not modules:
             return Response(
                 {"error": "Modules are required"},
@@ -238,6 +240,28 @@ class ModuleIssueViewSet(BaseViewSet):
             )
             for module in modules
         ]
+
+        for module_id in removed_modules:
+            module_issue = ModuleIssue.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                module_id=module_id,
+                issue_id=issue_id,
+            )
+            issue_activity.delay(
+                type="module.activity.deleted",
+                requested_data=json.dumps({"module_id": str(module_id)}),
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=json.dumps(
+                    {"module_name": module_issue.module.name}
+                ),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+            module_issue.delete()
 
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
