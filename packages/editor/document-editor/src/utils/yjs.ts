@@ -48,3 +48,29 @@ export const proseMirrorJSONToBinaryString = (
 
   return base64Doc;
 };
+
+/**
+ * @description apply updates to a doc and return the updated doc in base64(binary) format
+ * @param {Uint8Array} document
+ * @param {Uint8Array} updates
+ * @returns {string} base64(binary) form of the updated doc
+ */
+export const applyUpdates = (document: Uint8Array, updates: Uint8Array): string => {
+  const yDoc = new Y.Doc();
+  Y.applyUpdate(yDoc, document);
+  Y.applyUpdate(yDoc, updates);
+
+  const encodedDoc = Y.encodeStateAsUpdate(yDoc);
+  const base64Updates = Buffer.from(encodedDoc).toString("base64");
+  return base64Updates;
+};
+
+/**
+ * @description merge multiple updates into one single update
+ * @param {Uint8Array[]} updates
+ * @returns {Uint8Array} merged updates
+ */
+export const mergeUpdates = (updates: Uint8Array[]): Uint8Array => {
+  const mergedUpdates = Y.mergeUpdates(updates);
+  return mergedUpdates;
+};
