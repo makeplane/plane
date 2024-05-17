@@ -1,6 +1,6 @@
 # Python imports
 import uuid
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urlencode
 
 # Django import
 from django.http import HttpResponseRedirect
@@ -36,10 +36,7 @@ class GoogleOauthInitiateSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
         try:
@@ -52,10 +49,7 @@ class GoogleOauthInitiateSpaceEndpoint(View):
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
 
@@ -76,10 +70,7 @@ class GoogleCallbackSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host,
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
         if not code:
             exc = AuthenticationException(
@@ -91,10 +82,7 @@ class GoogleCallbackSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = next_path
-            url = urljoin(
-                base_host,
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
         try:
             provider = GoogleOAuthProvider(
@@ -105,16 +93,11 @@ class GoogleCallbackSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            url = urljoin(
-                base_host, str(next_path) if next_path else "/spaces"
-            )
+            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host,
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
