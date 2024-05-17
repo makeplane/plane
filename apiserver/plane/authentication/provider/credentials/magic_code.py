@@ -59,7 +59,9 @@ class MagicCodeProvider(CredentialAdapter):
                 payload={"email": str(self.key)},
             )
 
-        super().__init__(request, self.provider)
+        super().__init__(
+            request=request, provider=self.provider, callback=callback
+        )
         self.key = key
         self.code = code
 
