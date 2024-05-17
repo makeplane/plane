@@ -1,6 +1,5 @@
 # Python imports
 import json
-import y_py as Y
 import base64
 from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
@@ -425,19 +424,8 @@ class PagesDescriptionViewSet(BaseViewSet):
             # Decode the base64 data to bytes
             new_binary_data = base64.b64decode(base64_data)
 
-            # Load the existing data into a YDoc
-            existing_doc = Y.YDoc()
-            if page.description_binary:
-                Y.apply_update(existing_doc, page.description_binary)
-
-            # Load the new data into a separate YDoc
-            Y.apply_update(existing_doc, new_binary_data)
-
-            # # Encode the updated state as binary data
-            updated_binary_data = Y.encode_state_as_update(existing_doc)
-
             # Store the updated binary data
-            page.description_binary = updated_binary_data
+            page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
             page.save()
             return Response({"message": "Updated successfully"})
