@@ -179,7 +179,6 @@ export class UserStore implements IUserStore {
    * @returns {Promise<void>}
    */
   signOut = async (): Promise<void> => {
-    // await this.authService.signOut(API_BASE_URL);
-    // this.store.resetOnSignOut();
+    this.store.reset();
   };
 }
