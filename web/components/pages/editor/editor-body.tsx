@@ -30,7 +30,7 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   markings: IMarking[];
-  pageStore: IPageStore;
+  page: IPageStore;
   sidePeekVisible: boolean;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
@@ -44,7 +44,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     editorRef,
     markings,
     readOnlyEditorRef,
-    pageStore,
+    page,
     sidePeekVisible,
     updateMarkings,
   } = props;
@@ -60,16 +60,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = useMember();
   // derived values
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
-  const pageId = pageStore?.id;
-  const pageTitle = pageStore?.name ?? "";
-  const pageDescription = pageStore?.description_html;
-  const { isContentEditable, updateTitle, setIsSubmitting } = pageStore;
+  const pageId = page?.id;
+  const pageTitle = page?.name ?? "";
+  const pageDescription = page?.description_html;
+  const { isContentEditable, updateTitle, setIsSubmitting } = page;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // project-description
   const { handleDescriptionChange, isDescriptionReady, pageDescriptionYJS } = usePageDescription({
     editorRef,
-    pageStore,
+    page,
     projectId,
     workspaceSlug,
   });

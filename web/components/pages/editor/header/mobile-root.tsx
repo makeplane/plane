@@ -12,7 +12,7 @@ type Props = {
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleDuplicatePage: () => void;
   markings: IMarking[];
-  pageStore: IPageStore;
+  page: IPageStore;
   projectId: string;
   sidePeekVisible: boolean;
   setSidePeekVisible: (sidePeekState: boolean) => void;
@@ -28,13 +28,13 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
     markings,
     readOnlyEditorReady,
     handleDuplicatePage,
-    pageStore,
+    page,
     projectId,
     sidePeekVisible,
     setSidePeekVisible,
   } = props;
   // derived values
-  const { isContentEditable } = pageStore;
+  const { isContentEditable } = page;
   // page filters
   const { isFullWidth } = usePageFilters();
 
@@ -55,7 +55,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
         <PageExtraOptions
           editorRef={editorRef}
           handleDuplicatePage={handleDuplicatePage}
-          pageStore={pageStore}
+          page={page}
           projectId={projectId}
           readOnlyEditorRef={readOnlyEditorRef}
         />

@@ -37,8 +37,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
   const { createPage, getPageById } = useProjectPages(projectId?.toString() ?? "");
-  const pageStore = usePage(pageId?.toString() ?? "");
-  const { description_html, id, name } = pageStore;
+  const page = usePage(pageId?.toString() ?? "");
+  const { description_html, id, name } = page;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
   // fetch page details
@@ -52,7 +52,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     }
   );
 
-  if ((!pageStore || !id) && !pageDetailsError)
+  if ((!page || !id) && !pageDetailsError)
     return (
       <div className="size-full grid place-items-center">
         <LogoSpinner />
@@ -107,7 +107,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               readOnlyEditorReady={readOnlyEditorReady}
               handleDuplicatePage={handleDuplicatePage}
               markings={markings}
-              pageStore={pageStore}
+              page={page}
               projectId={projectId.toString()}
               sidePeekVisible={sidePeekVisible}
               setSidePeekVisible={(state) => setSidePeekVisible(state)}
@@ -119,7 +119,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
             readOnlyEditorRef={readOnlyEditorRef}
             handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
             markings={markings}
-            pageStore={pageStore}
+            page={page}
             sidePeekVisible={sidePeekVisible}
             updateMarkings={updateMarkings}
           />

@@ -12,7 +12,7 @@ const pageService = new PageService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
-  pageStore: IPageStore;
+  page: IPageStore;
   projectId: string | string[] | undefined;
   workspaceSlug: string | string[] | undefined;
 };
@@ -20,14 +20,14 @@ type Props = {
 const AUTO_SAVE_TIME = 10000;
 
 export const usePageDescription = (props: Props) => {
-  const { editorRef, pageStore, projectId, workspaceSlug } = props;
+  const { editorRef, page, projectId, workspaceSlug } = props;
   // states
   const [isDescriptionReady, setIsDescriptionReady] = useState(false);
   const [descriptionUpdates, setDescriptionUpdates] = useState<Uint8Array[]>([]);
   // derived values
-  const { isContentEditable, isSubmitting, updateDescription, setIsSubmitting } = pageStore;
-  const pageDescription = pageStore.description_html;
-  const pageId = pageStore.id;
+  const { isContentEditable, isSubmitting, updateDescription, setIsSubmitting } = page;
+  const pageDescription = page.description_html;
+  const pageId = page.id;
 
   const { data: descriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}` : null,

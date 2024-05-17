@@ -18,19 +18,19 @@ import { IPageStore } from "@/store/pages/page.store";
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
-  pageStore: IPageStore;
+  page: IPageStore;
   projectId: string;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, pageStore, projectId, readOnlyEditorRef } = props;
+  const { editorRef, handleDuplicatePage, page, projectId, readOnlyEditorRef } = props;
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // store hooks
   const { instance } = useInstance();
   // derived values
-  const { archived_at, isContentEditable, is_locked } = pageStore;
+  const { archived_at, isContentEditable, is_locked } = page;
 
   const handleAiAssistance = async (response: string) => {
     if (!editorRef) return;
@@ -75,11 +75,11 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           className="!min-w-[38rem]"
         />
       )}
-      <PageInfoPopover pageStore={pageStore} />
+      <PageInfoPopover page={page} />
       <PageOptionsDropdown
         editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
         handleDuplicatePage={handleDuplicatePage}
-        pageStore={pageStore}
+        page={page}
       />
     </div>
   );
