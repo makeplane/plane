@@ -39,7 +39,7 @@ export const UploadImagesPlugin = (editor: Editor, cancelUploadImage?: () => voi
     cancelButton.onclick = () => {
       if (currentView) {
         cancelUploadImage?.();
-        removePlaceholder(uploadKey, editor, currentView, id);
+        removePlaceholder(editor, currentView, id);
       }
     };
 
@@ -132,7 +132,7 @@ export async function startImageUpload(
   // Handle FileReader errors
   reader.onerror = (error) => {
     console.error("FileReader error: ", error);
-    removePlaceholder(uploadKey, editor, view, id);
+    removePlaceholder(editor, view, id);
     return;
   };
 
@@ -144,7 +144,7 @@ export async function startImageUpload(
     }
 
     const { schema } = view.state;
-    pos = findPlaceholder(uploadKey, view.state, id);
+    pos = findPlaceholder(view.state, id);
 
     if (pos == null) {
       editor.storage.image.uploadInProgress = false;
@@ -166,6 +166,6 @@ export async function startImageUpload(
     editor.storage.image.uploadInProgress = false;
   } catch (error) {
     console.error("Error in uploading and inserting image: ", error);
-    removePlaceholder(uploadKey, editor, view, id);
+    removePlaceholder(editor, view, id);
   }
 }

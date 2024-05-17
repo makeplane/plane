@@ -33,7 +33,7 @@ export const UploadImagesPlugin = (editor: Editor, cancelUploadImage?: () => voi
     cancelButton.onclick = () => {
       if (currentView) {
         cancelUploadImage?.();
-        removePlaceholder(uploadKey, editor, currentView, id);
+        removePlaceholder(editor, currentView, id);
       }
     };
 
