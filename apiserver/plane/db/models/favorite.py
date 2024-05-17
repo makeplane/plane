@@ -39,11 +39,11 @@ class UserFavorite(WorkspaceBaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            largest_sort_order = UserFavorite.objects.filter(
-                workspace=self.workspace
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
-            if largest_sort_order is not None:
-                self.sort_order = largest_sort_order + 10000
+            largest_sequence = UserFavorite.objects.filter(
+                workspace=self.project.workspace
+            ).aggregate(largest=models.Max("sequence"))["largest"]
+            if largest_sequence is not None:
+                self.sequence = largest_sequence + 10000
 
         super(UserFavorite, self).save(*args, **kwargs)
 
