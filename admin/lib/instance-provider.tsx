@@ -34,7 +34,7 @@ export const InstanceProvider: FC<InstanceProviderProps> = observer((props) => {
   if (error) {
     return (
       <DefaultLayout>
-        <div className="relative w-screen min-h-[500px] overflow-y-auto px-5 mx-auto flex justify-center items-center">
+        <div className="relative h-full w-full overflow-y-auto px-6 py-10 mx-auto flex justify-center items-center">
           <InstanceFailureView />
         </div>
       </DefaultLayout>
@@ -44,7 +44,7 @@ export const InstanceProvider: FC<InstanceProviderProps> = observer((props) => {
   if (!instance?.is_setup_done) {
     return (
       <DefaultLayout>
-        <div className="relative w-screen min-h-screen overflow-y-auto px-5 py-10 mx-auto flex justify-center items-center">
+        <div className="relative h-full w-full overflow-y-auto px-6 py-10 mx-auto flex justify-center items-center">
           <InstanceSetupForm />
         </div>
       </DefaultLayout>
