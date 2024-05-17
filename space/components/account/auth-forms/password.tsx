@@ -53,9 +53,6 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   const handleShowPassword = (key: keyof typeof showPassword) =>
     setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  const handleShowPassword = (key: keyof typeof showPassword) =>
-    setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
-
   const handleFormChange = (key: keyof TPasswordFormValues, value: string) =>
     setPasswordFormData((prev) => ({ ...prev, [key]: value }));
 
