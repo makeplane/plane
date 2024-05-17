@@ -76,7 +76,7 @@ export class PageStore implements IPageStore {
     page: TPage
   ) {
     this.id = page?.id || undefined;
-    this.name = page?.name || undefined;
+    this.name = page?.name?.trim() === "" ? "" : undefined;
     this.description_html = page?.description_html || undefined;
     this.color = page?.color || undefined;
     this.labels = page?.labels || undefined;
