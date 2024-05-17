@@ -25,7 +25,7 @@ export const usePageDescription = (props: Props) => {
   const [isDescriptionReady, setIsDescriptionReady] = useState(false);
   const [descriptionUpdates, setDescriptionUpdates] = useState<Uint8Array[]>([]);
   // derived values
-  const { isSubmitting, updateDescription, setIsSubmitting } = pageStore;
+  const { isContentEditable, isSubmitting, updateDescription, setIsSubmitting } = pageStore;
   const pageDescription = pageStore.description_html;
   const pageId = pageStore.id;
 
@@ -66,6 +66,8 @@ export const usePageDescription = (props: Props) => {
   }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
   const handleSaveDescription = useCallback(async () => {
+    if (!isContentEditable) return;
+
     const applyUpdatesAndSave = async (latestDescription: any, updates: Uint8Array) => {
       if (!workspaceSlug || !projectId || !pageId || !latestDescription) return;
       // convert description to Uint8Array
@@ -94,6 +96,7 @@ export const usePageDescription = (props: Props) => {
   }, [
     descriptionUpdates,
     editorRef,
+    isContentEditable,
     mutateDescriptionYJS,
     pageId,
     projectId,

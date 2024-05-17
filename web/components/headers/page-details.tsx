@@ -16,7 +16,7 @@ export const PageDetailsHeader = observer(() => {
   const { workspaceSlug, pageId } = router.query;
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { isSubmitting, name } = usePage(pageId?.toString() ?? "");
+  const { isContentEditable, isSubmitting, name } = usePage(pageId?.toString() ?? "");
   // use platform
   const { platform } = usePlatformOS();
   // derived values
@@ -73,23 +73,25 @@ export const PageDetailsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
-      <Button
-        variant="primary"
-        size="sm"
-        onClick={() => {
-          // ctrl/cmd + s to save the changes
-          const event = new KeyboardEvent("keydown", {
-            key: "s",
-            ctrlKey: !isMac,
-            metaKey: isMac,
-          });
-          window.dispatchEvent(event);
-        }}
-        className="flex-shrink-0"
-        loading={isSubmitting === "submitting"}
-      >
-        {isSubmitting === "submitting" ? "Saving" : "Save changes"}
-      </Button>
+      {isContentEditable && (
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => {
+            // ctrl/cmd + s to save the changes
+            const event = new KeyboardEvent("keydown", {
+              key: "s",
+              ctrlKey: !isMac,
+              metaKey: isMac,
+            });
+            window.dispatchEvent(event);
+          }}
+          className="flex-shrink-0"
+          loading={isSubmitting === "submitting"}
+        >
+          {isSubmitting === "submitting" ? "Saving" : "Save changes"}
+        </Button>
+      )}
     </div>
   );
 });
