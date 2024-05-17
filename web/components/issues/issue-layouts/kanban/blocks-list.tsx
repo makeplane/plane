@@ -15,6 +15,7 @@ interface IssueBlocksListProps {
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
+  canDropOverIssue: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
@@ -26,6 +27,7 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
     issueIds,
     displayProperties,
     isDragDisabled,
+    canDropOverIssue,
     updateIssue,
     quickActions,
     canEditProperties,
@@ -55,6 +57,7 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
                 quickActions={quickActions}
                 draggableId={draggableId}
                 isDragDisabled={isDragDisabled}
+                canDropOverIssue={canDropOverIssue}
                 canEditProperties={canEditProperties}
                 scrollableContainerRef={scrollableContainerRef}
               />
