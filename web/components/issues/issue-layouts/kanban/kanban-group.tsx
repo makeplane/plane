@@ -175,14 +175,15 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     return preloadedData;
   };
 
-  const shouldOverlay = isDraggingOverColumn && (orderBy !== "sort_order" || isDropDisabled);
+  const canDropOverIssue = orderBy === "sort_order";
+  const shouldOverlay = isDraggingOverColumn && (!canDropOverIssue || isDropDisabled);
   const readableOrderBy = ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.title;
 
   return (
     <div
       id={`${groupId}__${sub_group_id}`}
       className={cn(
-        "relative h-full transition-all min-h-[50px]",
+        "relative h-full transition-all min-h-[120px]",
         { "bg-custom-background-80 rounded": isDraggingOverColumn },
         { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlay }
       )}
@@ -201,7 +202,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       >
         <div
           className={cn(
-            "p-3 mt-6 flex flex-col border-[1px] rounded items-center",
+            "p-3 mt-8 flex flex-col border-[1px] rounded items-center",
             {
               "bg-custom-background-primary border-custom-border-primary text-custom-text-primary": shouldOverlay,
             },
@@ -231,6 +232,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
         quickActions={quickActions}
         canEditProperties={canEditProperties}
         scrollableContainerRef={sub_group_by ? scrollableContainerRef : columnRef}
+        canDropOverIssue={canDropOverIssue}
       />
 
       {enableQuickIssueCreate && !disableIssueCreation && (

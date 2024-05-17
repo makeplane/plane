@@ -21,9 +21,10 @@ from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
 class Adapter:
     """Common interface for all auth providers"""
 
-    def __init__(self, request, provider):
+    def __init__(self, request, provider, callback=None):
         self.request = request
         self.provider = provider
+        self.callback = callback
         self.token_data = None
         self.user_data = None
 
@@ -48,7 +49,8 @@ class Adapter:
     def complete_login_or_signup(self):
         email = self.user_data.get("email")
         user = User.objects.filter(email=email).first()
-
+        # Check if sign up case or login
+        is_signup = bool(user)
         if not user:
             # New user
             (ENABLE_SIGNUP,) = get_configuration_value(
@@ -114,6 +116,13 @@ class Adapter:
         user.last_login_uagent = self.request.META.get("HTTP_USER_AGENT")
         user.token_updated_at = timezone.now()
         user.save()
+
+        if self.callback:
+            self.callback(
+                user,
+                is_signup,
+                self.request,
+            )
 
         if self.token_data:
             self.create_update_account(user=user)

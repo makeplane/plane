@@ -1,4 +1,5 @@
 "use client";
+
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // components
@@ -9,17 +10,18 @@ import { AuthView } from "@/components/views";
 import { useUser } from "@/hooks/store";
 
 function HomePage() {
-  const { fetchCurrentUser, isAuthenticated, isLoading } = useUser();
+  const { data: currentUser, fetchCurrentUser, isAuthenticated, isLoading } = useUser();
 
-  useSWR("CURRENT_USER", () => fetchCurrentUser(), { errorRetryCount: 0 });
+  useSWR("CURRENT_USER", () => fetchCurrentUser(), {
+    errorRetryCount: 0,
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    refreshWhenHidden: false,
+  });
 
-  if (isLoading) {
-    return <LogoSpinner />;
-  }
+  if (isLoading) return <LogoSpinner />;
 
-  if (isAuthenticated) {
-    return <UserLoggedIn />;
-  }
+  if (currentUser && isAuthenticated) return <UserLoggedIn />;
 
   return <AuthView />;
 }

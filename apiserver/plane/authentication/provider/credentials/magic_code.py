@@ -24,6 +24,7 @@ class MagicCodeProvider(CredentialAdapter):
         request,
         key,
         code=None,
+        callback=None,
     ):
 
         (
@@ -58,7 +59,9 @@ class MagicCodeProvider(CredentialAdapter):
                 payload={"email": str(self.key)},
             )
 
-        super().__init__(request, self.provider)
+        super().__init__(
+            request=request, provider=self.provider, callback=callback
+        )
         self.key = key
         self.code = code
 
@@ -125,6 +128,8 @@ class MagicCodeProvider(CredentialAdapter):
                         },
                     }
                 )
+                # Delete the token from redis if the code match is successful
+                ri.delete(self.key)
                 return
             else:
                 raise AuthenticationException(
