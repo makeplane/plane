@@ -9,7 +9,12 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails, useUser } from "@/hooks/store";
 
-export const IssueVotes: React.FC = observer((props: any) => {
+type TIssueVotes = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
