@@ -4,7 +4,7 @@ import Image from "next/image";
 // assets
 import UserLoggedInImage from "public/user-logged-in.svg";
 
-export default function InstanceNotFound() {
+export default function NotFound() {
   return (
     <div className="flex h-screen w-screen flex-col">
       <div className="grid h-full w-full place-items-center p-6">

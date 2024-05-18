@@ -43,7 +43,7 @@ export const PasswordStrengthMeter: React.FC<Props> = (props: Props) => {
   ];
 
   return (
-    <div className="w-full p-1">
+    <div className="w-full">
       <div className="flex w-full gap-1.5">
         {bars.map((color, index) => (
           <div key={index} className={cn("w-full h-1 rounded-full", color)} />

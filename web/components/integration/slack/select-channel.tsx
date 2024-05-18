@@ -22,7 +22,7 @@ const appInstallationService = new AppInstallationService();
 
 export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
   // store hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
   // states
   const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
   const [slackChannel, setSlackChannel] = useState<ISlackIntegration | null>(null);
@@ -35,7 +35,7 @@ export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
     provider: "slackChannel",
     stateParams: integration.id,
     // github_app_name: instance?.config?.github_client_id || "",
-    slack_client_id: instance?.config?.slack_client_id || "",
+    slack_client_id: config?.slack_client_id || "",
   });
 
   const { data: projectIntegration } = useSWR(
