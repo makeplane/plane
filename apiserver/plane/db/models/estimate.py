@@ -1,9 +1,9 @@
 # Django imports
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Module imports
-from . import ProjectBaseModel
+from .project import ProjectBaseModel
 
 
 class Estimate(ProjectBaseModel):
@@ -11,6 +11,7 @@ class Estimate(ProjectBaseModel):
     description = models.TextField(
         verbose_name="Estimate Description", blank=True
     )
+    type = models.CharField(max_length=255, default="Categories")
 
     def __str__(self):
         """Return name of the estimate"""
@@ -31,7 +32,7 @@ class EstimatePoint(ProjectBaseModel):
         related_name="points",
     )
     key = models.IntegerField(
-        default=0, validators=[MinValueValidator(0), MaxValueValidator(7)]
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
     )
     description = models.TextField(blank=True)
     value = models.CharField(max_length=20)

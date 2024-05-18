@@ -2,22 +2,21 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
+// icons
 import { History, MessageSquare } from "lucide-react";
 // hooks
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
 import { ActivitySettingsLoader } from "@/components/ui";
+// constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
+// helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
+// hooks
 import { useUser } from "@/hooks/store";
 // services
 import { UserService } from "@/services/user.service";
-// components
-// ui
-// helpers
-// fetch-keys
 
-// services
 const userService = new UserService();
 
 type Props = {
@@ -30,7 +29,7 @@ type Props = {
 export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
   const { cursor, perPage, updateResultsCount, updateTotalPages } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
 
   const { data: userProfileActivity } = useSWR(
     USER_ACTIVITY({
@@ -72,7 +71,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                           className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white"
                         />
                       ) : (
-                        <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white capitalize">
+                        <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 capitalize text-white">
                           {activityItem.actor_detail.display_name?.[0]}
                         </div>
                       )}
@@ -141,7 +140,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                                     className="h-full w-full rounded-full object-cover"
                                   />
                                 ) : (
-                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white capitalize">
+                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs capitalize text-white">
                                     {activityItem.actor_detail.display_name?.[0]}
                                   </div>
                                 )}

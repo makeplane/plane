@@ -1,5 +1,5 @@
-import React, { useState, ReactElement } from "react";
-import { observer } from "mobx-react-lite";
+import { ReactElement, useState } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -8,13 +8,14 @@ import { IWorkspace } from "@plane/types";
 // hooks
 import { PageHead } from "@/components/core";
 import { CreateWorkspaceForm } from "@/components/workspace";
-import { useUser } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store";
 // layouts
-import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
 // components
 // images
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
@@ -23,7 +24,8 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   // store hooks
-  const { currentUser, updateCurrentUser } = useUser();
+  const { data: currentUser } = useUser();
+  const { updateUserProfile } = useUserProfile();
   // states
   const [defaultValues, setDefaultValues] = useState({
     name: "",
@@ -34,7 +36,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   const { theme } = useTheme();
 
   const onSubmit = async (workspace: IWorkspace) => {
-    await updateCurrentUser({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
+    await updateUserProfile({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
   };
 
   return (
@@ -78,9 +80,9 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
 
 CreateWorkspacePage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserAuthWrapper>
+    <AuthenticationWrapper>
       <DefaultLayout>{page} </DefaultLayout>
-    </UserAuthWrapper>
+    </AuthenticationWrapper>
   );
 };
 

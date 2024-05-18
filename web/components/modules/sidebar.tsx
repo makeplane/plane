@@ -125,7 +125,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Module link created",
+          title: "Success!",
           message: "Module link created successfully.",
         });
       })
@@ -151,7 +151,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Module link updated",
+          title: "Success!",
           message: "Module link updated successfully.",
         });
       })
@@ -175,7 +175,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Module link deleted",
+          title: "Success!",
           message: "Module link deleted successfully.",
         });
       })
@@ -644,7 +644,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
 
           <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 px-1.5 py-5">
-            <Disclosure>
+            {/* Accessing link outside the disclosure as mobx is not  considering the children inside Disclosure as part of the component hence not observing their state change*/}
+            <Disclosure defaultOpen={!!moduleDetails?.link_module?.length}>
               {({ open }) => (
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
@@ -673,18 +674,20 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               </div>
                             )}
 
-                            <LinksList
-                              links={moduleDetails.link_module}
-                              handleEditLink={handleEditLink}
-                              handleDeleteLink={handleDeleteLink}
-                              userAuth={{
-                                isGuest: currentProjectRole === EUserProjectRoles.GUEST,
-                                isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
-                                isMember: currentProjectRole === EUserProjectRoles.MEMBER,
-                                isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
-                              }}
-                              disabled={isArchived}
-                            />
+                            {moduleId && (
+                              <LinksList
+                                moduleId={moduleId}
+                                handleEditLink={handleEditLink}
+                                handleDeleteLink={handleDeleteLink}
+                                userAuth={{
+                                  isGuest: currentProjectRole === EUserProjectRoles.GUEST,
+                                  isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
+                                  isMember: currentProjectRole === EUserProjectRoles.MEMBER,
+                                  isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
+                                }}
+                                disabled={isArchived}
+                              />
+                            )}
                           </>
                         ) : (
                           <div className="flex items-center justify-between gap-2">

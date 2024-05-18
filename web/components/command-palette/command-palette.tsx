@@ -1,13 +1,11 @@
 import React, { useCallback, useEffect, FC, useMemo } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// hooks
-import { TOAST_TYPE, setToast } from "@plane/ui";
-
-import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 import { BulkDeleteIssuesModal } from "@/components/core";
 import { CycleCreateUpdateModal } from "@/components/cycles";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
@@ -15,15 +13,17 @@ import { CreateUpdateModuleModal } from "@/components/modules";
 import { CreatePageModal } from "@/components/pages";
 import { CreateProjectModal } from "@/components/project";
 import { CreateUpdateProjectViewModal } from "@/components/views";
-// helpers
-// services
-// fetch keys
+// constants
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
-import { useApplication, useEventTracker, useIssues, useUser } from "@/hooks/store";
+// hooks
+import { useEventTracker, useIssues, useUser, useAppTheme, useCommandPalette } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// services
 import { IssueService } from "@/services/issue";
 
 // services
@@ -34,14 +34,12 @@ export const CommandPalette: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, cycleId, moduleId } = router.query;
   // store hooks
-  const {
-    commandPalette,
-    theme: { toggleSidebar },
-  } = useApplication();
+  const { toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
+  const { platform } = usePlatformOS();
   const {
-    currentUser,
     membership: { currentWorkspaceRole, currentProjectRole },
+    data: currentUser,
   } = useUser();
   const {
     issues: { removeIssue },
@@ -68,7 +66,7 @@ export const CommandPalette: FC = observer(() => {
     toggleDeleteIssueModal,
     isAnyModalOpen,
     createIssueStoreType,
-  } = commandPalette;
+  } = useCommandPalette();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -200,6 +198,11 @@ export const CommandPalette: FC = observer(() => {
 
       const keyPressed = key.toLowerCase();
       const cmdClicked = ctrlKey || metaKey;
+
+      if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
+        e.preventDefault();
+        toggleCommandPaletteModal(true);
+      }
       // if on input, textarea or editor, don't do anything
       if (
         e.target instanceof HTMLTextAreaElement ||
@@ -209,10 +212,7 @@ export const CommandPalette: FC = observer(() => {
         return;
 
       if (cmdClicked) {
-        if (keyPressed === "k") {
-          e.preventDefault();
-          toggleCommandPaletteModal(true);
-        } else if (keyPressed === "c" && altKey) {
+        if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
           e.preventDefault();
           copyIssueUrlToClipboard();
         } else if (keyPressed === "b") {

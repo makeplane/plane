@@ -1,4 +1,6 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // hooks
 // components
@@ -62,6 +64,20 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
   const ganttContainerRef = useRef<HTMLDivElement>(null);
   // chart hook
   const { currentView, currentViewData } = useGanttChart();
+
+  // Enable Auto Scroll for Ganttlist
+  useEffect(() => {
+    const element = ganttContainerRef.current;
+
+    if (!element) return;
+
+    return combine(
+      autoScrollForElements({
+        element,
+        getAllowedAxis: () => "vertical",
+      })
+    );
+  }, [ganttContainerRef?.current]);
   // handling scroll functionality
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const { clientWidth, scrollLeft, scrollWidth } = e.currentTarget;

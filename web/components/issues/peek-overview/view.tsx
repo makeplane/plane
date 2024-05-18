@@ -1,8 +1,7 @@
 import { FC, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
-// ui
-import { Spinner } from "@plane/ui";
+import { observer } from "mobx-react";
 // components
+import { LogoSpinner } from "@/components/common";
 import {
   DeleteIssueModal,
   IssuePeekOverviewHeader,
@@ -41,7 +40,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const {
     setPeekIssue,
     isAnyModalOpen,
@@ -144,7 +143,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
               {isLoading && !issue ? (
                 <div className="flex h-full w-full items-center justify-center">
-                  <Spinner />
+                  <LogoSpinner />
                 </div>
               ) : (
                 issue && (

@@ -500,12 +500,22 @@ const emptyStateDetails = {
     title: "No private pages yet",
     description: "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
     path: "/empty-state/pages/private",
+    primaryButton: {
+      text: "Create your first page",
+    },
+    accessType: "project",
+    access: EUserProjectRoles.MEMBER,
   },
   [EmptyStateType.PROJECT_PAGE_PUBLIC]: {
     key: EmptyStateType.PROJECT_PAGE_PUBLIC,
     title: "No public pages yet",
     description: "See pages shared with everyone in your project right here.",
     path: "/empty-state/pages/public",
+    primaryButton: {
+      text: "Create your first page",
+    },
+    accessType: "project",
+    access: EUserProjectRoles.MEMBER,
   },
   [EmptyStateType.PROJECT_PAGE_ARCHIVED]: {
     key: EmptyStateType.PROJECT_PAGE_ARCHIVED,

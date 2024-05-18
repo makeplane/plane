@@ -1,5 +1,5 @@
 # Django imports
-from django.db.models import Count, Sum, F
+from django.db.models import Count, F, Sum
 from django.db.models.functions import ExtractMonth
 from django.utils import timezone
 
@@ -7,13 +7,14 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
-# Module imports
-from plane.app.views import BaseAPIView, BaseViewSet
 from plane.app.permissions import WorkSpaceAdminPermission
-from plane.db.models import Issue, AnalyticView, Workspace
 from plane.app.serializers import AnalyticViewSerializer
-from plane.utils.analytics_plot import build_graph_plot
+
+# Module imports
+from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.analytic_plot_export import analytic_export_task
+from plane.db.models import AnalyticView, Issue, Workspace
+from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.issue_filters import issue_filters
 
 

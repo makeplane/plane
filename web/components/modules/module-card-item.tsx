@@ -2,11 +2,12 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Info } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Info, MoveRight, User2 } from "lucide-react";
 // ui
-import { Avatar, AvatarGroup, LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
+import { LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
 // components
 import { FavoriteStar } from "@/components/core";
+import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
@@ -145,6 +146,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
         : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
+  const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
+
   return (
     <div className="relative">
       <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
@@ -179,16 +182,15 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
               </div>
-              {moduleDetails.member_ids?.length > 0 && (
-                <Tooltip tooltipContent={`${moduleDetails.member_ids.length} Members`} isMobile={isMobile}>
-                  <div className="flex cursor-default items-center gap-1">
-                    <AvatarGroup showTooltip={false}>
-                      {moduleDetails.member_ids.map((member_id) => {
-                        const member = getUserDetails(member_id);
-                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
-                      })}
-                    </AvatarGroup>
-                  </div>
+              {moduleLeadDetails ? (
+                <span className="cursor-default">
+                  <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
+                </span>
+              ) : (
+                <Tooltip tooltipContent="No lead">
+                  <span className="cursor-default flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
+                    <User2 className="h-4 w-4 text-custom-text-400" />
+                  </span>
                 </Tooltip>
               )}
             </div>
@@ -217,11 +219,13 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
             <div className="flex items-center justify-between py-0.5">
               {isDateValid ? (
-                <>
-                  <span className="text-xs text-custom-text-300">
-                    {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
-                  </span>
-                </>
+                <div className="h-6 flex items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs px-2 cursor-default">
+                  <CalendarClock className="h-3 w-3 flex-shrink-0" />
+                  <span className="flex-grow truncate">{renderFormattedDate(startDate)}</span>
+                  <MoveRight className="h-3 w-3 flex-shrink-0" />
+                  <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />
+                  <span className="flex-grow truncate">{renderFormattedDate(endDate)}</span>
+                </div>
               ) : (
                 <span className="text-xs text-custom-text-400">No due date</span>
               )}
@@ -229,7 +233,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </Link>
-      <div className="absolute right-4 bottom-3.5 flex items-center gap-1.5">
+      <div className="absolute right-4 bottom-[18px] flex items-center gap-1.5">
         {isEditingAllowed && (
           <FavoriteStar
             onClick={(e) => {

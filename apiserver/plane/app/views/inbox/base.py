@@ -251,6 +251,16 @@ class InboxIssueViewSet(BaseViewSet):
         )
         if serializer.is_valid():
             serializer.save()
+            inbox_id = Inbox.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).first()
+            # create an inbox issue
+            inbox_issue = InboxIssue.objects.create(
+                inbox_id=inbox_id.id,
+                project_id=project_id,
+                issue_id=serializer.data["id"],
+                source=request.data.get("source", "in-app"),
+            )
             # Create an Issue Activity
             issue_activity.delay(
                 type="issue.activity.created",
@@ -262,16 +272,7 @@ class InboxIssueViewSet(BaseViewSet):
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
-            )
-            inbox_id = Inbox.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            ).first()
-            # create an inbox issue
-            inbox_issue = InboxIssue.objects.create(
-                inbox_id=inbox_id.id,
-                project_id=project_id,
-                issue_id=serializer.data["id"],
-                source=request.data.get("source", "in-app"),
+                inbox=str(inbox_issue.id),
             )
             inbox_issue = (
                 InboxIssue.objects.select_related("issue")
@@ -339,7 +340,24 @@ class InboxIssueViewSet(BaseViewSet):
         # Get issue data
         issue_data = request.data.pop("issue", False)
         if bool(issue_data):
-            issue = Issue.objects.get(
+            issue = Issue.objects.annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            ).get(
                 pk=inbox_issue.issue_id,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -379,6 +397,7 @@ class InboxIssueViewSet(BaseViewSet):
                         epoch=int(timezone.now().timestamp()),
                         notification=True,
                         origin=request.META.get("HTTP_ORIGIN"),
+                        inbox=str(inbox_issue.id),
                     )
                 issue_serializer.save()
             else:
@@ -444,15 +463,11 @@ class InboxIssueViewSet(BaseViewSet):
                     epoch=int(timezone.now().timestamp()),
                     notification=False,
                     origin=request.META.get("HTTP_ORIGIN"),
+                    inbox=(inbox_issue.id),
                 )
 
                 inbox_issue = (
-                    InboxIssue.objects.filter(
-                        inbox_id=inbox_id.id,
-                        issue_id=serializer.data["id"],
-                        project_id=project_id,
-                    )
-                    .select_related("issue")
+                    InboxIssue.objects.select_related("issue")
                     .prefetch_related(
                         "issue__labels",
                         "issue__assignees",
@@ -464,10 +479,7 @@ class InboxIssueViewSet(BaseViewSet):
                                 distinct=True,
                                 filter=~Q(issue__labels__id__isnull=True),
                             ),
-                            Value(
-                                [],
-                                output_field=ArrayField(UUIDField()),
-                            ),
+                            Value([], output_field=ArrayField(UUIDField())),
                         ),
                         assignee_ids=Coalesce(
                             ArrayAgg(
@@ -475,12 +487,14 @@ class InboxIssueViewSet(BaseViewSet):
                                 distinct=True,
                                 filter=~Q(issue__assignees__id__isnull=True),
                             ),
-                            Value(
-                                [],
-                                output_field=ArrayField(UUIDField()),
-                            ),
+                            Value([], output_field=ArrayField(UUIDField())),
                         ),
-                    ).first()
+                    )
+                    .get(
+                        inbox_id=inbox_id.id,
+                        issue_id=issue_id,
+                        project_id=project_id,
+                    )
                 )
                 serializer = InboxIssueDetailSerializer(inbox_issue).data
                 return Response(serializer, status=status.HTTP_200_OK)

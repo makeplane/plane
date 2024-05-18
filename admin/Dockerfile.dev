@@ -1,0 +1,17 @@
+FROM node:18-alpine
+RUN apk add --no-cache libc6-compat
+# Set working directory
+WORKDIR /app
+
+COPY . .
+
+RUN yarn global add turbo
+RUN yarn install
+
+ENV NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
+
+EXPOSE 3000
+
+VOLUME [ "/app/node_modules", "/app/admin/node_modules" ]
+
+CMD ["yarn", "dev", "--filter=admin"]

@@ -1,20 +1,20 @@
 from django.urls import path
 
 from plane.app.views import (
-    ## User
-    UserEndpoint,
+    AccountEndpoint,
+    ProfileEndpoint,
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
-    ChangePasswordEndpoint,
-    SetUserPasswordEndpoint,
+    UserActivityGraphEndpoint,
+    ## User
+    UserEndpoint,
+    UserIssueCompletedGraphEndpoint,
+    UserWorkspaceDashboardEndpoint,
+    UserSessionEndpoint,
     ## End User
     ## Workspaces
     UserWorkSpacesEndpoint,
-    UserActivityGraphEndpoint,
-    UserIssueCompletedGraphEndpoint,
-    UserWorkspaceDashboardEndpoint,
-    ## End Workspaces
 )
 
 urlpatterns = [
@@ -31,6 +31,11 @@ urlpatterns = [
         name="users",
     ),
     path(
+        "users/session/",
+        UserSessionEndpoint.as_view(),
+        name="user-session",
+    ),
+    path(
         "users/me/settings/",
         UserEndpoint.as_view(
             {
@@ -39,6 +44,25 @@ urlpatterns = [
         ),
         name="users",
     ),
+    # Profile
+    path(
+        "users/me/profile/",
+        ProfileEndpoint.as_view(),
+        name="accounts",
+    ),
+    # End profile
+    # Accounts
+    path(
+        "users/me/accounts/",
+        AccountEndpoint.as_view(),
+        name="accounts",
+    ),
+    path(
+        "users/me/accounts/<uuid:pk>/",
+        AccountEndpoint.as_view(),
+        name="accounts",
+    ),
+    ## End Accounts
     path(
         "users/me/instance-admin/",
         UserEndpoint.as_view(
@@ -47,11 +71,6 @@ urlpatterns = [
             }
         ),
         name="users",
-    ),
-    path(
-        "users/me/change-password/",
-        ChangePasswordEndpoint.as_view(),
-        name="change-password",
     ),
     path(
         "users/me/onboard/",
@@ -89,11 +108,6 @@ urlpatterns = [
         "users/me/workspaces/<str:slug>/dashboard/",
         UserWorkspaceDashboardEndpoint.as_view(),
         name="user-workspace-dashboard",
-    ),
-    path(
-        "users/me/set-password/",
-        SetUserPasswordEndpoint.as_view(),
-        name="set-password",
     ),
     ## End User Graph
 ]

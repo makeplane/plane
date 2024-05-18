@@ -8,7 +8,8 @@ export type TModuleOrderByOptions =
   | "target_date"
   | "-target_date"
   | "created_at"
-  | "-created_at";
+  | "-created_at"
+  | "sort_order";
 
 export type TModuleLayoutOptions = "list" | "board" | "gantt";
 

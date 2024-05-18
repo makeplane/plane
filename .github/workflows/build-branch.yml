@@ -22,10 +22,11 @@ jobs:
       gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
-      build_frontend: ${{ steps.changed_files.outputs.frontend_any_changed }}
-      build_space: ${{ steps.changed_files.outputs.space_any_changed }}
-      build_backend: ${{ steps.changed_files.outputs.backend_any_changed }}
       build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
+      build_apiserver: ${{ steps.changed_files.outputs.apiserver_any_changed }}
+      build_admin: ${{ steps.changed_files.outputs.admin_any_changed }}
+      build_space: ${{ steps.changed_files.outputs.space_any_changed }}
+      build_web: ${{ steps.changed_files.outputs.web_any_changed }}
 
     steps:
       - id: set_env_variables
@@ -53,8 +54,12 @@ jobs:
         uses: tj-actions/changed-files@v42
         with:
           files_yaml: |
-            frontend:
-              - web/**
+            apiserver:
+              - apiserver/**
+            proxy:
+              - nginx/**
+            admin:
+              - admin/**
               - packages/**
               - 'package.json'
               - 'yarn.lock'
@@ -67,13 +72,16 @@ jobs:
               - 'yarn.lock'
               - 'tsconfig.json'
               - 'turbo.json'
-            backend:
-              - apiserver/**
-            proxy:
-              - nginx/**
+            web:
+              - web/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
 
-  branch_build_push_frontend:
-    if: ${{ needs.branch_build_setup.outputs.build_frontend == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+  branch_build_push_web:
+    if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -118,6 +126,58 @@ jobs:
           file: ./web/Dockerfile.web
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.FRONTEND_TAG }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_admin:
+    if: ${{ needs.branch_build_setup.outputs.build_admin== 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    env:
+      ADMIN_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-admin:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Admin Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-admin:stable,${{ secrets.DOCKERHUB_USERNAME }}/plane-admin:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-admin:latest
+          else
+            TAG=${{ env.ADMIN_TAG }}
+          fi
+          echo "ADMIN_TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Frontend to Docker Container Registry
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./admin/Dockerfile.admin
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.ADMIN_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -176,8 +236,8 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  branch_build_push_backend:
-    if: ${{ needs.branch_build_setup.outputs.build_backend == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+  branch_build_push_apiserver:
+    if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:

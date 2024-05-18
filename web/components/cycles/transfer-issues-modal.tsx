@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { AlertCircle, Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -39,7 +39,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Issues transferred successfully",
+          title: "Success!",
           message: "Issues have been transferred successfully",
         });
       })

@@ -1,6 +1,7 @@
 # Python imports
 import json
 
+# Django Imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
@@ -17,21 +18,20 @@ from django.db.models import (
     Value,
 )
 from django.db.models.functions import Coalesce
-
-# Django Imports
+from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
-from rest_framework import status
 
 # Third party imports
+from rest_framework import status
 from rest_framework.response import Response
 
+# Module imports
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
 )
 from plane.app.serializers import (
     ModuleDetailSerializer,
-    ModuleFavoriteSerializer,
     ModuleLinkSerializer,
     ModuleSerializer,
     ModuleUserPropertiesSerializer,
@@ -41,7 +41,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Issue,
     Module,
-    ModuleFavorite,
+    UserFavorite,
     ModuleIssue,
     ModuleLink,
     ModuleUserProperties,
@@ -49,13 +49,11 @@ from plane.db.models import (
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.utils.user_timezone_converter import user_timezone_converter
+from plane.bgtasks.webhook_task import model_activity
+from .. import BaseAPIView, BaseViewSet
 
 
-# Module imports
-from .. import BaseAPIView, BaseViewSet, WebhookMixin
-
-
-class ModuleViewSet(WebhookMixin, BaseViewSet):
+class ModuleViewSet(BaseViewSet):
     model = Module
     permission_classes = [
         ProjectEntityPermission,
@@ -70,9 +68,10 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def get_queryset(self):
-        favorite_subquery = ModuleFavorite.objects.filter(
+        favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
-            module_id=OuterRef("pk"),
+            entity_type="module",
+            entity_identifier=OuterRef("pk"),
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
@@ -238,6 +237,16 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                     "updated_at",
                 )
             ).first()
+            # Send the model activity
+            model_activity.delay(
+                model_name="module",
+                model_id=str(module["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(
                 module, datetime_fields, request.user.user_timezone
@@ -428,6 +437,9 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 {"error": "Archived module cannot be updated"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        current_instance = json.dumps(
+            ModuleSerializer(module.first()).data, cls=DjangoJSONEncoder
+        )
         serializer = ModuleWriteSerializer(
             module.first(), data=request.data, partial=True
         )
@@ -464,6 +476,18 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 "created_at",
                 "updated_at",
             ).first()
+
+            # Send the model activity
+            model_activity.delay(
+                model_name="module",
+                model_id=str(module["id"]),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(
                 module, datetime_fields, request.user.user_timezone
@@ -530,8 +554,7 @@ class ModuleLinkViewSet(BaseViewSet):
 
 
 class ModuleFavoriteViewSet(BaseViewSet):
-    serializer_class = ModuleFavoriteSerializer
-    model = ModuleFavorite
+    model = UserFavorite
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -543,18 +566,21 @@ class ModuleFavoriteViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
-        serializer = ModuleFavoriteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user, project_id=project_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        _ = UserFavorite.objects.create(
+            project_id=project_id,
+            user=request.user,
+            entity_type="module",
+            entity_identifier=request.data.get("module"),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, module_id):
-        module_favorite = ModuleFavorite.objects.get(
-            project=project_id,
+        module_favorite = UserFavorite.objects.get(
+            project_id=project_id,
             user=request.user,
             workspace__slug=slug,
-            module_id=module_id,
+            entity_type="module",
+            entity_identifier=module_id,
         )
         module_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,253 +1,220 @@
-import { action, observable, runInAction, makeObservable } from "mobx";
-// interfaces
-import { IUser, IUserSettings } from "@plane/types";
+import cloneDeep from "lodash/cloneDeep";
+import set from "lodash/set";
+import { action, makeObservable, observable, runInAction } from "mobx";
+// types
+import { IUser } from "@plane/types";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
-// store
-import { RootStore } from "../root.store";
-import { IUserMembershipStore, UserMembershipStore } from "./user-membership.store";
+// stores
+import { RootStore } from "@/store/root.store";
+import { IAccountStore } from "@/store/user/account.store";
+import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
+import { IUserMembershipStore, UserMembershipStore } from "@/store/user/user-membership.store";
+import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
 
-export interface IUserRootStore {
-  // states
-  currentUserError: any | null;
-  currentUserLoader: boolean;
+type TUserErrorStatus = {
+  status: string;
+  message: string;
+};
+
+export interface IUserStore {
   // observables
-  isUserLoggedIn: boolean | null;
-  currentUser: IUser | null;
-  isUserInstanceAdmin: boolean | null;
-  currentUserSettings: IUserSettings | null;
-  dashboardInfo: any;
-  // fetch actions
-  fetchCurrentUser: () => Promise<IUser>;
-  fetchCurrentUserInstanceAdminStatus: () => Promise<boolean>;
-  fetchCurrentUserSettings: () => Promise<IUserSettings>;
-  // crud actions
-  updateUserOnBoard: () => Promise<void>;
-  updateTourCompleted: () => Promise<void>;
-  updateCurrentUser: (data: Partial<IUser>) => Promise<IUser>;
-  updateCurrentUserTheme: (theme: string) => Promise<IUser>;
-
-  deactivateAccount: () => Promise<void>;
-  signOut: () => Promise<void>;
-
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: TUserErrorStatus | undefined;
+  data: IUser | undefined;
+  // store observables
+  userProfile: IUserProfileStore;
+  userSettings: IUserSettingsStore;
+  accounts: Record<string, IAccountStore>;
   membership: IUserMembershipStore;
+  // actions
+  fetchCurrentUser: () => Promise<IUser | undefined>;
+  updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
+  handleSetPassword: (csrfToken: string, data: { password: string }) => Promise<IUser | undefined>;
+  deactivateAccount: () => Promise<void>;
+  reset: () => void;
+  signOut: () => Promise<void>;
 }
 
-export class UserRootStore implements IUserRootStore {
-  // states
-  currentUserError: any | null = null;
-  currentUserLoader: boolean = false;
+export class UserStore implements IUserStore {
   // observables
-  isUserLoggedIn: boolean | null = null;
-  currentUser: IUser | null = null;
-  isUserInstanceAdmin: boolean | null = null;
-  currentUserSettings: IUserSettings | null = null;
+  isAuthenticated: boolean = false;
+  isLoading: boolean = false;
+  error: TUserErrorStatus | undefined = undefined;
+  data: IUser | undefined = undefined;
+  // store observables
+  userProfile: IUserProfileStore;
+  userSettings: IUserSettingsStore;
+  accounts: Record<string, IAccountStore> = {};
+  membership: IUserMembershipStore;
+  // service
+  userService: UserService;
+  authService: AuthService;
 
-  dashboardInfo: any = null;
-  membership: UserMembershipStore;
-
-  // root store
-  rootStore;
-  // services
-  userService;
-  authService;
-
-  constructor(_rootStore: RootStore) {
-    makeObservable(this, {
-      // states
-      currentUserError: observable.ref,
-      currentUserLoader: observable.ref,
-      // observable
-      currentUser: observable,
-      isUserInstanceAdmin: observable.ref,
-      currentUserSettings: observable,
-      dashboardInfo: observable,
-      // action
-      fetchCurrentUser: action,
-      fetchCurrentUserInstanceAdminStatus: action,
-      fetchCurrentUserSettings: action,
-      updateUserOnBoard: action,
-      updateTourCompleted: action,
-      updateCurrentUser: action,
-      updateCurrentUserTheme: action,
-      deactivateAccount: action,
-      signOut: action,
-    });
-    this.rootStore = _rootStore;
+  constructor(private store: RootStore) {
+    // stores
+    this.userProfile = new ProfileStore(store);
+    this.userSettings = new UserSettingsStore();
+    this.membership = new UserMembershipStore(store);
+    // service
     this.userService = new UserService();
     this.authService = new AuthService();
-    this.membership = new UserMembershipStore(_rootStore);
+    // observables
+    makeObservable(this, {
+      // observables
+      isAuthenticated: observable.ref,
+      isLoading: observable.ref,
+      error: observable,
+      // model observables
+      data: observable,
+      userProfile: observable,
+      userSettings: observable,
+      accounts: observable,
+      membership: observable,
+      // actions
+      fetchCurrentUser: action,
+      updateCurrentUser: action,
+      handleSetPassword: action,
+      deactivateAccount: action,
+      reset: action,
+      signOut: action,
+    });
   }
 
   /**
-   * Fetches the current user
-   * @returns Promise<IUser>
+   * @description fetches the current user
+   * @returns {Promise<IUser>}
    */
-  fetchCurrentUser = async () => {
-    try {
-      this.currentUserLoader = true;
-      const response = await this.userService.currentUser();
-      runInAction(() => {
-        this.isUserLoggedIn = true;
-        this.currentUser = response;
-        this.currentUserError = null;
-        this.currentUserLoader = false;
-      });
-      return response;
-    } catch (error) {
-      runInAction(() => {
-        this.currentUserLoader = false;
-        this.currentUserError = error;
-      });
-      throw error;
-    }
-  };
-
-  /**
-   * Fetches the current user instance admin status
-   * @returns Promise<boolean>
-   */
-  fetchCurrentUserInstanceAdminStatus = async () =>
-    await this.userService.currentUserInstanceAdminStatus().then((response) => {
-      runInAction(() => {
-        this.isUserInstanceAdmin = response.is_instance_admin;
-      });
-      return response.is_instance_admin;
-    });
-
-  /**
-   * Fetches the current user settings
-   * @returns Promise<IUserSettings>
-   */
-  fetchCurrentUserSettings = async () =>
-    await this.userService.currentUserSettings().then((response) => {
-      runInAction(() => {
-        this.currentUserSettings = response;
-      });
-      return response;
-    });
-
-  /**
-   * Updates the user onboarding status
-   * @returns Promise<void>
-   */
-  updateUserOnBoard = async () => {
+  fetchCurrentUser = async (): Promise<IUser> => {
     try {
       runInAction(() => {
-        this.currentUser = {
-          ...this.currentUser,
-          is_onboarded: true,
-        } as IUser;
+        this.isLoading = true;
+        this.error = undefined;
       });
-      const user = this.currentUser ?? undefined;
-      if (!user) return;
-      await this.userService.updateUserOnBoard();
-    } catch (error) {
-      this.fetchCurrentUser();
-      throw error;
-    }
-  };
-
-  /**
-   * Updates the user tour completed status
-   * @returns Promise<void>
-   */
-  updateTourCompleted = async () => {
-    try {
-      if (this.currentUser) {
+      const user = await this.userService.currentUser();
+      if (user && user?.id) {
+        await this.userProfile.fetchUserProfile();
+        await this.userSettings.fetchCurrentUserSettings();
+        await this.store.workspaceRoot.fetchWorkspaces();
         runInAction(() => {
-          this.currentUser = {
-            ...this.currentUser,
-            is_tour_completed: true,
-          } as IUser;
+          this.data = user;
+          this.isLoading = false;
+          this.isAuthenticated = true;
         });
-        const response = await this.userService.updateUserTourCompleted();
-        return response;
-      }
+      } else
+        runInAction(() => {
+          this.data = user;
+          this.isLoading = false;
+          this.isAuthenticated = false;
+        });
+      return user;
     } catch (error) {
-      this.fetchCurrentUser();
+      runInAction(() => {
+        this.isLoading = false;
+        this.isAuthenticated = false;
+        this.error = {
+          status: "user-fetch-error",
+          message: "Failed to fetch current user",
+        };
+      });
       throw error;
     }
   };
 
   /**
-   * Updates the current user
+   * @description updates the current user
    * @param data
-   * @returns Promise<IUser>
+   * @returns {Promise<IUser>}
    */
-  updateCurrentUser = async (data: Partial<IUser>) => {
+  updateCurrentUser = async (data: Partial<IUser>): Promise<IUser> => {
+    const currentUserData = this.data;
     try {
-      runInAction(() => {
-        this.currentUser = {
-          ...this.currentUser,
-          ...data,
-        } as IUser;
-      });
-      const response = await this.userService.updateUser(data);
-      runInAction(() => {
-        this.currentUser = response;
-      });
-      return response;
+      if (currentUserData) {
+        Object.keys(data).forEach((key: string) => {
+          const userKey: keyof IUser = key as keyof IUser;
+          if (this.data) set(this.data, userKey, data[userKey]);
+        });
+      }
+      const user = await this.userService.updateUser(data);
+      return user;
     } catch (error) {
-      this.fetchCurrentUser();
+      if (currentUserData) {
+        Object.keys(currentUserData).forEach((key: string) => {
+          const userKey: keyof IUser = key as keyof IUser;
+          if (this.data) set(this.data, userKey, currentUserData[userKey]);
+        });
+      }
+      runInAction(() => {
+        this.error = {
+          status: "user-update-error",
+          message: "Failed to update current user",
+        };
+      });
       throw error;
     }
   };
 
   /**
-   * Updates the current user theme
-   * @param theme
-   * @returns Promise<IUser>
+   * @description update the user password
+   * @param data
+   * @returns {Promise<IUser>}
    */
-  updateCurrentUserTheme = async (theme: string) => {
+  handleSetPassword = async (csrfToken: string, data: { password: string }): Promise<IUser | undefined> => {
+    const currentUserData = cloneDeep(this.data);
     try {
-      runInAction(() => {
-        this.currentUser = {
-          ...this.currentUser,
-          theme: {
-            ...this.currentUser?.theme,
-            theme,
-          },
-        } as IUser;
-      });
-      const response = await this.userService.updateUser({
-        theme: { ...this.currentUser?.theme, theme },
-      } as IUser);
-      return response;
+      if (currentUserData && currentUserData.is_password_autoset && this.data) {
+        const user = await this.authService.setPassword(csrfToken, { password: data.password });
+        set(this.data, ["is_password_autoset"], false);
+        return user;
+      }
+      return undefined;
     } catch (error) {
+      if (this.data) set(this.data, ["is_password_autoset"], true);
+      runInAction(() => {
+        this.error = {
+          status: "user-update-error",
+          message: "Failed to update current user",
+        };
+      });
       throw error;
     }
   };
 
   /**
-   * Deactivates the current user
-   * @returns Promise<void>
+   * @description deactivates the current user
+   * @returns {Promise<void>}
    */
-  deactivateAccount = async () =>
-    await this.userService.deactivateAccount().then(() => {
-      runInAction(() => {
-        this.currentUser = null;
-        this.currentUserError = null;
-        this.isUserLoggedIn = false;
-      });
-      this.membership = new UserMembershipStore(this.rootStore);
-      this.rootStore.eventTracker.resetSession();
-      this.rootStore.resetOnSignout();
-    });
+  deactivateAccount = async (): Promise<void> => {
+    await this.userService.deactivateAccount();
+    this.store.resetOnSignOut();
+  };
 
   /**
-   * Signs out the current user
-   * @returns Promise<void>
+   * @description resets the user store
+   * @returns {void}
    */
-  signOut = async () =>
-    await this.authService.signOut().then(() => {
-      runInAction(() => {
-        this.currentUser = null;
-        this.isUserLoggedIn = false;
-      });
-      this.membership = new UserMembershipStore(this.rootStore);
-      this.rootStore.eventTracker.resetSession();
-      this.rootStore.resetOnSignout();
+  reset = (): void => {
+    runInAction(() => {
+      this.isAuthenticated = false;
+      this.isLoading = false;
+      this.error = undefined;
+      this.data = undefined;
+      this.userProfile = new ProfileStore(this.store);
+      this.userSettings = new UserSettingsStore();
+      this.membership = new UserMembershipStore(this.store);
     });
+  };
+
+  /**
+   * @description signs out the current user
+   * @returns {Promise<void>}
+   */
+  signOut = async (): Promise<void> => {
+    await this.authService.signOut(API_BASE_URL);
+    this.store.resetOnSignOut();
+  };
 }

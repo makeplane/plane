@@ -1,19 +1,18 @@
 import { FC, useEffect, useState, useMemo } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// types
 import { TIssue } from "@plane/types";
-// hooks
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import { IssueView } from "@/components/issues";
 // ui
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
+import { IssueView } from "@/components/issues";
+// constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
-// components
-// types
-// constants
 
 interface IIssuePeekOverview {
   is_archived?: boolean;
@@ -60,8 +59,14 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     archiveIssue,
     issue: { getIssueById, fetchIssue },
   } = useIssueDetail();
-  const { addIssueToCycle, removeIssueFromCycle, addModulesToIssue, removeIssueFromModule, removeModulesFromIssue } =
-    useIssueDetail();
+  const {
+    addCycleToIssue,
+    addIssueToCycle,
+    removeIssueFromCycle,
+    addModulesToIssue,
+    removeIssueFromModule,
+    removeModulesFromIssue,
+  } = useIssueDetail();
   const { captureIssueEvent } = useEventTracker();
   // state
   const [loader, setLoader] = useState(false);
@@ -100,7 +105,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               path: router.asPath,
             });
             setToast({
-              title: "Issue update failed",
+              title: "Error!",
               type: TOAST_TYPE.ERROR,
               message: "Issue update failed",
             });
@@ -110,7 +115,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         try {
           removeIssue(workspaceSlug, projectId, issueId);
           setToast({
-            title: "Issue deleted successfully",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Issue deleted successfully",
           });
@@ -121,7 +126,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch (error) {
           setToast({
-            title: "Issue delete failed",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Issue delete failed",
           });
@@ -174,21 +179,39 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         }
       },
+      addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+        try {
+          console.log("Peek adding...");
+          await addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
+            path: router.asPath,
+          });
+        } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be added to the cycle. Please try again.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { state: "FAILED", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
+            path: router.asPath,
+          });
+        }
+      },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          const addToCyclePromise = addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
-          setPromiseToast(addToCyclePromise, {
-            loading: "Adding cycle to issue...",
-            success: {
-              title: "Success!",
-              message: () => "Cycle added to issue successfully",
-            },
-            error: {
-              title: "Error!",
-              message: () => "Cycle add to issue failed",
-            },
-          });
-          await addToCyclePromise;
+          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...issueIds, state: "SUCCESS", element: "Issue peek-overview" },
@@ -199,6 +222,11 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             path: router.asPath,
           });
         } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be added to the cycle. Please try again.",
+          });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue peek-overview" },
@@ -214,14 +242,14 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         try {
           const removeFromCyclePromise = removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
           setPromiseToast(removeFromCyclePromise, {
-            loading: "Removing cycle from issue...",
+            loading: "Removing issue from the cycle...",
             success: {
               title: "Success!",
-              message: () => "Cycle removed from issue successfully",
+              message: () => "Issue removed from the cycle successfully.",
             },
             error: {
               title: "Error!",
-              message: () => "Cycle remove from issue failed",
+              message: () => "Issue could not be removed from the cycle. Please try again.",
             },
           });
           await removeFromCyclePromise;
@@ -248,19 +276,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       addModulesToIssue: async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
         try {
-          const addToModulePromise = addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
-          setPromiseToast(addToModulePromise, {
-            loading: "Adding module to issue...",
-            success: {
-              title: "Success!",
-              message: () => "Module added to issue successfully",
-            },
-            error: {
-              title: "Error!",
-              message: () => "Module add to issue failed",
-            },
-          });
-          const response = await addToModulePromise;
+          const response = await addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
@@ -271,6 +287,11 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             path: router.asPath,
           });
         } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be added to the module. Please try again.",
+          });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
@@ -286,14 +307,14 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         try {
           const removeFromModulePromise = removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
           setPromiseToast(removeFromModulePromise, {
-            loading: "Removing module from issue...",
+            loading: "Removing issue from the module...",
             success: {
               title: "Success!",
-              message: () => "Module removed from issue successfully",
+              message: () => "Issue removed from the module successfully.",
             },
             error: {
               title: "Error!",
-              message: () => "Module remove from issue failed",
+              message: () => "Issue could not be removed from the module. Please try again.",
             },
           });
           await removeFromModulePromise;

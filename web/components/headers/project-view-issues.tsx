@@ -1,24 +1,24 @@
 import { useCallback } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Plus } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-// hooks
-// components
 // ui
 import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// helpers
-// types
-// constants
 import { ProjectLogo } from "@/components/project";
+// constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
+// hooks
 import {
-  useApplication,
+  useCommandPalette,
   useEventTracker,
   useIssues,
   useLabel,
@@ -38,9 +38,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { setTrackElement } = useEventTracker();
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -128,6 +126,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+
   return (
     <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 label={currentProjectDetails?.name ?? "Project"}
                 icon={
                   currentProjectDetails && (
-                    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                    <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                       <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                     </span>
                   )
@@ -200,7 +200,12 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           selectedLayout={activeLayout}
         />
 
-        <FiltersDropdown title="Filters" placement="bottom-end" disabled={!canUserCreateIssue}>
+        <FiltersDropdown
+          title="Filters"
+          placement="bottom-end"
+          disabled={!canUserCreateIssue}
+          isFiltersApplied={isFiltersApplied}
+        >
           <FilterSelection
             filters={issueFilters?.filters ?? {}}
             handleFiltersUpdate={handleFiltersUpdate}
@@ -234,7 +239,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             size="sm"
-            prependIcon={<Plus />}
           >
             Add Issue
           </Button>

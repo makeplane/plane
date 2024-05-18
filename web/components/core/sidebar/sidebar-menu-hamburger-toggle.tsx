@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Menu } from "lucide-react";
-import { useApplication } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store";
 
 type Props = {
   onClick?: () => void;
@@ -9,16 +9,18 @@ type Props = {
 
 export const SidebarHamburgerToggle: FC<Props> = observer((props) => {
   const { onClick } = props;
-  const { theme: themeStore } = useApplication();
+  // store hooks
+  const { toggleSidebar } = useAppTheme();
+
   return (
     <div
-      className="w-7 h-7 flex-shrink-0 rounded flex justify-center items-center bg-custom-background-80 transition-all hover:bg-custom-background-90 cursor-pointer group md:hidden"
+      className="group flex h-7 w-7 flex-shrink-0 cursor-pointer items-center justify-center rounded bg-custom-background-80 transition-all hover:bg-custom-background-90 md:hidden"
       onClick={() => {
         if (onClick) onClick();
-        else themeStore.toggleSidebar();
+        else toggleSidebar();
       }}
     >
-      <Menu size={14} className="text-custom-text-200 group-hover:text-custom-text-100 transition-all" />
+      <Menu size={14} className="text-custom-text-200 transition-all group-hover:text-custom-text-100" />
     </div>
   );
 });

@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
+// types
 import { TWidgetKeys } from "@plane/types";
-// hooks
+// components
 import {
   AssignedIssuesWidget,
   CreatedIssuesWidget,
@@ -12,9 +13,8 @@ import {
   RecentProjectsWidget,
   WidgetProps,
 } from "@/components/dashboard";
-import { useApplication, useDashboard } from "@/hooks/store";
-// components
-// types
+// hooks
+import { useAppRouter, useDashboard } from "@/hooks/store";
 
 const WIDGETS_LIST: {
   [key in TWidgetKeys]: { component: React.FC<WidgetProps>; fullWidth: boolean };
@@ -31,9 +31,7 @@ const WIDGETS_LIST: {
 
 export const DashboardWidgets = observer(() => {
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { homeDashboardId, homeDashboardWidgets } = useDashboard();
 
   const doesWidgetExist = (widgetKey: TWidgetKeys) =>

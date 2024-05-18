@@ -1,7 +1,7 @@
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // constants
-import { issueGroupFilter } from "@/constants/data";
+import { issueGroupFilter } from "@/constants/issue";
 
 export const IssueBlockState = ({ state }: any) => {
   const stateGroup = issueGroupFilter(state.group);

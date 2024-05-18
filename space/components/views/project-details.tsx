@@ -1,7 +1,10 @@
-import { useEffect } from "react";
+"use client";
+
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
 // components
 import { IssueCalendarView } from "@/components/issues/board-views/calendar";
 import { IssueGanttView } from "@/components/issues/board-views/gantt";
@@ -11,54 +14,67 @@ import { IssueSpreadsheetView } from "@/components/issues/board-views/spreadshee
 import { IssueAppliedFilters } from "@/components/issues/filters/applied-filters/root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // mobx store
-import { useMobxStore } from "@/lib/mobx/store-provider";
-import { RootStore } from "@/store/root";
+import { useIssue, useUser, useIssueDetails, useIssueFilter, useProject } from "@/hooks/store";
 // assets
 import SomethingWentWrongImage from "public/something-went-wrong.svg";
 
-export const ProjectDetailsView = observer(() => {
-  const router = useRouter();
-  const { workspace_slug, project_slug, states, labels, priorities, peekId } = router.query;
+type ProjectDetailsViewProps = {
+  workspaceSlug: string;
+  projectId: string;
+  peekId: string | undefined;
+};
 
-  const {
-    issue: issueStore,
-    project: projectStore,
-    issueDetails: issueDetailStore,
-    user: userStore,
-  }: RootStore = useMobxStore();
+export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) => {
+  // router
+  const searchParams = useSearchParams();
+  // query params
+  const states = searchParams.get("states") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
+
+  const { workspaceSlug, projectId, peekId } = props;
+  // hooks
+  const { fetchProjectSettings } = useProject();
+  const { issueFilters } = useIssueFilter();
+  const { loader, issues, error, fetchPublicIssues } = useIssue();
+  const issueDetailStore = useIssueDetails();
+  const { data: currentUser, fetchCurrentUser } = useUser();
+
+  useSWR(
+    workspaceSlug && projectId ? "WORKSPACE_PROJECT_SETTINGS" : null,
+    workspaceSlug && projectId ? () => fetchProjectSettings(workspaceSlug, projectId) : null
+  );
+  useSWR(
+    (workspaceSlug && projectId) || states || priority || labels ? "WORKSPACE_PROJECT_PUBLIC_ISSUES" : null,
+    (workspaceSlug && projectId) || states || priority || labels
+      ? () => fetchPublicIssues(workspaceSlug, projectId, { states, priority, labels })
+      : null
+  );
+  useSWR(
+    workspaceSlug && projectId && !currentUser ? "WORKSPACE_PROJECT_CURRENT_USER" : null,
+    workspaceSlug && projectId && !currentUser ? () => fetchCurrentUser() : null
+  );
 
   useEffect(() => {
-    if (!userStore.currentUser) {
-      userStore.fetchCurrentUser();
-    }
-  }, [userStore]);
-
-  useEffect(() => {
-    if (workspace_slug && project_slug) {
-      const params = {
-        state: states || null,
-        labels: labels || null,
-        priority: priorities || null,
-      };
-      issueStore.fetchPublicIssues(workspace_slug?.toString(), project_slug.toString(), params);
-    }
-  }, [workspace_slug, project_slug, issueStore, states, labels, priorities]);
-
-  useEffect(() => {
-    if (peekId && workspace_slug && project_slug) {
+    if (peekId && workspaceSlug && projectId) {
       issueDetailStore.setPeekId(peekId.toString());
     }
-  }, [peekId, issueDetailStore, project_slug, workspace_slug]);
+  }, [peekId, issueDetailStore, projectId, workspaceSlug]);
+
+  // derived values
+  const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      {workspace_slug && <IssuePeekOverview />}
+      {workspaceSlug && projectId && peekId && (
+        <IssuePeekOverview workspaceSlug={workspaceSlug} projectId={projectId} peekId={peekId} />
+      )}
 
-      {issueStore?.loader && !issueStore.issues ? (
+      {loader && !issues ? (
         <div className="py-10 text-center text-sm text-custom-text-100">Loading...</div>
       ) : (
         <>
-          {issueStore?.error ? (
+          {error ? (
             <div className="grid h-full w-full place-items-center p-6">
               <div className="text-center">
                 <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-custom-background-80">
@@ -71,24 +87,24 @@ export const ProjectDetailsView = observer(() => {
               </div>
             </div>
           ) : (
-            projectStore?.activeBoard && (
+            activeLayout && (
               <div className="relative flex h-full w-full flex-col overflow-hidden">
                 {/* applied filters */}
-                <IssueAppliedFilters />
+                <IssueAppliedFilters workspaceSlug={workspaceSlug} projectId={projectId} />
 
-                {projectStore?.activeBoard === "list" && (
+                {activeLayout === "list" && (
                   <div className="relative h-full w-full overflow-y-auto">
-                    <IssueListView />
+                    <IssueListView workspaceSlug={workspaceSlug} projectId={projectId} />
                   </div>
                 )}
-                {projectStore?.activeBoard === "kanban" && (
+                {activeLayout === "kanban" && (
                   <div className="relative mx-auto h-full w-full p-5">
-                    <IssueKanbanView />
+                    <IssueKanbanView workspaceSlug={workspaceSlug} projectId={projectId} />
                   </div>
                 )}
-                {projectStore?.activeBoard === "calendar" && <IssueCalendarView />}
-                {projectStore?.activeBoard === "spreadsheet" && <IssueSpreadsheetView />}
-                {projectStore?.activeBoard === "gantt" && <IssueGanttView />}
+                {activeLayout === "calendar" && <IssueCalendarView />}
+                {activeLayout === "spreadsheet" && <IssueSpreadsheetView />}
+                {activeLayout === "gantt" && <IssueGanttView />}
               </div>
             )
           )}

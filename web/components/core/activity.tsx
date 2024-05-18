@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // store hooks
 // icons
@@ -724,6 +724,7 @@ const activityDetails: {
             <IssueLink activity={activity} />
           </>
         )}
+        {activity.verb === "2" && ` from inbox by marking a duplicate issue.`}
       </>
     ),
     icon: <Inbox size={12} color="#6b7280" aria-hidden="true" />,

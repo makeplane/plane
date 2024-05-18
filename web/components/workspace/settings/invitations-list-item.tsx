@@ -1,5 +1,5 @@
 import { useState, FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { ChevronDown, XCircle } from "lucide-react";
 // ui
@@ -41,14 +41,14 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success",
+          title: "Success!",
           message: "Invitation removed successfully.",
         });
       })
       .catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error",
+          title: "Error!",
           message: err?.error || "Something went wrong. Please try again.",
         })
       );

@@ -19,7 +19,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 # Module imports
-from plane.bgtasks.webhook_task import send_webhook
+from plane.authentication.session import BaseSessionAuthentication
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 
@@ -38,35 +38,6 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class WebhookMixin:
-    webhook_event = None
-    bulk = False
-
-    def finalize_response(self, request, response, *args, **kwargs):
-        response = super().finalize_response(
-            request, response, *args, **kwargs
-        )
-
-        # Check for the case should webhook be sent
-        if (
-            self.webhook_event
-            and self.request.method in ["POST", "PATCH", "DELETE"]
-            and response.status_code in [200, 201, 204]
-        ):
-            # Push the object to delay
-            send_webhook.delay(
-                event=self.webhook_event,
-                payload=response.data,
-                kw=self.kwargs,
-                action=self.request.method,
-                slug=self.workspace_slug,
-                bulk=self.bulk,
-                current_site=request.META.get("HTTP_ORIGIN"),
-            )
-
-        return response
-
-
 class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
     model = None
 
@@ -78,6 +49,10 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
         DjangoFilterBackend,
         SearchFilter,
     )
+
+    authentication_classes = [
+        BaseSessionAuthentication,
+    ]
 
     filterset_fields = []
 
@@ -190,6 +165,10 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         DjangoFilterBackend,
         SearchFilter,
     )
+
+    authentication_classes = [
+        BaseSessionAuthentication,
+    ]
 
     filterset_fields = []
 

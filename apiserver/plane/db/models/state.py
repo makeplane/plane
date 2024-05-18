@@ -3,7 +3,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 
 # Module imports
-from . import ProjectBaseModel
+from .project import ProjectBaseModel
 
 
 class State(ProjectBaseModel):

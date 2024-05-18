@@ -19,12 +19,11 @@ import { useCycle, useKanbanView, useLabel, useMember, useModule, useProject, us
 // types
 // parent components
 import { TRenderQuickActions } from "../list/list-view-types";
-import { getGroupByColumns, isWorkspaceLevel } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
 // components
 import { KanbanStoreType } from "./base-kanban-root";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
-import { KanbanDropLocation } from "./utils";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
@@ -52,7 +51,7 @@ export interface IGroupByKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
   subGroupIssueHeaderCount?: (listId: string) => number;
 }
@@ -142,7 +141,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
           return (
             <div
               key={subList.id}
-              className={`relative flex flex-shrink-0 flex-col group ${
+              className={`group relative flex flex-shrink-0 flex-col ${
                 groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
               } `}
             >
@@ -176,6 +175,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   orderBy={orderBy}
                   sub_group_id={sub_group_id}
                   isDragDisabled={isDragDisabled}
+                  isDropDisabled={!!subList.isDropDisabled}
+                  dropErrorMessage={subList.dropErrorMessage}
                   updateIssue={updateIssue}
                   quickActions={quickActions}
                   enableQuickIssueCreate={enableQuickIssueCreate}
@@ -220,7 +221,7 @@ export interface IKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   subGroupIssueHeaderCount?: (listId: string) => number;
 }
 

@@ -1,8 +1,6 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// icons
-import { PlusIcon } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
@@ -14,6 +12,8 @@ import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useMember, useUser, useIssues } from "@/hooks/store";
 
@@ -110,6 +110,8 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
@@ -131,7 +133,7 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />
-            <FiltersDropdown title="Filters" placement="bottom-end">
+            <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
               <FilterSelection
                 layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                 filters={issueFilters?.filters ?? {}}
@@ -151,8 +153,8 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
             </FiltersDropdown>
           </>
           {isAuthorizedUser && (
-            <Button variant="primary" size="sm" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
-              New View
+            <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
+              Add View
             </Button>
           )}
         </div>

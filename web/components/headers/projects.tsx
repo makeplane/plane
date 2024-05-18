@@ -1,19 +1,21 @@
 import { useCallback, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
-import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
+import { observer } from "mobx-react";
+import { Search, Briefcase, X, ListFilter } from "lucide-react";
+// types
 import { TProjectFilters } from "@plane/types";
-// hooks
-// components
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
-// helpers
-// constants
 import { FiltersDropdown } from "@/components/issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
+// constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
 import { cn } from "@/helpers/common.helper";
-import { useApplication, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+// hooks
+import { useAppRouter, useCommandPalette, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ProjectsHeader = observer(() => {
@@ -22,10 +24,8 @@ export const ProjectsHeader = observer(() => {
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    router: { workspaceSlug },
-  } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
+  const { workspaceSlug } = useAppRouter();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
@@ -77,6 +77,8 @@ export const ProjectsHeader = observer(() => {
       else setIsSearchOpen(false);
     }
   };
+
+  const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -145,7 +147,12 @@ export const ProjectsHeader = observer(() => {
               });
             }}
           />
-          <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+          <FiltersDropdown
+            icon={<ListFilter className="h-3 w-3" />}
+            title="Filters"
+            placement="bottom-end"
+            isFiltersApplied={isFiltersApplied}
+          >
             <ProjectFiltersSelection
               displayFilters={displayFilters ?? {}}
               filters={filters ?? {}}
@@ -160,11 +167,10 @@ export const ProjectsHeader = observer(() => {
         </div>
         {isAuthorizedUser && (
           <Button
-            prependIcon={<Plus />}
             size="sm"
             onClick={() => {
               setTrackElement("Projects page");
-              commandPaletteStore.toggleCreateProjectModal(true);
+              toggleCreateProjectModal(true);
             }}
             className="items-center gap-1"
           >

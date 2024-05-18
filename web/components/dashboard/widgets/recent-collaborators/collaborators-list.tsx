@@ -2,14 +2,14 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
+// types
 import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
-// store hooks
+// ui
 import { Avatar } from "@plane/ui";
+// hooks
 import { useDashboard, useMember, useUser } from "@/hooks/store";
 // components
 import { WidgetLoader } from "../loaders";
-// ui
-// types
 
 type CollaboratorListItemProps = {
   issueCount: number;
@@ -20,13 +20,13 @@ type CollaboratorListItemProps = {
 const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((props) => {
   const { issueCount, userId, workspaceSlug } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { getUserDetails } = useMember();
   // derived values
   const userDetails = getUserDetails(userId);
   const isCurrentUser = userId === currentUser?.id;
 
-  if (!userDetails) return null;
+  if (!userDetails || userDetails.is_bot) return null;
 
   return (
     <Link href={`/${workspaceSlug}/profile/${userId}`} className="group text-center">
@@ -39,10 +39,10 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
           showTooltip={false}
         />
       </div>
-      <h6 className="mt-6 text-xs font-semibold group-hover:underline truncate">
+      <h6 className="mt-6 truncate text-xs font-semibold group-hover:underline">
         {isCurrentUser ? "You" : userDetails?.display_name}
       </h6>
-      <p className="text-sm mt-2">
+      <p className="mt-2 text-sm">
         {issueCount} active issue{issueCount > 1 ? "s" : ""}
       </p>
     </Link>

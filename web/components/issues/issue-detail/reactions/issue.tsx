@@ -40,13 +40,13 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await createReaction(workspaceSlug, projectId, issueId, reaction);
           setToast({
-            title: "Reaction created successfully",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction created successfully",
           });
         } catch (error) {
           setToast({
-            title: "Reaction creation failed",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Reaction creation failed",
           });
@@ -57,13 +57,13 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
           if (!workspaceSlug || !projectId || !issueId || !currentUser?.id) throw new Error("Missing fields");
           await removeReaction(workspaceSlug, projectId, issueId, reaction, currentUser.id);
           setToast({
-            title: "Reaction removed successfully",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction removed successfully",
           });
         } catch (error) {
           setToast({
-            title: "Reaction remove failed",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Reaction remove failed",
           });
@@ -90,11 +90,10 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
   };
 
   return (
-    <div className="mt-4 relative flex items-center gap-1.5">
+    <div className="relative mt-4 flex items-center gap-1.5">
       {!disabled && (
         <ReactionSelector size="md" position="top" value={userReactions} onSelect={issueReactionOperations.react} />
       )}
-
       {reactionIds &&
         Object.keys(reactionIds || {}).map(
           (reaction) =>

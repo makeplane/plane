@@ -5,7 +5,7 @@ import { computedFn } from "mobx-utils";
 // types
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
-import { filterPagesByPageType, orderPages, shouldFilterPage } from "@/helpers/page.helper";
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // services
 import { PageService } from "@/services/page.service";
 // store
@@ -68,7 +68,7 @@ export class ProjectPageStore implements IProjectPageStore {
     this.service = new PageService();
     // initialize display filters of the current project
     reaction(
-      () => this.store.app.router.projectId,
+      () => this.store.router.projectId,
       (projectId) => {
         if (!projectId) return;
         this.filters.searchQuery = "";
@@ -81,7 +81,7 @@ export class ProjectPageStore implements IProjectPageStore {
    * @param {TPageNavigationTabs} pageType
    */
   getCurrentProjectPageIds = computedFn((pageType: TPageNavigationTabs) => {
-    const { projectId } = this.store.app.router;
+    const { projectId } = this.store.router;
     if (!projectId) return undefined;
     // helps to filter pages based on the pageType
     let pagesByType = filterPagesByPageType(pageType, Object.values(this?.data || {}));
@@ -97,7 +97,7 @@ export class ProjectPageStore implements IProjectPageStore {
    * @param {TPageNavigationTabs} pageType
    */
   getCurrentProjectFilteredPageIds = computedFn((pageType: TPageNavigationTabs) => {
-    const { projectId } = this.store.app.router;
+    const { projectId } = this.store.router;
     if (!projectId) return undefined;
 
     // helps to filter pages based on the pageType
@@ -105,7 +105,7 @@ export class ProjectPageStore implements IProjectPageStore {
     let filteredPages = pagesByType.filter(
       (p) =>
         p.project === projectId &&
-        p.name?.toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        getPageName(p.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
         shouldFilterPage(p, this.filters.filters)
     );
     filteredPages = orderPages(filteredPages, this.filters.sortKey, this.filters.sortBy);
@@ -140,7 +140,7 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   getAllPages = async (pageType: TPageNavigationTabs) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
+      const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId) return undefined;
 
       const currentPageIds = this.getCurrentProjectPageIds(pageType);
@@ -174,7 +174,7 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   getPageById = async (pageId: string) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
+      const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
       const currentPageId = this.pageById(pageId);
@@ -208,7 +208,7 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   createPage = async (pageData: Partial<TPage>) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
+      const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId) return undefined;
 
       runInAction(() => {
@@ -241,7 +241,7 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   removePage = async (pageId: string) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
+      const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
       await this.service.remove(workspaceSlug, projectId, pageId);

@@ -3,13 +3,14 @@ import uuid
 # Python imports
 from uuid import uuid4
 
-# Django imports
-from django.db import models
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 
+# Django imports
+from django.db import models
+
 # Module imports
-from . import BaseModel
+from .base import BaseModel
 
 
 def generate_token():

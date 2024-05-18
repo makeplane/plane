@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
-import { User2 } from "lucide-react";
+import { CalendarCheck2, CalendarClock, MoveRight, User2 } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
@@ -8,6 +8,7 @@ import { Avatar, AvatarGroup, Tooltip, setPromiseToast } from "@plane/ui";
 // components
 import { FavoriteStar } from "@/components/core";
 import { CycleQuickActions } from "@/components/cycles";
+import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
@@ -104,11 +105,19 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     });
   };
 
+  const createdByDetails = cycleDetails.created_by ? getUserDetails(cycleDetails.created_by) : undefined;
+
   return (
     <>
-      <div className="text-xs text-custom-text-300 flex-shrink-0">
-        {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
-      </div>
+      {renderDate && (
+        <div className="h-6 flex items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs px-2 cursor-default">
+          <CalendarClock className="h-3 w-3 flex-shrink-0" />
+          <span className="flex-grow truncate">{renderFormattedDate(startDate)}</span>
+          <MoveRight className="h-3 w-3 flex-shrink-0" />
+          <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />
+          <span className="flex-grow truncate">{renderFormattedDate(endDate)}</span>
+        </div>
+      )}
 
       {currentCycle && (
         <div
@@ -123,6 +132,9 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
             : `${currentCycle.label}`}
         </div>
       )}
+
+      {/* created by */}
+      {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
 
       <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
         <div className="flex w-10 cursor-default items-center justify-center">

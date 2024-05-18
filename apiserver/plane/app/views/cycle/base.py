@@ -20,6 +20,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
@@ -29,7 +30,6 @@ from plane.app.permissions import (
     ProjectLitePermission,
 )
 from plane.app.serializers import (
-    CycleFavoriteSerializer,
     CycleSerializer,
     CycleUserPropertiesSerializer,
     CycleWriteSerializer,
@@ -37,8 +37,8 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Cycle,
-    CycleFavorite,
     CycleIssue,
+    UserFavorite,
     CycleUserProperties,
     Issue,
     Label,
@@ -47,10 +47,11 @@ from plane.db.models import (
 from plane.utils.analytics_plot import burndown_plot
 
 # Module imports
-from .. import BaseAPIView, BaseViewSet, WebhookMixin
+from .. import BaseAPIView, BaseViewSet
+from plane.bgtasks.webhook_task import model_activity
 
 
-class CycleViewSet(WebhookMixin, BaseViewSet):
+class CycleViewSet(BaseViewSet):
     serializer_class = CycleSerializer
     model = Cycle
     webhook_event = "cycle"
@@ -65,9 +66,10 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def get_queryset(self):
-        favorite_subquery = CycleFavorite.objects.filter(
+        favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
-            cycle_id=OuterRef("pk"),
+            entity_identifier=OuterRef("pk"),
+            entity_type="cycle",
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
@@ -239,6 +241,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "backlog_issues",
                 "assignee_ids",
                 "status",
+                "created_by",
             )
 
             if data:
@@ -363,6 +366,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             "backlog_issues",
             "assignee_ids",
             "status",
+            "created_by",
         )
         return Response(data, status=status.HTTP_200_OK)
 
@@ -412,6 +416,17 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     )
                     .first()
                 )
+
+                # Send the model activity
+                model_activity.delay(
+                    model_name="cycle",
+                    model_id=str(cycle["id"]),
+                    requested_data=request.data,
+                    current_instance=None,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
                 return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -434,6 +449,11 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 {"error": "Archived cycle cannot be updated"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        current_instance = json.dumps(
+            CycleSerializer(cycle).data, cls=DjangoJSONEncoder
+        )
+
         request_data = request.data
 
         if (
@@ -487,6 +507,18 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "assignee_ids",
                 "status",
             ).first()
+
+            # Send the model activity
+            model_activity.delay(
+                model_name="cycle",
+                model_id=str(cycle["id"]),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
             return Response(cycle, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -534,6 +566,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "backlog_issues",
                 "assignee_ids",
                 "status",
+                "created_by",
             )
             .first()
         )
@@ -721,8 +754,7 @@ class CycleDateCheckEndpoint(BaseAPIView):
 
 
 class CycleFavoriteViewSet(BaseViewSet):
-    serializer_class = CycleFavoriteSerializer
-    model = CycleFavorite
+    model = UserFavorite
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -734,18 +766,21 @@ class CycleFavoriteViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
-        serializer = CycleFavoriteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user, project_id=project_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        _ = UserFavorite.objects.create(
+            project_id=project_id,
+            user=request.user,
+            entity_type="cycle",
+            entity_identifier=request.data.get("cycle"),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, cycle_id):
-        cycle_favorite = CycleFavorite.objects.get(
+        cycle_favorite = UserFavorite.objects.get(
             project=project_id,
+            entity_type="cycle",
             user=request.user,
             workspace__slug=slug,
-            cycle_id=cycle_id,
+            entity_identifier=cycle_id,
         )
         cycle_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

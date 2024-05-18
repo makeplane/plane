@@ -1,54 +1,54 @@
-import React, { useEffect, useState } from "react";
+"use client";
 
+import { FC, Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
-
-// mobx
-// headless ui
+import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 // components
 import { FullScreenPeekView, SidePeekView } from "@/components/issues/peek-overview";
-// lib
-import { useMobxStore } from "@/lib/mobx/store-provider";
+// store
+import { useIssue, useIssueDetails } from "@/hooks/store";
 
-export const IssuePeekOverview: React.FC = observer(() => {
+type TIssuePeekOverview = {
+  workspaceSlug: string;
+  projectId: string;
+  peekId: string;
+};
+
+export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
+  const { workspaceSlug, projectId, peekId } = props;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // query params
+  const board = searchParams.get("board") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
   // states
   const [isSidePeekOpen, setIsSidePeekOpen] = useState(false);
   const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
-  // router
-  const router = useRouter();
-  const { workspace_slug, project_slug, peekId, board, priorities, states, labels } = router.query as {
-    workspace_slug: string;
-    project_slug: string;
-    peekId: string;
-    board: string;
-    priorities: string;
-    states: string;
-    labels: string;
-  };
   // store
-  const { issueDetails: issueDetailStore, issue: issueStore } = useMobxStore();
+  const issueDetailStore = useIssueDetails();
+  const issueStore = useIssue();
+
   const issueDetails = issueDetailStore.peekId && peekId ? issueDetailStore.details[peekId.toString()] : undefined;
 
   useEffect(() => {
-    if (workspace_slug && project_slug && peekId && issueStore.issues && issueStore.issues.length > 0) {
+    if (workspaceSlug && projectId && peekId && issueStore.issues && issueStore.issues.length > 0) {
       if (!issueDetails) {
-        issueDetailStore.fetchIssueDetails(workspace_slug.toString(), project_slug.toString(), peekId.toString());
+        issueDetailStore.fetchIssueDetails(workspaceSlug.toString(), projectId.toString(), peekId.toString());
       }
     }
-  }, [workspace_slug, project_slug, issueDetailStore, issueDetails, peekId, issueStore.issues]);
+  }, [workspaceSlug, projectId, issueDetailStore, issueDetails, peekId, issueStore.issues]);
 
   const handleClose = () => {
     issueDetailStore.setPeekId(null);
-
-    const params: any = { board: board };
-    if (states && states.length > 0) params.states = states;
-    if (priorities && priorities.length > 0) params.priorities = priorities;
-    if (labels && labels.length > 0) params.labels = labels;
-
-    router.replace({ pathname: `/${workspace_slug?.toString()}/${project_slug}`, query: { ...params } }, undefined, {
-      shallow: true,
-    });
+    let queryParams: any = { board: board };
+    if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
+    if (state && state.length > 0) queryParams = { ...queryParams, state: state };
+    if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
+    queryParams = new URLSearchParams(queryParams).toString();
+    router.push(`/${workspaceSlug}/${projectId}?${queryParams}`);
   };
 
   useEffect(() => {
@@ -68,10 +68,10 @@ export const IssuePeekOverview: React.FC = observer(() => {
 
   return (
     <>
-      <Transition.Root appear show={isSidePeekOpen} as={React.Fragment}>
+      <Transition.Root appear show={isSidePeekOpen} as={Fragment}>
         <Dialog as="div" onClose={handleClose}>
           <Transition.Child
-            as={React.Fragment}
+            as={Fragment}
             enter="transition-transform duration-300"
             enterFrom="translate-x-full"
             enterTo="translate-x-0"
@@ -80,15 +80,20 @@ export const IssuePeekOverview: React.FC = observer(() => {
             leaveTo="translate-x-full"
           >
             <Dialog.Panel className="fixed right-0 top-0 z-20 h-full w-1/2 bg-custom-background-100 shadow-custom-shadow-sm">
-              <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
+              <SidePeekView
+                handleClose={handleClose}
+                issueDetails={issueDetails}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+              />
             </Dialog.Panel>
           </Transition.Child>
         </Dialog>
       </Transition.Root>
-      <Transition.Root appear show={isModalPeekOpen} as={React.Fragment}>
+      <Transition.Root appear show={isModalPeekOpen} as={Fragment}>
         <Dialog as="div" onClose={handleClose}>
           <Transition.Child
-            as={React.Fragment}
+            as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
             enterTo="opacity-100"
@@ -99,7 +104,7 @@ export const IssuePeekOverview: React.FC = observer(() => {
             <div className="fixed inset-0 z-20 bg-custom-backdrop bg-opacity-50 transition-opacity" />
           </Transition.Child>
           <Transition.Child
-            as={React.Fragment}
+            as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
             enterTo="opacity-100"
@@ -114,13 +119,19 @@ export const IssuePeekOverview: React.FC = observer(() => {
                 }`}
               >
                 {issueDetailStore.peekMode === "modal" && (
-                  <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
+                  <SidePeekView
+                    handleClose={handleClose}
+                    issueDetails={issueDetails}
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
+                  />
                 )}
                 {issueDetailStore.peekMode === "full" && (
                   <FullScreenPeekView
-                    workspace_slug={workspace_slug}
                     handleClose={handleClose}
                     issueDetails={issueDetails}
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
                   />
                 )}
               </div>

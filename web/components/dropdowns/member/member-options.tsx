@@ -7,10 +7,7 @@ import { Combobox } from "@headlessui/react";
 //components
 import { Avatar } from "@plane/ui";
 //store
-import { useApplication, useMember, useUser } from "@/hooks/store";
-//hooks
-//icon
-//types
+import { useUser, useMember, useAppRouter } from "@/hooks/store";
 
 interface Props {
   projectId?: string;
@@ -21,22 +18,19 @@ interface Props {
 
 export const MemberOptions = observer((props: Props) => {
   const { projectId, referenceElement, placement, isOpen } = props;
-
+  // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // refs
   const inputRef = useRef<HTMLInputElement | null>(null);
-
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const {
     getUserDetails,
     project: { getProjectMemberIds, fetchProjectMembers },
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { currentUser } = useUser();
-
+  const { data: currentUser } = useUser();
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -116,7 +110,7 @@ export const MemberOptions = observer((props: Props) => {
                   key={option.value}
                   value={option.value}
                   className={({ active, selected }) =>
-                    `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
+                    `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                       active ? "bg-custom-background-80" : ""
                     } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                   }
@@ -130,10 +124,10 @@ export const MemberOptions = observer((props: Props) => {
                 </Combobox.Option>
               ))
             ) : (
-              <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
+              <p className="px-1.5 py-1 italic text-custom-text-400">No matching results</p>
             )
           ) : (
-            <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+            <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
           )}
         </div>
       </div>

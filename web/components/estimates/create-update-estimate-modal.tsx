@@ -1,16 +1,17 @@
 import React, { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
-import { IEstimate, IEstimateFormData } from "@plane/types";
-// store hooks
-import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
-import { checkDuplicates } from "@/helpers/array.helper";
-import { useEstimate } from "@/hooks/store";
-// ui
-// helpers
 // types
+import { IEstimate, IEstimateFormData } from "@plane/types";
+// ui
+import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
+// helpers
+import { checkDuplicates } from "@/helpers/array.helper";
+// hooks
+import { useEstimate } from "@/hooks/store";
 
 type Props = {
   isOpen: boolean;
@@ -196,133 +197,96 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   }, [data, reset]);
 
   return (
-    <>
-      <Transition.Root show={isOpen} as={React.Fragment}>
-        <Dialog as="div" className="relative z-20" onClose={handleClose}>
-          <Transition.Child
-            as={React.Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 z-20 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-              <Transition.Child
-                as={React.Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                enterTo="opacity-100 translate-y-0 sm:scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              >
-                <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                  <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="space-y-3">
-                      <div className="text-lg font-medium leading-6">{data ? "Update" : "Create"} Estimate</div>
-                      <div>
-                        <Controller
-                          control={control}
-                          name="name"
-                          render={({ field: { value, onChange, ref } }) => (
-                            <Input
-                              id="name"
-                              name="name"
-                              type="name"
-                              value={value}
-                              onChange={onChange}
-                              ref={ref}
-                              hasError={Boolean(errors.name)}
-                              placeholder="Title"
-                              className="w-full resize-none text-xl"
-                            />
-                          )}
-                        />
-                      </div>
-                      <div>
-                        <Controller
-                          name="description"
-                          control={control}
-                          render={({ field: { value, onChange } }) => (
-                            <TextArea
-                              id="description"
-                              name="description"
-                              value={value}
-                              placeholder="Description"
-                              onChange={onChange}
-                              className="mt-3 min-h-32 resize-none text-sm"
-                              hasError={Boolean(errors?.description)}
-                            />
-                          )}
-                        />
-                      </div>
-
-                      {/* list of all the points */}
-                      {/* since they are all the same, we can use a loop to render them */}
-                      <div className="grid grid-cols-3 gap-3">
-                        {Array(6)
-                          .fill(0)
-                          .map((_, i) => (
-                            <div className="flex items-center" key={i}>
-                              <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                                <span className="rounded-lg px-2 text-sm text-custom-text-200">{i + 1}</span>
-                                <span className="rounded-r-lg bg-custom-background-100">
-                                  <Controller
-                                    control={control}
-                                    name={`value${i + 1}` as keyof FormValues}
-                                    rules={{
-                                      maxLength: {
-                                        value: 20,
-                                        message: "Estimate point must at most be of 20 characters",
-                                      },
-                                    }}
-                                    render={({ field: { value, onChange, ref } }) => (
-                                      <Input
-                                        ref={ref}
-                                        type="text"
-                                        value={value}
-                                        onChange={onChange}
-                                        id={`value${i + 1}`}
-                                        name={`value${i + 1}`}
-                                        placeholder={`Point ${i + 1}`}
-                                        className="w-full rounded-l-none"
-                                        hasError={Boolean(errors[`value${i + 1}` as keyof FormValues])}
-                                      />
-                                    )}
-                                  />
-                                </span>
-                              </span>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                    <div className="mt-5 flex justify-end gap-2">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                        Cancel
-                      </Button>
-                      <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-                        {data
-                          ? isSubmitting
-                            ? "Updating Estimate..."
-                            : "Update Estimate"
-                          : isSubmitting
-                            ? "Creating Estimate..."
-                            : "Create Estimate"}
-                      </Button>
-                    </div>
-                  </form>
-                </Dialog.Panel>
-              </Transition.Child>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-5 p-5">
+          <div className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} Estimate</div>
+          <div className="space-y-3">
+            <div>
+              <Controller
+                control={control}
+                name="name"
+                render={({ field: { value, onChange, ref } }) => (
+                  <Input
+                    id="name"
+                    name="name"
+                    type="name"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    hasError={Boolean(errors.name)}
+                    placeholder="Title"
+                    className="w-full text-base"
+                  />
+                )}
+              />
+            </div>
+            <div>
+              <Controller
+                name="description"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextArea
+                    id="description"
+                    name="description"
+                    value={value}
+                    placeholder="Description"
+                    onChange={onChange}
+                    className="w-full text-base resize-none min-h-24"
+                    hasError={Boolean(errors?.description)}
+                  />
+                )}
+              />
             </div>
           </div>
-        </Dialog>
-      </Transition.Root>
-    </>
+          {/* list of all the points */}
+          {/* since they are all the same, we can use a loop to render them */}
+          <div className="grid grid-cols-3 gap-3">
+            {Array(6)
+              .fill(0)
+              .map((_, i) => (
+                <div className="flex items-center" key={i}>
+                  <span className="flex h-full items-center rounded-lg bg-custom-background-80">
+                    <span className="rounded-lg px-2 text-sm text-custom-text-200">{i + 1}</span>
+                    <span className="rounded-r-lg bg-custom-background-100">
+                      <Controller
+                        control={control}
+                        name={`value${i + 1}` as keyof FormValues}
+                        rules={{
+                          maxLength: {
+                            value: 20,
+                            message: "Estimate point must at most be of 20 characters",
+                          },
+                        }}
+                        render={({ field: { value, onChange, ref } }) => (
+                          <Input
+                            ref={ref}
+                            type="text"
+                            value={value}
+                            onChange={onChange}
+                            id={`value${i + 1}`}
+                            name={`value${i + 1}`}
+                            placeholder={`Point ${i + 1}`}
+                            className="w-full rounded-l-none"
+                            hasError={Boolean(errors[`value${i + 1}` as keyof FormValues])}
+                          />
+                        )}
+                      />
+                    </span>
+                  </span>
+                </div>
+              ))}
+          </div>
+        </div>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+            {data ? (isSubmitting ? "Updating" : "Update Estimate") : isSubmitting ? "Creating" : "Create Estimate"}
+          </Button>
+        </div>
+      </form>
+    </ModalCore>
   );
 });

@@ -24,7 +24,7 @@ from rest_framework.response import Response
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import (
     Cycle,
-    CycleFavorite,
+    UserFavorite,
     Issue,
     Label,
     User,
@@ -42,9 +42,10 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
     ]
 
     def get_queryset(self):
-        favorite_subquery = CycleFavorite.objects.filter(
+        favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
-            cycle_id=OuterRef("pk"),
+            entity_type="cycle",
+            entity_identifier=OuterRef("pk"),
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )

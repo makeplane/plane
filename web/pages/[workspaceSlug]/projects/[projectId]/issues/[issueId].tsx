@@ -1,33 +1,44 @@
 import React, { ReactElement, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import useSWR from "swr";
-// layouts
+// ui
 import { Loader } from "@plane/ui";
-import { PageHead } from "@/components/core";
 // components
+import { EmptyState } from "@/components/common";
+import { PageHead } from "@/components/core";
 import { ProjectIssueDetailsHeader } from "@/components/headers";
 import { IssueDetailRoot } from "@/components/issues";
-// ui
-// types
-// store hooks
-import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+// hooks
+import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
+// layouts
 import { AppLayout } from "@/layouts/app-layout";
+// types
 import { NextPageWithLayout } from "@/lib/types";
+// assets
+import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
+import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
 const IssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
   // hooks
+  const { resolvedTheme } = useTheme();
+  // store hooks
   const {
     fetchIssue,
     issue: { getIssueById },
   } = useIssueDetail();
   const { getProjectById } = useProject();
-  const { theme: themeStore } = useApplication();
+  const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
   // fetching issue details
-  const { isLoading, data: swrIssueDetails } = useSWR(
+  const {
+    isLoading,
+    data: swrIssueDetails,
+    error,
+  } = useSWR(
     workspaceSlug && projectId && issueId ? `ISSUE_DETAIL_${workspaceSlug}_${projectId}_${issueId}` : null,
     workspaceSlug && projectId && issueId
       ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString())
@@ -42,22 +53,31 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
   useEffect(() => {
     const handleToggleIssueDetailSidebar = () => {
       if (window && window.innerWidth < 768) {
-        themeStore.toggleIssueDetailSidebar(true);
+        toggleIssueDetailSidebar(true);
       }
-      if (window && themeStore.issueDetailSidebarCollapsed && window.innerWidth >= 768) {
-        themeStore.toggleIssueDetailSidebar(false);
+      if (window && issueDetailSidebarCollapsed && window.innerWidth >= 768) {
+        toggleIssueDetailSidebar(false);
       }
     };
-
     window.addEventListener("resize", handleToggleIssueDetailSidebar);
     handleToggleIssueDetailSidebar();
     return () => window.removeEventListener("resize", handleToggleIssueDetailSidebar);
-  }, [themeStore]);
+  }, [issueDetailSidebarCollapsed, toggleIssueDetailSidebar]);
 
   return (
     <>
       <PageHead title={pageTitle} />
-      {issueLoader ? (
+      {error ? (
+        <EmptyState
+          image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
+          title="Issue does not exist"
+          description="The issue you are looking for does not exist or has been deleted."
+          primaryButton={{
+            text: "View other issues",
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/issues`),
+          }}
+        />
+      ) : issueLoader ? (
         <Loader className="flex h-full gap-5 p-5">
           <div className="basis-2/3 space-y-2">
             <Loader.Item height="30px" width="40%" />

@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { TGroupedIssues } from "@plane/types";
@@ -51,32 +50,27 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
 
-  const onDragEnd = async (result: DropResult) => {
-    if (!result) return;
+  const handleDragAndDrop = async (
+    issueId: string | undefined,
+    sourceDate: string | undefined,
+    destinationDate: string | undefined
+  ) => {
+    if (!issueId || !destinationDate || !sourceDate) return;
 
-    // return if not dropped on the correct place
-    if (!result.destination) return;
-
-    // return if dropped on the same date
-    if (result.destination.droppableId === result.source.droppableId) return;
-
-    if (handleDragDrop) {
-      await handleDragDrop(
-        result.source,
-        result.destination,
-        workspaceSlug?.toString(),
-        projectId?.toString(),
-        issueMap,
-        groupedIssueIds,
-        updateIssue
-      ).catch((err) => {
-        setToast({
-          title: "Error",
-          type: TOAST_TYPE.ERROR,
-          message: err?.detail ?? "Failed to perform this action",
-        });
+    await handleDragDrop(
+      issueId,
+      sourceDate,
+      destinationDate,
+      workspaceSlug?.toString(),
+      projectId?.toString(),
+      updateIssue
+    ).catch((err) => {
+      setToast({
+        title: "Error!",
+        type: TOAST_TYPE.ERROR,
+        message: err?.detail ?? "Failed to perform this action",
       });
-    }
+    });
   };
 
   const renderQuickActions: TRenderQuickActions = ({ issue, parentRef, customActionButton, placement }) => (
@@ -110,6 +104,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
             viewId={viewId}
             readOnly={!isEditingAllowed || isCompletedCycle}
             updateFilters={updateFilters}
+            handleDragAndDrop={handleDragAndDrop}
           />
         </DragDropContext>
       </div>

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { ICycle } from "@plane/types";
 // hooks
@@ -61,7 +61,7 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
         enableBlockLeftResize={false}
         enableBlockRightResize={false}
         enableBlockMove={false}
-        enableReorder={false}
+        enableReorder
       />
     </div>
   );

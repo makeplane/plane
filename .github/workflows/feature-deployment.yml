@@ -5,18 +5,24 @@ on:
     inputs:
       web-build:
         required: false
-        description: 'Build Web'
+        description: "Build Web"
         type: boolean
         default: true
       space-build:
         required: false
-        description: 'Build Space'
+        description: "Build Space"
+        type: boolean
+        default: false
+      admin-build:
+        required: false
+        description: "Build Admin"
         type: boolean
         default: false
 
 env:
   BUILD_WEB: ${{ github.event.inputs.web-build }}
   BUILD_SPACE: ${{ github.event.inputs.space-build }}
+  BUILD_ADMIN: ${{ github.event.inputs.admin-build }}
 
 jobs:
   setup-feature-build:
@@ -27,9 +33,11 @@ jobs:
         run: |
           echo "BUILD_WEB=$BUILD_WEB" 
           echo "BUILD_SPACE=$BUILD_SPACE"
+          echo "BUILD_ADMIN=$BUILD_ADMIN"
     outputs:
-      web-build: ${{ env.BUILD_WEB}} 
+      web-build: ${{ env.BUILD_WEB}}
       space-build: ${{env.BUILD_SPACE}}
+      admin-build: ${{env.BUILD_ADMIN}}
 
   feature-build-web:
     if: ${{ needs.setup-feature-build.outputs.web-build == 'true' }}
@@ -45,7 +53,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
       - name: Install AWS cli
         run: |
           sudo apt-get update
@@ -71,7 +79,7 @@ jobs:
 
           FILE_EXPIRY=$(date -u -d "+2 days" +"%Y-%m-%dT%H:%M:%SZ")
           aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
-     
+
   feature-build-space:
     if: ${{ needs.setup-feature-build.outputs.space-build == 'true' }}
     needs: setup-feature-build
@@ -81,7 +89,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
       AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
-      NEXT_PUBLIC_DEPLOY_WITH_NGINX: 1
+      NEXT_PUBLIC_SPACE_BASE_PATH: "/spaces"
       NEXT_PUBLIC_API_BASE_URL: ${{ vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL }}
     outputs:
       do-build: ${{ needs.setup-feature-build.outputs.space-build }}
@@ -90,7 +98,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
       - name: Install AWS cli
         run: |
           sudo apt-get update
@@ -117,9 +125,60 @@ jobs:
           FILE_EXPIRY=$(date -u -d "+2 days" +"%Y-%m-%dT%H:%M:%SZ")
           aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
 
+  feature-build-admin:
+    if: ${{ needs.setup-feature-build.outputs.admin-build == 'true' }}
+    needs: setup-feature-build
+    name: Feature Build Admin
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
+      AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
+      NEXT_PUBLIC_ADMIN_BASE_PATH: "/god-mode"
+      NEXT_PUBLIC_API_BASE_URL: ${{ vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL }}
+    outputs:
+      do-build: ${{ needs.setup-feature-build.outputs.admin-build }}
+      s3-url: ${{ steps.build-admin.outputs.S3_PRESIGNED_URL }}
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - name: Install AWS cli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install awscli
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: plane
+      - name: Install Dependencies
+        run: |
+          cd $GITHUB_WORKSPACE/plane
+          yarn install
+      - name: Build Admin
+        id: build-admin
+        run: |
+          cd $GITHUB_WORKSPACE/plane
+          yarn build --filter=admin
+          cd $GITHUB_WORKSPACE
+
+          TAR_NAME="admin.tar.gz"
+          tar -czf $TAR_NAME ./plane
+
+          FILE_EXPIRY=$(date -u -d "+2 days" +"%Y-%m-%dT%H:%M:%SZ")
+          aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
+
   feature-deploy:
-    if: ${{ always() && (needs.setup-feature-build.outputs.web-build == 'true' || needs.setup-feature-build.outputs.space-build == 'true') }}
-    needs: [feature-build-web, feature-build-space]
+    if: ${{ always() && (needs.setup-feature-build.outputs.web-build == 'true' || needs.setup-feature-build.outputs.space-build == 'true' || needs.setup-feature-build.outputs.admin-build == 'true') }}
+    needs:
+      [
+        setup-feature-build,
+        feature-build-web,
+        feature-build-space,
+        feature-build-admin,
+      ]
     name: Feature Deploy
     runs-on: ubuntu-latest
     env:
@@ -164,7 +223,12 @@ jobs:
             SPACE_S3_URL=$(aws s3 presign s3://${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}/${{github.sha}}/space.tar.gz --expires-in 3600)
           fi
 
-          if [ ${{ env.BUILD_WEB }} == true ] || [ ${{ env.BUILD_SPACE }} == true ]; then
+          ADMIN_S3_URL=""
+          if [ ${{ env.BUILD_ADMIN }} == true ]; then
+            ADMIN_S3_URL=$(aws s3 presign s3://${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}/${{github.sha}}/admin.tar.gz --expires-in 3600)
+          fi
+
+          if [ ${{ env.BUILD_WEB }} == true ] || [ ${{ env.BUILD_SPACE }} == true ] || [ ${{ env.BUILD_ADMIN }} == true ]; then
 
             helm --kube-insecure-skip-tls-verify repo add feature-preview ${{ vars.FEATURE_PREVIEW_HELM_CHART_URL }} 
 
@@ -181,6 +245,9 @@ jobs:
                 --set space.image=${{vars.FEATURE_PREVIEW_DOCKER_BASE}} \
                 --set space.enabled=${{ env.BUILD_SPACE || false }} \
                 --set space.artifact_url=$SPACE_S3_URL \
+                --set admin.image=${{vars.FEATURE_PREVIEW_DOCKER_BASE}} \
+                --set admin.enabled=${{ env.BUILD_ADMIN || false }} \
+                --set admin.artifact_url=$ADMIN_S3_URL \
                 --set shared_config.deploy_script_url=$DEPLOY_SCRIPT_URL \
                 --set shared_config.api_base_url=${{vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL}} \
                 --output json \

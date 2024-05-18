@@ -1,6 +1,6 @@
-import { IMentionHighlight } from "@plane/lite-text-editor";
-import { RootStore } from "./root";
 import { computed, makeObservable } from "mobx";
+import { IMentionHighlight } from "@plane/lite-text-editor";
+import { RootStore } from "./root.store";
 
 export interface IMentionsStore {
   // mentionSuggestions: IMentionSuggestion[];
@@ -37,7 +37,7 @@ export class MentionsStore implements IMentionsStore {
   // }
 
   get mentionHighlights() {
-    const user = this.rootStore.user.currentUser;
+    const user = this.rootStore.user.data;
     return user ? [user.id] : [];
   }
 }

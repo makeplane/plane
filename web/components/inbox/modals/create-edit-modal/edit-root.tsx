@@ -1,8 +1,11 @@
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// editor
 import { EditorRefApi } from "@plane/rich-text-editor";
+// types
 import { TIssue } from "@plane/types";
+// ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
@@ -15,7 +18,7 @@ import { ISSUE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
-import { useEventTracker, useInboxIssues, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useInboxIssues, useProject, useWorkspace } from "@/hooks/store";
 
 type TInboxIssueEditRoot = {
   workspaceSlug: string;
@@ -31,8 +34,9 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
   const router = useRouter();
   // refs
   const descriptionEditorRef = useRef<EditorRefApi>(null);
-  // hooks
+  // store hooks
   const { captureIssueEvent } = useEventTracker();
+  const { currentProjectDetails } = useProject();
   const { updateProjectIssue } = useInboxIssues(issueId);
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
@@ -95,7 +99,7 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${TOAST_TYPE.SUCCESS}!`,
+          title: `Success!`,
           message: "Issue created successfully.",
         });
         descriptionEditorRef?.current?.clearEditor();
@@ -114,7 +118,7 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: `${TOAST_TYPE.ERROR}!`,
+          title: `Error!`,
           message: "Some error occurred. Please try again.",
         });
       });
@@ -125,23 +129,30 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
 
   if (!workspaceSlug || !projectId || !workspaceId || !formData) return <></>;
   return (
-    <div className="relative space-y-4">
-      <InboxIssueTitle
-        data={formData}
-        handleData={handleFormData}
-        isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
-      />
-      <InboxIssueDescription
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        workspaceId={workspaceId}
-        data={formData}
-        handleData={handleFormData}
-        editorRef={descriptionEditorRef}
-        containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
-      />
-      <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} isVisible />
-      <div className="relative flex justify-end items-center gap-3">
+    <>
+      <div className="space-y-5 p-5">
+        <h3 className="text-xl font-medium text-custom-text-200">
+          Move {currentProjectDetails?.identifier}-{issue?.sequence_id} to project issues
+        </h3>
+        <div className="space-y-3">
+          <InboxIssueTitle
+            data={formData}
+            handleData={handleFormData}
+            isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
+          />
+          <InboxIssueDescription
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            workspaceId={workspaceId}
+            data={formData}
+            handleData={handleFormData}
+            editorRef={descriptionEditorRef}
+            containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
+          />
+          <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} isVisible />
+        </div>
+      </div>
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" type="button" onClick={handleModalClose}>
           Cancel
         </Button>
@@ -153,9 +164,9 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
           disabled={isTitleLengthMoreThan255Character}
           onClick={handleFormSubmit}
         >
-          {formSubmitting ? "Adding..." : "Add to project"}
+          {formSubmitting ? "Adding" : "Add to project"}
         </Button>
       </div>
-    </div>
+    </>
   );
 });

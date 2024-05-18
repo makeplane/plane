@@ -220,7 +220,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     set(this, ["inboxIssuePaginationInfo"], undefined);
     if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 1, 2]);
     else set(this, ["inboxFilters", "status"], [-2]);
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 
@@ -228,7 +228,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     set(this.inboxFilters, key, value);
     set(this, ["inboxIssues"], {});
     set(this, ["inboxIssuePaginationInfo"], undefined);
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 
@@ -236,7 +236,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     set(this.inboxSorting, key, value);
     set(this, ["inboxIssues"], {});
     set(this, ["inboxIssuePaginationInfo"], undefined);
-    const { workspaceSlug, projectId } = this.store.app.router;
+    const { workspaceSlug, projectId } = this.store.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 

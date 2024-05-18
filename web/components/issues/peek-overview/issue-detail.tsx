@@ -25,7 +25,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   const { workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } = props;
   // store hooks
   const { getProjectById } = useProject();
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
   } = useIssueDetail();

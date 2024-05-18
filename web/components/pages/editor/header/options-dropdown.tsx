@@ -7,8 +7,9 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@pl
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useApplication } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
+
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -34,12 +35,9 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     restore,
   } = pageStore;
   // store hooks
-  const {
-    router: { workspaceSlug, projectId },
-  } = useApplication();
+  const { workspaceSlug, projectId } = useAppRouter();
   // page filters
   const { isFullWidth, handleFullWidth } = usePageFilters();
-
   const handleArchivePage = async () =>
     await archive().catch(() =>
       setToast({
@@ -91,7 +89,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         copyTextToClipboard(editorRef.getMarkDown()).then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Successful!",
+            title: "Success!",
             message: "Markdown copied to clipboard.",
           })
         );
@@ -106,7 +104,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${id}`).then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Successful!",
+            title: "Success!",
             message: "Page link copied to clipboard.",
           })
         );

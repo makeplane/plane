@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
@@ -111,8 +111,8 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         </div>
 
         <div
-          className={`relative flex items-center gap-1 overflow-hidden ${
-            verticalAlignPosition ? `flex-col` : `w-full flex-row`
+          className={`relative flex items-center gap-1 ${
+            verticalAlignPosition ? `flex-col` : `w-full flex-row overflow-hidden`
           }`}
         >
           <div

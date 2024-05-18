@@ -1,9 +1,10 @@
 import { makeObservable } from "mobx";
-// services
 import { computedFn } from "mobx-utils";
-import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 // types
 import { TIssue } from "@plane/types";
+// services
+import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
+// types
 import { IIssueDetail } from "./root.store";
 
 export interface IIssueStoreActions {
@@ -17,6 +18,7 @@ export interface IIssueStoreActions {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addModulesToIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<any>;
@@ -161,6 +163,16 @@ export class IssueStore implements IIssueStore {
   archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.rootIssueDetailStore.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
 
+  addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+    await this.rootIssueDetailStore.rootIssueStore.cycleIssues.addCycleToIssue(
+      workspaceSlug,
+      projectId,
+      cycleId,
+      issueId
+    );
+    await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+  };
+
   addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
     await this.rootIssueDetailStore.rootIssueStore.cycleIssues.addIssueToCycle(
       workspaceSlug,
@@ -185,11 +197,12 @@ export class IssueStore implements IIssueStore {
   };
 
   addModulesToIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.addModulesToIssue(
+    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.changeModulesInIssue(
       workspaceSlug,
       projectId,
       issueId,
-      moduleIds
+      moduleIds,
+      []
     );
     if (moduleIds && moduleIds.length > 0)
       await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
@@ -197,10 +210,11 @@ export class IssueStore implements IIssueStore {
   };
 
   removeModulesFromIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeModulesFromIssue(
+    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.changeModulesInIssue(
       workspaceSlug,
       projectId,
       issueId,
+      [],
       moduleIds
     );
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
@@ -208,11 +222,11 @@ export class IssueStore implements IIssueStore {
   };
 
   removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
-    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeIssueFromModule(
+    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeIssuesFromModule(
       workspaceSlug,
       projectId,
       moduleId,
-      issueId
+      [issueId]
     );
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
     return currentModule;

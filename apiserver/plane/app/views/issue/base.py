@@ -53,7 +53,7 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.user_timezone_converter import user_timezone_converter
 
 # Module imports
-from .. import BaseAPIView, BaseViewSet, WebhookMixin
+from .. import BaseAPIView, BaseViewSet
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -249,7 +249,7 @@ class IssueListEndpoint(BaseAPIView):
         return Response(issues, status=status.HTTP_200_OK)
 
 
-class IssueViewSet(WebhookMixin, BaseViewSet):
+class IssueViewSet(BaseViewSet):
     def get_serializer_class(self):
         return (
             IssueCreateSerializer
@@ -447,7 +447,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(
-                issue_queryset, datetime_fields, request.user.user_timezone
+                issues, datetime_fields, request.user.user_timezone
             )
         return Response(issues, status=status.HTTP_200_OK)
 

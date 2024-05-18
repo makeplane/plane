@@ -25,12 +25,7 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     ModuleDetailSerializer,
 )
-from plane.db.models import (
-    Issue,
-    Module,
-    ModuleFavorite,
-    ModuleLink,
-)
+from plane.db.models import Issue, Module, ModuleLink, UserFavorite
 from plane.utils.analytics_plot import burndown_plot
 from plane.utils.user_timezone_converter import user_timezone_converter
 
@@ -46,9 +41,10 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
     ]
 
     def get_queryset(self):
-        favorite_subquery = ModuleFavorite.objects.filter(
+        favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
-            module_id=OuterRef("pk"),
+            entity_identifier=OuterRef("pk"),
+            entity_type="module",
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
