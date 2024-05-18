@@ -32,6 +32,8 @@ import { useAppRouter, useEstimate, useInstance, useIssueDetail, useProject, use
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
 import { AIService } from "@/services/ai.service";
+import useKeypress from "@/hooks/use-keypress";
+import useKeypressWithEvent from "@/hooks/use-keypress-with-event";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -120,6 +122,21 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
 
+  function handleKeyDown(event: KeyboardEvent) {
+    if (editorRef.current?.isEditorReadyToDiscard()) {
+      onClose();
+    } else {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Editor is still processing changes. Please wait before proceeding.",
+      });
+      event.preventDefault(); // Prevent default action if editor is not ready to discard
+    }
+  }
+
+  useKeypress("Escape", handleKeyDown);
+
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -167,6 +184,16 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const issueName = watch("name");
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
+    // Check if the editor is ready to discard
+    if (!editorRef.current?.isEditorReadyToDiscard()) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Editor is not ready to discard changes.",
+      });
+      return;
+    }
+
     const submitData = !data?.id
       ? formData
       : {
@@ -738,7 +765,22 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={getTabIndex("discard_button")}>
+            <Button
+              variant="neutral-primary"
+              size="sm"
+              onClick={() => {
+                if (editorRef.current?.isEditorReadyToDiscard()) {
+                  onClose();
+                } else {
+                  setToast({
+                    type: TOAST_TYPE.ERROR,
+                    title: "Error!",
+                    message: "Editor is still processing changes. Please wait before proceeding.",
+                  });
+                }
+              }}
+              tabIndex={getTabIndex("discard_button")}
+            >
               Discard
             </Button>
             {isDraft && (

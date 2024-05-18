@@ -65,6 +65,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     },
     issueId
   );
+
   const handleKeyDown = () => {
     const slashCommandDropdownElement = document.querySelector("#slash-command");
     const dropdownElement = document.activeElement?.tagName === "INPUT";
@@ -74,6 +75,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       if (issueElement) issueElement?.focus();
     }
   };
+
   useKeypress("Escape", handleKeyDown);
 
   const handleRestore = async () => {

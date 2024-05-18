@@ -181,6 +181,7 @@ export const useEditor = ({
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
       },
+      isEditorReadyToDiscard: () => editorRef.current?.storage.image.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
         if (!editorRef.current || editorRef.current.isDestroyed) {
           console.error("Editor reference is not available or has been destroyed.");
