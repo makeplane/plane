@@ -262,6 +262,27 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         values: ["sub_issue"],
       },
     },
+    calendar: {
+      filters: [
+        "priority",
+        "state_group",
+        "labels",
+        "assignees",
+        "created_by",
+        "subscriber",
+        "project",
+        "start_date",
+        "target_date",
+      ],
+      display_properties: true,
+      display_filters: {
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["sub_issue"],
+      },
+    },
     list: {
       filters: [
         "priority",

@@ -3,20 +3,21 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 // components
 import { EmptyState } from "@/components/empty-state";
 import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "@/components/issues";
-import { SpreadsheetView } from "@/components/issues/issue-layouts";
+import { GanttLayout, KanBanLayout, CalendarLayout, SpreadsheetView, CalendarView, AllIssueCalendarLayout } from "@/components/issues/issue-layouts";
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
-import { SpreadsheetLayoutLoader } from "@/components/ui";
+import { ActiveLoader, SpreadsheetLayoutLoader } from "@/components/ui";
 // types
+import { IIssueDisplayFilterOptions, TGroupedIssues } from "@plane/types";
 // constants
 import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
-import { useApplication, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "@/hooks/store";
+import { useApplication, useEventTracker, useGlobalView, useProject, useUser } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 import { TRenderQuickActions } from "../list/list-view-types";
@@ -30,10 +31,11 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   // store
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
-    issuesFilter: { filters, fetchFilters, updateFilters },
-    issues: { loader, groupedIssueIds, fetchIssues },
+    issuesFilter, //: { filters, fetchFilters, updateFilters },
+    issues: { loader, groupedIssueIds, quickAddIssue, fetchIssues },
+    issueMap
   } = useIssues(EIssuesStoreType.GLOBAL);
-  const { updateIssue, removeIssue, archiveIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
+  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } = useIssuesActions(EIssuesStoreType.GLOBAL);
 
   const { dataViewId, issueIds } = groupedIssueIds;
   const {
@@ -45,6 +47,9 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   const isDefaultView = ["all-issues", "assigned", "created", "subscribed"].includes(groupedIssueIds.dataViewId);
   const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
+
+  const issueFilters = globalViewId ? issuesFilter.filters?.[globalViewId.toString()] : undefined;
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   // filter init from the query params
 
@@ -58,16 +63,23 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
       Object.keys(routeFilters).forEach((key) => {
         const filterKey: any = key;
         const filterValue = routeFilters[key]?.toString() || undefined;
-        if (
-          ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet.filters.includes(filterKey) &&
-          filterKey &&
-          filterValue
-        )
-          issueFilters = { ...issueFilters, [filterKey]: filterValue.split(",") };
+        if (filterKey && filterValue) {
+          if (
+            ((activeLayout === "spreadsheet") && ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet.filters.includes(filterKey))
+          ) {
+            issueFilters = { ...issueFilters, [filterKey]: filterValue.split(",") };
+          }
+          else if ((activeLayout === "calendar") && ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.calendar.filters.includes(filterKey)) {
+            issueFilters = { ...issueFilters, [filterKey]: filterValue.split(",") };
+          }
+          else {
+            console.warn("Could not find filterKey in ISSUE_DISPLAY_FILTERS_BY_LAYOUT");
+          }
+        }
       });
 
       if (!isEmpty(routeFilters))
-        updateFilters(
+        issuesFilter.updateFilters(
           workspaceSlug.toString(),
           undefined,
           EIssueFilterType.FILTERS,
@@ -92,8 +104,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && globalViewId) {
         await fetchAllGlobalViews(workspaceSlug.toString());
-        await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
-        await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
+        await issuesFilter.fetchFilters(workspaceSlug.toString(), globalViewId.toString());
+        await fetchIssues(
+          workspaceSlug.toString(),
+          globalViewId.toString(),
+          groupedIssueIds ? "mutation" : "init-loader"
+        );
         routerFilterParams();
       }
     },
@@ -111,13 +127,11 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     [currentWorkspaceAllProjectsRole]
   );
 
-  const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
-
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !globalViewId) return;
 
-      updateFilters(
+      issuesFilter.updateFilters(
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
@@ -125,28 +139,28 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         globalViewId.toString()
       );
     },
-    [updateFilters, workspaceSlug, globalViewId]
+    [issuesFilter.updateFilters, workspaceSlug, globalViewId]
   );
 
-  const renderQuickActions: TRenderQuickActions = useCallback(
-    ({ issue, parentRef, customActionButton, placement, portalElement }) => (
-      <AllIssueQuickActions
-        parentRef={parentRef}
-        customActionButton={customActionButton}
-        issue={issue}
-        handleDelete={async () => removeIssue(issue.project_id, issue.id)}
-        handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
-        handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
-        portalElement={portalElement}
-        readOnly={!canEditProperties(issue.project_id)}
-        placements={placement}
-      />
-    ),
-    [canEditProperties, removeIssue, updateIssue, archiveIssue]
+  const renderQuickActions: TRenderQuickActions = ({ issue, parentRef, customActionButton, placement }) => (
+    // <QuickActions
+    <AllIssueQuickActions
+      parentRef={parentRef}
+      customActionButton={customActionButton}
+      issue={issue}
+      handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+      handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+      handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
+      handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+      handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
+      readOnly={!canEditProperties}
+      placements={placement}
+    />
   );
 
   if (loader === "init-loader" || !globalViewId || globalViewId !== dataViewId || !issueIds) {
-    return <SpreadsheetLayoutLoader />;
+    // return <SpreadsheetLayoutLoader />;
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
   }
 
   const emptyStateType =
@@ -164,29 +178,48 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
               (workspaceProjectIds ?? []).length > 0
                 ? currentView !== "custom-view" && currentView !== "subscribed"
                   ? () => {
-                      setTrackElement("All issues empty state");
-                      commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
-                    }
+                    setTrackElement("All issues empty state");
+                    commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+                  }
                   : undefined
                 : () => {
-                    setTrackElement("All issues empty state");
-                    commandPaletteStore.toggleCreateProjectModal(true);
-                  }
+                  setTrackElement("All issues empty state");
+                  commandPaletteStore.toggleCreateProjectModal(true);
+                }
             }
           />
         ) : (
           <Fragment>
-            <SpreadsheetView
-              displayProperties={issueFilters?.displayProperties ?? {}}
-              displayFilters={issueFilters?.displayFilters ?? {}}
-              handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-              issueIds={issueIds}
-              quickActions={renderQuickActions}
-              updateIssue={updateIssue}
-              canEditProperties={canEditProperties}
-              viewId={globalViewId}
-              isWorkspaceLevel
-            />
+            <div className="relative h-full w-full overflow-auto bg-custom-background-90">
+              {activeLayout === "calendar" ? (
+                <CalendarView
+                  issuesFilterStore={issuesFilter}
+                  issues={issueMap}
+                  groupedIssueIds={groupedIssueIds.issueIds}
+                  // layout="month"
+                  // showWeekends={false}
+                  quickActions={renderQuickActions}
+                  quickAddIssue={quickAddIssue}
+                  // addIssuesToView={addIssuesToView}
+                  viewId={globalViewId}
+                  readOnly={true}
+                  updateFilters={updateFilters}
+                  isWorkspaceLevel
+                />
+              ) : activeLayout === "spreadsheet" ? (
+                <SpreadsheetView
+                  displayProperties={issueFilters?.displayProperties ?? {}}
+                  displayFilters={issueFilters?.displayFilters ?? {}}
+                  handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+                  issueIds={issueIds}
+                  quickActions={renderQuickActions}
+                  updateIssue={updateIssue}
+                  canEditProperties={canEditProperties}
+                  viewId={globalViewId}
+                  isWorkspaceLevel
+                />
+              ) : null}
+            </div>
             {/* peek overview */}
             <IssuePeekOverview />
           </Fragment>

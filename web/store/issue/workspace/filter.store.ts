@@ -37,7 +37,7 @@ export interface IWorkspaceIssuesFilter {
     projectId: string | undefined,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId: string
+    viewId: string,
   ) => Promise<void>;
   //helper action
   getIssueFilters: (viewId: string | undefined) => IIssueFilters | undefined;
@@ -123,7 +123,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       };
 
       const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
-      displayFilters = this.computedDisplayFilters(_filters?.display_filters, { layout: "spreadsheet" });
+      displayFilters = this.computedDisplayFilters(_filters?.display_filters); // TODO: Is this wrong?
       displayProperties = this.computedDisplayProperties(_filters?.display_properties);
       kanbanFilters = {
         group_by: _filters?.kanban_filters?.group_by || [],
@@ -224,15 +224,16 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           if (this.requiresServerUpdate(updatedDisplayFilters))
             this.rootIssueStore.workspaceIssues.fetchIssues(workspaceSlug, viewId, "mutation");
 
-          if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
+          if (["all-issues", "assigned", "created", "subscribed"].includes(viewId)) {
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
               display_filters: _filters.displayFilters,
             });
-          else
+          }
+          else {
             await this.issueFilterService.updateView(workspaceSlug, viewId, {
               display_filters: _filters.displayFilters,
             });
-
+          }
           break;
         case EIssueFilterType.DISPLAY_PROPERTIES:
           const updatedDisplayProperties = filters as IIssueDisplayProperties;

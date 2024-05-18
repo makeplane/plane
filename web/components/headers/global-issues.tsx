@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 // icons
 import { PlusIcon } from "lucide-react";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
@@ -22,7 +22,7 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
+  const { workspaceSlug, globalViewId, projectId } = router.query;
   // store hooks
   const {
     issuesFilter: { filters, updateFilters },
@@ -36,6 +36,22 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
   } = useMember();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
+  const activeLayout = issueFilters?.displayFilters?.layout;
+
+  const handleLayoutChange = useCallback(
+    (layout: TIssueLayouts) => {
+    // (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
+      if (!workspaceSlug) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        globalViewId.toString(),
+      );
+    },
+    [workspaceSlug, updateFilters, globalViewId]
+  );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -110,6 +126,11 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
         </div>
         <div className="flex items-center gap-2">
           <>
+            <LayoutSelection
+              layouts={["calendar", "spreadsheet"]}
+              onChange={(layout) => handleLayoutChange(layout)}
+              selectedLayout={activeLayout}
+            />
             <FiltersDropdown title="Filters" placement="bottom-end">
               <FilterSelection
                 layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}

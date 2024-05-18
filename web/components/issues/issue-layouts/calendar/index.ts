@@ -1,5 +1,6 @@
 export * from "./dropdowns";
 export * from "./roots";
+export * from "./calendar-view";
 export * from "./calendar";
 export * from "./types.d";
 export * from "./day-tile";

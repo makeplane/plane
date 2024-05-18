@@ -4,7 +4,7 @@ import { action, observable, makeObservable, computed, runInAction } from "mobx"
 // base class
 import { IssueService, IssueArchiveService } from "@/services/issue";
 import { WorkspaceService } from "@/services/workspace.service";
-import { TIssue, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
 // types
@@ -16,7 +16,7 @@ export interface IWorkspaceIssues {
   issues: { [viewId: string]: string[] };
   viewFlags: ViewFlags;
   // computed
-  groupedIssueIds: { dataViewId: string; issueIds: TUnGroupedIssues | undefined };
+  groupedIssueIds: { dataViewId: string; issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined };
   // actions
   fetchIssues: (workspaceSlug: string, viewId: string, loadType: TLoader) => Promise<TIssue[]>;
   createIssue: (
@@ -93,7 +93,10 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     const displayFilters = this.rootIssueStore?.workspaceIssuesFilter?.filters?.[viewId]?.displayFilters;
     if (!displayFilters) return { dataViewId: viewId, issueIds: undefined };
 
+    const subGroupBy = displayFilters?.sub_group_by;
+    const groupBy = displayFilters?.group_by;
     const orderBy = displayFilters?.order_by;
+    const layout = displayFilters?.layout;
 
     const viewIssueIds = this.issues[uniqueViewId];
 
@@ -104,7 +107,8 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
 
     let issueIds: TIssue | TUnGroupedIssues | undefined = undefined;
 
-    issueIds = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
+    if (layout === "calendar") issueIds = this.groupedIssues("target_date", "target_date", _issues, true);
+    else if (layout === "spreadsheet") issueIds = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
 
     return { dataViewId: viewId, issueIds };
   }
@@ -131,7 +135,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
 
       return response;
     } catch (error) {
-      console.error(error);
+      console.error(`workspaceIssues.fetchIssues: ${error}`);
       this.loader = undefined;
       throw error;
     }

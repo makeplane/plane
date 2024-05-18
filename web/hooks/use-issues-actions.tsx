@@ -558,6 +558,7 @@ const useGlobalIssueActions = () => {
       filterType: EIssueFilterType,
       filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
     ) => {
+      // TODO: Cannot change layout yet, maybe because of this?
       if (!globalViewId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, globalViewId);
     },
