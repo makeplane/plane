@@ -1,7 +1,6 @@
 "use client";
 
 import { ReactNode, createContext } from "react";
-import { ThemeProvider } from "next-themes";
 // store
 import { RootStore } from "@/store/root.store";
 
@@ -23,16 +22,13 @@ function initializeStore(initialData = {}) {
   return singletonRootStore;
 }
 
-export type AppProviderProps = {
+export type StoreProviderProps = {
   children: ReactNode;
-  initialState: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialState?: any;
 };
 
-export const AppProvider = ({ children, initialState = {} }: AppProviderProps) => {
+export const StoreProvider = ({ children, initialState = {} }: StoreProviderProps) => {
   const store = initializeStore(initialState);
-  return (
-    <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-      <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
-    </ThemeProvider>
-  );
+  return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
 };

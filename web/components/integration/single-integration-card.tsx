@@ -46,7 +46,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -55,8 +55,8 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const { isMobile } = usePlatformOS();
   const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
     provider: integration.provider,
-    github_app_name: instance?.config?.github_app_name || "",
-    slack_client_id: instance?.config?.slack_client_id || "",
+    github_app_name: config?.github_app_name || "",
+    slack_client_id: config?.slack_client_id || "",
   });
 
   const { data: workspaceIntegrations } = useSWR(

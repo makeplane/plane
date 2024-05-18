@@ -1,12 +1,14 @@
-"use client";
-
 import { ReactNode } from "react";
-// layouts
+import { Metadata } from "next";
 import { AdminLayout } from "@/layouts/admin-layout";
 
 interface EmailLayoutProps {
   children: ReactNode;
 }
+
+export const metadata: Metadata = {
+  title: "Email Settings - God Mode",
+};
 
 const EmailLayout = ({ children }: EmailLayoutProps) => <AdminLayout>{children}</AdminLayout>;
 

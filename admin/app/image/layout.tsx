@@ -1,10 +1,14 @@
 import { ReactNode } from "react";
-// layouts
+import { Metadata } from "next";
 import { AdminLayout } from "@/layouts/admin-layout";
 
 interface ImageLayoutProps {
   children: ReactNode;
 }
+
+export const metadata: Metadata = {
+  title: "Images Settings - God Mode",
+};
 
 const ImageLayout = ({ children }: ImageLayoutProps) => <AdminLayout>{children}</AdminLayout>;
 
