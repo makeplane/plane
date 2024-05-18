@@ -39,8 +39,8 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
       <InstanceSidebar />
       <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
         <InstanceHeader />
+        <div className="h-full w-full overflow-hidden">{children}</div>
       </main>
-      <div className="h-full w-full overflow-hidden">{children}</div>
       <NewUserPopup />
     </div>
   );

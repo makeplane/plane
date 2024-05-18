@@ -23,12 +23,13 @@ function initializeStore(initialData = {}) {
   return singletonRootStore;
 }
 
-export type AppProviderProps = {
+export type StoreProviderProps = {
   children: ReactNode;
-  initialState: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialState?: any;
 };
 
-export const AppProvider = ({ children, initialState = {} }: AppProviderProps) => {
+export const StoreProvider = ({ children, initialState = {} }: StoreProviderProps) => {
   const store = initializeStore(initialState);
   return (
     <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>

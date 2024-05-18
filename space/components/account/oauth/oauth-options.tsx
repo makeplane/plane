@@ -6,7 +6,7 @@ import { useInstance } from "@/hooks/store";
 
 export const OAuthOptions: React.FC = observer(() => {
   // hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
 
   return (
     <>
@@ -16,12 +16,12 @@ export const OAuthOptions: React.FC = observer(() => {
         <hr className="w-full border-onboarding-border-100" />
       </div>
       <div className={`mt-7 grid gap-4 overflow-hidden`}>
-        {instance?.config?.is_google_enabled && (
+        {config?.is_google_enabled && (
           <div className="flex h-[42px] items-center !overflow-hidden">
             <GoogleOAuthButton text="Sign in with Google" />
           </div>
         )}
-        {instance?.config?.is_github_enabled && <GithubOAuthButton text="Sign in with Github" />}
+        {config?.is_github_enabled && <GithubOAuthButton text="Sign in with Github" />}
       </div>
     </>
   );

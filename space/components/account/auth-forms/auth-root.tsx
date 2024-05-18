@@ -43,7 +43,7 @@ export const AuthRoot: FC = observer(() => {
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   const [isPasswordAutoset, setIsPasswordAutoset] = useState(true);
   // hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
 
   useEffect(() => {
     if (error_code) {
@@ -67,11 +67,10 @@ export const AuthRoot: FC = observer(() => {
     }
   }, [error_code]);
 
-  const isSMTPConfigured = instance?.config?.is_smtp_configured || false;
-  const isMagicLoginEnabled = instance?.config?.is_magic_login_enabled || false;
-  const isEmailPasswordEnabled = instance?.config?.is_email_password_enabled || false;
-  const isOAuthEnabled =
-    (instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled)) || false;
+  const isSMTPConfigured = config?.is_smtp_configured || false;
+  const isMagicLoginEnabled = config?.is_magic_login_enabled || false;
+  const isEmailPasswordEnabled = config?.is_email_password_enabled || false;
+  const isOAuthEnabled = (config && (config?.is_google_enabled || config?.is_github_enabled)) || false;
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {

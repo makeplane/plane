@@ -32,7 +32,7 @@ export interface IAppProvider {
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
   // store hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
   const {
     data: currentUser,
     membership: { currentProjectRole, currentWorkspaceRole },
@@ -53,8 +53,8 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
               currentWorkspaceId={currentWorkspace?.id}
               workspaceRole={currentWorkspaceRole}
               projectRole={currentProjectRole}
-              posthogAPIKey={instance?.config?.posthog_api_key || undefined}
-              posthogHost={instance?.config?.posthog_host || undefined}
+              posthogAPIKey={config?.posthog_api_key || undefined}
+              posthogHost={config?.posthog_host || undefined}
             >
               <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
             </PostHogProvider>
