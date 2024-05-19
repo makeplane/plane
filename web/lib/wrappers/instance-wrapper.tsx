@@ -32,7 +32,7 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   if (error && error?.status === "error") return <>{children}</>;
 
   // instance is not ready and setup is not done
-  if (instance?.instance?.is_setup_done === false) return <InstanceNotReady />;
+  if (instance?.is_setup_done === false) return <InstanceNotReady />;
 
   return <>{children}</>;
 });

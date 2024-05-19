@@ -21,7 +21,7 @@ type Props = {
 export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
   const { workspaceSlug, disabled = false, handleAttachmentOperations } = props;
   // store hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
   // states
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,12 +50,12 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     onDrop,
-    maxSize: instance?.config?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
     disabled: isLoading || disabled,
   });
 
-  const maxFileSize = instance?.config?.file_size_limit ?? MAX_FILE_SIZE;
+  const maxFileSize = config?.file_size_limit ?? MAX_FILE_SIZE;
 
   const fileError =
     fileRejections.length > 0 ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)` : null;

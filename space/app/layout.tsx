@@ -1,16 +1,11 @@
 import { Metadata } from "next";
-// styles
-import "@/styles/globals.css";
-// components
-import { InstanceNotReady, InstanceFailureView } from "@/components/instance";
 // helpers
 import { ASSET_PREFIX } from "@/helpers/common.helper";
-// lib
-import { AppProvider } from "@/lib/app-providers";
-// services
-import { InstanceService } from "@/services/instance.service";
-
-const instanceService = new InstanceService();
+// components
+import { InstanceProvider } from "@/lib/instance-provider";
+import { StoreProvider } from "@/lib/store-provider";
+// styles
+import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Plane Deploy | Make your Plane boards public with one-click",
@@ -27,9 +22,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const instanceDetails = await instanceService.getInstanceInfo().catch(() => undefined);
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -40,21 +33,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="shortcut icon" href={`${ASSET_PREFIX}/favicon/favicon.ico`} />
       </head>
       <body>
-        <AppProvider initialState={{ instance: instanceDetails }}>
-          {!instanceDetails ? (
-            <InstanceFailureView />
-          ) : (
-            <>
-              {instanceDetails.instance.is_setup_done ? (
-                <>{children}</>
-              ) : (
-                <div className="h-screen w-screen">
-                  <InstanceNotReady />
-                </div>
-              )}
-            </>
-          )}
-        </AppProvider>
+        <StoreProvider>
+          <InstanceProvider>{children}</InstanceProvider>
+        </StoreProvider>
       </body>
     </html>
   );

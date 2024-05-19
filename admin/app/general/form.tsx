@@ -13,7 +13,7 @@ import { ControllerInput } from "@/components/common";
 import { useInstance } from "@/hooks/store";
 
 export interface IGeneralConfigurationForm {
-  instance: IInstance["instance"];
+  instance: IInstance;
   instanceAdmins: IInstanceAdmin[];
 }
 
@@ -26,15 +26,15 @@ export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = observer(
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<Partial<IInstance["instance"]>>({
+  } = useForm<Partial<IInstance>>({
     defaultValues: {
       instance_name: instance?.instance_name,
       is_telemetry_enabled: instance?.is_telemetry_enabled,
     },
   });
 
-  const onSubmit = async (formData: Partial<IInstance["instance"]>) => {
-    const payload: Partial<IInstance["instance"]> = { ...formData };
+  const onSubmit = async (formData: Partial<IInstance>) => {
+    const payload: Partial<IInstance> = { ...formData };
 
     console.log("payload", payload);
 

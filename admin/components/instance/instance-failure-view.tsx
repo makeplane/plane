@@ -21,7 +21,7 @@ export const InstanceFailureView: FC<InstanceFailureViewProps> = () => {
   };
 
   return (
-    <div className="h-full w-full relative container px-5 mx-auto flex justify-center items-center mt-10">
+    <div className="h-full w-full relative container px-5 mx-auto flex justify-center items-center">
       <div className="w-auto max-w-2xl relative space-y-8 py-10">
         <div className="relative flex flex-col justify-center items-center space-y-4">
           <Image src={instanceImage} alt="Plane Logo" />

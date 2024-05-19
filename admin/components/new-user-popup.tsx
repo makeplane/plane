@@ -17,11 +17,11 @@ import TakeoffIconDark from "/public/logos/takeoff-icon-dark.svg";
 export const NewUserPopup: React.FC = observer(() => {
   // hooks
   const { isNewUserPopup, toggleNewUserPopup } = useTheme();
-  const { instance } = useInstance();
+  const { config } = useInstance();
   // theme
   const { resolvedTheme } = nextUseTheme();
 
-  const redirectionLink = `${instance?.config?.app_base_url ? `${instance?.config?.app_base_url}/create-workspace` : `/god-mode/`}`;
+  const redirectionLink = `${config?.app_base_url ? `${config?.app_base_url}/create-workspace` : `/god-mode/`}`;
 
   if (!isNewUserPopup) return <></>;
   return (

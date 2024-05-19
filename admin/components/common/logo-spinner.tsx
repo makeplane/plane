@@ -11,7 +11,7 @@ export const LogoSpinner = () => {
 
   return (
     <div className="flex items-center justify-center">
-      <Image src={logoSrc} alt="logo" className="w-[82px] h-[82px] mr-2" />
+      <Image src={logoSrc} alt="logo" className="w-[82px] h-[82px] mr-2" priority={false} />
     </div>
   );
 };

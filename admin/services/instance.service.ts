@@ -1,5 +1,11 @@
 // types
-import type { IFormattedInstanceConfiguration, IInstance, IInstanceAdmin, IInstanceConfiguration } from "@plane/types";
+import type {
+  IFormattedInstanceConfiguration,
+  IInstance,
+  IInstanceAdmin,
+  IInstanceConfiguration,
+  IInstanceInfo,
+} from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
@@ -9,8 +15,8 @@ export class InstanceService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getInstanceInfo(): Promise<IInstance> {
-    return this.get<IInstance>("/api/instances/")
+  async getInstanceInfo(): Promise<IInstanceInfo> {
+    return this.get<IInstanceInfo>("/api/instances/")
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -25,8 +31,8 @@ export class InstanceService extends APIService {
       });
   }
 
-  async updateInstanceInfo(data: Partial<IInstance["instance"]>): Promise<IInstance["instance"]> {
-    return this.patch<Partial<IInstance["instance"]>, IInstance["instance"]>("/api/instances/", data)
+  async updateInstanceInfo(data: Partial<IInstance>): Promise<IInstance> {
+    return this.patch<Partial<IInstance>, IInstance>("/api/instances/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

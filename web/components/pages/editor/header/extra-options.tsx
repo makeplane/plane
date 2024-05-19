@@ -28,7 +28,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // store hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
   // derived values
   const { archived_at, isContentEditable, is_locked } = page;
 
@@ -51,7 +51,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           <span>Archived at {renderFormattedDate(archived_at)}</span>
         </div>
       )}
-      {isContentEditable && instance?.config?.has_openai_configured && (
+      {isContentEditable && config?.has_openai_configured && (
         <GptAssistantPopover
           isOpen={gptModalOpen}
           projectId={projectId}

@@ -1,6 +1,6 @@
 import { useContext } from "react";
 // lib
-import { StoreContext } from "@/lib/app-providers";
+import { StoreContext } from "@/lib/store-provider";
 // store
 import { IInstanceStore } from "@/store/instance.store";
 
