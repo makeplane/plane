@@ -57,14 +57,12 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
 
   const issue = issuesMap[issueId];
-  // const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   const { isMobile } = usePlatformOS();
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
-  // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
-  // const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
+  const subIssuesCount = subIssuesStore.getSubIssueCountByIssueId(issue.id);
 
   const paddingLeft = `${spacingLeft}px`;
 
@@ -100,7 +98,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
             <div className="flex items-center group">
               <span className="size-3.5" />
               <div className="flex h-4 w-4 items-center justify-center">
-                {issue.sub_issues_count > 0 && (
+                {subIssuesCount > 0 && (
                   <button
                     className="flex items-center justify-center h-4 w-4 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
                     onClick={handleToggleExpand}
