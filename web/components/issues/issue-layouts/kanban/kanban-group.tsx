@@ -2,6 +2,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
+import { observer } from "mobx-react";
 import { AlertCircle } from "lucide-react";
 //types
 import {
@@ -14,6 +15,7 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
 // helpers
@@ -21,6 +23,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 //components
+import { GroupDragOverlay } from "../group-drag-overlay";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
@@ -54,7 +57,7 @@ interface IKanbanGroup {
   orderBy: TIssueOrderByOptions | undefined;
 }
 
-export const KanbanGroup = (props: IKanbanGroup) => {
+export const KanbanGroup = observer((props: IKanbanGroup) => {
   const {
     groupId,
     sub_group_id,
@@ -108,7 +111,17 @@ export const KanbanGroup = (props: IKanbanGroup) => {
           const source = getSourceFromDropPayload(payload);
           const destination = getDestinationFromDropPayload(payload);
 
-          if (!source || !destination || isDropDisabled) return;
+          if (!source || !destination) return;
+
+          if (isDropDisabled) {
+            dropErrorMessage &&
+              setToast({
+                type: TOAST_TYPE.WARNING,
+                title: "Warning!",
+                message: dropErrorMessage,
+              });
+            return;
+          }
 
           handleOnDrop(source, destination);
 
@@ -122,7 +135,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
         element,
       })
     );
-  }, [columnRef?.current, groupId, sub_group_id, setIsDraggingOverColumn, orderBy, isDropDisabled, handleOnDrop]);
+  }, [columnRef?.current, groupId, sub_group_id, setIsDraggingOverColumn, orderBy, isDropDisabled, dropErrorMessage, handleOnDrop]);
 
   const prePopulateQuickAddData = (
     groupByKey: string | undefined,
@@ -190,6 +203,14 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       )}
       ref={columnRef}
     >
+      <GroupDragOverlay
+        dragColumnOrientation={sub_group_by ? "justify-start": "justify-center" }
+        canDropOverIssue={canDropOverIssue}
+        isDropDisabled={isDropDisabled}
+        dropErrorMessage={dropErrorMessage}
+        orderBy={orderBy}
+        isDraggingOverColumn={isDraggingOverColumn}
+      />
       <div
         //column overlay when issues are not sorted by manual
         className={cn(
@@ -259,4 +280,4 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       )}
     </div>
   );
-};
+});

@@ -169,7 +169,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       }),
       dropTargetForElements({
         element,
-        canDrop: () => canDropOverIssue,
+        canDrop: ({ source }) => source?.data?.id !== issue?.id && canDropOverIssue,
         getData: () => ({ id: issue?.id, type: "ISSUE" }),
         onDragEnter: () => {
           setIsDraggingOverBlock(true);

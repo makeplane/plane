@@ -425,11 +425,8 @@ const handleSortOrder = (
   return currentIssueState;
 };
 
-export const getIssueBlockId = (
-  issueId: string | undefined,
-  groupId: string | undefined,
-  subGroupId: string | undefined
-) => `issue_${issueId}_${groupId}_${subGroupId}`;
+export const getIssueBlockId = (issueId: string | undefined, groupId: string | undefined, subGroupId?: string | undefined) =>
+  `issue_${issueId}_${groupId}_${subGroupId}`;
 
 /**
  * returns empty Array if groupId is None
