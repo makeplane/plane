@@ -88,7 +88,7 @@ class MagicCodeProvider(CredentialAdapter):
 
             if data["current_attempt"] > 2:
                 email = str(self.key).replace("magic_", "", 1)
-                if User.objects.exists(email=email):
+                if User.objects.filter(email=email).exists():
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES[
                             "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"
@@ -144,7 +144,7 @@ class MagicCodeProvider(CredentialAdapter):
                 return
             else:
                 email = str(self.key).replace("magic_", "", 1)
-                if User.objects.exists(email=email):
+                if User.objects.filter(email=email).exists():
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES[
                             "INVALID_MAGIC_CODE_SIGN_IN"
@@ -162,7 +162,7 @@ class MagicCodeProvider(CredentialAdapter):
                     )
         else:
             email = str(self.key).replace("magic_", "", 1)
-            if User.objects.exists(email=email):
+            if User.objects.filter(email=email).exists():
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES[
                         "EXPIRED_MAGIC_CODE_SIGN_IN"
