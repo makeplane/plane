@@ -97,10 +97,7 @@ export const ProfileSidebar = observer(() => {
               </div>
             )}
             <img
-              src={
-                userProjectsData.user_data?.cover_image ??
-                "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
-              }
+              src={userProjectsData.user_data?.cover_image ?? "/users/user-profile-cover-default-img.png"}
               alt={userProjectsData.user_data?.display_name}
               className="h-32 w-full object-cover"
             />
@@ -166,8 +163,8 @@ export const ProfileSidebar = observer(() => {
                                     completedIssuePercentage <= 35
                                       ? "bg-red-500/10 text-red-500"
                                       : completedIssuePercentage <= 70
-                                      ? "bg-yellow-500/10 text-yellow-500"
-                                      : "bg-green-500/10 text-green-500"
+                                        ? "bg-yellow-500/10 text-yellow-500"
+                                        : "bg-green-500/10 text-green-500"
                                   }`}
                                 >
                                   {completedIssuePercentage}%

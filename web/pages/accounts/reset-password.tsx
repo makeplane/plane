@@ -7,10 +7,16 @@ import { Eye, EyeOff } from "lucide-react";
 // ui
 import { Button, Input } from "@plane/ui";
 // components
-import { PasswordStrengthMeter } from "@/components/account";
+import { AuthBanner, PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
 // helpers
-import { EPageTypes } from "@/helpers/authentication.helper";
+import {
+  EAuthenticationErrorCodes,
+  EErrorAlertType,
+  EPageTypes,
+  TAuthErrorInfo,
+  authErrorHandler,
+} from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // layouts
@@ -43,7 +49,7 @@ const authService = new AuthService();
 const ResetPasswordPage: NextPageWithLayout = () => {
   // router
   const router = useRouter();
-  const { uidb64, token, email } = router.query;
+  const { uidb64, token, email, error_code } = router.query;
   // states
   const [showPassword, setShowPassword] = useState({
     password: false,
@@ -56,6 +62,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
+  const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
 
   // hooks
   const { resolvedTheme } = useTheme();
@@ -80,6 +87,15 @@ const ResetPasswordPage: NextPageWithLayout = () => {
         : true,
     [resetFormData]
   );
+
+  useEffect(() => {
+    if (error_code) {
+      const errorhandler = authErrorHandler(error_code?.toString() as EAuthenticationErrorCodes);
+      if (errorhandler) {
+        setErrorInfo(errorhandler);
+      }
+    }
+  }, [error_code]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
@@ -106,6 +122,9 @@ const ResetPasswordPage: NextPageWithLayout = () => {
               </h3>
               <p className="font-medium text-onboarding-text-400">Secure your account with a strong password</p>
             </div>
+            {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
+              <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
+            )}
             <form
               className="mt-5 space-y-4"
               method="POST"

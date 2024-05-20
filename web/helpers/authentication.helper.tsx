@@ -248,7 +248,7 @@ const errorCodeMessages: {
   // Reset Password
   [EAuthenticationErrorCodes.INVALID_PASSWORD_TOKEN]: {
     title: `Invalid password token`,
-    message: () => `Invalid password token. Please try again.`,
+    message: () => `Invalid password token.`,
   },
   [EAuthenticationErrorCodes.EXPIRED_PASSWORD_TOKEN]: {
     title: `Expired password token`,
