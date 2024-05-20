@@ -415,7 +415,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
                 Add another
               </button>
             </div>
-            <div className="flex flex-col mx-auto px-8 sm:px-2 items-center justify-center gap-4 w-96">
+            <div className="flex flex-col mx-auto px-8 sm:px-2 items-center justify-center gap-4 w-full max-w-96">
               <Button
                 variant="primary"
                 type="submit"

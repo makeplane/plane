@@ -60,7 +60,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     return redirectionRoute;
   };
 
-  if (isUserSWRLoading || isUserLoading)
+  if ((isUserSWRLoading || isUserLoading) && !currentUser?.id)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <LogoSpinner />
