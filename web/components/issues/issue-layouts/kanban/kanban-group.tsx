@@ -2,6 +2,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
+import { AlertCircle } from "lucide-react";
 //types
 import {
   TGroupedIssues,
@@ -192,7 +193,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       <div
         //column overlay when issues are not sorted by manual
         className={cn(
-          "absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded transparent",
+          "absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-overlay",
           {
             "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlay,
           },
@@ -202,20 +203,27 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       >
         <div
           className={cn(
-            "p-3 mt-8 flex flex-col border-[1px] rounded items-center",
+            "p-3 mt-8 flex flex-col rounded items-center",
             {
-              "bg-custom-background-primary border-custom-border-primary text-custom-text-primary": shouldOverlay,
+              "text-custom-text-200": shouldOverlay,
             },
             {
-              "bg-custom-background-error border-custom-border-error text-custom-text-error": isDropDisabled,
+              "text-custom-text-error": isDropDisabled,
             }
           )}
         >
           {dropErrorMessage ? (
-            <span>{dropErrorMessage}</span>
+            <div className="flex items-center">
+              <AlertCircle width={13} height={13} /> &nbsp;
+              <span>{dropErrorMessage}</span>
+            </div>
           ) : (
             <>
-              {readableOrderBy && <span>The layout is ordered by {readableOrderBy}.</span>}
+              {readableOrderBy && (
+                <span>
+                  The layout is ordered by <span className="font-semibold">{readableOrderBy}</span>.
+                </span>
+              )}
               <span>Drop here to move the issue.</span>
             </>
           )}
