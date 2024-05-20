@@ -6,7 +6,6 @@ from .base import BaseSerializer
 from plane.db.models import (
     Page,
     PageLog,
-    PageFavorite,
     PageLabel,
     Label,
 )
@@ -141,17 +140,4 @@ class PageLogSerializer(BaseSerializer):
             "workspace",
             "project",
             "page",
-        ]
-
-
-class PageFavoriteSerializer(BaseSerializer):
-    page_detail = PageSerializer(source="page", read_only=True)
-
-    class Meta:
-        model = PageFavorite
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "user",
         ]

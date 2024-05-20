@@ -1,26 +1,25 @@
-export type TEmailCheckTypes = "magic_code" | "password";
+export enum EAuthModes {
+  SIGN_IN = "SIGN_IN",
+  SIGN_UP = "SIGN_UP",
+}
 
+export enum EAuthSteps {
+  EMAIL = "EMAIL",
+  PASSWORD = "PASSWORD",
+  UNIQUE_CODE = "UNIQUE_CODE",
+}
+
+export interface ICsrfTokenData {
+  csrf_token: string;
+}
+
+// email check types starts
 export interface IEmailCheckData {
   email: string;
 }
 
 export interface IEmailCheckResponse {
   is_password_autoset: boolean;
-  is_existing: boolean;
+  existing: boolean;
 }
-
-export interface ILoginTokenResponse {
-  access_token: string;
-  refresh_token: string;
-}
-
-export interface IMagicSignInData {
-  email: string;
-  key: string;
-  token: string;
-}
-
-export interface IPasswordSignInData {
-  email: string;
-  password: string;
-}
+// email check types ends

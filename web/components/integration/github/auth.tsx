@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
-import { IWorkspaceIntegration } from "@plane/types";
-// hooks
-import { Button } from "@plane/ui";
-import { useApplication } from "@/hooks/store";
-import useIntegrationPopup from "@/hooks/use-integration-popup";
-// ui
 // types
+import { IWorkspaceIntegration } from "@plane/types";
+// ui
+import { Button } from "@plane/ui";
+// hooks
+import { useInstance } from "@/hooks/store";
+import useIntegrationPopup from "@/hooks/use-integration-popup";
 
 type Props = {
   workspaceIntegration: false | IWorkspaceIntegration | undefined;
@@ -14,14 +14,12 @@ type Props = {
 
 export const GithubAuth: React.FC<Props> = observer(({ workspaceIntegration, provider }) => {
   // store hooks
-  const {
-    config: { envConfig },
-  } = useApplication();
+  const { config } = useInstance();
   // hooks
   const { startAuth, isConnecting } = useIntegrationPopup({
     provider,
-    github_app_name: envConfig?.github_app_name || "",
-    slack_client_id: envConfig?.slack_client_id || "",
+    github_app_name: config?.github_app_name || "",
+    slack_client_id: config?.slack_client_id || "",
   });
 
   return (

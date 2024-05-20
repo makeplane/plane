@@ -12,7 +12,7 @@ import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useApplication } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -30,9 +30,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // store hooks
-  const {
-    config: { envConfig },
-  } = useApplication();
+  const { config } = useInstance();
   // derived values
   const { archived_at, isContentEditable, isSubmitting, is_locked } = pageStore;
 
@@ -71,7 +69,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           <span>Archived at {renderFormattedDate(archived_at)}</span>
         </div>
       )}
-      {isContentEditable && envConfig?.has_openai_configured && (
+      {isContentEditable && config?.has_openai_configured && (
         <GptAssistantPopover
           isOpen={gptModalOpen}
           projectId={projectId}

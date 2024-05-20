@@ -1,4 +1,5 @@
 import { FC, useEffect, useRef, useState } from "react";
+import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/lite-text-editor";
@@ -28,7 +29,7 @@ type TIssueCommentCard = {
   disabled?: boolean;
 };
 
-export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
+export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
   const {
     workspaceSlug,
     projectId,
@@ -42,7 +43,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
   const {
     comment: { getCommentById },
   } = useIssueDetail();
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const showEditorRef = useRef<EditorReadOnlyRefApi>(null);
@@ -90,7 +91,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
       quickActions={
         <>
           {!disabled && currentUser?.id === comment.actor && (
-            <CustomMenu ellipsis>
+            <CustomMenu ellipsis closeOnSelect>
               <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
                 <Pencil className="h-3 w-3" />
                 Edit comment
@@ -196,4 +197,4 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
       </>
     </IssueCommentBlock>
   );
-};
+});

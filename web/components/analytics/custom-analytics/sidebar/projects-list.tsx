@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 // icons
 import { Contrast, LayoutGrid, Users } from "lucide-react";

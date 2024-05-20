@@ -1,8 +1,8 @@
-// services
-import APIService from "@/services/api.service";
+import axios from "axios";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-import axios from "axios";
+// services
+import { APIService } from "@/services/api.service";
 
 interface UnSplashImage {
   id: string;
@@ -43,7 +43,6 @@ class FileService extends APIService {
     this.cancelSource = axios.CancelToken.source();
     return this.post(`/api/workspaces/${workspaceSlug}/file-assets/`, file, {
       headers: {
-        ...this.getHeaders(),
         "Content-Type": "multipart/form-data",
       },
       cancelToken: this.cancelSource.token,
@@ -117,7 +116,6 @@ class FileService extends APIService {
 
   async restoreImage(assetUrlWithWorkspaceId: string): Promise<any> {
     return this.post(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/restore/`, {
-      headers: this.getHeaders(),
       "Content-Type": "application/json",
     })
       .then((response) => response?.status)
@@ -136,8 +134,13 @@ class FileService extends APIService {
         throw error?.response?.data;
       });
   }
+
   async uploadUserFile(file: FormData): Promise<any> {
-    return this.mediaUpload(`/api/users/file-assets/`, file)
+    return this.post(`/api/users/file-assets/`, file, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

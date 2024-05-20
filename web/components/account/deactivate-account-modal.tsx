@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-import { mutate } from "swr";
 import { Trash2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
@@ -15,16 +13,13 @@ type Props = {
 };
 
 export const DeactivateAccountModal: React.FC<Props> = (props) => {
+  const router = useRouter();
   const { isOpen, onClose } = props;
+  // hooks
+  const { deactivateAccount, signOut } = useUser();
 
   // states
   const [isDeactivating, setIsDeactivating] = useState(false);
-
-  const { deactivateAccount } = useUser();
-
-  const router = useRouter();
-
-  const { setTheme } = useTheme();
 
   const handleClose = () => {
     setIsDeactivating(false);
@@ -41,12 +36,11 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
           title: "Success!",
           message: "Account deactivated successfully.",
         });
-        mutate("CURRENT_USER_DETAILS", null);
-        setTheme("system");
+        signOut();
         router.push("/");
         handleClose();
       })
-      .catch((err) =>
+      .catch((err: any) =>
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

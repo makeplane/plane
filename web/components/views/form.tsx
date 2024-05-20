@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
 import { IProjectView, IIssueFilterOptions } from "@plane/types";

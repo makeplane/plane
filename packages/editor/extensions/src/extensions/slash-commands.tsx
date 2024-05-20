@@ -315,7 +315,10 @@ const CommandList = ({ items, command }: { items: CommandItemProps[]; command: a
               "bg-custom-background-80": index === selectedIndex,
             }
           )}
-          onClick={() => selectItem(index)}
+          onClick={(e) => {
+            e.stopPropagation();
+            selectItem(index);
+          }}
         >
           <span className="grid place-items-center flex-shrink-0">{item.icon}</span>
           <p className="flex-grow truncate">{item.title}</p>

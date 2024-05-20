@@ -12,13 +12,13 @@ import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import {
-  useApplication,
   useEventTracker,
   useCycle,
   useIssues,
   useModule,
   useProject,
   useIssueDetail,
+  useAppRouter,
 } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -55,9 +55,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const [description, setDescription] = useState<string | undefined>(undefined);
   // store hooks
   const { captureIssueEvent } = useEventTracker();
-  const {
-    router: { workspaceSlug, projectId, cycleId, moduleId },
-  } = useApplication();
+  const { workspaceSlug, projectId, cycleId, moduleId } = useAppRouter();
   const { workspaceProjectIds } = useProject();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
@@ -123,7 +121,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const addIssueToModule = async (issue: TIssue, moduleIds: string[]) => {
     if (!workspaceSlug || !activeProjectId) return;
 
-    await moduleIssues.addModulesToIssue(workspaceSlug, activeProjectId, issue.id, moduleIds);
+    await moduleIssues.changeModulesInIssue(workspaceSlug, activeProjectId, issue.id, moduleIds, []);
     moduleIds.forEach((moduleId) => fetchModuleDetails(workspaceSlug, activeProjectId, moduleId));
   };
 
@@ -172,11 +170,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         path: router.asPath,
       });
       !createMore && handleClose();
-      if (createMore) {
-        issueTitleRef && issueTitleRef?.current?.focus();
-        setDescription("<p></p>");
-        setChangesMade(null);
-      }
+      if (createMore) issueTitleRef && issueTitleRef?.current?.focus();
+      setDescription("<p></p>");
+      setChangesMade(null);
       return response;
     } catch (error) {
       setToast({

@@ -4,11 +4,11 @@ import { StateGroupIcon } from "@plane/ui";
 // icons
 import { Icon } from "@/components/ui";
 // helpers
-import { issueGroupFilter, issuePriorityFilter } from "@/constants/data";
+import { issueGroupFilter, issuePriorityFilter } from "@/constants/issue";
 import { renderFullDate } from "@/helpers/date-time.helper";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
 // types
-import { IPeekMode } from "@/store/issue_details";
+import { IPeekMode } from "@/store/issue-detail.store";
 // constants
 import useToast from "hooks/use-toast";
 import { IIssue } from "types/issue";

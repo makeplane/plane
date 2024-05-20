@@ -32,7 +32,6 @@ from plane.app.permissions import (
 )
 from plane.app.serializers import (
     ModuleDetailSerializer,
-    ModuleFavoriteSerializer,
     ModuleLinkSerializer,
     ModuleSerializer,
     ModuleUserPropertiesSerializer,
@@ -42,7 +41,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Issue,
     Module,
-    ModuleFavorite,
+    UserFavorite,
     ModuleIssue,
     ModuleLink,
     ModuleUserProperties,
@@ -69,9 +68,10 @@ class ModuleViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
-        favorite_subquery = ModuleFavorite.objects.filter(
+        favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
-            module_id=OuterRef("pk"),
+            entity_type="module",
+            entity_identifier=OuterRef("pk"),
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
@@ -554,8 +554,7 @@ class ModuleLinkViewSet(BaseViewSet):
 
 
 class ModuleFavoriteViewSet(BaseViewSet):
-    serializer_class = ModuleFavoriteSerializer
-    model = ModuleFavorite
+    model = UserFavorite
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -567,18 +566,21 @@ class ModuleFavoriteViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
-        serializer = ModuleFavoriteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user, project_id=project_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        _ = UserFavorite.objects.create(
+            project_id=project_id,
+            user=request.user,
+            entity_type="module",
+            entity_identifier=request.data.get("module"),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, module_id):
-        module_favorite = ModuleFavorite.objects.get(
-            project=project_id,
+        module_favorite = UserFavorite.objects.get(
+            project_id=project_id,
             user=request.user,
             workspace__slug=slug,
-            module_id=module_id,
+            entity_type="module",
+            entity_identifier=module_id,
         )
         module_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

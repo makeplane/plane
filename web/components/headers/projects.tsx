@@ -16,7 +16,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useApplication, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
+import { useAppRouter, useCommandPalette, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ProjectsHeader = observer(() => {
@@ -25,10 +25,8 @@ export const ProjectsHeader = observer(() => {
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    router: { workspaceSlug },
-  } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
+  const { workspaceSlug } = useAppRouter();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
@@ -173,7 +171,7 @@ export const ProjectsHeader = observer(() => {
             size="sm"
             onClick={() => {
               setTrackElement("Projects page");
-              commandPaletteStore.toggleCreateProjectModal(true);
+              toggleCreateProjectModal(true);
             }}
             className="items-center gap-1"
           >

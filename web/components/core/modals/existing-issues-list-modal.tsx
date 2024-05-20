@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Rocket, Search, X } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+// types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
-// services
+// ui
 import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// services
 import { ProjectService } from "@/services/project";
-// hooks
 // components
 import { IssueSearchModalEmptyState } from "./issue-search-modal-empty-state";
-// ui
-// types
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -21,6 +21,7 @@ type Props = {
   searchParams: Partial<TProjectIssuesSearchParams>;
   handleOnSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   workspaceLevelToggle?: boolean;
+  shouldHideIssue?: (issue: ISearchIssueResponse) => boolean;
 };
 
 const projectService = new ProjectService();
@@ -34,6 +35,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     searchParams,
     handleOnSubmit,
     workspaceLevelToggle = false,
+    shouldHideIssue,
   } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
@@ -86,6 +88,8 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
         setIsLoading(false);
       });
   }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, workspaceSlug]);
+
+  const filteredIssues = issues.filter((issue) => !shouldHideIssue?.(issue));
 
   return (
     <>
@@ -207,16 +211,16 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       </Loader>
                     ) : (
                       <>
-                        {issues.length === 0 ? (
+                        {filteredIssues.length === 0 ? (
                           <IssueSearchModalEmptyState
                             debouncedSearchTerm={debouncedSearchTerm}
                             isSearching={isSearching}
-                            issues={issues}
+                            issues={filteredIssues}
                             searchTerm={searchTerm}
                           />
                         ) : (
-                          <ul className={`text-sm text-custom-text-100 ${issues.length > 0 ? "p-2" : ""}`}>
-                            {issues.map((issue) => {
+                          <ul className={`text-sm text-custom-text-100 ${filteredIssues.length > 0 ? "p-2" : ""}`}>
+                            {filteredIssues.map((issue) => {
                               const selected = selectedIssues.some((i) => i.id === issue.id);
 
                               return (

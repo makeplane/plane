@@ -1,29 +1,26 @@
 import { useState } from "react";
-
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-// hooks
+// icons
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
+// ui
 import { Button } from "@plane/ui";
+// components
 import { EmptyState } from "@/components/empty-state";
 import { Exporter, SingleExport } from "@/components/exporter";
 import { ImportExportSettingsLoader } from "@/components/ui";
+// constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
 import { EXPORTERS_LIST } from "@/constants/workspace";
+// hooks
 import { useUser } from "@/hooks/store";
-import useUserAuth from "@/hooks/use-user-auth";
 // services
 import { IntegrationService } from "@/services/integrations";
-// components
-// ui
-// icons
-// constants
 
-// services
 const integrationService = new IntegrationService();
 
 const IntegrationGuide = observer(() => {
@@ -35,9 +32,7 @@ const IntegrationGuide = observer(() => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
   // store hooks
-  const { currentUser, currentUserLoader } = useUser();
-  // custom hooks
-  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
+  const { data: currentUser } = useUser();
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
@@ -140,7 +135,7 @@ const IntegrationGuide = observer(() => {
                     </div>
                   </div>
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center">
+                  <div className="flex h-full w-full items-center justify-center">
                     <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_EXPORT} size="sm" />
                   </div>
                 )
@@ -155,7 +150,7 @@ const IntegrationGuide = observer(() => {
             isOpen
             handleClose={() => handleCsvClose()}
             data={null}
-            user={currentUser}
+            user={currentUser || null}
             provider={provider}
             mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`))}
           />

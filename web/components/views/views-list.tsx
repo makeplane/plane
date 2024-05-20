@@ -7,13 +7,11 @@ import { ProjectViewListItem } from "@/components/views";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useApplication, useProjectView } from "@/hooks/store";
+import { useCommandPalette, useProjectView } from "@/hooks/store";
 
 export const ProjectViewsList = observer(() => {
   // store hooks
-  const {
-    commandPalette: { toggleCreateViewModal },
-  } = useApplication();
+  const { toggleCreateViewModal } = useCommandPalette();
   const { projectViewIds, getViewById, loader, searchQuery } = useProjectView();
 
   if (loader || !projectViewIds) return <ViewListLoader />;

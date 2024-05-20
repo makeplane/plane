@@ -6,12 +6,14 @@
   "workspaces": [
     "web",
     "space",
+    "admin",
     "packages/editor/*",
     "packages/eslint-config-custom",
     "packages/tailwind-config-custom",
     "packages/tsconfig",
     "packages/ui",
-    "packages/types"
+    "packages/types",
+    "packages/constants"
   ],
   "scripts": {
     "build": "turbo run build",
@@ -31,7 +33,7 @@
     "turbo": "^1.13.2"
   },
   "resolutions": {
-    "@types/react": "18.2.42"
+    "@types/react": "18.2.48"
   },
   "packageManager": "yarn@1.22.19"
 }

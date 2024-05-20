@@ -13,6 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from plane.license.utils.encryption import encrypt_data
+        from plane.license.utils.instance_value import get_configuration_value
 
         config_keys = [
             # Authentication Settings
@@ -39,6 +40,12 @@ class Command(BaseCommand):
                 "value": os.environ.get("GOOGLE_CLIENT_ID"),
                 "category": "GOOGLE",
                 "is_encrypted": False,
+            },
+            {
+                "key": "GOOGLE_CLIENT_SECRET",
+                "value": os.environ.get("GOOGLE_CLIENT_SECRET"),
+                "category": "GOOGLE",
+                "is_encrypted": True,
             },
             {
                 "key": "GITHUB_CLIENT_ID",
@@ -112,6 +119,80 @@ class Command(BaseCommand):
                 "category": "UNSPLASH",
                 "is_encrypted": True,
             },
+            ## OIDC
+            {
+                "key": "OIDC_CLIENT_ID",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_CLIENT_SECRET",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": True,
+            },
+            {
+                "key": "OIDC_TOKEN_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_USERINFO_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_AUTHORIZE_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "IS_OIDC_ENABLED",
+                "value": "0",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_LOGOUT_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            ## SAML
+            {
+                "key": "SAML_ENTITY_ID",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "SAML_SSO_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "SAML_CERTIFICATE",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": True,
+            },
+            {
+                "key": "SAML_LOGOUT_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "IS_SAML_ENABLED",
+                "value": "0",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
         ]
 
         for item in config_keys:
@@ -136,4 +217,81 @@ class Command(BaseCommand):
                     self.style.WARNING(
                         f"{obj.key} configuration already exists"
                     )
+                )
+
+        keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED"]
+        if not InstanceConfiguration.objects.filter(key__in=keys).exists():
+            for key in keys:
+                if key == "IS_GOOGLE_ENABLED":
+                    GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET = (
+                        get_configuration_value(
+                            [
+                                {
+                                    "key": "GOOGLE_CLIENT_ID",
+                                    "default": os.environ.get(
+                                        "GOOGLE_CLIENT_ID", ""
+                                    ),
+                                },
+                                {
+                                    "key": "GOOGLE_CLIENT_SECRET",
+                                    "default": os.environ.get(
+                                        "GOOGLE_CLIENT_SECRET", "0"
+                                    ),
+                                },
+                            ]
+                        )
+                    )
+                    if bool(GOOGLE_CLIENT_ID) and bool(GOOGLE_CLIENT_SECRET):
+                        value = "1"
+                    else:
+                        value = "0"
+                    InstanceConfiguration.objects.create(
+                        key=key,
+                        value=value,
+                        category="AUTHENTICATION",
+                        is_encrypted=False,
+                    )
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"{key} loaded with value from environment variable."
+                        )
+                    )
+                if key == "IS_GITHUB_ENABLED":
+                    GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = (
+                        get_configuration_value(
+                            [
+                                {
+                                    "key": "GITHUB_CLIENT_ID",
+                                    "default": os.environ.get(
+                                        "GITHUB_CLIENT_ID", ""
+                                    ),
+                                },
+                                {
+                                    "key": "GITHUB_CLIENT_SECRET",
+                                    "default": os.environ.get(
+                                        "GITHUB_CLIENT_SECRET", "0"
+                                    ),
+                                },
+                            ]
+                        )
+                    )
+                    if bool(GITHUB_CLIENT_ID) and bool(GITHUB_CLIENT_SECRET):
+                        value = "1"
+                    else:
+                        value = "0"
+                    InstanceConfiguration.objects.create(
+                        key="IS_GITHUB_ENABLED",
+                        value=value,
+                        category="AUTHENTICATION",
+                        is_encrypted=False,
+                    )
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"{key} loaded with value from environment variable."
+                        )
+                    )
+        else:
+            for key in keys:
+                self.stdout.write(
+                    self.style.WARNING(f"{key} configuration already exists")
                 )

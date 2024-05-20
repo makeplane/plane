@@ -28,7 +28,6 @@ from plane.app.views.base import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
     ProjectSerializer,
     ProjectListSerializer,
-    ProjectFavoriteSerializer,
     ProjectDeployBoardSerializer,
 )
 
@@ -42,7 +41,7 @@ from plane.db.models import (
     ProjectMember,
     Workspace,
     State,
-    ProjectFavorite,
+    UserFavorite,
     ProjectIdentifier,
     Module,
     Cycle,
@@ -90,10 +89,11 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(
                 is_favorite=Exists(
-                    ProjectFavorite.objects.filter(
+                    UserFavorite.objects.filter(
                         user=self.request.user,
+                        entity_identifier=OuterRef("pk"),
+                        entity_type="project",
                         project_id=OuterRef("pk"),
-                        workspace__slug=self.kwargs.get("slug"),
                     )
                 )
             )
@@ -560,8 +560,7 @@ class ProjectUserViewsEndpoint(BaseAPIView):
 
 
 class ProjectFavoritesViewSet(BaseViewSet):
-    serializer_class = ProjectFavoriteSerializer
-    model = ProjectFavorite
+    model = UserFavorite
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -579,15 +578,21 @@ class ProjectFavoritesViewSet(BaseViewSet):
         serializer.save(user=self.request.user)
 
     def create(self, request, slug):
-        serializer = ProjectFavoriteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        _ = UserFavorite.objects.create(
+            user=request.user,
+            entity_type="project",
+            entity_identifier=request.data.get("project"),
+            project_id=request.data.get("project"),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id):
-        project_favorite = ProjectFavorite.objects.get(
-            project=project_id, user=request.user, workspace__slug=slug
+        project_favorite = UserFavorite.objects.get(
+            entity_identifier=project_id,
+            entity_type="project",
+            project=project_id,
+            user=request.user,
+            workspace__slug=slug,
         )
         project_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -602,11 +607,19 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
     @cache_response(60 * 60 * 24, user=False)
     def get(self, request):
         files = []
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
+        if settings.USE_MINIO:
+            s3 = boto3.client(
+                "s3",
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            )
+        else:
+            s3 = boto3.client(
+                "s3",
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            )
         params = {
             "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
             "Prefix": "static/project-cover/",

@@ -2,6 +2,12 @@ name: Branch Build Enterprise
 
 on:
   workflow_dispatch:
+    inputs:
+      arm64:
+        description: "Build for ARM64 architecture"
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       - master
@@ -12,11 +18,12 @@ on:
 
 env:
   TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
+  ARM64_BUILD: ${{ github.event.inputs.arm64 }}
 
 jobs:
   branch_build_setup:
-    name: Build-Push Web/Space/API/Proxy Docker Image
-    runs-on: ubuntu-latest
+    name: Build Setup
+    runs-on: ${{vars.ACTION_RUNS_ON}}
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
       gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
@@ -24,8 +31,9 @@ jobs:
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
       build_web: ${{ steps.changed_files.outputs.web_any_changed }}
+      build_admin: ${{ steps.changed_files.outputs.admin_any_changed }}
       build_space: ${{ steps.changed_files.outputs.space_any_changed }}
-      build_backend: ${{ steps.changed_files.outputs.backend_any_changed }}
+      build_apiserver: ${{ steps.changed_files.outputs.apiserver_any_changed }}
       build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
       artifact_upload_to_s3: ${{ steps.set_env_variables.outputs.artifact_upload_to_s3 }}
       artifact_s3_suffix: ${{ steps.set_env_variables.outputs.artifact_s3_suffix }}
@@ -34,7 +42,7 @@ jobs:
       - id: set_env_variables
         name: Set Environment Variables
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ github.event_name }}" == "release" ] || [ "${{ env.ARM64_BUILD }}" == "true" ] ; then
             echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
@@ -71,28 +79,101 @@ jobs:
         uses: tj-actions/changed-files@v42
         with:
           files_yaml: |
-            web:
-              - web/**
-              - packages/**
-              - 'package.json'
-              - 'yarn.lock'
-              - 'tsconfig.json'
-              - 'turbo.json'
-            space:
-              - space/**
-              - packages/**
-              - 'package.json'
-              - 'yarn.lock'
-              - 'tsconfig.json'
-              - 'turbo.json'
-            backend:
+            apiserver:
               - apiserver/**
             proxy:
               - nginx/**
+            admin:
+              - admin/**
+              - packages/**
+              - "package.json"
+              - "yarn.lock"
+              - "tsconfig.json"
+              - "turbo.json"
+            space:
+              - space/**
+              - packages/**
+              - "package.json"
+              - "yarn.lock"
+              - "tsconfig.json"
+              - "turbo.json"
+            web:
+              - web/**
+              - packages/**
+              - "package.json"
+              - "yarn.lock"
+              - "tsconfig.json"
+              - "turbo.json"
+
+  branch_build_push_admin:
+    if: ${{ needs.branch_build_setup.outputs.build_admin== 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Admin Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
+    env:
+      ADMIN_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/admin-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Admin Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/admin-enterprise:stable
+            TAG=${TAG},${{ secrets.DOCKERHUB_USERNAME }}/admin-enterprise:${{ github.event.release.tag_name }}
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:stable
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/admin-enterprise:latest
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:latest
+          else
+            TAG=${{ env.ADMIN_TAG }}
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+          fi
+          echo "ADMIN_TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to Harbor
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_TOKEN }}
+          registry: ${{ vars.HARBOR_REGISTRY }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Frontend to Docker Container Registry
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./admin/Dockerfile.admin
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.ADMIN_TAG }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_web:
     if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
-    runs-on: ubuntu-20.04
+    name: Build-Push Web Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
     needs: [branch_build_setup]
     env:
       WEB_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/web-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
@@ -156,7 +237,8 @@ jobs:
 
   branch_build_push_space:
     if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
-    runs-on: ubuntu-20.04
+    name: Build-Push Space Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
     needs: [branch_build_setup]
     env:
       SPACE_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/space-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
@@ -218,9 +300,10 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  branch_build_push_backend:
-    if: ${{ needs.branch_build_setup.outputs.build_backend == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
-    runs-on: ubuntu-20.04
+  branch_build_push_apiserver:
+    if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push API Server Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
     needs: [branch_build_setup]
     env:
       BACKEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/backend-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
@@ -284,7 +367,8 @@ jobs:
 
   branch_build_push_proxy:
     if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
-    runs-on: ubuntu-20.04
+    name: Build-Push Proxy Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
     needs: [branch_build_setup]
     env:
       PROXY_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/proxy-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
@@ -349,15 +433,8 @@ jobs:
   upload_artifacts_s3:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
     name: Upload artifacts to S3 Bucket
-    runs-on: ubuntu-latest
-    needs:
-      [
-        branch_build_setup,
-        branch_build_push_web,
-        branch_build_push_space,
-        branch_build_push_backend,
-        branch_build_push_proxy,
-      ]
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
     container:
       image: docker:20.10.7
       credentials:

@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// ui
+// icons
 import { ChevronDown, Pencil } from "lucide-react";
+// ui
 import { Disclosure, Transition } from "@headlessui/react";
 // icons
 // plane ui
@@ -15,7 +16,7 @@ import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useApplication, useProject, useUser } from "@/hooks/store";
+import { useAppTheme, useProject, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
@@ -33,8 +34,8 @@ export const ProfileSidebar = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
   // store hooks
-  const { currentUser } = useUser();
-  const { theme: themeStore } = useApplication();
+  const { data: currentUser } = useUser();
+  const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { data: userProjectsData } = useSWR(
@@ -45,9 +46,9 @@ export const ProfileSidebar = observer(() => {
   );
 
   useOutsideClickDetector(ref, () => {
-    if (themeStore.profileSidebarCollapsed === false) {
+    if (profileSidebarCollapsed === false) {
       if (window.innerWidth < 768) {
-        themeStore.toggleProfileSidebar();
+        toggleProfileSidebar();
       }
     }
   });
@@ -66,22 +67,22 @@ export const ProfileSidebar = observer(() => {
   useEffect(() => {
     const handleToggleProfileSidebar = () => {
       if (window && window.innerWidth < 768) {
-        themeStore.toggleProfileSidebar(true);
+        toggleProfileSidebar(true);
       }
-      if (window && themeStore.profileSidebarCollapsed && window.innerWidth >= 768) {
-        themeStore.toggleProfileSidebar(false);
+      if (window && profileSidebarCollapsed && window.innerWidth >= 768) {
+        toggleProfileSidebar(false);
       }
     };
 
     window.addEventListener("resize", handleToggleProfileSidebar);
     handleToggleProfileSidebar();
     return () => window.removeEventListener("resize", handleToggleProfileSidebar);
-  }, [themeStore]);
+  }, []);
 
   return (
     <div
       className={`vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 shadow-custom-shadow-sm transition-all md:relative md:w-[300px]`}
-      style={themeStore.profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
+      style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
     >
       {userProjectsData ? (
         <>
@@ -152,7 +153,7 @@ export const ProfileSidebar = observer(() => {
                       <div className="w-full">
                         <Disclosure.Button className="flex w-full items-center justify-between gap-2">
                           <div className="flex w-3/4 items-center gap-2">
-                            <span className="grid place-items-center flex-shrink-0 h-7 w-7">
+                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
                               <ProjectLogo logo={projectDetails.logo_props} />
                             </span>
                             <div className="truncate break-words text-sm font-medium">{projectDetails.name}</div>
@@ -165,8 +166,8 @@ export const ProfileSidebar = observer(() => {
                                     completedIssuePercentage <= 35
                                       ? "bg-red-500/10 text-red-500"
                                       : completedIssuePercentage <= 70
-                                        ? "bg-yellow-500/10 text-yellow-500"
-                                        : "bg-green-500/10 text-green-500"
+                                      ? "bg-yellow-500/10 text-yellow-500"
+                                      : "bg-green-500/10 text-green-500"
                                   }`}
                                 >
                                   {completedIssuePercentage}%

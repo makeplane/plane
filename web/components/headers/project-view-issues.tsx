@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // types
@@ -18,7 +18,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
-  useApplication,
+  useCommandPalette,
   useEventTracker,
   useIssues,
   useLabel,
@@ -38,9 +38,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { setTrackElement } = useEventTracker();
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -142,7 +140,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 label={currentProjectDetails?.name ?? "Project"}
                 icon={
                   currentProjectDetails && (
-                    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                    <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                       <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                     </span>
                   )

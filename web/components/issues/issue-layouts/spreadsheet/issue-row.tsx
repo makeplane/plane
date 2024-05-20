@@ -1,5 +1,5 @@
 import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
 import { ChevronRight, MoreHorizontal } from "lucide-react";
@@ -66,7 +66,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
         defaultHeight="calc(2.75rem - 1px)"
         root={containerRef}
         placeholderChildren={<td colSpan={100} className="border-b-[0.5px] border-custom-border-200" />}
-        changingReference={issueIds}
       >
         <IssueRowDetails
           issueId={issueId}
@@ -152,7 +151,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const { workspaceSlug } = router.query;
   // hooks
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, peekIssue, setPeekIssue } = useIssueDetail();
   const { isMobile } = usePlatformOS();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
@@ -161,7 +160,12 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     issue.project_id &&
     issue.id &&
     !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
+    setPeekIssue({
+      workspaceSlug: workspaceSlug.toString(),
+      projectId: issue.project_id,
+      issueId: issue.id,
+      nestingLevel: nestingLevel,
+    });
 
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
@@ -211,7 +215,8 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
             "group clickable cursor-pointer h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
             {
               "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
-              "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issueDetail.id),
+              "border border-custom-primary-70 hover:border-custom-primary-70":
+                getIsIssuePeeked(issueDetail.id) && nestingLevel === peekIssue?.nestingLevel,
               "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
             }
           )}
@@ -219,7 +224,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         >
           <div
             className="flex min-w-min items-center gap-0.5 px-4 py-2.5 pl-1.5 pr-0"
-            style={issueDetail.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}
+            style={issueDetail?.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}
           >
             <div className="flex items-center">
               {/* bulk ops */}

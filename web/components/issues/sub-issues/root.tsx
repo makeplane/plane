@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Plus, ChevronRight, Loader, Pencil } from "lucide-react";
 import { IUser, TIssue } from "@plane/types";

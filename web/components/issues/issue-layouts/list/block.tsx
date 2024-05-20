@@ -10,7 +10,7 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useApplication, useIssueDetail, useProject } from "@/hooks/store";
+import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { TRenderQuickActions } from "./list-view-types";
@@ -44,13 +44,9 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   // refs
   const parentRef = useRef(null);
   // hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
-
-  // store hooks
+  const { workspaceSlug } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
+  const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -58,14 +54,17 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     issue.project_id &&
     issue.id &&
     !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
 
   const issue = issuesMap[issueId];
+  // const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   const { isMobile } = usePlatformOS();
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
+  // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
+  // const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
 
   const paddingLeft = `${spacingLeft}px`;
 
@@ -89,12 +88,13 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
       className={cn(
         "min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 pl-1.5 text-sm",
         {
-          "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+          "border border-custom-primary-70 hover:border-custom-primary-70":
+            getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
         }
       )}
     >
-      <div className="flex w-full truncate" style={issue.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
+      <div className="flex w-full truncate" style={issue?.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
           <div className="flex items-center gap-0.5">
             <div className="flex items-center group">

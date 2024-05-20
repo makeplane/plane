@@ -21,8 +21,10 @@ type Props = {
 
 export const IssueEmbedCard: React.FC<Props> = observer((props) => {
   const { issueId, projectId, workspaceSlug } = props;
+
   // states
   const [error, setError] = useState<any | null>(null);
+
   // store hooks
   const {
     membership: { currentWorkspaceAllProjectsRole },
@@ -32,17 +34,22 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
     setPeekIssue,
     issue: { fetchIssue, getIssueById, updateIssue },
   } = useIssueDetail();
+
   // derived values
   const projectRole = currentWorkspaceAllProjectsRole?.[projectId];
   const projectDetails = getProjectById(projectId);
   const issueDetails = getIssueById(issueId);
+
   // auth
   const isReadOnly = !!projectRole && projectRole < EUserProjectRoles.MEMBER;
+
   // issue display properties
   const displayProperties: IIssueDisplayProperties = {};
+
   ISSUE_DISPLAY_PROPERTIES.forEach((property) => {
     displayProperties[property.key] = true;
   });
+
   // fetch issue details if not available
   useEffect(() => {
     if (!issueDetails) {
@@ -85,10 +92,10 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
         })
       }
     >
-      <h5 className="text-xs text-custom-text-300">
+      <h5 className="!text-xs !font-normal !mt-0 text-custom-text-300">
         {projectDetails?.identifier}-{issueDetails?.sequence_id}
       </h5>
-      <h4 className="text-sm font-medium line-clamp-2 break-words">{issueDetails?.name}</h4>
+      <h4 className="!text-sm !font-medium !mt-1 line-clamp-2 break-words">{issueDetails?.name}</h4>
       {issueDetails && (
         <IssueProperties
           className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"

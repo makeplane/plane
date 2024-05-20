@@ -29,6 +29,7 @@ export type TPeekIssue = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  nestingLevel?: number;
 };
 
 export type TIssueRelationModal = {

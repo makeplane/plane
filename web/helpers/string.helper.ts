@@ -174,10 +174,10 @@ export const getFetchKeysForIssueMutation = (options: {
   const ganttFetchKey = cycleId
     ? { ganttFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), ganttParams) }
     : moduleId
-    ? { ganttFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), ganttParams) }
-    : viewId
-    ? { ganttFetchKey: VIEW_ISSUES(viewId.toString(), viewGanttParams) }
-    : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
+      ? { ganttFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), ganttParams) }
+      : viewId
+        ? { ganttFetchKey: VIEW_ISSUES(viewId.toString(), viewGanttParams) }
+        : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
 
   return {
     ...ganttFetchKey,
@@ -230,7 +230,7 @@ export const checkEmailValidity = (email: string): boolean => {
 
 export const isEmptyHtmlString = (htmlString: string) => {
   // Remove HTML tags using regex
-  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: [] });
+  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: ["img"] });
   // Trim the string and check if it's empty
   return cleanText.trim() === "";
 };
