@@ -30,7 +30,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
 
   return (
     <div className="pb-10">
-      <h4 className="font-medium">Activity</h4>
+      <h4 className="font-medium">Comments</h4>
       {workspaceSlug && (
         <div className="mt-4">
           <div className="space-y-4">
