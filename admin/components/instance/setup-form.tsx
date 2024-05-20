@@ -128,6 +128,10 @@ export const InstanceSetupForm: FC = (props) => {
     [formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]
   );
 
+  const password = formData?.password ?? "";
+  const confirmPassword = formData?.confirm_password ?? "";
+  const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;
+
   return (
     <div className="max-w-lg lg:max-w-md w-full">
       <div className="relative flex flex-col space-y-6">
@@ -308,7 +312,7 @@ export const InstanceSetupForm: FC = (props) => {
             </div>
             {!!formData.confirm_password &&
               formData.password !== formData.confirm_password &&
-              !isRetryPasswordInputFocused && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
+              renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
           </div>
 
           <div className="relative flex items-center pt-2 gap-2">
