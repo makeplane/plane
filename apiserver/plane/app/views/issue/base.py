@@ -241,6 +241,7 @@ class IssueListEndpoint(BaseAPIView):
                 "link_count",
                 "is_draft",
                 "archived_at",
+                "deleted_at",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(
@@ -329,7 +330,7 @@ class IssueViewSet(BaseViewSet):
                         filter=~Q(issue_module__module_id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
-                ),
+                ), 
             )
         ).distinct()
 
@@ -444,6 +445,7 @@ class IssueViewSet(BaseViewSet):
                 "link_count",
                 "is_draft",
                 "archived_at",
+                "deleted_at",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(
@@ -509,6 +511,7 @@ class IssueViewSet(BaseViewSet):
                     "link_count",
                     "is_draft",
                     "archived_at",
+                    "deleted_at",
                 )
                 .first()
             )

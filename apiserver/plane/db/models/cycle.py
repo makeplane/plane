@@ -115,6 +115,7 @@ class CycleIssue(ProjectBaseModel):
         return f"{self.cycle}"
 
 
+# DEPRECATED TODO: - Remove in next release
 class CycleFavorite(ProjectBaseModel):
     """_summary_
     CycleFavorite (model): To store all the cycle favorite of the user

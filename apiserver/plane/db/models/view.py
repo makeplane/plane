@@ -51,7 +51,7 @@ def get_default_display_properties():
         "updated_on": True,
     }
 
-
+# DEPRECATED TODO: - Remove in next release
 class GlobalView(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="global_views"
@@ -87,7 +87,6 @@ class GlobalView(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
 
-# DEPRECATED TODO: - Remove in next release
 class IssueView(WorkspaceBaseModel):
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)
@@ -113,6 +112,7 @@ class IssueView(WorkspaceBaseModel):
         return f"{self.name} <{self.project.name}>"
 
 
+# DEPRECATED TODO: - Remove in next release
 class IssueViewFavorite(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
