@@ -49,19 +49,34 @@ export const AuthRoot: FC = observer(() => {
     if (error_code) {
       const errorhandler = authErrorHandler(error_code?.toString() as EAuthenticationErrorCodes);
       if (errorhandler) {
+        if (errorhandler.code === EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN) {
+          setAuthMode(EAuthModes.SIGN_IN);
+          setAuthStep(EAuthSteps.PASSWORD);
+        }
+        if (errorhandler.code === EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP) {
+          setAuthMode(EAuthModes.SIGN_UP);
+          setAuthStep(EAuthSteps.PASSWORD);
+        }
         if (
           [
-            EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN,
-            EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP,
+            EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN,
+            EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
+            EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
           ].includes(errorhandler.code)
-        )
-          setAuthStep(EAuthSteps.PASSWORD);
-        if (
-          [EAuthenticationErrorCodes.INVALID_MAGIC_CODE, EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE].includes(
-            errorhandler.code
-          )
-        )
+        ) {
+          setAuthMode(EAuthModes.SIGN_IN);
           setAuthStep(EAuthSteps.UNIQUE_CODE);
+        }
+        if (
+          [
+            EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP,
+            EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP,
+            EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP,
+          ].includes(errorhandler.code)
+        ) {
+          setAuthMode(EAuthModes.SIGN_UP);
+          setAuthStep(EAuthSteps.UNIQUE_CODE);
+        }
         setErrorInfo(errorhandler);
       }
     }
