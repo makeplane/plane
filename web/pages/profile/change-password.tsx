@@ -68,6 +68,8 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   const password = watch("new_password");
   const confirmPassword = watch("confirm_password");
 
+  const isNewPasswordSameAsOldPassword = oldPassword !== "" && password !== "" && password === oldPassword;
+
   const handleShowPassword = (key: keyof typeof showPassword) =>
     setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
 
@@ -211,6 +213,9 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
                 )}
               </div>
               {passwordSupport}
+              {isNewPasswordSameAsOldPassword && !isPasswordInputFocused && (
+                <span className="text-xs text-red-500">New password must be different from old password</span>
+              )}
             </div>
             <div className="space-y-1">
               <h4 className="text-sm">Confirm password</h4>
