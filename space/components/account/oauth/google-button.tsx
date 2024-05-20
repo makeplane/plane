@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
@@ -11,12 +12,14 @@ export type GoogleOAuthButtonProps = {
 };
 
 export const GoogleOAuthButton: FC<GoogleOAuthButtonProps> = (props) => {
+  const searchParams = useSearchParams();
+  const nextPath = searchParams.get("next_path") || undefined;
   const { text } = props;
   // hooks
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    window.location.assign(`${API_BASE_URL}/auth/spaces/google/`);
+    window.location.assign(`${API_BASE_URL}/auth/spaces/google/${nextPath ? `?next_path=${nextPath}` : ``}`);
   };
 
   return (
