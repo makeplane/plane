@@ -1,4 +1,5 @@
 import { FC, ReactNode } from "react";
+import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
 // hooks
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
@@ -12,7 +13,7 @@ type TIssueCommentBlock = {
   children: ReactNode;
 };
 
-export const IssueCommentBlock: FC<TIssueCommentBlock> = (props) => {
+export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
   const { commentId, ends, quickActions, children } = props;
   // hooks
   const {
@@ -63,4 +64,4 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = (props) => {
       </div>
     </div>
   );
-};
+});
