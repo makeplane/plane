@@ -106,16 +106,10 @@ export const usePageDescription = (props: Props) => {
   ]);
 
   // auto-save updates every 10 seconds
+  // handle ctrl/cmd + S to save the description
   useEffect(() => {
     const intervalId = setInterval(handleSaveDescription, AUTO_SAVE_TIME);
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [handleSaveDescription]);
-
-  // handle ctrl/cmd + S to save the description
-  useEffect(() => {
     const handleSave = (e: KeyboardEvent) => {
       const { ctrlKey, metaKey, key } = e;
       const cmdClicked = ctrlKey || metaKey;
@@ -124,12 +118,15 @@ export const usePageDescription = (props: Props) => {
         e.preventDefault();
         e.stopPropagation();
         handleSaveDescription();
+
+        // reset interval timer
+        clearInterval(intervalId);
       }
     };
-
     window.addEventListener("keydown", handleSave);
 
     return () => {
+      clearInterval(intervalId);
       window.removeEventListener("keydown", handleSave);
     };
   }, [handleSaveDescription]);
