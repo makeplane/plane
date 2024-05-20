@@ -97,6 +97,10 @@ const ResetPasswordPage: NextPageWithLayout = () => {
     }
   }, [error_code]);
 
+  const password = resetFormData?.password ?? "";
+  const confirmPassword = resetFormData?.confirm_password ?? "";
+  const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       <PageHead title="Reset Password" />
@@ -209,9 +213,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
                 </div>
                 {!!resetFormData.confirm_password &&
                   resetFormData.password !== resetFormData.confirm_password &&
-                  !isRetryPasswordInputFocused && (
-                    <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
-                  )}
+                  renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
               </div>
               <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
                 Set password

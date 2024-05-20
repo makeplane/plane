@@ -84,6 +84,10 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
     [isSubmitting, mode, passwordFormData.confirm_password, passwordFormData.password]
   );
 
+  const password = passwordFormData.password ?? "";
+  const confirmPassword = passwordFormData.confirm_password ?? "";
+  const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;
+
   return (
     <form
       className="mt-5 space-y-4"
@@ -181,7 +185,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
           </div>
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
-            !isRetryPasswordInputFocused && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
+            renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
         </div>
       )}
 
