@@ -53,9 +53,12 @@ export enum EAuthenticationErrorCodes {
   INVALID_EMAIL_MAGIC_SIGN_IN = "5080",
   MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED = "5085",
   // Both Sign in and Sign up for magic
-  INVALID_MAGIC_CODE = "5090",
-  EXPIRED_MAGIC_CODE = "5095",
-  EMAIL_CODE_ATTEMPT_EXHAUSTED = "5100",
+  INVALID_MAGIC_CODE_SIGN_IN = "5090",
+  INVALID_MAGIC_CODE_SIGN_UP = "5092",
+  EXPIRED_MAGIC_CODE_SIGN_IN = "5095",
+  EXPIRED_MAGIC_CODE_SIGN_UP = "5097",
+  EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN = "5100",
+  EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP = "5102",
   // Oauth
   GOOGLE_NOT_CONFIGURED = "5105",
   GITHUB_NOT_CONFIGURED = "5110",
@@ -199,15 +202,27 @@ const errorCodeMessages: {
   },
 
   // Both Sign in and Sign up
-  [EAuthenticationErrorCodes.INVALID_MAGIC_CODE]: {
+  [EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN]: {
     title: `Authentication failed`,
     message: () => `Invalid magic code. Please try again.`,
   },
-  [EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE]: {
+  [EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP]: {
+    title: `Authentication failed`,
+    message: () => `Invalid magic code. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN]: {
     title: `Expired magic code`,
     message: () => `Expired magic code. Please try again.`,
   },
-  [EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED]: {
+  [EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP]: {
+    title: `Expired magic code`,
+    message: () => `Expired magic code. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN]: {
+    title: `Expired magic code`,
+    message: () => `Expired magic code. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP]: {
     title: `Expired magic code`,
     message: () => `Expired magic code. Please try again.`,
   },
@@ -334,9 +349,12 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_IN,
     EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
     EAuthenticationErrorCodes.MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED,
-    EAuthenticationErrorCodes.INVALID_MAGIC_CODE,
-    EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE,
-    EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED,
+    EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN,
+    EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP,
+    EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
+    EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP,
+    EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
+    EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP,
     EAuthenticationErrorCodes.GOOGLE_NOT_CONFIGURED,
     EAuthenticationErrorCodes.GITHUB_NOT_CONFIGURED,
     EAuthenticationErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR,

@@ -25,6 +25,7 @@ from plane.db.models import (
     ProjectMember,
     User,
     WorkspaceMember,
+    WorkspaceMemberInvite,
 )
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.cache import cache_response, invalidate_cache
@@ -153,6 +154,11 @@ class UserEndpoint(BaseViewSet):
         WorkspaceMember.objects.bulk_update(
             workspaces_to_deactivate, ["is_active"], batch_size=100
         )
+
+        # Delete all workspace invites
+        WorkspaceMemberInvite.objects.filter(
+            email=user.email,
+        ).delete()
 
         # Deactivate the user
         user.is_active = False

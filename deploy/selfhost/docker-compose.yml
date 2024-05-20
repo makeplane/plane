@@ -14,6 +14,7 @@ x-app-env: &app-env
     - POSTGRES_USER=${POSTGRES_USER:-plane}
     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-plane}
     - POSTGRES_DB=${POSTGRES_DB:-plane}
+    - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     - PGDATA=${PGDATA:-/var/lib/postgresql/data}
     - DATABASE_URL=${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
     # REDIS SETTINGS
@@ -145,7 +146,7 @@ services:
     command: postgres -c 'max_connections=1000'
     volumes:
       - pgdata:/var/lib/postgresql/data
-  
+
   plane-redis:
     <<: *app-env
     image: redis:7.2.4-alpine
