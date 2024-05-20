@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
@@ -252,14 +253,18 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
+      let newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
+        if (key === "state") {
+          if (isEqual(newValues, value)) newValues = [];
+          else newValues = value;
+        } else {
+          value.forEach((val) => {
+            if (!newValues.includes(val)) newValues.push(val);
+            else newValues.splice(newValues.indexOf(val), 1);
+          });
+        }
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
