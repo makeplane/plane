@@ -345,6 +345,7 @@ CSRF_COOKIE_SECURE = secure_origins
 CSRF_COOKIE_HTTPONLY = True
 CSRF_TRUSTED_ORIGINS = cors_allowed_origins
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
+CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
 # Base URLs
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
