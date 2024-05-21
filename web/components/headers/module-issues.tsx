@@ -71,7 +71,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     issuesFilter: { issueFilters },
-    issues: { getIssuesCount },
+    issues: { issuesCount },
   } = useIssues(EIssuesStoreType.MODULE);
   const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
@@ -204,16 +204,16 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                         <DiceIcon className="h-3 w-3" />
                         <div className="flex w-auto max-w-[70px] items-center gap-2 truncate sm:max-w-[200px]">
                           <p className="truncate">{moduleDetails?.name && moduleDetails.name}</p>
-                          {getIssuesCount && getIssuesCount > 0 ? (
+                          {issuesCount && issuesCount > 0 ? (
                             <Tooltip
                               isMobile={isMobile}
-                              tooltipContent={`There are ${getIssuesCount} ${
-                                getIssuesCount > 1 ? "issues" : "issue"
+                              tooltipContent={`There are ${issuesCount} ${
+                                issuesCount > 1 ? "issues" : "issue"
                               } in this module`}
                               position="bottom"
                             >
                               <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
-                                {getIssuesCount}
+                                {issuesCount}
                               </span>
                             </Tooltip>
                           ) : null}

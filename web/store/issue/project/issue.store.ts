@@ -19,7 +19,7 @@ export interface IProjectIssues {
   issues: Record<string, string[]>; // Record of project_id as key and issue_ids as value
   viewFlags: ViewFlags;
   // computed
-  getIssuesCount: number;
+  issuesCount: number;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   // action
@@ -54,7 +54,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       loader: observable.ref,
       issues: observable,
       // computed
-      getIssuesCount: computed,
+      issuesCount: computed,
       groupedIssueIds: computed,
       // action
       fetchIssues: action,
@@ -72,7 +72,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     this.issueArchiveService = new IssueArchiveService();
   }
 
-  get getIssuesCount() {
+  get issuesCount() {
     let issuesCount = 0;
 
     const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;

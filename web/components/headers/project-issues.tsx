@@ -43,7 +43,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   } = useMember();
   const {
     issuesFilter: { issueFilters, updateFilters },
-    issues: { getIssuesCount },
+    issues: { issuesCount },
   } = useIssues(EIssuesStoreType.PROJECT);
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -148,14 +148,14 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
               />
             </Breadcrumbs>
-            {getIssuesCount && getIssuesCount > 0 ? (
+            {issuesCount && issuesCount > 0 ? (
               <Tooltip
                 isMobile={isMobile}
-                tooltipContent={`There are ${getIssuesCount} ${getIssuesCount > 1 ? "issues" : "issue"} in this project`}
+                tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`}
                 position="bottom"
               >
                 <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                  {getIssuesCount}
+                  {issuesCount}
                 </span>
               </Tooltip>
             ) : null}

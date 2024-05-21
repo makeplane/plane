@@ -23,7 +23,7 @@ export interface IModuleIssues {
   issues: { [module_id: string]: string[] };
   viewFlags: ViewFlags;
   // computed
-  getIssuesCount: number;
+  issuesCount: number;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
@@ -98,7 +98,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       loader: observable.ref,
       issues: observable,
       // computed
-      getIssuesCount: computed,
+      issuesCount: computed,
       groupedIssueIds: computed,
       // action
       fetchIssues: action,
@@ -117,7 +117,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     this.moduleService = new ModuleService();
   }
 
-  get getIssuesCount() {
+  get issuesCount() {
     let issuesCount = 0;
 
     const displayFilters = this.rootIssueStore?.moduleIssuesFilter?.issueFilters?.displayFilters;

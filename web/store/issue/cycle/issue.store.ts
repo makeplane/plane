@@ -23,7 +23,7 @@ export interface ICycleIssues {
   issues: { [cycle_id: string]: string[] };
   viewFlags: ViewFlags;
   // computed
-  getIssuesCount: number;
+  issuesCount: number;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
@@ -96,7 +96,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       loader: observable.ref,
       issues: observable,
       // computed
-      getIssuesCount: computed,
+      issuesCount: computed,
       groupedIssueIds: computed,
       // action
       fetchIssues: action,
@@ -117,7 +117,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     this.cycleService = new CycleService();
   }
 
-  get getIssuesCount() {
+  get issuesCount() {
     let issuesCount = 0;
 
     const displayFilters = this.rootStore?.cycleIssuesFilter?.issueFilters?.displayFilters;
