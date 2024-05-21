@@ -14,6 +14,7 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 import { useProject, useIssueFilter, useIssueDetails } from "@/hooks/store";
 // types
 import { TIssueLayout } from "@/types/issue";
+import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 export type NavbarControlsProps = {
   workspaceSlug: string;
@@ -38,6 +39,10 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   const { setPeekId } = useIssueDetails();
   // derived values
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
+
+  const isInIframe = useIsInIframe();
+
+  console.log("isInIframe", isInIframe);
 
   useEffect(() => {
     if (workspaceSlug && projectId && settings) {
@@ -111,7 +116,7 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
         <NavbarTheme />
       </div>
 
-      <UserAvatar />
+      {!isInIframe && <UserAvatar />}
     </>
   );
 });
