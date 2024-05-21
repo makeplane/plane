@@ -26,15 +26,7 @@ import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
-import {
-  useEventTracker,
-  useEstimate,
-  useLabel,
-  useIssues,
-  useProjectState,
-  useProject,
-  useIssueDetail,
-} from "@/hooks/store";
+import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
 import { IssuePropertyLabels } from "../properties/labels";
