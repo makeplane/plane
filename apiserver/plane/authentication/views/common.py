@@ -1,3 +1,6 @@
+# Django imports
+from django.shortcuts import render
+
 # Third party imports
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -17,7 +20,7 @@ from plane.authentication.adapter.error import (
 )
 from django.middleware.csrf import get_token
 from plane.utils.cache import invalidate_cache
-
+from plane.authentication.utils.host import base_host
 
 class CSRFTokenEndpoint(APIView):
 
@@ -32,6 +35,11 @@ class CSRFTokenEndpoint(APIView):
         return Response(
             {"csrf_token": str(csrf_token)}, status=status.HTTP_200_OK
         )
+
+
+def csrf_failure(request, reason=""):
+    """Custom CSRF failure view"""
+    return render(request, "csrf_failure.html", {"reason": reason, "root_url": base_host(request=request)})
 
 
 class ChangePasswordEndpoint(APIView):

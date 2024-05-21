@@ -1,3 +1,4 @@
+import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import clone from "lodash/clone";
 import concat from "lodash/concat";
 import pull from "lodash/pull";
@@ -37,6 +38,7 @@ export type GroupDropLocation = {
   groupId: string;
   subGroupId?: string;
   id: string | undefined;
+  canAddIssueBelow?: boolean;
 };
 
 export type IssueUpdates = {
@@ -353,11 +355,15 @@ export const getDestinationFromDropPayload = (payload: IPragmaticDropPayload): G
 
   if (!destinationColumnData?.groupId) return;
 
+  // extract instruction from destination issue
+  const extractedInstruction = destinationIssueData ? extractInstruction(destinationIssueData)?.type : "";
+
   return {
     groupId: destinationColumnData.groupId as string,
     subGroupId: destinationColumnData.subGroupId as string,
     columnId: destinationColumnData.columnId as string,
     id: destinationIssueData?.id as string | undefined,
+    canAddIssueBelow: extractedInstruction === "reorder-below",
   };
 };
 
@@ -372,16 +378,24 @@ const handleSortOrder = (
   destinationIssues: string[],
   destinationIssueId: string | undefined,
   getIssueById: (issueId: string) => TIssue | undefined,
-  shouldAddIssueAtTop = false
+  shouldAddIssueAtTop = false,
+  canAddIssueBelow = false
 ) => {
   const sortOrderDefaultValue = 65535;
   let currentIssueState = {};
 
-  const destinationIndex = destinationIssueId
+  let destinationIndex = destinationIssueId
     ? destinationIssues.indexOf(destinationIssueId)
     : shouldAddIssueAtTop
       ? 0
       : destinationIssues.length;
+
+  const isDestinationLastChild = destinationIndex === destinationIssues.length - 1;
+
+  // if issue can be added below and if the destination issue is the last child, then add to the end of the list
+  if (canAddIssueBelow && isDestinationLastChild) {
+    destinationIndex = destinationIssues.length;
+  }
 
   if (destinationIssues && destinationIssues.length > 0) {
     if (destinationIndex === 0) {
@@ -428,7 +442,7 @@ const handleSortOrder = (
 export const getIssueBlockId = (
   issueId: string | undefined,
   groupId: string | undefined,
-  subGroupId: string | undefined
+  subGroupId?: string | undefined
 ) => `issue_${issueId}_${groupId}_${subGroupId}`;
 
 /**
@@ -469,7 +483,13 @@ export const handleGroupDragDrop = async (
   // for both horizontal and vertical dnd
   updatedIssue = {
     ...updatedIssue,
-    ...handleSortOrder(destinationIssues, destination.id, getIssueById, shouldAddIssueAtTop),
+    ...handleSortOrder(
+      destinationIssues,
+      destination.id,
+      getIssueById,
+      shouldAddIssueAtTop,
+      !!destination.canAddIssueBelow
+    ),
   };
 
   // update updatedIssue values based on the source and destination groupIds

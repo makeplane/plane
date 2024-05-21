@@ -62,7 +62,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
         <div className="flex items-center gap-4">
           {peekMode === "side" && (
             <button type="button" onClick={handleClose}>
-              <MoveRight className="h-3.5 w-3.5" strokeWidth={2} />
+              <MoveRight className="h-4 w-4" strokeWidth={2} />
             </button>
           )}
           <Listbox
@@ -72,7 +72,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
             className="relative flex-shrink-0 text-left"
           >
             <Listbox.Button className={`grid place-items-center ${peekMode === "full" ? "rotate-45" : ""}`}>
-              <Icon iconName={peekModes.find((m) => m.key === peekMode)?.icon ?? ""} />
+              <Icon iconName={peekModes.find((m) => m.key === peekMode)?.icon ?? ""} className="text-[1rem]" />
             </Listbox.Button>
 
             <Transition
@@ -120,7 +120,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
         {(peekMode === "side" || peekMode === "modal") && (
           <div className="flex flex-shrink-0 items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45 focus:outline-none" tabIndex={1}>
-              <Icon iconName="link" />
+              <Icon iconName="link" className="text-[1rem]" />
             </button>
           </div>
         )}

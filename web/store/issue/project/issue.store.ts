@@ -5,6 +5,8 @@ import update from "lodash/update";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // types
 import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
+// helpers
+import { issueCountBasedOnFilters } from "@/helpers/issue.helper";
 // base class
 import { IssueService, IssueArchiveService } from "@/services/issue";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
@@ -17,6 +19,7 @@ export interface IProjectIssues {
   issues: Record<string, string[]>; // Record of project_id as key and issue_ids as value
   viewFlags: ViewFlags;
   // computed
+  issuesCount: number;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   // action
@@ -51,6 +54,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       loader: observable.ref,
       issues: observable,
       // computed
+      issuesCount: computed,
       groupedIssueIds: computed,
       // action
       fetchIssues: action,
@@ -66,6 +70,22 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     // services
     this.issueService = new IssueService();
     this.issueArchiveService = new IssueArchiveService();
+  }
+
+  get issuesCount() {
+    let issuesCount = 0;
+
+    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    const groupedIssueIds = this.groupedIssueIds;
+    if (!displayFilters || !groupedIssueIds) return issuesCount;
+
+    const layout = displayFilters?.layout || undefined;
+    const groupBy = displayFilters?.group_by || undefined;
+    const subGroupBy = displayFilters?.sub_group_by || undefined;
+
+    if (!layout) return issuesCount;
+    issuesCount = issueCountBasedOnFilters(groupedIssueIds, layout, groupBy, subGroupBy);
+    return issuesCount;
   }
 
   get groupedIssueIds() {
