@@ -100,6 +100,14 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
             # Start date
             if properties.get("start_date", False):
+                if issue.target_date < properties.get("start_date"):
+                    return Response(
+                        {
+                            "error_code": "4101",
+                            "error_message": "INVALID_ISSUE_START_DATE",
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
                 bulk_issue_activities.append(
                     {
                         "type": "issue.activity.updated",
@@ -119,6 +127,14 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
             # Target date
             if properties.get("target_date", False):
+                if issue.start_date > properties.get("target_date"):
+                    return Response(
+                        {
+                            "error_code": "4102",
+                            "error_message": "INVALID_ISSUE_TARGET_DATE",
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
                 bulk_issue_activities.append(
                     {
                         "type": "issue.activity.updated",

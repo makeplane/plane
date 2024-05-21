@@ -49,6 +49,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.user_timezone_converter import user_timezone_converter
 
+
 class IssueArchiveViewSet(BaseViewSet):
     permission_classes = [
         ProjectEntityPermission,
@@ -372,6 +373,14 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
         )
         bulk_archive_issues = []
         for issue in issues:
+            if issue.state.group not in ["completed", "cancelled"]:
+                return Response(
+                    {
+                        "error_code": "4091",
+                        "error_message": "INVALID_ARCHIVE_STATE_GROUP"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             issue_activity.delay(
                 type="issue.activity.updated",
                 requested_data=json.dumps(
@@ -392,7 +401,9 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
             )
             issue.archived_at = timezone.now().date()
             bulk_archive_issues.append(issue)
-    
         Issue.objects.bulk_update(bulk_archive_issues, ["archived_at"])
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"archived_at": str(timezone.now().date())},
+            status=status.HTTP_204_NO_CONTENT,
+        )
