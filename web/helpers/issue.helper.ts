@@ -2,12 +2,15 @@ import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import { v4 as uuidv4 } from "uuid";
 // types
 import {
+  TGroupedIssues,
   TIssue,
   TIssueGroupByOptions,
   TIssueLayouts,
   TIssueOrderByOptions,
   TIssueParams,
   TStateGroups,
+  TSubGroupedIssues,
+  TUnGroupedIssues,
 } from "@plane/types";
 import { IGanttBlock } from "@/components/gantt-chart";
 // constants
@@ -210,4 +213,44 @@ export const getDescriptionPlaceholder = (isFocused: boolean, description: strin
   const isDescriptionEmpty = !description || description === "<p></p>" || description.trim() === "";
   if (!isDescriptionEmpty || isFocused) return "Press '/' for commands...";
   else return "Click to add description";
+};
+
+export const issueCountBasedOnFilters = (
+  issueIds: TUnGroupedIssues | TGroupedIssues | TSubGroupedIssues,
+  layout: TIssueLayouts,
+  groupBy: string | undefined,
+  subGroupBy: string | undefined
+): number => {
+  let issuesCount = 0;
+  if (!layout) return issuesCount;
+
+  if (["spreadsheet", "gantt_chart"].includes(layout)) {
+    issuesCount = (issueIds as TUnGroupedIssues)?.length;
+  } else if (layout === "calendar") {
+    Object.keys(issueIds || {}).map((groupId) => {
+      issuesCount += (issueIds as TGroupedIssues)?.[groupId]?.length;
+    });
+  } else if (layout === "list") {
+    if (groupBy) {
+      Object.keys(issueIds || {}).map((groupId) => {
+        issuesCount += (issueIds as TGroupedIssues)?.[groupId]?.length;
+      });
+    } else {
+      issuesCount = (issueIds as TUnGroupedIssues)?.length;
+    }
+  } else if (layout === "kanban") {
+    if (groupBy && subGroupBy) {
+      Object.keys(issueIds || {}).map((groupId) => {
+        Object.keys((issueIds as TSubGroupedIssues)?.[groupId] || {}).map((subGroupId) => {
+          issuesCount += (issueIds as TSubGroupedIssues)?.[groupId]?.[subGroupId]?.length || 0;
+        });
+      });
+    } else if (groupBy) {
+      Object.keys(issueIds || {}).map((groupId) => {
+        issuesCount += (issueIds as TGroupedIssues)?.[groupId]?.length;
+      });
+    }
+  }
+
+  return issuesCount;
 };
