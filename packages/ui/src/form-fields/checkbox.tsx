@@ -4,14 +4,14 @@ import { cn } from "../../helpers";
 
 export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   intermediate?: boolean;
-  className?: string;
+  containerClassName?: string;
 }
 
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
-  const { id, name, checked, intermediate = false, disabled, className = "", ...rest } = props;
+  const { id, name, checked, intermediate = false, disabled, containerClassName, className, ...rest } = props;
 
   return (
-    <div className={cn("relative w-full flex gap-2", className)}>
+    <div className={cn("relative w-full flex gap-2", containerClassName)}>
       <input
         id={id}
         ref={ref}
@@ -19,13 +19,14 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) 
         name={name}
         checked={checked}
         className={cn(
-          "appearance-none shrink-0 w-4 h-4 border rounded-[3px] focus:outline-1 focus:outline-offset-4 focus:outline-custom-primary-50",
+          "appearance-none shrink-0 size-4 border rounded-[3px] focus:outline-1 focus:outline-offset-4 focus:outline-custom-primary-50",
           {
             "border-custom-border-200 bg-custom-background-80 cursor-not-allowed": disabled,
-            "cursor-pointer border-custom-border-300 hover:border-custom-border-400 bg-white": !disabled,
+            "cursor-pointer border-custom-border-300 hover:border-custom-border-400 bg-transparent": !disabled,
             "border-custom-primary-40 bg-custom-primary-100 hover:bg-custom-primary-200":
               !disabled && (checked || intermediate),
-          }
+          },
+          className
         )}
         disabled={disabled}
         {...rest}

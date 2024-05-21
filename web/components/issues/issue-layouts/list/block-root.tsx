@@ -7,7 +7,7 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { IssueBlock } from "@/components/issues/issue-layouts/list";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-import { TSelectionHelper } from "@/hooks/use-entity-selection";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
 import { TRenderQuickActions } from "./list-view-types";
 

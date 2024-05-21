@@ -6,13 +6,13 @@ import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
 // components
-import { BulkOperationsSelect } from "@/components/issues";
+import { MultipleSelectAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
-import { TSelectionHelper } from "@/hooks/use-entity-selection";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { TRenderQuickActions } from "./list-view-types";
@@ -71,6 +71,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   const canEditIssueProperties = canEditProperties(issue.project_id);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
   const isIssueSelected = selectionHelpers.isEntitySelected(issue.id);
+  const isIssueActive = selectionHelpers.isEntityActive(issue.id);
 
   // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
   // const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
@@ -95,7 +96,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     <div
       ref={parentRef}
       className={cn(
-        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 pl-1.5 text-sm transition-colors",
+        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 pl-1.5 text-sm transition-colors issue-list-block",
         {
           "border border-custom-primary-70 hover:border-custom-primary-70":
             getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
@@ -104,6 +105,14 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
         }
       )}
+      style={
+        isIssueActive
+          ? {
+              boxShadow:
+                "inset 1px 1px 2px rgba(var(--color-primary-100), 0.15), inset -1px -1px 2px rgba(var(--color-primary-100), 0.15)",
+            }
+          : {}
+      }
     >
       <div className="flex w-full truncate" style={issue?.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
@@ -111,16 +120,27 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
             <div className="flex items-center group">
               {canEditIssueProperties && (
                 <div className="flex-shrink-0 grid place-items-center w-3.5 pl-1.5">
-                  <BulkOperationsSelect groupId={groupId} id={issue.id} selectionHelpers={selectionHelpers} />
+                  <MultipleSelectAction
+                    className={cn(
+                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                      {
+                        "opacity-100 pointer-events-auto": isIssueSelected,
+                      }
+                    )}
+                    groupId={groupId}
+                    id={issue.id}
+                    selectionHelpers={selectionHelpers}
+                  />
                 </div>
               )}
-              <div className="flex h-4 w-4 items-center justify-center">
+              <div className="size-4 flex items-center justify-center">
                 {issue.sub_issues_count > 0 && (
                   <button
-                    className="flex items-center justify-center h-4 w-4 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
+                    type="button"
+                    className="flex items-center justify-center size-4 rounded-sm text-custom-text-400 hover:text-custom-text-300"
                     onClick={handleToggleExpand}
                   >
-                    <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
+                    <ChevronRight className={`size-4 ${isExpanded ? "rotate-90" : ""}`} />
                   </button>
                 )}
               </div>
@@ -152,13 +172,13 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
               disabled={!!issue?.tempId}
             >
               <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left">
-                <p className="truncate">{issue.name}</p>
+                <p className="truncate">{issue.id}</p>
               </Tooltip>
             </ControlLink>
           )}
         </div>
         {!issue?.tempId && (
-          <div className="block md:hidden border border-custom-border-300 rounded ">
+          <div className="block md:hidden border border-custom-border-300 rounded">
             {quickActions({
               issue,
               parentRef,

@@ -10,12 +10,8 @@ import {
   TUnGroupedIssues,
 } from "@plane/types";
 // components
-import {
-  BulkOperationsSelectGroup,
-  IssueBlocksList,
-  IssueBulkOperationsRoot,
-  ListQuickAddIssueForm,
-} from "@/components/issues";
+import { MultipleSelectGroup } from "@/components/core";
+import { IssueBlocksList, IssueBulkOperationsRoot, ListQuickAddIssueForm } from "@/components/issues";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
@@ -135,7 +131,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
       className="vertical-scrollbar scrollbar-lg relative size-full overflow-auto vertical-scrollbar-margin-top-md"
     >
       {groups && (
-        <BulkOperationsSelectGroup groups={groups.map((g) => g.id)}>
+        <MultipleSelectGroup groups={groups.map((g) => g.id)}>
           {(helpers, snapshot) => (
             <>
               {console.log("snapshot", snapshot.isSelectionActive)}
@@ -143,8 +139,9 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                 (_list) =>
                   validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
                     <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
-                      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 pl-5 py-1">
+                      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pr-3 py-1">
                         <HeaderGroupByCard
+                          groupID={_list.id}
                           icon={_list.icon}
                           title={_list.name || ""}
                           count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
@@ -152,6 +149,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                           disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
                           storeType={storeType}
                           addIssuesToView={addIssuesToView}
+                          selectionHelpers={helpers}
                         />
                       </div>
 
@@ -188,7 +186,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
               )}
             </>
           )}
-        </BulkOperationsSelectGroup>
+        </MultipleSelectGroup>
       )}
     </div>
   );

@@ -1,7 +1,9 @@
+// ui
+import { Checkbox } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { TSelectionHelper } from "@/hooks/use-entity-selection";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 type Props = {
   className?: string;
@@ -10,25 +12,21 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const BulkOperationsSelect: React.FC<Props> = (props) => {
+export const MultipleSelectAction: React.FC<Props> = (props) => {
   const { className, groupId, id, selectionHelpers } = props;
   // derived values
   const isSelected = selectionHelpers.isEntitySelected(id);
+  const isActive = selectionHelpers.isEntityActive(id);
 
   return (
-    <input
-      type="checkbox"
-      className={cn(
-        "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto cursor-pointer transition-opacity outline-none",
-        {
-          "opacity-100 pointer-events-auto": isSelected,
-        },
-        className
-      )}
+    <Checkbox
+      className={cn("outline-0", className)}
       onClick={(e) => selectionHelpers.handleEntityClick(e, id, groupId)}
       checked={isSelected}
       data-entity-group-id={groupId}
       data-entity-id={id}
+      data-type="multiple-select-action"
+      data-active={isActive}
     />
   );
 };

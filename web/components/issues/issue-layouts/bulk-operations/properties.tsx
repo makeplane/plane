@@ -8,7 +8,7 @@ import { DateDropdown, MemberDropdown, PriorityDropdown, StateDropdown } from "@
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useBulkIssueOperations } from "@/hooks/store";
-import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-entity-selection";
+import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 
 type Props = {
   selectionHelpers: TSelectionHelper;

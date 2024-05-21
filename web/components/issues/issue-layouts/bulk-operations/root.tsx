@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Trash2 } from "lucide-react";
 // ui
-import { ArchiveIcon, Tooltip } from "@plane/ui";
+import { ArchiveIcon, Checkbox, Tooltip } from "@plane/ui";
 // components
 import {
   BulkArchiveConfirmationModal,
@@ -13,7 +13,7 @@ import {
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-entity-selection";
+import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 
 type Props = {
   className?: string;
@@ -62,7 +62,7 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
         )}
       >
         <div className="h-7 pr-3 text-sm flex items-center gap-2">
-          <input type="checkbox" className="minus-checkbox" checked />
+          <Checkbox className="cursor-pointer outline-0" onClick={selectionHelpers.handleClearSelection} intermediate />
           <div className="flex items-center gap-1">
             {/* // TODO: add min width here */}
             <span className="flex-shrink-0">{selectedEntityIds.length}</span>selected

@@ -5,7 +5,7 @@ import { CircleDashed, Plus } from "lucide-react";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
 // ui
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { Checkbox, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues";
@@ -15,8 +15,10 @@ import { EIssuesStoreType } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 interface IHeaderGroupByCard {
+  groupID: string;
   icon?: React.ReactNode;
   title: string;
   count: number;
@@ -24,10 +26,21 @@ interface IHeaderGroupByCard {
   disableIssueCreation?: boolean;
   storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
+  selectionHelpers: TSelectionHelper;
 }
 
 export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
-  const { icon, title, count, issuePayload, disableIssueCreation, storeType, addIssuesToView } = props;
+  const {
+    groupID,
+    icon,
+    title,
+    count,
+    issuePayload,
+    disableIssueCreation,
+    storeType,
+    addIssuesToView,
+    selectionHelpers,
+  } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
@@ -40,6 +53,8 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
   const isDraftIssue = router.pathname.includes("draft-issue");
   const renderExistingIssueModal = moduleId || cycleId;
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
+  const isPartialGroupSelected = selectionHelpers.isGroupSelected(groupID) === "partial";
+  const isCompleteGroupSelected = selectionHelpers.isGroupSelected(groupID) === "complete";
 
   const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
@@ -65,23 +80,19 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
 
   return (
     <>
-      <div className="group/list-block relative w-full flex-shrink-0 flex items-center gap-2 py-1.5">
-        {true && (
-          <div className="flex-shrink-0 flex items-center w-3.5 pl-1.5">
-            <input
-              type="checkbox"
-              className={cn(
-                "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto cursor-pointer transition-opacity outline-none",
-                {
-                  // "opacity-100 pointer-events-auto": true,
-                  // "opacity-100 pointer-events-auto": isIssueSelected,
-                }
-              )}
-              // onClick={(e) => handleClick(e, issueId)}
-              // checked={isIssueSelected}
-            />
-          </div>
-        )}
+      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-3 py-1.5 pl-3">
+        <div className="flex-shrink-0 flex items-center w-3.5">
+          <Checkbox
+            className={cn(
+              "opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto outline-0",
+              {
+                "opacity-100 pointer-events-auto": isPartialGroupSelected || isCompleteGroupSelected,
+              }
+            )}
+            onClick={() => selectionHelpers.handleGroupClick(groupID)}
+            checked={isCompleteGroupSelected}
+          />
+        </div>
         <div className="flex-shrink-0 grid place-items-center overflow-hidden">
           {icon ?? <CircleDashed className="h-3.5 w-3.5" strokeWidth={2} />}
         </div>

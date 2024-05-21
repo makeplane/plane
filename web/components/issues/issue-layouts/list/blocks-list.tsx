@@ -3,7 +3,7 @@ import { FC, MutableRefObject } from "react";
 import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
 import { IssueBlockRoot } from "@/components/issues/issue-layouts/list";
 // hooks
-import { TSelectionHelper } from "@/hooks/use-entity-selection";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
 import { TRenderQuickActions } from "./list-view-types";
 

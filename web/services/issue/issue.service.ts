@@ -269,7 +269,7 @@ export class IssueService extends APIService {
   ): Promise<{
     archived_at: string;
   }> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-archive-issues/`, data)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-archive-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
