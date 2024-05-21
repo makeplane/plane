@@ -62,7 +62,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
-  const subIssuesCount = subIssuesStore.getSubIssueCountByIssueId(issue.id);
+  const subIssuesCount = issue.sub_issues_count;
 
   const paddingLeft = `${spacingLeft}px`;
 

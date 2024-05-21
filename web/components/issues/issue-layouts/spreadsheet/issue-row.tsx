@@ -203,7 +203,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   };
 
   const disableUserActions = !canEditProperties(issueDetail.project_id);
-  const subIssuesCount = subIssuesStore.getSubIssueCountByIssueId(issueId);
+  const subIssuesCount = issueDetail.sub_issues_count;
 
   return (
     <>

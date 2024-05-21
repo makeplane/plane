@@ -45,7 +45,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     getIsIssuePeeked,
     setPeekIssue,
     issue: { getIssueById },
-    subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers, getSubIssueCountByIssueId },
+    subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
     toggleCreateIssueModal,
     toggleDeleteIssueModal,
   } = useIssueDetail();
@@ -59,7 +59,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     undefined;
 
   const subIssueHelpers = subIssueHelpersByIssueId(parentIssueId);
-  const subIssueCount = getSubIssueCountByIssueId(issueId);
+  const subIssueCount = issue?.sub_issues_count || 0;
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&

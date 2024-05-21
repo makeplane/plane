@@ -65,16 +65,13 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
-  const {
-    subIssues: { getSubIssueCountByIssueId },
-  } = useIssueDetail();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   const currentLayout = `${activeLayout} layout`;
   // derived values
   const stateDetails = getStateById(issue.state_id);
-  const subIssueCount = getSubIssueCountByIssueId(issue.id);
+  const subIssueCount = issue.sub_issues_count;
 
   const issueOperations = useMemo(
     () => ({

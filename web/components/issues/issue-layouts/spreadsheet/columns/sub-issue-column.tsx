@@ -6,7 +6,7 @@ import { TIssue } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppRouter, useIssueDetail } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/store";
 
 type Props = {
   issue: TIssue;
@@ -18,11 +18,8 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
   const router = useRouter();
   // hooks
   const { workspaceSlug } = useAppRouter();
-  const {
-    subIssues: { getSubIssueCountByIssueId },
-  } = useIssueDetail();
   // derived values
-  const subIssueCount = getSubIssueCountByIssueId(issue.id);
+  const subIssueCount = issue.sub_issues_count;
 
   const redirectToIssueDetail = () => {
     router.push({

@@ -5,7 +5,6 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
-import { computedFn } from "mobx-utils";
 import {
   TIssue,
   TIssueSubIssues,
@@ -49,7 +48,6 @@ export interface IIssueSubIssuesStore extends IIssueSubIssuesStoreActions {
   // helper methods
   stateDistributionByIssueId: (issueId: string) => TSubIssuesStateDistribution | undefined;
   subIssuesByIssueId: (issueId: string) => string[] | undefined;
-  getSubIssueCountByIssueId: (issueId: string) => number;
   subIssueHelpersByIssueId: (issueId: string) => TSubIssueHelpers;
   // actions
   fetchOtherProjectProperties: (workspaceSlug: string, projectIds: string[]) => Promise<void>;
@@ -97,19 +95,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     if (!issueId) return undefined;
     return this.subIssues[issueId] ?? undefined;
   };
-
-  getSubIssueCountByIssueId = computedFn((issueId: string) => {
-    // if issueId is not provided or empty, return 0
-    if (!issueId) return 0;
-
-    // if sub-issues are already fetched, return the length
-    const subIssues = this.subIssuesByIssueId(issueId);
-    if (subIssues) return subIssues.length;
-
-    // if sub-issues are not fetched, return the sub_issues_count of the issue
-    const issueDetail = this.rootIssueDetailStore.issue.getIssueById(issueId);
-    return issueDetail?.sub_issues_count || 0;
-  });
 
   subIssueHelpersByIssueId = (issueId: string) => ({
     preview_loader: this.subIssueHelpers?.[issueId]?.preview_loader || [],
@@ -188,6 +173,13 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       });
 
       this.rootIssueDetailStore.rootIssueStore.issues.addIssue(subIssues);
+
+      // update sub-issues_count of the parent issue
+      set(
+        this.rootIssueDetailStore.rootIssueStore.issues.issuesMap,
+        [parentIssueId, "sub_issues_count"],
+        this.subIssues[parentIssueId].length
+      );
 
       return;
     } catch (error) {
@@ -285,6 +277,12 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
       runInAction(() => {
         pull(this.subIssues[parentIssueId], issueId);
+        // update sub-issues_count of the parent issue
+        set(
+          this.rootIssueDetailStore.rootIssueStore.issues.issuesMap,
+          [parentIssueId, "sub_issues_count"],
+          this.subIssues[parentIssueId].length
+        );
       });
 
       return;
@@ -316,6 +314,12 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
       runInAction(() => {
         pull(this.subIssues[parentIssueId], issueId);
+        // update sub-issues_count of the parent issue
+        set(
+          this.rootIssueDetailStore.rootIssueStore.issues.issuesMap,
+          [parentIssueId, "sub_issues_count"],
+          this.subIssues[parentIssueId].length
+        );
       });
 
       return;
