@@ -3,7 +3,6 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-import { AlertCircle } from "lucide-react";
 //types
 import {
   TGroupedIssues,
@@ -17,7 +16,6 @@ import {
 } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
-import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -191,7 +189,6 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
   const canDropOverIssue = orderBy === "sort_order";
   const shouldOverlay = isDraggingOverColumn && (!canDropOverIssue || isDropDisabled);
-  const readableOrderBy = ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.title;
 
   return (
     <div
@@ -211,45 +208,6 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         orderBy={orderBy}
         isDraggingOverColumn={isDraggingOverColumn}
       />
-      <div
-        //column overlay when issues are not sorted by manual
-        className={cn(
-          "absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-overlay",
-          {
-            "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlay,
-          },
-          { hidden: !shouldOverlay },
-          { "justify-center": !sub_group_by }
-        )}
-      >
-        <div
-          className={cn(
-            "p-3 mt-8 flex flex-col rounded items-center",
-            {
-              "text-custom-text-200": shouldOverlay,
-            },
-            {
-              "text-custom-text-error": isDropDisabled,
-            }
-          )}
-        >
-          {dropErrorMessage ? (
-            <div className="flex items-center">
-              <AlertCircle width={13} height={13} /> &nbsp;
-              <span>{dropErrorMessage}</span>
-            </div>
-          ) : (
-            <>
-              {readableOrderBy && (
-                <span>
-                  The layout is ordered by <span className="font-semibold">{readableOrderBy}</span>.
-                </span>
-              )}
-              <span>Drop here to move the issue.</span>
-            </>
-          )}
-        </div>
-      </div>
       <KanbanIssueBlocksList
         sub_group_id={sub_group_id}
         groupId={groupId}
