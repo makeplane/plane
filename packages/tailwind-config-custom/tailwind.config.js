@@ -108,6 +108,7 @@ module.exports = {
             100: convertToRGB("--color-text-100"),
             200: convertToRGB("--color-text-200"),
             300: convertToRGB("--color-text-300"),
+            350: convertToRGB("--color-text-350"),
             400: convertToRGB("--color-text-400"),
             500: convertToRGB("--color-text-500"),
             600: convertToRGB("--color-text-600"),
