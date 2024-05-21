@@ -7,10 +7,12 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { IssueBlock } from "@/components/issues/issue-layouts/list";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import { TSelectionHelper } from "@/hooks/use-entity-selection";
 // types
 import { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
+  groupId: string;
   issueIds: string[];
   issueId: string;
   issuesMap: TIssueMap;
@@ -21,10 +23,12 @@ type Props = {
   nestingLevel: number;
   spacingLeft?: number;
   containerRef: MutableRefObject<HTMLDivElement | null>;
+  selectionHelpers: TSelectionHelper;
 };
 
 export const IssueBlockRoot: FC<Props> = observer((props) => {
   const {
+    groupId,
     issueIds,
     issueId,
     issuesMap,
@@ -35,6 +39,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     nestingLevel,
     spacingLeft = 14,
     containerRef,
+    selectionHelpers,
   } = props;
   // states
   const [isExpanded, setExpanded] = useState(false);
@@ -53,6 +58,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         classNames="relative border-b border-b-custom-border-200 last:border-b-transparent"
       >
         <IssueBlock
+          groupId={groupId}
           issueId={issueId}
           issuesMap={issuesMap}
           updateIssue={updateIssue}
@@ -63,6 +69,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
           setExpanded={setExpanded}
           nestingLevel={nestingLevel}
           spacingLeft={spacingLeft}
+          selectionHelpers={selectionHelpers}
         />
       </RenderIfVisible>
 
@@ -70,6 +77,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         subIssues?.map((subIssueId) => (
           <IssueBlockRoot
             key={`${subIssueId}`}
+            groupId={groupId}
             issueIds={issueIds}
             issueId={subIssueId}
             issuesMap={issuesMap}
@@ -80,6 +88,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
             nestingLevel={nestingLevel + 1}
             spacingLeft={spacingLeft + (displayProperties?.key ? 12 : 0)}
             containerRef={containerRef}
+            selectionHelpers={selectionHelpers}
           />
         ))}
     </>

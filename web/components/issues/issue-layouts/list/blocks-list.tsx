@@ -2,10 +2,13 @@ import { FC, MutableRefObject } from "react";
 // components
 import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
 import { IssueBlockRoot } from "@/components/issues/issue-layouts/list";
+// hooks
+import { TSelectionHelper } from "@/hooks/use-entity-selection";
 // types
 import { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
+  groupId: string;
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -13,16 +16,28 @@ interface Props {
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   containerRef: MutableRefObject<HTMLDivElement | null>;
+  selectionHelpers: TSelectionHelper;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { issueIds, issuesMap, updateIssue, quickActions, displayProperties, canEditProperties, containerRef } = props;
+  const {
+    groupId,
+    issueIds,
+    issuesMap,
+    updateIssue,
+    quickActions,
+    displayProperties,
+    canEditProperties,
+    containerRef,
+    selectionHelpers,
+  } = props;
 
   return (
     <div className="relative h-full w-full">
       {issueIds && issueIds.length > 0 ? (
         issueIds.map((issueId: string) => (
           <IssueBlockRoot
+            groupId={groupId}
             key={`${issueId}`}
             issueIds={issueIds}
             issueId={issueId}
@@ -34,6 +49,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
             nestingLevel={0}
             spacingLeft={0}
             containerRef={containerRef}
+            selectionHelpers={selectionHelpers}
           />
         ))
       ) : (

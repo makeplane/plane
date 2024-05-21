@@ -6,17 +6,19 @@ import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
 // components
+import { BulkOperationsSelect } from "@/components/issues";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppRouter, useBulkIssueOperations, useIssueDetail, useProject } from "@/hooks/store";
-import { useEntitySelection } from "@/hooks/use-entity-selection";
+import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
+import { TSelectionHelper } from "@/hooks/use-entity-selection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
+  groupId: string;
   issueId: string;
   issuesMap: TIssueMap;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -27,10 +29,12 @@ interface IssueBlockProps {
   spacingLeft?: number;
   isExpanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
+  selectionHelpers: TSelectionHelper;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlockProps) => {
   const {
+    groupId,
     issuesMap,
     issueId,
     updateIssue,
@@ -41,6 +45,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     spacingLeft = 14,
     isExpanded,
     setExpanded,
+    selectionHelpers,
   } = props;
   // refs
   const parentRef = useRef(null);
@@ -61,13 +66,11 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   // const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   const { isMobile } = usePlatformOS();
 
-  const { getIsIssueSelected } = useBulkIssueOperations();
-  const { handleClick } = useEntitySelection();
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
-  const isIssueSelected = getIsIssueSelected(issueId);
+  const isIssueSelected = selectionHelpers.isEntitySelected(issue.id);
 
   // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
   // const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
@@ -98,7 +101,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
             getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
           "hover:bg-custom-background-90": !isIssueSelected,
-          "bg-custom-primary-100/5": isIssueSelected,
+          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
         }
       )}
     >
@@ -108,17 +111,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
             <div className="flex items-center group">
               {canEditIssueProperties && (
                 <div className="flex-shrink-0 grid place-items-center w-3.5 pl-1.5">
-                  <input
-                    type="checkbox"
-                    className={cn(
-                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto cursor-pointer transition-opacity outline-none",
-                      {
-                        "opacity-100 pointer-events-auto": isIssueSelected,
-                      }
-                    )}
-                    onClick={(e) => handleClick(e, issueId)}
-                    checked={isIssueSelected}
-                  />
+                  <BulkOperationsSelect groupId={groupId} id={issue.id} selectionHelpers={selectionHelpers} />
                 </div>
               )}
               <div className="flex h-4 w-4 items-center justify-center">

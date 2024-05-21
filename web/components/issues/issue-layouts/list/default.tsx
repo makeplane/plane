@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { observer } from "mobx-react";
 // types
 import {
   GroupByColumnTypes,
@@ -9,7 +10,12 @@ import {
   TUnGroupedIssues,
 } from "@plane/types";
 // components
-import { IssueBlocksList, IssueBulkOperationsRoot, ListQuickAddIssueForm } from "@/components/issues";
+import {
+  BulkOperationsSelectGroup,
+  IssueBlocksList,
+  IssueBulkOperationsRoot,
+  ListQuickAddIssueForm,
+} from "@/components/issues";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
@@ -42,7 +48,7 @@ export interface IGroupByList {
   isCompletedCycle?: boolean;
 }
 
-const GroupByList: React.FC<IGroupByList> = (props) => {
+const GroupByList: React.FC<IGroupByList> = observer((props) => {
   const {
     issueIds,
     issuesMap,
@@ -126,55 +132,67 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   return (
     <div
       ref={containerRef}
-      className="vertical-scrollbar scrollbar-lg relative h-full w-full overflow-auto vertical-scrollbar-margin-top-md"
+      className="vertical-scrollbar scrollbar-lg relative size-full overflow-auto vertical-scrollbar-margin-top-md"
     >
-      {groups &&
-        groups.map(
-          (_list) =>
-            validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
-              <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 pl-5 py-1">
-                  <HeaderGroupByCard
-                    icon={_list.icon}
-                    title={_list.name || ""}
-                    count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
-                    issuePayload={_list.payload}
-                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
-                    storeType={storeType}
-                    addIssuesToView={addIssuesToView}
-                  />
+      {groups && (
+        <BulkOperationsSelectGroup groups={groups.map((g) => g.id)}>
+          {(helpers, snapshot) => (
+            <>
+              {console.log("snapshot", snapshot.isSelectionActive)}
+              {groups.map(
+                (_list) =>
+                  validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
+                    <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
+                      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 pl-5 py-1">
+                        <HeaderGroupByCard
+                          icon={_list.icon}
+                          title={_list.name || ""}
+                          count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
+                          issuePayload={_list.payload}
+                          disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
+                          storeType={storeType}
+                          addIssuesToView={addIssuesToView}
+                        />
+                      </div>
+
+                      {issueIds && (
+                        <IssueBlocksList
+                          groupId={_list.id}
+                          issueIds={is_list ? issueIds || 0 : issueIds?.[_list.id] || 0}
+                          issuesMap={issuesMap}
+                          updateIssue={updateIssue}
+                          quickActions={quickActions}
+                          displayProperties={displayProperties}
+                          canEditProperties={canEditProperties}
+                          containerRef={containerRef}
+                          selectionHelpers={helpers}
+                        />
+                      )}
+
+                      {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
+                        <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
+                          <ListQuickAddIssueForm
+                            prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}
+                            quickAddCallback={quickAddCallback}
+                            viewId={viewId}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )
+              )}
+              {snapshot.isSelectionActive && (
+                <div className="sticky bottom-0 left-0 z-[2] h-14">
+                  <IssueBulkOperationsRoot selectionHelpers={helpers} snapshot={snapshot} />
                 </div>
-
-                {issueIds && (
-                  <IssueBlocksList
-                    issueIds={is_list ? issueIds || 0 : issueIds?.[_list.id] || 0}
-                    issuesMap={issuesMap}
-                    updateIssue={updateIssue}
-                    quickActions={quickActions}
-                    displayProperties={displayProperties}
-                    canEditProperties={canEditProperties}
-                    containerRef={containerRef}
-                  />
-                )}
-
-                {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
-                  <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
-                    <ListQuickAddIssueForm
-                      prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}
-                      quickAddCallback={quickAddCallback}
-                      viewId={viewId}
-                    />
-                  </div>
-                )}
-              </div>
-            )
-        )}
-      <div className="sticky bottom-0 left-0 z-10 h-14">
-        <IssueBulkOperationsRoot />
-      </div>
+              )}
+            </>
+          )}
+        </BulkOperationsSelectGroup>
+      )}
     </div>
   );
-};
+});
 
 export interface IList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;

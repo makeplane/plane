@@ -1,5 +1,5 @@
 import set from "lodash/set";
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, runInAction } from "mobx";
 // types
 import { TBulkOperationsPayload } from "@plane/types";
 // services
@@ -7,21 +7,11 @@ import { IssueService } from "@/services/issue";
 import { IIssueRootStore } from "./root.store";
 
 export type IIssueBulkOperationsStore = {
-  // observables
-  issueIds: string[];
-  // computed
-  isSelectionActive: boolean;
-  // helper functions
-  getIsIssueSelected: (issueId: string) => boolean;
   // actions
-  toggleIssueSelection: (issueId: string) => void;
-  clearSelection: () => void;
   bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => void;
 };
 
 export class IssueBulkOperationsStore implements IIssueBulkOperationsStore {
-  // observables
-  issueIds: string[] = [];
   // root store
   rootIssueStore: IIssueRootStore;
   // service
@@ -29,47 +19,13 @@ export class IssueBulkOperationsStore implements IIssueBulkOperationsStore {
 
   constructor(_rootStore: IIssueRootStore) {
     makeObservable(this, {
-      // observable
-      issueIds: observable,
-      // computed
-      isSelectionActive: computed,
       // actions
-      toggleIssueSelection: action,
-      clearSelection: action,
       bulkUpdateProperties: action,
     });
 
     this.rootIssueStore = _rootStore;
     this.issueService = new IssueService();
   }
-
-  get isSelectionActive() {
-    return this.issueIds.length > 0;
-  }
-
-  /**
-   * @description check if an issue is selected
-   * @param {string} issueId
-   * @returns {boolean}
-   */
-  getIsIssueSelected = (issueId: string): boolean => this.issueIds.includes(issueId);
-
-  /**
-   * @description select an issue by issue id
-   * @param {string} issueId
-   */
-  toggleIssueSelection = (issueId: string) => {
-    const index = this.issueIds.indexOf(issueId);
-    if (index === -1) this.issueIds.push(issueId);
-    else this.issueIds.splice(index, 1);
-  };
-
-  /**
-   * @description clear all selected issues
-   */
-  clearSelection = () => {
-    this.issueIds = [];
-  };
 
   /**
    * @description bulk update properties of selected issues

@@ -8,22 +8,31 @@ import { DateDropdown, MemberDropdown, PriorityDropdown, StateDropdown } from "@
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useBulkIssueOperations } from "@/hooks/store";
+import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-entity-selection";
 
-export const IssueBulkOperationsProperties: React.FC = () => {
+type Props = {
+  selectionHelpers: TSelectionHelper;
+  snapshot: TSelectionSnapshot;
+};
+
+export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
+  const { snapshot } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { bulkUpdateProperties, issueIds } = useBulkIssueOperations();
+  const { bulkUpdateProperties } = useBulkIssueOperations();
 
   const handleBulkOperation = (data: Partial<TBulkIssueProperties>) => {
     if (!workspaceSlug || !projectId) return;
 
     bulkUpdateProperties(workspaceSlug.toString(), projectId.toString(), {
-      issue_ids: issueIds,
+      issue_ids: snapshot.selectedEntityIds,
       properties: data,
     });
   };
+
+  const isUpdateDisabled = !snapshot.isSelectionActive;
 
   return (
     <>
@@ -32,11 +41,13 @@ export const IssueBulkOperationsProperties: React.FC = () => {
         onChange={(val) => handleBulkOperation({ state_id: val })}
         projectId={projectId?.toString() ?? ""}
         buttonVariant="border-with-text"
+        disabled={isUpdateDisabled}
       />
       <PriorityDropdown
         value="urgent"
         onChange={(val) => handleBulkOperation({ priority: val })}
         buttonVariant="border-with-text"
+        disabled={isUpdateDisabled}
       />
       <MemberDropdown
         value={[]}
@@ -44,20 +55,23 @@ export const IssueBulkOperationsProperties: React.FC = () => {
         buttonVariant="border-with-text"
         placeholder="Assignees"
         multiple
+        disabled={isUpdateDisabled}
       />
       <DateDropdown
         value={null}
         onChange={(val) => handleBulkOperation({ start_date: val ? renderFormattedPayloadDate(val) : null })}
         buttonVariant="border-with-text"
         placeholder="Start date"
-        icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+        icon={<CalendarClock className="size-3 flex-shrink-0" />}
+        disabled={isUpdateDisabled}
       />
       <DateDropdown
         value={null}
         onChange={(val) => handleBulkOperation({ target_date: val ? renderFormattedPayloadDate(val) : null })}
         buttonVariant="border-with-text"
         placeholder="Due date"
-        icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+        icon={<CalendarCheck2 className="size-3 flex-shrink-0" />}
+        disabled={isUpdateDisabled}
       />
     </>
   );

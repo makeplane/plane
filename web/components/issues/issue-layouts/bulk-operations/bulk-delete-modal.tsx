@@ -7,25 +7,25 @@ import { AlertModalCore, EModalPosition, EModalWidth } from "@/components/core";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useBulkIssueOperations, useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store";
 
 type Props = {
   handleClose: () => void;
   isOpen: boolean;
   issueIds: string[];
+  onSubmit?: () => void;
   projectId: string;
   workspaceSlug: string;
 };
 
 export const BulkDeleteConfirmationModal: React.FC<Props> = observer((props) => {
-  const { handleClose, isOpen, issueIds, projectId, workspaceSlug } = props;
+  const { handleClose, isOpen, issueIds, onSubmit, projectId, workspaceSlug } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
   const {
     issues: { removeBulkIssues },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const { clearSelection } = useBulkIssueOperations();
 
   const handleSubmit = async () => {
     setIsDeleting(true);
@@ -37,7 +37,7 @@ export const BulkDeleteConfirmationModal: React.FC<Props> = observer((props) => 
           title: "Success!",
           message: "Issues deleted successfully.",
         });
-        clearSelection();
+        onSubmit?.();
         handleClose();
       })
       .catch(() =>
