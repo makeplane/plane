@@ -15,12 +15,16 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
-
+from plane.authentication.rate_limit import AuthenticationThrottle
 
 class EmailCheckEndpoint(APIView):
 
     permission_classes = [
         AllowAny,
+    ]
+
+    throttle_classes = [
+        AuthenticationThrottle,
     ]
 
     def post(self, request):

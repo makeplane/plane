@@ -47,13 +47,18 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   useEffect(() => {
     const textarea = document.querySelector("#title-input");
     if (debouncedValue && debouncedValue !== value) {
-      issueOperations.update(workspaceSlug, projectId, issueId, { name: debouncedValue }).finally(() => {
+      if (debouncedValue.trim().length > 0) {
+        issueOperations.update(workspaceSlug, projectId, issueId, { name: debouncedValue }).finally(() => {
+          setIsSubmitting("saved");
+          if (textarea && !textarea.matches(":focus")) {
+            const trimmedTitle = debouncedValue.trim();
+            if (trimmedTitle !== title) setTitle(trimmedTitle);
+          }
+        });
+      } else {
+        setTitle(value || "");
         setIsSubmitting("saved");
-        if (textarea && !textarea.matches(":focus")) {
-          const trimmedTitle = debouncedValue.trim();
-          if (trimmedTitle !== title) setTitle(trimmedTitle);
-        }
-      });
+      }
     }
     // DO NOT Add more dependencies here. It will cause multiple requests to be sent.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,8 +68,13 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     const handleBlur = () => {
       const trimmedTitle = title.trim();
       if (trimmedTitle !== title && isSubmitting !== "submitting") {
-        setTitle(trimmedTitle);
-        setIsSubmitting("submitting");
+        if (trimmedTitle.length > 0) {
+          setTitle(trimmedTitle);
+          setIsSubmitting("submitting");
+        } else {
+          setTitle(value || "");
+          setIsSubmitting("saved");
+        }
       }
     };
 
@@ -91,35 +101,38 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   if (disabled) return <div className="text-2xl font-medium">{title}</div>;
 
   return (
-    <div className={cn("relative", containerClassName)}>
-      <TextArea
-        id="title-input"
-        className={cn(
-          "block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-0 text-2xl font-medium outline-none ring-0",
-          {
-            "ring-red-400": title.length === 0,
-          },
-          className
-        )}
-        disabled={disabled}
-        value={title}
-        onChange={handleTitleChange}
-        maxLength={255}
-        placeholder="Issue title"
-        onFocus={() => setIsLengthVisible(true)}
-        onBlur={() => setIsLengthVisible(false)}
-      />
-      <div
-        className={cn(
-          "pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
-          {
-            "opacity-100": isLengthVisible,
-          }
-        )}
-      >
-        <span className={`${title.length === 0 || title.length > 255 ? "text-red-500" : ""}`}>{title.length}</span>
-        /255
+    <div className="flex flex-col gap-1.5">
+      <div className={cn("relative", containerClassName)}>
+        <TextArea
+          id="title-input"
+          className={cn(
+            "block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-0 text-2xl font-medium outline-none ring-0",
+            {
+              "ring-1 ring-red-400 mx-3": title.length === 0,
+            },
+            className
+          )}
+          disabled={disabled}
+          value={title}
+          onChange={handleTitleChange}
+          maxLength={255}
+          placeholder="Issue title"
+          onFocus={() => setIsLengthVisible(true)}
+          onBlur={() => setIsLengthVisible(false)}
+        />
+        <div
+          className={cn(
+            "pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
+            {
+              "opacity-100": isLengthVisible,
+            }
+          )}
+        >
+          <span className={`${title.length === 0 || title.length > 255 ? "text-red-500" : ""}`}>{title.length}</span>
+          /255
+        </div>
       </div>
+      {title.length === 0 && <span className="text-sm text-red-500">Title is required</span>}
     </div>
   );
 });
