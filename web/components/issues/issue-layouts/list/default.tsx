@@ -99,7 +99,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
         element,
       })
     );
-  }, [containerRef?.current]);
+  }, [containerRef]);
 
   if (!groups) return null;
 
