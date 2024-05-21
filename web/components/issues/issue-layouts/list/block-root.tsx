@@ -99,7 +99,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         },
       })
     );
-  }, [issueId, isLastChild, issueBlockRef?.current, setInstruction]);
+  }, [issueId, isLastChild, issueBlockRef?.current, isSubIssue, canDropOverIssue, setInstruction]);
 
   useOutsideClickDetector(issueBlockRef, () => {
     issueBlockRef?.current?.classList?.remove(HIGHLIGHT_CLASS);

@@ -182,7 +182,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
         },
       })
     );
-  }, [cardRef?.current, issue?.id, setIsCurrentBlockDragging, setIsDraggingOverBlock]);
+  }, [cardRef?.current, issue?.id, isDragAllowed, canDropOverIssue, setIsCurrentBlockDragging, setIsDraggingOverBlock]);
 
   if (!issue) return null;
 
