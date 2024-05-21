@@ -17,7 +17,7 @@ export const DragHandle = forwardRef<HTMLButtonElement | null, IDragHandle>((pro
   return (
     <button
       type="button"
-      className={`mr-1 p-[2px] flex flex-shrink-0 rounded bg-custom-background-90 text-custom-sidebar-text-200 group-hover:opacity-100 cursor-grab ${
+      className={` p-[2px] flex flex-shrink-0 rounded bg-custom-background-90 text-custom-sidebar-text-200 group-hover:opacity-100 cursor-grab ${
         isDragging ? "opacity-100" : "opacity-0"
       }`}
       onContextMenu={(e) => {

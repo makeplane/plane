@@ -119,7 +119,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     <div
       ref={issueRef}
       className={cn(
-        "group min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 text-sm",
+        "group min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 pl-1.5 pr-1 text-sm",
         {
           "border border-custom-primary-70 hover:border-custom-primary-70":
             getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
@@ -145,7 +145,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               </div>
             </div>
             {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+              <div className="pl-1 flex-shrink-0 text-xs font-medium text-custom-text-300">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
             )}
