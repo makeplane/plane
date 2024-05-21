@@ -42,7 +42,6 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
-  const [isPasswordAutoset, setIsPasswordAutoset] = useState(true);
   // hooks
   const { config } = useInstance();
 
@@ -80,17 +79,14 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
-    const emailCheckRequest =
-      authMode === EAuthModes.SIGN_IN ? authService.signInEmailCheck(data) : authService.signUpEmailCheck(data);
-
-    await emailCheckRequest
+    await authService
+      .emailCheck(data)
       .then(async (response) => {
         if (authMode === EAuthModes.SIGN_IN) {
-          if (response.is_password_autoset) {
+          if (response.status === "MAGIC_CODE") {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
             generateEmailUniqueCode(data.email);
           } else if (isEmailPasswordEnabled) {
-            setIsPasswordAutoset(false);
             setAuthStep(EAuthSteps.PASSWORD);
           }
         } else {
@@ -148,7 +144,6 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
         {authStep === EAuthSteps.PASSWORD && (
           <AuthPasswordForm
             mode={authMode}
-            isPasswordAutoset={isPasswordAutoset}
             isSMTPConfigured={isSMTPConfigured}
             email={email}
             handleEmailClear={() => {
