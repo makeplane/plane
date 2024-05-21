@@ -1,4 +1,4 @@
-import { Dispatch, MouseEvent, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, MouseEvent, SetStateAction, useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react-lite";
@@ -29,6 +29,8 @@ interface IssueBlockProps {
   spacingLeft?: number;
   isExpanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
+  isCurrentBlockDragging: boolean;
+  setIsCurrentBlockDragging: React.Dispatch<React.SetStateAction<boolean>>;
   canDrag: boolean;
 }
 
@@ -45,9 +47,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     spacingLeft = 14,
     isExpanded,
     setExpanded,
+    isCurrentBlockDragging,
+    setIsCurrentBlockDragging,
     canDrag,
   } = props;
-  const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef(null);

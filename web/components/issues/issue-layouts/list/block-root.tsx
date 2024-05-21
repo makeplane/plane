@@ -29,6 +29,7 @@ type Props = {
   groupId: string;
   isDragAllowed: boolean;
   canDropOverIssue: boolean;
+  isParentIssueBeingDragged?: boolean;
   isLastChild?: boolean;
 };
 
@@ -47,11 +48,13 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     containerRef,
     isDragAllowed,
     canDropOverIssue,
+    isParentIssueBeingDragged = false,
     isLastChild,
   } = props;
   // states
   const [isExpanded, setExpanded] = useState<boolean>(false);
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
+  const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
   // ref
   const issueBlockRef = useRef<HTMLDivElement | null>(null);
   // store hooks
@@ -130,6 +133,8 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
           nestingLevel={nestingLevel}
           spacingLeft={spacingLeft}
           canDrag={!isSubIssue && isDragAllowed}
+          isCurrentBlockDragging={isParentIssueBeingDragged || isCurrentBlockDragging}
+          setIsCurrentBlockDragging={setIsCurrentBlockDragging}
         />
       </RenderIfVisible>
 
@@ -152,6 +157,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
             groupId={groupId}
             isDragAllowed={isDragAllowed}
             canDropOverIssue={canDropOverIssue}
+            isParentIssueBeingDragged={isParentIssueBeingDragged || isCurrentBlockDragging}
           />
         ))}
       {isLastChild && <DropIndicator classNames={"absolute z-[2]"} isVisible={instruction === "DRAG_BELOW"} />}
