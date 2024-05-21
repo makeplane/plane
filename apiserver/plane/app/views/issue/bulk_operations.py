@@ -1,5 +1,6 @@
 # Python imports
 import json
+from datetime import datetime
 
 # Django imports
 from django.utils import timezone
@@ -100,7 +101,13 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
             # Start date
             if properties.get("start_date", False):
-                if issue.target_date < properties.get("start_date"):
+                if (
+                    issue.target_date
+                    and issue.target_date
+                    <= datetime.strptime(
+                        properties.get("start_date"), "%Y-%m-%d"
+                    ).date()
+                ):
                     return Response(
                         {
                             "error_code": "4101",
@@ -127,7 +134,13 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
             # Target date
             if properties.get("target_date", False):
-                if issue.start_date > properties.get("target_date"):
+                if (
+                    issue.start_date
+                    and issue.start_date
+                    >= datetime.strptime(
+                        properties.get("target_date"), "%Y-%m-%d"
+                    ).date()
+                ):
                     return Response(
                         {
                             "error_code": "4102",
