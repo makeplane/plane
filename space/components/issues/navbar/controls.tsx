@@ -12,9 +12,9 @@ import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useProject, useIssueFilter, useIssueDetails } from "@/hooks/store";
+import useIsInIframe from "@/hooks/use-is-in-iframe";
 // types
 import { TIssueLayout } from "@/types/issue";
-import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 export type NavbarControlsProps = {
   workspaceSlug: string;
@@ -41,8 +41,6 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
   const isInIframe = useIsInIframe();
-
-  console.log("isInIframe", isInIframe);
 
   useEffect(() => {
     if (workspaceSlug && projectId && settings) {
