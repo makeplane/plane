@@ -1,3 +1,6 @@
+# Python imports
+import os
+
 # Django imports
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -16,8 +19,10 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
 )
 from plane.authentication.rate_limit import AuthenticationThrottle
+from plane.license.utils.instance_value import get_configuration_value
 
-class EmailCheckEndpoint(APIView):
+
+class EmailCheckSpaceEndpoint(APIView):
 
     permission_classes = [
         AllowAny,
@@ -41,6 +46,17 @@ class EmailCheckEndpoint(APIView):
                 exc.get_error_dict(),
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        (EMAIL_HOST,) = get_configuration_value(
+            [
+                {
+                    "key": "EMAIL_HOST",
+                    "default": os.environ.get("EMAIL_HOST", ""),
+                },
+            ]
+        )
+
+        smtp_configured = bool(EMAIL_HOST)
 
         email = request.data.get("email", False)
 
@@ -86,12 +102,20 @@ class EmailCheckEndpoint(APIView):
             return Response(
                 {
                     "existing": True,
-                    "is_password_autoset": existing_user.is_password_autoset,
+                    "status": (
+                        "MAGIC_CODE"
+                        if existing_user.is_password_autoset
+                        and smtp_configured
+                        else "CREDENTIAL"
+                    ),
                 },
                 status=status.HTTP_200_OK,
             )
         # Else return response
         return Response(
-            {"existing": False, "is_password_autoset": False},
+            {
+                "existing": False,
+                "status": "MAGIC_CODE" if smtp_configured else "CREDENTIAL",
+            },
             status=status.HTTP_200_OK,
         )
