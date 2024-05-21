@@ -10,7 +10,9 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { IssueBlock } from "@/components/issues/issue-layouts/list";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // types
+import { HIGHLIGHT_CLASS, getIssueBlockId } from "../utils";
 import { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
@@ -99,11 +101,15 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     );
   }, [issueId, isLastChild, issueBlockRef?.current, setInstruction]);
 
+  useOutsideClickDetector(issueBlockRef, () => {
+    issueBlockRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
+  });
+
   if (!issueId) return null;
 
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   return (
-    <div className="relative" ref={issueBlockRef}>
+    <div className="relative" ref={issueBlockRef} id={getIssueBlockId(issueId, groupId)}>
       <DropIndicator classNames={"absolute top-0 z-[2]"} isVisible={instruction === "DRAG_OVER"} />
       <RenderIfVisible
         key={`${issueId}`}

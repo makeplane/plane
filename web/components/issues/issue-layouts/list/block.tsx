@@ -13,10 +13,8 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { HIGHLIGHT_CLASS, getIssueBlockId } from "../utils";
 import { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
@@ -115,14 +113,9 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     }
   };
 
-  useOutsideClickDetector(issueRef, () => {
-    issueRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
-  });
-
   return (
     <div
       ref={issueRef}
-      id={getIssueBlockId(issueId, groupId)}
       className={cn(
         "group min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 text-sm",
         {
