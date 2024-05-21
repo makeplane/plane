@@ -12,6 +12,15 @@ import {
   TIssueTypeFilters,
 } from "@plane/types";
 
+export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
+  "state",
+  "priority",
+  "assignees",
+  "labels",
+  "module",
+  "cycle",
+];
+
 export enum EIssuesStoreType {
   GLOBAL = "GLOBAL",
   PROFILE = "PROFILE",
@@ -422,3 +431,4 @@ export const groupReactionEmojis = (reactions: any) => {
 
   return groupedEmojis;
 };
+

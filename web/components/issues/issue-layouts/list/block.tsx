@@ -1,10 +1,12 @@
-import { Dispatch, MouseEvent, SetStateAction, useRef } from "react";
+import { Dispatch, MouseEvent, SetStateAction, useEffect, useRef } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react-lite";
 import { ChevronRight } from "lucide-react";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
-import { Spinner, Tooltip, ControlLink } from "@plane/ui";
+import { Spinner, Tooltip, ControlLink, DragHandle } from "@plane/ui";
 // components
 import { MultipleSelectAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
@@ -18,9 +20,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
-  groupId: string;
   issueId: string;
   issuesMap: TIssueMap;
+  groupId: string;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -30,13 +32,16 @@ interface IssueBlockProps {
   isExpanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
   selectionHelpers: TSelectionHelper;
+  isCurrentBlockDragging: boolean;
+  setIsCurrentBlockDragging: React.Dispatch<React.SetStateAction<boolean>>;
+  canDrag: boolean;
 }
 
-export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlockProps) => {
+export const IssueBlock = observer((props: IssueBlockProps) => {
   const {
-    groupId,
     issuesMap,
     issueId,
+    groupId,
     updateIssue,
     quickActions,
     displayProperties,
@@ -46,9 +51,13 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     isExpanded,
     setExpanded,
     selectionHelpers,
+    isCurrentBlockDragging,
+    setIsCurrentBlockDragging,
+    canDrag,
   } = props;
-  // refs
-  const parentRef = useRef(null);
+  // ref
+  const issueRef = useRef<HTMLDivElement | null>(null);
+  const dragHandleRef = useRef(null);
   // hooks
   const { workspaceSlug } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
@@ -63,8 +72,31 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
 
   const issue = issuesMap[issueId];
-  // const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+  const subIssuesCount = issue.sub_issues_count;
+
   const { isMobile } = usePlatformOS();
+
+  useEffect(() => {
+    const element = issueRef.current;
+    const dragHandleElement = dragHandleRef.current;
+
+    if (!element || !dragHandleElement) return;
+
+    return combine(
+      draggable({
+        element,
+        dragHandle: dragHandleElement,
+        canDrag: () => canDrag,
+        getInitialData: () => ({ id: issueId, type: "ISSUE", groupId }),
+        onDragStart: () => {
+          setIsCurrentBlockDragging(true);
+        },
+        onDrop: () => {
+          setIsCurrentBlockDragging(false);
+        },
+      })
+    );
+  }, [issueRef?.current, canDrag, issueId, groupId, dragHandleRef?.current, setIsCurrentBlockDragging]);
 
   if (!issue) return null;
 
@@ -94,7 +126,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
 
   return (
     <div
-      ref={parentRef}
+      ref={issueRef}
       className={cn(
         "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 pl-1.5 text-sm transition-colors issue-list-block",
         {
@@ -103,6 +135,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
           "hover:bg-custom-background-90": !isIssueSelected,
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
+          "bg-custom-background-80": isCurrentBlockDragging,
         }
       )}
       style={
@@ -114,10 +147,11 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           : {}
       }
     >
-      <div className="flex w-full truncate" style={issue?.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}>
+      <div className="flex w-full truncate" style={nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
           <div className="flex items-center gap-0.5">
             <div className="flex items-center group">
+              <DragHandle isDragging={isCurrentBlockDragging} ref={dragHandleRef} disabled={!canDrag} />
               {canEditIssueProperties && (
                 <div className="flex-shrink-0 grid place-items-center w-3.5 pl-1.5">
                   <MultipleSelectAction
@@ -133,11 +167,10 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
                   />
                 </div>
               )}
-              <div className="size-4 flex items-center justify-center">
-                {issue.sub_issues_count > 0 && (
+              <div className="flex h-5 w-5 items-center justify-center">
+                {subIssuesCount > 0 && (
                   <button
-                    type="button"
-                    className="flex items-center justify-center size-4 rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                    className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
                     onClick={handleToggleExpand}
                   >
                     <ChevronRight className={`size-4 ${isExpanded ? "rotate-90" : ""}`} />
@@ -181,7 +214,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           <div className="block md:hidden border border-custom-border-300 rounded">
             {quickActions({
               issue,
-              parentRef,
+              parentRef: issueRef,
             })}
           </div>
         )}
@@ -200,7 +233,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
             <div className="hidden md:block">
               {quickActions({
                 issue,
-                parentRef,
+                parentRef: issueRef,
               })}
             </div>
           </>

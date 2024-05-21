@@ -33,7 +33,7 @@ export const DefaultLayout: FC<TDefaultLayout> = (props) => {
             <Image src={patternBackground} className="w-screen h-full object-cover" alt="Plane background pattern" />
           </div>
         )}
-        <div className="relative z-10 mb-[110px] flex-grow">{children}</div>
+        <div className="relative z-10 flex-grow">{children}</div>
       </div>
     </div>
   );

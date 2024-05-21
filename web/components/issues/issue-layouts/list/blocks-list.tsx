@@ -1,6 +1,6 @@
 import { FC, MutableRefObject } from "react";
 // components
-import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
+import { TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
 import { IssueBlockRoot } from "@/components/issues/issue-layouts/list";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -8,36 +8,40 @@ import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
-  groupId: string;
-  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issueIds: TUnGroupedIssues;
   issuesMap: TIssueMap;
+  groupId: string;
   canEditProperties: (projectId: string | undefined) => boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   containerRef: MutableRefObject<HTMLDivElement | null>;
   selectionHelpers: TSelectionHelper;
+  isDragAllowed: boolean;
+  canDropOverIssue: boolean;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
   const {
-    groupId,
     issueIds,
     issuesMap,
+    groupId,
     updateIssue,
     quickActions,
     displayProperties,
     canEditProperties,
     containerRef,
     selectionHelpers,
+    isDragAllowed,
+    canDropOverIssue,
   } = props;
 
   return (
     <div className="relative h-full w-full">
-      {issueIds && issueIds.length > 0 ? (
-        issueIds.map((issueId: string) => (
+      {issueIds &&
+        issueIds.length > 0 &&
+        issueIds.map((issueId: string, index) => (
           <IssueBlockRoot
-            groupId={groupId}
             key={`${issueId}`}
             issueIds={issueIds}
             issueId={issueId}
@@ -50,11 +54,12 @@ export const IssueBlocksList: FC<Props> = (props) => {
             spacingLeft={0}
             containerRef={containerRef}
             selectionHelpers={selectionHelpers}
+            groupId={groupId}
+            isLastChild={index === issueIds.length - 1}
+            isDragAllowed={isDragAllowed}
+            canDropOverIssue={canDropOverIssue}
           />
-        ))
-      ) : (
-        <div className="bg-custom-background-100 p-3 text-sm text-custom-text-400">No issues</div>
-      )}
+        ))}
     </div>
   );
 };

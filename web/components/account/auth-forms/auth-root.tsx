@@ -44,7 +44,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   const [isPasswordAutoset, setIsPasswordAutoset] = useState(true);
   // hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
 
   useEffect(() => {
     if (error_code) {
@@ -58,9 +58,14 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
         )
           setAuthStep(EAuthSteps.PASSWORD);
         if (
-          [EAuthenticationErrorCodes.INVALID_MAGIC_CODE, EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE].includes(
-            errorhandler.code
-          )
+          [
+            EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
+            EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP,
+            EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
+            EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP,
+            EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
+            EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP,
+          ].includes(errorhandler.code)
         )
           setAuthStep(EAuthSteps.UNIQUE_CODE);
         setErrorInfo(errorhandler);
@@ -68,9 +73,9 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
     }
   }, [error_code, authMode]);
 
-  const isSMTPConfigured = instance?.config?.is_smtp_configured || false;
-  const isMagicLoginEnabled = instance?.config?.is_magic_login_enabled || false;
-  const isEmailPasswordEnabled = instance?.config?.is_email_password_enabled || false;
+  const isSMTPConfigured = config?.is_smtp_configured || false;
+  const isMagicLoginEnabled = config?.is_magic_login_enabled || false;
+  const isEmailPasswordEnabled = config?.is_email_password_enabled || false;
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
