@@ -38,7 +38,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
       <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-custom-background-80 text-custom-text-200">
         {icon ? icon : <Network className="w-3.5 h-3.5" />}
       </div>
-      <div className="w-full text-custom-text-200">
+      <div className="w-full truncate text-custom-text-200">
         <IssueUser activityId={activityId} customUserName={customUserName} />
         <span> {children} </span>
         <span>

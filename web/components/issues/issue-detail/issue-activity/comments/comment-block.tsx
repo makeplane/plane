@@ -48,8 +48,8 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
           <MessageCircle className="w-3 h-3" color="#6b7280" />
         </div>
       </div>
-      <div className="w-full relative flex ">
-        <div className="w-full space-y-1">
+      <div className="w-full truncate relative flex ">
+        <div className="w-full truncate space-y-1">
           <div>
             <div className="text-xs capitalize">
               {comment.actor_detail.is_bot
