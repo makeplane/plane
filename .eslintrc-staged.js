@@ -1,6 +1,7 @@
 /**
  * Adds three new lint plugins over the existing configuration:
  * This is used to lint staged files only.
+ * We should remove this file once the entire codebase follows these rules.
  */
 module.exports = {
   root: true,
