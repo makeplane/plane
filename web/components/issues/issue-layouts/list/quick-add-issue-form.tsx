@@ -135,7 +135,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
 
   return (
     <div
-      className={`border-b border-custom-border-200 bg-custom-background-100 ${
+      className={`border-b border-t border-custom-border-200 bg-custom-background-100 ${
         errors && errors?.name && errors?.name?.message ? `border-red-500 bg-red-500/10` : ``
       }`}
     >

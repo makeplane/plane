@@ -49,7 +49,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     isDragAllowed,
     canDropOverIssue,
     isParentIssueBeingDragged = false,
-    isLastChild,
+    isLastChild = false,
   } = props;
   // states
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -118,7 +118,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         key={`${issueId}`}
         defaultHeight="3rem"
         root={containerRef}
-        classNames="relative border-b border-b-custom-border-200"
+        classNames={`relative ${isLastChild ? "" : "border-b border-b-custom-border-200"}`}
       >
         <IssueBlock
           issueId={issueId}
