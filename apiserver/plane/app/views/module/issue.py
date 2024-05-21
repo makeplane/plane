@@ -202,44 +202,40 @@ class ModuleIssueViewSet(BaseViewSet):
     def create_issue_modules(self, request, slug, project_id, issue_id):
         modules = request.data.get("modules", [])
         removed_modules = request.data.get("removed_modules", [])
-
-        if not modules:
-            return Response(
-                {"error": "Modules are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         project = Project.objects.get(pk=project_id)
-        _ = ModuleIssue.objects.bulk_create(
-            [
-                ModuleIssue(
+
+
+        if modules:
+            _ = ModuleIssue.objects.bulk_create(
+                [
+                    ModuleIssue(
+                        issue_id=issue_id,
+                        module_id=module,
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for module in modules
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+            # Bulk Update the activity
+            _ = [
+                issue_activity.delay(
+                    type="module.activity.created",
+                    requested_data=json.dumps({"module_id": module}),
+                    actor_id=str(request.user.id),
                     issue_id=issue_id,
-                    module_id=module,
                     project_id=project_id,
-                    workspace_id=project.workspace_id,
-                    created_by=request.user,
-                    updated_by=request.user,
+                    current_instance=None,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
                 )
                 for module in modules
-            ],
-            batch_size=10,
-            ignore_conflicts=True,
-        )
-        # Bulk Update the activity
-        _ = [
-            issue_activity.delay(
-                type="module.activity.created",
-                requested_data=json.dumps({"module_id": module}),
-                actor_id=str(request.user.id),
-                issue_id=issue_id,
-                project_id=project_id,
-                current_instance=None,
-                epoch=int(timezone.now().timestamp()),
-                notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
-            )
-            for module in modules
-        ]
+            ]
 
         for module_id in removed_modules:
             module_issue = ModuleIssue.objects.get(
