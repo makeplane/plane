@@ -8,6 +8,7 @@ import { Icon } from "@/components/ui";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetails } from "@/hooks/store";
+import useClipboardWritePermission from "@/hooks/use-clipboard-write-permission";
 import useToast from "@/hooks/use-toast";
 // store
 import { IPeekMode } from "@/store/issue-detail.store";
@@ -41,6 +42,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
   const { handleClose } = props;
 
   const { peekMode, setPeekMode } = useIssueDetails();
+  const isClipboardWriteAllowed = useClipboardWritePermission();
 
   const { setToastAlert } = useToast();
 
@@ -117,7 +119,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
             </Transition>
           </Listbox>
         </div>
-        {(peekMode === "side" || peekMode === "modal") && (
+        {isClipboardWriteAllowed && (peekMode === "side" || peekMode === "modal") && (
           <div className="flex flex-shrink-0 items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45 focus:outline-none" tabIndex={1}>
               <Icon iconName="link" className="text-[1rem]" />
