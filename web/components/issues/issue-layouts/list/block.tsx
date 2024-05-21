@@ -67,8 +67,9 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
 
-  const issue = issuesMap[issueId];
-  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+    const issue = issuesMap[issueId];
+    const subIssuesCount = issue.sub_issues_count;
+
   const { isMobile } = usePlatformOS();
 
   useEffect(() => {
@@ -97,8 +98,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
-  // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
-  const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
 
   const paddingLeft = `${spacingLeft}px`;
 

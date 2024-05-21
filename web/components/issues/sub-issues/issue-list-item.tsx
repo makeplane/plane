@@ -59,6 +59,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     undefined;
 
   const subIssueHelpers = subIssueHelpersByIssueId(parentIssueId);
+  const subIssueCount = issue?.sub_issues_count || 0;
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -77,7 +78,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
           style={{ paddingLeft: `${spacingLeft}px` }}
         >
           <div className="h-[22px] w-[22px] flex-shrink-0">
-            {issue?.sub_issues_count > 0 && (
+            {subIssueCount > 0 && (
               <>
                 {subIssueHelpers.preview_loader.includes(issue.id) ? (
                   <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-sm bg-custom-background-80 transition-all">
@@ -205,7 +206,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
         </div>
       )}
 
-      {subIssueHelpers.issue_visibility.includes(issueId) && issue.sub_issues_count && issue.sub_issues_count > 0 && (
+      {subIssueHelpers.issue_visibility.includes(issueId) && subIssueCount > 0 && (
         <IssueList
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
