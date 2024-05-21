@@ -1,27 +1,42 @@
 import { FC, MutableRefObject } from "react";
 // components
-import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
+import { TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
 import { IssueBlockRoot } from "@/components/issues/issue-layouts/list";
 // types
 import { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
-  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issueIds: TUnGroupedIssues;
   issuesMap: TIssueMap;
+  groupId: string;
   canEditProperties: (projectId: string | undefined) => boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   containerRef: MutableRefObject<HTMLDivElement | null>;
+  isDragAllowed: boolean;
+  canDropOverIssue: boolean;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { issueIds, issuesMap, updateIssue, quickActions, displayProperties, canEditProperties, containerRef } = props;
+  const {
+    issueIds,
+    issuesMap,
+    groupId,
+    updateIssue,
+    quickActions,
+    displayProperties,
+    canEditProperties,
+    containerRef,
+    isDragAllowed,
+    canDropOverIssue,
+  } = props;
 
   return (
     <div className="relative h-full w-full">
-      {issueIds && issueIds.length > 0 ? (
-        issueIds.map((issueId: string) => (
+      {issueIds &&
+        issueIds.length > 0 &&
+        issueIds.map((issueId: string, index) => (
           <IssueBlockRoot
             key={`${issueId}`}
             issueIds={issueIds}
@@ -34,11 +49,12 @@ export const IssueBlocksList: FC<Props> = (props) => {
             nestingLevel={0}
             spacingLeft={0}
             containerRef={containerRef}
+            groupId={groupId}
+            isLastChild={index === issueIds.length - 1}
+            isDragAllowed={isDragAllowed}
+            canDropOverIssue={canDropOverIssue}
           />
-        ))
-      ) : (
-        <div className="bg-custom-background-100 p-3 text-sm text-custom-text-400">No issues</div>
-      )}
+        ))}
     </div>
   );
 };
