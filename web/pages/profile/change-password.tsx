@@ -129,6 +129,8 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
       </div>
     );
 
+  const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;
+
   return (
     <>
       <PageHead title="Profile - Change Password" />
@@ -252,7 +254,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
                   />
                 )}
               </div>
-              {!!confirmPassword && password !== confirmPassword && !isRetryPasswordInputFocused && (
+              {!!confirmPassword && password !== confirmPassword && renderPasswordMatchError && (
                 <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
               )}
             </div>

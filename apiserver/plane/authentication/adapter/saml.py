@@ -2,7 +2,6 @@
 import os
 
 # Django imports
-from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 
 # Third party imports
@@ -10,7 +9,11 @@ from onelogin.saml2.auth import OneLogin_Saml2_Auth
 
 # Module imports
 from plane.license.utils.instance_value import get_configuration_value
-from .base import Adapter, AuthenticationException
+from .base import Adapter
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
 
 
 class SAMLAdapter(Adapter):
@@ -50,8 +53,9 @@ class SAMLAdapter(Adapter):
         )
 
         if not (SAML_ENTITY_ID and SAML_SSO_URL and SAML_CERTIFICATE):
-            raise ImproperlyConfigured(
-                "SAML is not configured. Please contact the support team."
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["SAML_NOT_CONFIGURED"],
+                error_message="SAML_NOT_CONFIGURED",
             )
 
         super().__init__(request, self.provider)
@@ -84,7 +88,7 @@ class SAMLAdapter(Adapter):
             "strict": True,
             "debug": settings.DEBUG,
             "sp": {
-                "entityId": f"{request.scheme}://{request.get_host()}/auth/saml/",
+                "entityId": f"{request.scheme}://{request.get_host()}/auth/saml/metadata/",
                 "assertionConsumerService": {
                     "url": f"{request.scheme}://{request.get_host()}/auth/saml/callback/",
                     "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
@@ -146,11 +150,15 @@ class SAMLAdapter(Adapter):
         if errors:
             if not self.auth.is_authenticated():
                 raise AuthenticationException(
-                    error_code="SAML_PROVIDER_ERROR",
-                    error_message="Could not authenticate with the provider. Please contact admin",
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "SAML_PROVIDER_ERROR"
+                    ],
+                    error_message="SAML_PROVIDER_ERROR",
                 )
             raise AuthenticationException(
-                error_message=",".join(errors),
+                error_message=AUTHENTICATION_ERROR_CODES[
+                    "SAML_PROVIDER_ERROR"
+                ],
                 error_code="SAML_PROVIDER_ERROR",
             )
         attributes = self.auth.get_attributes()
@@ -163,8 +171,10 @@ class SAMLAdapter(Adapter):
 
         if not email:
             raise AuthenticationException(
+                error_message=AUTHENTICATION_ERROR_CODES[
+                    "SAML_PROVIDER_ERROR"
+                ],
                 error_code="SAML_PROVIDER_ERROR",
-                error_message="Could not fetch an email from the provider. Please check your provider configuration.",
             )
 
         first_name = (

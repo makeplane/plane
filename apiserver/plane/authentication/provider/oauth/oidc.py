@@ -4,12 +4,13 @@ from datetime import datetime
 from urllib.parse import urlencode
 import pytz
 
-# Django imports
-from django.core.exceptions import ImproperlyConfigured
-
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
 
 
 class OIDCOAuthProvider(OauthAdapter):
@@ -56,8 +57,9 @@ class OIDCOAuthProvider(OauthAdapter):
             and OIDC_USERINFO_URL
             and OIDC_AUTHORIZE_URL
         ):
-            raise ImproperlyConfigured(
-                "OIDC is not configured. Please contact the support team."
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["OIDC_NOT_CONFIGURED"],
+                error_message="OIDC_NOT_CONFIGURED",
             )
 
         redirect_uri = (
