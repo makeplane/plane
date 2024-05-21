@@ -97,7 +97,7 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
             if (user) handleVote(e, 1);
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
-          className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
+          className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 h-7 focus:outline-none ${
             isUpVotedByUser ? "border-custom-primary-200 text-custom-primary-200" : "border-custom-border-300"
           }`}
         >
@@ -131,7 +131,7 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
             if (user) handleVote(e, -1);
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
-          className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
+          className={`flex items-center justify-center gap-x-1 h-7 overflow-hidden rounded border px-2 focus:outline-none ${
             isDownVotedByUser ? "border-red-600 text-red-600" : "border-custom-border-300"
           }`}
         >
