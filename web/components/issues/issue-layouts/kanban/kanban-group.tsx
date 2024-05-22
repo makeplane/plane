@@ -187,8 +187,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     return preloadedData;
   };
 
-  const canDropOverIssue = orderBy === "sort_order";
-  const shouldOverlay = isDraggingOverColumn && (!canDropOverIssue || isDropDisabled);
+  const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
+  const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 
   return (
     <div
@@ -196,13 +196,13 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
       className={cn(
         "relative h-full transition-all min-h-[120px]",
         { "bg-custom-background-80 rounded": isDraggingOverColumn },
-        { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlay }
+        { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlayBeVisible }
       )}
       ref={columnRef}
     >
       <GroupDragOverlay
         dragColumnOrientation={sub_group_by ? "justify-start": "justify-center" }
-        canDropOverIssue={canDropOverIssue}
+        canOverlayBeVisible={canOverlayBeVisible}
         isDropDisabled={isDropDisabled}
         dropErrorMessage={dropErrorMessage}
         orderBy={orderBy}
@@ -219,7 +219,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         quickActions={quickActions}
         canEditProperties={canEditProperties}
         scrollableContainerRef={sub_group_by ? scrollableContainerRef : columnRef}
-        canDropOverIssue={canDropOverIssue}
+        canDropOverIssue={!canOverlayBeVisible}
       />
 
       {enableQuickIssueCreate && !disableIssueCreation && (
