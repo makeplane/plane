@@ -21,7 +21,10 @@ export const MultipleSelectAction: React.FC<Props> = (props) => {
   return (
     <Checkbox
       className={cn("outline-0", className)}
-      onClick={(e) => selectionHelpers.handleEntityClick(e, id, groupId)}
+      onClick={(e) => {
+        e.stopPropagation();
+        selectionHelpers.handleEntityClick(e, id, groupId);
+      }}
       checked={isSelected}
       data-entity-group-id={groupId}
       data-entity-id={id}

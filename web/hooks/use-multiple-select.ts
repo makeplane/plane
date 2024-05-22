@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 
+export type TEntityDetails = {
+  entityID: string;
+  groupID: string;
+};
+
 type Props = {
+  entities: TEntityDetails[]; // { groupID: entityIds[] }
   groups: string[];
 };
 
@@ -18,75 +24,13 @@ export type TSelectionHelper = {
   isGroupSelected: (groupID: string) => "empty" | "partial" | "complete";
 };
 
-type TEntityDetails = {
-  entityID: string;
-  groupID: string;
-};
-
-const groupElements: Record<string, NodeListOf<Element>> = {};
-
-/**
- * @description returns attribute values of the given element
- * @param {Element} element
- * @returns {TEntityDetails}
- */
-const getElementDetails = (element: Element | undefined): TEntityDetails | null => {
-  if (!element) return null;
-  return {
-    entityID: element.getAttribute("data-entity-id") ?? "",
-    groupID: element.getAttribute("data-entity-group-id") ?? "",
-  };
-};
-
-const getElement = (entityID: string): Element | null => {
-  const element = document.querySelector(`[data-entity-id="${entityID}"]`);
-  return element;
-};
-
-const getPreviousAndNextElements = (entityID: string, groupID: string, groups: string[]) => {
-  const currentGroupElements = Array.from(groupElements[groupID]);
-  const currentGroupIndex = groups.findIndex((key) => key === groupID);
-  const currentEntityIndex = currentGroupElements.findIndex((el) => getElementDetails(el)?.entityID === entityID);
-
-  // group position
-  const isFirstGroup = currentGroupIndex === 0;
-  const isLastGroup = currentGroupIndex === groups.length - 1;
-  // entity position
-  const isFirstEntity = currentEntityIndex === 0;
-  const isLastEntity = currentEntityIndex === currentGroupElements.length - 1;
-
-  let previousEntity: Element | null = null;
-  let nextEntity: Element | null = null;
-
-  if (!isLastEntity) {
-    nextEntity = currentGroupElements[currentEntityIndex + 1];
-  } else {
-    if (isLastGroup) nextEntity = null;
-    else nextEntity = groupElements[groups[currentGroupIndex + 1]][0] ?? null;
-  }
-
-  if (!isFirstEntity) {
-    previousEntity = currentGroupElements[currentEntityIndex - 1];
-  } else {
-    if (isFirstGroup) previousEntity = null;
-    else
-      previousEntity =
-        groupElements[groups[currentGroupIndex - 1]][groupElements[groups[currentGroupIndex - 1]].length - 1] ?? null;
-  }
-
-  return {
-    previousEntity,
-    nextEntity,
-  };
-};
-
 export const useMultipleSelect = (props: Props) => {
-  const { groups } = props;
+  const { entities, groups } = props;
   // states
   const [selectedEntityDetails, setSelectedEntityDetails] = useState<TEntityDetails[]>([]);
   const [lastSelectedEntityDetails, setLastSelectedEntityDetails] = useState<TEntityDetails | null>(null);
-  const [previousActiveEntity, setPreviousActiveEntity] = useState<Element | null>(null);
-  const [nextActiveEntity, setNextActiveEntity] = useState<Element | null>(null);
+  const [previousActiveEntity, setPreviousActiveEntity] = useState<TEntityDetails | null>(null);
+  const [nextActiveEntity, setNextActiveEntity] = useState<TEntityDetails | null>(null);
   const [activeEntityDetails, setActiveEntityDetails] = useState<TEntityDetails | null>(null);
 
   /**
@@ -97,7 +41,39 @@ export const useMultipleSelect = (props: Props) => {
     setLastSelectedEntityDetails(null);
     setPreviousActiveEntity(null);
     setNextActiveEntity(null);
+    setActiveEntityDetails(null);
   }, []);
+
+  const getPreviousAndNextEntities = useCallback(
+    (entityID: string) => {
+      const currentEntityIndex = entities.findIndex((entity) => entity?.entityID === entityID);
+
+      // entity position
+      const isFirstEntity = currentEntityIndex === 0;
+      const isLastEntity = currentEntityIndex === entities.length - 1;
+
+      let previousEntity: TEntityDetails | null = null;
+      let nextEntity: TEntityDetails | null = null;
+
+      if (isLastEntity) {
+        nextEntity = null;
+      } else {
+        nextEntity = entities[currentEntityIndex + 1];
+      }
+
+      if (isFirstEntity) {
+        previousEntity = null;
+      } else {
+        previousEntity = entities[currentEntityIndex - 1];
+      }
+
+      return {
+        previousEntity,
+        nextEntity,
+      };
+    },
+    [entities]
+  );
 
   const updateActiveEntityDetails = useCallback(
     (entityDetails: TEntityDetails | null) => {
@@ -113,15 +89,13 @@ export const useMultipleSelect = (props: Props) => {
         groupID: entityDetails.groupID,
       });
 
-      const { previousEntity: previousActiveEntity, nextEntity: nextActiveEntity } = getPreviousAndNextElements(
-        entityDetails.entityID,
-        entityDetails.groupID,
-        groups
+      const { previousEntity: previousActiveEntity, nextEntity: nextActiveEntity } = getPreviousAndNextEntities(
+        entityDetails.entityID
       );
       setPreviousActiveEntity(previousActiveEntity);
       setNextActiveEntity(nextActiveEntity);
     },
-    [groups]
+    [getPreviousAndNextEntities]
   );
 
   const handleEntitySelection = useCallback(
@@ -137,16 +111,15 @@ export const useMultipleSelect = (props: Props) => {
         newSelectedEntities.splice(index, 1);
         setSelectedEntityDetails(newSelectedEntities);
         const newLastEntity = newSelectedEntities[newSelectedEntities.length - 1];
-        if (newLastEntity) {
-          setLastSelectedEntityDetails({
-            entityID: newLastEntity.entityID,
-            groupID: newLastEntity.groupID,
-          });
-          updateActiveEntityDetails(newLastEntity);
-        } else {
-          setLastSelectedEntityDetails(null);
-          updateActiveEntityDetails(null);
-        }
+        setLastSelectedEntityDetails(
+          newLastEntity
+            ? {
+                entityID: newLastEntity.entityID,
+                groupID: newLastEntity.groupID,
+              }
+            : null
+        );
+        updateActiveEntityDetails(newLastEntity ?? null);
       }
     },
     [selectedEntityDetails, updateActiveEntityDetails]
@@ -161,47 +134,30 @@ export const useMultipleSelect = (props: Props) => {
   const handleEntityClick = useCallback(
     (e: React.MouseEvent, entityID: string, groupID: string) => {
       if (e.shiftKey && lastSelectedEntityDetails) {
-        const currentGroupElements = Array.from(groupElements[groupID]);
-        const currentGroupIndex = groups.findIndex((key) => key === groupID);
-        const currentEntityIndex = currentGroupElements.findIndex((el) => getElementDetails(el)?.entityID === entityID);
+        const currentEntityIndex = entities.findIndex((entity) => entity?.entityID === entityID);
 
-        const lastGroupElements = Array.from(groupElements[lastSelectedEntityDetails.groupID]);
-        const lastGroupIndex = groups.findIndex((key) => key === lastSelectedEntityDetails.groupID);
-        const lastEntityIndex = lastGroupElements.findIndex(
-          (el) => getElementDetails(el)?.entityID === lastSelectedEntityDetails.entityID
-        );
-        if (lastGroupIndex < currentGroupIndex) {
-          for (let i = lastGroupIndex; i <= currentGroupIndex; i++) {
-            const startIndex = i === lastGroupIndex ? lastEntityIndex + 1 : 0;
-            const endIndex = i === currentGroupIndex ? currentEntityIndex : groupElements[groups[i]].length - 1;
-            for (let j = startIndex; j <= endIndex; j++) {
-              const element = groupElements[groups[i]][j];
-              const elementDetails = getElementDetails(element);
-              if (elementDetails) {
-                handleEntitySelection(elementDetails.entityID, elementDetails.groupID);
-              }
+        const lastEntityIndex = entities.findIndex((entity) => entity?.entityID === lastSelectedEntityDetails.entityID);
+        if (lastEntityIndex < currentEntityIndex) {
+          for (let i = lastEntityIndex + 1; i <= currentEntityIndex; i++) {
+            const entityDetails = entities[i];
+            if (entityDetails) {
+              handleEntitySelection(entityDetails.entityID, entityDetails.groupID);
             }
           }
-        } else if (lastGroupIndex > currentGroupIndex) {
-          for (let i = currentGroupIndex; i <= lastGroupIndex; i++) {
-            const startIndex = i === currentGroupIndex ? currentEntityIndex : 0;
-            const endIndex = i === lastGroupIndex ? lastEntityIndex - 1 : groupElements[groups[i]].length - 1;
-            for (let j = startIndex; j <= endIndex; j++) {
-              const element = groupElements[groups[i]][j];
-              const elementDetails = getElementDetails(element);
-              if (elementDetails) {
-                handleEntitySelection(elementDetails.entityID, elementDetails.groupID);
-              }
+        } else if (lastEntityIndex > currentEntityIndex) {
+          for (let i = currentEntityIndex; i <= lastEntityIndex - 1; i++) {
+            const entityDetails = entities[i];
+            if (entityDetails) {
+              handleEntitySelection(entityDetails.entityID, entityDetails.groupID);
             }
           }
         } else {
           const startIndex = lastEntityIndex + 1;
           const endIndex = currentEntityIndex;
           for (let i = startIndex; i <= endIndex; i++) {
-            const element = groupElements[groups[lastGroupIndex]][i];
-            const elementDetails = getElementDetails(element);
-            if (elementDetails) {
-              handleEntitySelection(elementDetails.entityID, elementDetails.groupID);
+            const entityDetails = entities[i];
+            if (entityDetails) {
+              handleEntitySelection(entityDetails.entityID, entityDetails.groupID);
             }
           }
         }
@@ -210,7 +166,7 @@ export const useMultipleSelect = (props: Props) => {
 
       handleEntitySelection(entityID, groupID);
     },
-    [groups, handleEntitySelection, lastSelectedEntityDetails]
+    [entities, handleEntitySelection, lastSelectedEntityDetails]
   );
 
   /**
@@ -240,17 +196,13 @@ export const useMultipleSelect = (props: Props) => {
    */
   const isGroupSelected = useCallback(
     (groupID: string) => {
-      const currentGroupElements = groupElements[groupID];
-      if (!currentGroupElements) return "empty";
-      const groupElementsArray = Array.from(currentGroupElements);
-      const totalSelected = groupElementsArray.filter((entity) =>
-        isEntitySelected(getElementDetails(entity)?.entityID ?? "")
-      ).length;
+      const groupEntities = entities.filter((entity) => entity.groupID === groupID);
+      const totalSelected = groupEntities.filter((entity) => isEntitySelected(entity.entityID ?? "")).length;
       if (totalSelected === 0) return "empty";
-      if (totalSelected === currentGroupElements.length) return "complete";
+      if (totalSelected === groupEntities.length) return "complete";
       return "partial";
     },
-    [isEntitySelected]
+    [entities, isEntitySelected]
   );
 
   /**
@@ -259,49 +211,13 @@ export const useMultipleSelect = (props: Props) => {
    */
   const handleGroupClick = useCallback(
     (groupID: string) => {
-      const currentGroupElements = groupElements[groupID];
-      if (!currentGroupElements) return;
-
-      const groupElementsArray = Array.from(currentGroupElements);
-
-      groupElementsArray.forEach((element) => {
-        const elementDetails = getElementDetails(element);
-        if (elementDetails) {
-          handleEntitySelection(elementDetails.entityID, elementDetails.groupID);
-        }
+      const groupEntities = entities.filter((entity) => entity.groupID === groupID);
+      groupEntities.forEach((entity) => {
+        handleEntitySelection(entity.entityID, groupID);
       });
     },
-    [handleEntitySelection]
+    [entities, handleEntitySelection]
   );
-
-  useEffect(() => {
-    const updateGroupElements = () => {
-      groups.forEach((group) => {
-        groupElements[group] = document.querySelectorAll(`[data-entity-group-id="${group}"]`);
-      });
-      // console.log("groupElements", groupElements);
-    };
-
-    // Initial update
-    updateGroupElements();
-
-    // Create a MutationObserver to watch for changes in the DOM
-    const observer = new MutationObserver((mutationsList) => {
-      for (const mutation of mutationsList) {
-        if (mutation.type === "childList" || mutation.type === "attributes") {
-          updateGroupElements();
-          break;
-        }
-      }
-    });
-
-    // Start observing the document body for changes
-    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [groups]);
 
   // clear selection on escape key press
   useEffect(() => {
@@ -321,24 +237,20 @@ export const useMultipleSelect = (props: Props) => {
       if (!e.shiftKey) return;
 
       if (e.key === "ArrowDown" && activeEntityDetails) {
-        let element: Element | null = null;
-        if (activeEntityDetails.entityID === lastSelectedEntityDetails?.entityID) element = nextActiveEntity;
-        else element = getElement(activeEntityDetails.entityID);
-        if (!element) return;
-        const elementDetails = getElementDetails(element ?? undefined);
-        if (elementDetails) {
-          handleEntitySelection(elementDetails.entityID, elementDetails.groupID);
-        }
+        let entity: TEntityDetails | null = null;
+        if (activeEntityDetails.entityID === lastSelectedEntityDetails?.entityID) entity = nextActiveEntity;
+        else entity = activeEntityDetails;
+        if (!entity) return;
+        // console.log("selected by down", elementDetails.entityID);
+        handleEntitySelection(entity.entityID, entity.groupID);
       }
       if (e.key === "ArrowUp" && activeEntityDetails) {
-        let element: Element | null = null;
-        if (activeEntityDetails.entityID === lastSelectedEntityDetails?.entityID) element = previousActiveEntity;
-        else element = getElement(activeEntityDetails.entityID);
-        if (!element) return;
-        const elementDetails = getElementDetails(element);
-        if (elementDetails) {
-          handleEntitySelection(elementDetails.entityID, elementDetails.groupID);
-        }
+        let entity: TEntityDetails | null = null;
+        if (activeEntityDetails.entityID === lastSelectedEntityDetails?.entityID) entity = previousActiveEntity;
+        else entity = activeEntityDetails;
+        if (!entity) return;
+        // console.log("selected by up", elementDetails.entityID);
+        handleEntitySelection(entity.entityID, entity.groupID);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -346,42 +258,36 @@ export const useMultipleSelect = (props: Props) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleEntitySelection, nextActiveEntity, previousActiveEntity]);
+  }, [
+    activeEntityDetails,
+    handleEntitySelection,
+    lastSelectedEntityDetails?.entityID,
+    nextActiveEntity,
+    previousActiveEntity,
+  ]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // set active entity id to the first entity
       if (["ArrowUp", "ArrowDown"].includes(e.key) && !activeEntityDetails) {
-        const firstElementDetails = getElementDetails(groupElements[groups[0]][0]);
+        const firstElementDetails = entities[0];
         if (!firstElementDetails) return;
         updateActiveEntityDetails(firstElementDetails);
       }
 
       if (e.key === "ArrowDown" && activeEntityDetails) {
-        const element = getElement(activeEntityDetails.entityID);
-        if (!element) return;
-        const { nextEntity: nextActiveEntity } = getPreviousAndNextElements(
-          activeEntityDetails.entityID,
-          activeEntityDetails.groupID,
-          groups
-        );
-        const nextElementDetails = getElementDetails(nextActiveEntity ?? undefined);
-        if (nextElementDetails) {
-          updateActiveEntityDetails(nextElementDetails);
+        if (!activeEntityDetails) return;
+        const { nextEntity: nextActiveEntity } = getPreviousAndNextEntities(activeEntityDetails.entityID);
+        if (nextActiveEntity) {
+          updateActiveEntityDetails(nextActiveEntity);
         }
       }
 
       if (e.key === "ArrowUp" && activeEntityDetails) {
-        const element = getElement(activeEntityDetails.entityID);
-        if (!element) return;
-        const { previousEntity: previousActiveEntity } = getPreviousAndNextElements(
-          activeEntityDetails.entityID,
-          activeEntityDetails.groupID,
-          groups
-        );
-        const previousElementDetails = getElementDetails(previousActiveEntity ?? undefined);
-        if (previousElementDetails) {
-          updateActiveEntityDetails(previousElementDetails);
+        if (!activeEntityDetails) return;
+        const { previousEntity: previousActiveEntity } = getPreviousAndNextEntities(activeEntityDetails.entityID);
+        if (previousActiveEntity) {
+          updateActiveEntityDetails(previousActiveEntity);
         }
       }
     };
@@ -391,7 +297,7 @@ export const useMultipleSelect = (props: Props) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeEntityDetails, groups, updateActiveEntityDetails]);
+  }, [activeEntityDetails, entities, groups, getPreviousAndNextEntities, updateActiveEntityDetails]);
 
   /**
    * @description snapshot of the current state of selection

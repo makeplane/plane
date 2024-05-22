@@ -23,6 +23,7 @@ interface IHeaderGroupByCard {
   title: string;
   count: number;
   issuePayload: Partial<TIssue>;
+  canEditProperties: (projectId: string | undefined) => boolean;
   disableIssueCreation?: boolean;
   storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
@@ -36,6 +37,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     title,
     count,
     issuePayload,
+    canEditProperties,
     disableIssueCreation,
     storeType,
     addIssuesToView,
@@ -55,6 +57,8 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
   const isPartialGroupSelected = selectionHelpers.isGroupSelected(groupID) === "partial";
   const isCompleteGroupSelected = selectionHelpers.isGroupSelected(groupID) === "complete";
+  // auth
+  const canSelectIssues = canEditProperties(projectId?.toString());
 
   const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
@@ -80,19 +84,21 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
 
   return (
     <>
-      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-3 py-1.5 pl-3">
-        <div className="flex-shrink-0 flex items-center w-3.5">
-          <Checkbox
-            className={cn(
-              "opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto outline-0",
-              {
-                "opacity-100 pointer-events-auto": isPartialGroupSelected || isCompleteGroupSelected,
-              }
-            )}
-            onClick={() => selectionHelpers.handleGroupClick(groupID)}
-            checked={isCompleteGroupSelected}
-          />
-        </div>
+      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2 py-1.5 pl-2.5">
+        {canSelectIssues && (
+          <div className="flex-shrink-0 flex items-center w-3.5">
+            <Checkbox
+              className={cn(
+                "opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto outline-0",
+                {
+                  "opacity-100 pointer-events-auto": isPartialGroupSelected || isCompleteGroupSelected,
+                }
+              )}
+              onClick={() => selectionHelpers.handleGroupClick(groupID)}
+              checked={isCompleteGroupSelected}
+            />
+          </div>
+        )}
         <div className="flex-shrink-0 grid place-items-center overflow-hidden">
           {icon ?? <CircleDashed className="h-3.5 w-3.5" strokeWidth={2} />}
         </div>

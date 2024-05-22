@@ -59,7 +59,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const issueRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef(null);
   // hooks
-  const { workspaceSlug } = useAppRouter();
+  const { workspaceSlug, projectId } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
 
@@ -150,10 +150,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
       <div className="flex w-full truncate" style={nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
           <div className="flex items-center gap-0.5">
-            <div className="flex items-center group">
+            <div className="flex items-center gap-1 group">
               <DragHandle isDragging={isCurrentBlockDragging} ref={dragHandleRef} disabled={!canDrag} />
-              {canEditIssueProperties && (
-                <div className="flex-shrink-0 grid place-items-center w-3.5 pl-1.5">
+              {projectId && canEditIssueProperties && (
+                <div className="flex-shrink-0 grid place-items-center w-3.5">
                   <MultipleSelectAction
                     className={cn(
                       "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",

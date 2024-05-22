@@ -1,9 +1,11 @@
 import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
-//types
+// hooks
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
-//components
+// components
 import { TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
@@ -20,6 +22,7 @@ type Props = {
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
+  selectionHelpers: TSelectionHelper;
 };
 
 export const SpreadsheetTable = observer((props: Props) => {
@@ -35,6 +38,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     canEditProperties,
     containerRef,
     spreadsheetColumnsList,
+    selectionHelpers,
   } = props;
 
   // states
@@ -100,6 +104,7 @@ export const SpreadsheetTable = observer((props: Props) => {
             isScrolled={isScrolled}
             issueIds={issueIds}
             spreadsheetColumnsList={spreadsheetColumnsList}
+            selectionHelpers={selectionHelpers}
           />
         ))}
       </tbody>

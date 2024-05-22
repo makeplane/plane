@@ -118,13 +118,20 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
 
   const is_list = group_by === null ? true : false;
 
+  const groupIds = groups.map((g) => g.id);
+  const orderedGroups: Record<string, string[]> = {};
+  groupIds.forEach((gID) => {
+    orderedGroups[gID] = [];
+  });
+  const entities = Object.assign(orderedGroups, { ...issueIds });
+
   return (
     <div
       ref={containerRef}
       className="vertical-scrollbar scrollbar-lg relative size-full overflow-auto vertical-scrollbar-margin-top-md"
     >
       {groups && (
-        <MultipleSelectGroup groups={groups.map((g) => g.id)}>
+        <MultipleSelectGroup groups={groupIds} entities={entities}>
           {(helpers, snapshot) => (
             <>
               {groups.map(

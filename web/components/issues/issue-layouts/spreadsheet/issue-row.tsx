@@ -7,11 +7,15 @@ import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
 // components
+import { MultipleSelectAction } from "@/components/core";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+// constants
+import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
@@ -34,6 +38,7 @@ interface Props {
   issueIds: string[];
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
+  selectionHelpers: TSelectionHelper;
 }
 
 export const SpreadsheetIssueRow = observer((props: Props) => {
@@ -51,6 +56,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     issueIds,
     spreadsheetColumnsList,
     spacingLeft = 6,
+    selectionHelpers,
   } = props;
 
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -81,13 +87,12 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           isExpanded={isExpanded}
           setExpanded={setExpanded}
           spreadsheetColumnsList={spreadsheetColumnsList}
+          selectionHelpers={selectionHelpers}
         />
       </RenderIfVisible>
 
       {isExpanded &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssueId: string) => (
+        subIssues?.map((subIssueId) => (
           <SpreadsheetIssueRow
             key={subIssueId}
             issueId={subIssueId}
@@ -103,6 +108,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             containerRef={containerRef}
             issueIds={issueIds}
             spreadsheetColumnsList={spreadsheetColumnsList}
+            selectionHelpers={selectionHelpers}
           />
         ))}
     </>
@@ -123,6 +129,7 @@ interface IssueRowDetailsProps {
   setExpanded: Dispatch<SetStateAction<boolean>>;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
+  selectionHelpers: TSelectionHelper;
 }
 
 const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
@@ -140,6 +147,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     setExpanded,
     spreadsheetColumnsList,
     spacingLeft = 6,
+    selectionHelpers,
   } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -148,7 +156,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const menuActionRef = useRef<HTMLDivElement | null>(null);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // hooks
   const { getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked, peekIssue, setPeekIssue } = useIssueDetail();
@@ -204,10 +212,11 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   const disableUserActions = !canEditProperties(issueDetail.project_id);
   const subIssuesCount = issueDetail.sub_issues_count;
+  const isIssueSelected = selectionHelpers.isEntitySelected(issueDetail.id);
 
   return (
     <>
-      <td id={`issue-${issueId}`} ref={cellRef} tabIndex={0} className="sticky left-0 z-10">
+      <td id={`issue-${issueId}`} ref={cellRef} tabIndex={0} className="sticky left-0 z-10 group/list-block">
         <ControlLink
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
@@ -229,7 +238,21 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           >
             <div className="flex items-center">
               {/* bulk ops */}
-              <span className="size-3.5" />
+              {projectId && !disableUserActions && (
+                <div className="flex-shrink-0 grid place-items-center w-3.5">
+                  <MultipleSelectAction
+                    className={cn(
+                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                      {
+                        "opacity-100 pointer-events-auto": isIssueSelected,
+                      }
+                    )}
+                    groupId={SPREADSHEET_SELECT_GROUP}
+                    id={issueDetail.id}
+                    selectionHelpers={selectionHelpers}
+                  />
+                </div>
+              )}
               <div className="flex size-4 items-center justify-center">
                 {subIssuesCount > 0 && (
                   <button
