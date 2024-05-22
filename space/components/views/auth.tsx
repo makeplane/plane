@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 // components
 import { AuthRoot } from "@/components/account";
+// helpers
+import { SPACE_BASE_PATH } from "@/helpers/common.helper";
 // images
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
@@ -30,7 +32,7 @@ export const AuthView = observer(() => {
       <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
         <div className="container mx-auto px-10 lg:px-0 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
           <div className="flex items-center gap-x-2 py-10">
-            <Link href={`/spaces`} className="h-[30px] w-[133px]">
+            <Link href={`${SPACE_BASE_PATH}/`} className="h-[30px] w-[133px]">
               <Image src={logo} alt="Plane logo" />
             </Link>
           </div>
