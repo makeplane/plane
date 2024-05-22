@@ -101,4 +101,4 @@ class OIDCLogoutEndpoint(View):
 
     def get(self, request):
         logout(request=request)
-        return HttpResponseRedirect(request.session.get("referer", "/"))
+        return HttpResponseRedirect(base_host(request=request, is_app=True))

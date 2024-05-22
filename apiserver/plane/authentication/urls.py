@@ -27,6 +27,7 @@ from .views import (
     SAMLAuthInitiateEndpoint,
     SAMLCallbackEndpoint,
     SAMLMetadataEndpoint,
+    SAMLLogoutEndpoint,
     # Space
     EmailCheckSpaceEndpoint,
     GitHubCallbackSpaceEndpoint,
@@ -211,6 +212,11 @@ urlpatterns = [
         OIDCallbackEndpoint.as_view(),
         name="oidc",
     ),
+    path(
+        "oidc/logout/",
+        OIDCallbackEndpoint.as_view(),
+        name="oidc",
+    ),
     # SAML
     path(
         "saml/",
@@ -225,6 +231,11 @@ urlpatterns = [
     path(
         "saml/metadata/",
         SAMLMetadataEndpoint.as_view(),
+        name="saml",
+    ),
+    path(
+        "saml/logout/",
+        SAMLLogoutEndpoint.as_view(),
         name="saml",
     ),
 ]

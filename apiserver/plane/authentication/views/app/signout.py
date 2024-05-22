@@ -10,6 +10,8 @@ from django.utils import timezone
 # Module imports
 from plane.authentication.utils.host import user_ip, base_host
 from plane.db.models import User
+from plane.authentication.provider.oauth.oidc import OIDCOAuthProvider
+from plane.authentication.adapter.saml import SAMLAdapter
 
 
 class SignOutAuthEndpoint(View):
@@ -21,7 +23,26 @@ class SignOutAuthEndpoint(View):
             user.last_logout_ip = user_ip(request=request)
             user.last_logout_time = timezone.now()
             user.save()
-            # Log the user out
+
+            # Check if the last medium of user is oidc
+            if request.user.last_login_medium == "oidc":
+                provider = OIDCOAuthProvider(
+                    request=request,
+                )
+                logout_url = provider.logout()
+                if logout_url:
+                    return HttpResponseRedirect(logout_url)
+
+            # Check if the last medium of user is saml
+            if request.user.last_login_medium == "saml":
+                provider = SAMLAdapter(
+                    request=request,
+                )
+                logout_url = provider.logout()
+                if logout_url:
+                    return HttpResponseRedirect(logout_url)
+
+            # Logout user
             logout(request)
             url = urljoin(base_host(request=request, is_app=True), "sign-in")
             return HttpResponseRedirect(url)

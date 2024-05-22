@@ -24,7 +24,11 @@ from .app.magic import (
     MagicSignUpEndpoint,
 )
 
-from .app.oidc import OIDCAuthInitiateEndpoint, OIDCallbackEndpoint
+from .app.oidc import (
+    OIDCAuthInitiateEndpoint,
+    OIDCallbackEndpoint,
+    OIDCLogoutEndpoint,
+)
 
 from .app.saml import (
     SAMLAuthInitiateEndpoint,
