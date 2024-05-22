@@ -47,16 +47,21 @@ class EmailCheckSpaceEndpoint(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        (EMAIL_HOST,) = get_configuration_value(
+        (EMAIL_HOST, ENABLE_MAGIC_LINK_LOGIN) = get_configuration_value(
             [
                 {
                     "key": "EMAIL_HOST",
                     "default": os.environ.get("EMAIL_HOST", ""),
                 },
+                {
+                    "key": "ENABLE_MAGIC_LINK_LOGIN",
+                    "default": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "1"),
+                },
             ]
         )
 
         smtp_configured = bool(EMAIL_HOST)
+        is_magic_login_enabled = ENABLE_MAGIC_LINK_LOGIN == "1"
 
         email = request.data.get("email", False)
 
@@ -106,6 +111,7 @@ class EmailCheckSpaceEndpoint(APIView):
                         "MAGIC_CODE"
                         if existing_user.is_password_autoset
                         and smtp_configured
+                        and is_magic_login_enabled
                         else "CREDENTIAL"
                     ),
                 },
@@ -115,7 +121,11 @@ class EmailCheckSpaceEndpoint(APIView):
         return Response(
             {
                 "existing": False,
-                "status": "MAGIC_CODE" if smtp_configured else "CREDENTIAL",
+                "status": (
+                    "MAGIC_CODE"
+                    if smtp_configured and is_magic_login_enabled
+                    else "CREDENTIAL"
+                ),
             },
             status=status.HTTP_200_OK,
         )
