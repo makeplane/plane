@@ -7,14 +7,13 @@ import { Combobox } from "@headlessui/react";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, getDate } from "@/helpers/date-time.helper";
 // hooks
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
-// types
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
-import { TDropdownProps } from "./types";
 // constants
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
+// types
+import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;
@@ -76,33 +75,21 @@ export const DateDropdown: React.FC<Props> = (props) => {
     if (referenceElement) referenceElement.focus();
   };
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    if (referenceElement) referenceElement.blur();
-    onClose && onClose();
-  };
-
-  const toggleDropdown = () => {
-    if (!isOpen) onOpen();
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-    if (isOpen) onClose && onClose();
-  };
+  const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
+    dropdownRef,
+    isOpen,
+    onClose,
+    onOpen,
+    setIsOpen,
+  });
 
   const dropdownOnChange = (val: Date | null) => {
     onChange(val);
-    if (closeOnSelect) handleClose();
+    if (closeOnSelect) {
+      handleClose();
+      referenceElement?.blur();
+    }
   };
-
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
 
   const disabledDays: Matcher[] = [];
   if (minDate) disabledDays.push({ before: minDate });

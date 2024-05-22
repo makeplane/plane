@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 import { AuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
-import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
+import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 // helpers
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -33,7 +33,7 @@ const SignInPage: NextPageWithLayout = observer(() => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      <PageHead title="Sign In" />
+      <PageHead title="Sign up or Log in to continue" />
       <div className="absolute inset-0 z-0">
         <Image
           src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
@@ -48,18 +48,18 @@ const SignInPage: NextPageWithLayout = observer(() => {
             <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
           <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row  text-center text-sm font-medium text-onboarding-text-300">
-            New to Plane?{" "}
+            Already have an account?{" "}
             <Link
               href="/"
-              onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
+              onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
               className="font-semibold text-custom-primary-100 hover:underline"
             >
-              Create an account
+              Log in
             </Link>
           </div>
         </div>
-        <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 lg:pt-28 transition-all">
-          <AuthRoot authMode={EAuthModes.SIGN_IN} />
+        <div className="flex flex-col justify-center flex-grow container h-[100vh-60px] mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 transition-all">
+          <AuthRoot authMode={EAuthModes.SIGN_UP} />
         </div>
       </div>
     </div>

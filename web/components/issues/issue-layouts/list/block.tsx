@@ -189,7 +189,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               </div>
             </div>
             {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+              <div className="pl-1 flex-shrink-0 text-xs font-medium text-custom-text-300">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
             )}

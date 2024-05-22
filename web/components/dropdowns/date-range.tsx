@@ -4,15 +4,14 @@ import { DateRange, DayPicker, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// hooks
-// components
 // ui
 import { Button } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// hooks
+import { useDropdown } from "@/hooks/use-dropdown";
+// components
 import { DropdownButton } from "./buttons";
 // types
 import { TButtonVariants } from "./types";
@@ -105,6 +104,13 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     if (referenceElement) referenceElement.focus();
   };
 
+  const { handleKeyDown, handleOnClick } = useDropdown({
+    dropdownRef,
+    isOpen,
+    onOpen,
+    setIsOpen,
+  });
+
   const handleClose = () => {
     if (!isOpen) return;
     setIsOpen(false);
@@ -114,21 +120,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     });
     if (referenceElement) referenceElement.blur();
   };
-
-  const toggleDropdown = () => {
-    if (!isOpen) onOpen();
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-  };
-
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
 
   const disabledDays: Matcher[] = [];
   if (minDate) disabledDays.push({ before: minDate });

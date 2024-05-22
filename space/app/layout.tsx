@@ -6,6 +6,7 @@ import { InstanceProvider } from "@/lib/instance-provider";
 import { StoreProvider } from "@/lib/store-provider";
 // styles
 import "@/styles/globals.css";
+import { ToastProvider } from "@/lib/toast-provider";
 
 export const metadata: Metadata = {
   title: "Plane Deploy | Make your Plane boards public with one-click",
@@ -34,7 +35,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <StoreProvider>
-          <InstanceProvider>{children}</InstanceProvider>
+          <ToastProvider>
+            <InstanceProvider>{children}</InstanceProvider>
+          </ToastProvider>
         </StoreProvider>
       </body>
     </html>
