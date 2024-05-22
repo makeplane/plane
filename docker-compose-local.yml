@@ -97,7 +97,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/docker-entrypoint-api.sh
+    command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apiserver/.env
     depends_on:
