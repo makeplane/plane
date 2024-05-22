@@ -94,7 +94,7 @@ export const AuthRoot: FC = observer(() => {
     await authService
       .emailCheck(data)
       .then(async (response) => {
-        let currentAuthMode: EAuthModes = EAuthModes.SIGN_UP;
+        let currentAuthMode: EAuthModes = response.existing ? EAuthModes.SIGN_IN : EAuthModes.SIGN_UP;
         if (response.existing) {
           currentAuthMode = EAuthModes.SIGN_IN;
           setAuthMode(() => EAuthModes.SIGN_IN);

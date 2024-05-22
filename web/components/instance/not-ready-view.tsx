@@ -1,5 +1,6 @@
 import { FC } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Button } from "@plane/ui";
 // helpers
@@ -9,19 +10,23 @@ import PlaneTakeOffImage from "@/public/plane-takeoff.png";
 // assets
 import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 
 export const InstanceNotReady: FC = () => {
   const { resolvedTheme } = useTheme();
   const patternBackground = resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern;
+
+  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
 
   return (
     <div className="relative">
       <div className="h-screen w-full overflow-hidden overflow-y-auto flex flex-col">
         <div className="container h-[110px] flex-shrink-0 mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
           <div className="flex items-center gap-x-2 py-10">
-            <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" />
-            <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
+            <Link href={`/`} className="h-[30px] w-[133px]">
+              <Image src={logo} alt="Plane logo" />
+            </Link>
           </div>
         </div>
 

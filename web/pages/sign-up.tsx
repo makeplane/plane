@@ -21,7 +21,9 @@ import { AuthenticationWrapper } from "@/lib/wrappers";
 // assets
 import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 
 export type AuthType = "sign-in" | "sign-up";
 
@@ -31,9 +33,11 @@ const SignInPage: NextPageWithLayout = observer(() => {
   // hooks
   const { resolvedTheme } = useTheme();
 
+  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      <PageHead title="Sign up or Log in to continue" />
+      <PageHead title="Sign up - Plane" />
       <div className="absolute inset-0 z-0">
         <Image
           src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
@@ -44,8 +48,9 @@ const SignInPage: NextPageWithLayout = observer(() => {
       <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
         <div className="container mx-auto px-10 lg:px-0 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
           <div className="flex items-center gap-x-2 py-10">
-            <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" />
-            <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
+            <Link href={`/`} className="h-[30px] w-[133px]">
+              <Image src={logo} alt="Plane logo" />
+            </Link>
           </div>
           <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row  text-center text-sm font-medium text-onboarding-text-300">
             Already have an account?{" "}
