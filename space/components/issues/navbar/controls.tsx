@@ -12,6 +12,7 @@ import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useProject, useIssueFilter, useIssueDetails } from "@/hooks/store";
+import useIsInIframe from "@/hooks/use-is-in-iframe";
 // types
 import { TIssueLayout } from "@/types/issue";
 
@@ -38,6 +39,8 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   const { setPeekId } = useIssueDetails();
   // derived values
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
+
+  const isInIframe = useIsInIframe();
 
   useEffect(() => {
     if (workspaceSlug && projectId && settings) {
@@ -111,7 +114,7 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
         <NavbarTheme />
       </div>
 
-      <UserAvatar />
+      {!isInIframe && <UserAvatar />}
     </>
   );
 });
