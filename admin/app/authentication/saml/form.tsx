@@ -61,7 +61,7 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
     {
       key: "SAML_SSO_URL",
       type: "text",
-      label: "SSO URLs",
+      label: "SSO URL",
       description: "URL used for Single Sign-On (SSO) with your Identity Provider (IdP).",
       placeholder: "https://example.com/sso",
       error: Boolean(errors.SAML_SSO_URL),
@@ -89,18 +89,18 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
 
   const SAML_SERVICE_DETAILS: TCopyField[] = [
     {
+      key: "Metadata_Information",
+      label: "Entity ID / Audience / Metadata Information",
+      url: `${originURL}/auth/saml/metadata/`,
+      description:
+        "We will auto-generate this. Paste this into your audience URI or SP entity ID section of your identity provider.",
+    },
+    {
       key: "Callback_URI",
       label: "Callback URI",
       url: `${originURL}/auth/saml/callback/`,
       description:
         "We will auto-generate this. Paste this in the single sign on callback url section of your identity provider.",
-    },
-    {
-      key: "Metadata_Information",
-      label: "Metadata Information",
-      url: `${originURL}/auth/saml/metadata/`,
-      description:
-        "We will auto-generate this. Paste this into your audience URI or SP entity ID section of your identity provider.",
     },
     {
       key: "Logout_URI",
