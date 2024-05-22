@@ -82,7 +82,7 @@ COPY apiserver/templates templates/
 RUN apk --no-cache add "bash~=5.2"
 COPY apiserver/bin ./bin/
 
-RUN chmod +x ./bin/takeoff ./bin/worker
+RUN chmod +x ./bin/*
 RUN chmod -R 777 /code
 
 # Expose container port and run entry point script
