@@ -75,6 +75,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
       <div ref={portalRef} className="spreadsheet-menu-portal" />
       <MultipleSelectGroup
+        containerRef={containerRef}
         groups={[SPREADSHEET_SELECT_GROUP]}
         entities={{
           [SPREADSHEET_SELECT_GROUP]: issueIds,

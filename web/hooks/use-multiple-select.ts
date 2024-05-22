@@ -6,6 +6,7 @@ export type TEntityDetails = {
 };
 
 type Props = {
+  containerRef: React.MutableRefObject<HTMLElement | null>;
   entities: TEntityDetails[]; // { groupID: entityIds[] }
   groups: string[];
 };
@@ -25,7 +26,7 @@ export type TSelectionHelper = {
 };
 
 export const useMultipleSelect = (props: Props) => {
-  const { entities, groups } = props;
+  const { containerRef, entities, groups } = props;
   // states
   const [selectedEntityDetails, setSelectedEntityDetails] = useState<TEntityDetails[]>([]);
   const [lastSelectedEntityDetails, setLastSelectedEntityDetails] = useState<TEntityDetails | null>(null);
@@ -89,13 +90,34 @@ export const useMultipleSelect = (props: Props) => {
         groupID: entityDetails.groupID,
       });
 
+      const activeElement = document.querySelector(
+        `[data-entity-id="${entityDetails.entityID}"][data-entity-group-id="${entityDetails.groupID}"]`
+      );
+
+      if (activeElement && containerRef.current) {
+        const SCROLL_OFFSET = 160;
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const elementRect = activeElement.getBoundingClientRect();
+
+        const isInView =
+          elementRect.top >= containerRect.top + SCROLL_OFFSET &&
+          elementRect.bottom <= containerRect.bottom - SCROLL_OFFSET;
+
+        if (!isInView) {
+          containerRef.current.scrollBy({
+            top: elementRect.top < containerRect.top + SCROLL_OFFSET ? -50 : 50,
+            behavior: "smooth",
+          });
+        }
+      }
+
       const { previousEntity: previousActiveEntity, nextEntity: nextActiveEntity } = getPreviousAndNextEntities(
         entityDetails.entityID
       );
       setPreviousActiveEntity(previousActiveEntity);
       setNextActiveEntity(nextActiveEntity);
     },
-    [getPreviousAndNextEntities]
+    [containerRef, getPreviousAndNextEntities]
   );
 
   const handleEntitySelection = useCallback(
@@ -111,14 +133,7 @@ export const useMultipleSelect = (props: Props) => {
         newSelectedEntities.splice(index, 1);
         setSelectedEntityDetails(newSelectedEntities);
         const newLastEntity = newSelectedEntities[newSelectedEntities.length - 1];
-        setLastSelectedEntityDetails(
-          newLastEntity
-            ? {
-                entityID: newLastEntity.entityID,
-                groupID: newLastEntity.groupID,
-              }
-            : null
-        );
+        setLastSelectedEntityDetails(newLastEntity ?? null);
         updateActiveEntityDetails(newLastEntity ?? null);
       }
     },
@@ -190,6 +205,20 @@ export const useMultipleSelect = (props: Props) => {
   );
 
   /**
+   * @description toggle group selection
+   * @param {string} groupID
+   */
+  const handleGroupClick = useCallback(
+    (groupID: string) => {
+      const groupEntities = entities.filter((entity) => entity.groupID === groupID);
+      groupEntities.forEach((entity) => {
+        handleEntitySelection(entity.entityID, groupID);
+      });
+    },
+    [entities, handleEntitySelection]
+  );
+
+  /**
    * @description check if any entity of the group is selected
    * @param {string} groupID
    * @returns {boolean}
@@ -203,20 +232,6 @@ export const useMultipleSelect = (props: Props) => {
       return "partial";
     },
     [entities, isEntitySelected]
-  );
-
-  /**
-   * @description toggle group selection
-   * @param {string} groupID
-   */
-  const handleGroupClick = useCallback(
-    (groupID: string) => {
-      const groupEntities = entities.filter((entity) => entity.groupID === groupID);
-      groupEntities.forEach((entity) => {
-        handleEntitySelection(entity.entityID, groupID);
-      });
-    },
-    [entities, handleEntitySelection]
   );
 
   // clear selection on escape key press

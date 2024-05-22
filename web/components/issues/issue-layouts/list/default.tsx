@@ -131,7 +131,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
       className="vertical-scrollbar scrollbar-lg relative size-full overflow-auto vertical-scrollbar-margin-top-md"
     >
       {groups && (
-        <MultipleSelectGroup groups={groupIds} entities={entities}>
+        <MultipleSelectGroup containerRef={containerRef} groups={groupIds} entities={entities}>
           {(helpers, snapshot) => (
             <>
               {groups.map(
