@@ -21,17 +21,15 @@ export const DefaultLayout: FC<TDefaultLayout> = (props) => {
   const { resolvedTheme } = useTheme();
   const patternBackground = resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern;
 
+  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
+
   return (
     <div className="relative">
       <div className="h-screen w-full overflow-hidden overflow-y-auto flex flex-col">
         <div className="container h-[110px] flex-shrink-0 mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
           <div className="flex items-center gap-x-2 py-10">
             <Link href={`/`} className="h-[30px] w-[133px]">
-              {resolvedTheme === "light" ? (
-                <Image src={BlackHorizontalLogo} alt="Plane black logo" />
-              ) : (
-                <Image src={WhiteHorizontalLogo} alt="Plane white logo" />
-              )}
+              <Image src={logo} alt="Plane logo" />
             </Link>
           </div>
         </div>

@@ -30,6 +30,8 @@ const HomePage: NextPageWithLayout = observer(() => {
   // hooks
   const { captureEvent } = useEventTracker();
 
+  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       <PageHead title="Log in - Plane" />
@@ -44,11 +46,7 @@ const HomePage: NextPageWithLayout = observer(() => {
         <div className="container mx-auto px-10 lg:px-0 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
           <div className="flex items-center gap-x-2 py-10">
             <Link href={`/`} className="h-[30px] w-[133px]">
-              {resolvedTheme === "light" ? (
-                <Image src={BlackHorizontalLogo} alt="Plane black logo" />
-              ) : (
-                <Image src={WhiteHorizontalLogo} alt="Plane white logo" />
-              )}
+              <Image src={logo} alt="Plane logo" />
             </Link>
           </div>
           <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row text-center text-sm font-medium text-onboarding-text-300">

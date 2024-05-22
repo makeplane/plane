@@ -16,6 +16,8 @@ export const AuthView = observer(() => {
   // hooks
   const { resolvedTheme } = useTheme();
 
+  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -29,11 +31,7 @@ export const AuthView = observer(() => {
         <div className="container mx-auto px-10 lg:px-0 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
           <div className="flex items-center gap-x-2 py-10">
             <Link href={`/spaces`} className="h-[30px] w-[133px]">
-              {resolvedTheme === "light" ? (
-                <Image src={BlackHorizontalLogo} alt="Plane black logo" />
-              ) : (
-                <Image src={WhiteHorizontalLogo} alt="Plane white logo" />
-              )}
+              <Image src={logo} alt="Plane logo" />
             </Link>
           </div>
         </div>
