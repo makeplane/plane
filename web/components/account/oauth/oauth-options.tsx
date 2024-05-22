@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { GithubOAuthButton, GoogleOAuthButton } from "@/components/account";
 // hooks
 import { useInstance } from "@/hooks/store";
+import { EnterpriseOAuthOptions } from "./enterprise-oauth-options";
 
 type TOAuthOptionProps = {
   isSignUp?: boolean;
@@ -12,7 +13,10 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
   // hooks
   const { config } = useInstance();
 
-  const isOAuthEnabled = (config && (config?.is_google_enabled || config?.is_github_enabled)) || false;
+  const isOAuthEnabled =
+    (config &&
+      (config?.is_google_enabled || config?.is_github_enabled || config?.is_oidc_enabled || config?.is_saml_enabled)) ||
+    false;
 
   if (!isOAuthEnabled) return null;
 
@@ -30,6 +34,8 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
           </div>
         )}
         {config?.is_github_enabled && <GithubOAuthButton text="Continue with Github" />}
+
+        <EnterpriseOAuthOptions />
       </div>
     </>
   );

@@ -94,6 +94,7 @@ from .cycle.base import (
     CycleViewSet,
     TransferCycleIssueEndpoint,
 )
+from .cycle.active_cycle import ActiveCycleEndpoint
 from .cycle.issue import (
     CycleIssueViewSet,
 )
@@ -179,7 +180,7 @@ from .page.base import (
     SubPagesEndpoint,
 )
 
-from .search import GlobalSearchEndpoint, IssueSearchEndpoint
+from .search import GlobalSearchEndpoint, IssueSearchEndpoint, SearchEndpoint
 
 
 from .external.base import (
@@ -220,6 +221,28 @@ from .dashboard.base import DashboardEndpoint, WidgetsEndpoint
 
 from .error_404 import custom_404_view
 
+from .importer.base import (
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+    BulkImportIssuesEndpoint,
+    BulkImportModulesEndpoint,
+)
+
+from .integration.base import (
+    IntegrationViewSet,
+    WorkspaceIntegrationViewSet,
+)
+
+from .integration.github import (
+    GithubRepositoriesEndpoint,
+    GithubRepositorySyncViewSet,
+    GithubIssueSyncViewSet,
+    GithubCommentSyncViewSet,
+    BulkCreateGithubIssueSyncEndpoint,
+)
+
+from .integration.slack import SlackProjectSyncViewSet
 from .exporter.base import ExportIssuesEndpoint
 from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
