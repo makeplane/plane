@@ -2,10 +2,13 @@ import { useCallback, useMemo } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// icons
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
+// types
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
-// hooks
+// ui
 import { Tooltip } from "@plane/ui";
+// components
 import {
   DateDropdown,
   EstimateDropdown,
@@ -15,23 +18,19 @@ import {
   CycleDropdown,
   StateDropdown,
 } from "@/components/dropdowns";
-// helpers
-
-// types
 // constants
 import { ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+// hooks
 import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// components
+// local components
 import { IssuePropertyLabels } from "../properties/labels";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-// helpers
-// types
-// constants
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -64,6 +63,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const currentLayout = `${activeLayout} layout`;
   // derived values
   const stateDetails = getStateById(issue.state_id);
+  const subIssueCount = issue.sub_issues_count;
 
   const issueOperations = useMemo(
     () => ({
@@ -414,24 +414,24 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="sub_issue_count"
-        shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!issue.sub_issues_count}
+        shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
       >
-        <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`} isMobile={isMobile}>
+        <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${subIssueCount}`} isMobile={isMobile}>
           <div
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              if (issue.sub_issues_count) redirectToIssueDetail();
+              if (subIssueCount) redirectToIssueDetail();
             }}
             className={cn(
               "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
               {
-                "hover:bg-custom-background-80 cursor-pointer": issue.sub_issues_count,
+                "hover:bg-custom-background-80 cursor-pointer": subIssueCount,
               }
             )}
           >
             <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.sub_issues_count}</div>
+            <div className="text-xs">{subIssueCount}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>

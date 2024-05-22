@@ -170,7 +170,6 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
   const issueDetail = issue.getIssueById(issueId);
-  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
 
   const paddingLeft = `${spacingLeft}px`;
 
@@ -204,8 +203,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   };
 
   const disableUserActions = !canEditProperties(issueDetail.project_id);
-  // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
-  const subIssuesCount = subIssues ? subIssues.length : issueDetail.sub_issues_count;
+  const subIssuesCount = issueDetail.sub_issues_count;
 
   return (
     <>

@@ -5,9 +5,7 @@ import IssueService from "@/services/issue.service";
 // store types
 import { RootStore } from "@/store/root.store";
 // types
-import { IIssue, IVote } from "@/types/issue";
-
-export type IPeekMode = "side" | "modal" | "full";
+import { IIssue, IPeekMode, IVote } from "@/types/issue";
 
 export interface IIssueDetailStore {
   loader: boolean;

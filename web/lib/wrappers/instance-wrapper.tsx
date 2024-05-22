@@ -16,12 +16,12 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   // store
   const { isLoading, instance, error, fetchInstanceInfo } = useInstance();
 
-  useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
+  const { isLoading: isInstanceSWRLoading } = useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
   });
 
   // loading state
-  if (isLoading)
+  if ((isLoading || isInstanceSWRLoading) && !instance)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <LogoSpinner />

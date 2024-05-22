@@ -57,6 +57,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const handleClose = () => {
     if (isDropdownOpen) setIsDropdownOpen(false);
     if (referenceElement) referenceElement.blur();
+    setQuery("");
   };
 
   const toggleDropdown = () => {

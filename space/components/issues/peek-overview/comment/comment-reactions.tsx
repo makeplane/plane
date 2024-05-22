@@ -5,10 +5,12 @@ import { Tooltip } from "@plane/ui";
 // ui
 import { ReactionSelector } from "@/components/ui";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails, useUser } from "@/hooks/store";
+import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 type Props = {
   commentId: string;
@@ -30,6 +32,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
   // hooks
   const { addCommentReaction, removeCommentReaction, details, peekId } = useIssueDetails();
   const { data: user } = useUser();
+  const isInIframe = useIsInIframe();
 
   const commentReactions = peekId ? details[peekId].comments.find((c) => c.id === commentId)?.comment_reactions : [];
   const groupedReactions = peekId ? groupReactions(commentReactions ?? [], "reaction") : {};
@@ -58,15 +61,17 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
 
   return (
     <div className="mt-2 flex items-center gap-1.5">
-      <ReactionSelector
-        onSelect={(value) => {
-          if (user) handleReactionClick(value);
-          else router.push(`/?next_path=${pathName}?${queryParam}`);
-        }}
-        position="top"
-        selected={userReactions?.map((r) => r.reaction)}
-        size="md"
-      />
+      {!isInIframe && (
+        <ReactionSelector
+          onSelect={(value) => {
+            if (user) handleReactionClick(value);
+            else router.push(`/?next_path=${pathName}?${queryParam}`);
+          }}
+          position="top"
+          selected={userReactions?.map((r) => r.reaction)}
+          size="md"
+        />
+      )}
 
       {Object.keys(groupedReactions || {}).map((reaction) => {
         const reactions = groupedReactions?.[reaction] ?? [];
@@ -89,14 +94,20 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
               <button
                 type="button"
                 onClick={() => {
+                  if (isInIframe) return;
                   if (user) handleReactionClick(reaction);
                   else router.push(`/?next_path=${pathName}?${queryParam}`);
                 }}
-                className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
-                  commentReactions?.some((r) => r?.actor_detail?.id === user?.id && r.reaction === reaction)
-                    ? "bg-custom-primary-100/10"
-                    : "bg-custom-background-80"
-                }`}
+                className={cn(
+                  `flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
+                    commentReactions?.some((r) => r?.actor_detail?.id === user?.id && r.reaction === reaction)
+                      ? "bg-custom-primary-100/10"
+                      : "bg-custom-background-80"
+                  }`,
+                  {
+                    "cursor-default": isInIframe,
+                  }
+                )}
               >
                 <span>{renderEmoji(reaction)}</span>
                 <span
