@@ -7,8 +7,7 @@ import { Combobox } from "@headlessui/react";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember } from "@/hooks/store";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
@@ -62,31 +61,17 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
   };
   if (multiple) comboboxProps.multiple = true;
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    onClose && onClose();
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-    if (isOpen) onClose && onClose();
-  };
+  const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
+    dropdownRef,
+    isOpen,
+    onClose,
+    setIsOpen,
+  });
 
   const dropdownOnChange = (val: string & string[]) => {
     onChange(val);
     if (!multiple) handleClose();
   };
-
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
 
   return (
     <Combobox
