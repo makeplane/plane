@@ -86,7 +86,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/docker-entry-api.sh
+    command: ./bin/docker-entrypoint-api.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
     volumes:
@@ -101,7 +101,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/docker-entry-worker.sh
+    command: ./bin/docker-entrypoint-worker.sh
     volumes:
       - logs_worker:/code/plane/logs
     depends_on:
@@ -115,7 +115,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/docker-entry-beat.sh
+    command: ./bin/docker-entrypoint-beat.sh
     volumes:
       - logs_beat-worker:/code/plane/logs
     depends_on:
@@ -129,7 +129,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: no
-    command: ./bin/docker-entry-migrator.sh
+    command: ./bin/docker-entrypoint-migrator.sh
     volumes:
       - logs_migrator:/code/plane/logs
     depends_on:
