@@ -9,6 +9,8 @@ import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
 import { InstanceFailureView } from "@/components/instance";
+// helpers
+import { SPACE_BASE_PATH } from "@/helpers/common.helper";
 // hooks
 import { useInstance, useUser } from "@/hooks/store";
 // assets
@@ -45,7 +47,7 @@ export const InstanceProvider = observer(({ children }: { children: ReactNode })
         <div className="h-screen w-full overflow-hidden overflow-y-auto flex flex-col">
           <div className="container h-[110px] flex-shrink-0 mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
             <div className="flex items-center gap-x-2 py-10">
-              <Link href={`/spaces`} className="h-[30px] w-[133px]">
+              <Link href={`${SPACE_BASE_PATH}/`} className="h-[30px] w-[133px]">
                 <Image src={logo} alt="Plane logo" />
               </Link>
             </div>
