@@ -134,7 +134,7 @@ export const useMultipleSelect = (props: Props) => {
         setSelectedEntityDetails(newSelectedEntities);
         const newLastEntity = newSelectedEntities[newSelectedEntities.length - 1];
         setLastSelectedEntityDetails(newLastEntity ?? null);
-        updateActiveEntityDetails(newLastEntity ?? null);
+        // updateActiveEntityDetails(newLastEntity ?? null);
       }
     },
     [selectedEntityDetails, updateActiveEntityDetails]
@@ -252,20 +252,14 @@ export const useMultipleSelect = (props: Props) => {
       if (!e.shiftKey) return;
 
       if (e.key === "ArrowDown" && activeEntityDetails) {
-        let entity: TEntityDetails | null = null;
-        if (activeEntityDetails.entityID === lastSelectedEntityDetails?.entityID) entity = nextActiveEntity;
-        else entity = activeEntityDetails;
-        if (!entity) return;
+        if (!nextActiveEntity) return;
         // console.log("selected by down", elementDetails.entityID);
-        handleEntitySelection(entity.entityID, entity.groupID);
+        handleEntitySelection(nextActiveEntity.entityID, nextActiveEntity.groupID);
       }
       if (e.key === "ArrowUp" && activeEntityDetails) {
-        let entity: TEntityDetails | null = null;
-        if (activeEntityDetails.entityID === lastSelectedEntityDetails?.entityID) entity = previousActiveEntity;
-        else entity = activeEntityDetails;
-        if (!entity) return;
+        if (!previousActiveEntity) return;
         // console.log("selected by up", elementDetails.entityID);
-        handleEntitySelection(entity.entityID, entity.groupID);
+        handleEntitySelection(previousActiveEntity.entityID, previousActiveEntity.groupID);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
