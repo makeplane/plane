@@ -55,9 +55,10 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
         disabled={isUpdateDisabled}
       />
       <PriorityDropdown
-        value="urgent"
+        value={undefined}
         onChange={(val) => handleBulkOperation({ priority: val })}
         buttonVariant="border-with-text"
+        buttonClassName="!text-custom-text-300"
         disabled={isUpdateDisabled}
       />
       <MemberDropdown

@@ -3,12 +3,23 @@ import * as React from "react";
 import { cn } from "../../helpers";
 
 export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  intermediate?: boolean;
   containerClassName?: string;
+  iconClassName?: string;
+  intermediate?: boolean;
 }
 
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
-  const { id, name, checked, intermediate = false, disabled, containerClassName, className, ...rest } = props;
+  const {
+    id,
+    name,
+    checked,
+    intermediate = false,
+    disabled,
+    containerClassName,
+    iconClassName,
+    className,
+    ...rest
+  } = props;
 
   return (
     <div className={cn("relative w-full flex gap-2", containerClassName)}>
@@ -23,7 +34,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) 
           {
             "border-custom-border-200 bg-custom-background-80 cursor-not-allowed": disabled,
             "cursor-pointer border-custom-border-300 hover:border-custom-border-400 bg-transparent": !disabled,
-            "border-custom-primary-40 bg-custom-primary-100 hover:bg-custom-primary-200":
+            "border-custom-primary-100 hover:border-custom-primary-200 bg-custom-primary-100 hover:bg-custom-primary-200":
               !disabled && (checked || intermediate),
           },
           className
@@ -32,10 +43,14 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) 
         {...rest}
       />
       <svg
-        className={cn("absolute w-4 h-4 p-0.5 pointer-events-none outline-none hidden stroke-white", {
-          block: checked,
-          "stroke-custom-text-400 opacity-40": disabled,
-        })}
+        className={cn(
+          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-4 p-0.5 pointer-events-none outline-none hidden stroke-white",
+          {
+            block: checked,
+            "stroke-custom-text-400 opacity-40": disabled,
+          },
+          iconClassName
+        )}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -47,10 +62,14 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) 
         <polyline points="20 6 9 17 4 12" />
       </svg>
       <svg
-        className={cn("absolute w-4 h-4 p-0.5 pointer-events-none outline-none stroke-white hidden", {
-          "stroke-custom-text-400 opacity-40": disabled,
-          block: intermediate && !checked,
-        })}
+        className={cn(
+          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-4 p-0.5 pointer-events-none outline-none stroke-white hidden",
+          {
+            "stroke-custom-text-400 opacity-40": disabled,
+            block: intermediate && !checked,
+          },
+          iconClassName
+        )}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 8 8"
         fill="none"

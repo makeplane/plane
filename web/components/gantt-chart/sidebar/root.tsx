@@ -1,19 +1,39 @@
+// ui
+import { Checkbox } from "@plane/ui";
 // components
 import { IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants
-import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
+import { GANTT_SELECT_GROUP, HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
 
 type Props = {
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableReorder: boolean;
+  enableSelection: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
   quickAdd?: React.JSX.Element | undefined;
+  selectionHelpers: TSelectionHelper;
 };
 
 export const GanttChartSidebar: React.FC<Props> = (props) => {
-  const { blocks, blockUpdateHandler, enableReorder, sidebarToRender, title, quickAdd } = props;
+  const {
+    blocks,
+    blockUpdateHandler,
+    enableReorder,
+    enableSelection,
+    sidebarToRender,
+    title,
+    quickAdd,
+    selectionHelpers,
+  } = props;
+
+  const isPartialGroupSelected = selectionHelpers.isGroupSelected(GANTT_SELECT_GROUP) === "partial";
+  const isCompleteGroupSelected = selectionHelpers.isGroupSelected(GANTT_SELECT_GROUP) === "complete";
 
   return (
     <div
@@ -25,17 +45,39 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
       }}
     >
       <div
-        className="box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pl-8 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-10 bg-custom-background-100"
+        className="group/list-header box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pl-2 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-10 bg-custom-background-100"
         style={{
           height: `${HEADER_HEIGHT}px`,
         }}
       >
-        <h6>{title}</h6>
+        <div
+          className={cn("flex items-center gap-2", {
+            "pl-2": !enableSelection,
+          })}
+        >
+          {enableSelection && (
+            <div className="flex-shrink-0 flex items-center w-3.5">
+              <Checkbox
+                className={cn(
+                  "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
+                  {
+                    "opacity-100 pointer-events-auto": isPartialGroupSelected || isCompleteGroupSelected,
+                  }
+                )}
+                iconClassName="size-3"
+                onClick={() => selectionHelpers.handleGroupClick(GANTT_SELECT_GROUP)}
+                checked={isCompleteGroupSelected}
+              />
+            </div>
+          )}
+          <h6>{title}</h6>
+        </div>
         <h6>Duration</h6>
       </div>
 
       <div className="min-h-full h-max bg-custom-background-100 overflow-hidden">
-        {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
+        {sidebarToRender &&
+          sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder, enableSelection, selectionHelpers })}
       </div>
       {quickAdd ? quickAdd : null}
     </div>

@@ -179,7 +179,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   const issueDetail = issue.getIssueById(issueId);
 
-  const paddingLeft = `${spacingLeft}px`;
+  const marginLeft = `${spacingLeft}px`;
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
@@ -238,49 +238,50 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           )}
           disabled={!!issueDetail?.tempId}
         >
-          <div
-            className="flex min-w-min items-center gap-0.5 px-4 py-2.5 pl-1.5 pr-0"
-            style={nestingLevel !== 0 ? { paddingLeft } : {}}
-          >
-            <div className="flex items-center">
-              {/* bulk ops */}
-              {projectId && !disableUserActions && (
-                <Tooltip
-                  tooltipContent={
-                    <>
-                      Only issues within the current
-                      <br />
-                      project can be selected.
-                    </>
-                  }
-                  disabled={issueDetail.project_id === projectId}
+          <div className="flex items-center gap-2 min-w-min py-2.5 pl-2">
+            {/* select checkbox */}
+            {projectId && !disableUserActions && (
+              <Tooltip
+                tooltipContent={
+                  <>
+                    Only issues within the current
+                    <br />
+                    project can be selected.
+                  </>
+                }
+                disabled={issueDetail.project_id === projectId}
+              >
+                <div className="flex-shrink-0 grid place-items-center w-3.5">
+                  <MultipleSelectAction
+                    className={cn(
+                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                      {
+                        "opacity-100 pointer-events-auto": isIssueSelected,
+                      }
+                    )}
+                    groupId={SPREADSHEET_SELECT_GROUP}
+                    id={issueDetail.id}
+                    selectionHelpers={selectionHelpers}
+                    disabled={issueDetail.project_id !== projectId}
+                  />
+                </div>
+              </Tooltip>
+            )}
+            {/* sub-issues chevron */}
+            <div className="grid place-items-center size-4" style={nestingLevel !== 0 ? { marginLeft } : {}}>
+              {subIssuesCount > 0 && (
+                <button
+                  type="button"
+                  className="grid place-items-center size-4 rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                  onClick={handleToggleExpand}
                 >
-                  <div className="flex-shrink-0 grid place-items-center w-3.5">
-                    <MultipleSelectAction
-                      className={cn(
-                        "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
-                        {
-                          "opacity-100 pointer-events-auto": isIssueSelected,
-                        }
-                      )}
-                      groupId={SPREADSHEET_SELECT_GROUP}
-                      id={issueDetail.id}
-                      selectionHelpers={selectionHelpers}
-                      disabled={issueDetail.project_id !== projectId}
-                    />
-                  </div>
-                </Tooltip>
+                  <ChevronRight
+                    className={cn("size-4", {
+                      "rotate-90": isExpanded,
+                    })}
+                  />
+                </button>
               )}
-              <div className="flex size-4 items-center justify-center">
-                {subIssuesCount > 0 && (
-                  <button
-                    className="flex items-center justify-center size-4 cursor-pointer rounded-sm text-custom-text-400 hover:text-custom-text-300"
-                    onClick={handleToggleExpand}
-                  >
-                    <ChevronRight className={`size-4 ${isExpanded ? "rotate-90" : ""}`} />
-                  </button>
-                )}
-              </div>
             </div>
 
             <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">

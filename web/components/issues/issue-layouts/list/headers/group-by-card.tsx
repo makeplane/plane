@@ -84,16 +84,17 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
 
   return (
     <>
-      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2 py-1.5 pl-3">
+      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2 py-1.5 pl-4">
         {canSelectIssues && (
-          <div className="flex-shrink-0 flex items-center w-3.5 pl-0.5">
+          <div className="flex-shrink-0 flex items-center w-3.5 pl-1">
             <Checkbox
               className={cn(
-                "opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto outline-0",
+                "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
                 {
                   "opacity-100 pointer-events-auto": isPartialGroupSelected || isCompleteGroupSelected,
                 }
               )}
+              iconClassName="size-3"
               onClick={() => selectionHelpers.handleGroupClick(groupID)}
               checked={isCompleteGroupSelected}
             />

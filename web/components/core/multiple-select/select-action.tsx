@@ -17,11 +17,11 @@ export const MultipleSelectAction: React.FC<Props> = (props) => {
   const { className, disabled = false, groupId, id, selectionHelpers } = props;
   // derived values
   const isSelected = selectionHelpers.isEntitySelected(id);
-  const isActive = selectionHelpers.isEntityActive(id);
 
   return (
     <Checkbox
-      className={cn("!outline-none", className)}
+      className={cn("!outline-none size-3.5", className)}
+      iconClassName="size-3"
       onClick={(e) => {
         e.stopPropagation();
         selectionHelpers.handleEntityClick(e, id, groupId);
@@ -29,8 +29,6 @@ export const MultipleSelectAction: React.FC<Props> = (props) => {
       checked={isSelected}
       data-entity-group-id={groupId}
       data-entity-id={id}
-      data-type="multiple-select-action"
-      data-active={isActive}
       disabled={disabled}
     />
   );

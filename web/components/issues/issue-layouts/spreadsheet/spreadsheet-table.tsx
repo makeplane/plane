@@ -85,8 +85,10 @@ export const SpreadsheetTable = observer((props: Props) => {
         displayProperties={displayProperties}
         displayFilters={displayFilters}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        canEditProperties={canEditProperties}
         isEstimateEnabled={isEstimateEnabled}
         spreadsheetColumnsList={spreadsheetColumnsList}
+        selectionHelpers={selectionHelpers}
       />
       <tbody>
         {issueIds.map((id) => (

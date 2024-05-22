@@ -64,11 +64,16 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
         <div className="h-7 pr-3 text-sm flex items-center gap-2">
           <Checkbox className="cursor-pointer outline-0" onClick={selectionHelpers.handleClearSelection} intermediate />
           <div className="flex items-center gap-1">
-            {/* // TODO: add min width here */}
-            <span className="flex-shrink-0">{selectedEntityIds.length}</span>selected
+            <span
+              className="flex-shrink-0"
+              style={{ minWidth: `${Math.max(8, String(selectedEntityIds.length).length * 8)}px` }}
+            >
+              {selectedEntityIds.length}
+            </span>
+            selected
           </div>
         </div>
-        <div className="h-7 px-3 flex items-center">
+        <div className="h-7 px-3 flex items-center gap-3">
           <Tooltip tooltipContent="Archive">
             <button
               type="button"
@@ -82,8 +87,6 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
               <ArchiveIcon className="size-4" />
             </button>
           </Tooltip>
-        </div>
-        <div className="h-7 px-3 flex items-center">
           <Tooltip tooltipContent="Delete">
             <button
               type="button"

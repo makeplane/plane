@@ -77,7 +77,7 @@ export const useMultipleSelect = (props: Props) => {
   );
 
   const updateActiveEntityDetails = useCallback(
-    (entityDetails: TEntityDetails | null) => {
+    (entityDetails: TEntityDetails | null, shouldScroll: boolean = true) => {
       if (!entityDetails) {
         setActiveEntityDetails(null);
         setPreviousActiveEntity(null);
@@ -90,12 +90,12 @@ export const useMultipleSelect = (props: Props) => {
         groupID: entityDetails.groupID,
       });
 
+      // scroll to get the active element in view
       const activeElement = document.querySelector(
         `[data-entity-id="${entityDetails.entityID}"][data-entity-group-id="${entityDetails.groupID}"]`
       );
-
-      if (activeElement && containerRef.current) {
-        const SCROLL_OFFSET = 160;
+      if (activeElement && containerRef.current && shouldScroll) {
+        const SCROLL_OFFSET = 200;
         const containerRect = containerRef.current.getBoundingClientRect();
         const elementRect = activeElement.getBoundingClientRect();
 
@@ -121,20 +121,19 @@ export const useMultipleSelect = (props: Props) => {
   );
 
   const handleEntitySelection = useCallback(
-    (entityID: string, groupID: string) => {
+    (entityID: string, groupID: string, shouldScroll: boolean = true) => {
       const index = selectedEntityDetails.findIndex((en) => en.entityID === entityID && en.groupID === groupID);
 
       if (index === -1) {
         setSelectedEntityDetails((prev) => [...prev, { entityID, groupID }]);
         setLastSelectedEntityDetails({ entityID, groupID });
-        updateActiveEntityDetails({ entityID, groupID });
+        updateActiveEntityDetails({ entityID, groupID }, shouldScroll);
       } else {
         const newSelectedEntities = [...selectedEntityDetails];
         newSelectedEntities.splice(index, 1);
         setSelectedEntityDetails(newSelectedEntities);
         const newLastEntity = newSelectedEntities[newSelectedEntities.length - 1];
         setLastSelectedEntityDetails(newLastEntity ?? null);
-        // updateActiveEntityDetails(newLastEntity ?? null);
       }
     },
     [selectedEntityDetails, updateActiveEntityDetails]
@@ -212,7 +211,7 @@ export const useMultipleSelect = (props: Props) => {
     (groupID: string) => {
       const groupEntities = entities.filter((entity) => entity.groupID === groupID);
       groupEntities.forEach((entity) => {
-        handleEntitySelection(entity.entityID, groupID);
+        handleEntitySelection(entity.entityID, groupID, false);
       });
     },
     [entities, handleEntitySelection]

@@ -1,33 +1,70 @@
+import { useRouter } from "next/router";
 // ui
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // types
-import { LayersIcon } from "@plane/ui";
+import { Checkbox } from "@plane/ui";
 // components
 import { SpreadsheetHeaderColumn } from "@/components/issues/issue-layouts";
+// constants
+import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
+  canEditProperties: (projectId: string | undefined) => boolean;
   isEstimateEnabled: boolean;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
+  selectionHelpers: TSelectionHelper;
 }
 
 export const SpreadsheetHeader = (props: Props) => {
-  const { displayProperties, displayFilters, handleDisplayFilterUpdate, isEstimateEnabled, spreadsheetColumnsList } =
-    props;
+  const {
+    displayProperties,
+    displayFilters,
+    handleDisplayFilterUpdate,
+    canEditProperties,
+    isEstimateEnabled,
+    spreadsheetColumnsList,
+    selectionHelpers,
+  } = props;
+  // router
+  const router = useRouter();
+  const { projectId } = router.query;
+  // derived values
+  const isPartialGroupSelected = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "partial";
+  const isCompleteGroupSelected = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "complete";
+  // auth
+  const canSelectIssues = canEditProperties(projectId?.toString());
 
   return (
     <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-custom-border-100">
       <tr>
         <th
-          className="sticky left-0 z-[15] h-11 w-[28rem] flex items-center bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px]  before:border-custom-border-100"
+          className="group/list-header sticky left-0 z-[15] h-11 w-[28rem] flex items-center gap-2 bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px] before:border-custom-border-100 pl-2"
           tabIndex={-1}
         >
-          <span className="flex h-full w-full flex-grow items-center pl-5 px-4 py-2.5">
-            <LayersIcon className="mr-1 h-4 w-4 text-custom-text-400" />
-            Issue
-          </span>
+          {canSelectIssues && (
+            <div className="flex-shrink-0 flex items-center w-3.5">
+              <Checkbox
+                className={cn(
+                  "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
+                  {
+                    "opacity-100 pointer-events-auto": isPartialGroupSelected || isCompleteGroupSelected,
+                  }
+                )}
+                iconClassName="size-3"
+                onClick={() => selectionHelpers.handleGroupClick(SPREADSHEET_SELECT_GROUP)}
+                checked={isCompleteGroupSelected}
+              />
+            </div>
+          )}
+          <div className="size-4" />
+          <span className="flex h-full w-full flex-grow items-center py-2.5">Issues</span>
         </th>
 
         {spreadsheetColumnsList.map((property) => (

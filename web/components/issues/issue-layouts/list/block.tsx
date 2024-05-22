@@ -104,11 +104,12 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
   const isIssueSelected = selectionHelpers.isEntitySelected(issue.id);
   const isIssueActive = selectionHelpers.isEntityActive(issue.id);
+  const isSubIssue = nestingLevel !== 0;
 
   // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
   // const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
 
-  const paddingLeft = `${spacingLeft}px`;
+  const marginLeft = `${spacingLeft}px`;
 
   const handleToggleExpand = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -128,68 +129,75 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     <div
       ref={issueRef}
       className={cn(
-        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-sm transition-colors issue-list-block border border-transparent",
+        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-sm transition-colors border border-transparent",
         {
           "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
-          "last:border-b-transparent": !getIsIssuePeeked(issue.id),
+          "border-custom-border-400": isIssueActive,
+          "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
           "bg-custom-background-80": isCurrentBlockDragging,
         }
       )}
-      style={
-        isIssueActive
-          ? {
-              boxShadow:
-                "inset 1px 1px 2px rgba(var(--color-primary-100), 0.15), inset -1px -1px 2px rgba(var(--color-primary-100), 0.15)",
-            }
-          : {}
-      }
     >
-      <div className="flex w-full truncate" style={nestingLevel !== 0 ? { paddingLeft } : {}}>
+      <div className="flex w-full truncate">
         <div className="flex flex-grow items-center gap-3 truncate">
-          <div className="flex items-center gap-0.5">
-            <div className="flex items-center gap-1 group">
-              <DragHandle isDragging={isCurrentBlockDragging} ref={dragHandleRef} disabled={!canDrag} />
-              {projectId && canEditIssueProperties && (
-                <Tooltip
-                  tooltipContent={
-                    <>
-                      Only issues within the current
-                      <br />
-                      project can be selected.
-                    </>
-                  }
-                  disabled={issue.project_id === projectId}
+          <div className="flex items-center gap-2">
+            {/* drag handle */}
+            <div className="size-4 flex items-center group/drag-handle">
+              <DragHandle
+                ref={dragHandleRef}
+                disabled={!canDrag}
+                className={cn("opacity-0 group-hover/drag-handle:opacity-100", {
+                  "opacity-100": isCurrentBlockDragging,
+                })}
+              />
+            </div>
+            {/* select checkbox */}
+            {projectId && canEditIssueProperties && (
+              <Tooltip
+                tooltipContent={
+                  <>
+                    Only issues within the current
+                    <br />
+                    project can be selected.
+                  </>
+                }
+                disabled={issue.project_id === projectId}
+              >
+                <div className="flex-shrink-0 grid place-items-center w-3.5">
+                  <MultipleSelectAction
+                    className={cn(
+                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                      {
+                        "opacity-100 pointer-events-auto": isIssueSelected,
+                      }
+                    )}
+                    groupId={groupId}
+                    id={issue.id}
+                    selectionHelpers={selectionHelpers}
+                    disabled={issue.project_id !== projectId}
+                  />
+                </div>
+              </Tooltip>
+            )}
+            {/* sub-issues chevron */}
+            <div className="size-4 grid place-items-center flex-shrink-0" style={isSubIssue ? { marginLeft } : {}}>
+              {subIssuesCount > 0 && (
+                <button
+                  type="button"
+                  className="size-4 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                  onClick={handleToggleExpand}
                 >
-                  <div className="flex-shrink-0 grid place-items-center w-3.5">
-                    <MultipleSelectAction
-                      className={cn(
-                        "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
-                        {
-                          "opacity-100 pointer-events-auto": isIssueSelected,
-                        }
-                      )}
-                      groupId={groupId}
-                      id={issue.id}
-                      selectionHelpers={selectionHelpers}
-                      disabled={issue.project_id !== projectId}
-                    />
-                  </div>
-                </Tooltip>
+                  <ChevronRight
+                    className={cn("size-4", {
+                      "rotate-90": isExpanded,
+                    })}
+                  />
+                </button>
               )}
-              <div className="size-5 flex items-center justify-center">
-                {subIssuesCount > 0 && (
-                  <button
-                    className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
-                    onClick={handleToggleExpand}
-                  >
-                    <ChevronRight className={`size-4 ${isExpanded ? "rotate-90" : ""}`} />
-                  </button>
-                )}
-              </div>
             </div>
             {displayProperties && displayProperties?.key && (
-              <div className="pl-1 flex-shrink-0 text-xs font-medium text-custom-text-300">
+              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
             )}
@@ -215,7 +223,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               disabled={!!issue?.tempId}
             >
               <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left">
-                <p className="truncate">{issue.id}</p>
+                <p className="truncate">{issue.name}</p>
               </Tooltip>
             </ControlLink>
           )}
