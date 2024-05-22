@@ -1,0 +1,34 @@
+FROM ubuntu:20.04
+
+# Set environment variables for non-interactive installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update the package list and install dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    supervisor \
+    nginx \
+    curl \
+    python3-pip
+
+# Installing Postgres
+RUN apt-get update && apt-get install -y postgresql postgresql-contrib
+
+# Install Redis
+RUN apt-get update && apt-get install -y redis-server
+
+# Install MinIO
+RUN wget https://dl.min.io/server/minio/release/linux-amd64/minio -O /usr/local/bin/minio && \
+    chmod +x /usr/local/bin/minio
+
+# Create necessary directories and set permissions
+RUN mkdir -p /data/postgres /data/redis /data/minio && \
+    chown -R postgres:postgres /data/postgres && \
+    chown -R redis:redis /data/redis && \
+    chown -R root:root /data/minio
+
+# Expose the necessary ports
+EXPOSE 5432 6379 9000
