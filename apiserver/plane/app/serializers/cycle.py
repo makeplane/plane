@@ -7,7 +7,6 @@ from .issue import IssueStateSerializer
 from plane.db.models import (
     Cycle,
     CycleIssue,
-    CycleFavorite,
     CycleUserProperties,
 )
 
@@ -92,20 +91,6 @@ class CycleIssueSerializer(BaseSerializer):
             "project",
             "cycle",
         ]
-
-
-class CycleFavoriteSerializer(BaseSerializer):
-    cycle_detail = CycleSerializer(source="cycle", read_only=True)
-
-    class Meta:
-        model = CycleFavorite
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "user",
-        ]
-
 
 class CycleUserPropertiesSerializer(BaseSerializer):
     class Meta:

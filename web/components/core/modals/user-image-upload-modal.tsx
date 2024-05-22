@@ -30,7 +30,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   // store hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 
@@ -39,7 +39,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: instance?.config?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
   });
 

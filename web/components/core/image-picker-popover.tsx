@@ -62,7 +62,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
   const { currentWorkspace } = useWorkspace();
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
@@ -90,7 +90,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: instance?.config?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
   });
 
   const handleSubmit = async () => {

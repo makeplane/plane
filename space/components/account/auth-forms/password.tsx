@@ -19,6 +19,7 @@ type Props = {
   isPasswordAutoset: boolean;
   isSMTPConfigured: boolean;
   mode: EAuthModes;
+  nextPath: string | undefined;
   handleEmailClear: () => void;
   handleAuthStep: (step: EAuthSteps) => void;
 };
@@ -37,7 +38,7 @@ const defaultValues: TPasswordFormValues = {
 const authService = new AuthService();
 
 export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
-  const { email, isSMTPConfigured, handleAuthStep, handleEmailClear, mode } = props;
+  const { email, nextPath, isSMTPConfigured, handleAuthStep, handleEmailClear, mode } = props;
   // states
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
@@ -65,6 +66,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   };
 
   const passwordSupport = passwordFormData.password.length > 0 &&
+    mode === EAuthModes.SIGN_UP &&
     (getPasswordStrength(passwordFormData.password) < 3 || isPasswordInputFocused) && (
       <PasswordStrengthMeter password={passwordFormData.password} />
     );
@@ -82,6 +84,10 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
     [isSubmitting, mode, passwordFormData.confirm_password, passwordFormData.password]
   );
 
+  const password = passwordFormData.password ?? "";
+  const confirmPassword = passwordFormData.confirm_password ?? "";
+  const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;
+
   return (
     <form
       className="mt-5 space-y-4"
@@ -92,6 +98,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <input type="hidden" value={passwordFormData.email} name="email" />
+      <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
           Email
@@ -178,7 +185,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
           </div>
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
-            !isRetryPasswordInputFocused && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
+            renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
         </div>
       )}
 

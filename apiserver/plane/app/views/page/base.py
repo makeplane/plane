@@ -15,7 +15,6 @@ from rest_framework.response import Response
 
 from plane.app.permissions import ProjectEntityPermission
 from plane.app.serializers import (
-    PageFavoriteSerializer,
     PageLogSerializer,
     PageSerializer,
     SubPageSerializer,
@@ -23,8 +22,8 @@ from plane.app.serializers import (
 )
 from plane.db.models import (
     Page,
-    PageFavorite,
     PageLog,
+    UserFavorite,
     ProjectMember,
 )
 
@@ -61,9 +60,10 @@ class PageViewSet(BaseViewSet):
     ]
 
     def get_queryset(self):
-        subquery = PageFavorite.objects.filter(
+        subquery = UserFavorite.objects.filter(
             user=self.request.user,
-            page_id=OuterRef("pk"),
+            entity_type="page",
+            entity_identifier=OuterRef("pk"),
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
@@ -303,23 +303,24 @@ class PageFavoriteViewSet(BaseViewSet):
         ProjectEntityPermission,
     ]
 
-    serializer_class = PageFavoriteSerializer
-    model = PageFavorite
+    model = UserFavorite
 
     def create(self, request, slug, project_id, pk):
-        _ = PageFavorite.objects.create(
+        _ = UserFavorite.objects.create(
             project_id=project_id,
-            page_id=pk,
+            entity_identifier=pk,
+            entity_type="page",
             user=request.user,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, pk):
-        page_favorite = PageFavorite.objects.get(
+        page_favorite = UserFavorite.objects.get(
             project=project_id,
             user=request.user,
             workspace__slug=slug,
-            page_id=pk,
+            entity_identifier=pk,
+            entity_type="page",
         )
         page_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

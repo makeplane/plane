@@ -87,7 +87,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    retypePassword: false,
+  });
   // hooks
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -111,6 +114,9 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     },
     mode: "onChange",
   });
+
+  const handleShowPassword = (key: keyof typeof showPassword) =>
+    setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const handleSetPassword = async (password: string) => {
     const token = await authService.requestCSRFToken().then((data) => data?.csrf_token);
@@ -415,7 +421,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                       render={({ field: { value, onChange, ref } }) => (
                         <div className="relative flex items-center rounded-md">
                           <Input
-                            type={showPassword ? "text" : "password"}
+                            type={showPassword.password ? "text" : "password"}
                             name="password"
                             value={value}
                             onChange={onChange}
@@ -426,15 +432,15 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
                           />
-                          {showPassword ? (
+                          {showPassword.password ? (
                             <EyeOff
                               className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                              onClick={() => setShowPassword(false)}
+                              onClick={() => handleShowPassword("password")}
                             />
                           ) : (
                             <Eye
                               className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                              onClick={() => setShowPassword(true)}
+                              onClick={() => handleShowPassword("password")}
                             />
                           )}
                         </div>
@@ -458,7 +464,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                       render={({ field: { value, onChange, ref } }) => (
                         <div className="relative flex items-center rounded-md">
                           <Input
-                            type={showPassword ? "text" : "password"}
+                            type={showPassword.retypePassword ? "text" : "password"}
                             name="confirm_password"
                             value={value}
                             onChange={onChange}
@@ -467,15 +473,15 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                             placeholder="Confirm password..."
                             className="w-full border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                           />
-                          {showPassword ? (
+                          {showPassword.retypePassword ? (
                             <EyeOff
                               className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                              onClick={() => setShowPassword(false)}
+                              onClick={() => handleShowPassword("retypePassword")}
                             />
                           ) : (
                             <Eye
                               className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                              onClick={() => setShowPassword(true)}
+                              onClick={() => handleShowPassword("retypePassword")}
                             />
                           )}
                         </div>

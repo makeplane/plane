@@ -22,7 +22,7 @@ class GitHubOAuthProvider(OauthAdapter):
     provider = "github"
     scope = "read:user user:email"
 
-    def __init__(self, request, code=None, state=None):
+    def __init__(self, request, code=None, state=None, callback=None):
 
         GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = get_configuration_value(
             [
@@ -67,6 +67,7 @@ class GitHubOAuthProvider(OauthAdapter):
             self.userinfo_url,
             client_secret,
             code,
+            callback=callback,
         )
 
     def set_token_data(self):

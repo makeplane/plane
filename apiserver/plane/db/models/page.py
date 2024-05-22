@@ -16,7 +16,7 @@ def get_view_props():
 
 
 class Page(ProjectBaseModel):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True)
     description = models.JSONField(default=dict, blank=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
@@ -43,6 +43,7 @@ class Page(ProjectBaseModel):
     is_locked = models.BooleanField(default=False)
     view_props = models.JSONField(default=get_view_props)
     logo_props = models.JSONField(default=dict)
+    description_binary = models.BinaryField(null=True)
 
     class Meta:
         verbose_name = "Page"
