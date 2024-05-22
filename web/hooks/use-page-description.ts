@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 // editor
 import { applyUpdates, mergeUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
@@ -54,15 +54,17 @@ export const usePageDescription = (props: Props) => {
   // if description_binary field is empty, convert description_html to yDoc and update the DB
   // TODO: this is a one-time operation, and needs to be removed once all the pages are updated
   useEffect(() => {
-    if (!pageDescriptionYJS || !pageDescription) return;
-    if (pageDescriptionYJS.byteLength === 0) {
-      const { contentJSON, editorSchema } = generateJSONfromHTML(pageDescription ?? "<p></p>");
-      const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
-      updateDescription(yDocBinaryString, pageDescription ?? "<p></p>").then(async () => {
+    const changeHTMLToBinary = async () => {
+      if (!pageDescriptionYJS || !pageDescription) return;
+      if (pageDescriptionYJS.byteLength === 0) {
+        const { contentJSON, editorSchema } = generateJSONfromHTML(pageDescription ?? "<p></p>");
+        const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
+        await updateDescription(yDocBinaryString, pageDescription ?? "<p></p>");
         await mutateDescriptionYJS();
         setIsDescriptionReady(true);
-      });
-    } else setIsDescriptionReady(true);
+      } else setIsDescriptionReady(true);
+    };
+    changeHTMLToBinary();
   }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
   const handleSaveDescription = useCallback(async () => {
@@ -80,19 +82,24 @@ export const usePageDescription = (props: Props) => {
       await updateDescription(combinedBinaryString, descriptionHTML).finally(() => setIsSubmitting("saved"));
     };
 
-    setIsSubmitting("submitting");
-    // fetch the latest description
-    const latestDescription = await mutateDescriptionYJS();
-    // return if there are no updates
-    if (descriptionUpdates.length <= 0) {
+    try {
+      setIsSubmitting("submitting");
+      // fetch the latest description
+      const latestDescription = await mutateDescriptionYJS();
+      // return if there are no updates
+      if (descriptionUpdates.length <= 0) {
+        setIsSubmitting("saved");
+        return;
+      }
+      // merge the updates array into one single update
+      const mergedUpdates = mergeUpdates(descriptionUpdates);
+      await applyUpdatesAndSave(latestDescription, mergedUpdates);
+      // reset the updates array to empty
+      setDescriptionUpdates([]);
+    } catch (error) {
       setIsSubmitting("saved");
-      return;
+      throw error;
     }
-    // merge the updates array into one single update
-    const mergedUpdates = mergeUpdates(descriptionUpdates);
-    await applyUpdatesAndSave(latestDescription, mergedUpdates);
-    // reset the updates array to empty
-    setDescriptionUpdates([]);
   }, [
     descriptionUpdates,
     editorRef,
