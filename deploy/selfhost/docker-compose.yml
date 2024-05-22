@@ -86,7 +86,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/takeoff
+    command: ./bin/docker-entry-api.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
     volumes:
@@ -101,7 +101,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/worker
+    command: ./bin/docker-entry-worker.sh
     volumes:
       - logs_worker:/code/plane/logs
     depends_on:
@@ -115,7 +115,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/beat
+    command: ./bin/docker-entry-beat.sh
     volumes:
       - logs_beat-worker:/code/plane/logs
     depends_on:
@@ -129,9 +129,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: no
-    command: >
-      sh -c "python manage.py wait_for_db &&
-           python manage.py migrate"
+    command: ./bin/docker-entry-migrator.sh
     volumes:
       - logs_migrator:/code/plane/logs
     depends_on:

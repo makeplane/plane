@@ -152,7 +152,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
         </div>
       ) : (
         <div
-          className="flex w-full cursor-pointer items-center gap-2 p-3 py-3 text-custom-primary-100"
+          className="flex w-full cursor-pointer items-center gap-3 p-6 py-3 text-custom-primary-100"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-3.5 w-3.5 stroke-2" />
