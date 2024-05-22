@@ -97,7 +97,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/docker-entry-api.sh
+    command: ./bin/docker-entrypoint-api.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -115,7 +115,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/docker-entry-worker.sh
+    command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -134,7 +134,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/docker-entry-beat.sh
+    command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -153,7 +153,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/docker-entry-migrator.sh --settings=plane.settings.local
+    command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apiserver/.env
     depends_on:
