@@ -5,7 +5,7 @@ import { cn } from "@/helpers/common.helper";
 
 type Props = {
   dragColumnOrientation: "justify-start" | "justify-center" | "justify-end";
-  canDropOverIssue: boolean;
+  canOverlayBeVisible: boolean;
   isDropDisabled: boolean;
   dropErrorMessage?: string;
   orderBy: TIssueOrderByOptions | undefined;
@@ -13,10 +13,16 @@ type Props = {
 };
 
 export const GroupDragOverlay = (props: Props) => {
-  const { dragColumnOrientation, canDropOverIssue, isDropDisabled, dropErrorMessage, orderBy, isDraggingOverColumn } =
-    props;
+  const {
+    dragColumnOrientation,
+    canOverlayBeVisible,
+    isDropDisabled,
+    dropErrorMessage,
+    orderBy,
+    isDraggingOverColumn,
+  } = props;
 
-  const shouldOverlay = isDraggingOverColumn && (!canDropOverIssue || isDropDisabled);
+  const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
   const readableOrderBy = ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.title;
 
   return (
@@ -24,16 +30,16 @@ export const GroupDragOverlay = (props: Props) => {
       className={cn(
         `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-overlay ${dragColumnOrientation}`,
         {
-          "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlay,
+          "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlayBeVisible,
         },
-        { hidden: !shouldOverlay }
+        { hidden: !shouldOverlayBeVisible }
       )}
     >
       <div
         className={cn(
-          "p-3 mt-8 flex flex-col rounded items-center",
+          "p-3 my-8 flex flex-col rounded items-center",
           {
-            "text-custom-text-200": shouldOverlay,
+            "text-custom-text-200": shouldOverlayBeVisible,
           },
           {
             "text-custom-text-error": isDropDisabled,
