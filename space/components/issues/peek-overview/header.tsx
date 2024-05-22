@@ -10,10 +10,8 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetails } from "@/hooks/store";
 import useClipboardWritePermission from "@/hooks/use-clipboard-write-permission";
-// store
-import { IPeekMode } from "@/store/issue-detail.store";
 // types
-import { IIssue } from "@/types/issue";
+import { IIssue, IPeekMode } from "@/types/issue";
 
 type Props = {
   handleClose: () => void;

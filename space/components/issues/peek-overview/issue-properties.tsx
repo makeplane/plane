@@ -1,5 +1,3 @@
-// types
-import { IIssue } from "types/issue";
 // ui
 import { StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
@@ -9,8 +7,8 @@ import { issueGroupFilter, issuePriorityFilter } from "@/constants/issue";
 // helpers
 import { renderFullDate } from "@/helpers/date-time.helper";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
-// store
-import { IPeekMode } from "@/store/issue-detail.store";
+// types
+import { IIssue, IPeekMode } from "@/types/issue";
 // components
 import { dueDateIconDetails } from "../board-views/block-due-date";
 
