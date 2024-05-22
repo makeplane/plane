@@ -9,8 +9,8 @@ import {
   IMentionHighlight,
   IMentionSuggestion,
 } from "@plane/editor-core";
-import { DocumentEditorExtensions } from "src/ui/extensions";
 import { PageRenderer } from "src/ui/components/page-renderer";
+import { DocumentEditorExtensions, TEmbedConfig } from "src/ui/extensions";
 
 interface IDocumentEditor {
   initialValue: string;
@@ -31,6 +31,8 @@ interface IDocumentEditor {
     suggestions: () => Promise<IMentionSuggestion[]>;
   };
   tabIndex?: number;
+  // embed configuration
+  embedHandler?: TEmbedConfig;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
 }
 
@@ -46,6 +48,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     handleEditorReady,
     forwardedRef,
     tabIndex,
+    embedHandler,
     placeholder,
   } = props;
   // states
@@ -71,10 +74,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     handleEditorReady,
     forwardedRef,
     mentionHandler,
-    extensions: DocumentEditorExtensions({
-      uploadFile: fileHandler.upload,
-      setHideDragHandle: setHideDragHandleFunction,
-    }),
+    extensions: DocumentEditorExtensions(fileHandler.upload, setHideDragHandleFunction, embedHandler?.issue),
     placeholder,
     tabIndex,
   });

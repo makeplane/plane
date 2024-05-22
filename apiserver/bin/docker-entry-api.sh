@@ -20,6 +20,9 @@ SIGNATURE=$(echo "$HOSTNAME$MAC_ADDRESS$CPU_INFO$MEMORY_INFO$DISK_INFO" | sha256
 # Export the variables
 export MACHINE_SIGNATURE=$SIGNATURE
 
+# License check
+python manage.py license_check
+
 # Register instance
 python manage.py register_instance "$MACHINE_SIGNATURE"
 
