@@ -1,13 +1,14 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // types
-import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/spreadsheet";
-import { useEventTracker } from "@/hooks/store";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // constants
+import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/spreadsheet";
+// hooks
+import { useEventTracker } from "@/hooks/store";
 // components
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -16,10 +17,19 @@ type Props = {
   property: keyof IIssueDisplayProperties;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   isEstimateEnabled: boolean;
+  isIssueSelected: boolean;
 };
 
 export const IssueColumn = observer((props: Props) => {
-  const { displayProperties, issueDetail, disableUserActions, property, updateIssue, isEstimateEnabled } = props;
+  const {
+    displayProperties,
+    issueDetail,
+    disableUserActions,
+    property,
+    updateIssue,
+    isEstimateEnabled,
+    isIssueSelected,
+  } = props;
   // router
   const router = useRouter();
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
@@ -58,9 +68,8 @@ export const IssueColumn = observer((props: Props) => {
             })
           }
           disabled={disableUserActions}
-          onClose={() => {
-            tableCellRef?.current?.focus();
-          }}
+          onClose={() => tableCellRef?.current?.focus()}
+          isIssueSelected={isIssueSelected}
         />
       </td>
     </WithDisplayPropertiesHOC>

@@ -2,8 +2,12 @@ import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 // types
 import { TBulkIssueProperties } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DateDropdown, MemberDropdown, PriorityDropdown, StateDropdown } from "@/components/dropdowns";
+// constants
+import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
@@ -29,6 +33,13 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
     bulkUpdateProperties(workspaceSlug.toString(), projectId.toString(), {
       issue_ids: snapshot.selectedEntityIds,
       properties: data,
+    }).catch((error) => {
+      const errorInfo = ERROR_DETAILS[error?.error_code as EErrorCodes] ?? undefined;
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: errorInfo?.title ?? "Error!",
+        message: errorInfo?.message ?? "Something went wrong. Please try again.",
+      });
     });
   };
 

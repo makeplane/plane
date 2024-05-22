@@ -128,12 +128,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     <div
       ref={issueRef}
       className={cn(
-        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 p-3 pl-1.5 text-sm transition-colors issue-list-block",
+        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-sm transition-colors issue-list-block border border-transparent",
         {
-          "border border-custom-primary-70 hover:border-custom-primary-70":
-            getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
+          "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
-          "hover:bg-custom-background-90": !isIssueSelected,
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
           "bg-custom-background-80": isCurrentBlockDragging,
         }
@@ -153,21 +151,33 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
             <div className="flex items-center gap-1 group">
               <DragHandle isDragging={isCurrentBlockDragging} ref={dragHandleRef} disabled={!canDrag} />
               {projectId && canEditIssueProperties && (
-                <div className="flex-shrink-0 grid place-items-center w-3.5">
-                  <MultipleSelectAction
-                    className={cn(
-                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
-                      {
-                        "opacity-100 pointer-events-auto": isIssueSelected,
-                      }
-                    )}
-                    groupId={groupId}
-                    id={issue.id}
-                    selectionHelpers={selectionHelpers}
-                  />
-                </div>
+                <Tooltip
+                  tooltipContent={
+                    <>
+                      Only issues within the current
+                      <br />
+                      project can be selected.
+                    </>
+                  }
+                  disabled={issue.project_id === projectId}
+                >
+                  <div className="flex-shrink-0 grid place-items-center w-3.5">
+                    <MultipleSelectAction
+                      className={cn(
+                        "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                        {
+                          "opacity-100 pointer-events-auto": isIssueSelected,
+                        }
+                      )}
+                      groupId={groupId}
+                      id={issue.id}
+                      selectionHelpers={selectionHelpers}
+                      disabled={issue.project_id !== projectId}
+                    />
+                  </div>
+                </Tooltip>
               )}
-              <div className="flex h-5 w-5 items-center justify-center">
+              <div className="size-5 flex items-center justify-center">
                 {subIssuesCount > 0 && (
                   <button
                     className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"

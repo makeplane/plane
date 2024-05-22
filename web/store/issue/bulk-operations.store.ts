@@ -8,7 +8,7 @@ import { IIssueRootStore } from "./root.store";
 
 export type IIssueBulkOperationsStore = {
   // actions
-  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => void;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 };
 
 export class IssueBulkOperationsStore implements IIssueBulkOperationsStore {

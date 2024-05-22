@@ -2,27 +2,29 @@ import React, { useCallback } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { TIssue } from "@plane/types";
-// hooks
-import { ModuleDropdown } from "@/components/dropdowns";
-import { EIssuesStoreType } from "@/constants/issue";
-import { useEventTracker, useIssues } from "@/hooks/store";
-// components
 // types
+import { TIssue } from "@plane/types";
+// components
+import { ModuleDropdown } from "@/components/dropdowns";
 // constants
+import { EIssuesStoreType } from "@/constants/issue";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useEventTracker, useIssues } from "@/hooks/store";
 
 type Props = {
   issue: TIssue;
   onClose: () => void;
   disabled: boolean;
+  isIssueSelected: boolean;
 };
 
 export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
+  const { issue, disabled, onClose, isIssueSelected } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // props
-  const { issue, disabled, onClose } = props;
   // hooks
   const { captureIssueEvent } = useEventTracker();
   const {
@@ -65,7 +67,9 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
         disabled={disabled}
         placeholder="Select modules"
         buttonVariant="transparent-with-text"
-        buttonContainerClassName="w-full relative flex items-center p-2"
+        buttonContainerClassName={cn("w-full relative flex items-center p-2", {
+          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
+        })}
         buttonClassName="relative leading-4 h-4.5 bg-transparent"
         onClose={onClose}
         multiple

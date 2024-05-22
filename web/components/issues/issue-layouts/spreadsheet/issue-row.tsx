@@ -216,7 +216,12 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   return (
     <>
-      <td id={`issue-${issueId}`} ref={cellRef} tabIndex={0} className="sticky left-0 z-10 group/list-block">
+      <td
+        id={`issue-${issueId}`}
+        ref={cellRef}
+        tabIndex={0}
+        className="sticky left-0 z-10 group/list-block bg-custom-background-100"
+      >
         <ControlLink
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
@@ -228,6 +233,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
               "border border-custom-primary-70 hover:border-custom-primary-70":
                 getIsIssuePeeked(issueDetail.id) && nestingLevel === peekIssue?.nestingLevel,
               "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
+              "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
             }
           )}
           disabled={!!issueDetail?.tempId}
@@ -239,19 +245,31 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
             <div className="flex items-center">
               {/* bulk ops */}
               {projectId && !disableUserActions && (
-                <div className="flex-shrink-0 grid place-items-center w-3.5">
-                  <MultipleSelectAction
-                    className={cn(
-                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
-                      {
-                        "opacity-100 pointer-events-auto": isIssueSelected,
-                      }
-                    )}
-                    groupId={SPREADSHEET_SELECT_GROUP}
-                    id={issueDetail.id}
-                    selectionHelpers={selectionHelpers}
-                  />
-                </div>
+                <Tooltip
+                  tooltipContent={
+                    <>
+                      Only issues within the current
+                      <br />
+                      project can be selected.
+                    </>
+                  }
+                  disabled={issueDetail.project_id === projectId}
+                >
+                  <div className="flex-shrink-0 grid place-items-center w-3.5">
+                    <MultipleSelectAction
+                      className={cn(
+                        "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                        {
+                          "opacity-100 pointer-events-auto": isIssueSelected,
+                        }
+                      )}
+                      groupId={SPREADSHEET_SELECT_GROUP}
+                      id={issueDetail.id}
+                      selectionHelpers={selectionHelpers}
+                      disabled={issueDetail.project_id !== projectId}
+                    />
+                  </div>
+                </Tooltip>
               )}
               <div className="flex size-4 items-center justify-center">
                 {subIssuesCount > 0 && (
@@ -308,6 +326,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           property={property}
           updateIssue={updateIssue}
           isEstimateEnabled={isEstimateEnabled}
+          isIssueSelected={isIssueSelected}
         />
       ))}
     </>

@@ -1,17 +1,27 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { TIssue } from "@plane/types";
 // types
+import { TIssue } from "@plane/types";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 type Props = {
   issue: TIssue;
+  isIssueSelected: boolean;
 };
 
 export const SpreadsheetAttachmentColumn: React.FC<Props> = observer((props) => {
-  const { issue } = props;
+  const { issue, isIssueSelected } = props;
 
   return (
-    <div className="flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 px-2.5 py-1 text-xs hover:bg-custom-background-80">
+    <div
+      className={cn(
+        "flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 px-2.5 py-1 text-xs hover:bg-custom-background-80",
+        {
+          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
+        }
+      )}
+    >
       {issue?.attachment_count} {issue?.attachment_count === 1 ? "attachment" : "attachments"}
     </div>
   );

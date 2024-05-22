@@ -5,6 +5,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { AlertModalCore, EModalPosition, EModalWidth } from "@/components/core";
 // constants
+import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues } from "@/hooks/store";
@@ -40,13 +41,14 @@ export const BulkArchiveConfirmationModal: React.FC<Props> = observer((props) =>
         onSubmit?.();
         handleClose();
       })
-      .catch(() =>
+      .catch((error) => {
+        const errorInfo = ERROR_DETAILS[error?.error_code as EErrorCodes] ?? undefined;
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
-        })
-      )
+          title: errorInfo?.title ?? "Error!",
+          message: errorInfo?.message ?? "Something went wrong. Please try again.",
+        });
+      })
       .finally(() => setIsDeleting(false));
   };
 
