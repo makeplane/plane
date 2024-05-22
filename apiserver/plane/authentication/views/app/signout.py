@@ -23,9 +23,9 @@ class SignOutAuthEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = urljoin(base_host(request=request, is_app=True), "sign-in")
+            url = urljoin(base_host(request=request, is_app=True))
             return HttpResponseRedirect(url)
         except Exception:
             return HttpResponseRedirect(
-                base_host(request=request, is_app=True), "sign-in"
+                base_host(request=request, is_app=True)
             )
