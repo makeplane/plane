@@ -16,6 +16,7 @@ module.exports = {
       "./ui/**/*.tsx",
       "../packages/ui/**/*.{js,ts,jsx,tsx}",
       "../packages/editor/**/src/**/*.{js,ts,jsx,tsx}",
+      "!../packages/ui/**/*.stories{js,ts,jsx,tsx}",
     ],
   },
   theme: {

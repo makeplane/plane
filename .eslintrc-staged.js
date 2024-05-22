@@ -7,9 +7,6 @@ module.exports = {
   root: true,
   extends: [
     "custom",
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:prettier/recommended",
   ],
   parser: "@typescript-eslint/parser",
   settings: {

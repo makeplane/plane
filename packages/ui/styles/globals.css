@@ -1,0 +1,650 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .text-1\.5xl {
+    font-size: 1.375rem;
+    line-height: 1.875rem;
+  }
+
+  .text-2\.5xl {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+  }
+}
+
+@layer base {
+  html {
+    font-family: "Inter", sans-serif;
+  }
+
+  :root {
+    color-scheme: light !important;
+
+    --color-primary-10: 236, 241, 255;
+    --color-primary-20: 217, 228, 255;
+    --color-primary-30: 197, 214, 255;
+    --color-primary-40: 178, 200, 255;
+    --color-primary-50: 159, 187, 255;
+    --color-primary-60: 140, 173, 255;
+    --color-primary-70: 121, 159, 255;
+    --color-primary-80: 101, 145, 255;
+    --color-primary-90: 82, 132, 255;
+    --color-primary-100: 63, 118, 255;
+    --color-primary-200: 57, 106, 230;
+    --color-primary-300: 50, 94, 204;
+    --color-primary-400: 44, 83, 179;
+    --color-primary-500: 38, 71, 153;
+    --color-primary-600: 32, 59, 128;
+    --color-primary-700: 25, 47, 102;
+    --color-primary-800: 19, 35, 76;
+    --color-primary-900: 13, 24, 51;
+
+    --color-background-100: 255, 255, 255; /* primary bg */
+    --color-background-90: 247, 247, 247; /* secondary bg */
+    --color-background-80: 232, 232, 232; /* tertiary bg */
+
+    --color-text-100: 23, 23, 23; /* primary text */
+    --color-text-200: 58, 58, 58; /* secondary text */
+    --color-text-300: 82, 82, 82; /* tertiary text */
+    --color-text-400: 163, 163, 163; /* placeholder text */
+
+    --color-scrollbar: 163, 163, 163; /* scrollbar thumb */
+
+    --color-border-100: 245, 245, 245; /* subtle border= 1 */
+    --color-border-200: 229, 229, 229; /* subtle border- 2 */
+    --color-border-300: 212, 212, 212; /* strong border- 1 */
+    --color-border-400: 185, 185, 185; /* strong border- 2 */
+
+    --color-shadow-2xs: 0px 0px 1px 0px rgba(23, 23, 23, 0.06), 0px 1px 2px 0px rgba(23, 23, 23, 0.06),
+      0px 1px 2px 0px rgba(23, 23, 23, 0.14);
+    --color-shadow-xs: 0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(16, 24, 40, 0.12),
+      0px 1px 8px -1px rgba(16, 24, 40, 0.1);
+    --color-shadow-sm: 0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02),
+      0px 1px 12px 0px rgba(0, 0, 0, 0.12);
+    --color-shadow-rg: 0px 3px 6px 0px rgba(0, 0, 0, 0.1), 0px 4px 4px 0px rgba(16, 24, 40, 0.08),
+      0px 1px 12px 0px rgba(16, 24, 40, 0.04);
+    --color-shadow-md: 0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12),
+      0px 1px 16px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-lg: 0px 6px 12px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.12),
+      0px 1px 24px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-xl: 0px 0px 18px 0px rgba(0, 0, 0, 0.16), 0px 0px 24px 0px rgba(16, 24, 40, 0.16),
+      0px 0px 52px 0px rgba(16, 24, 40, 0.16);
+    --color-shadow-2xl: 0px 8px 16px 0px rgba(0, 0, 0, 0.12), 0px 12px 24px 0px rgba(16, 24, 40, 0.12),
+      0px 1px 32px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-3xl: 0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
+      0px 1px 48px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-4xl: 0px 8px 40px 0px rgba(0, 0, 61, 0.05), 0px 12px 32px -16px rgba(0, 0, 0, 0.05);
+
+    --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
+    --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
+    --color-sidebar-background-80: var(--color-background-80); /* tertiary sidebar bg */
+
+    --color-sidebar-text-100: var(--color-text-100); /* primary sidebar text */
+    --color-sidebar-text-200: var(--color-text-200); /* secondary sidebar text */
+    --color-sidebar-text-300: var(--color-text-300); /* tertiary sidebar text */
+    --color-sidebar-text-400: var(--color-text-400); /* sidebar placeholder text */
+
+    --color-sidebar-border-100: var(--color-border-100); /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: var(--color-border-100); /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: var(--color-border-100); /* strong sidebar border- 1 */
+    --color-sidebar-border-400: var(--color-border-100); /* strong sidebar border- 2 */
+
+    --color-sidebar-shadow-2xs: var(--color-shadow-2xs);
+    --color-sidebar-shadow-xs: var(--color-shadow-xs);
+    --color-sidebar-shadow-sm: var(--color-shadow-sm);
+    --color-sidebar-shadow-rg: var(--color-shadow-rg);
+    --color-sidebar-shadow-md: var(--color-shadow-md);
+    --color-sidebar-shadow-lg: var(--color-shadow-lg);
+    --color-sidebar-shadow-xl: var(--color-shadow-xl);
+    --color-sidebar-shadow-2xl: var(--color-shadow-2xl);
+    --color-sidebar-shadow-3xl: var(--color-shadow-3xl);
+    --color-sidebar-shadow-4xl: var(--color-shadow-4xl);
+  }
+
+  [data-theme="light"],
+  [data-theme="light-contrast"] {
+    color-scheme: light !important;
+
+    --color-background-100: 255, 255, 255; /* primary bg */
+    --color-background-90: 247, 247, 247; /* secondary bg */
+    --color-background-80: 232, 232, 232; /* tertiary bg */
+  }
+
+  [data-theme="light"] {
+    --color-text-100: 23, 23, 23; /* primary text */
+    --color-text-200: 58, 58, 58; /* secondary text */
+    --color-text-300: 82, 82, 82; /* tertiary text */
+    --color-text-400: 163, 163, 163; /* placeholder text */
+
+    --color-scrollbar: 163, 163, 163; /* scrollbar thumb */
+
+    --color-border-100: 245, 245, 245; /* subtle border= 1 */
+    --color-border-200: 229, 229, 229; /* subtle border- 2 */
+    --color-border-300: 212, 212, 212; /* strong border- 1 */
+    --color-border-400: 185, 185, 185; /* strong border- 2 */
+
+    /* onboarding colors */
+    --gradient-onboarding-100: linear-gradient(106deg, #f2f6ff 29.8%, #e1eaff 99.34%);
+    --gradient-onboarding-200: linear-gradient(129deg, rgba(255, 255, 255, 0) -22.23%, rgba(255, 255, 255, 0.8) 62.98%);
+    --gradient-onboarding-300: linear-gradient(164deg, #fff 4.25%, rgba(255, 255, 255, 0.06) 93.5%);
+    --gradient-onboarding-400: linear-gradient(129deg, rgba(255, 255, 255, 0) -22.23%, rgba(255, 255, 255, 0.8) 62.98%);
+
+    --color-onboarding-text-100: 23, 23, 23;
+    --color-onboarding-text-200: 58, 58, 58;
+    --color-onboarding-text-300: 82, 82, 82;
+    --color-onboarding-text-400: 163, 163, 163;
+
+    --color-onboarding-background-100: 236, 241, 255;
+    --color-onboarding-background-200: 255, 255, 255;
+    --color-onboarding-background-300: 236, 241, 255;
+    --color-onboarding-background-400: 177, 206, 250;
+
+    --color-onboarding-border-100: 229, 229, 229;
+    --color-onboarding-border-200: 217, 228, 255;
+    --color-onboarding-border-300: 229, 229, 229, 0.5;
+
+    --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(126, 139, 171, 0.1);
+
+    /* toast theme */
+    --color-toast-success-text: 62, 155, 79;
+    --color-toast-error-text: 220, 62, 66;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 51, 88, 212;
+    --color-toast-loading-text: 28, 32, 36;
+    --color-toast-secondary-text: 128, 131, 141;
+    --color-toast-tertiary-text: 96, 100, 108;
+
+    --color-toast-success-background: 253, 253, 254;
+    --color-toast-error-background: 255, 252, 252;
+    --color-toast-warning-background: 254, 253, 251;
+    --color-toast-info-background: 253, 253, 254;
+    --color-toast-loading-background: 253, 253, 254;
+
+    --color-toast-success-border: 218, 241, 219;
+    --color-toast-error-border: 255, 219, 220;
+    --color-toast-warning-border: 255, 247, 194;
+    --color-toast-info-border: 210, 222, 255;
+    --color-toast-loading-border: 224, 225, 230;
+  }
+
+  [data-theme="light-contrast"] {
+    --color-text-100: 11, 11, 11; /* primary text */
+    --color-text-200: 38, 38, 38; /* secondary text */
+    --color-text-300: 58, 58, 58; /* tertiary text */
+    --color-text-400: 115, 115, 115; /* placeholder text */
+
+    --color-scrollbar: 115, 115, 115; /* scrollbar thumb */
+
+    --color-border-100: 34, 34, 34; /* subtle border= 1 */
+    --color-border-200: 38, 38, 38; /* subtle border- 2 */
+    --color-border-300: 46, 46, 46; /* strong border- 1 */
+    --color-border-400: 58, 58, 58; /* strong border- 2 */
+  }
+
+  [data-theme="dark"],
+  [data-theme="dark-contrast"] {
+    color-scheme: dark !important;
+
+    --color-background-100: 25, 25, 25; /* primary bg */
+    --color-background-90: 32, 32, 32; /* secondary bg */
+    --color-background-80: 44, 44, 44; /* tertiary bg */
+
+    --color-shadow-2xs: 0px 0px 1px 0px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-xs: 0px 0px 2px 0px rgba(0, 0, 0, 0.2), 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-sm: 0px 0px 4px 0px rgba(0, 0, 0, 0.2), 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-rg: 0px 0px 6px 0px rgba(0, 0, 0, 0.2), 0px 4px 6px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-md: 0px 2px 8px 0px rgba(0, 0, 0, 0.2), 0px 4px 8px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-lg: 0px 4px 12px 0px rgba(0, 0, 0, 0.25), 0px 4px 10px 0px rgba(0, 0, 0, 0.55);
+    --color-shadow-xl: 0px 0px 14px 0px rgba(0, 0, 0, 0.25), 0px 6px 10px 0px rgba(0, 0, 0, 0.55);
+    --color-shadow-2xl: 0px 0px 18px 0px rgba(0, 0, 0, 0.25), 0px 8px 12px 0px rgba(0, 0, 0, 0.6);
+    --color-shadow-3xl: 0px 4px 24px 0px rgba(0, 0, 0, 0.3), 0px 12px 40px 0px rgba(0, 0, 0, 0.65);
+  }
+
+  [data-theme="dark"] {
+    --color-text-100: 229, 229, 229; /* primary text */
+    --color-text-200: 163, 163, 163; /* secondary text */
+    --color-text-300: 115, 115, 115; /* tertiary text */
+    --color-text-400: 82, 82, 82; /* placeholder text */
+
+    --color-scrollbar: 82, 82, 82; /* scrollbar thumb */
+
+    --color-border-100: 34, 34, 34; /* subtle border= 1 */
+    --color-border-200: 38, 38, 38; /* subtle border- 2 */
+    --color-border-300: 46, 46, 46; /* strong border- 1 */
+    --color-border-400: 58, 58, 58; /* strong border- 2 */
+
+    /* onboarding colors */
+    --gradient-onboarding-100: linear-gradient(106deg, #18191b 25.17%, #18191b 99.34%);
+    --gradient-onboarding-200: linear-gradient(129deg, rgba(47, 49, 53, 0.8) -22.23%, rgba(33, 34, 37, 0.8) 62.98%);
+    --gradient-onboarding-300: linear-gradient(167deg, rgba(47, 49, 53, 0.45) 19.22%, #212225 98.48%);
+
+    --color-onboarding-text-100: 237, 238, 240;
+    --color-onboarding-text-200: 176, 180, 187;
+    --color-onboarding-text-300: 118, 123, 132;
+    --color-onboarding-text-400: 105, 110, 119;
+
+    --color-onboarding-background-100: 54, 58, 64;
+    --color-onboarding-background-200: 40, 42, 45;
+    --color-onboarding-background-300: 40, 42, 45;
+    --color-onboarding-background-400: 67, 72, 79;
+
+    --color-onboarding-border-100: 54, 58, 64;
+    --color-onboarding-border-200: 54, 58, 64;
+    --color-onboarding-border-300: 34, 35, 38, 0.5;
+
+    --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(39, 44, 56, 0.1);
+
+    /* toast theme */
+    --color-toast-success-text: 178, 221, 181;
+    --color-toast-error-text: 206, 44, 49;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 141, 164, 239;
+    --color-toast-loading-text: 255, 255, 255;
+    --color-toast-secondary-text: 185, 187, 198;
+    --color-toast-tertiary-text: 139, 141, 152;
+
+    --color-toast-success-background: 46, 46, 46;
+    --color-toast-error-background: 46, 46, 46;
+    --color-toast-warning-background: 46, 46, 46;
+    --color-toast-info-background: 46, 46, 46;
+    --color-toast-loading-background: 46, 46, 46;
+
+    --color-toast-success-border: 42, 126, 59;
+    --color-toast-error-border: 100, 23, 35;
+    --color-toast-warning-border: 79, 52, 34;
+    --color-toast-info-border: 58, 91, 199;
+    --color-toast-loading-border: 96, 100, 108;
+  }
+
+  [data-theme="dark-contrast"] {
+    --color-text-100: 250, 250, 250; /* primary text */
+    --color-text-200: 241, 241, 241; /* secondary text */
+    --color-text-300: 212, 212, 212; /* tertiary text */
+    --color-text-400: 115, 115, 115; /* placeholder text */
+
+    --color-scrollbar: 115, 115, 115; /* scrollbar thumb */
+
+    --color-border-100: 245, 245, 245; /* subtle border= 1 */
+    --color-border-200: 229, 229, 229; /* subtle border- 2 */
+    --color-border-300: 212, 212, 212; /* strong border- 1 */
+    --color-border-400: 185, 185, 185; /* strong border- 2 */
+  }
+
+  [data-theme="light"],
+  [data-theme="dark"],
+  [data-theme="light-contrast"],
+  [data-theme="dark-contrast"] {
+    --color-primary-10: 236, 241, 255;
+    --color-primary-20: 217, 228, 255;
+    --color-primary-30: 197, 214, 255;
+    --color-primary-40: 178, 200, 255;
+    --color-primary-50: 159, 187, 255;
+    --color-primary-60: 140, 173, 255;
+    --color-primary-70: 121, 159, 255;
+    --color-primary-80: 101, 145, 255;
+    --color-primary-90: 82, 132, 255;
+    --color-primary-100: 63, 118, 255;
+    --color-primary-200: 57, 106, 230;
+    --color-primary-300: 50, 94, 204;
+    --color-primary-400: 44, 83, 179;
+    --color-primary-500: 38, 71, 153;
+    --color-primary-600: 32, 59, 128;
+    --color-primary-700: 25, 47, 102;
+    --color-primary-800: 19, 35, 76;
+    --color-primary-900: 13, 24, 51;
+
+    --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
+    --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
+    --color-sidebar-background-80: var(--color-background-80); /* tertiary sidebar bg */
+
+    --color-sidebar-text-100: var(--color-text-100); /* primary sidebar text */
+    --color-sidebar-text-200: var(--color-text-200); /* secondary sidebar text */
+    --color-sidebar-text-300: var(--color-text-300); /* tertiary sidebar text */
+    --color-sidebar-text-400: var(--color-text-400); /* sidebar placeholder text */
+
+    --color-sidebar-border-100: var(--color-border-100); /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: var(--color-border-200); /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: var(--color-border-300); /* strong sidebar border- 1 */
+    --color-sidebar-border-400: var(--color-border-400); /* strong sidebar border- 2 */
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  font-variant-ligatures: none;
+  -webkit-font-variant-ligatures: none;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  color: rgba(var(--color-text-100));
+}
+
+/* scrollbar style */
+::-webkit-scrollbar {
+  display: none;
+}
+
+.tags-input-container {
+  border: 2px solid #000;
+  padding: 0.5em;
+  border-radius: 3px;
+  width: min(80vw, 600px);
+  margin-top: 1em;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.tag-item {
+  background-color: rgb(218, 216, 216);
+  display: inline-block;
+  padding: 0.5em 0.75em;
+  border-radius: 20px;
+}
+.tag-item .close {
+  height: 20px;
+  width: 20px;
+  background-color: rgb(48, 48, 48);
+  color: #fff;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0.5em;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.tags-input {
+  flex-grow: 1;
+  padding: 0.5em 0;
+  border: none;
+  outline: none;
+}
+
+/* emoji icon picker */
+.conical-gradient {
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff6b00 0deg,
+    #f7ae59 70.5deg,
+    #3f76ff 151.12deg,
+    #05c3ff 213deg,
+    #18914f 289.87deg,
+    #f6f172 329.25deg,
+    #ff6b00 360deg
+  );
+}
+
+/* progress bar */
+.progress-bar {
+  fill: currentColor;
+  color: rgba(var(--color-sidebar-background-100));
+}
+
+/* lineclamp */
+.lineclamp {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+/* popover2 styling */
+.bp4-popover2-transition-container {
+  z-index: 1 !important;
+}
+
+::-webkit-input-placeholder,
+::placeholder,
+:-ms-input-placeholder {
+  color: rgb(var(--color-text-400));
+}
+
+.bp4-overlay-content {
+  z-index: 555 !important;
+}
+
+.disable-scroll {
+  overflow: hidden !important;
+}
+
+.vertical-lr {
+  writing-mode: vertical-lr;
+  -webkit-writing-mode: vertical-lr;
+  -ms-writing-mode: vertical-lr;
+  width: fit-content;
+}
+
+div.web-view-spinner {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  display: inline-block;
+  margin-left: 50%;
+  margin-right: 50%;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+div.web-view-spinner div {
+  width: 6%;
+  height: 16%;
+  background: rgb(var(--color-text-400));
+  position: absolute;
+  left: 49%;
+  top: 43%;
+  opacity: 0;
+  border-radius: 50px;
+  -webkit-border-radius: 50px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  animation: fade 1s linear infinite;
+  -webkit-animation: fade 1s linear infinite;
+}
+
+@keyframes fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.25;
+  }
+}
+@-webkit-keyframes fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.25;
+  }
+}
+
+div.web-view-spinner div.bar1 {
+  transform: rotate(0deg) translate(0, -130%);
+  -webkit-transform: rotate(0deg) translate(0, -130%);
+  animation-delay: 0s;
+  -webkit-animation-delay: 0s;
+}
+
+div.web-view-spinner div.bar2 {
+  transform: rotate(30deg) translate(0, -130%);
+  -webkit-transform: rotate(30deg) translate(0, -130%);
+  animation-delay: -0.9167s;
+  -webkit-animation-delay: -0.9167s;
+}
+
+div.web-view-spinner div.bar3 {
+  transform: rotate(60deg) translate(0, -130%);
+  -webkit-transform: rotate(60deg) translate(0, -130%);
+  animation-delay: -0.833s;
+  -webkit-animation-delay: -0.833s;
+}
+div.web-view-spinner div.bar4 {
+  transform: rotate(90deg) translate(0, -130%);
+  -webkit-transform: rotate(90deg) translate(0, -130%);
+  animation-delay: -0.7497s;
+  -webkit-animation-delay: -0.7497s;
+}
+div.web-view-spinner div.bar5 {
+  transform: rotate(120deg) translate(0, -130%);
+  -webkit-transform: rotate(120deg) translate(0, -130%);
+  animation-delay: -0.667s;
+  -webkit-animation-delay: -0.667s;
+}
+div.web-view-spinner div.bar6 {
+  transform: rotate(150deg) translate(0, -130%);
+  -webkit-transform: rotate(150deg) translate(0, -130%);
+  animation-delay: -0.5837s;
+  -webkit-animation-delay: -0.5837s;
+}
+div.web-view-spinner div.bar7 {
+  transform: rotate(180deg) translate(0, -130%);
+  -webkit-transform: rotate(180deg) translate(0, -130%);
+  animation-delay: -0.5s;
+  -webkit-animation-delay: -0.5s;
+}
+div.web-view-spinner div.bar8 {
+  transform: rotate(210deg) translate(0, -130%);
+  -webkit-transform: rotate(210deg) translate(0, -130%);
+  animation-delay: -0.4167s;
+  -webkit-animation-delay: -0.4167s;
+}
+div.web-view-spinner div.bar9 {
+  transform: rotate(240deg) translate(0, -130%);
+  -webkit-transform: rotate(240deg) translate(0, -130%);
+  animation-delay: -0.333s;
+  -webkit-animation-delay: -0.333s;
+}
+div.web-view-spinner div.bar10 {
+  transform: rotate(270deg) translate(0, -130%);
+  -webkit-transform: rotate(270deg) translate(0, -130%);
+  animation-delay: -0.2497s;
+  -webkit-animation-delay: -0.2497s;
+}
+div.web-view-spinner div.bar11 {
+  transform: rotate(300deg) translate(0, -130%);
+  -webkit-transform: rotate(300deg) translate(0, -130%);
+  animation-delay: -0.167s;
+  -webkit-animation-delay: -0.167s;
+}
+div.web-view-spinner div.bar12 {
+  transform: rotate(330deg) translate(0, -130%);
+  -webkit-transform: rotate(330deg) translate(0, -130%);
+  animation-delay: -0.0833s;
+  -webkit-animation-delay: -0.0833s;
+}
+
+@-moz-document url-prefix() {
+  * {
+    scrollbar-width: none;
+  }
+  .vertical-scrollbar,
+  .horizontal-scrollbar {
+    scrollbar-width: initial;
+    scrollbar-color: rgba(96, 100, 108, 0.1) transparent;
+  }
+  .vertical-scrollbar:hover,
+  .horizontal-scrollbar:hover {
+    scrollbar-color: rgba(96, 100, 108, 0.25) transparent;
+  }
+  .vertical-scrollbar:active,
+  .horizontal-scrollbar:active {
+    scrollbar-color: rgba(96, 100, 108, 0.7) transparent;
+  }
+}
+
+.vertical-scrollbar {
+  overflow-y: auto;
+}
+.horizontal-scrollbar {
+  overflow-x: auto;
+}
+.vertical-scrollbar::-webkit-scrollbar,
+.horizontal-scrollbar::-webkit-scrollbar {
+  display: block;
+}
+.vertical-scrollbar::-webkit-scrollbar-track,
+.horizontal-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+  border-radius: 9999px;
+}
+.vertical-scrollbar::-webkit-scrollbar-thumb,
+.horizontal-scrollbar::-webkit-scrollbar-thumb {
+  background-clip: padding-box;
+  background-color: rgba(96, 100, 108, 0.1);
+  border-radius: 9999px;
+}
+.vertical-scrollbar:hover::-webkit-scrollbar-thumb,
+.horizontal-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(96, 100, 108, 0.25);
+}
+.vertical-scrollbar::-webkit-scrollbar-thumb:hover,
+.horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(96, 100, 108, 0.5);
+}
+.vertical-scrollbar::-webkit-scrollbar-thumb:active,
+.horizontal-scrollbar::-webkit-scrollbar-thumb:active {
+  background-color: rgba(96, 100, 108, 0.7);
+}
+.vertical-scrollbar::-webkit-scrollbar-corner,
+.horizontal-scrollbar::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+.vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
+  margin-top: 44px;
+}
+
+/* scrollbar sm size */
+.scrollbar-sm::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+}
+.scrollbar-sm::-webkit-scrollbar-thumb {
+  border: 3px solid rgba(0, 0, 0, 0);
+}
+/* scrollbar md size */
+.scrollbar-md::-webkit-scrollbar {
+  height: 14px;
+  width: 14px;
+}
+.scrollbar-md::-webkit-scrollbar-thumb {
+  border: 3px solid rgba(0, 0, 0, 0);
+}
+/* scrollbar lg size */
+
+.scrollbar-lg::-webkit-scrollbar {
+  height: 16px;
+  width: 16px;
+}
+.scrollbar-lg::-webkit-scrollbar-thumb {
+  border: 4px solid rgba(0, 0, 0, 0);
+}
+
+/* highlight class */
+.highlight {
+  border: 1px solid rgb(var(--color-primary-100)) !important;
+}
+.highlight-with-line {
+  border-left: 5px solid rgb(var(--color-primary-100)) !important;
+  background: rgb(var(--color-background-80));
+}
+
+/* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */
+
+.disable-autofill-style:-webkit-autofill,
+.disable-autofill-style:-webkit-autofill:hover,
+.disable-autofill-style:-webkit-autofill:focus,
+.disable-autofill-style:-webkit-autofill:active {
+  -webkit-background-clip: text;
+}
