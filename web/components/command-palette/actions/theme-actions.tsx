@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
+// icons
 import { Settings } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants

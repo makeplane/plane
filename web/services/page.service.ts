@@ -1,5 +1,5 @@
 // types
-import { TPage } from "@plane/types";
+import { TPage, TPageEmbedType } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -114,6 +114,24 @@ export class PageService extends APIService {
 
   async unlock(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async searchEmbed<T>(
+    workspaceSlug: string,
+    projectId: string,
+    params: {
+      query_type: TPageEmbedType;
+      count?: number;
+      query: string;
+    }
+  ): Promise<T | undefined> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
