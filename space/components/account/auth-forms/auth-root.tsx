@@ -35,6 +35,7 @@ export const AuthRoot: FC = observer(() => {
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
   const error_code = searchParams.get("error_code") || undefined;
+  const nextPath = searchParams.get("next_path") || undefined;
   // states
   const [authMode, setAuthMode] = useState<EAuthModes>(EAuthModes.SIGN_UP);
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
@@ -42,35 +43,49 @@ export const AuthRoot: FC = observer(() => {
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   const [isPasswordAutoset, setIsPasswordAutoset] = useState(true);
   // hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
 
   useEffect(() => {
     if (error_code) {
       const errorhandler = authErrorHandler(error_code?.toString() as EAuthenticationErrorCodes);
       if (errorhandler) {
+        if (errorhandler.code === EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN) {
+          setAuthMode(EAuthModes.SIGN_IN);
+          setAuthStep(EAuthSteps.PASSWORD);
+        }
+        if (errorhandler.code === EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP) {
+          setAuthMode(EAuthModes.SIGN_UP);
+          setAuthStep(EAuthSteps.PASSWORD);
+        }
         if (
           [
-            EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN,
-            EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP,
+            EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN,
+            EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
+            EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
           ].includes(errorhandler.code)
-        )
-          setAuthStep(EAuthSteps.PASSWORD);
-        if (
-          [EAuthenticationErrorCodes.INVALID_MAGIC_CODE, EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE].includes(
-            errorhandler.code
-          )
-        )
+        ) {
+          setAuthMode(EAuthModes.SIGN_IN);
           setAuthStep(EAuthSteps.UNIQUE_CODE);
+        }
+        if (
+          [
+            EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP,
+            EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP,
+            EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP,
+          ].includes(errorhandler.code)
+        ) {
+          setAuthMode(EAuthModes.SIGN_UP);
+          setAuthStep(EAuthSteps.UNIQUE_CODE);
+        }
         setErrorInfo(errorhandler);
       }
     }
   }, [error_code]);
 
-  const isSMTPConfigured = instance?.config?.is_smtp_configured || false;
-  const isMagicLoginEnabled = instance?.config?.is_magic_login_enabled || false;
-  const isEmailPasswordEnabled = instance?.config?.is_email_password_enabled || false;
-  const isOAuthEnabled =
-    (instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled)) || false;
+  const isSMTPConfigured = config?.is_smtp_configured || false;
+  const isMagicLoginEnabled = config?.is_magic_login_enabled || false;
+  const isEmailPasswordEnabled = config?.is_email_password_enabled || false;
+  const isOAuthEnabled = (config && (config?.is_google_enabled || config?.is_github_enabled)) || false;
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
@@ -141,6 +156,7 @@ export const AuthRoot: FC = observer(() => {
           <AuthUniqueCodeForm
             mode={authMode}
             email={email}
+            nextPath={nextPath}
             handleEmailClear={() => {
               setEmail("");
               setAuthStep(EAuthSteps.EMAIL);
@@ -154,6 +170,7 @@ export const AuthRoot: FC = observer(() => {
             isPasswordAutoset={isPasswordAutoset}
             isSMTPConfigured={isSMTPConfigured}
             email={email}
+            nextPath={nextPath}
             handleEmailClear={() => {
               setEmail("");
               setAuthStep(EAuthSteps.EMAIL);

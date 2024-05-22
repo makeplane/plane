@@ -1,5 +1,5 @@
 # Python imports
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urlencode
 
 # Django imports
 from django.core.validators import validate_email
@@ -84,10 +84,7 @@ class MagicSignInSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
         existing_user = User.objects.filter(email=email).first()
@@ -100,10 +97,7 @@ class MagicSignInSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
         # Active User
@@ -117,10 +111,7 @@ class MagicSignInSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
         try:
             provider = MagicCodeProvider(
@@ -136,17 +127,14 @@ class MagicSignInSpaceEndpoint(View):
             else:
                 # Get the redirection path
                 path = str(next_path) if next_path else ""
-            url = urljoin(base_host(request=request, is_space=True), path)
+            url = f"{base_host(request=request, is_space=True)}{path}"
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
 
@@ -169,10 +157,7 @@ class MagicSignUpSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
         # Existing User
         existing_user = User.objects.filter(email=email).first()
@@ -185,10 +170,7 @@ class MagicSignUpSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
         try:
@@ -199,18 +181,12 @@ class MagicSignUpSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                str(next_path) if next_path else "spaces",
-            )
+            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "?" + urlencode(params),
-            )
+            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)

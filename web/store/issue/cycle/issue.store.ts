@@ -6,6 +6,8 @@ import update from "lodash/update";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // types
 import { TIssue, TSubGroupedIssues, TGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
+// helpers
+import { issueCountBasedOnFilters } from "@/helpers/issue.helper";
 // services
 import { CycleService } from "@/services/cycle.service";
 import { IssueService } from "@/services/issue";
@@ -21,6 +23,7 @@ export interface ICycleIssues {
   issues: { [cycle_id: string]: string[] };
   viewFlags: ViewFlags;
   // computed
+  issuesCount: number;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
@@ -60,7 +63,7 @@ export interface ICycleIssues {
   ) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  removeCycleFromIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>
+  removeCycleFromIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   transferIssuesFromCycle: (
     workspaceSlug: string,
     projectId: string,
@@ -93,6 +96,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
       loader: observable.ref,
       issues: observable,
       // computed
+      issuesCount: computed,
       groupedIssueIds: computed,
       // action
       fetchIssues: action,
@@ -111,6 +115,22 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     this.rootIssueStore = _rootStore;
     this.issueService = new IssueService();
     this.cycleService = new CycleService();
+  }
+
+  get issuesCount() {
+    let issuesCount = 0;
+
+    const displayFilters = this.rootStore?.cycleIssuesFilter?.issueFilters?.displayFilters;
+    const groupedIssueIds = this.groupedIssueIds;
+    if (!displayFilters || !groupedIssueIds) return issuesCount;
+
+    const layout = displayFilters?.layout || undefined;
+    const groupBy = displayFilters?.group_by || undefined;
+    const subGroupBy = displayFilters?.sub_group_by || undefined;
+
+    if (!layout) return issuesCount;
+    issuesCount = issueCountBasedOnFilters(groupedIssueIds, layout, groupBy, subGroupBy);
+    return issuesCount;
   }
 
   get groupedIssueIds() {
@@ -336,14 +356,14 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
   /**
    * Remove a cycle from issue
-   * @param workspaceSlug 
-   * @param projectId 
-   * @param issueId 
-   * @returns 
+   * @param workspaceSlug
+   * @param projectId
+   * @param issueId
+   * @returns
    */
   removeCycleFromIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
-    if(!issueCycleId) return;
+    if (!issueCycleId) return;
     try {
       // perform optimistic update, update store
       runInAction(() => {

@@ -30,6 +30,20 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: "/accounts/sign-up",
+        destination: "/sign-up",
+        permanent: true
+      },
+      {
+        source: "/sign-in",
+        destination: "/",
+        permanent: true
+      }
+    ]
+  },
   async rewrites() {
     const rewrites = [
       {

@@ -47,7 +47,10 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { email } = router.query;
   // states
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    retypePassword: false,
+  });
   const [passwordFormData, setPasswordFormData] = useState<TResetPasswordFormValues>({
     ...defaultValues,
     email: email ? email.toString() : "",
@@ -64,6 +67,9 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
     if (csrfToken === undefined)
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
+
+  const handleShowPassword = (key: keyof typeof showPassword) =>
+    setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const handleFormChange = (key: keyof TResetPasswordFormValues, value: string) =>
     setPasswordFormData((prev) => ({ ...prev, [key]: value }));
@@ -92,6 +98,10 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
       });
     }
   };
+
+  const password = passwordFormData?.password ?? "";
+  const confirmPassword = passwordFormData?.confirm_password ?? "";
+  const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
@@ -142,7 +152,7 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
                 </label>
                 <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                   <Input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword.password ? "text" : "password"}
                     name="password"
                     value={passwordFormData.password}
                     onChange={(e) => handleFormChange("password", e.target.value)}
@@ -154,15 +164,15 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
                     onBlur={() => setIsPasswordInputFocused(false)}
                     autoFocus
                   />
-                  {showPassword ? (
+                  {showPassword.password ? (
                     <EyeOff
                       className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => setShowPassword(false)}
+                      onClick={() => handleShowPassword("password")}
                     />
                   ) : (
                     <Eye
                       className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => setShowPassword(true)}
+                      onClick={() => handleShowPassword("password")}
                     />
                   )}
                 </div>
@@ -174,7 +184,7 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
                 </label>
                 <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                   <Input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword.retypePassword ? "text" : "password"}
                     name="confirm_password"
                     value={passwordFormData.confirm_password}
                     onChange={(e) => handleFormChange("confirm_password", e.target.value)}
@@ -183,23 +193,21 @@ const SetPasswordPage: NextPageWithLayout = observer(() => {
                     onFocus={() => setIsRetryPasswordInputFocused(true)}
                     onBlur={() => setIsRetryPasswordInputFocused(false)}
                   />
-                  {showPassword ? (
+                  {showPassword.retypePassword ? (
                     <EyeOff
                       className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => setShowPassword(false)}
+                      onClick={() => handleShowPassword("retypePassword")}
                     />
                   ) : (
                     <Eye
                       className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => setShowPassword(true)}
+                      onClick={() => handleShowPassword("retypePassword")}
                     />
                   )}
                 </div>
                 {!!passwordFormData.confirm_password &&
                   passwordFormData.password !== passwordFormData.confirm_password &&
-                  !isRetryPasswordInputFocused && (
-                    <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
-                  )}
+                  renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
               </div>
               <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
                 Continue

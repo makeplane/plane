@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { IInstance } from "@plane/types";
+import { IInstance, IInstanceConfig } from "@plane/types";
 // services
 import { InstanceService } from "@/services/instance.service";
 
@@ -17,6 +17,7 @@ export interface IInstanceStore {
   // issues
   isLoading: boolean;
   instance: IInstance | undefined;
+  config: IInstanceConfig | undefined;
   error: TError | undefined;
   // action
   fetchInstanceInfo: () => Promise<void>;
@@ -25,6 +26,7 @@ export interface IInstanceStore {
 export class InstanceStore implements IInstanceStore {
   isLoading: boolean = true;
   instance: IInstance | undefined = undefined;
+  config: IInstanceConfig | undefined = undefined;
   error: TError | undefined = undefined;
   // services
   instanceService;
@@ -34,6 +36,7 @@ export class InstanceStore implements IInstanceStore {
       // observable
       isLoading: observable.ref,
       instance: observable,
+      config: observable,
       error: observable,
       // actions
       fetchInstanceInfo: action,
@@ -49,10 +52,11 @@ export class InstanceStore implements IInstanceStore {
     try {
       this.isLoading = true;
       this.error = undefined;
-      const instance = await this.instanceService.getInstanceInfo();
+      const instanceInfo = await this.instanceService.getInstanceInfo();
       runInAction(() => {
         this.isLoading = false;
-        this.instance = instance;
+        this.instance = instanceInfo.instance;
+        this.config = instanceInfo.config;
       });
     } catch (error) {
       runInAction(() => {

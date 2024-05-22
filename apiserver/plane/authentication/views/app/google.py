@@ -11,8 +11,8 @@ from django.views import View
 from plane.authentication.provider.oauth.google import GoogleOAuthProvider
 from plane.authentication.utils.login import user_login
 from plane.authentication.utils.redirection_path import get_redirection_path
-from plane.authentication.utils.workspace_project_join import (
-    process_workspace_project_invitations,
+from plane.authentication.utils.user_auth_workflow import (
+    post_user_auth_workflow,
 )
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
@@ -105,12 +105,11 @@ class GoogleCallbackEndpoint(View):
             provider = GoogleOAuthProvider(
                 request=request,
                 code=code,
+                callback=post_user_auth_workflow,
             )
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
-            # Process workspace and project invitations
-            process_workspace_project_invitations(user=user)
             # Get the redirection path
             path = get_redirection_path(user=user)
             # redirect to referer path

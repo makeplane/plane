@@ -33,7 +33,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
     organization_size: "",
   });
   // hooks
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   const onSubmit = async (workspace: IWorkspace) => {
     await updateUserProfile({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
@@ -50,7 +50,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
             href="/"
           >
             <div className="h-[30px] w-[133px]">
-              {theme === "light" ? (
+              {resolvedTheme === "light" ? (
                 <Image src={BlackHorizontalLogo} alt="Plane black logo" />
               ) : (
                 <Image src={WhiteHorizontalLogo} alt="Plane white logo" />

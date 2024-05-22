@@ -2,17 +2,39 @@
 
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Tooltip } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails, useUser } from "@/hooks/store";
+import useIsInIframe from "@/hooks/use-is-in-iframe";
 
-export const IssueVotes: React.FC = observer((props: any) => {
+type TIssueVotes = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
+  const router = useRouter();
+  const pathName = usePathname();
+  const searchParams = useSearchParams();
+  // query params
+  const peekId = searchParams.get("peekId") || undefined;
+  const board = searchParams.get("board") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
+
   const { workspaceSlug, projectId } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const issueDetailsStore = useIssueDetails();
   const { data: user, fetchCurrentUser } = useUser();
+
+  const isInIframe = useIsInIframe();
 
   const issueId = issueDetailsStore.peekId;
 
@@ -49,6 +71,9 @@ export const IssueVotes: React.FC = observer((props: any) => {
 
   const VOTES_LIMIT = 1000;
 
+  // derived values
+  const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
+
   return (
     <div className="flex items-center gap-2">
       {/* upvote button 👇 */}
@@ -73,12 +98,18 @@ export const IssueVotes: React.FC = observer((props: any) => {
           type="button"
           disabled={isSubmitting}
           onClick={(e) => {
+            if (isInIframe) return;
             if (user) handleVote(e, 1);
-            // userStore.requiredLogin(() => {});
+            else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
-          className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
-            isUpVotedByUser ? "border-custom-primary-200 text-custom-primary-200" : "border-custom-border-300"
-          }`}
+          className={cn(
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 h-7 focus:outline-none",
+            {
+              "border-custom-primary-200 text-custom-primary-200": isUpVotedByUser,
+              "border-custom-border-300": !isUpVotedByUser,
+              "cursor-default": isInIframe,
+            }
+          )}
         >
           <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_upward_alt</span>
           <span className="text-sm font-normal transition-opacity ease-in-out">{allUpVotes.length}</span>
@@ -107,12 +138,18 @@ export const IssueVotes: React.FC = observer((props: any) => {
           type="button"
           disabled={isSubmitting}
           onClick={(e) => {
+            if (isInIframe) return;
             if (user) handleVote(e, -1);
-            // userStore.requiredLogin(() => {});
+            else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
-          className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
-            isDownVotedByUser ? "border-red-600 text-red-600" : "border-custom-border-300"
-          }`}
+          className={cn(
+            "flex items-center justify-center gap-x-1 h-7 overflow-hidden rounded border px-2 focus:outline-none",
+            {
+              "border-red-600 text-red-600": isDownVotedByUser,
+              "border-custom-border-300": !isDownVotedByUser,
+              "cursor-default": isInIframe,
+            }
+          )}
         >
           <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_downward_alt</span>
           <span className="text-sm font-normal transition-opacity ease-in-out">{allDownVotes.length}</span>

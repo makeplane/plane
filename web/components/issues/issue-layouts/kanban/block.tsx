@@ -29,6 +29,7 @@ interface IssueBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   draggableId: string;
+  canDropOverIssue: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -108,6 +109,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     issuesMap,
     displayProperties,
     isDragDisabled,
+    canDropOverIssue,
     updateIssue,
     quickActions,
     canEditProperties,
@@ -167,6 +169,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       }),
       dropTargetForElements({
         element,
+        canDrop: ({ source }) => source?.data?.id !== issue?.id && canDropOverIssue,
         getData: () => ({ id: issue?.id, type: "ISSUE" }),
         onDragEnter: () => {
           setIsDraggingOverBlock(true);
@@ -179,7 +182,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
         },
       })
     );
-  }, [cardRef?.current, issue?.id, setIsCurrentBlockDragging, setIsDraggingOverBlock]);
+  }, [cardRef?.current, issue?.id, isDragAllowed, canDropOverIssue, setIsCurrentBlockDragging, setIsDraggingOverBlock]);
 
   if (!issue) return null;
 
