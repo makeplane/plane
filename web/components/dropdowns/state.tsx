@@ -3,20 +3,19 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// hooks
+// ui
 import { Spinner, StateGroupIcon } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useAppRouter, useProjectState } from "@/hooks/store";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
-// icons
-// helpers
-// types
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
-import { TDropdownProps } from "./types";
 // constants
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
+// types
+import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -99,50 +98,27 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
       setStateLoader(false);
     }
   };
+
+  const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
+    dropdownRef,
+    inputRef,
+    isOpen,
+    onClose,
+    onOpen,
+    query,
+    setIsOpen,
+    setQuery,
+  });
+
   useEffect(() => {
     if (projectId) onOpen();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    onClose && onClose();
-  };
-
-  const toggleDropdown = () => {
-    if (!isOpen) onOpen();
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-    if (isOpen) onClose && onClose();
-  };
-
   const dropdownOnChange = (val: string) => {
     onChange(val);
     handleClose();
   };
-
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (query !== "" && e.key === "Escape") {
-      e.stopPropagation();
-      setQuery("");
-    }
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
-
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]);
 
   return (
     <Combobox

@@ -72,6 +72,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const handleClose = () => {
     if (!isOpen) return;
     setIsOpen(false);
+    setQuery("");
     onClose && onClose();
   };
 
