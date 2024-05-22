@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 python manage.py wait_for_db
-python manage.py migrate
+# Wait for migrations
+python manage.py wait_for_migrations
 
 # Create the default bucket
 #!/bin/bash
@@ -18,11 +19,21 @@ SIGNATURE=$(echo "$HOSTNAME$MAC_ADDRESS$CPU_INFO$MEMORY_INFO$DISK_INFO" | sha256
 
 # Export the variables
 export MACHINE_SIGNATURE=$SIGNATURE
+export SKIP_ENV_VAR=1
+
+# License check
+python manage.py license_check
 
 # Register instance
-python manage.py setup_instance $INSTANCE_ADMIN_EMAIL
+python manage.py register_instance "$MACHINE_SIGNATURE"
+
+# Load the configuration variable
+python manage.py configure_instance
 
 # Create the default bucket
 python manage.py create_bucket
 
-exec gunicorn -w $GUNICORN_WORKERS -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:${PORT:-8000} --max-requests 1200 --max-requests-jitter 1000 --access-logfile -
+# Clear Cache before starting to remove stale values
+python manage.py clear_cache
+
+exec gunicorn -w "$GUNICORN_WORKERS" -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:"${PORT:-8000}" --max-requests 1200 --max-requests-jitter 1000 --access-logfile -
