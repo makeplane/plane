@@ -1,12 +1,14 @@
 "use client";
 
 import { ReactNode } from "react";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider, useTheme } from "next-themes";
 import { SWRConfig } from "swr";
+// ui
+import { Toast } from "@plane/ui";
 // constants
 import { SWR_CONFIG } from "@/constants/swr-config";
 // helpers
-import { ASSET_PREFIX } from "@/helpers/common.helper";
+import { ASSET_PREFIX, resolveGeneralTheme } from "@/helpers/common.helper";
 // lib
 import { InstanceProvider } from "@/lib/instance-provider";
 import { StoreProvider } from "@/lib/store-provider";
@@ -15,6 +17,9 @@ import { UserProvider } from "@/lib/user-provider";
 import "./globals.css";
 
 function RootLayout({ children }: { children: ReactNode }) {
+  // themes
+  const { resolvedTheme } = useTheme();
+
   return (
     <html lang="en">
       <head>
@@ -26,6 +31,7 @@ function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className={`antialiased`}>
         <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+          <Toast theme={resolveGeneralTheme(resolvedTheme)} />
           <SWRConfig value={SWR_CONFIG}>
             <StoreProvider>
               <InstanceProvider>

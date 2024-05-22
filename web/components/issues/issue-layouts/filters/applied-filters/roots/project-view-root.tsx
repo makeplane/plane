@@ -96,14 +96,16 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
 
   return (
     <div className="flex justify-between gap-4 p-4">
-      <AppliedFiltersList
-        appliedFilters={appliedFilters ?? {}}
-        handleClearAllFilters={handleClearAllFilters}
-        handleRemoveFilter={handleRemoveFilter}
-        labels={projectLabels ?? []}
-        states={projectStates}
-        alwaysAllowEditing
-      />
+      <div>
+        <AppliedFiltersList
+          appliedFilters={appliedFilters ?? {}}
+          handleClearAllFilters={handleClearAllFilters}
+          handleRemoveFilter={handleRemoveFilter}
+          labels={projectLabels ?? []}
+          states={projectStates}
+          alwaysAllowEditing
+        />
+      </div>
 
       {!areFiltersEqual && (
         <div>
