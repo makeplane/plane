@@ -45,7 +45,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: ./bin/takeoff
+    command: ./bin/docker-entry-api.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -60,7 +60,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: ./bin/worker
+    command: ./bin/docker-entry-worker.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -76,7 +76,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: ./bin/beat
+    command: ./bin/docker-entry-beat.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -92,9 +92,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: no
-    command: >
-      sh -c "python manage.py wait_for_db &&
-           python manage.py migrate"
+    command: ./bin/docker-entry-migrator.sh
     env_file:
       - ./apiserver/.env
     depends_on:
