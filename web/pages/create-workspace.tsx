@@ -39,6 +39,8 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
     await updateUserProfile({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
   };
 
+  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
+
   return (
     <>
       <PageHead title="Create Workspace" />
@@ -50,11 +52,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
             href="/"
           >
             <div className="h-[30px] w-[133px]">
-              {resolvedTheme === "light" ? (
-                <Image src={BlackHorizontalLogo} alt="Plane black logo" />
-              ) : (
-                <Image src={WhiteHorizontalLogo} alt="Plane white logo" />
-              )}
+              <Image src={logo} alt="Plane logo" />
             </div>
           </Link>
           <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">

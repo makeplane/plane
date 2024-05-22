@@ -176,7 +176,7 @@ export const ListGroup = observer((props: Props) => {
 
   const is_list = group_by === null ? true : false;
   const isDragAllowed = !!group_by && DRAG_ALLOWED_GROUPS.includes(group_by);
-  const canDropOverIssue = orderBy === "sort_order";
+  const canOverlayBeVisible = orderBy !== "sort_order" || !!group.isDropDisabled;
 
   const issueCount: number = is_list ? issueIds?.length ?? 0 : issueIds?.[group.id]?.length ?? 0;
 
@@ -186,7 +186,8 @@ export const ListGroup = observer((props: Props) => {
     <div
       ref={groupRef}
       className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`, {
-        "border-custom-primary-100 ": isDraggingOverColumn,
+        "border-custom-primary-100": isDraggingOverColumn,
+        "border-custom-error-200": isDraggingOverColumn && !!group.isDropDisabled,
       })}
     >
       <div className="sticky top-0 z-[3] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 pl-5 py-1">
@@ -205,7 +206,7 @@ export const ListGroup = observer((props: Props) => {
         <div className="relative">
           <GroupDragOverlay
             dragColumnOrientation={dragColumnOrientation}
-            canDropOverIssue={canDropOverIssue}
+            canOverlayBeVisible={canOverlayBeVisible}
             isDropDisabled={!!group.isDropDisabled}
             dropErrorMessage={group.dropErrorMessage}
             orderBy={orderBy}
@@ -222,7 +223,7 @@ export const ListGroup = observer((props: Props) => {
               canEditProperties={canEditProperties}
               containerRef={containerRef}
               isDragAllowed={isDragAllowed}
-              canDropOverIssue={canDropOverIssue}
+              canDropOverIssue={!canOverlayBeVisible}
             />
           )}
 
