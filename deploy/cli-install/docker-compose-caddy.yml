@@ -83,7 +83,7 @@ services:
     <<: *app-env
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     restart: unless-stopped
-    command: ./bin/docker-entrypointy-api-ee.sh
+    command: ./bin/docker-entrypoint-api-ee.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
     volumes:
