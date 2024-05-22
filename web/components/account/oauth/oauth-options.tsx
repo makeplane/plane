@@ -8,8 +8,7 @@ type TOAuthOptionProps = {
   isSignUp?: boolean;
 };
 
-export const OAuthOptions: React.FC<TOAuthOptionProps> = observer((props) => {
-  const { isSignUp = false } = props;
+export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
   // hooks
   const { config } = useInstance();
 
@@ -19,8 +18,6 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer((props) => {
     false;
 
   if (!isOAuthEnabled) return null;
-
-  const oauthProviderButtonText = `Sign ${isSignUp ? "up" : "in"} with`;
 
   return (
     <>
@@ -32,10 +29,10 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer((props) => {
       <div className={`mt-7 grid gap-4 overflow-hidden`}>
         {config?.is_google_enabled && (
           <div className="flex h-[42px] items-center !overflow-hidden">
-            <GoogleOAuthButton text={`${oauthProviderButtonText} Google`} />
+            <GoogleOAuthButton text="Continue with Google" />
           </div>
         )}
-        {config?.is_github_enabled && <GithubOAuthButton text={`${oauthProviderButtonText} Github`} />}
+        {config?.is_github_enabled && <GithubOAuthButton text="Continue with Github" />}
 
         {/* Enterprise Authentication Methods Start */}
         {config?.is_oidc_enabled && (

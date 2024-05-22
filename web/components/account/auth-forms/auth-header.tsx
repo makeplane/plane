@@ -21,30 +21,30 @@ type TAuthHeader = {
 const Titles = {
   [EAuthModes.SIGN_IN]: {
     [EAuthSteps.EMAIL]: {
-      header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
+      header: "Log in or sign up",
+      subHeader: "",
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
+      header: "Log in or sign up",
+      subHeader: "Log in using your password.",
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "Sign in to Plane",
-      subHeader: "Get back to your projects and make progress",
+      header: "Log in or sign up",
+      subHeader: "Log in using your unique code.",
     },
   },
   [EAuthModes.SIGN_UP]: {
     [EAuthSteps.EMAIL]: {
-      header: "Create your account",
-      subHeader: "Start tracking your projects with Plane",
+      header: "Sign up or log in",
+      subHeader: "",
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Create your account",
-      subHeader: "Progress, visualize, and measure work how it works best for you.",
+      header: "Sign up or log in",
+      subHeader: "Sign up using your password",
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "Create your account",
-      subHeader: "Progress, visualize, and measure work how it works best for you.",
+      header: "Sign up or log in",
+      subHeader: "Sign up using your unique code",
     },
   },
 };

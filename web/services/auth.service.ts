@@ -18,15 +18,8 @@ export class AuthService extends APIService {
       });
   }
 
-  signUpEmailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> =>
-    this.post("/auth/sign-up/email-check/", data, { headers: {} })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-
-  signInEmailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> =>
-    this.post("/auth/sign-in/email-check/", data, { headers: {} })
+  emailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> =>
+    this.post("/auth/email-check/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
