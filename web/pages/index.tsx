@@ -31,7 +31,7 @@ const HomePage: NextPageWithLayout = observer(() => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      <PageHead title="Log in to continue" />
+      <PageHead title="Log in or Sign up to continue" />
       <div className="absolute inset-0 z-0">
         <Image
           src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
@@ -56,7 +56,7 @@ const HomePage: NextPageWithLayout = observer(() => {
             </Link>
           </div>
         </div>
-        <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 lg:pt-28 transition-all">
+        <div className="flex flex-col justify-center flex-grow container h-[100vh-60px] mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 transition-all">
           <AuthRoot authMode={EAuthModes.SIGN_IN} />
         </div>
       </div>

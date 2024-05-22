@@ -93,7 +93,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
-      router.push("/sign-in");
+      router.push("/");
       return <></>;
     } else {
       if (currentUser && currentUserProfile?.id && isUserOnboard) {
@@ -106,7 +106,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.SET_PASSWORD) {
     if (!currentUser?.id) {
-      router.push("/sign-in");
+      router.push("/");
       return <></>;
     } else {
       if (currentUser && !currentUser?.is_password_autoset && currentUserProfile?.id && isUserOnboard) {
@@ -125,7 +125,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
         return <></>;
       }
     } else {
-      router.push("/sign-in");
+      router.push("/");
       return <></>;
     }
   }
