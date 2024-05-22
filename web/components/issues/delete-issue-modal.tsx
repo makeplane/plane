@@ -44,6 +44,11 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
     if (onSubmit)
       await onSubmit()
         .then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: "Issue deleted successfully",
+          });
           onClose();
         })
         .catch(() => {
