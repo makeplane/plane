@@ -18,7 +18,7 @@ DISK_INFO=$(df -h)
 SIGNATURE=$(echo "$HOSTNAME$MAC_ADDRESS$CPU_INFO$MEMORY_INFO$DISK_INFO" | sha256sum | awk '{print $1}')
 
 # Export the variables
-export MACHINE_SIGNATURE=$SIGNATURE
+MACHINE_SIGNATURE=${MACHINE_SIGNATURE:-$SIGNATURE}
 export SKIP_ENV_VAR=1
 
 # License check
