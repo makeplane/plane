@@ -249,9 +249,9 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
             className="w-full"
             customButtonClassName="w-full"
             customButton={
-              <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100">
+              <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-custom-text-300">
                 <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
-                <span className="text-sm font-medium flex-shrink-0 text-custom-primary-100">New Issue</span>
+                <span className="text-sm font-medium flex-shrink-0">New Issue</span>
               </div>
             }
           >
