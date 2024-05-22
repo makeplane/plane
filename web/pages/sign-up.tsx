@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 import { AuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
-import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
+import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 // helpers
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -51,7 +51,7 @@ const SignInPage: NextPageWithLayout = observer(() => {
             Already have an account?{" "}
             <Link
               href="/"
-              onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
+              onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
               className="font-semibold text-custom-primary-100 hover:underline"
             >
               Log in

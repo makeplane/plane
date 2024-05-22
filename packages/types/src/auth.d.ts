@@ -5,7 +5,7 @@ export interface IEmailCheckData {
 }
 
 export interface IEmailCheckResponse {
-  status: "MAGIC_CODE" | "CREDENTIALS";
+  status: "MAGIC_CODE" | "CREDENTIAL";
   existing: boolean;
 }
 

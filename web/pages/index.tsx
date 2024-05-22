@@ -8,7 +8,7 @@ import { useTheme } from "next-themes";
 import { AuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
-import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
+import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // helpers
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -49,7 +49,7 @@ const HomePage: NextPageWithLayout = observer(() => {
             New to Plane?{" "}
             <Link
               href="/sign-up"
-              onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
+              onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
               className="font-semibold text-custom-primary-100 hover:underline"
             >
               Create an account
