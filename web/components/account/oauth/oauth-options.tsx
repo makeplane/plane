@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // components
-import { GithubOAuthButton, GoogleOAuthButton } from "@/components/account";
+import { GithubOAuthButton, GoogleOAuthButton, OIDCOAuthButton, SAMLOAuthButton } from "@/components/account";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -12,7 +12,10 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
   // hooks
   const { config } = useInstance();
 
-  const isOAuthEnabled = (config && (config?.is_google_enabled || config?.is_github_enabled)) || false;
+  const isOAuthEnabled =
+    (config &&
+      (config?.is_google_enabled || config?.is_github_enabled || config?.is_oidc_enabled || config?.is_saml_enabled)) ||
+    false;
 
   if (!isOAuthEnabled) return null;
 
@@ -30,6 +33,19 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
           </div>
         )}
         {config?.is_github_enabled && <GithubOAuthButton text="Continue with Github" />}
+
+        {/* Enterprise Authentication Methods Start */}
+        {config?.is_oidc_enabled && (
+          <OIDCOAuthButton
+            text={`${oauthProviderButtonText} ${!!config?.oidc_provider_name ? config.oidc_provider_name : "OIDC"}`}
+          />
+        )}
+        {config?.is_saml_enabled && (
+          <SAMLOAuthButton
+            text={`${oauthProviderButtonText} ${!!config?.saml_provider_name ? config.saml_provider_name : "SAML"}`}
+          />
+        )}
+        {/* Enterprise Authentication Methods End */}
       </div>
     </>
   );

@@ -3,20 +3,20 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
-// services
-import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "@/constants/fetch-keys";
-import { NotificationService } from "@/services/notification.service";
-// fetch-keys
 // type
 import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
+// fetch-keys
+import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "@/constants/fetch-keys";
+// services
+import { NotificationService } from "@/services/notification.service";
 
 const PER_PAGE = 30;
 
 const userNotificationServices = new NotificationService();
 
-const useUserNotification = (): any => {
+const useUserNotification: any = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -79,7 +79,7 @@ const useUserNotification = (): any => {
     }, false);
   };
 
-  const mutateNotification = (notificationId: string, value: Object) => {
+  const mutateNotification = (notificationId: string, value: any) => {
     notificationMutate((previousNotifications: any) => {
       if (!previousNotifications) return previousNotifications;
 

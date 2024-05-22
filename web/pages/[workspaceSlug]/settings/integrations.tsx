@@ -1,26 +1,25 @@
 import { ReactElement } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// hooks
-// services
-// layouts
 // components
-import { PageHead } from "components/core";
-import { WorkspaceSettingHeader } from "components/headers";
-import { SingleIntegrationCard } from "components/integration";
+import { PageHead } from "@/components/core";
+import { WorkspaceSettingHeader } from "@/components/headers";
+import { SingleIntegrationCard } from "@/components/integration";
 // ui
-import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "components/ui";
-// types
-// fetch-keys
-import { APP_INTEGRATIONS } from "constants/fetch-keys";
+import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { useUser, useWorkspace } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
-import { NextPageWithLayout } from "lib/types";
-import { IntegrationService } from "services/integrations";
+import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+// hooks
+import { useUser, useWorkspace } from "@/hooks/store";
+// layouts
+import { AppLayout } from "@/layouts/app-layout";
+import { WorkspaceSettingLayout } from "@/layouts/settings-layout";
+// types
+import { NextPageWithLayout } from "@/lib/types";
+// services
+import { IntegrationService } from "@/services/integrations";
 
 const integrationService = new IntegrationService();
 
@@ -38,6 +37,10 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
 
+  const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
+    workspaceSlug && isAdmin ? integrationService.getAppIntegrationsList() : null
+  );
+
   if (!isAdmin)
     return (
       <>
@@ -47,10 +50,6 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
         </div>
       </>
     );
-
-  const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
-    workspaceSlug && isAdmin ? integrationService.getAppIntegrationsList() : null
-  );
 
   return (
     <>

@@ -20,6 +20,13 @@ from .views import (
     SignUpAuthEndpoint,
     ForgotPasswordSpaceEndpoint,
     ResetPasswordSpaceEndpoint,
+    # OIDC
+    OIDCAuthInitiateEndpoint,
+    OIDCallbackEndpoint,
+    # SAML
+    SAMLAuthInitiateEndpoint,
+    SAMLCallbackEndpoint,
+    SAMLMetadataEndpoint,
     # Space
     EmailCheckSpaceEndpoint,
     GitHubCallbackSpaceEndpoint,
@@ -192,5 +199,32 @@ urlpatterns = [
         "set-password/",
         SetUserPasswordEndpoint.as_view(),
         name="set-password",
+    ),
+    # OIDC
+    path(
+        "oidc/",
+        OIDCAuthInitiateEndpoint.as_view(),
+        name="oidc",
+    ),
+    path(
+        "oidc/callback/",
+        OIDCallbackEndpoint.as_view(),
+        name="oidc",
+    ),
+    # SAML
+    path(
+        "saml/",
+        SAMLAuthInitiateEndpoint.as_view(),
+        name="saml",
+    ),
+    path(
+        "saml/callback/",
+        SAMLCallbackEndpoint.as_view(),
+        name="saml",
+    ),
+    path(
+        "saml/metadata/",
+        SAMLMetadataEndpoint.as_view(),
+        name="saml",
     ),
 ]

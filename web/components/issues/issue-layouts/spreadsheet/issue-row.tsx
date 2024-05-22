@@ -225,7 +225,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         >
           <div
             className="flex min-w-min items-center gap-0.5 px-4 py-2.5 pl-1.5 pr-0"
-            style={nestingLevel !== 0 ? { paddingLeft } : {}}
+            style={issueDetail?.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}
           >
             <div className="flex items-center">
               {/* bulk ops */}
