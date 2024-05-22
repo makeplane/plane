@@ -20,7 +20,6 @@ import { AuthService } from "@/services/auth.service";
 
 type Props = {
   email: string;
-  isPasswordAutoset: boolean;
   isSMTPConfigured: boolean;
   mode: EAuthModes;
   handleEmailClear: () => void;
