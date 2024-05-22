@@ -2,6 +2,7 @@ import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 import { IssueRootStore } from "./root.store";
 import { TIssueGroupByOptions } from "@plane/types";
+import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
 // types
 
 export interface IIssueKanBanViewStore {
@@ -21,8 +22,6 @@ export interface IIssueKanBanViewStore {
   handleKanBanToggle: (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => void;
   setIsDragging: (isDragging: boolean) => void;
 }
-
-const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = ["state", "priority", "assignees", "labels", "module", "cycle"];
 
 export class IssueKanBanViewStore implements IIssueKanBanViewStore {
   kanBanToggle: {

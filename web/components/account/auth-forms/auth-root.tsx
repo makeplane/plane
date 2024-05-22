@@ -37,67 +37,83 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const router = useRouter();
   const { email: emailParam, invitation_id, slug: workspaceSlug, error_code } = router.query;
   // props
-  const { authMode } = props;
+  const { authMode: currentAuthMode } = props;
   // states
+  const [authMode, setAuthMode] = useState<EAuthModes | undefined>(undefined);
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
-  const [isPasswordAutoset, setIsPasswordAutoset] = useState(true);
   // hooks
   const { config } = useInstance();
 
   useEffect(() => {
-    if (error_code) {
+    if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
+  }, [currentAuthMode, authMode]);
+
+  useEffect(() => {
+    if (error_code && authMode) {
       const errorhandler = authErrorHandler(error_code?.toString() as EAuthenticationErrorCodes);
       if (errorhandler) {
-        if (
-          [
-            EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN,
-            EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP,
-          ].includes(errorhandler.code)
-        )
+        // password error handler
+        if ([EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP].includes(errorhandler.code)) {
+          setAuthMode(EAuthModes.SIGN_UP);
           setAuthStep(EAuthSteps.PASSWORD);
+        }
+        if ([EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN].includes(errorhandler.code)) {
+          setAuthMode(EAuthModes.SIGN_IN);
+          setAuthStep(EAuthSteps.PASSWORD);
+        }
+        // magic_code error handler
         if (
           [
-            EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
+            EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP,
             EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP,
-            EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
             EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP,
-            EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
             EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP,
           ].includes(errorhandler.code)
-        )
+        ) {
+          setAuthMode(EAuthModes.SIGN_UP);
           setAuthStep(EAuthSteps.UNIQUE_CODE);
+        }
+        if (
+          [
+            EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN,
+            EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
+            EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
+            EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
+          ].includes(errorhandler.code)
+        ) {
+          setAuthMode(EAuthModes.SIGN_IN);
+          setAuthStep(EAuthSteps.UNIQUE_CODE);
+        }
+
         setErrorInfo(errorhandler);
       }
     }
   }, [error_code, authMode]);
 
   const isSMTPConfigured = config?.is_smtp_configured || false;
-  const isMagicLoginEnabled = config?.is_magic_login_enabled || false;
-  const isEmailPasswordEnabled = config?.is_email_password_enabled || false;
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
-    const emailCheckRequest =
-      authMode === EAuthModes.SIGN_IN ? authService.signInEmailCheck(data) : authService.signUpEmailCheck(data);
-
-    await emailCheckRequest
+    await authService
+      .emailCheck(data)
       .then(async (response) => {
-        if (authMode === EAuthModes.SIGN_IN) {
-          if (response.is_password_autoset) {
+        if (response.existing) {
+          if (currentAuthMode === EAuthModes.SIGN_UP) setAuthMode(EAuthModes.SIGN_IN);
+          if (response.status === "MAGIC_CODE") {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
             generateEmailUniqueCode(data.email);
-          } else if (isEmailPasswordEnabled) {
-            setIsPasswordAutoset(false);
+          } else if (response.status === "CREDENTIAL") {
             setAuthStep(EAuthSteps.PASSWORD);
           }
         } else {
-          if (isSMTPConfigured && isMagicLoginEnabled) {
+          if (currentAuthMode === EAuthModes.SIGN_IN) setAuthMode(EAuthModes.SIGN_UP);
+          if (response.status === "MAGIC_CODE") {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
             generateEmailUniqueCode(data.email);
-          } else if (isEmailPasswordEnabled) {
+          } else if (response.status === "CREDENTIAL") {
             setAuthStep(EAuthSteps.PASSWORD);
           }
         }
@@ -108,8 +124,17 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
       });
   };
 
+  const handleEmailClear = () => {
+    setAuthMode(currentAuthMode);
+    setErrorInfo(undefined);
+    setEmail("");
+    setAuthStep(EAuthSteps.EMAIL);
+    router.push(currentAuthMode === EAuthModes.SIGN_IN ? `/` : "/sign-up", undefined, { shallow: true });
+  };
+
   // generating the unique code
   const generateEmailUniqueCode = async (email: string): Promise<{ code: string } | undefined> => {
+    if (!isSMTPConfigured) return;
     const payload = { email: email };
     return await authService
       .generateUniqueCode(payload)
@@ -121,6 +146,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
       });
   };
 
+  if (!authMode) return <></>;
   return (
     <div className="relative flex flex-col space-y-6">
       <AuthHeader
@@ -138,23 +164,16 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
           <AuthUniqueCodeForm
             mode={authMode}
             email={email}
-            handleEmailClear={() => {
-              setEmail("");
-              setAuthStep(EAuthSteps.EMAIL);
-            }}
+            handleEmailClear={handleEmailClear}
             generateEmailUniqueCode={generateEmailUniqueCode}
           />
         )}
         {authStep === EAuthSteps.PASSWORD && (
           <AuthPasswordForm
             mode={authMode}
-            isPasswordAutoset={isPasswordAutoset}
             isSMTPConfigured={isSMTPConfigured}
             email={email}
-            handleEmailClear={() => {
-              setEmail("");
-              setAuthStep(EAuthSteps.EMAIL);
-            }}
+            handleEmailClear={handleEmailClear}
             handleAuthStep={(step: EAuthSteps) => {
               if (step === EAuthSteps.UNIQUE_CODE) generateEmailUniqueCode(email);
               setAuthStep(step);

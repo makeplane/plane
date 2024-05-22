@@ -57,7 +57,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@company.com"
+            placeholder="name@example.com"
             className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}

@@ -17,6 +17,7 @@ export interface IArchivedIssues {
   // computed
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
+  getIssueIds: (groupId?: string) => string[] | undefined;
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restoreIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -83,6 +84,26 @@ export class ArchivedIssues extends IssueHelperStore implements IArchivedIssues 
 
     return issues;
   }
+
+  getIssueIds = (groupId?: string) => {
+    const groupedIssueIds = this.groupedIssueIds;
+
+    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    if (!displayFilters || !groupedIssueIds) return undefined;
+
+    const subGroupBy = displayFilters?.sub_group_by;
+    const groupBy = displayFilters?.group_by;
+
+    if (!groupBy && !subGroupBy) {
+      return groupedIssueIds as string[];
+    }
+
+    if (groupBy && groupId) {
+      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[];
+    }
+
+    return undefined;
+  };
 
   fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader") => {
     try {
