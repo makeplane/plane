@@ -79,6 +79,7 @@ export class RootStore {
   resetOnSignOut() {
     // handling the system theme when user logged out from the app
     localStorage.setItem("theme", "system");
+    localStorage.setItem("app_sidebar_collapsed", "false");
 
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
@@ -96,7 +97,7 @@ export class RootStore {
     this.dashboard = new DashboardStore(this);
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();
-    this.theme = new ThemeStore(this);
+    // this.theme = new ThemeStore(this);
     this.eventTracker = new EventTrackerStore(this);
     this.instance = new InstanceStore();
     this.user = new UserStore(this);
