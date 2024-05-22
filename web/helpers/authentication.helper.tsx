@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import Link from "next/link";
+// helpers
+import { SUPPORT_EMAIL } from "./common.helper";
 
 export enum EPageTypes {
   PUBLIC = "PUBLIC",
@@ -126,7 +128,7 @@ const errorCodeMessages: {
   },
   [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
     title: `User account deactivated`,
-    message: () => `User account deactivated. Please contact your administrator.`,
+    message: () => `User account deactivated. Please contact ${!!SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
   },
   [EAuthenticationErrorCodes.INVALID_PASSWORD]: {
     title: `Invalid password`,

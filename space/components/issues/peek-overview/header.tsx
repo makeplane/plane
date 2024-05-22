@@ -3,17 +3,15 @@ import { observer } from "mobx-react-lite";
 import { MoveRight } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // ui
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { Icon } from "@/components/ui";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetails } from "@/hooks/store";
 import useClipboardWritePermission from "@/hooks/use-clipboard-write-permission";
-import useToast from "@/hooks/use-toast";
-// store
-import { IPeekMode } from "@/store/issue-detail.store";
 // types
-import { IIssue } from "@/types/issue";
+import { IIssue, IPeekMode } from "@/types/issue";
 
 type Props = {
   handleClose: () => void;
@@ -44,14 +42,12 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
   const { peekMode, setPeekMode } = useIssueDetails();
   const isClipboardWriteAllowed = useClipboardWritePermission();
 
-  const { setToastAlert } = useToast();
-
   const handleCopyLink = () => {
     const urlToCopy = window.location.href;
 
     copyTextToClipboard(urlToCopy).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.INFO,
         title: "Link copied!",
         message: "Issue link copied to clipboard",
       });

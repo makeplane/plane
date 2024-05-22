@@ -97,6 +97,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
     setEmail(data.email);
+    setErrorInfo(undefined);
     await authService
       .emailCheck(data)
       .then(async (response) => {

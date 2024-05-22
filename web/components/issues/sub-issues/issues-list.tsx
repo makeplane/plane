@@ -12,6 +12,7 @@ export interface IIssueList {
   workspaceSlug: string;
   projectId: string;
   parentIssueId: string;
+  rootIssueId: string;
   spacingLeft: number;
   disabled: boolean;
   handleIssueCrudState: (
@@ -27,6 +28,7 @@ export const IssueList: FC<IIssueList> = observer((props) => {
     workspaceSlug,
     projectId,
     parentIssueId,
+    rootIssueId,
     spacingLeft = 10,
     disabled,
     handleIssueCrudState,
@@ -50,6 +52,7 @@ export const IssueList: FC<IIssueList> = observer((props) => {
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 parentIssueId={parentIssueId}
+                rootIssueId={rootIssueId}
                 issueId={issueId}
                 spacingLeft={spacingLeft}
                 disabled={disabled}
