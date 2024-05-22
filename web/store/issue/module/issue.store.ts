@@ -404,23 +404,18 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
           });
         });
       });
-      if(originalModuleIds){
+      if (originalModuleIds) {
         // update the root issue map with the new module ids
         let currentModuleIds = concat([...originalModuleIds], addModuleIds);
         currentModuleIds = pull(currentModuleIds, ...removeModuleIds);
         this.rootStore.issues.updateIssue(issueId, { module_ids: uniq(currentModuleIds) });
       }
 
-      //Perform API calls
-      if (!isEmpty(addModuleIds)) {
-        await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
-          modules: addModuleIds,
-        });
-      }
-      if (!isEmpty(removeModuleIds)) {
-        await this.moduleService.removeModulesFromIssueBulk(workspaceSlug, projectId, issueId, removeModuleIds);
-      }
-
+      //Perform API call
+      await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
+        modules: addModuleIds,
+        removed_modules: removeModuleIds,
+      });
     } catch (error) {
       // revert the issue back to its original module ids
       set(this.rootStore.issues.issuesMap, [issueId, "module_ids"], originalModuleIds);
