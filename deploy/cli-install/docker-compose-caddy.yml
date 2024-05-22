@@ -45,12 +45,11 @@ x-app-env: &app-env
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
 
 services:
-
   admin:
     <<: *app-env
     image: registry.plane.tools/plane/admin-enterprise:${APP_RELEASE_VERSION}
     restart: unless-stopped
-    command:  node admin/server.js admin
+    command: node admin/server.js admin
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
     depends_on:
@@ -84,7 +83,7 @@ services:
     <<: *app-env
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     restart: unless-stopped
-    command: ./bin/takeoff
+    command: ./bin/docker-entrypointy-api-ee.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
     volumes:
@@ -97,7 +96,7 @@ services:
     <<: *app-env
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     restart: unless-stopped
-    command: ./bin/worker
+    command: ./bin/docker-entrypoint-worker.sh
     volumes:
       - ${INSTALL_DIR}/logs/worker:/code/plane/logs
     depends_on:
@@ -109,7 +108,7 @@ services:
     <<: *app-env
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     restart: unless-stopped
-    command: ./bin/beat
+    command: ./bin/docker-entrypoint-beat.sh
     volumes:
       - ${INSTALL_DIR}/logs/beat-worker:/code/plane/logs
     depends_on:
@@ -121,9 +120,7 @@ services:
     <<: *app-env
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     restart: no
-    command: >
-      sh -c "python manage.py wait_for_db &&
-           python manage.py migrate"
+    command: ./bin/docker-entrypoint-migrator.sh
     volumes:
       - ${INSTALL_DIR}/logs/migrator:/code/plane/logs
     depends_on:
