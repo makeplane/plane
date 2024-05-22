@@ -4,31 +4,36 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { observer } from "mobx-react-lite";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks
-import { ControlLink, DropIndicator, Tooltip } from "@plane/ui";
+import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useAppRouter, useIssueDetail, useProject, useKanbanView } from "@/hooks/store";
-
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { getIssueBlockId } from "../utils";
 // ui
 // types
 // helper
 
 interface IssueBlockProps {
   issueId: string;
+  groupId: string;
+  subGroupId: string;
   issuesMap: IIssueMap;
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   draggableId: string;
+  canDropOverIssue: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  issueIds: string[]; //DO NOT REMOVE< needed to force render for virtualization
 }
 
 interface IssueDetailsBlockProps {
@@ -59,7 +64,9 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
             {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
           <div
-            className="absolute -top-1 right-0 hidden group-hover/kanban-block:block"
+            className={cn("absolute -top-1 right-0", {
+              "hidden group-hover/kanban-block:block": !isMobile,
+            })}
             onClick={handleEventPropagation}
           >
             {quickActions({
@@ -97,20 +104,23 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const {
     issueId,
+    groupId,
+    subGroupId,
     issuesMap,
     displayProperties,
     isDragDisabled,
+    canDropOverIssue,
     updateIssue,
     quickActions,
     canEditProperties,
     scrollableContainerRef,
-    issueIds,
   } = props;
 
   const cardRef = useRef<HTMLAnchorElement | null>(null);
   // hooks
   const { workspaceSlug } = useAppRouter();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -130,6 +140,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const canEditIssueProperties = canEditProperties(issue?.project_id);
 
   const isDragAllowed = !isDragDisabled && !issue?.tempId && canEditIssueProperties;
+
+  useOutsideClickDetector(cardRef, () => {
+    cardRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
+  });
 
   // Make Issue block both as as Draggable and,
   // as a DropTarget for other issues being dragged to get the location of drop
@@ -155,6 +169,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       }),
       dropTargetForElements({
         element,
+        canDrop: () => canDropOverIssue,
         getData: () => ({ id: issue?.id, type: "ISSUE" }),
         onDragEnter: () => {
           setIsDraggingOverBlock(true);
@@ -177,32 +192,37 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       <div
         // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
         className={cn("group/kanban-block relative p-1.5", { "z-[1]": isCurrentBlockDragging })}
-        onDragStart={() => isDragAllowed && setIsCurrentBlockDragging(true)}
+        onDragStart={() => {
+          if (isDragAllowed) setIsCurrentBlockDragging(true);
+          else
+            setToast({
+              type: TOAST_TYPE.WARNING,
+              title: "Cannot move issue",
+              message: "Drag and drop is disabled for the current grouping",
+            });
+        }}
       >
         <ControlLink
-          id={`issue-${issue.id}`}
+          id={getIssueBlockId(issueId, groupId, subGroupId)}
           href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
             issue.id
           }`}
           ref={cardRef}
           className={cn(
-            "block rounded border-[0.5px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
-            {
-              "hover:cursor-pointer": isDragAllowed,
-              "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
-              "bg-custom-background-80 z-[100]": isCurrentBlockDragging,
-            }
+            "block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+            { "hover:cursor-pointer": isDragAllowed },
+            { "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id) },
+            { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
           )}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
-          disabled={!!issue?.tempId}
+          disabled={!!issue?.tempId || isMobile}
         >
           <RenderIfVisible
             classNames="space-y-2 px-3 py-2"
             root={scrollableContainerRef}
             defaultHeight="100px"
             horizontalOffset={50}
-            changingReference={issueIds}
           >
             <KanbanIssueDetailsBlock
               cardRef={cardRef}

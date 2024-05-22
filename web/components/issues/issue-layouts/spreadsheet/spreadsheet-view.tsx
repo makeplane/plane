@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
-import { Spinner } from "@plane/ui";
+import { LogoSpinner } from "@/components/common";
 import { SpreadsheetQuickAddIssueForm } from "@/components/issues";
 import { SPREADSHEET_PROPERTY_LIST } from "@/constants/spreadsheet";
 import { useProject } from "@/hooks/store";
@@ -66,7 +66,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   if (!issueIds || issueIds.length === 0)
     return (
       <div className="grid h-full w-full place-items-center">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 

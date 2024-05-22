@@ -1,7 +1,9 @@
 import React, { FC, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// icons
 import { ListFilter, Search, X } from "lucide-react";
+// helpers
 import { cn } from "@plane/editor-core";
 // types
 import { TModuleFilters } from "@plane/types";
@@ -18,6 +20,8 @@ import {
   MODULES_SORT_UPDATED,
 } from "@/constants/event-tracker";
 import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useEventTracker, useMember, useModuleFilter } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
@@ -90,6 +94,9 @@ export const ModuleViewHeader: FC = observer(() => {
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
+
+  const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0 || displayFilters?.favorites;
+
   return (
     <div className="hidden h-full sm:flex items-center gap-3 self-end">
       <div className="flex items-center">
@@ -154,7 +161,12 @@ export const ModuleViewHeader: FC = observer(() => {
           });
         }}
       />
-      <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+      <FiltersDropdown
+        icon={<ListFilter className="h-3 w-3" />}
+        title="Filters"
+        placement="bottom-end"
+        isFiltersApplied={isFiltersApplied}
+      >
         <ModuleFiltersSelection
           displayFilters={displayFilters ?? {}}
           filters={filters ?? {}}

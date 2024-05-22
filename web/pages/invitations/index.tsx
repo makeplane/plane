@@ -16,17 +16,18 @@ import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 // constants
 import { E_WORKSPACE_INVITATION, MEMBER_ACCEPTED } from "@/constants/event-tracker";
+import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 import { ROLE } from "@/constants/workspace";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
-import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
-import { UserAuthWrapper } from "@/layouts/auth-layout";
+import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import DefaultLayout from "@/layouts/default-layout";
 // types
 import { NextPageWithLayout } from "@/lib/types";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
-import { UserService } from "@/services/user.service";
 import { WorkspaceService } from "@/services/workspace.service";
 // images
 import emptyInvitation from "public/empty-state/invitation.svg";
@@ -34,7 +35,6 @@ import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-l
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 
 const workspaceService = new WorkspaceService();
-const userService = new UserService();
 
 const UserInvitationsPage: NextPageWithLayout = observer(() => {
   // states
@@ -45,6 +45,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { captureEvent, joinWorkspaceMetricGroup } = useEventTracker();
   const { data: currentUser } = useUser();
+  const { updateUserProfile } = useUserProfile();
+
   const { fetchWorkspaces } = useWorkspace();
   // next-themes
   const { theme } = useTheme();
@@ -79,7 +81,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(() => {
-        mutate("USER_WORKSPACES");
+        mutate(USER_WORKSPACES_LIST);
         const firstInviteId = invitationsRespond[0];
         const invitation = invitations?.find((i) => i.id === firstInviteId);
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
@@ -92,8 +94,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
           state: "SUCCESS",
           element: E_WORKSPACE_INVITATION,
         });
-        userService
-          .updateUser({ last_workspace_id: redirectWorkspace?.id })
+        updateUserProfile({ last_workspace_id: redirectWorkspace?.id })
           .then(() => {
             setIsJoiningWorkspaces(false);
             fetchWorkspaces().then(() => {
@@ -236,9 +237,9 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
 
 UserInvitationsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserAuthWrapper>
+    <AuthenticationWrapper>
       <DefaultLayout>{page}</DefaultLayout>
-    </UserAuthWrapper>
+    </AuthenticationWrapper>
   );
 };
 

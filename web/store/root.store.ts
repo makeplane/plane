@@ -76,7 +76,10 @@ export class RootStore {
     this.theme = new ThemeStore(this);
   }
 
-  resetOnSignout() {
+  resetOnSignOut() {
+    // handling the system theme when user logged out from the app
+    localStorage.setItem("theme", "system");
+
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
     this.memberRoot = new MemberRootStore(this);

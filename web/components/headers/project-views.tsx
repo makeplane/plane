@@ -1,13 +1,14 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Plus } from "lucide-react";
 // hooks
 // components
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
+// constants
+import { E_VIEWS } from "@/constants/event-tracker";
 // helpers
 import { ProjectLogo } from "@/components/project";
-import { E_VIEWS } from "@/constants/event-tracker";
+import { ViewListHeader } from "@/components/views";
 import { EUserProjectRoles } from "@/constants/project";
 // constants
 import { useCommandPalette, useProject, useUser, useEventTracker } from "@/hooks/store";
@@ -60,17 +61,17 @@ export const ProjectViewsHeader: React.FC = observer(() => {
         </div>
         {canUserCreateIssue && (
           <div className="flex flex-shrink-0 items-center gap-2">
+            <ViewListHeader />
             <div>
               <Button
                 variant="primary"
                 size="sm"
-                prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
                 onClick={() => {
                   setTrackElement(E_VIEWS);
                   toggleCreateViewModal(true);
                 }}
               >
-                Create View
+                Add View
               </Button>
             </div>
           </div>

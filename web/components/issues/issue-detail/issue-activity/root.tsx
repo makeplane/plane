@@ -67,13 +67,13 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             element: peekIssue ? "Peek issue" : inboxIssueId ? E_INBOX : E_ISSUE_DETAILS,
           });
           setToast({
-            title: "Comment created successfully.",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Comment created successfully.",
           });
         } catch (error) {
           setToast({
-            title: "Comment creation failed.",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Comment creation failed. Please try again later.",
           });
@@ -90,13 +90,13 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             element: peekIssue ? "Peek issue" : inboxIssueId ? E_INBOX : E_ISSUE_DETAILS,
           });
           setToast({
-            title: "Comment updated successfully.",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Comment updated successfully.",
           });
         } catch (error) {
           setToast({
-            title: "Comment update failed.",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Comment update failed. Please try again later.",
           });
@@ -112,13 +112,13 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             element: peekIssue ? "Peek issue" : inboxIssueId ? E_INBOX : E_ISSUE_DETAILS,
           });
           setToast({
-            title: "Comment removed successfully.",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Comment removed successfully.",
           });
         } catch (error) {
           setToast({
-            title: "Comment remove failed.",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Comment remove failed. Please try again later.",
           });
@@ -171,6 +171,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               />
               {!disabled && (
                 <IssueCommentCreate
+                  issueId={issueId}
                   projectId={projectId}
                   workspaceSlug={workspaceSlug}
                   activityOperations={activityOperations}
@@ -190,6 +191,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               />
               {!disabled && (
                 <IssueCommentCreate
+                  issueId={issueId}
                   projectId={projectId}
                   workspaceSlug={workspaceSlug}
                   activityOperations={activityOperations}

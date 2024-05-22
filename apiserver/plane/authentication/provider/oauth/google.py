@@ -5,12 +5,13 @@ from urllib.parse import urlencode
 
 import pytz
 
-# Django imports
-from django.core.exceptions import ImproperlyConfigured
-
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 
 
 class GoogleOAuthProvider(OauthAdapter):
@@ -19,7 +20,7 @@ class GoogleOAuthProvider(OauthAdapter):
     scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
     provider = "google"
 
-    def __init__(self, request, code=None, state=None):
+    def __init__(self, request, code=None, state=None, callback=None):
         (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET) = get_configuration_value(
             [
                 {
@@ -34,16 +35,15 @@ class GoogleOAuthProvider(OauthAdapter):
         )
 
         if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET):
-            raise ImproperlyConfigured(
-                "Google is not configured. Please contact the support team."
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["GOOGLE_NOT_CONFIGURED"],
+                error_message="GOOGLE_NOT_CONFIGURED",
             )
 
         client_id = GOOGLE_CLIENT_ID
         client_secret = GOOGLE_CLIENT_SECRET
 
-        redirect_uri = (
-            f"{request.scheme}://{request.get_host()}/auth/google/callback/"
-        )
+        redirect_uri = f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/google/callback/"""
         url_params = {
             "client_id": client_id,
             "scope": self.scope,
@@ -66,6 +66,7 @@ class GoogleOAuthProvider(OauthAdapter):
             self.userinfo_url,
             client_secret,
             code,
+            callback=callback,
         )
 
     def set_token_data(self):

@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-import { mutate } from "swr";
 // icons
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // ui
@@ -11,7 +9,7 @@ import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // constants
 import { PROFILE_ACTION_LINKS } from "@/constants/profile";
 // hooks
-import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -35,12 +33,10 @@ export const ProfileLayoutSidebar = observer(() => {
   const [isSigningOut, setIsSigningOut] = useState(false);
   // router
   const router = useRouter();
-  // next themes
-  const { setTheme } = useTheme();
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser, signOut } = useUser();
-  // const { currentUserSettings } = useUser();
+  const { data: currentUserSettings } = useUserSettings();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
 

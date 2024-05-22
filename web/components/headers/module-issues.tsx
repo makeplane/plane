@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // icons
-import { ArrowRight, PanelRight, Plus } from "lucide-react";
+import { ArrowRight, PanelRight } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip } from "@plane/ui";
@@ -28,6 +29,7 @@ import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
@@ -191,10 +193,12 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const issueCount = moduleDetails
-    ? issueFilters?.displayFilters?.sub_issue && moduleDetails.sub_issues
-      ? moduleDetails.total_issues + moduleDetails.sub_issues
+    ? !issueFilters?.displayFilters?.sub_issue && moduleDetails.sub_issues
+      ? moduleDetails.total_issues - moduleDetails.sub_issues
       : moduleDetails.total_issues
     : undefined;
+
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <>
@@ -284,7 +288,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 onChange={(layout) => handleLayoutChange(layout)}
                 selectedLayout={activeLayout}
               />
-              <FiltersDropdown title="Filters" placement="bottom-end">
+              <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
                 <FilterSelection
                   filters={issueFilters?.filters ?? {}}
                   handleFiltersUpdate={handleFiltersUpdate}
@@ -341,7 +345,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                   }}
                   size="sm"
-                  prependIcon={<Plus />}
                 >
                   Add Issue
                 </Button>

@@ -1,34 +1,46 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import set from "lodash/set";
-import { IInstance, IInstanceAdmin, IInstanceConfiguration, IFormattedInstanceConfiguration } from "@plane/types";
+import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import {
+  IInstance,
+  IInstanceAdmin,
+  IInstanceConfiguration,
+  IFormattedInstanceConfiguration,
+  IInstanceInfo,
+  IInstanceConfig,
+} from "@plane/types";
 // helpers
 import { EInstanceStatus, TInstanceStatus } from "@/helpers";
 // services
 import { InstanceService } from "@/services/instance.service";
 // root store
-import { RootStore } from "@/store/root-store";
+import { RootStore } from "@/store/root.store";
 
 export interface IInstanceStore {
   // issues
   isLoading: boolean;
+  error: any;
   instanceStatus: TInstanceStatus | undefined;
   instance: IInstance | undefined;
+  config: IInstanceConfig | undefined;
   instanceAdmins: IInstanceAdmin[] | undefined;
   instanceConfigurations: IInstanceConfiguration[] | undefined;
   // computed
   formattedConfig: IFormattedInstanceConfiguration | undefined;
   // action
-  fetchInstanceInfo: () => Promise<IInstance | undefined>;
-  updateInstanceInfo: (data: Partial<IInstance["instance"]>) => Promise<IInstance["instance"] | undefined>;
+  hydrate: (data: IInstanceInfo) => void;
+  fetchInstanceInfo: () => Promise<IInstanceInfo | undefined>;
+  updateInstanceInfo: (data: Partial<IInstance>) => Promise<IInstance | undefined>;
   fetchInstanceAdmins: () => Promise<IInstanceAdmin[] | undefined>;
   fetchInstanceConfigurations: () => Promise<IInstanceConfiguration[] | undefined>;
-  updateInstanceConfigurations: (data: Partial<IFormattedInstanceConfiguration>) => Promise<void>;
+  updateInstanceConfigurations: (data: Partial<IFormattedInstanceConfiguration>) => Promise<IInstanceConfiguration[]>;
 }
 
 export class InstanceStore implements IInstanceStore {
   isLoading: boolean = true;
+  error: any = undefined;
   instanceStatus: TInstanceStatus | undefined = undefined;
   instance: IInstance | undefined = undefined;
+  config: IInstanceConfig | undefined = undefined;
   instanceAdmins: IInstanceAdmin[] | undefined = undefined;
   instanceConfigurations: IInstanceConfiguration[] | undefined = undefined;
   // service
@@ -38,6 +50,7 @@ export class InstanceStore implements IInstanceStore {
     makeObservable(this, {
       // observable
       isLoading: observable.ref,
+      error: observable.ref,
       instanceStatus: observable,
       instance: observable,
       instanceAdmins: observable,
@@ -45,6 +58,7 @@ export class InstanceStore implements IInstanceStore {
       // computed
       formattedConfig: computed,
       // actions
+      hydrate: action,
       fetchInstanceInfo: action,
       fetchInstanceAdmins: action,
       updateInstanceInfo: action,
@@ -54,6 +68,13 @@ export class InstanceStore implements IInstanceStore {
 
     this.instanceService = new InstanceService();
   }
+
+  hydrate = (data: IInstanceInfo) => {
+    if (data) {
+      this.instance = data.instance;
+      this.config = data.config;
+    }
+  };
 
   /**
    * computed value for instance configurations data for forms.
@@ -74,15 +95,22 @@ export class InstanceStore implements IInstanceStore {
   fetchInstanceInfo = async () => {
     try {
       if (this.instance === undefined) this.isLoading = true;
-      const instance = await this.instanceService.getInstanceInfo();
+      this.error = undefined;
+      const instanceInfo = await this.instanceService.getInstanceInfo();
+      // handling the new user popup toggle
+      if (this.instance === undefined && !instanceInfo?.instance?.workspaces_exist)
+        this.store.theme.toggleNewUserPopup();
       runInAction(() => {
+        console.log("instanceInfo: ", instanceInfo);
         this.isLoading = false;
-        this.instance = instance;
+        this.instance = instanceInfo.instance;
+        this.config = instanceInfo.config;
       });
-      return instance;
+      return instanceInfo;
     } catch (error) {
       console.error("Error fetching the instance info");
       this.isLoading = false;
+      this.error = { message: "Failed to fetch the instance info" };
       this.instanceStatus = {
         status: EInstanceStatus.ERROR,
       };
@@ -92,10 +120,10 @@ export class InstanceStore implements IInstanceStore {
 
   /**
    * @description updating instance information
-   * @param {Partial<IInstance["instance"]>} data
+   * @param {Partial<IInstance>} data
    * @returns void
    */
-  updateInstanceInfo = async (data: Partial<IInstance["instance"]>) => {
+  updateInstanceInfo = async (data: Partial<IInstance>) => {
     try {
       const instanceResponse = await this.instanceService.updateInstanceInfo(data);
       if (instanceResponse) {
@@ -146,13 +174,15 @@ export class InstanceStore implements IInstanceStore {
    */
   updateInstanceConfigurations = async (data: Partial<IFormattedInstanceConfiguration>) => {
     try {
-      await this.instanceService.updateInstanceConfigurations(data).then((response) => {
-        runInAction(() => {
-          this.instanceConfigurations = this.instanceConfigurations
-            ? [...this.instanceConfigurations, ...response]
-            : response;
+      const response = await this.instanceService.updateInstanceConfigurations(data);
+      runInAction(() => {
+        this.instanceConfigurations = this.instanceConfigurations?.map((config) => {
+          const item = response.find((item) => item.key === config.key);
+          if (item) return item;
+          return config;
         });
       });
+      return response;
     } catch (error) {
       console.error("Error updating the instance configurations");
       throw error;

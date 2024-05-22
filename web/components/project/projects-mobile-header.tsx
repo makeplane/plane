@@ -5,10 +5,12 @@ import { ChevronDown, ListFilter } from "lucide-react";
 // types
 import { TProjectFilters } from "@plane/types";
 // hooks
-import { useApplication, useMember, useProjectFilter } from "@/hooks/store";
-// components
-import { FiltersDropdown } from "../issues";
-import { ProjectFiltersSelection, ProjectOrderByDropdown } from "./dropdowns";
+import { FiltersDropdown } from "@/components/issues/issue-layouts";
+import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project/dropdowns";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+// hooks
+import { useAppRouter, useMember, useProjectFilter } from "@/hooks/store";
 
 const ProjectsMobileHeader = observer(() => {
   const {
@@ -18,9 +20,7 @@ const ProjectsMobileHeader = observer(() => {
     updateFilters,
   } = useProjectFilter();
 
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
 
   const {
     workspace: { workspaceMemberIds },
@@ -43,6 +43,8 @@ const ProjectsMobileHeader = observer(() => {
     },
     [filters, updateFilters, workspaceSlug]
   );
+
+  const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;
 
   return (
     <div className="flex py-2 border-b border-custom-border-200 md:hidden bg-custom-background-100 w-full">
@@ -68,6 +70,7 @@ const ProjectsMobileHeader = observer(() => {
               <ChevronDown className="h-3 w-3" strokeWidth={2} />
             </div>
           }
+          isFiltersApplied={isFiltersApplied}
         >
           <ProjectFiltersSelection
             displayFilters={displayFilters ?? {}}

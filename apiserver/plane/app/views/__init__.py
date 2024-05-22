@@ -29,7 +29,7 @@ from .user.base import (
 )
 
 
-from .base import BaseAPIView, BaseViewSet, WebhookMixin
+from .base import BaseAPIView, BaseViewSet
 
 from .workspace.base import (
     WorkSpaceViewSet,
@@ -222,4 +222,4 @@ from .error_404 import custom_404_view
 
 from .exporter.base import ExportIssuesEndpoint
 from .notification.base import MarkAllReadNotificationViewSet
-from .user.base import AccountEndpoint, ProfileEndpoint
+from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint

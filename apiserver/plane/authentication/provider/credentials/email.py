@@ -1,7 +1,14 @@
+# Python imports
+import os
+
 # Module imports
-from plane.authentication.adapter.base import AuthenticationException
 from plane.authentication.adapter.credential import CredentialAdapter
 from plane.db.models import User
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
+from plane.license.utils.instance_value import get_configuration_value
 
 
 class EmailProvider(CredentialAdapter):
@@ -14,19 +21,39 @@ class EmailProvider(CredentialAdapter):
         key=None,
         code=None,
         is_signup=False,
+        callback=None,
     ):
-        super().__init__(request, self.provider)
+        super().__init__(
+            request=request, provider=self.provider, callback=callback
+        )
         self.key = key
         self.code = code
         self.is_signup = is_signup
+
+        (ENABLE_EMAIL_PASSWORD,) = get_configuration_value(
+            [
+                {
+                    "key": "ENABLE_EMAIL_PASSWORD",
+                    "default": os.environ.get("ENABLE_EMAIL_PASSWORD"),
+                },
+            ]
+        )
+
+        if ENABLE_EMAIL_PASSWORD == "0":
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["ENABLE_EMAIL_PASSWORD"],
+                error_message="ENABLE_EMAIL_PASSWORD",
+            )
 
     def set_user_data(self):
         if self.is_signup:
             # Check if the user already exists
             if User.objects.filter(email=self.key).exists():
                 raise AuthenticationException(
-                    error_message="User with this email already exists",
-                    error_code="USER_ALREADY_EXIST",
+                    error_message="USER_ALREADY_EXIST",
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "USER_ALREADY_EXIST"
+                    ],
                 )
 
             super().set_user_data(
@@ -46,18 +73,35 @@ class EmailProvider(CredentialAdapter):
             user = User.objects.filter(
                 email=self.key,
             ).first()
-            # Existing user
+
+            # User does not exists
             if not user:
                 raise AuthenticationException(
-                    error_message="Sorry, we could not find a user with the provided credentials. Please try again.",
-                    error_code="AUTHENTICATION_FAILED",
+                    error_message="USER_DOES_NOT_EXIST",
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "USER_DOES_NOT_EXIST"
+                    ],
+                    payload={
+                        "email": self.key,
+                    },
                 )
 
             # Check user password
             if not user.check_password(self.code):
                 raise AuthenticationException(
-                    error_message="Sorry, we could not find a user with the provided credentials. Please try again.",
-                    error_code="AUTHENTICATION_FAILED",
+                    error_message=(
+                        "AUTHENTICATION_FAILED_SIGN_UP"
+                        if self.is_signup
+                        else "AUTHENTICATION_FAILED_SIGN_IN"
+                    ),
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        (
+                            "AUTHENTICATION_FAILED_SIGN_UP"
+                            if self.is_signup
+                            else "AUTHENTICATION_FAILED_SIGN_IN"
+                        )
+                    ],
+                    payload={"email": self.key},
                 )
 
             super().set_user_data(

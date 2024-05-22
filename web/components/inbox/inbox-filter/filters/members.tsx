@@ -25,7 +25,7 @@ type Props = {
 export const FilterMember: FC<Props> = observer((props: Props) => {
   const { filterKey, label = "Members", memberIds, searchQuery, inboxFilters, handleFilterUpdate } = props;
   const { getUserDetails } = useMember();
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);

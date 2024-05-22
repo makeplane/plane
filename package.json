@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/makeplane/plane.git",
-  "version": "0.18.0",
+  "version": "0.20.0",
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
@@ -12,7 +12,8 @@
     "packages/tailwind-config-custom",
     "packages/tsconfig",
     "packages/ui",
-    "packages/types"
+    "packages/types",
+    "packages/constants"
   ],
   "scripts": {
     "build": "turbo run build",

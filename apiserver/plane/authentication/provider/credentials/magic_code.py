@@ -4,14 +4,16 @@ import os
 import random
 import string
 
-# Django imports
-from django.core.exceptions import ImproperlyConfigured
 
 # Module imports
-from plane.authentication.adapter.base import AuthenticationException
 from plane.authentication.adapter.credential import CredentialAdapter
 from plane.license.utils.instance_value import get_configuration_value
 from plane.settings.redis import redis_instance
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
+from plane.db.models import User
 
 
 class MagicCodeProvider(CredentialAdapter):
@@ -23,33 +25,44 @@ class MagicCodeProvider(CredentialAdapter):
         request,
         key,
         code=None,
+        callback=None,
     ):
 
-        (EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD) = (
-            get_configuration_value(
-                [
-                    {
-                        "key": "EMAIL_HOST",
-                        "default": os.environ.get("EMAIL_HOST"),
-                    },
-                    {
-                        "key": "EMAIL_HOST_USER",
-                        "default": os.environ.get("EMAIL_HOST_USER"),
-                    },
-                    {
-                        "key": "EMAIL_HOST_PASSWORD",
-                        "default": os.environ.get("EMAIL_HOST_PASSWORD"),
-                    },
-                ]
-            )
+        (
+            EMAIL_HOST,
+            ENABLE_MAGIC_LINK_LOGIN,
+        ) = get_configuration_value(
+            [
+                {
+                    "key": "EMAIL_HOST",
+                    "default": os.environ.get("EMAIL_HOST"),
+                },
+                {
+                    "key": "ENABLE_MAGIC_LINK_LOGIN",
+                    "default": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "1"),
+                },
+            ]
         )
 
-        if not (EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
-            raise ImproperlyConfigured(
-                "SMTP is not configured. Please contact the support team."
+        if not (EMAIL_HOST):
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
+                error_message="SMTP_NOT_CONFIGURED",
+                payload={"email": str(self.key)},
             )
 
-        super().__init__(request, self.provider)
+        if ENABLE_MAGIC_LINK_LOGIN == "0":
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "MAGIC_LINK_LOGIN_DISABLED"
+                ],
+                error_message="MAGIC_LINK_LOGIN_DISABLED",
+                payload={"email": str(self.key)},
+            )
+
+        super().__init__(
+            request=request, provider=self.provider, callback=callback
+        )
         self.key = key
         self.code = code
 
@@ -74,7 +87,23 @@ class MagicCodeProvider(CredentialAdapter):
             current_attempt = data["current_attempt"] + 1
 
             if data["current_attempt"] > 2:
-                return key, ""
+                email = str(self.key).replace("magic_", "", 1)
+                if User.objects.filter(email=email).exists():
+                    raise AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES[
+                            "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"
+                        ],
+                        error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN",
+                        payload={"email": str(email)},
+                    )
+                else:
+                    raise AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES[
+                            "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"
+                        ],
+                        error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP",
+                        payload={"email": self.key},
+                    )
 
             value = {
                 "current_attempt": current_attempt,
@@ -110,14 +139,42 @@ class MagicCodeProvider(CredentialAdapter):
                         },
                     }
                 )
+                # Delete the token from redis if the code match is successful
+                ri.delete(self.key)
                 return
             else:
-                raise AuthenticationException(
-                    error_message="The token is not valid.",
-                    error_code="INVALID_TOKEN",
-                )
+                email = str(self.key).replace("magic_", "", 1)
+                if User.objects.filter(email=email).exists():
+                    raise AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES[
+                            "INVALID_MAGIC_CODE_SIGN_IN"
+                        ],
+                        error_message="INVALID_MAGIC_CODE_SIGN_IN",
+                        payload={"email": str(email)},
+                    )
+                else:
+                    raise AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES[
+                            "INVALID_MAGIC_CODE_SIGN_UP"
+                        ],
+                        error_message="INVALID_MAGIC_CODE_SIGN_UP",
+                        payload={"email": str(email)},
+                    )
         else:
-            raise AuthenticationException(
-                error_message="The token has expired. Please regenerate the token and try again.",
-                error_code="EXPIRED_TOKEN",
-            )
+            email = str(self.key).replace("magic_", "", 1)
+            if User.objects.filter(email=email).exists():
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "EXPIRED_MAGIC_CODE_SIGN_IN"
+                    ],
+                    error_message="EXPIRED_MAGIC_CODE_SIGN_IN",
+                    payload={"email": str(email)},
+                )
+            else:
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "EXPIRED_MAGIC_CODE_SIGN_UP"
+                    ],
+                    error_message="EXPIRED_MAGIC_CODE_SIGN_UP",
+                    payload={"email": str(email)},
+                )

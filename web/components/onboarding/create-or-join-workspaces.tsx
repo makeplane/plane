@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // icons
-import { Sparkles } from "lucide-react";
+import { useTheme } from "next-themes";
 // types
 import { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
-// ui
-import { Spinner } from "@plane/ui";
 // components
 import { Invitations, OnboardingHeader, SwitchOrDeleteAccountDropdown, CreateWorkspace } from "@/components/onboarding";
 // hooks
 import { useUser } from "@/hooks/store";
 // assets
-import createJoinWorkspace from "public/onboarding/create-join-workspace.png";
+import CreateJoinWorkspaceDark from "public/onboarding/create-join-workspace-dark.svg";
+import CreateJoinWorkspace from "public/onboarding/create-join-workspace.svg";
+import { LogoSpinner } from "../common";
 
 export enum ECreateOrJoinWorkspaceViews {
   WORKSPACE_CREATE = "WORKSPACE_CREATE",
@@ -23,14 +23,17 @@ type Props = {
   invitations: IWorkspaceMemberInvitation[];
   totalSteps: number;
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
+  finishOnboarding: () => Promise<void>;
 };
 
 export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
-  const { invitations, totalSteps, stepChange } = props;
+  const { invitations, totalSteps, stepChange, finishOnboarding } = props;
   // states
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);
   // store hooks
   const { data: user } = useUser();
+  // hooks
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     if (invitations.length > 0) {
@@ -42,14 +45,15 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
 
   const handleNextStep = async () => {
     if (!user) return;
-    await stepChange({ workspace_join: true, workspace_create: true });
+
+    await finishOnboarding();
   };
 
   return (
     <div className="flex h-full w-full">
-      <div className="w-full lg:w-3/5 h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
+      <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="flex items-center justify-between">
-          <OnboardingHeader currentStep={2} totalSteps={totalSteps} />
+          <OnboardingHeader currentStep={totalSteps - 1} totalSteps={totalSteps} />
           <div className="shrink-0 lg:hidden">
             <SwitchOrDeleteAccountDropdown />
           </div>
@@ -69,19 +73,19 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
             />
           ) : (
             <div className="flex h-96 w-full items-center justify-center">
-              <Spinner />
+              <LogoSpinner />
             </div>
           )}
         </div>
       </div>
-      <div className="hidden lg:block relative w-2/5 px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28 bg-onboarding-gradient-100">
+      <div className="hidden lg:block relative w-2/5 h-screen overflow-hidden px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <SwitchOrDeleteAccountDropdown />
-        <div className="absolute right-0 bottom-0 flex flex-col items-start justify-end w-2/3 ">
-          <div className="flex gap-2 pb-1 pr-2 text-base text-custom-primary-300 font-medium self-end">
-            <Sparkles className="h-6 w-6" />
-            Workspace is the hub for all work happening in your company.
-          </div>
-          <Image src={createJoinWorkspace} alt="create-join-workspace" />
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={resolvedTheme === "dark" ? CreateJoinWorkspaceDark : CreateJoinWorkspace}
+            className="h-screen w-auto float-end object-cover"
+            alt="Profile setup"
+          />
         </div>
       </div>
     </div>

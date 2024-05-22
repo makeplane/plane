@@ -13,9 +13,7 @@ import { CreateUpdateModuleModal } from "@/components/modules";
 import { CreatePageModal } from "@/components/pages";
 import { CreateProjectModal } from "@/components/project";
 import { CreateUpdateProjectViewModal } from "@/components/views";
-// helpers
-// services
-// fetch keys
+// constants
 import { E_SHORTCUT_KEY } from "@/constants/event-tracker";
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -25,6 +23,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssues, useUser, useAppTheme, useCommandPalette } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -38,6 +37,7 @@ export const CommandPalette: FC = observer(() => {
   // store hooks
   const { toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
+  const { platform } = usePlatformOS();
   const {
     membership: { currentWorkspaceRole, currentProjectRole },
     data: currentUser,
@@ -199,6 +199,11 @@ export const CommandPalette: FC = observer(() => {
 
       const keyPressed = key.toLowerCase();
       const cmdClicked = ctrlKey || metaKey;
+
+      if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
+        e.preventDefault();
+        toggleCommandPaletteModal(true);
+      }
       // if on input, textarea or editor, don't do anything
       if (
         e.target instanceof HTMLTextAreaElement ||
@@ -208,10 +213,7 @@ export const CommandPalette: FC = observer(() => {
         return;
 
       if (cmdClicked) {
-        if (keyPressed === "k") {
-          e.preventDefault();
-          toggleCommandPaletteModal(true);
-        } else if (keyPressed === "c" && altKey) {
+        if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
           e.preventDefault();
           copyIssueUrlToClipboard();
         } else if (keyPressed === "b") {

@@ -14,12 +14,12 @@ type Props = {
 
 export const GithubAuth: React.FC<Props> = observer(({ workspaceIntegration, provider }) => {
   // store hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
   // hooks
   const { startAuth, isConnecting } = useIntegrationPopup({
     provider,
-    github_app_name: instance?.config?.github_app_name || "",
-    slack_client_id: instance?.config?.slack_client_id || "",
+    github_app_name: config?.github_app_name || "",
+    slack_client_id: config?.slack_client_id || "",
   });
 
   return (

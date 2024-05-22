@@ -7,7 +7,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: /usr/local/bin/start.sh web/server.js web
+    command: node web/server.js web
     depends_on:
       - api
 
@@ -32,7 +32,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: /usr/local/bin/start.sh space/server.js space
+    command: node space/server.js space
     depends_on:
       - api
       - web

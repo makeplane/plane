@@ -15,7 +15,7 @@ import { useUser } from "@/hooks/store";
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   // store hooks
   const {
-    profile: { data: userProfile },
+    userProfile: { data: userProfile },
   } = useUser();
 
   const isDarkMode = userProfile?.theme.theme === "dark";

@@ -97,10 +97,7 @@ export const ProfileSidebar = observer(() => {
               </div>
             )}
             <img
-              src={
-                userProjectsData.user_data?.cover_image ??
-                "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
-              }
+              src={userProjectsData.user_data?.cover_image ?? "/users/user-profile-cover-default-img.png"}
               alt={userProjectsData.user_data?.display_name}
               className="h-32 w-full object-cover"
             />

@@ -1,21 +1,24 @@
 import { ReactElement, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// types
 import { TModuleFilters } from "@plane/types";
-// layouts
 // components
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { ModulesListHeader } from "@/components/headers";
-import { ModuleAppliedFiltersList, ModuleViewHeader, ModulesListView } from "@/components/modules";
-// types
-// hooks
+import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
 import ModulesListMobileHeader from "@/components/modules/moduels-list-mobile-header";
+// constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { MODULES_FILTER_REMOVED } from "@/constants/event-tracker";
+// helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
-import { useEventTracker, useModuleFilter, useProject } from "@/hooks/store";
+// hooks
+import { useModuleFilter, useProject, useEventTracker } from "@/hooks/store";
+// layouts
 import { AppLayout } from "@/layouts/app-layout";
+// types
 import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectModulesPage: NextPageWithLayout = observer(() => {
@@ -23,7 +26,8 @@ const ProjectModulesPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // store
   const { getProjectById, currentProjectDetails } = useProject();
-  const { currentProjectFilters, clearAllFilters, updateFilters } = useModuleFilter();
+  const { currentProjectFilters, currentProjectDisplayFilters, clearAllFilters, updateFilters, updateDisplayFilters } =
+    useModuleFilter();
   const { captureEvent } = useEventTracker();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
@@ -64,18 +68,17 @@ const ProjectModulesPage: NextPageWithLayout = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className="h-full w-full flex flex-col">
-        <div className="h-[50px] flex-shrink-0 w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
-          <div className="flex items-center">
-            <span className="block text-sm font-medium">Module name</span>
-          </div>
-          <ModuleViewHeader />
-        </div>
-        {calculateTotalFilters(currentProjectFilters ?? {}) !== 0 && (
+        {(calculateTotalFilters(currentProjectFilters ?? {}) !== 0 || currentProjectDisplayFilters?.favorites) && (
           <div className="border-b border-custom-border-200 px-5 py-3">
             <ModuleAppliedFiltersList
               appliedFilters={currentProjectFilters ?? {}}
+              isFavoriteFilterApplied={currentProjectDisplayFilters?.favorites ?? false}
               handleClearAllFilters={() => clearAllFilters(`${projectId}`)}
               handleRemoveFilter={handleRemoveFilter}
+              handleDisplayFiltersUpdate={(val) => {
+                if (!projectId) return;
+                updateDisplayFilters(projectId.toString(), val);
+              }}
               alwaysAllowEditing
             />
           </div>

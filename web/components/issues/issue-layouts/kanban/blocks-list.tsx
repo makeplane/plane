@@ -7,7 +7,7 @@ import { TRenderQuickActions } from "../list/list-view-types";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
-  columnId: string;
+  groupId: string;
   issuesMap: IIssueMap;
   issueIds: string[];
   displayProperties: IIssueDisplayProperties | undefined;
@@ -15,17 +15,19 @@ interface IssueBlocksListProps {
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
+  canDropOverIssue: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
 const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
   const {
     sub_group_id,
-    columnId,
+    groupId,
     issuesMap,
     issueIds,
     displayProperties,
     isDragDisabled,
+    canDropOverIssue,
     updateIssue,
     quickActions,
     canEditProperties,
@@ -40,22 +42,24 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
             if (!issueId) return null;
 
             let draggableId = issueId;
-            if (columnId) draggableId = `${draggableId}__${columnId}`;
+            if (groupId) draggableId = `${draggableId}__${groupId}`;
             if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
 
             return (
               <KanbanIssueBlock
                 key={draggableId}
                 issueId={issueId}
+                groupId={groupId}
+                subGroupId={sub_group_id}
                 issuesMap={issuesMap}
                 displayProperties={displayProperties}
                 updateIssue={updateIssue}
                 quickActions={quickActions}
                 draggableId={draggableId}
                 isDragDisabled={isDragDisabled}
+                canDropOverIssue={canDropOverIssue}
                 canEditProperties={canEditProperties}
                 scrollableContainerRef={scrollableContainerRef}
-                issueIds={issueIds} //passing to force render for virtualization whenever parent rerenders
               />
             );
           })}

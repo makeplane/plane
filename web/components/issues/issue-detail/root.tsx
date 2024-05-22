@@ -26,6 +26,7 @@ export type TIssueOperations = {
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restore?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  addCycleToIssue?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
@@ -62,6 +63,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     updateIssue,
     removeIssue,
     archiveIssue,
+    addCycleToIssue,
     addIssueToCycle,
     removeIssueFromCycle,
     addModulesToIssue,
@@ -109,7 +111,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             routePath: router.asPath,
           });
           setToast({
-            title: "Issue update failed",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Issue update failed",
           });
@@ -120,7 +122,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
           else await removeIssue(workspaceSlug, projectId, issueId);
           setToast({
-            title: "Issue deleted successfully",
+            title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Issue deleted successfully",
           });
@@ -131,7 +133,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
         } catch (error) {
           setToast({
-            title: "Issue delete failed",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Issue delete failed",
           });
@@ -158,21 +160,38 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
         }
       },
+      addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+        try {
+          await addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { issueId, state: "SUCCESS", element: "Issue detail page" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
+            routePath: router.asPath,
+          });
+        } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be added to the cycle. Please try again.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { state: "FAILED", element: "Issue detail page" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
+            routePath: router.asPath,
+          });
+        }
+      },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          const addToCyclePromise = addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
-          setPromiseToast(addToCyclePromise, {
-            loading: "Adding cycle to issue...",
-            success: {
-              title: "Success!",
-              message: () => "Cycle added to issue successfully",
-            },
-            error: {
-              title: "Error!",
-              message: () => "Cycle add to issue failed",
-            },
-          });
-          await addToCyclePromise;
+          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...issueIds, state: "SUCCESS", element: E_ISSUE_DETAILS },
@@ -183,6 +202,11 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             routePath: router.asPath,
           });
         } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be added to the cycle. Please try again.",
+          });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: E_ISSUE_DETAILS },
@@ -198,14 +222,14 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           const removeFromCyclePromise = removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
           setPromiseToast(removeFromCyclePromise, {
-            loading: "Removing cycle from issue...",
+            loading: "Removing issue from the cycle...",
             success: {
               title: "Success!",
-              message: () => "Cycle removed from issue successfully",
+              message: () => "Issue removed from the cycle successfully.",
             },
             error: {
               title: "Error!",
-              message: () => "Cycle remove from issue failed",
+              message: () => "Issue could not be removed from the cycle. Please try again.",
             },
           });
           await removeFromCyclePromise;
@@ -232,19 +256,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       },
       addModulesToIssue: async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
         try {
-          const addToModulePromise = addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
-          setPromiseToast(addToModulePromise, {
-            loading: "Adding module to issue...",
-            success: {
-              title: "Success!",
-              message: () => "Module added to issue successfully",
-            },
-            error: {
-              title: "Error!",
-              message: () => "Module add to issue failed",
-            },
-          });
-          const response = await addToModulePromise;
+          const response = await addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: E_ISSUE_DETAILS },
@@ -255,6 +267,11 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             routePath: router.asPath,
           });
         } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Issue could not be added to the module. Please try again.",
+          });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "FAILED", element: E_ISSUE_DETAILS },
@@ -270,14 +287,14 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           const removeFromModulePromise = removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
           setPromiseToast(removeFromModulePromise, {
-            loading: "Removing module from issue...",
+            loading: "Removing issue from the module...",
             success: {
               title: "Success!",
-              message: () => "Module removed from issue successfully",
+              message: () => "Issue removed from the module successfully.",
             },
             error: {
               title: "Error!",
-              message: () => "Module remove from issue failed",
+              message: () => "Issue could not be removed from the module. Please try again.",
             },
           });
           await removeFromModulePromise;
@@ -359,7 +376,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         />
       ) : (
         <div className="flex h-full w-full overflow-hidden">
-          <div className="max-w-2/3 h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
+          <div className="max-w-2/3 h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto px-6 py-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
               swrIssueDetails={swrIssueDetails}

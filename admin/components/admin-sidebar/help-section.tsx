@@ -1,13 +1,14 @@
 "use client";
 
 import { FC, useState, useRef } from "react";
-import { Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
-import { FileText, HelpCircle, MoveLeft } from "lucide-react";
+import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
+import { Transition } from "@headlessui/react";
+import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
-import { useTheme } from "@/hooks";
-// icons
-import { DiscordIcon, GithubIcon } from "@plane/ui";
+import { WEB_BASE_URL } from "@/helpers/common.helper";
+import { useTheme } from "@/hooks/store";
 // assets
 import packageJson from "package.json";
 
@@ -29,7 +30,7 @@ const helpOptions = [
   },
 ];
 
-export const HelpSection: FC = () => {
+export const HelpSection: FC = observer(() => {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store
@@ -37,40 +38,46 @@ export const HelpSection: FC = () => {
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
+  const redirectionLink = encodeURI(WEB_BASE_URL + "/create-workspace");
+
   return (
     <div
       className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
         isSidebarCollapsed ? "flex-col" : ""
       }`}
     >
-      <div
-        className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full justify-end"}`}
-      >
-        <button
-          type="button"
-          className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
-            isSidebarCollapsed ? "w-full" : ""
-          }`}
-          onClick={() => setIsNeedHelpOpen((prev) => !prev)}
-        >
-          <HelpCircle className="h-3.5 w-3.5" />
-        </button>
-        <button
-          type="button"
-          className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
-          onClick={() => toggleSidebar(!isSidebarCollapsed)}
-        >
-          <MoveLeft className="h-3.5 w-3.5" />
-        </button>
-        <button
-          type="button"
-          className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
-            isSidebarCollapsed ? "w-full" : ""
-          }`}
-          onClick={() => toggleSidebar(!isSidebarCollapsed)}
-        >
-          <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`} />
-        </button>
+      <div className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full"}`}>
+        <Tooltip tooltipContent="Redirect to plane" position="right" className="ml-4" disabled={!isSidebarCollapsed}>
+          <a
+            href={redirectionLink}
+            className={`relative px-2 py-1.5 flex items-center gap-2 font-medium rounded border border-custom-primary-100/20 bg-custom-primary-100/10 text-xs text-custom-primary-200 whitespace-nowrap`}
+          >
+            <ExternalLink size={14} />
+            {!isSidebarCollapsed && "Redirect to plane"}
+          </a>
+        </Tooltip>
+        <Tooltip tooltipContent="Help" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
+          <button
+            type="button"
+            className={`ml-auto grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+              isSidebarCollapsed ? "w-full" : ""
+            }`}
+            onClick={() => setIsNeedHelpOpen((prev) => !prev)}
+          >
+            <HelpCircle className="h-3.5 w-3.5" />
+          </button>
+        </Tooltip>
+        <Tooltip tooltipContent="Toggle sidebar" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
+          <button
+            type="button"
+            className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+              isSidebarCollapsed ? "w-full" : ""
+            }`}
+            onClick={() => toggleSidebar(!isSidebarCollapsed)}
+          >
+            <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`} />
+          </button>
+        </Tooltip>
       </div>
 
       <div className="relative">
@@ -123,4 +130,4 @@ export const HelpSection: FC = () => {
       </div>
     </div>
   );
-};
+});

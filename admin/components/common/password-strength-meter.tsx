@@ -1,10 +1,10 @@
 "use client";
 
 // helpers
+import { CircleCheck } from "lucide-react";
 import { cn } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // icons
-import { CircleCheck } from "lucide-react";
 
 type Props = {
   password: string;
@@ -43,7 +43,7 @@ export const PasswordStrengthMeter: React.FC<Props> = (props: Props) => {
   ];
 
   return (
-    <div className="w-full p-1">
+    <div className="w-full">
       <div className="flex w-full gap-1.5">
         {bars.map((color, index) => (
           <div key={index} className={cn("w-full h-1 rounded-full", color)} />

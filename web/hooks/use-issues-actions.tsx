@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+// types
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -231,9 +232,9 @@ const useModuleIssueActions = () => {
   const removeIssueFromView = useCallback(
     async (projectId: string, issueId: string) => {
       if (!moduleId || !workspaceSlug) return;
-      return await issues.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+      return await issues.removeIssuesFromModule(workspaceSlug, projectId, moduleId, [issueId]);
     },
-    [issues.removeIssueFromModule, moduleId, workspaceSlug]
+    [issues.removeIssuesFromModule, moduleId, workspaceSlug]
   );
   const archiveIssue = useCallback(
     async (projectId: string, issueId: string) => {

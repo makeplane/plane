@@ -58,7 +58,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
       .catch((err: any) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error",
+          title: "Error!",
           message: err?.error || "Something went wrong. Please try again.",
         })
       );

@@ -185,7 +185,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       <div className="w-full space-y-2.5 overflow-hidden">
         <div className="flex items-start">
           {!notification.message ? (
-            <div className="w-full break-words text-sm">
+            <div className="w-full break-all text-sm group-hover:pr-24 line-clamp-2">
               <span className="font-semibold">
                 {notificationTriggeredBy.is_bot
                   ? notificationTriggeredBy.first_name
@@ -392,46 +392,46 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             </button>
           </Tooltip>
         ))}
-        <Tooltip tooltipContent="Snooze" isMobile={isMobile}>
-          <CustomMenu
-            className="flex items-center"
-            customButton={
+        <CustomMenu
+          className="flex items-center"
+          customButton={
+            <Tooltip tooltipContent="Snooze" isMobile={isMobile}>
               <div className="flex w-full items-center gap-x-2 rounded bg-custom-background-80 p-0.5 text-sm hover:bg-custom-background-100">
                 <Clock className="h-3.5 w-3.5 text-custom-text-300" />
               </div>
-            }
-            optionsClassName="!z-20"
-          >
-            {snoozeOptions.map((item) => (
-              <CustomMenu.MenuItem
-                key={item.label}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
+            </Tooltip>
+          }
+          optionsClassName="!z-20"
+        >
+          {snoozeOptions.map((item) => (
+            <CustomMenu.MenuItem
+              key={item.label}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
 
-                  if (!item.value) {
-                    setSelectedNotificationForSnooze(notification.id);
-                    return;
-                  }
+                if (!item.value) {
+                  setSelectedNotificationForSnooze(notification.id);
+                  return;
+                }
 
-                  markSnoozeNotification(notification.id, item.value).then(() => {
-                    captureEvent(NOTIFICATION_SNOOZED, {
-                      issue_id: notification.data.issue.id,
-                      tab: selectedTab,
-                      state: "SUCCESS",
-                    });
-                    setToast({
-                      title: `Notification snoozed till ${renderFormattedDate(item.value)}`,
-                      type: TOAST_TYPE.SUCCESS,
-                    });
+                markSnoozeNotification(notification.id, item.value).then(() => {
+                  captureEvent(NOTIFICATION_SNOOZED, {
+                    issue_id: notification.data.issue.id,
+                    tab: selectedTab,
+                    state: "SUCCESS",
                   });
-                }}
-              >
-                {item.label}
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
-        </Tooltip>
+                  setToast({
+                    title: `Notification snoozed till ${renderFormattedDate(item.value)}`,
+                    type: TOAST_TYPE.SUCCESS,
+                  });
+                });
+              }}
+            >
+              {item.label}
+            </CustomMenu.MenuItem>
+          ))}
+        </CustomMenu>
       </div>
     </Link>
   );

@@ -8,17 +8,9 @@ import { Disclosure, Transition } from "@headlessui/react";
 // layouts
 // components
 import type { IUser } from "@plane/types";
-import {
-  Button,
-  CustomSelect,
-  CustomSearchSelect,
-  Input,
-  Spinner,
-  TOAST_TYPE,
-  setPromiseToast,
-  setToast,
-} from "@plane/ui";
+import { Button, CustomSelect, CustomSearchSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { DeactivateAccountModal } from "@/components/account";
+import { LogoSpinner } from "@/components/common";
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components/core";
 // ui
 // icons
@@ -29,7 +21,6 @@ import { TIME_ZONES } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
 // hooks
 import { useAppTheme, useUser } from "@/hooks/store";
-import useUserAuth from "@/hooks/use-user-auth";
 import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // layouts
 // lib types
@@ -66,14 +57,8 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
     formState: { errors },
   } = useForm<IUser>({ defaultValues });
   // store hooks
-  const {
-    data: currentUser,
-    updateCurrentUser,
-    profile: { isLoading: currentUserLoader, data },
-  } = useUser();
+  const { data: currentUser, updateCurrentUser } = useUser();
   const { toggleSidebar } = useAppTheme();
-  // custom hooks
-  const {} = useUserAuth({ user: currentUser || null, userProfile: data, isLoading: currentUserLoader });
 
   useEffect(() => {
     reset({ ...defaultValues, ...currentUser });
@@ -141,7 +126,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   if (!currentUser)
     return (
       <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 

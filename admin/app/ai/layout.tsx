@@ -1,21 +1,11 @@
-"use client";
-
 import { ReactNode } from "react";
-// layouts
-import { AdminLayout } from "@/layouts";
-// lib
-import { AuthWrapper, InstanceWrapper } from "@/lib/wrappers";
+import { Metadata } from "next";
+import { AdminLayout } from "@/layouts/admin-layout";
 
-interface AILayoutProps {
-  children: ReactNode;
+export const metadata: Metadata = {
+  title: "AI Settings - God Mode",
+};
+
+export default function AILayout({ children }: { children: ReactNode }) {
+  return <AdminLayout>{children}</AdminLayout>;
 }
-
-const AILayout = ({ children }: AILayoutProps) => (
-  <InstanceWrapper>
-    <AuthWrapper>
-      <AdminLayout>{children}</AdminLayout>
-    </AuthWrapper>
-  </InstanceWrapper>
-);
-
-export default AILayout;

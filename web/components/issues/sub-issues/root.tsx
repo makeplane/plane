@@ -144,7 +144,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error fetching sub-issues",
+            title: "Error!",
             message: "Error fetching sub-issues",
           });
         }
@@ -154,13 +154,13 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           await createSubIssues(workspaceSlug, projectId, parentIssueId, issueIds);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Sub-issues added successfully",
+            title: "Success!",
             message: "Sub-issues added successfully",
           });
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error adding sub-issue",
+            title: "Error!",
             message: "Error adding sub-issue",
           });
         }
@@ -189,7 +189,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Sub-issue updated successfully",
+            title: "Success!",
             message: "Sub-issue updated successfully",
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
@@ -206,7 +206,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error updating sub-issue",
+            title: "Error!",
             message: "Error updating sub-issue",
           });
         }
@@ -217,7 +217,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           await removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Sub-issue removed successfully",
+            title: "Success!",
             message: "Sub-issue removed successfully",
           });
           captureIssueEvent({
@@ -242,7 +242,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error removing sub-issue",
+            title: "Error!",
             message: "Error removing sub-issue",
           });
         }
@@ -253,7 +253,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           await deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Issue deleted successfully",
+            title: "Error!",
             message: "Issue deleted successfully",
           });
           captureIssueEvent({
@@ -270,7 +270,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error deleting issue",
+            title: "Error!",
             message: "Error deleting issue",
           });
         }
@@ -393,7 +393,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                       onClick={() => {
                         setTrackElement(E_ISSUE_DETAILS);
                         handleIssueCrudState("existing", parentIssueId, null);
-                        toggleSubIssuesModal(true);
+                        toggleSubIssuesModal(issue.id);
                       }}
                     >
                       <div className="flex items-center gap-2">
@@ -451,7 +451,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     onClick={() => {
                       setTrackElement(E_ISSUE_DETAILS);
                       handleIssueCrudState("existing", parentIssueId, null);
-                      toggleSubIssuesModal(true);
+                      toggleSubIssuesModal(issue.id);
                     }}
                   >
                     <div className="flex items-center gap-2">
@@ -488,7 +488,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               isOpen={issueCrudState?.existing?.toggle}
               handleClose={() => {
                 handleIssueCrudState("existing", null, null);
-                toggleSubIssuesModal(false);
+                toggleSubIssuesModal(null);
               }}
               searchParams={{ sub_issue: true, issue_id: issueCrudState?.existing?.parentIssueId }}
               handleOnSubmit={(_issue) =>

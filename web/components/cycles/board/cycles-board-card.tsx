@@ -2,7 +2,7 @@ import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Info } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Info, MoveRight } from "lucide-react";
 // types
 import type { TCycleGroups } from "@plane/types";
 // ui
@@ -226,12 +226,14 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
             </Tooltip>
 
             <div className="flex items-center justify-between">
-              {isDateValid ? (
-                <span className="text-xs text-custom-text-300">
-                  {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
-                </span>
-              ) : (
-                <span className="text-xs text-custom-text-400">No due date</span>
+              {isDateValid && (
+                <div className="h-6 flex items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs px-2 cursor-default">
+                  <CalendarClock className="h-3 w-3 flex-shrink-0" />
+                  <span className="flex-grow truncate">{renderFormattedDate(startDate)}</span>
+                  <MoveRight className="h-3 w-3 flex-shrink-0" />
+                  <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />
+                  <span className="flex-grow truncate">{renderFormattedDate(endDate)}</span>
+                </div>
               )}
             </div>
           </div>

@@ -227,7 +227,13 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
         await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, data.cycle_id, [response.id]);
 
       if (data.module_ids && data.module_ids.length > 0)
-        await this.rootStore.moduleIssues.addModulesToIssue(workspaceSlug, projectId, response.id, data.module_ids);
+        await this.rootStore.moduleIssues.changeModulesInIssue(
+          workspaceSlug,
+          projectId,
+          response.id,
+          data.module_ids,
+          []
+        );
 
       const quickAddIssueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === data.id);
       if (quickAddIssueIndex >= 0)

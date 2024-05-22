@@ -77,7 +77,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
         .catch((err) =>
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error",
+            title: "Error!",
             message: err?.error || "Something went wrong. Please try again.",
           })
         );

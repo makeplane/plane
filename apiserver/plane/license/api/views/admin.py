@@ -28,7 +28,11 @@ from plane.license.models import Instance, InstanceAdmin
 from plane.db.models import User, Profile
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.authentication.utils.login import user_login
-from plane.authentication.utils.host import base_host
+from plane.authentication.utils.host import base_host, user_ip
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 
 
 class InstanceAdminEndpoint(BaseAPIView):
@@ -95,29 +99,27 @@ class InstanceAdminSignUpEndpoint(View):
         # Check instance first
         instance = Instance.objects.first()
         if instance is None:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "INSTANCE_NOT_CONFIGURED"
+                ],
+                error_message="INSTANCE_NOT_CONFIGURED",
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/setup?"
-                + urlencode(
-                    {
-                        "error_code": "INSTANCE_NOT_CONFIGURED",
-                        "error_message": "Instance is not configured",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
         # check if the instance has already an admin registered
         if InstanceAdmin.objects.first():
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["ADMIN_ALREADY_EXIST"],
+                error_message="ADMIN_ALREADY_EXIST",
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/setup?"
-                + urlencode(
-                    {
-                        "error_code": "ADMIN_ALREADY_EXIST",
-                        "error_message": "Admin for the instance has been already registered.",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
@@ -131,20 +133,22 @@ class InstanceAdminSignUpEndpoint(View):
 
         # return error if the email and password is not present
         if not email or not password or not first_name:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME"
+                ],
+                error_message="REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME",
+                payload={
+                    "email": email,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "company_name": company_name,
+                    "is_telemetry_enabled": is_telemetry_enabled,
+                },
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/setup?"
-                + urlencode(
-                    {
-                        "email": email,
-                        "first_name": first_name,
-                        "last_name": last_name,
-                        "company_name": company_name,
-                        "is_telemetry_enabled": is_telemetry_enabled,
-                        "error_code": "REQUIRED_EMAIL_PASSWORD_FIRST_NAME",
-                        "error_message": "Email, name and password are required",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
@@ -153,60 +157,64 @@ class InstanceAdminSignUpEndpoint(View):
         try:
             validate_email(email)
         except ValidationError:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_ADMIN_EMAIL"],
+                error_message="INVALID_ADMIN_EMAIL",
+                payload={
+                    "email": email,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "company_name": company_name,
+                    "is_telemetry_enabled": is_telemetry_enabled,
+                },
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/setup?"
-                + urlencode(
-                    {
-                        "email": email,
-                        "first_name": first_name,
-                        "last_name": last_name,
-                        "company_name": company_name,
-                        "is_telemetry_enabled": is_telemetry_enabled,
-                        "error_code": "INVALID_EMAIL",
-                        "error_message": "Please provide a valid email address.",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
         # Check if already a user exists or not
         # Existing user
         if User.objects.filter(email=email).exists():
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "ADMIN_USER_ALREADY_EXIST"
+                ],
+                error_message="ADMIN_USER_ALREADY_EXIST",
+                payload={
+                    "email": email,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "company_name": company_name,
+                    "is_telemetry_enabled": is_telemetry_enabled,
+                },
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/setup?"
-                + urlencode(
-                    {
-                        "email": email,
-                        "first_name": first_name,
-                        "last_name": last_name,
-                        "company_name": company_name,
-                        "is_telemetry_enabled": is_telemetry_enabled,
-                        "error_code": "USER_ALREADY_EXISTS",
-                        "error_message": "User already exists.",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
         else:
 
             results = zxcvbn(password)
             if results["score"] < 3:
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES[
+                        "INVALID_ADMIN_PASSWORD"
+                    ],
+                    error_message="INVALID_ADMIN_PASSWORD",
+                    payload={
+                        "email": email,
+                        "first_name": first_name,
+                        "last_name": last_name,
+                        "company_name": company_name,
+                        "is_telemetry_enabled": is_telemetry_enabled,
+                    },
+                )
                 url = urljoin(
-                    base_host(request=request),
-                    "god-mode/setup?"
-                    + urlencode(
-                        {
-                            "email": email,
-                            "first_name": first_name,
-                            "last_name": last_name,
-                            "company_name": company_name,
-                            "is_telemetry_enabled": is_telemetry_enabled,
-                            "error_code": "INVALID_PASSWORD",
-                            "error_message": "Invalid password provided.",
-                        }
-                    ),
+                    base_host(request=request, is_admin=True),
+                    "?" + urlencode(exc.get_error_dict()),
                 )
                 return HttpResponseRedirect(url)
 
@@ -235,12 +243,13 @@ class InstanceAdminSignUpEndpoint(View):
             )
             # Make the setup flag True
             instance.is_setup_done = True
+            instance.instance_name = company_name
             instance.is_telemetry_enabled = is_telemetry_enabled
             instance.save()
 
             # get tokens for user
-            user_login(request=request, user=user)
-            url = urljoin(base_host(request=request), "god-mode/general")
+            user_login(request=request, user=user, is_admin=True)
+            url = urljoin(base_host(request=request, is_admin=True), "general")
             return HttpResponseRedirect(url)
 
 
@@ -254,15 +263,15 @@ class InstanceAdminSignInEndpoint(View):
         # Check instance first
         instance = Instance.objects.first()
         if instance is None:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "INSTANCE_NOT_CONFIGURED"
+                ],
+                error_message="INSTANCE_NOT_CONFIGURED",
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/login?"
-                + urlencode(
-                    {
-                        "error_code": "INSTANCE_NOT_CONFIGURED",
-                        "error_message": "Instance is not configured",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
@@ -272,16 +281,18 @@ class InstanceAdminSignInEndpoint(View):
 
         # return error if the email and password is not present
         if not email or not password:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "REQUIRED_ADMIN_EMAIL_PASSWORD"
+                ],
+                error_message="REQUIRED_ADMIN_EMAIL_PASSWORD",
+                payload={
+                    "email": email,
+                },
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/login?"
-                + urlencode(
-                    {
-                        "email": email,
-                        "error_code": "REQUIRED_EMAIL_PASSWORD",
-                        "error_message": "Email and password are required",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
@@ -290,64 +301,84 @@ class InstanceAdminSignInEndpoint(View):
         try:
             validate_email(email)
         except ValidationError:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_ADMIN_EMAIL"],
+                error_message="INVALID_ADMIN_EMAIL",
+                payload={
+                    "email": email,
+                },
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/login?"
-                + urlencode(
-                    {
-                        "email": email,
-                        "error_code": "INVALID_EMAIL",
-                        "error_message": "Please provide a valid email address.",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
         # Fetch the user
         user = User.objects.filter(email=email).first()
 
+        # is_active
+        if not user.is_active:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "ADMIN_USER_DEACTIVATED"
+                ],
+                error_message="ADMIN_USER_DEACTIVATED",
+            )
+            url = urljoin(
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
+            )
+            return HttpResponseRedirect(url)
+
         # Error out if the user is not present
         if not user:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "ADMIN_USER_DOES_NOT_EXIST"
+                ],
+                error_message="ADMIN_USER_DOES_NOT_EXIST",
+                payload={
+                    "email": email,
+                },
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/login?"
-                + urlencode(
-                    {
-                        "email": email,
-                        "error_code": "USER_DOES_NOT_EXIST",
-                        "error_message": "User does not exist",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
         # Check password of the user
         if not user.check_password(password):
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "ADMIN_AUTHENTICATION_FAILED"
+                ],
+                error_message="ADMIN_AUTHENTICATION_FAILED",
+                payload={
+                    "email": email,
+                },
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/login?"
-                + urlencode(
-                    {
-                        "email": email,
-                        "error_code": "AUTHENTICATION_FAILED",
-                        "error_message": "Sorry, we could not find an admin user with the provided credentials. Please try again.",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
 
         # Check if the user is an instance admin
         if not InstanceAdmin.objects.filter(instance=instance, user=user):
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "ADMIN_AUTHENTICATION_FAILED"
+                ],
+                error_message="ADMIN_AUTHENTICATION_FAILED",
+                payload={
+                    "email": email,
+                },
+            )
             url = urljoin(
-                base_host(request=request),
-                "god-mode/login?"
-                + urlencode(
-                    {
-                        "email": email,
-                        "error_code": "AUTHENTICATION_FAILED",
-                        "error_message": "Sorry, we could not find an admin user with the provided credentials. Please try again.",
-                    }
-                ),
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
         # settings last active for the user
@@ -360,8 +391,8 @@ class InstanceAdminSignInEndpoint(View):
         user.save()
 
         # get tokens for user
-        user_login(request=request, user=user)
-        url = urljoin(base_host(request=request), "god-mode/general")
+        user_login(request=request, user=user, is_admin=True)
+        url = urljoin(base_host(request=request, is_admin=True), "general")
         return HttpResponseRedirect(url)
 
 
@@ -379,6 +410,30 @@ class InstanceAdminUserMeEndpoint(BaseAPIView):
         )
 
 
+class InstanceAdminUserSessionEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request):
+        if (
+            request.user.is_authenticated
+            and InstanceAdmin.objects.filter(user=request.user).exists()
+        ):
+            serializer = InstanceAdminMeSerializer(request.user)
+            data = {"is_authenticated": True}
+            data["user"] = serializer.data
+            return Response(
+                data,
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"is_authenticated": False}, status=status.HTTP_200_OK
+            )
+
+
 class InstanceAdminSignOutEndpoint(View):
 
     permission_classes = [
@@ -386,9 +441,17 @@ class InstanceAdminSignOutEndpoint(View):
     ]
 
     def post(self, request):
-        logout(request)
-        url = urljoin(
-            base_host(request=request),
-            "god-mode/login?" + urlencode({"success": "true"}),
-        )
-        return HttpResponseRedirect(url)
+        # Get user
+        try:
+            user = User.objects.get(pk=request.user.id)
+            user.last_logout_ip = user_ip(request=request)
+            user.last_logout_time = timezone.now()
+            user.save()
+            # Log the user out
+            logout(request)
+            url = urljoin(base_host(request=request, is_admin=True))
+            return HttpResponseRedirect(url)
+        except Exception:
+            return HttpResponseRedirect(
+                base_host(request=request, is_admin=True)
+            )

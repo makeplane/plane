@@ -1,4 +1,4 @@
-import Head from "next/head";
+"use client";
 
 type TPageHeader = {
   title?: string;
@@ -9,9 +9,9 @@ export const PageHeader: React.FC<TPageHeader> = (props) => {
   const { title = "God Mode - Plane", description = "Plane god mode" } = props;
 
   return (
-    <Head>
+    <>
       <title>{title}</title>
       <meta name="description" content={description} />
-    </Head>
+    </>
   );
 };

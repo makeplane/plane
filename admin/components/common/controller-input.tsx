@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import { Controller, Control } from "react-hook-form";
-// ui
-import { Input } from "@plane/ui";
 // icons
 import { Eye, EyeOff } from "lucide-react";
+// ui
+import { Input } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 type Props = {
   control: Control<any>;
@@ -35,7 +37,9 @@ export const ControllerInput: React.FC<Props> = (props) => {
 
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-sm text-custom-text-300">{label}</h4>
+      <h4 className="text-sm text-custom-text-300">
+        {label} {!required && "(optional)"}
+      </h4>
       <div className="relative">
         <Controller
           control={control}
@@ -51,13 +55,16 @@ export const ControllerInput: React.FC<Props> = (props) => {
               ref={ref}
               hasError={error}
               placeholder={placeholder}
-              className="w-full rounded-md font-medium"
+              className={cn("w-full rounded-md font-medium", {
+                "pr-10": type === "password",
+              })}
             />
           )}
         />
         {type === "password" &&
           (showPassword ? (
             <button
+              tabIndex={-1}
               className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
               onClick={() => setShowPassword(false)}
             >
@@ -65,6 +72,7 @@ export const ControllerInput: React.FC<Props> = (props) => {
             </button>
           ) : (
             <button
+              tabIndex={-1}
               className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
               onClick={() => setShowPassword(true)}
             >
@@ -72,7 +80,7 @@ export const ControllerInput: React.FC<Props> = (props) => {
             </button>
           ))}
       </div>
-      {description && <p className="text-xs text-custom-text-400">{description}</p>}
+      {description && <p className="text-xs text-custom-text-300">{description}</p>}
     </div>
   );
 };

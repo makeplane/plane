@@ -1,28 +1,33 @@
+import cloneDeep from "lodash/cloneDeep";
+import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 import { UserService } from "services/user.service";
 // types
-import { TUserProfile } from "@plane/types";
+import { IUserTheme, TUserProfile } from "@plane/types";
+import { RootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
   message: string;
 };
 
-export interface IProfileStore {
+export interface IUserProfileStore {
   // observables
   isLoading: boolean;
-  data: TUserProfile;
   error: TError | undefined;
+  data: TUserProfile;
   // actions
   fetchUserProfile: () => Promise<TUserProfile | undefined>;
-  updateUserProfile: (data: Partial<TUserProfile>) => Promise<void>;
-  updateUserOnBoard: () => Promise<void>;
-  updateTourCompleted: () => Promise<void>;
+  updateUserProfile: (data: Partial<TUserProfile>) => Promise<TUserProfile | undefined>;
+  updateUserOnBoard: () => Promise<TUserProfile | undefined>;
+  updateTourCompleted: () => Promise<TUserProfile | undefined>;
+  updateUserTheme: (data: Partial<IUserTheme>) => Promise<TUserProfile | undefined>;
 }
 
-export class ProfileStore implements IProfileStore {
+export class ProfileStore implements IUserProfileStore {
   isLoading: boolean = false;
+  error: TError | undefined = undefined;
   data: TUserProfile = {
     id: undefined,
     user: undefined,
@@ -53,27 +58,32 @@ export class ProfileStore implements IProfileStore {
     created_at: "",
     updated_at: "",
   };
-  error: TError | undefined = undefined;
+
   // services
   userService: UserService;
 
-  constructor() {
+  constructor(public store: RootStore) {
     makeObservable(this, {
       // observables
       isLoading: observable.ref,
-      data: observable,
       error: observable,
+      data: observable,
       // actions
       fetchUserProfile: action,
       updateUserProfile: action,
       updateUserOnBoard: action,
       updateTourCompleted: action,
+      updateUserTheme: action,
     });
     // services
     this.userService = new UserService();
   }
 
   // actions
+  /**
+   * @description fetches user profile information
+   * @returns {Promise<TUserProfile | undefined>}
+   */
   fetchUserProfile = async () => {
     try {
       runInAction(() => {
@@ -85,82 +95,121 @@ export class ProfileStore implements IProfileStore {
         this.isLoading = false;
         this.data = userProfile;
       });
-
       return userProfile;
     } catch (error) {
-      console.log("Failed to fetch profile details");
-      runInAction(() => {
-        this.isLoading = true;
-        this.error = {
-          status: "error",
-          message: "Failed to fetch instance info",
-        };
-      });
-    }
-  };
-
-  updateUserProfile = async (data: Partial<TUserProfile>) => {
-    try {
-      runInAction(() => {
-        this.isLoading = true;
-        this.error = undefined;
-      });
-      const userProfile = await this.userService.updateCurrentUserProfile(data);
       runInAction(() => {
         this.isLoading = false;
-        this.data = userProfile;
-      });
-    } catch (error) {
-      console.log("Failed to fetch profile details");
-      runInAction(() => {
-        this.isLoading = true;
         this.error = {
-          status: "error",
-          message: "Failed to fetch instance info",
+          status: "user-profile-fetch-error",
+          message: "Failed to fetch user profile",
         };
       });
     }
   };
 
   /**
-   * Updates the user onboarding status
-   * @returns Promise<void>
+   * @description updated the user profile information
+   * @param {Partial<TUserProfile>} data
+   * @returns {Promise<TUserProfile | undefined>}
+   */
+  updateUserProfile = async (data: Partial<TUserProfile>) => {
+    const currentUserProfileData = this.data;
+    try {
+      if (currentUserProfileData) {
+        Object.keys(data).forEach((key: string) => {
+          const userKey: keyof TUserProfile = key as keyof TUserProfile;
+          if (this.data) set(this.data, userKey, data[userKey]);
+        });
+      }
+      const userProfile = await this.userService.updateCurrentUserProfile(data);
+      return userProfile;
+    } catch (error) {
+      if (currentUserProfileData) {
+        Object.keys(currentUserProfileData).forEach((key: string) => {
+          const userKey: keyof TUserProfile = key as keyof TUserProfile;
+          if (this.data) set(this.data, userKey, currentUserProfileData[userKey]);
+        });
+      }
+      runInAction(() => {
+        this.error = {
+          status: "user-profile-update-error",
+          message: "Failed to update user profile",
+        };
+      });
+    }
+  };
+
+  /**
+   * @description updates the user onboarding status
+   * @returns @returns {Promise<TUserProfile | undefined>}
    */
   updateUserOnBoard = async () => {
+    const isUserProfileOnboard = this.data.is_onboarded || false;
     try {
-      runInAction(() => {
-        this.data = {
-          ...this.data,
-          is_onboarded: true,
-        } as TUserProfile;
-      });
-      const user = this.data ?? undefined;
-      if (!user) return;
-      await this.userService.updateUserOnBoard();
+      runInAction(() => set(this.data, ["is_onboarded"], true));
+      const userProfile = await this.userService.updateUserOnBoard();
+      return userProfile;
     } catch (error) {
-      this.fetchUserProfile();
+      runInAction(() => {
+        set(this.data, ["is_onboarded"], isUserProfileOnboard);
+        this.error = {
+          status: "user-profile-onboard-error",
+          message: "Failed to update user profile is_onboarded",
+        };
+      });
+
       throw error;
     }
   };
 
   /**
-   * Updates the user tour completed status
-   * @returns Promise<void>
+   * @description updates the user tour completed status
+   * @returns @returns {Promise<TUserProfile | undefined>}
    */
   updateTourCompleted = async () => {
+    const isUserProfileTourCompleted = this.data.is_tour_completed || false;
     try {
-      if (this.data) {
-        runInAction(() => {
-          this.data = {
-            ...this.data,
-            is_tour_completed: true,
-          } as TUserProfile;
-        });
-        const response = await this.userService.updateUserTourCompleted();
-        return response;
-      }
+      runInAction(() => set(this.data, ["is_tour_completed"], true));
+      const userProfile = await this.userService.updateUserTourCompleted();
+      return userProfile;
     } catch (error) {
-      this.fetchUserProfile();
+      runInAction(() => {
+        set(this.data, ["is_tour_completed"], isUserProfileTourCompleted);
+        this.error = {
+          status: "user-profile-tour-complete-error",
+          message: "Failed to update user profile is_tour_completed",
+        };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * @description updates the user theme
+   * @returns @returns {Promise<TUserProfile | undefined>}
+   */
+  updateUserTheme = async (data: Partial<IUserTheme>) => {
+    const currentProfileTheme = cloneDeep(this.data.theme);
+    try {
+      runInAction(() => {
+        Object.keys(data).forEach((key: string) => {
+          const userKey: keyof IUserTheme = key as keyof IUserTheme;
+          if (this.data.theme) set(this.data.theme, userKey, data[userKey]);
+        });
+      });
+      const userProfile = await this.userService.updateCurrentUserProfile({ theme: this.data.theme });
+      return userProfile;
+    } catch (error) {
+      runInAction(() => {
+        Object.keys(data).forEach((key: string) => {
+          const userKey: keyof IUserTheme = key as keyof IUserTheme;
+          if (currentProfileTheme) set(this.data.theme, userKey, currentProfileTheme[userKey]);
+        });
+        this.error = {
+          status: "user-profile-theme-update-error",
+          message: "Failed to update user profile theme",
+        };
+      });
       throw error;
     }
   };

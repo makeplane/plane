@@ -1,20 +1,30 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { Metadata } from "next";
 // components
-import { PageHeader } from "@/components/core";
+import { InstanceSignInForm } from "@/components/login";
+// layouts
+import { DefaultLayout } from "@/layouts/default-layout";
 
-const RootPage = () => {
-  const router = useRouter();
-
-  useEffect(() => router.push("/login"), [router]);
-
-  return (
-    <>
-      <PageHeader title="Plane - God Mode" />
-    </>
-  );
+export const metadata: Metadata = {
+  title: "Plane | Simple, extensible, open-source project management tool.",
+  description:
+    "Open-source project management tool to manage issues, sprints, and product roadmaps with peace of mind.",
+  openGraph: {
+    title: "Plane | Simple, extensible, open-source project management tool.",
+    description:
+      "Open-source project management tool to manage issues, sprints, and product roadmaps with peace of mind.",
+    url: "https://plane.so/",
+  },
+  keywords:
+    "software development, customer feedback, software, accelerate, code management, release management, project management, issue tracking, agile, scrum, kanban, collaboration",
+  twitter: {
+    site: "@planepowers",
+  },
 };
 
-export default RootPage;
+export default async function LoginPage() {
+  return (
+    <DefaultLayout>
+      <InstanceSignInForm />
+    </DefaultLayout>
+  );
+}

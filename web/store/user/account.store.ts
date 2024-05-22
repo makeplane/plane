@@ -1,11 +1,10 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
-// stores
-import { RootStore } from "store/root.store";
-// services
-import { UserService } from "services/user.service";
-// types
+import { makeObservable, observable } from "mobx";
 import { IUserAccount } from "@plane/types";
+// services
+import { UserService } from "@/services/user.service";
+// stores
+import { RootStore } from "@/store/root.store";
 
 export interface IAccountStore {
   // observables
@@ -24,7 +23,10 @@ export class AccountStore implements IAccountStore {
   provider: string | undefined = undefined;
   // service
   userService: UserService;
-  constructor(private store: RootStore, private _account: IUserAccount) {
+  constructor(
+    private store: RootStore,
+    private _account: IUserAccount
+  ) {
     makeObservable(this, {
       // observables
       isLoading: observable.ref,

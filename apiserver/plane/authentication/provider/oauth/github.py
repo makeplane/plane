@@ -6,12 +6,13 @@ from urllib.parse import urlencode
 import pytz
 import requests
 
-# Django imports
-from django.core.exceptions import ImproperlyConfigured
-
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
 
 
 class GitHubOAuthProvider(OauthAdapter):
@@ -21,7 +22,7 @@ class GitHubOAuthProvider(OauthAdapter):
     provider = "github"
     scope = "read:user user:email"
 
-    def __init__(self, request, code=None, state=None):
+    def __init__(self, request, code=None, state=None, callback=None):
 
         GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = get_configuration_value(
             [
@@ -37,16 +38,15 @@ class GitHubOAuthProvider(OauthAdapter):
         )
 
         if not (GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET):
-            raise ImproperlyConfigured(
-                "Google is not configured. Please contact the support team."
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["GITHUB_NOT_CONFIGURED"],
+                error_message="GITHUB_NOT_CONFIGURED",
             )
 
         client_id = GITHUB_CLIENT_ID
         client_secret = GITHUB_CLIENT_SECRET
 
-        redirect_uri = (
-            f"{request.scheme}://{request.get_host()}/auth/github/callback/"
-        )
+        redirect_uri = f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/github/callback/"""
         url_params = {
             "client_id": client_id,
             "redirect_uri": redirect_uri,
@@ -67,6 +67,7 @@ class GitHubOAuthProvider(OauthAdapter):
             self.userinfo_url,
             client_secret,
             code,
+            callback=callback,
         )
 
     def set_token_data(self):

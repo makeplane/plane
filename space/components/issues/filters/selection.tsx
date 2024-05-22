@@ -1,19 +1,17 @@
+"use client";
+
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
-// components
 // types
-
-// filter helpers
-import { ILayoutDisplayFiltersOptions } from "@/store/issues/helpers";
-import { IIssueFilterOptions } from "@/store/issues/types";
-import { IIssueState, IIssueLabel } from "types/issue";
+import { IIssueState, IIssueLabel, IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
+// components
 import { FilterPriority, FilterState } from "./";
 
 type Props = {
   filters: IIssueFilterOptions;
   handleFilters: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
-  layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
+  layoutDisplayFiltersOptions: TIssueFilterKeys[];
   labels?: IIssueLabel[] | undefined;
   states?: IIssueState[] | undefined;
 };
@@ -23,7 +21,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
 
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
-  const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions?.filters.includes(filter);
+  const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions.includes(filter);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">

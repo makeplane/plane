@@ -19,6 +19,7 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
   const orderByDetails = MODULE_ORDER_BY_OPTIONS.find((option) => value?.includes(option.key));
 
   const isDescending = value?.[0] === "-";
+  const isManual = value?.includes("sort_order");
 
   return (
     <CustomMenu
@@ -46,25 +47,29 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
           {value?.includes(option.key) && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-custom-border-200" />
-      <CustomMenu.MenuItem
-        className="flex items-center justify-between gap-2"
-        onClick={() => {
-          if (isDescending) onChange("sort_by", value.slice(1) as TModuleOrderByOptions);
-        }}
-      >
-        Ascending
-        {!isDescending && <Check className="h-3 w-3" />}
-      </CustomMenu.MenuItem>
-      <CustomMenu.MenuItem
-        className="flex items-center justify-between gap-2"
-        onClick={() => {
-          if (!isDescending) onChange("sort_by", `-${value}` as TModuleOrderByOptions);
-        }}
-      >
-        Descending
-        {isDescending && <Check className="h-3 w-3" />}
-      </CustomMenu.MenuItem>
+      {!isManual && (
+        <>
+          <hr className="my-2 border-custom-border-200" />
+          <CustomMenu.MenuItem
+            className="flex items-center justify-between gap-2"
+            onClick={() => {
+              if (isDescending) onChange("sort_by", value.slice(1) as TModuleOrderByOptions);
+            }}
+          >
+            Ascending
+            {!isDescending && <Check className="h-3 w-3" />}
+          </CustomMenu.MenuItem>
+          <CustomMenu.MenuItem
+            className="flex items-center justify-between gap-2"
+            onClick={() => {
+              if (!isDescending) onChange("sort_by", `-${value}` as TModuleOrderByOptions);
+            }}
+          >
+            Descending
+            {isDescending && <Check className="h-3 w-3" />}
+          </CustomMenu.MenuItem>
+        </>
+      )}
     </CustomMenu>
   );
 };

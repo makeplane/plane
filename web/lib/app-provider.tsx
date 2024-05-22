@@ -13,8 +13,8 @@ import { SWR_CONFIG } from "@/constants/swr-config";
 import { resolveGeneralTheme } from "@/helpers/theme.helper";
 // hooks
 import { useInstance, useWorkspace, useUser } from "@/hooks/store";
-// layouts
-import InstanceLayout from "@/layouts/instance-layout";
+// wrappers
+import { InstanceWrapper } from "@/lib/wrappers";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });
@@ -32,10 +32,10 @@ export interface IAppProvider {
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
   // store hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
   const {
     data: currentUser,
-    profile: { data: profile },
+    userProfile: { data: userProfile },
   } = useUser();
   const { currentWorkspace, workspaces } = useWorkspace();
   // themes
@@ -45,24 +45,24 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
     <>
       {/* TODO: Need to handle custom themes for toast */}
       <Toast theme={resolveGeneralTheme(resolvedTheme)} />
-      <InstanceLayout>
+      <InstanceWrapper>
         <StoreWrapper>
           <CrispWrapper user={currentUser}>
             <PostHogProvider
               user={currentUser}
-              profile={profile}
+              profile={userProfile}
               currentWorkspaceId={currentWorkspace?.id}
               workspaceIds={Object.keys(workspaces)}
-              isCloud={!instance?.instance?.is_telemetry_anonymous || false}
-              telemetryEnabled={instance?.instance?.is_telemetry_enabled || false}
-              posthogAPIKey={instance?.config?.posthog_api_key || undefined}
-              posthogHost={instance?.config.posthog_host || undefined}
+              isCloud={!config?.is_telemetry_anonymous || false}
+              telemetryEnabled={config?.is_telemetry_enabled || false}
+              posthogAPIKey={config?.posthog_api_key || undefined}
+              posthogHost={config?.posthog_host || undefined}
             >
               <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
             </PostHogProvider>
           </CrispWrapper>
         </StoreWrapper>
-      </InstanceLayout>
+      </InstanceWrapper>
     </>
   );
 });

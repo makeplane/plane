@@ -1,9 +1,11 @@
+import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { IInstance } from "@plane/types";
+import { IInstance, IInstanceConfig } from "@plane/types";
 // services
 import { InstanceService } from "@/services/instance.service";
-import { RootStore } from "./root";
+// store types
+import { RootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
@@ -15,69 +17,54 @@ type TError = {
 };
 
 export interface IInstanceStore {
-  // issues
+  // observables
   isLoading: boolean;
   instance: IInstance | undefined;
+  config: IInstanceConfig | undefined;
   error: TError | undefined;
   // action
   fetchInstanceInfo: () => Promise<void>;
+  hydrate: (data: IInstance) => void;
 }
 
 export class InstanceStore implements IInstanceStore {
   isLoading: boolean = true;
   instance: IInstance | undefined = undefined;
+  config: IInstanceConfig | undefined = undefined;
   error: TError | undefined = undefined;
-  // root store
-  rootStore: RootStore;
   // services
   instanceService;
 
-  constructor(_rootStore: any) {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // observable
       isLoading: observable.ref,
       instance: observable,
+      config: observable,
       error: observable,
       // actions
       fetchInstanceInfo: action,
+      hydrate: action,
     });
-    this.rootStore = _rootStore;
     // services
     this.instanceService = new InstanceService();
   }
+
+  hydrate = (data: IInstance) => set(this, "instance", data);
 
   /**
    * @description fetching instance information
    */
   fetchInstanceInfo = async () => {
     try {
+      this.isLoading = true;
+      this.error = undefined;
+      const instanceInfo = await this.instanceService.getInstanceInfo();
       runInAction(() => {
-        this.isLoading = true;
-        this.error = undefined;
+        this.isLoading = false;
+        this.instance = instanceInfo.instance;
+        this.config = instanceInfo.config;
       });
-
-      const instance = await this.instanceService.getInstanceInfo();
-
-      const isInstanceNotSetup = (instance: IInstance) => "is_activated" in instance && "is_setup_done" in instance;
-
-      if (isInstanceNotSetup(instance)) {
-        runInAction(() => {
-          this.isLoading = false;
-          this.error = {
-            status: "success",
-            message: "Instance is not created in the backend",
-            data: {
-              is_activated: instance?.instance?.is_activated,
-              is_setup_done: instance?.instance?.is_setup_done,
-            },
-          };
-        });
-      } else {
-        runInAction(() => {
-          this.isLoading = false;
-          this.instance = instance;
-        });
-      }
     } catch (error) {
       runInAction(() => {
         this.isLoading = false;

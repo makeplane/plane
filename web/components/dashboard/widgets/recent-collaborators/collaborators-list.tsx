@@ -26,14 +26,14 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
   const userDetails = getUserDetails(userId);
   const isCurrentUser = userId === currentUser?.id;
 
-  if (!userDetails) return null;
+  if (!userDetails || userDetails.is_bot) return null;
 
   return (
     <Link href={`/${workspaceSlug}/profile/${userId}`} className="group text-center">
       <div className="flex justify-center">
         <Avatar
           src={userDetails.avatar}
-          name={isCurrentUser ? "You" : userDetails.display_name}
+          name={userDetails.display_name}
           size={69}
           className="!text-3xl !font-medium"
           showTooltip={false}

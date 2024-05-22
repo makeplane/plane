@@ -27,7 +27,6 @@ from .. import BaseViewSet
 from plane.app.serializers import (
     IssueViewSerializer,
     IssueSerializer,
-    IssueViewFavoriteSerializer,
 )
 from plane.app.permissions import (
     WorkspaceEntityPermission,
@@ -37,12 +36,12 @@ from plane.db.models import (
     Workspace,
     IssueView,
     Issue,
-    IssueViewFavorite,
+    UserFavorite,
     IssueLink,
     IssueAttachment,
 )
 from plane.utils.issue_filters import issue_filters
-
+from plane.utils.user_timezone_converter import user_timezone_converter
 
 class GlobalViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
@@ -255,6 +254,10 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                 "is_draft",
                 "archived_at",
             )
+            datetime_fields = ["created_at", "updated_at"]
+            issues = user_timezone_converter(
+                issues, datetime_fields, request.user.user_timezone
+            )
         return Response(issues, status=status.HTTP_200_OK)
 
 
@@ -269,9 +272,10 @@ class IssueViewViewSet(BaseViewSet):
         serializer.save(project_id=self.kwargs.get("project_id"))
 
     def get_queryset(self):
-        subquery = IssueViewFavorite.objects.filter(
+        subquery = UserFavorite.objects.filter(
             user=self.request.user,
-            view_id=OuterRef("pk"),
+            entity_identifier=OuterRef("pk"),
+            entity_type="view",
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
@@ -306,8 +310,7 @@ class IssueViewViewSet(BaseViewSet):
 
 
 class IssueViewFavoriteViewSet(BaseViewSet):
-    serializer_class = IssueViewFavoriteSerializer
-    model = IssueViewFavorite
+    model = UserFavorite
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -319,18 +322,21 @@ class IssueViewFavoriteViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
-        serializer = IssueViewFavoriteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user, project_id=project_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        _ = UserFavorite.objects.create(
+            user=request.user,
+            entity_identifier=request.data.get("view"),
+            entity_type="view",
+            project_id=project_id,
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, view_id):
-        view_favorite = IssueViewFavorite.objects.get(
+        view_favorite = UserFavorite.objects.get(
             project=project_id,
             user=request.user,
             workspace__slug=slug,
-            view_id=view_id,
+            entity_type="view",
+            entity_identifier=view_id,
         )
         view_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -3,7 +3,6 @@ import os
 import uuid
 
 # Django imports
-from django.core.exceptions import ImproperlyConfigured
 from django.utils import timezone
 
 # Third party imports
@@ -16,24 +15,16 @@ from plane.db.models import (
     WorkspaceMemberInvite,
 )
 from plane.license.utils.instance_value import get_configuration_value
-
-
-class AuthenticationException(Exception):
-
-    error_code = None
-    error_message = None
-
-    def __init__(self, error_code, error_message):
-        self.error_code = error_code
-        self.error_message = error_message
+from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
 
 
 class Adapter:
     """Common interface for all auth providers"""
 
-    def __init__(self, request, provider):
+    def __init__(self, request, provider, callback=None):
         self.request = request
         self.provider = provider
+        self.callback = callback
         self.token_data = None
         self.user_data = None
 
@@ -58,7 +49,8 @@ class Adapter:
     def complete_login_or_signup(self):
         email = self.user_data.get("email")
         user = User.objects.filter(email=email).first()
-
+        # Check if sign up case or login
+        is_signup = bool(user)
         if not user:
             # New user
             (ENABLE_SIGNUP,) = get_configuration_value(
@@ -75,8 +67,10 @@ class Adapter:
                     email=email,
                 ).exists()
             ):
-                raise ImproperlyConfigured(
-                    "Account creation is disabled for this instance please contact your admin"
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["SIGNUP_DISABLED"],
+                    error_message="SIGNUP_DISABLED",
+                    payload={"email": email},
                 )
             user = User(email=email, username=uuid.uuid4().hex)
 
@@ -89,8 +83,11 @@ class Adapter:
                 results = zxcvbn(self.code)
                 if results["score"] < 3:
                     raise AuthenticationException(
-                        error_message="The password is not a valid password",
-                        error_code="INVALID_PASSWORD",
+                        error_code=AUTHENTICATION_ERROR_CODES[
+                            "INVALID_PASSWORD"
+                        ],
+                        error_message="INVALID_PASSWORD",
+                        payload={"email": email},
                     )
 
                 user.set_password(self.code)
@@ -105,6 +102,12 @@ class Adapter:
             user.save()
             Profile.objects.create(user=user)
 
+        if not user.is_active:
+            raise AuthenticationException(
+                AUTHENTICATION_ERROR_CODES["USER_ACCOUNT_DEACTIVATED"],
+                error_message="USER_ACCOUNT_DEACTIVATED",
+            )
+
         # Update user details
         user.last_login_medium = self.provider
         user.last_active = timezone.now()
@@ -113,6 +116,13 @@ class Adapter:
         user.last_login_uagent = self.request.META.get("HTTP_USER_AGENT")
         user.token_updated_at = timezone.now()
         user.save()
+
+        if self.callback:
+            self.callback(
+                user,
+                is_signup,
+                self.request,
+            )
 
         if self.token_data:
             self.create_update_account(user=user)

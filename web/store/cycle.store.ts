@@ -32,7 +32,7 @@ export interface ICycleStore {
   currentProjectActiveCycleId: string | null;
   currentProjectArchivedCycleIds: string[] | null;
   // computed actions
-  getFilteredCycleIds: (projectId: string) => string[] | null;
+  getFilteredCycleIds: (projectId: string, sortByManual: boolean) => string[] | null;
   getFilteredCompletedCycleIds: (projectId: string) => string[] | null;
   getFilteredArchivedCycleIds: (projectId: string) => string[] | null;
   getCycleById: (cycleId: string) => ICycle | null;
@@ -228,7 +228,7 @@ export class CycleStore implements ICycleStore {
    * @param {TCycleFilters} filters
    * @returns {string[] | null}
    */
-  getFilteredCycleIds = computedFn((projectId: string) => {
+  getFilteredCycleIds = computedFn((projectId: string, sortByManual: boolean) => {
     const filters = this.rootStore.cycleFilter.getFiltersByProjectId(projectId);
     const searchQuery = this.rootStore.cycleFilter.searchQuery;
     if (!this.fetchedMap[projectId]) return null;
@@ -239,7 +239,7 @@ export class CycleStore implements ICycleStore {
         c.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
         shouldFilterCycle(c, filters ?? {})
     );
-    cycles = orderCycles(cycles);
+    cycles = orderCycles(cycles, sortByManual);
     const cycleIds = cycles.map((c) => c.id);
     return cycleIds;
   });

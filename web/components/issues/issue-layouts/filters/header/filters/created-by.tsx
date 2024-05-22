@@ -22,7 +22,7 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // store hooks
   const { getUserDetails } = useMember();
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
 
   const sortedOptions = useMemo(() => {
     const filteredOptions = (memberIds || []).filter((memberId) =>
