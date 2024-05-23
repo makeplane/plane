@@ -14,7 +14,16 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     nginx \
     curl \
-    python3-pip
+    python3-pip \
+    build-essential \
+    libssl-dev \
+    python3-dev \
+    bzip2 \
+    xz-utils \
+    zlib1g \
+    libxml2-dev \
+    libxslt1-dev \
+    libpopt0
 
 # Installing Postgres
 RUN apt-get update && apt-get install -y postgresql postgresql-contrib
@@ -39,9 +48,9 @@ RUN mkdir -p /data/postgres /data/redis /data/minio && \
     chown -R redis:redis /data/redis && \
     chown -R root:root /data/minio
 
-COPY ./supervisor.base /code/supervisor.conf
+COPY ./supervisor.base /app/supervisor.conf
 
 # Expose the necessary ports
-EXPOSE 5432 6379 9000 9001 80 443
+EXPOSE 5432 6379 9001 80 443
 
-CMD ["supervisord","-c","/code/supervisor.conf"]
+CMD ["supervisord","-c","/app/supervisor.conf"]
