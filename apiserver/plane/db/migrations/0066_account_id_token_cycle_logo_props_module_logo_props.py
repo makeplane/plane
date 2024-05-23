@@ -45,4 +45,9 @@ class Migration(migrations.Migration):
             name="logo_props",
             field=models.JSONField(default=dict),
         ),
+        migrations.AddField(
+            model_name="issue",
+            name="description_binary",
+            field=models.BinaryField(null=True),
+        ),
     ]
