@@ -52,6 +52,7 @@ def get_default_display_properties():
     }
 
 
+# DEPRECATED TODO: - Remove in next release
 class GlobalView(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="global_views"
@@ -87,7 +88,6 @@ class GlobalView(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
 
-# DEPRECATED TODO: - Remove in next release
 class IssueView(WorkspaceBaseModel):
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)
@@ -101,6 +101,7 @@ class IssueView(WorkspaceBaseModel):
         default=1, choices=((0, "Private"), (1, "Public"))
     )
     sort_order = models.FloatField(default=65535)
+    logo_props = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Issue View"

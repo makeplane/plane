@@ -80,8 +80,10 @@ class SAMLCallbackEndpoint(View):
             return HttpResponseRedirect(url)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class SAMLLogoutEndpoint(View):
-    def post(self, request, *args, **kwargs):
+
+    def get(self, request, *args, **kwargs):
         logout(request=request)
         return HttpResponseRedirect(base_host(request=request, is_app=True))
 
@@ -96,6 +98,8 @@ class SAMLMetadataEndpoint(View):
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
                                   Location="{request.scheme}://{request.get_host()}/auth/saml/callback/"
                                   index="1"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                             Location="{request.scheme}://{request.get_host()}/auth/saml/logout/"/>
         <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
         <AttributeConsumingService index="1">
             <ServiceName xml:lang="en">Plane</ServiceName>
@@ -113,6 +117,6 @@ class SAMLMetadataEndpoint(View):
                                 isRequired="true"/>
         </AttributeConsumingService>
     </SPSSODescriptor>
-</EntityDescriptor>"""
-
+</EntityDescriptor>
+"""
         return HttpResponse(xml_template, content_type="application/xml")
