@@ -332,10 +332,22 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
             const property = key as keyof TBulkOperationsPayload["properties"];
             // update backup data
             set(originalData, [issueId, property], issueDetails[property]);
+            const propertyValue = data.properties[property];
             // update root issue map properties
-            this.rootIssueStore.issues.updateIssue(issueId, {
-              [property]: data.properties[property],
-            });
+            if (Array.isArray(propertyValue)) {
+              // if property value is array, append it to the existing values
+              const existingValue = issueDetails[property];
+              // convert existing value to an array
+              const newExistingValue = Array.isArray(existingValue) ? existingValue : [];
+              this.rootIssueStore.issues.updateIssue(issueId, {
+                [property]: [newExistingValue, ...propertyValue],
+              });
+            } else {
+              // if property value is not an array, simply update the value
+              this.rootIssueStore.issues.updateIssue(issueId, {
+                [property]: propertyValue,
+              });
+            }
           });
         });
       });
