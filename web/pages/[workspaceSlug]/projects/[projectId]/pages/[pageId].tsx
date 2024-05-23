@@ -112,6 +112,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     const formData: Partial<TPage> = {
       name: "Copy of " + pageStore.name,
       description_html: currentPageValues.description_html,
+      access: pageStore.access,
     };
 
     await handleCreatePage(formData)
