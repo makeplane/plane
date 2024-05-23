@@ -106,6 +106,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
             projectId={projectId.toString()}
             onChange={(val) => handleBulkOperation({ label_ids: val })}
             setIsOpen={() => setCreateLabelModal(true)}
+            buttonClassName="text-custom-text-300"
           />
         </>
       )}
