@@ -58,7 +58,10 @@ jobs:
       BUILDX_PLATFORMS: ${{ needs.base_build_setup.outputs.gh_buildx_platforms }}
       BUILDX_ENDPOINT: ${{ needs.base_build_setup.outputs.gh_buildx_endpoint }}
     steps:
-      - name: Set Proxy Docker Tag
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set Docker Tag
         run: |
           if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-aio-base:latest
@@ -80,9 +83,6 @@ jobs:
           driver: ${{ env.BUILDX_DRIVER }}
           version: ${{ env.BUILDX_VERSION }}
           endpoint: ${{ env.BUILDX_ENDPOINT }}
-
-      - name: Check out the repo
-        uses: actions/checkout@v4
 
       - name: Build and Push Plane-Proxy to Docker Hub
         uses: docker/build-push-action@v5.1.0
