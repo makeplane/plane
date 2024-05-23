@@ -41,5 +41,9 @@ RUN mkdir -p /data/postgres /data/redis /data/minio && \
     chown -R root:root /data/minio
 
 
+COPY supervisor.base /code/supervisor.conf
+
 # Expose the necessary ports
-EXPOSE 5432 6379 9000
+EXPOSE 5432 6379 9000 9001 80 443
+
+CMD ["supervisord","-c","/code/supervisor.conf"]

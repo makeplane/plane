@@ -1,0 +1,33 @@
+[supervisord]
+nodaemon=true
+logfile=/var/log/supervisord/supervisord.log
+pidfile=/var/run/supervisord.pid
+
+[program:postgresql]
+command=/usr/lib/postgresql/16/bin/postgres -D /var/lib/postgresql/16/main
+user=postgres
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/supervisor/postgresql.log
+stderr_logfile=/var/log/supervisor/postgresql_err.log
+
+[program:redis]
+command=/usr/bin/redis-server /etc/redis/redis.conf
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/supervisor/redis.log
+stderr_logfile=/var/log/supervisor/redis_err.log
+
+[program:minio]
+command=/usr/local/bin/minio server /data/minio --console-address ":9001"
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/supervisor/minio.log
+stderr_logfile=/var/log/supervisor/minio_err.log
+
+[program:nginx]
+command=/usr/sbin/nginx -g "daemon off;"
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/supervisor/nginx.log
+stderr_logfile=/var/log/supervisor/nginx_err.log
