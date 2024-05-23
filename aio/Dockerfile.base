@@ -1,6 +1,6 @@
 FROM --platform=$BUILDPLATFORM tonistiigi/binfmt as binfmt
 
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 
 # Set environment variables for non-interactive installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -37,12 +37,12 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
 # # Install Python 3.11
-# RUN add-apt-repository ppa:deadsnakes/ppa -y && \
-#     apt-get update && \
-#     apt-get install -y python3.11 python3.11-dev python3.11-distutils && \
-#     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 && \
-#     update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 && \
-#     update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+RUN add-apt-repository ppa:deadsnakes/ppa -y && \
+    apt-get update && \
+    apt-get install -y python3.12 python3.12-dev python3.12-distutils && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1 && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.12 1 && \
+    update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
 
 # Install MinIO
 ARG TARGETARCH
