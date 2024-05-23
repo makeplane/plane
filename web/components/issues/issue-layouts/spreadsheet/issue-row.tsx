@@ -238,7 +238,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           )}
           disabled={!!issueDetail?.tempId}
         >
-          <div className="flex items-center gap-2 min-w-min py-2.5 pl-2">
+          <div className="flex items-center gap-1 min-w-min py-2.5 pl-2">
             {/* select checkbox */}
             {projectId && !disableUserActions && (
               <Tooltip

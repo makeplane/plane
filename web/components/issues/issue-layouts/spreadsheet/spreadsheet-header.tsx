@@ -45,7 +45,7 @@ export const SpreadsheetHeader = (props: Props) => {
     <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-custom-border-100">
       <tr>
         <th
-          className="group/list-header sticky left-0 z-[15] h-11 w-[28rem] flex items-center gap-2 bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px] before:border-custom-border-100 pl-2"
+          className="group/list-header sticky left-0 z-[15] h-11 w-[28rem] flex items-center gap-1 bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px] before:border-custom-border-100 pl-2"
           tabIndex={-1}
         >
           {canSelectIssues && (

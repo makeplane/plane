@@ -106,7 +106,6 @@ export const useMultipleSelect = (props: Props) => {
         if (!isInView) {
           containerRef.current.scrollBy({
             top: elementRect.top < containerRect.top + SCROLL_OFFSET ? -50 : 50,
-            behavior: "smooth",
           });
         }
       }
@@ -121,7 +120,8 @@ export const useMultipleSelect = (props: Props) => {
   );
 
   const handleEntitySelection = useCallback(
-    (entityID: string, groupID: string, shouldScroll: boolean = true) => {
+    (entityDetails: TEntityDetails, shouldScroll: boolean = true) => {
+      const { entityID, groupID } = entityDetails;
       const index = selectedEntityDetails.findIndex((en) => en.entityID === entityID && en.groupID === groupID);
 
       if (index === -1) {
@@ -155,14 +155,14 @@ export const useMultipleSelect = (props: Props) => {
           for (let i = lastEntityIndex + 1; i <= currentEntityIndex; i++) {
             const entityDetails = entities[i];
             if (entityDetails) {
-              handleEntitySelection(entityDetails.entityID, entityDetails.groupID);
+              handleEntitySelection(entityDetails);
             }
           }
         } else if (lastEntityIndex > currentEntityIndex) {
           for (let i = currentEntityIndex; i <= lastEntityIndex - 1; i++) {
             const entityDetails = entities[i];
             if (entityDetails) {
-              handleEntitySelection(entityDetails.entityID, entityDetails.groupID);
+              handleEntitySelection(entityDetails);
             }
           }
         } else {
@@ -171,14 +171,14 @@ export const useMultipleSelect = (props: Props) => {
           for (let i = startIndex; i <= endIndex; i++) {
             const entityDetails = entities[i];
             if (entityDetails) {
-              handleEntitySelection(entityDetails.entityID, entityDetails.groupID);
+              handleEntitySelection(entityDetails);
             }
           }
         }
         return;
       }
 
-      handleEntitySelection(entityID, groupID);
+      handleEntitySelection({ entityID, groupID });
     },
     [entities, handleEntitySelection, lastSelectedEntityDetails]
   );
@@ -211,7 +211,7 @@ export const useMultipleSelect = (props: Props) => {
     (groupID: string) => {
       const groupEntities = entities.filter((entity) => entity.groupID === groupID);
       groupEntities.forEach((entity) => {
-        handleEntitySelection(entity.entityID, groupID, false);
+        handleEntitySelection(entity, false);
       });
     },
     [entities, handleEntitySelection]
@@ -253,12 +253,12 @@ export const useMultipleSelect = (props: Props) => {
       if (e.key === "ArrowDown" && activeEntityDetails) {
         if (!nextActiveEntity) return;
         // console.log("selected by down", elementDetails.entityID);
-        handleEntitySelection(nextActiveEntity.entityID, nextActiveEntity.groupID);
+        handleEntitySelection(nextActiveEntity);
       }
       if (e.key === "ArrowUp" && activeEntityDetails) {
         if (!previousActiveEntity) return;
         // console.log("selected by up", elementDetails.entityID);
-        handleEntitySelection(previousActiveEntity.entityID, previousActiveEntity.groupID);
+        handleEntitySelection(previousActiveEntity);
       }
     };
     window.addEventListener("keydown", handleKeyDown);

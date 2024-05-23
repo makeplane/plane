@@ -5,7 +5,7 @@ import { cn } from "../../helpers";
 export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string;
   iconClassName?: string;
-  intermediate?: boolean;
+  indeterminate?: boolean;
 }
 
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
@@ -13,7 +13,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) 
     id,
     name,
     checked,
-    intermediate = false,
+    indeterminate = false,
     disabled,
     containerClassName,
     iconClassName,
@@ -35,7 +35,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) 
             "border-custom-border-200 bg-custom-background-80 cursor-not-allowed": disabled,
             "cursor-pointer border-custom-border-300 hover:border-custom-border-400 bg-transparent": !disabled,
             "border-custom-primary-100 hover:border-custom-primary-200 bg-custom-primary-100 hover:bg-custom-primary-200":
-              !disabled && (checked || intermediate),
+              !disabled && (checked || indeterminate),
           },
           className
         )}
@@ -66,7 +66,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) 
           "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-4 p-0.5 pointer-events-none outline-none stroke-white hidden",
           {
             "stroke-custom-text-400 opacity-40": disabled,
-            block: intermediate && !checked,
+            block: indeterminate && !checked,
           },
           iconClassName
         )}

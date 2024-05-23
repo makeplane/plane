@@ -86,7 +86,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     <>
       <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2 py-1.5 pl-4">
         {canSelectIssues && (
-          <div className="flex-shrink-0 flex items-center w-3.5 pl-1">
+          <div className="flex-shrink-0 flex items-center w-3.5">
             <Checkbox
               className={cn(
                 "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
@@ -100,9 +100,8 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
             />
           </div>
         )}
-        <div className="size-5" />
-        <div className="flex-shrink-0 grid place-items-center overflow-hidden">
-          {icon ?? <CircleDashed className="h-3.5 w-3.5" strokeWidth={2} />}
+        <div className="flex-shrink-0 grid place-items-center overflow-hidden pl-3">
+          {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
         </div>
 
         <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">

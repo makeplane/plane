@@ -141,7 +141,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     >
       <div className="flex w-full truncate">
         <div className="flex flex-grow items-center gap-3 truncate">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-0.5">
             {/* drag handle */}
             <div className="size-4 flex items-center group/drag-handle">
               <DragHandle
@@ -192,6 +192,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                     className={cn("size-4", {
                       "rotate-90": isExpanded,
                     })}
+                    strokeWidth={2.5}
                   />
                 </button>
               )}

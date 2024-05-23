@@ -7,7 +7,7 @@ import { RootStore } from "../root.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
-import { IIssueBulkOperationsStore, IssueBulkOperationsStore } from "./bulk-operations.store";
+import { IIssueBulkOperationsStore, IssueBulkOperationsStore } from "./bulk_operations.store";
 import { ICycleIssuesFilter, CycleIssuesFilter, ICycleIssues, CycleIssues } from "./cycle";
 import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from "./draft";
 import { IIssueDetail, IssueDetail } from "./issue-details/root.store";
