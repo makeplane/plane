@@ -23,6 +23,7 @@ from .views import (
     # OIDC
     OIDCAuthInitiateEndpoint,
     OIDCallbackEndpoint,
+    OIDCLogoutEndpoint,
     # SAML
     SAMLAuthInitiateEndpoint,
     SAMLCallbackEndpoint,
@@ -214,7 +215,7 @@ urlpatterns = [
     ),
     path(
         "oidc/logout/",
-        OIDCallbackEndpoint.as_view(),
+        OIDCLogoutEndpoint.as_view(),
         name="oidc",
     ),
     # SAML

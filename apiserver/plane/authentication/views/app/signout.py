@@ -26,7 +26,9 @@ class SignOutAuthEndpoint(View):
                 provider = OIDCOAuthProvider(
                     request=request,
                 )
-                logout_url = provider.logout()
+                logout_url = provider.logout(
+                    logout_url=f"{base_host(request=request, is_app=True)}/auth/oidc/logout/"
+                )
                 if logout_url:
                     return HttpResponseRedirect(logout_url)
 
