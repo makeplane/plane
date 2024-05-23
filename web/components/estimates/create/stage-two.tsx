@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Plus } from "lucide-react";
-import { Button } from "@plane/ui";
+import { Button, Sortable } from "@plane/ui";
 // components
 import { EstimateItem } from "@/components/estimates";
 import {
@@ -10,7 +10,6 @@ import {
   TEstimateSystemKeyObject,
   TEstimateSystemKeys,
 } from "@/components/estimates/types";
-import { Sortable } from "@/components/sortable/sortable";
 // constants
 import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
 

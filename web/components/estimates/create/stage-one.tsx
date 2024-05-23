@@ -1,10 +1,10 @@
 import { FC } from "react";
 // components
-import { RadioInput } from "@/components/radio-group";
 // constants
+import { RadioInput } from "@plane/ui";
+import { TEstimateSystemKeys } from "@/components/estimates/types";
 import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
 // types
-import { TEstimateSystemKeys } from "@/components/estimates/types";
 
 type TEstimateCreateStageOne = {
   estimateSystem: TEstimateSystemKeys;
