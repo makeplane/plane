@@ -55,8 +55,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
   const isDraftIssue = router.pathname.includes("draft-issue");
   const renderExistingIssueModal = moduleId || cycleId;
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
-  const isPartialGroupSelected = selectionHelpers.isGroupSelected(groupID) === "partial";
-  const isCompleteGroupSelected = selectionHelpers.isGroupSelected(groupID) === "complete";
+  const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(groupID) === "empty";
   // auth
   const canSelectIssues = canEditProperties(projectId?.toString());
 
@@ -91,12 +90,12 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
               className={cn(
                 "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
                 {
-                  "opacity-100 pointer-events-auto": isPartialGroupSelected || isCompleteGroupSelected,
+                  "opacity-100 pointer-events-auto": !isGroupSelectionEmpty,
                 }
               )}
               iconClassName="size-3"
               onClick={() => selectionHelpers.handleGroupClick(groupID)}
-              checked={isCompleteGroupSelected}
+              indeterminate={!isGroupSelectionEmpty}
             />
           </div>
         )}

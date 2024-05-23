@@ -36,8 +36,7 @@ export const SpreadsheetHeader = (props: Props) => {
   const router = useRouter();
   const { projectId } = router.query;
   // derived values
-  const isPartialGroupSelected = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "partial";
-  const isCompleteGroupSelected = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "complete";
+  const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "empty";
   // auth
   const canSelectIssues = canEditProperties(projectId?.toString());
 
@@ -54,12 +53,12 @@ export const SpreadsheetHeader = (props: Props) => {
                 className={cn(
                   "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
                   {
-                    "opacity-100 pointer-events-auto": isPartialGroupSelected || isCompleteGroupSelected,
+                    "opacity-100 pointer-events-auto": !isGroupSelectionEmpty,
                   }
                 )}
                 iconClassName="size-3"
                 onClick={() => selectionHelpers.handleGroupClick(SPREADSHEET_SELECT_GROUP)}
-                checked={isCompleteGroupSelected}
+                indeterminate={!isGroupSelectionEmpty}
               />
             </div>
           )}

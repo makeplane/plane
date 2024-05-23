@@ -32,8 +32,7 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
     selectionHelpers,
   } = props;
 
-  const isPartialGroupSelected = selectionHelpers.isGroupSelected(GANTT_SELECT_GROUP) === "partial";
-  const isCompleteGroupSelected = selectionHelpers.isGroupSelected(GANTT_SELECT_GROUP) === "complete";
+  const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(GANTT_SELECT_GROUP) === "empty";
 
   return (
     <div
@@ -61,12 +60,12 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
                 className={cn(
                   "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
                   {
-                    "opacity-100 pointer-events-auto": isPartialGroupSelected || isCompleteGroupSelected,
+                    "opacity-100 pointer-events-auto": !isGroupSelectionEmpty,
                   }
                 )}
                 iconClassName="size-3"
                 onClick={() => selectionHelpers.handleGroupClick(GANTT_SELECT_GROUP)}
-                checked={isCompleteGroupSelected}
+                indeterminate={!isGroupSelectionEmpty}
               />
             </div>
           )}

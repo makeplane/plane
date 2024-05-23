@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { observer } from "mobx-react";
 // hooks
 import { TEntityDetails, TSelectionHelper, TSelectionSnapshot, useMultipleSelect } from "@/hooks/use-multiple-select";
 
@@ -9,7 +10,7 @@ type Props = {
   entities: Record<string, string[]>; // { groupID: entityIds[] }
 };
 
-export const MultipleSelectGroup: React.FC<Props> = (props) => {
+export const MultipleSelectGroup: React.FC<Props> = observer((props) => {
   const { children, containerRef, entities, groups } = props;
 
   const entityDetails: TEntityDetails[] = useMemo(
@@ -34,4 +35,4 @@ export const MultipleSelectGroup: React.FC<Props> = (props) => {
   });
 
   return <>{children(helpers, snapshot)}</>;
-};
+});
