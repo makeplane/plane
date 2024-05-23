@@ -18,7 +18,7 @@ type TSwitchAccountDropdownProps = {
 export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((props) => {
   const { fullName } = props;
   // states
-  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
+  const [showSwitchAccountModal, setShowSwitchAccountModal] = useState(false);
   // store hooks
   const { data: user } = useUser();
 
@@ -30,7 +30,7 @@ export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((
 
   return (
     <div className="flex w-full shrink-0 justify-end">
-      <SwitchAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
+      <SwitchAccountModal isOpen={showSwitchAccountModal} onClose={() => setShowSwitchAccountModal(false)} />
       <div className="flex items-center gap-x-2 pr-4 z-10">
         {user?.avatar && (
           <Avatar
@@ -64,7 +64,7 @@ export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((
                     "bg-custom-background-80": active,
                   })
                 }
-                onClick={() => setShowDeleteAccountModal(true)}
+                onClick={() => setShowSwitchAccountModal(true)}
               >
                 Wrong e-mail address?
               </Menu.Item>
