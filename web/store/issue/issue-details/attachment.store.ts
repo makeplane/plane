@@ -113,14 +113,14 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, data: FormData) => {
     try {
       const response = await this.issueAttachmentService.uploadIssueAttachment(workspaceSlug, projectId, issueId, data);
-      const issueDetails = this.rootIssueStore.issues.getIssueById(issueId);
+      const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 0;
 
       if (response && response.id) {
         runInAction(() => {
           update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, [response.id])));
           set(this.attachmentMap, response.id, response);
           this.rootIssueStore.issues.updateIssue(issueId, {
-            attachment_count: (issueDetails?.attachment_count ?? 0) + 1, // increment attachment count
+            attachment_count: issueAttachmentsCount + 1, // increment attachment count
           });
         });
       }
@@ -139,7 +139,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         issueId,
         attachmentId
       );
-      const issueDetails = this.rootIssueStore.issues.getIssueById(issueId);
+      const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 1;
 
       runInAction(() => {
         update(this.attachments, [issueId], (attachmentIds = []) => {
@@ -148,7 +148,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         });
         delete this.attachmentMap[attachmentId];
         this.rootIssueStore.issues.updateIssue(issueId, {
-          attachment_count: (issueDetails?.attachment_count ?? 1) - 1, // decrement attachment count
+          attachment_count: issueAttachmentsCount - 1, // decrement attachment count
         });
       });
 
