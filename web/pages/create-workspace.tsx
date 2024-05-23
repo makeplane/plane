@@ -16,8 +16,8 @@ import DefaultLayout from "@/layouts/default-layout";
 import { NextPageWithLayout } from "@/lib/types";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 // types
 
 const CreateWorkspacePage: NextPageWithLayout = observer(() => {
