@@ -1,4 +1,6 @@
-FROM --platform=$BUILDPLATFORM ubuntu:22.04
+FROM --platform=$BUILDPLATFORM tonistiigi/binfmt as binfmt
+
+FROM ubuntu:22.04
 
 # Set environment variables for non-interactive installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -22,13 +24,13 @@ RUN apt-get update && apt-get install -y redis-server
 
 # Install MinIO
 
-ARG TARGETPLATFORM
-RUN if [ "$TARGETPLATFORM" = "amd64" ]; then \
+ARG TARGETARCH
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
         wget https://dl.min.io/server/minio/release/linux-amd64/minio -O /usr/local/bin/minio; \
-    elif [ "$TARGETPLATFORM" = "arm64" ]; then \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
         wget https://dl.min.io/server/minio/release/linux-arm64/minio -O /usr/local/bin/minio; \
     else \
-        echo "Unsupported architecture: $TARGETPLATFORM"; exit 1; \
+        echo "Unsupported architecture: $TARGETARCH"; exit 1; \
     fi && \
     chmod +x /usr/local/bin/minio
 
