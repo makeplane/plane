@@ -1,14 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { isEqual } from "lodash";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "../../helpers";
 
 type Props = {
   children: React.ReactNode;
   data: any; //@todo make this generic
+  className?: string;
 };
-const Draggable = ({ children, data }: Props) => {
+const Draggable = ({ children, data, className }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState<boolean>(false); // NEW
   const [isDraggedOver, setIsDraggedOver] = useState(false);
@@ -37,7 +38,7 @@ const Draggable = ({ children, data }: Props) => {
   }, [data]);
 
   return (
-    <div ref={ref} className={cn(dragging && "opacity-25", isDraggedOver && "bg-red-500")}>
+    <div ref={ref} className={cn(dragging && "opacity-25", isDraggedOver && "bg-custom-background-80", className)}>
       {children}
     </div>
   );
