@@ -17,7 +17,7 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
   }.webp`;
 
   return (
-    <div className="relative flex flex-col justify-center items-center text-center gap-8 border border-custom-border-300 rounded bg-custom-background-90 py-20">
+    <div className="relative flex flex-col justify-center items-center text-center gap-8 border border-custom-border-300 rounded bg-custom-background-90 py-10">
       <div className="flex-shrink-0 w-[120px] h-[120px] overflow-hidden relative flex justify-center items-center">
         <Image
           src={emptyScreenImage}
@@ -27,9 +27,11 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
           className="object-contain w-full h-full"
         />
       </div>
-      <div className="space-y-2">
-        <h3 className="text-xl font-medium text-custom-text-100">No estimate systems yet</h3>
-        <p className="text-base text-custom-text-300">Explain estimates system here</p>
+      <div className="space-y-1.5">
+        <h3 className="text-xl font-semibold text-custom-text-100">No estimate systems yet</h3>
+        <p className="text-sm text-custom-text-300">
+          Create a set of estimates to communicate the amount of work per issue.
+        </p>
       </div>
       <div>
         <Button onClick={onButtonClick}>Add Estimate System</Button>

@@ -4,7 +4,7 @@ import { IEstimate } from "@plane/types";
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
-import { CreateEstimateModal, EstimateEmptyScreen } from "@/components/estimates";
+import { EstimateEmptyScreen, EstimateLoaderScreen, CreateEstimateModal } from "@/components/estimates";
 import { DeleteEstimateModal, EstimateListItem } from "@/components/estimates-legacy";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
@@ -61,7 +61,8 @@ export const EstimateRoot: FC<TEstimateRoot> = (props) => {
   };
 
   return (
-    <div>
+    <div className="container mx-auto">
+      <EstimateLoaderScreen />
       <EstimateEmptyScreen onButtonClick={() => {}} />
       {loader === "init-loader" || isSWRLoading ? (
         <Loader className="mt-5 space-y-5">
