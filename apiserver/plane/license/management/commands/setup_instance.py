@@ -10,7 +10,7 @@ from django.utils import timezone
 
 # Module imports
 from plane.license.models import Instance, InstanceAdmin
-from plane.db.models import User
+from plane.db.models import User, Profile
 
 
 class Command(BaseCommand):
@@ -39,6 +39,7 @@ class Command(BaseCommand):
                 username=uuid.uuid4().hex,
                 password=make_password(uuid.uuid4().hex),
             )
+            _ = Profile.objects.create(user=user)
 
         try:
             # Check if the instance is registered
