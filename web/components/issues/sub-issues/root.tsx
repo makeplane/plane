@@ -401,6 +401,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     parentIssueId={parentIssueId}
+                    rootIssueId={parentIssueId}
                     spacingLeft={10}
                     disabled={!disabled}
                     handleIssueCrudState={handleIssueCrudState}

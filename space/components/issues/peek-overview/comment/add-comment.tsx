@@ -1,12 +1,14 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
-// components
+// editor
 import { EditorRefApi } from "@plane/lite-text-editor";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+// editor components
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks
 import { useIssueDetails, useProject, useUser } from "@/hooks/store";
-import useToast from "@/hooks/use-toast";
 // types
 import { Comment } from "@/types/issue";
 
@@ -39,8 +41,6 @@ export const AddComment: React.FC<Props> = observer((props) => {
     formState: { isSubmitting },
     reset,
   } = useForm<Comment>({ defaultValues });
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const onSubmit = async (formData: Comment) => {
     if (!workspaceSlug || !projectId || !issueId || isSubmitting || !formData.comment_html) return;
@@ -51,8 +51,8 @@ export const AddComment: React.FC<Props> = observer((props) => {
         editorRef.current?.clearEditor();
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Comment could not be posted. Please try again.",
         })

@@ -1,6 +1,3 @@
-# Python imports
-from urllib.parse import urljoin
-
 # Django imports
 from django.views import View
 from django.contrib.auth import logout
@@ -23,9 +20,10 @@ class SignOutAuthEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = urljoin(base_host(request=request, is_app=True), "sign-in")
-            return HttpResponseRedirect(url)
+            return HttpResponseRedirect(
+                base_host(request=request, is_app=True)
+            )
         except Exception:
             return HttpResponseRedirect(
-                base_host(request=request, is_app=True), "sign-in"
+                base_host(request=request, is_app=True)
             )
