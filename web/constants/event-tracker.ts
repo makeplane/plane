@@ -199,7 +199,6 @@ export const FORGOT_PASS_LINK = "Forgot password link generated";
 export const NEW_PASS_CREATED = "New password created";
 // Onboarding Events
 export const USER_DETAILS = "User details added";
-export const USER_PERSONALIZATION = "User personalization added";
 export const USER_ONBOARDING_COMPLETED = "User onboarding completed";
 // Product Tour Events
 export const PRODUCT_TOUR_STARTED = "Product tour started";
@@ -228,3 +227,5 @@ export const GROUP_WORKSPACE = "Workspace_metrics";
 
 //Elements
 export const E_ONBOARDING = "Onboarding";
+export const E_ONBOARDING_STEP_1 = "Onboarding step 1";
+export const E_ONBOARDING_STEP_2 = "Onboarding step 2";
