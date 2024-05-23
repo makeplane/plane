@@ -1,20 +1,22 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// icons
 import { Plus, ChevronRight, Loader, Pencil } from "lucide-react";
+// types
 import { IUser, TIssue } from "@plane/types";
-// hooks
+// ui
 import { CircularProgressIndicator, CustomMenu, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { ExistingIssuesListModal } from "@/components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
+// hooks
 import { useEventTracker, useIssueDetail } from "@/hooks/store";
-// components
+// local components
 import { IssueList } from "./issues-list";
-// ui
-// helpers
-// types
 
 export interface ISubIssuesRoot {
   workspaceSlug: string;
@@ -248,11 +250,6 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Error!",
-            message: "Issue deleted successfully",
-          });
           captureIssueEvent({
             eventName: "Sub-issue deleted",
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -535,6 +532,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     issueCrudState?.delete?.issue?.id as string
                   )
                 }
+                isSubIssue
               />
             )}
         </>
