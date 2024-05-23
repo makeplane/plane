@@ -54,4 +54,7 @@ COPY ./supervisor.base /app/supervisor.conf
 # Expose the necessary ports
 EXPOSE 5432 6379 9001 80 443
 
+RUN mkdir -p /var/log/supervisord/ && \
+    touch /var/log/supervisord/supervisord.log
+
 CMD ["supervisord","-c","/app/supervisor.conf"]
