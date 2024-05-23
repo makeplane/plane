@@ -84,7 +84,7 @@ jobs:
           version: ${{ env.BUILDX_VERSION }}
           endpoint: ${{ env.BUILDX_ENDPOINT }}
 
-      - name: Build and Push Plane-Proxy to Docker Hub
+      - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v5.1.0
         with:
           context: ./no-use
