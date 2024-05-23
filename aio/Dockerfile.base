@@ -39,7 +39,6 @@ RUN mkdir -p /data/postgres /data/redis /data/minio && \
     chown -R redis:redis /data/redis && \
     chown -R root:root /data/minio
 
-
 COPY ./supervisor.base /code/supervisor.conf
 
 # Expose the necessary ports
