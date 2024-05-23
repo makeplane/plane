@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     bzip2 \
     xz-utils \
     zlib1g \
+    libpq-dev \
     libxml2-dev \
     libxslt1-dev \
     libpopt0
