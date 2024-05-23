@@ -27,10 +27,10 @@ RUN apt-get update && apt-get install -y \
     libpopt0
 
 # Installing Postgres
-RUN apt-get update && apt-get install -y postgresql postgresql-contrib
+RUN apt-get install -y postgresql postgresql-contrib
 
 # Install Redis
-RUN apt-get update && apt-get install -y redis-server
+RUN apt-get install -y redis-server
 
 # Install MinIO
 ARG TARGETARCH
