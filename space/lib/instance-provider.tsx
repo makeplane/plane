@@ -31,7 +31,11 @@ export const InstanceProvider = observer(({ children }: { children: ReactNode })
     revalidateIfStale: false,
     errorRetryCount: 0,
   });
-  useSWR("CURRENT_USER", () => fetchCurrentUser());
+  useSWR("CURRENT_USER", () => fetchCurrentUser(), {
+    shouldRetryOnError: false,
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
 
   if (!instance && !error)
     return (
