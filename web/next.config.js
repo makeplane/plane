@@ -34,6 +34,21 @@ const nextConfig = {
     return [
       {
         source: "/accounts/sign-up",
+        destination: "/sign-up",
+        permanent: true
+      },
+      {
+        source: "/sign-in",
+        destination: "/",
+        permanent: true
+      },
+      {
+        source: "/register",
+        destination: "/sign-up",
+        permanent: true
+      },
+      {
+        source: "/login",
         destination: "/",
         permanent: true
       }

@@ -118,6 +118,12 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
 
   const OIDC_SERVICE_DETAILS: TCopyField[] = [
     {
+      key: "Origin_URI",
+      label: "Origin URI",
+      url: `${originURL}/auth/oidc/`,
+      description: "We will auto-generate this. Add this as a trusted origin in your identity provider.",
+    },
+    {
       key: "Callback_URI",
       label: "Callback URI",
       url: `${originURL}/auth/oidc/callback/`,
@@ -129,12 +135,6 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       label: "Logout URI",
       url: `${originURL}/auth/oidc/logout/`,
       description: "We will auto-generate this. Paste this in sign-out redirect URI in your identity provider",
-    },
-    {
-      key: "Origin_URI",
-      label: "Origin URI",
-      url: `${originURL}/auth/oidc/`,
-      description: "We will auto-generate this. Add this as a trusted origin in your identity provider.",
     },
   ];
 

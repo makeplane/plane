@@ -83,7 +83,7 @@ class SAMLCallbackEndpoint(View):
 class SAMLLogoutEndpoint(View):
     def post(self, request, *args, **kwargs):
         logout(request=request)
-        return HttpResponseRedirect(request.session.get("referer", "/"))
+        return HttpResponseRedirect(base_host(request=request, is_app=True))
 
 
 @method_decorator(csrf_exempt, name="dispatch")

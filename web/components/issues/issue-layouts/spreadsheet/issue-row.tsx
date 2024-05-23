@@ -203,6 +203,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   };
 
   const disableUserActions = !canEditProperties(issueDetail.project_id);
+  const subIssuesCount = issueDetail.sub_issues_count;
 
   return (
     <>
@@ -230,7 +231,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
               {/* bulk ops */}
               <span className="size-3.5" />
               <div className="flex size-4 items-center justify-center">
-                {issueDetail.sub_issues_count > 0 && (
+                {subIssuesCount > 0 && (
                   <button
                     className="flex items-center justify-center size-4 cursor-pointer rounded-sm text-custom-text-400 hover:text-custom-text-300"
                     onClick={handleToggleExpand}

@@ -1,15 +1,15 @@
 import { observer } from "mobx-react";
 // components
-import { GithubOAuthButton, GoogleOAuthButton, OIDCOAuthButton, SAMLOAuthButton } from "@/components/account";
+import { GithubOAuthButton, GoogleOAuthButton } from "@/components/account";
 // hooks
 import { useInstance } from "@/hooks/store";
+import { EnterpriseOAuthOptions } from "./enterprise-oauth-options";
 
 type TOAuthOptionProps = {
   isSignUp?: boolean;
 };
 
-export const OAuthOptions: React.FC<TOAuthOptionProps> = observer((props) => {
-  const { isSignUp = false } = props;
+export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
   // hooks
   const { config } = useInstance();
 
@@ -19,8 +19,6 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer((props) => {
     false;
 
   if (!isOAuthEnabled) return null;
-
-  const oauthProviderButtonText = `Sign ${isSignUp ? "up" : "in"} with`;
 
   return (
     <>
@@ -32,23 +30,12 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer((props) => {
       <div className={`mt-7 grid gap-4 overflow-hidden`}>
         {config?.is_google_enabled && (
           <div className="flex h-[42px] items-center !overflow-hidden">
-            <GoogleOAuthButton text={`${oauthProviderButtonText} Google`} />
+            <GoogleOAuthButton text="Continue with Google" />
           </div>
         )}
-        {config?.is_github_enabled && <GithubOAuthButton text={`${oauthProviderButtonText} Github`} />}
+        {config?.is_github_enabled && <GithubOAuthButton text="Continue with Github" />}
 
-        {/* Enterprise Authentication Methods Start */}
-        {config?.is_oidc_enabled && (
-          <OIDCOAuthButton
-            text={`${oauthProviderButtonText} ${!!config?.oidc_provider_name ? config.oidc_provider_name : "OIDC"}`}
-          />
-        )}
-        {config?.is_saml_enabled && (
-          <SAMLOAuthButton
-            text={`${oauthProviderButtonText} ${!!config?.saml_provider_name ? config.saml_provider_name : "SAML"}`}
-          />
-        )}
-        {/* Enterprise Authentication Methods End */}
+        <EnterpriseOAuthOptions />
       </div>
     </>
   );

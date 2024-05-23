@@ -23,7 +23,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters = {}, handleRemoveAllFilters, handleRemoveFilter, states } = props;
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TFilters;
         const filterValue = value as TFilters[keyof TFilters];
