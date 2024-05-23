@@ -11,8 +11,8 @@ import { SPACE_BASE_PATH } from "@/helpers/common.helper";
 // images
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 
 export const AuthView = observer(() => {
   // hooks
@@ -37,7 +37,7 @@ export const AuthView = observer(() => {
             </Link>
           </div>
         </div>
-        <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 lg:pt-28 transition-all">
+        <div className="flex flex-col justify-center flex-grow container h-[100vh-60px] mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 transition-all">
           <AuthRoot />
         </div>
       </div>
