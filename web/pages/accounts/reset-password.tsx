@@ -9,6 +9,8 @@ import { Button, Input } from "@plane/ui";
 // components
 import { AuthBanner, PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
+// constants
+import { NEW_PASS_CREATED } from "@/constants/event-tracker";
 // helpers
 import {
   EAuthenticationErrorCodes,
@@ -19,6 +21,8 @@ import {
 } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
+// hooks
+import { useEventTracker } from "@/hooks/store";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // lib
@@ -66,6 +70,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
 
   // hooks
   const { resolvedTheme } = useTheme();
+  const { captureEvent } = useEventTracker();
 
   const handleShowPassword = (key: keyof typeof showPassword) =>
     setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -132,6 +137,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
             <form
               className="mt-5 space-y-4"
               method="POST"
+              onSubmit={() => captureEvent(NEW_PASS_CREATED)}
               action={`${API_BASE_URL}/auth/reset-password/${uidb64?.toString()}/${token?.toString()}/`}
             >
               <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />

@@ -5,7 +5,7 @@ import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { WORKSPACE_CREATED } from "@/constants/event-tracker";
+import { E_ONBOARDING, WORKSPACE_CREATED } from "@/constants/event-tracker";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
 // hooks
 import { useEventTracker, useUserProfile, useWorkspace } from "@/hooks/store";
@@ -66,10 +66,10 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
               captureWorkspaceEvent({
                 eventName: WORKSPACE_CREATED,
                 payload: {
-                  ...res,
+                  workspace_id: res.id,
                   state: "SUCCESS",
                   first_time: true,
-                  element: "Onboarding",
+                  element: E_ONBOARDING,
                 },
               });
               await fetchWorkspaces();
@@ -81,7 +81,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
                 payload: {
                   state: "FAILED",
                   first_time: true,
-                  element: "Onboarding",
+                  element: E_ONBOARDING,
                 },
               });
               setToast({

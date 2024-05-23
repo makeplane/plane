@@ -43,6 +43,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   const [isPasswordAutoset, setIsPasswordAutoset] = useState(true);
+  const [isExistingEmail, setIsExistingEmail] = useState(false);
   // hooks
   const { config } = useInstance();
 
@@ -101,6 +102,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
             setAuthStep(EAuthSteps.PASSWORD);
           }
         }
+        setIsExistingEmail(response.existing);
       })
       .catch((error) => {
         const errorhandler = authErrorHandler(error?.error_code?.toString(), data?.email || undefined);
@@ -138,6 +140,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
           <AuthUniqueCodeForm
             mode={authMode}
             email={email}
+            isExistingEmail={isExistingEmail}
             handleEmailClear={() => {
               setEmail("");
               setAuthStep(EAuthSteps.EMAIL);

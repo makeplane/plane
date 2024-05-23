@@ -115,7 +115,7 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
             New to Plane?{" "}
             <Link
               href="/"
-              onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
+              onClick={() => captureEvent(NAVIGATE_TO_SIGNUP)}
               className="font-semibold text-custom-primary-100 hover:underline"
             >
               Create an account

@@ -192,11 +192,14 @@ export const SETUP_PASSWORD = "Password setup";
 export const PASSWORD_CREATE_SELECTED = "Password created";
 export const PASSWORD_CREATE_SKIPPED = "Skipped to setup";
 export const SIGN_IN_WITH_PASSWORD = "Sign in with password";
+export const SIGN_UP_WITH_PASSWORD = "Sign up with password";
+export const SIGN_IN_WITH_CODE = "Sign in with magic link";
 export const FORGOT_PASSWORD = "Forgot password clicked";
 export const FORGOT_PASS_LINK = "Forgot password link generated";
 export const NEW_PASS_CREATED = "New password created";
 // Onboarding Events
 export const USER_DETAILS = "User details added";
+export const USER_PERSONALIZATION = "User personalization added";
 export const USER_ONBOARDING_COMPLETED = "User onboarding completed";
 // Product Tour Events
 export const PRODUCT_TOUR_STARTED = "Product tour started";
@@ -222,3 +225,6 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+
+//Elements
+export const E_ONBOARDING = "Onboarding";
