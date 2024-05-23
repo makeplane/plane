@@ -37,8 +37,6 @@ const RadioInput = ({
     aria = "radio-input";
   }
 
-  // return <h1>Hello</h1>;
-
   return (
     <RadioGroup value={selected} onChange={setSelected} aria-label={aria} className={className}>
       <Label className={cn(`mb-2`, inputLabelClassName)}>{inputLabel}</Label>

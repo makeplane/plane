@@ -25,6 +25,7 @@ export interface IProjectEstimateStore {
   projectEstimateIds: string[] | undefined;
   estimateById: (estimateId: string) => IEstimate | undefined;
   // actions
+  getWorkspaceAllEstimates: () => Promise<IEstimateType[] | undefined>;
   getAllEstimates: () => Promise<IEstimateType[] | undefined>;
   getEstimateById: (estimateId: string) => Promise<IEstimateType | undefined>;
   createEstimate: (data: Partial<IEstimateType>) => Promise<IEstimateType | undefined>;
@@ -48,6 +49,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       // computed
       projectEstimateIds: computed,
       // actions
+      getWorkspaceAllEstimates: action,
       getAllEstimates: action,
       getEstimateById: action,
       createEstimate: action,
@@ -79,7 +81,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
    * @description fetch all estimates for a project
    * @returns { IEstimateType[] | undefined }
    */
-  async getWorkspaceAllEstimates(): Promise<IEstimateType[] | undefined> {
+  getWorkspaceAllEstimates = async (): Promise<IEstimateType[] | undefined> => {
     try {
       const { workspaceSlug } = this.store.router;
       if (!workspaceSlug) return;
@@ -99,9 +101,9 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         message: "Error fetching estimates",
       };
     }
-  }
+  };
 
-  async getAllEstimates(): Promise<IEstimateType[] | undefined> {
+  getAllEstimates = async (): Promise<IEstimateType[] | undefined> => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId) return;
@@ -121,14 +123,14 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         message: "Error fetching estimates",
       };
     }
-  }
+  };
 
   /**
    * @description update an estimate for a project
    * @param { string } estimateId
    * @returns IEstimateType | undefined
    */
-  async getEstimateById(estimateId: string): Promise<IEstimateType | undefined> {
+  getEstimateById = async (estimateId: string): Promise<IEstimateType | undefined> => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId) return;
@@ -149,14 +151,14 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         message: "Error fetching estimate by id",
       };
     }
-  }
+  };
 
   /**
    * @description create an estimate for a project
    * @param { Partial<IEstimateType> } data
    * @returns
    */
-  async createEstimate(data: Partial<IEstimateType>): Promise<IEstimateType | undefined> {
+  createEstimate = async (data: Partial<IEstimateType>): Promise<IEstimateType | undefined> => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId) return;
@@ -174,14 +176,14 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         message: "Error creating estimate",
       };
     }
-  }
+  };
 
   /**
    * @description delete an estimate for a project
    * @param { string } estimateId
    * @returns void
    */
-  async deleteEstimate(estimateId: string): Promise<void> {
+  deleteEstimate = async (estimateId: string): Promise<void> => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId) return;
@@ -196,5 +198,5 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         message: "Error deleting estimate",
       };
     }
-  }
+  };
 }

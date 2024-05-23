@@ -4,11 +4,11 @@ import { IEstimate } from "@plane/types";
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
-import { DeleteEstimateModal, EstimateListItem } from "@/components/estimates";
+import { CreateEstimateModal, EstimateEmptyScreen } from "@/components/estimates";
+import { DeleteEstimateModal, EstimateListItem } from "@/components/estimates-legacy";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // ee components
-import { CreateEstimateModal } from "@/ee/components/estimates";
 // hooks
 import { useProject, useProjectEstimates } from "@/hooks/store";
 
@@ -23,13 +23,16 @@ export const EstimateRoot: FC<TEstimateRoot> = (props) => {
   const { updateProject, currentProjectDetails } = useProject();
   const { loader, projectEstimateIds, estimateById, getAllEstimates } = useProjectEstimates(projectId);
   // states
-  const [isEstimateCreateModalOpen, setIsEstimateCreateModalOpen] = useState(true);
+  const [isEstimateCreateModalOpen, setIsEstimateCreateModalOpen] = useState(false);
   const [isEstimateDeleteModalOpen, setIsEstimateDeleteModalOpen] = useState<string | null>(null);
   const [estimateToUpdate, setEstimateToUpdate] = useState<IEstimate | undefined>();
 
+  console.log("workspaceSlug", workspaceSlug);
+  console.log("projectId", projectId);
+
   const { isLoading: isSWRLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => getAllEstimates() : null
+    async () => workspaceSlug && projectId && getAllEstimates()
   );
 
   const editEstimate = (estimate: IEstimate) => {
@@ -57,32 +60,9 @@ export const EstimateRoot: FC<TEstimateRoot> = (props) => {
     });
   };
 
-  if (!workspaceSlug || !projectId) return <></>;
-
   return (
     <div>
-      {/* modals */}
-      {/* create modal */}
-      <CreateEstimateModal
-        isOpen={isEstimateCreateModalOpen}
-        data={estimateToUpdate}
-        handleClose={() => {
-          setIsEstimateCreateModalOpen(false);
-          setEstimateToUpdate(undefined);
-        }}
-      />
-      {/* edit modal */}
-      {/* delete modal */}
-      <DeleteEstimateModal
-        isOpen={!!isEstimateDeleteModalOpen}
-        handleClose={() => setIsEstimateDeleteModalOpen(null)}
-        data={
-          null
-          // getProjectEstimateById(isEstimateDeleteModalOpen!)
-        }
-      />
-
-      {/* handling the estimates list */}
+      <EstimateEmptyScreen onButtonClick={() => {}} />
       {loader === "init-loader" || isSWRLoading ? (
         <Loader className="mt-5 space-y-5">
           <Loader.Item height="40px" />
@@ -140,6 +120,23 @@ export const EstimateRoot: FC<TEstimateRoot> = (props) => {
           )}
         </>
       )}
+
+      <CreateEstimateModal
+        isOpen={isEstimateCreateModalOpen}
+        data={estimateToUpdate}
+        handleClose={() => {
+          setIsEstimateCreateModalOpen(false);
+          setEstimateToUpdate(undefined);
+        }}
+      />
+      <DeleteEstimateModal
+        isOpen={!!isEstimateDeleteModalOpen}
+        handleClose={() => setIsEstimateDeleteModalOpen(null)}
+        data={
+          null
+          // getProjectEstimateById(isEstimateDeleteModalOpen!)
+        }
+      />
     </div>
   );
 };

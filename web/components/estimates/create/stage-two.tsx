@@ -2,18 +2,17 @@ import { FC } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@plane/ui";
 // components
-import { Sortable } from "@/components/sortable/sortable";
-// constants
-import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
-import { EstimateItem } from "@/ee/components/estimates";
-// types
+import { EstimateItem } from "@/components/estimates";
 import {
   EEstimateSystem,
   TEstimatePointNumeric,
   TEstimatePointString,
   TEstimateSystemKeyObject,
   TEstimateSystemKeys,
-} from "@/ee/components/estimates/types";
+} from "@/components/estimates/types";
+import { Sortable } from "@/components/sortable/sortable";
+// constants
+import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
 
 type TEstimateCreateStageTwo = {
   estimateSystem: EEstimateSystem;

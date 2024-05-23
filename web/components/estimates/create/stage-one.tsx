@@ -4,7 +4,7 @@ import { RadioInput } from "@/components/radio-group";
 // constants
 import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
 // types
-import { TEstimateSystemKeys } from "@/ee/components/estimates/types";
+import { TEstimateSystemKeys } from "@/components/estimates/types";
 
 type TEstimateCreateStageOne = {
   estimateSystem: TEstimateSystemKeys;

@@ -5,7 +5,7 @@ import { IEstimate } from "@plane/types";
 // store hooks
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";
-import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "@/components/estimates";
+import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "@/components/estimates-legacy";
 import { EmptyStateType } from "@/constants/empty-state";
 import { orderArrayBy } from "@/helpers/array.helper";
 import { useEstimate, useProject } from "@/hooks/store";

@@ -1,4 +1,4 @@
-import { TEstimateSystems } from "@/ee/components/estimates/types";
+import { TEstimateSystems } from "@/components/estimates/types";
 
 export const ESTIMATE_SYSTEMS: TEstimateSystems = {
   points: {

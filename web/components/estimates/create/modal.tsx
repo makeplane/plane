@@ -6,12 +6,11 @@ import { IEstimate } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
+import { EstimateCreateStageOne, EstimateCreateStageTwo } from "@/components/estimates";
+import { TEstimateSystemKeys, EEstimateSystem, TEstimateSystemKeyObject } from "@/components/estimates/types";
 // constants
 import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
 // ee components
-import { EstimateCreateStageOne, EstimateCreateStageTwo } from "@/ee/components/estimates";
-// types
-import { TEstimateSystemKeys, EEstimateSystem, TEstimateSystemKeyObject } from "@/ee/components/estimates/types";
 
 type Props = {
   isOpen: boolean;

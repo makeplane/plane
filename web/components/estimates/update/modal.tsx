@@ -5,7 +5,7 @@ import { Button } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 // types
-import { TEstimateSystemKeys, TEstimateSystemKeyObject } from "@/ee/components/estimates/types";
+import { TEstimateSystemKeys, TEstimateSystemKeyObject } from "@/components/estimates/types";
 
 type Props = {
   isOpen: boolean;
