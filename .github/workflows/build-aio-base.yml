@@ -43,7 +43,8 @@ jobs:
         uses: tj-actions/changed-files@v42
         with:
           files_yaml: |
-            base: Dockerfile.base
+            base: 
+              - Dockerfile.base
 
   base_build_push:
     if: ${{ needs.base_build_setup.outputs.build_base == 'true' || github.event_name == 'workflow_dispatch' || needs.base_build_setup.outputs.gh_branch_name == 'master' }}
