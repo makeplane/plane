@@ -3,7 +3,6 @@
 # Python imports
 import os
 import ssl
-from datetime import timedelta
 from urllib.parse import urlparse
 
 import certifi
@@ -45,10 +44,9 @@ INSTALLED_APPS = [
     "plane.middleware",
     "plane.license",
     "plane.api",
+    "plane.authentication",
     # Third-party things
     "rest_framework",
-    "rest_framework.authtoken",
-    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "django_celery_beat",
     "storages",
@@ -58,7 +56,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
+    "plane.authentication.middleware.session.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -71,7 +69,7 @@ MIDDLEWARE = [
 # Rest Framework settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
@@ -80,6 +78,7 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": (
         "django_filters.rest_framework.DjangoFilterBackend",
     ),
+    "EXCEPTION_HANDLER": "plane.authentication.adapter.exception.auth_exception_handler",
 }
 
 # Django Auth Backend
@@ -109,9 +108,6 @@ TEMPLATES = [
     },
 ]
 
-# Cookie Settings
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
 
 # CORS Settings
 CORS_ALLOW_CREDENTIALS = True
@@ -122,8 +118,14 @@ cors_allowed_origins = [
 ]
 if cors_allowed_origins:
     CORS_ALLOWED_ORIGINS = cors_allowed_origins
+    secure_origins = (
+        False
+        if [origin for origin in cors_allowed_origins if "http:" in origin]
+        else True
+    )
 else:
     CORS_ALLOW_ALL_ORIGINS = True
+    secure_origins = False
 
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
@@ -149,6 +151,7 @@ else:
             "USER": os.environ.get("POSTGRES_USER"),
             "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
             "HOST": os.environ.get("POSTGRES_HOST"),
+            "PORT": os.environ.get("POSTGRES_PORT", "5432"),
         }
     }
 
@@ -246,35 +249,6 @@ if AWS_S3_ENDPOINT_URL:
     AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
 
 
-# JWT Auth Configuration
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=43200),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=43200),
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": False,
-    "UPDATE_LAST_LOGIN": False,
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": SECRET_KEY,
-    "VERIFYING_KEY": None,
-    "AUDIENCE": None,
-    "ISSUER": None,
-    "JWK_URL": None,
-    "LEEWAY": 0,
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
-    "USER_ID_FIELD": "id",
-    "USER_ID_CLAIM": "user_id",
-    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
-    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-    "TOKEN_TYPE_CLAIM": "token_type",
-    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
-    "JTI_CLAIM": "jti",
-    "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
-}
-
-
 # Celery Configuration
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
@@ -293,6 +267,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.exporter_expired_task",
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
+    "plane.bgtasks.api_logs_task",
     # management tasks
     "plane.bgtasks.dummy_data_task",
 )
@@ -349,3 +324,30 @@ INSTANCE_KEY = os.environ.get(
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
+# Cookie Settings
+SESSION_COOKIE_SECURE = secure_origins
+SESSION_COOKIE_HTTPONLY = True
+SESSION_ENGINE = "plane.db.models.session"
+SESSION_COOKIE_AGE = os.environ.get("SESSION_COOKIE_AGE", 604800)
+SESSION_COOKIE_NAME = "plane-session-id"
+SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
+SESSION_SAVE_EVERY_REQUEST = (
+    os.environ.get("SESSION_SAVE_EVERY_REQUEST", "0") == "1"
+)
+
+# Admin Cookie
+ADMIN_SESSION_COOKIE_NAME = "plane-admin-session-id"
+ADMIN_SESSION_COOKIE_AGE = os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600)
+
+# CSRF cookies
+CSRF_COOKIE_SECURE = secure_origins
+CSRF_COOKIE_HTTPONLY = True
+CSRF_TRUSTED_ORIGINS = cors_allowed_origins
+CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
+CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
+
+# Base URLs
+ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
+SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
+APP_BASE_URL = os.environ.get("APP_BASE_URL") or os.environ.get("WEB_URL")

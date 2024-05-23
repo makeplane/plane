@@ -1,32 +1,38 @@
 // ui
-import { IDefaultAnalyticsResponse } from "@plane/types";
+import { IDefaultAnalyticsUser } from "@plane/types";
 import { BarGraph, ProfileEmptyState } from "@/components/ui";
 // image
 import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // types
 
 type Props = {
-  defaultAnalytics: IDefaultAnalyticsResponse;
+  pendingUnAssignedIssuesUser: IDefaultAnalyticsUser | undefined;
+  pendingAssignedIssues: IDefaultAnalyticsUser[];
 };
 
-export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="rounded-[10px] border border-custom-border-200">
-    <h5 className="p-3 text-xs text-green-500">SCOPE</h5>
+export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, pendingAssignedIssues }) => (
+  <div className="rounded-[10px] border border-custom-border-200 p-3">
     <div className="divide-y divide-custom-border-200">
       <div>
-        <h6 className="px-3 text-base font-medium">Pending issues</h6>
-        {defaultAnalytics.pending_issue_user && defaultAnalytics.pending_issue_user.length > 0 ? (
+        <div className="flex items-center justify-between">
+          <h6 className=" text-base font-medium">Pending issues</h6>
+          {pendingUnAssignedIssuesUser && (
+            <div className="relative flex items-center py-1 px-3 rounded-md gap-2  text-xs text-custom-primary-100  bg-custom-primary-100/10">
+              Unassigned: {pendingUnAssignedIssuesUser.count}
+            </div>
+          )}
+        </div>
+
+        {pendingAssignedIssues && pendingAssignedIssues.length > 0 ? (
           <BarGraph
-            data={defaultAnalytics.pending_issue_user}
+            data={pendingAssignedIssues}
             indexBy="assignees__id"
             keys={["count"]}
             height="250px"
             colors={() => `#f97316`}
-            customYAxisTickValues={defaultAnalytics.pending_issue_user.map((d) => (d.count > 0 ? d.count : 50))}
+            customYAxisTickValues={pendingAssignedIssues.map((d) => (d.count > 0 ? d.count : 50))}
             tooltip={(datum) => {
-              const assignee = defaultAnalytics.pending_issue_user.find(
-                (a) => a.assignees__id === `${datum.indexValue}`
-              );
+              const assignee = pendingAssignedIssues.find((a) => a.assignees__id === `${datum.indexValue}`);
 
               return (
                 <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
@@ -39,7 +45,7 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
             }}
             axisBottom={{
               renderTick: (datum) => {
-                const assignee = defaultAnalytics.pending_issue_user[datum.tickIndex] ?? "";
+                const assignee = pendingAssignedIssues[datum.tickIndex] ?? "";
 
                 if (assignee && assignee?.assignees__avatar && assignee?.assignees__avatar !== "")
                   return (

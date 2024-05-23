@@ -1,17 +1,15 @@
-// hooks
 // ui
-import { StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { Icon } from "@/components/ui";
+// constants
+import { issueGroupFilter, issuePriorityFilter } from "@/constants/issue";
 // helpers
-import { issueGroupFilter, issuePriorityFilter } from "@/constants/data";
 import { renderFullDate } from "@/helpers/date-time.helper";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
 // types
-import { IPeekMode } from "@/store/issue_details";
-// constants
-import useToast from "hooks/use-toast";
-import { IIssue } from "types/issue";
+import { IIssue, IPeekMode } from "@/types/issue";
+// components
 import { dueDateIconDetails } from "../board-views/block-due-date";
 
 type Props = {
@@ -20,8 +18,6 @@ type Props = {
 };
 
 export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mode }) => {
-  const { setToastAlert } = useToast();
-
   const state = issueDetails.state_detail;
   const stateGroup = issueGroupFilter(state.group);
 
@@ -33,8 +29,8 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
     const urlToCopy = window.location.href;
 
     copyTextToClipboard(urlToCopy).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.INFO,
         title: "Link copied!",
         message: "Issue link copied to clipboard",
       });

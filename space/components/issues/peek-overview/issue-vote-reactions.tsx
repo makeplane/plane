@@ -1,24 +1,41 @@
+"use client";
+
 import { useState, useEffect } from "react";
-
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
-
-// mobx
-// lib
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Tooltip } from "@plane/ui";
-import { useMobxStore } from "@/lib/mobx/store-provider";
-// ui
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { queryParamGenerator } from "@/helpers/query-param-generator";
+// hooks
+import { useIssueDetails, useUser } from "@/hooks/store";
+import useIsInIframe from "@/hooks/use-is-in-iframe";
 
-export const IssueVotes: React.FC = observer(() => {
+type TIssueVotes = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
+  const router = useRouter();
+  const pathName = usePathname();
+  const searchParams = useSearchParams();
+  // query params
+  const peekId = searchParams.get("peekId") || undefined;
+  const board = searchParams.get("board") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
+
+  const { workspaceSlug, projectId } = props;
+  // states
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const router = useRouter();
+  const issueDetailsStore = useIssueDetails();
+  const { data: user, fetchCurrentUser } = useUser();
 
-  const { workspace_slug, project_slug } = router.query;
+  const isInIframe = useIsInIframe();
 
-  const { user: userStore, issueDetails: issueDetailsStore } = useMobxStore();
-
-  const user = userStore?.currentUser;
   const issueId = issueDetailsStore.peekId;
 
   const votes = issueId ? issueDetailsStore.details[issueId]?.votes : [];
@@ -30,16 +47,16 @@ export const IssueVotes: React.FC = observer(() => {
   const isDownVotedByUser = allDownVotes?.some((vote) => vote.actor === user?.id);
 
   const handleVote = async (e: any, voteValue: 1 | -1) => {
-    if (!workspace_slug || !project_slug || !issueId) return;
+    if (!workspaceSlug || !projectId || !issueId) return;
 
     setIsSubmitting(true);
 
     const actionPerformed = votes?.find((vote) => vote.actor === user?.id && vote.vote === voteValue);
 
     if (actionPerformed)
-      await issueDetailsStore.removeIssueVote(workspace_slug.toString(), project_slug.toString(), issueId);
+      await issueDetailsStore.removeIssueVote(workspaceSlug.toString(), projectId.toString(), issueId);
     else
-      await issueDetailsStore.addIssueVote(workspace_slug.toString(), project_slug.toString(), issueId, {
+      await issueDetailsStore.addIssueVote(workspaceSlug.toString(), projectId.toString(), issueId, {
         vote: voteValue,
       });
 
@@ -49,10 +66,13 @@ export const IssueVotes: React.FC = observer(() => {
   useEffect(() => {
     if (user) return;
 
-    userStore.fetchCurrentUser();
-  }, [user, userStore]);
+    fetchCurrentUser();
+  }, [user, fetchCurrentUser]);
 
   const VOTES_LIMIT = 1000;
+
+  // derived values
+  const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
 
   return (
     <div className="flex items-center gap-2">
@@ -78,13 +98,18 @@ export const IssueVotes: React.FC = observer(() => {
           type="button"
           disabled={isSubmitting}
           onClick={(e) => {
-            userStore.requiredLogin(() => {
-              handleVote(e, 1);
-            });
+            if (isInIframe) return;
+            if (user) handleVote(e, 1);
+            else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
-          className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
-            isUpVotedByUser ? "border-custom-primary-200 text-custom-primary-200" : "border-custom-border-300"
-          }`}
+          className={cn(
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 h-7 focus:outline-none",
+            {
+              "border-custom-primary-200 text-custom-primary-200": isUpVotedByUser,
+              "border-custom-border-300": !isUpVotedByUser,
+              "cursor-default": isInIframe,
+            }
+          )}
         >
           <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_upward_alt</span>
           <span className="text-sm font-normal transition-opacity ease-in-out">{allUpVotes.length}</span>
@@ -113,13 +138,18 @@ export const IssueVotes: React.FC = observer(() => {
           type="button"
           disabled={isSubmitting}
           onClick={(e) => {
-            userStore.requiredLogin(() => {
-              handleVote(e, -1);
-            });
+            if (isInIframe) return;
+            if (user) handleVote(e, -1);
+            else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
-          className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
-            isDownVotedByUser ? "border-red-600 text-red-600" : "border-custom-border-300"
-          }`}
+          className={cn(
+            "flex items-center justify-center gap-x-1 h-7 overflow-hidden rounded border px-2 focus:outline-none",
+            {
+              "border-red-600 text-red-600": isDownVotedByUser,
+              "border-custom-border-300": !isDownVotedByUser,
+              "cursor-default": isInIframe,
+            }
+          )}
         >
           <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_downward_alt</span>
           <span className="text-sm font-normal transition-opacity ease-in-out">{allDownVotes.length}</span>

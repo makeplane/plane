@@ -1,17 +1,17 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
+// types
 import { IWorkspaceView } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { WorkspaceViewForm } from "@/components/workspace";
 // constants
 import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
 // store hooks
 import { useEventTracker, useGlobalView } from "@/hooks/store";
-// types
 
 type Props = {
   data?: IWorkspaceView;
@@ -120,43 +120,13 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <WorkspaceViewForm
-                  handleFormSubmit={handleFormSubmit}
-                  handleClose={handleClose}
-                  data={data}
-                  preLoadedData={preLoadedData}
-                />
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+      <WorkspaceViewForm
+        handleFormSubmit={handleFormSubmit}
+        handleClose={handleClose}
+        data={data}
+        preLoadedData={preLoadedData}
+      />
+    </ModalCore>
   );
 });

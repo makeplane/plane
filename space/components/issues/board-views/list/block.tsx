@@ -1,48 +1,45 @@
+"use client";
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 // components
 import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
 import { IssueBlockLabels } from "@/components/issues/board-views/block-labels";
 import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
 import { IssueBlockState } from "@/components/issues/board-views/block-state";
-// mobx hook
-import { useMobxStore } from "@/lib/mobx/store-provider";
+// helpers
+import { queryParamGenerator } from "@/helpers/query-param-generator";
+// hook
+import { useIssueDetails, useProject } from "@/hooks/store";
 // interfaces
-import { RootStore } from "@/store/root";
-import { IIssue } from "types/issue";
+import { IIssue } from "@/types/issue";
 // store
 
-export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
-  const { issue } = props;
+type IssueListBlockProps = {
+  issue: IIssue;
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
+  const { workspaceSlug, projectId, issue } = props;
+  const searchParams = useSearchParams();
+  // query params
+  const board = searchParams.get("board") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
   // store
-  const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
+  const { project } = useProject();
+  const { setPeekId } = useIssueDetails();
   // router
   const router = useRouter();
-  const { workspace_slug, project_slug, board, priorities, states, labels } = router.query as {
-    workspace_slug: string;
-    project_slug: string;
-    board: string;
-    priorities: string;
-    states: string;
-    labels: string;
-  };
 
   const handleBlockClick = () => {
-    issueDetailStore.setPeekId(issue.id);
-    const params: any = { board: board, peekId: issue.id };
-    if (states && states.length > 0) params.states = states;
-    if (priorities && priorities.length > 0) params.priorities = priorities;
-    if (labels && labels.length > 0) params.labels = labels;
-    router.push(
-      {
-        pathname: `/${workspace_slug}/${project_slug}`,
-        query: { ...params },
-      },
-      undefined,
-      { shallow: true }
-    );
-    // router.push(`/${workspace_slug?.toString()}/${project_slug}?board=${board?.toString()}&peekId=${issue.id}`);
+    setPeekId(issue.id);
+
+    const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
+    router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
   };
 
   return (
@@ -50,7 +47,7 @@ export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
       <div className="relative flex w-full flex-grow items-center gap-3 overflow-hidden">
         {/* id */}
         <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-          {projectStore?.project?.identifier}-{issue?.sequence_id}
+          {project?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}
         <div onClick={handleBlockClick} className="flex-grow cursor-pointer truncate text-sm font-medium">

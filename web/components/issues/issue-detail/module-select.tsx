@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import xor from "lodash/xor";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 // components
 import { ModuleDropdown } from "@/components/dropdowns";

@@ -15,6 +15,7 @@ from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.core.exceptions import ObjectDoesNotExist
 
 # Module imports
 from plane.api.serializers import (
@@ -25,6 +26,8 @@ from plane.api.serializers import (
     ModuleIssueSerializer,
     ModuleSerializer,
     ProjectSerializer,
+    UserLiteSerializer,
+    InboxIssueSerializer,
 )
 from plane.db.models import (
     Cycle,
@@ -37,6 +40,7 @@ from plane.db.models import (
     User,
     Webhook,
     WebhookLog,
+    InboxIssue,
 )
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
@@ -49,6 +53,8 @@ SERIALIZER_MAPPER = {
     "cycle_issue": CycleIssueSerializer,
     "module_issue": ModuleIssueSerializer,
     "issue_comment": IssueCommentSerializer,
+    "user": UserLiteSerializer,
+    "inbox_issue": InboxIssueSerializer,
 }
 
 MODEL_MAPPER = {
@@ -59,6 +65,8 @@ MODEL_MAPPER = {
     "cycle_issue": CycleIssue,
     "module_issue": ModuleIssue,
     "issue_comment": IssueComment,
+    "user": User,
+    "inbox_issue": InboxIssue,
 }
 
 
@@ -179,64 +187,6 @@ def webhook_task(self, webhook, slug, event, event_data, action, current_site):
         return
 
 
-@shared_task()
-def send_webhook(event, payload, kw, action, slug, bulk, current_site):
-    try:
-        webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
-
-        if event == "project":
-            webhooks = webhooks.filter(project=True)
-
-        if event == "issue":
-            webhooks = webhooks.filter(issue=True)
-
-        if event == "module" or event == "module_issue":
-            webhooks = webhooks.filter(module=True)
-
-        if event == "cycle" or event == "cycle_issue":
-            webhooks = webhooks.filter(cycle=True)
-
-        if event == "issue_comment":
-            webhooks = webhooks.filter(issue_comment=True)
-
-        if webhooks:
-            if action in ["POST", "PATCH"]:
-                if bulk and event in ["cycle_issue", "module_issue"]:
-                    return
-                else:
-                    event_data = [
-                        get_model_data(
-                            event=event,
-                            event_id=(
-                                payload.get("id")
-                                if isinstance(payload, dict)
-                                else kw.get("pk")
-                            ),
-                            many=False,
-                        )
-                    ]
-
-            if action == "DELETE":
-                event_data = [{"id": kw.get("pk")}]
-
-            for webhook in webhooks:
-                for data in event_data:
-                    webhook_task.delay(
-                        webhook=webhook.id,
-                        slug=slug,
-                        event=event,
-                        event_data=data,
-                        action=action,
-                        current_site=current_site,
-                    )
-
-    except Exception as e:
-        if settings.DEBUG:
-            print(e)
-        log_exception(e)
-        return
-
-
 @shared_task
 def send_webhook_deactivation_email(
     webhook_id, receiver_id, current_site, reason
@@ -294,3 +244,245 @@ def send_webhook_deactivation_email(
     except Exception as e:
         log_exception(e)
         return
+
+
+@shared_task(
+    bind=True,
+    autoretry_for=(requests.RequestException,),
+    retry_backoff=600,
+    max_retries=5,
+    retry_jitter=True,
+)
+def webhook_send_task(
+    self,
+    webhook,
+    slug,
+    event,
+    event_data,
+    action,
+    current_site,
+    activity,
+):
+    try:
+        webhook = Webhook.objects.get(id=webhook, workspace__slug=slug)
+
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Autopilot",
+            "X-Plane-Delivery": str(uuid.uuid4()),
+            "X-Plane-Event": event,
+        }
+
+        # # Your secret key
+        event_data = (
+            json.loads(json.dumps(event_data, cls=DjangoJSONEncoder))
+            if event_data is not None
+            else None
+        )
+
+        activity = (
+            json.loads(json.dumps(activity, cls=DjangoJSONEncoder))
+            if activity is not None
+            else None
+        )
+
+        action = {
+            "POST": "create",
+            "PATCH": "update",
+            "PUT": "update",
+            "DELETE": "delete",
+        }.get(action, action)
+
+        payload = {
+            "event": event,
+            "action": action,
+            "webhook_id": str(webhook.id),
+            "workspace_id": str(webhook.workspace_id),
+            "data": event_data,
+            "activity": activity,
+        }
+
+        # Use HMAC for generating signature
+        if webhook.secret_key:
+            hmac_signature = hmac.new(
+                webhook.secret_key.encode("utf-8"),
+                json.dumps(payload).encode("utf-8"),
+                hashlib.sha256,
+            )
+            signature = hmac_signature.hexdigest()
+            headers["X-Plane-Signature"] = signature
+
+        # Send the webhook event
+        response = requests.post(
+            webhook.url,
+            headers=headers,
+            json=payload,
+            timeout=30,
+        )
+
+        # Log the webhook request
+        WebhookLog.objects.create(
+            workspace_id=str(webhook.workspace_id),
+            webhook_id=str(webhook.id),
+            event_type=str(event),
+            request_method=str(action),
+            request_headers=str(headers),
+            request_body=str(payload),
+            response_status=str(response.status_code),
+            response_headers=str(response.headers),
+            response_body=str(response.text),
+            retry_count=str(self.request.retries),
+        )
+
+    except requests.RequestException as e:
+        # Log the failed webhook request
+        WebhookLog.objects.create(
+            workspace_id=str(webhook.workspace_id),
+            webhook_id=str(webhook.id),
+            event_type=str(event),
+            request_method=str(action),
+            request_headers=str(headers),
+            request_body=str(payload),
+            response_status=500,
+            response_headers="",
+            response_body=str(e),
+            retry_count=str(self.request.retries),
+        )
+        # Retry logic
+        if self.request.retries >= self.max_retries:
+            Webhook.objects.filter(pk=webhook.id).update(is_active=False)
+            if webhook:
+                # send email for the deactivation of the webhook
+                send_webhook_deactivation_email(
+                    webhook_id=webhook.id,
+                    receiver_id=webhook.created_by_id,
+                    reason=str(e),
+                    current_site=current_site,
+                )
+            return
+        raise requests.RequestException()
+
+    except Exception as e:
+        if settings.DEBUG:
+            print(e)
+        log_exception(e)
+        return
+
+
+@shared_task
+def webhook_activity(
+    event,
+    verb,
+    field,
+    old_value,
+    new_value,
+    actor_id,
+    slug,
+    current_site,
+    event_id,
+    old_identifier,
+    new_identifier,
+):
+    try:
+        webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
+
+        if event == "project":
+            webhooks = webhooks.filter(project=True)
+
+        if event == "issue":
+            webhooks = webhooks.filter(issue=True)
+
+        if event == "module" or event == "module_issue":
+            webhooks = webhooks.filter(module=True)
+
+        if event == "cycle" or event == "cycle_issue":
+            webhooks = webhooks.filter(cycle=True)
+
+        if event == "issue_comment":
+            webhooks = webhooks.filter(issue_comment=True)
+
+        for webhook in webhooks:
+            webhook_send_task.delay(
+                webhook=webhook.id,
+                slug=slug,
+                event=event,
+                event_data=get_model_data(
+                    event=event,
+                    event_id=event_id,
+                ),
+                action=verb,
+                current_site=current_site,
+                activity={
+                    "field": field,
+                    "new_value": new_value,
+                    "old_value": old_value,
+                    "actor": get_model_data(event="user", event_id=actor_id),
+                    "old_identifier": old_identifier,
+                    "new_identifier": new_identifier,
+                },
+            )
+        return
+    except Exception as e:
+        # Return if a does not exist error occurs
+        if isinstance(e, ObjectDoesNotExist):
+            return
+        if settings.DEBUG:
+            print(e)
+        log_exception(e)
+        return
+
+
+@shared_task
+def model_activity(
+    model_name,
+    model_id,
+    requested_data,
+    current_instance,
+    actor_id,
+    slug,
+    origin=None,
+):
+    """Function takes in two json and computes differences between keys of both the json"""
+    if current_instance is None:
+        webhook_activity.delay(
+            event=model_name,
+            verb="created",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=actor_id,
+            slug=slug,
+            current_site=origin,
+            event_id=model_id,
+            old_identifier=None,
+            new_identifier=None,
+        )
+        return
+
+    # Load the current instance
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    # Loop through all keys in requested data and check the current value and requested value
+    for key in requested_data:
+        # Check if key is present in current instance or not
+        if key in current_instance:
+            current_value = current_instance.get(key, None)
+            requested_value = requested_data.get(key, None)
+            if current_value != requested_value:
+                webhook_activity.delay(
+                    event=model_name,
+                    verb="updated",
+                    field=key,
+                    old_value=current_value,
+                    new_value=requested_value,
+                    actor_id=actor_id,
+                    slug=slug,
+                    current_site=origin,
+                    event_id=model_id,
+                    old_identifier=None,
+                    new_identifier=None,
+                )
+
+    return

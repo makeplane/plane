@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
 // components
 import { EmptyState } from "@/components/common";
@@ -6,13 +6,13 @@ import { EmptyState } from "@/components/common";
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useApplication, useEventTracker, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
@@ -33,7 +33,7 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
                 icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
                 onClick: () => {
                   setTrackElement("View issue empty state");
-                  commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
+                  toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
                 },
               }
             : undefined

@@ -1,22 +1,23 @@
-import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
+import { Fragment, ReactNode, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-import { TIssuePriorities } from "@plane/types";
-// hooks
-import { PriorityIcon, Tooltip } from "@plane/ui";
-import { ISSUE_PRIORITIES } from "@/constants/issue";
-import { cn } from "@/helpers/common.helper";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
-// icons
-// helpers
 // types
-import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
-import { TDropdownProps } from "./types";
+import { TIssuePriorities } from "@plane/types";
+// ui
+import { PriorityIcon, Tooltip } from "@plane/ui";
 // constants
+import { ISSUE_PRIORITIES } from "@/constants/issue";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useDropdown } from "@/hooks/use-dropdown";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// constants
+import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
+// types
+import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -328,50 +329,26 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const filteredOptions =
     query === "" ? options : options.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    onClose && onClose();
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-    if (isOpen) onClose && onClose();
-  };
-
   const dropdownOnChange = (val: TIssuePriorities) => {
     onChange(val);
     handleClose();
   };
 
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (query !== "" && e.key === "Escape") {
-      e.stopPropagation();
-      setQuery("");
-    }
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
+  const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
+    dropdownRef,
+    inputRef,
+    isOpen,
+    onClose,
+    query,
+    setIsOpen,
+    setQuery,
+  });
 
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
       ? BackgroundButton
       : TransparentButton;
-
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]);
 
   return (
     <Combobox

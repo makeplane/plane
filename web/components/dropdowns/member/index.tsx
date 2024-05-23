@@ -1,21 +1,21 @@
 import { Fragment, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronDown } from "lucide-react";
+// headless ui
 import { Combobox } from "@headlessui/react";
-// hooks
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useMember } from "@/hooks/store";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { ButtonAvatars } from "./avatar";
-// helpers
-// types
-import { MemberOptions } from "./member-options";
-import { MemberDropdownProps } from "./types";
 // constants
+import { MemberOptions } from "./member-options";
+// types
+import { MemberDropdownProps } from "./types";
 
 type Props = {
   projectId?: string;
@@ -53,6 +53,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
 
   const { getUserDetails } = useMember();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const comboboxProps: any = {
     value,
     onChange,
@@ -60,31 +61,17 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
   };
   if (multiple) comboboxProps.multiple = true;
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    onClose && onClose();
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-    if (isOpen) onClose && onClose();
-  };
+  const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
+    dropdownRef,
+    isOpen,
+    onClose,
+    setIsOpen,
+  });
 
   const dropdownOnChange = (val: string & string[]) => {
     onChange(val);
     if (!multiple) handleClose();
   };
-
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
 
   return (
     <Combobox

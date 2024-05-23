@@ -14,6 +14,7 @@ x-app-env: &app-env
     - POSTGRES_USER=${POSTGRES_USER:-plane}
     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-plane}
     - POSTGRES_DB=${POSTGRES_DB:-plane}
+    - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     - PGDATA=${PGDATA:-/var/lib/postgresql/data}
     - DATABASE_URL=${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
     # REDIS SETTINGS
@@ -33,14 +34,19 @@ x-app-env: &app-env
     - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-"secret-key"}
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+    # Admin and Space URLs
+    - ADMIN_BASE_URL=${ADMIN_BASE_URL}
+    - SPACE_BASE_URL=${SPACE_BASE_URL}
+    - APP_BASE_URL=${APP_BASE_URL}
 
 services:
   web:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-frontend:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: /usr/local/bin/start.sh web/server.js web
+    command: node web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
     depends_on:
@@ -50,9 +56,10 @@ services:
   space:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-space:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: /usr/local/bin/start.sh space/server.js space
+    command: node space/server.js space
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
     depends_on:
@@ -60,12 +67,26 @@ services:
       - worker
       - web
 
+  admin:
+    <<: *app-env
+    image: ${DOCKERHUB_USER:-makeplane}/plane-admin:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
+    pull_policy: ${PULL_POLICY:-always}
+    restart: unless-stopped
+    command: node admin/server.js admin
+    deploy:
+      replicas: ${ADMIN_REPLICAS:-1}
+    depends_on:
+      - api
+      - web
+
   api:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/takeoff
+    command: ./bin/docker-entrypoint-api.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
     volumes:
@@ -77,9 +98,10 @@ services:
   worker:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/worker
+    command: ./bin/docker-entrypoint-worker.sh
     volumes:
       - logs_worker:/code/plane/logs
     depends_on:
@@ -90,9 +112,10 @@ services:
   beat-worker:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/beat
+    command: ./bin/docker-entrypoint-beat.sh
     volumes:
       - logs_beat-worker:/code/plane/logs
     depends_on:
@@ -103,11 +126,10 @@ services:
   migrator:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: no
-    command: >
-      sh -c "python manage.py wait_for_db &&
-           python manage.py migrate"
+    command: ./bin/docker-entrypoint-migrator.sh
     volumes:
       - logs_migrator:/code/plane/logs
     depends_on:
@@ -122,6 +144,7 @@ services:
     command: postgres -c 'max_connections=1000'
     volumes:
       - pgdata:/var/lib/postgresql/data
+
   plane-redis:
     <<: *app-env
     image: redis:7.2.4-alpine
@@ -132,7 +155,7 @@ services:
 
   plane-minio:
     <<: *app-env
-    image: minio/minio
+    image: minio/minio:latest
     pull_policy: if_not_present
     restart: unless-stopped
     command: server /export --console-address ":9090"
@@ -143,6 +166,7 @@ services:
   proxy:
     <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-proxy:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     ports:
       - ${NGINX_PORT}:80

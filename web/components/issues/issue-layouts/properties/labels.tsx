@@ -1,18 +1,18 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Tags } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// types
 import { IIssueLabel } from "@plane/types";
-// hooks
+// ui
 import { Tooltip } from "@plane/ui";
-import { useApplication, useLabel } from "@/hooks/store";
+// hooks
+import { useAppRouter, useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// components
-// types
 
 export interface IIssuePropertyLabels {
   projectId: string | null;
@@ -59,9 +59,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // store hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
   const { fetchProjectLabels, getProjectLabels } = useLabel();
   const { isMobile } = usePlatformOS();
   const storeLabels = getProjectLabels(projectId);
@@ -74,6 +72,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const handleClose = () => {
     if (!isOpen) return;
     setIsOpen(false);
+    setQuery("");
     onClose && onClose();
   };
 

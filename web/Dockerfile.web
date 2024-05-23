@@ -1,6 +1,6 @@
-# ******************************************
+# *****************************************************************************
 # STAGE 1: Build the project
-# ******************************************
+# *****************************************************************************
 FROM node:18-alpine AS builder
 RUN apk add --no-cache libc6-compat
 # Set working directory
@@ -11,17 +11,14 @@ COPY . .
 
 RUN turbo prune --scope=web --docker
 
-
-# ******************************************
+# *****************************************************************************
 # STAGE 2: Install dependencies & build the project
-# ******************************************
+# *****************************************************************************
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-ARG NEXT_PUBLIC_API_BASE_URL=""
-ARG NEXT_PUBLIC_DEPLOY_URL=""
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
@@ -33,16 +30,32 @@ RUN yarn install --network-timeout 500000
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
+ARG NEXT_PUBLIC_API_BASE_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_DEPLOY_URL=$NEXT_PUBLIC_DEPLOY_URL
+
+ARG NEXT_PUBLIC_ADMIN_BASE_URL=""
+ENV NEXT_PUBLIC_ADMIN_BASE_URL=$NEXT_PUBLIC_ADMIN_BASE_URL
+
+ARG NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
+ENV NEXT_PUBLIC_ADMIN_BASE_PATH=$NEXT_PUBLIC_ADMIN_BASE_PATH
+
+ARG NEXT_PUBLIC_SPACE_BASE_URL=""
+ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
+
+ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
+ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
+
+ARG NEXT_PUBLIC_WEB_BASE_URL=""
+ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
+
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV TURBO_TELEMETRY_DISABLED 1
 
 RUN yarn turbo run build --filter=web
 
-
-# ******************************************
+# *****************************************************************************
 # STAGE 3: Copy the project and start it
-# ******************************************
-
+# *****************************************************************************
 FROM node:18-alpine AS runner
 WORKDIR /app
 
@@ -56,13 +69,24 @@ COPY --from=installer /app/web/.next ./web/.next
 COPY --from=installer /app/web/public ./web/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
-ARG NEXT_PUBLIC_DEPLOY_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_DEPLOY_URL=$NEXT_PUBLIC_DEPLOY_URL
 
-COPY start.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/start.sh
+ARG NEXT_PUBLIC_ADMIN_BASE_URL=""
+ENV NEXT_PUBLIC_ADMIN_BASE_URL=$NEXT_PUBLIC_ADMIN_BASE_URL
+
+ARG NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
+ENV NEXT_PUBLIC_ADMIN_BASE_PATH=$NEXT_PUBLIC_ADMIN_BASE_PATH
+
+ARG NEXT_PUBLIC_SPACE_BASE_URL=""
+ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
+
+ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
+ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
+
+ARG NEXT_PUBLIC_WEB_BASE_URL=""
+ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV TURBO_TELEMETRY_DISABLED 1
 
 EXPOSE 3000

@@ -38,7 +38,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
             style={{
               lineHeight: "1.2",
             }}
-            placeholder="Untitled Page"
+            placeholder="Untitled"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
@@ -60,7 +60,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           >
             <span
               className={cn({
-                "text-red-500": title.length === 0 || title.length > 255,
+                "text-red-500": title.length > 255,
               })}
             >
               {title.length}

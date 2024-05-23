@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Plus, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components
@@ -70,7 +70,7 @@ export const ProjectInboxHeader: FC = observer(() => {
             issue={undefined}
           />
 
-          <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
+          <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
             Add Issue
           </Button>
         </div>

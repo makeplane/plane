@@ -1,23 +1,22 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// icons
-import { Plus } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, DiceIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+import { ModuleViewHeader } from "@/components/modules";
 import { ProjectLogo } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateModuleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
@@ -41,7 +40,7 @@ export const ModulesListHeader: React.FC = observer(() => {
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
                     currentProjectDetails && (
-                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                      <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                         <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                       </span>
                     )
@@ -57,14 +56,14 @@ export const ModulesListHeader: React.FC = observer(() => {
         </div>
       </div>
       <div className="flex items-center gap-2">
+        <ModuleViewHeader />
         {canUserCreateModule && (
           <Button
             variant="primary"
             size="sm"
-            prependIcon={<Plus />}
             onClick={() => {
               setTrackElement("Modules page");
-              commandPaletteStore.toggleCreateModuleModal(true);
+              toggleCreateModuleModal(true);
             }}
           >
             <div className="hidden sm:block">Add</div> Module

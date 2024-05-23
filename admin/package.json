@@ -1,0 +1,50 @@
+{
+  "name": "admin",
+  "version": "0.20.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run develop",
+    "develop": "next dev --port 3001",
+    "build": "next build",
+    "preview": "next build && next start",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.19",
+    "@plane/types": "*",
+    "@plane/ui": "*",
+    "@plane/constants": "*",
+    "@tailwindcss/typography": "^0.5.9",
+    "@types/lodash": "^4.17.0",
+    "autoprefixer": "10.4.14",
+    "axios": "^1.6.7",
+    "js-cookie": "^3.0.5",
+    "lodash": "^4.17.21",
+    "lucide-react": "^0.356.0",
+    "mobx": "^6.12.0",
+    "mobx-react-lite": "^4.0.5",
+    "next": "^14.2.3",
+    "next-themes": "^0.2.1",
+    "postcss": "^8.4.38",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.51.0",
+    "swr": "^2.2.4",
+    "tailwindcss": "3.3.2",
+    "uuid": "^9.0.1",
+    "zxcvbn": "^4.4.2"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "18.16.1",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@types/uuid": "^9.0.8",
+    "@types/zxcvbn": "^4.4.4",
+    "eslint-config-custom": "*",
+    "tailwind-config-custom": "*",
+    "tsconfig": "*",
+    "typescript": "^5.4.2"
+  }
+}

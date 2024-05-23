@@ -1,0 +1,86 @@
+# *****************************************************************************
+# STAGE 1: Build the project
+# *****************************************************************************
+FROM node:18-alpine AS builder
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+RUN yarn global add turbo
+COPY . .
+
+RUN turbo prune --scope=admin --docker
+
+# *****************************************************************************
+# STAGE 2: Install dependencies & build the project
+# *****************************************************************************
+FROM node:18-alpine AS installer
+
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/yarn.lock ./yarn.lock
+RUN yarn install --network-timeout 500000
+
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+
+ARG NEXT_PUBLIC_API_BASE_URL=""
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
+ARG NEXT_PUBLIC_ADMIN_BASE_URL=""
+ENV NEXT_PUBLIC_ADMIN_BASE_URL=$NEXT_PUBLIC_ADMIN_BASE_URL
+
+ARG NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
+ENV NEXT_PUBLIC_ADMIN_BASE_PATH=$NEXT_PUBLIC_ADMIN_BASE_PATH
+
+ARG NEXT_PUBLIC_SPACE_BASE_URL=""
+ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
+
+ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
+ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
+
+ARG NEXT_PUBLIC_WEB_BASE_URL=""
+ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
+
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV TURBO_TELEMETRY_DISABLED 1
+
+RUN yarn turbo run build --filter=admin
+
+# *****************************************************************************
+# STAGE 3: Copy the project and start it
+# *****************************************************************************
+FROM node:18-alpine AS runner
+WORKDIR /app
+
+COPY --from=installer /app/admin/next.config.js .
+COPY --from=installer /app/admin/package.json .
+
+COPY --from=installer /app/admin/.next/standalone ./
+COPY --from=installer /app/admin/.next/static ./admin/.next/static
+COPY --from=installer /app/admin/public ./admin/public
+
+ARG NEXT_PUBLIC_API_BASE_URL=""
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
+ARG NEXT_PUBLIC_ADMIN_BASE_URL=""
+ENV NEXT_PUBLIC_ADMIN_BASE_URL=$NEXT_PUBLIC_ADMIN_BASE_URL
+
+ARG NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
+ENV NEXT_PUBLIC_ADMIN_BASE_PATH=$NEXT_PUBLIC_ADMIN_BASE_PATH
+
+ARG NEXT_PUBLIC_SPACE_BASE_URL=""
+ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
+
+ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
+ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
+
+ARG NEXT_PUBLIC_WEB_BASE_URL=""
+ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
+
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV TURBO_TELEMETRY_DISABLED 1
+
+EXPOSE 3000

@@ -1,16 +1,16 @@
 import { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { IProjectView, IIssueFilterOptions } from "@plane/types";
-// hooks
-import { Button, Input, TextArea } from "@plane/ui";
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
-// components
-// ui
 // types
+import { IProjectView, IIssueFilterOptions } from "@plane/types";
+// ui
+import { Button, Input, TextArea } from "@plane/ui";
+// components
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// hooks
+import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
 type Props = {
   data?: IProjectView | null;
@@ -109,10 +109,10 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
-      <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
+      <div className="space-y-5 p-5">
+        <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
-          <div className="flex flex-col gap-1">
+          <div className="space-y-1">
             <Controller
               control={control}
               name="name"
@@ -132,8 +132,9 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   onChange={onChange}
                   hasError={Boolean(errors.name)}
                   placeholder="Title"
-                  className="w-full resize-none text-xl focus:border-blue-400"
+                  className="w-full text-base"
                   tabIndex={1}
+                  autoFocus
                 />
               )}
             />
@@ -148,7 +149,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   id="description"
                   name="description"
                   placeholder="Description"
-                  className="min-h-24 w-full resize-none text-sm"
+                  className="w-full text-base resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
@@ -206,18 +207,12 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
           )}
         </div>
       </div>
-      <div className="mt-5 flex justify-end gap-2">
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" tabIndex={5} disabled={isSubmitting}>
-          {data
-            ? isSubmitting
-              ? "Updating View..."
-              : "Update View"
-            : isSubmitting
-              ? "Creating View..."
-              : "Create View"}
+        <Button variant="primary" size="sm" type="submit" tabIndex={5} loading={isSubmitting}>
+          {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
         </Button>
       </div>
     </form>

@@ -1,14 +1,14 @@
-// services images
+// types
+import { TStaticViewTypes } from "@plane/types";
+// icons
 import { SettingIcon } from "@/components/icons/attachment";
 import { Props } from "@/components/icons/types";
+// services images
 import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";
 import GithubLogo from "public/services/github.png";
 import JiraLogo from "public/services/jira.svg";
 import JSONLogo from "public/services/json.svg";
-// types
-import { TStaticViewTypes } from "@plane/types";
-// icons
 
 export enum EUserWorkspaceRoles {
   GUEST = 5,
@@ -22,6 +22,25 @@ export const ROLE = {
   10: "Viewer",
   15: "Member",
   20: "Admin",
+};
+
+export const ROLE_DETAILS = {
+  5: {
+    title: "Guest",
+    description: "External members of organizations can be invited as guests.",
+  },
+  10: {
+    title: "Viewer",
+    description: "External members of organizations can be invited as guests.",
+  },
+  15: {
+    title: "Member",
+    description: "Ability to read, write, edit, and delete entities inside projects, cycles, and modules",
+  },
+  20: {
+    title: "Admin",
+    description: "All permissions set to true within the workspace.",
+  },
 };
 
 export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];

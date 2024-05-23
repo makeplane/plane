@@ -43,7 +43,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
           else await updateIssue(workspaceSlug, projectId, issueId, data);
         } catch (error) {
           setToast({
-            title: "Issue update failed",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Issue update failed",
           });
@@ -54,14 +54,14 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
           const labelResponse = await createLabel(workspaceSlug, projectId, data);
           if (!isInboxIssue)
             setToast({
-              title: "Label created successfully",
+              title: "Success!",
               type: TOAST_TYPE.SUCCESS,
               message: "Label created successfully",
             });
           return labelResponse;
         } catch (error) {
           setToast({
-            title: "Label creation failed",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Label creation failed",
           });

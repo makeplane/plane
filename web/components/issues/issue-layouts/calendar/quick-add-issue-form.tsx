@@ -1,25 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { differenceInCalendarDays } from "date-fns";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-// components
 import { PlusIcon } from "lucide-react";
+// types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
+// ui
 import { TOAST_TYPE, setPromiseToast, setToast, CustomMenu } from "@plane/ui";
+// components
 import { ExistingIssuesListModal } from "@/components/core";
-// hooks
+// constants
 import { ISSUE_CREATED } from "@/constants/event-tracker";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { createIssuePayload } from "@/helpers/issue.helper";
+// hooks
 import { useEventTracker, useIssueDetail, useProject } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-// helpers
-// icons
-// ui
-// types
-// constants
-// helper
 
 type Props = {
   formKey: keyof TIssue;
@@ -182,9 +181,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
           updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, prePopulatedData ?? {})
         )
       );
-      if (addIssuesToView) {
-        await addIssuesToView(issueIds);
-      }
+      await addIssuesToView?.(issueIds);
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -212,6 +209,15 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
           handleClose={() => setIsExistingIssueModalOpen(false)}
           searchParams={ExistingIssuesListModalPayload}
           handleOnSubmit={handleAddIssuesToView}
+          shouldHideIssue={(issue) => {
+            if (issue.start_date && prePopulatedData?.target_date) {
+              const issueStartDate = new Date(issue.start_date);
+              const targetDate = new Date(prePopulatedData.target_date);
+              const diffInDays = differenceInCalendarDays(targetDate, issueStartDate);
+              if (diffInDays < 0) return true;
+            }
+            return false;
+          }}
         />
       )}
       {isOpen && (
@@ -243,9 +249,9 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
             className="w-full"
             customButtonClassName="w-full"
             customButton={
-              <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100">
+              <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-custom-text-300">
                 <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
-                <span className="text-sm font-medium flex-shrink-0 text-custom-primary-100">New Issue</span>
+                <span className="text-sm font-medium flex-shrink-0">New Issue</span>
               </div>
             }
           >

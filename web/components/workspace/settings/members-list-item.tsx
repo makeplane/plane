@@ -1,11 +1,11 @@
-import { useState, FC } from "react";
-import { observer } from "mobx-react-lite";
+import { FC, useState } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // lucide icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
-import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
@@ -28,10 +28,11 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    currentUser,
-    currentUserSettings,
+    // currentUser,
+    // currentUserSettings,
     membership: { currentWorkspaceRole, leaveWorkspace },
   } = useUser();
+  const { data: currentUser } = useUser();
   const {
     workspace: { updateMember, removeMemberFromWorkspace, getWorkspaceMemberDetails },
   } = useMember();
@@ -41,7 +42,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const memberDetails = getWorkspaceMemberDetails(memberId);
 
   const handleLeaveWorkspace = async () => {
-    if (!workspaceSlug || !currentUserSettings) return;
+    if (!workspaceSlug || !currentUser) return;
 
     await leaveWorkspace(workspaceSlug.toString())
       .then(() => {
@@ -51,10 +52,10 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         });
         router.push("/profile");
       })
-      .catch((err) =>
+      .catch((err: any) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error",
+          title: "Error!",
           message: err?.error || "Something went wrong. Please try again.",
         })
       );
@@ -66,7 +67,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     await removeMemberFromWorkspace(workspaceSlug.toString(), memberDetails.member.id).catch((err) =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
+        title: "Error!",
         message: err?.error || "Something went wrong. Please try again.",
       })
     );

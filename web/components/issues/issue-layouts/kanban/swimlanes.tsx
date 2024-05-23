@@ -16,12 +16,11 @@ import {
 // components
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { TRenderQuickActions } from "../list/list-view-types";
-import { getGroupByColumns, isWorkspaceLevel } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
 import { KanbanStoreType } from "./base-kanban-root";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
-import { KanbanDropLocation } from "./utils";
 // types
 // constants
 
@@ -111,7 +110,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   storeType: KanbanStoreType;
   enableQuickIssueCreate: boolean;
@@ -220,6 +219,8 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     scrollableContainerRef={scrollableContainerRef}
                     handleOnDrop={handleOnDrop}
                     orderBy={orderBy}
+                    isDropDisabled={_list.isDropDisabled}
+                    dropErrorMessage={_list.dropErrorMessage}
                     subGroupIssueHeaderCount={(groupByListId: string) =>
                       getSubGroupHeaderIssuesCount(issueIds as TSubGroupedIssues, groupByListId)
                     }
@@ -244,7 +245,7 @@ export interface IKanBanSwimLanes {
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   showEmptyGroup: boolean;
-  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;

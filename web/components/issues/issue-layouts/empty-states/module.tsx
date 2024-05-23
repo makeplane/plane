@@ -1,18 +1,17 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
+// types
 import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
-// hooks
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// ui
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
-// types
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EIssuesStoreType } from "@/constants/issue";
-import { useApplication, useEventTracker, useIssues } from "@/hooks/store";
+// hooks
+import { useCommandPalette, useEventTracker, useIssues } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -29,9 +28,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   // store hooks
   const { issues } = useIssues(EIssuesStoreType.MODULE);
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
 
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
@@ -58,6 +55,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
 
   const emptyStateType = isEmptyFilters ? EmptyStateType.PROJECT_EMPTY_FILTER : EmptyStateType.PROJECT_MODULE_ISSUES;
   const additionalPath = activeLayout ?? "list";
+  const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
     <>
@@ -73,6 +71,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
         <EmptyState
           type={emptyStateType}
           additionalPath={additionalPath}
+          size={emptyStateSize}
           primaryButtonOnClick={
             isEmptyFilters
               ? undefined

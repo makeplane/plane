@@ -29,6 +29,7 @@ export type TPeekIssue = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  nestingLevel?: number;
 };
 
 export type TIssueRelationModal = {
@@ -191,6 +192,8 @@ export class IssueDetail implements IIssueDetail {
     this.issue.removeIssue(workspaceSlug, projectId, issueId);
   archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.issue.archiveIssue(workspaceSlug, projectId, issueId);
+  addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) =>
+    this.issue.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
   addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) =>
     this.issue.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
   removeIssueFromCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) =>

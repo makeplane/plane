@@ -13,7 +13,7 @@ import {
 // types
 import { IUserLite, TPage } from "@plane/types";
 // components
-import { PageContentBrowser, PageEditorTitle } from "@/components/pages";
+import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -59,7 +59,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
   const {
     getUserDetails,
@@ -68,7 +68,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   // derived values
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
   const pageTitle = pageStore?.name ?? "";
-  const pageDescription = pageStore?.description_html ?? "<p></p>";
+  const pageDescription = pageStore?.description_html;
   const { description_html, isContentEditable, updateTitle, isSubmitting, setIsSubmitting } = pageStore;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -87,6 +87,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   useEffect(() => {
     updateMarkings(description_html ?? "<p></p>");
   }, [description_html, updateMarkings]);
+
+  if (pageDescription === undefined) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -132,7 +134,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                     upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
                   }}
                   handleEditorReady={handleEditorReady}
-                  initialValue={pageDescription}
+                  initialValue={pageDescription ?? "<p></p>"}
                   value={swrPageDetails?.description_html ?? "<p></p>"}
                   ref={editorRef}
                   containerClassName="p-0 pb-64"
@@ -153,7 +155,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           ) : (
             <DocumentReadOnlyEditorWithRef
               ref={readOnlyEditorRef}
-              initialValue={pageDescription}
+              initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
               editorClassName="lg:px-10 pl-8"

@@ -4,21 +4,23 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// hooks
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Spinner } from "@plane/ui";
 import { DeleteIssueModal } from "@/components/issues";
 import { ISSUE_DELETED } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUser } from "@/hooks/store";
+import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+// store
 // ui
 // types
 import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
+import { getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { KanbanDropLocation, handleDragDrop, getSourceFromDropPayload } from "./utils";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT
@@ -91,6 +93,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
+  const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by);
+
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {
       const isEditingAllowedBasedOnProject =
@@ -143,33 +147,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     );
   }, [deleteAreaRef?.current, setIsDragOverDelete, setDraggedIssueId, setDeleteIssueModal]);
 
-  const handleOnDrop = async (source: KanbanDropLocation, destination: KanbanDropLocation) => {
-    if (
-      source.columnId &&
-      destination.columnId &&
-      destination.columnId === source.columnId &&
-      destination.id === source.id
-    )
-      return;
-
-    await handleDragDrop(
-      source,
-      destination,
-      getIssueById,
-      issues.getIssueIds,
-      updateIssue,
-      group_by,
-      sub_group_by,
-      orderBy !== "sort_order"
-    ).catch((err) => {
-      setToast({
-        title: "Error",
-        type: TOAST_TYPE.ERROR,
-        message: err?.detail ?? "Failed to perform this action",
-      });
-    });
-  };
-
   const renderQuickActions: TRenderQuickActions = useCallback(
     ({ issue, parentRef, customActionButton }) => (
       <QuickActions
@@ -207,8 +184,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const handleKanbanFilters = (toggle: "group_by" | "sub_group_by", value: string) => {
     if (workspaceSlug && projectId) {
       let kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (kanbanFilters.includes(value)) kanbanFilters = kanbanFilters.filter((_value) => _value != value);
-      else kanbanFilters.push(value);
+      if (kanbanFilters.includes(value)) {
+        kanbanFilters = kanbanFilters.filter((_value) => _value != value);
+      } else {
+        kanbanFilters.push(value);
+      }
       updateFilters(projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
         [toggle]: kanbanFilters,
       });

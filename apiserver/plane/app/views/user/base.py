@@ -1,22 +1,40 @@
+# Python imports
+# import uuid
+
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
+from django.contrib.auth import logout
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 # Module imports
 from plane.app.serializers import (
+    AccountSerializer,
     IssueActivitySerializer,
+    ProfileSerializer,
     UserMeSerializer,
     UserMeSettingsSerializer,
     UserSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
-from plane.db.models import IssueActivity, ProjectMember, User, WorkspaceMember
+from plane.db.models import (
+    Account,
+    IssueActivity,
+    Profile,
+    ProjectMember,
+    User,
+    WorkspaceMember,
+    WorkspaceMemberInvite,
+    Session,
+)
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.utils.paginator import BasePaginator
+from plane.authentication.utils.host import user_ip
 
 
 class UserEndpoint(BaseViewSet):
@@ -141,28 +159,70 @@ class UserEndpoint(BaseViewSet):
             workspaces_to_deactivate, ["is_active"], batch_size=100
         )
 
-        # Deactivate the user
-        user.is_active = False
-        user.last_workspace_id = None
-        user.is_tour_completed = False
-        user.is_onboarded = False
-        user.onboarding_step = {
+        # Delete all workspace invites
+        WorkspaceMemberInvite.objects.filter(
+            email=user.email,
+        ).delete()
+
+        # Delete all sessions
+        Session.objects.filter(user_id=request.user.id).delete()
+
+        # Profile updates
+        profile = Profile.objects.get(user=user)
+
+        # Reset onboarding
+        profile.last_workspace_id = None
+        profile.is_tour_completed = False
+        profile.is_onboarded = False
+        profile.onboarding_step = {
             "workspace_join": False,
             "profile_complete": False,
             "workspace_create": False,
             "workspace_invite": False,
         }
+        profile.save()
+
+        # Reset password
+        # user.is_password_autoset = True
+        # user.set_password(uuid.uuid4().hex)
+
+        # Deactivate the user
+        user.is_active = False
+        user.last_logout_ip = user_ip(request=request)
+        user.last_logout_time = timezone.now()
         user.save()
+
+        # Logout the user
+        logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserSessionEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            user = User.objects.get(pk=request.user.id)
+            serializer = UserMeSerializer(user)
+            data = {"is_authenticated": True}
+            data["user"] = serializer.data
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"is_authenticated": False}, status=status.HTTP_200_OK
+            )
 
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
 
     @invalidate_cache(path="/api/users/me/")
     def patch(self, request):
-        user = User.objects.get(pk=request.user.id, is_active=True)
-        user.is_onboarded = request.data.get("is_onboarded", False)
-        user.save()
+        profile = Profile.objects.get(user_id=request.user.id)
+        profile.is_onboarded = request.data.get("is_onboarded", False)
+        profile.save()
         return Response(
             {"message": "Updated successfully"}, status=status.HTTP_200_OK
         )
@@ -172,9 +232,11 @@ class UpdateUserTourCompletedEndpoint(BaseAPIView):
 
     @invalidate_cache(path="/api/users/me/")
     def patch(self, request):
-        user = User.objects.get(pk=request.user.id, is_active=True)
-        user.is_tour_completed = request.data.get("is_tour_completed", False)
-        user.save()
+        profile = Profile.objects.get(user_id=request.user.id)
+        profile.is_tour_completed = request.data.get(
+            "is_tour_completed", False
+        )
+        profile.save()
         return Response(
             {"message": "Updated successfully"}, status=status.HTTP_200_OK
         )
@@ -194,3 +256,42 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
                 issue_activities, many=True
             ).data,
         )
+
+
+class AccountEndpoint(BaseAPIView):
+
+    def get(self, request, pk=None):
+        if pk:
+            account = Account.objects.get(pk=pk, user=request.user)
+            serializer = AccountSerializer(account)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        account = Account.objects.filter(user=request.user)
+        serializer = AccountSerializer(account, many=True)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, pk):
+        account = Account.objects.get(pk=pk, user=request.user)
+        account.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProfileEndpoint(BaseAPIView):
+    def get(self, request):
+        profile = Profile.objects.get(user=request.user)
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @invalidate_cache("/api/users/me/settings/")
+    def patch(self, request):
+        profile = Profile.objects.get(user=request.user)
+        serializer = ProfileSerializer(
+            profile, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
@@ -65,7 +65,7 @@ export const HeaderGroupByCard = observer(
 
     return (
       <>
-        <div className="relative flex w-full flex-shrink-0 flex-row items-center gap-2 py-1.5">
+        <div className="relative flex w-full flex-shrink-0 flex-row items-center gap-1.5 py-1.5">
           <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
             {icon ? icon : <CircleDashed className="h-3.5 w-3.5" strokeWidth={2} />}
           </div>

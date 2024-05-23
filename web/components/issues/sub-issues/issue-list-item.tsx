@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 import { TIssue } from "@plane/types";
 // components
@@ -18,6 +18,7 @@ export interface ISubIssues {
   workspaceSlug: string;
   projectId: string;
   parentIssueId: string;
+  rootIssueId: string;
   spacingLeft: number;
   disabled: boolean;
   handleIssueCrudState: (
@@ -34,6 +35,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     workspaceSlug,
     projectId,
     parentIssueId,
+    rootIssueId,
     issueId,
     spacingLeft = 10,
     disabled,
@@ -59,6 +61,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     undefined;
 
   const subIssueHelpers = subIssueHelpersByIssueId(parentIssueId);
+  const subIssueCount = issue?.sub_issues_count || 0;
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -69,6 +72,10 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   if (!issue) return <></>;
+
+  // check if current issue is the root issue
+  const isCurrentIssueRoot = issueId === rootIssueId;
+
   return (
     <div key={issueId}>
       {issue && (
@@ -77,7 +84,8 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
           style={{ paddingLeft: `${spacingLeft}px` }}
         >
           <div className="h-[22px] w-[22px] flex-shrink-0">
-            {issue?.sub_issues_count > 0 && (
+            {/* disable the chevron when current issue is also the root issue*/}
+            {subIssueCount > 0 && !isCurrentIssueRoot && (
               <>
                 {subIssueHelpers.preview_loader.includes(issue.id) ? (
                   <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-sm bg-custom-background-80 transition-all">
@@ -205,11 +213,13 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
         </div>
       )}
 
-      {subIssueHelpers.issue_visibility.includes(issueId) && issue.sub_issues_count && issue.sub_issues_count > 0 && (
+      {/* should not expand the current issue if it is also the root issue*/}
+      {subIssueHelpers.issue_visibility.includes(issueId) && subIssueCount > 0 && !isCurrentIssueRoot && (
         <IssueList
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           parentIssueId={issue.id}
+          rootIssueId={rootIssueId}
           spacingLeft={spacingLeft + 22}
           disabled={disabled}
           handleIssueCrudState={handleIssueCrudState}

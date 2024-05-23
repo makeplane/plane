@@ -12,7 +12,7 @@ type Props = {
 export const SpreadsheetCreatedOnColumn: React.FC<Props> = observer((props: Props) => {
   const { issue } = props;
   return (
-    <div className="flex h-11 w-full items-center justify-center text-xs border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80">
+    <div className="flex h-11 w-full items-center justify-center border-b-[0.5px] border-custom-border-200 text-xs hover:bg-custom-background-80">
       {renderFormattedDate(issue.created_at)}
     </div>
   );

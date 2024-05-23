@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { IWebhook, TWebhookEventTypes } from "@plane/types";
 // hooks
@@ -58,11 +58,11 @@ export const WebhookForm: FC<Props> = observer((props) => {
   }, [data]);
 
   return (
-    <div className="space-y-6">
-      <div className="text-xl font-medium">{data ? "Webhook details" : "Create webhook"}</div>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <div className="space-y-8">
-          <div>
+    <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <div className="space-y-5 p-5">
+        <div className="text-xl font-medium text-custom-text-200">{data ? "Webhook details" : "Create webhook"}</div>
+        <div className="space-y-3">
+          <div className="space-y-1">
             <Controller
               control={control}
               name="url"
@@ -76,34 +76,31 @@ export const WebhookForm: FC<Props> = observer((props) => {
             {errors.url && <div className="text-xs text-red-500">{errors.url.message}</div>}
           </div>
           {data && <WebhookToggle control={control} />}
-          <div className="space-y-3">
-            <WebhookOptions value={webhookEventType} onChange={(val) => setWebhookEventType(val)} />
-          </div>
+          <WebhookOptions value={webhookEventType} onChange={(val) => setWebhookEventType(val)} />
         </div>
         <div className="mt-4">
           {webhookEventType === "individual" && <WebhookIndividualEventOptions control={control} />}
         </div>
-        {data ? (
-          <div className="mt-8 space-y-8">
-            <WebhookSecretKey data={data} />
-
-            <Button type="submit" loading={isSubmitting}>
-              {isSubmitting ? "Updating..." : "Update"}
+      </div>
+      {data ? (
+        <div className="p-5 pt-0 space-y-5">
+          <WebhookSecretKey data={data} />
+          <Button type="submit" loading={isSubmitting}>
+            {isSubmitting ? "Updating" : "Update"}
+          </Button>
+        </div>
+      ) : (
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+            Cancel
+          </Button>
+          {!webhookSecretKey && (
+            <Button type="submit" variant="primary" size="sm" loading={isSubmitting}>
+              {isSubmitting ? "Creating" : "Create"}
             </Button>
-          </div>
-        ) : (
-          <div className="mt-4 flex justify-end gap-2">
-            <Button variant="neutral-primary" onClick={handleClose}>
-              Discard
-            </Button>
-            {!webhookSecretKey && (
-              <Button type="submit" variant="primary" loading={isSubmitting}>
-                {isSubmitting ? "Creating..." : "Create"}
-              </Button>
-            )}
-          </div>
-        )}
-      </form>
-    </div>
+          )}
+        </div>
+      )}
+    </form>
   );
 });

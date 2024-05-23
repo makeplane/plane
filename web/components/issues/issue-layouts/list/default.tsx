@@ -1,4 +1,6 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 // components
 import {
   GroupByColumnTypes,
@@ -8,20 +10,22 @@ import {
   TIssueMap,
   TUnGroupedIssues,
   IGroupByColumn,
+  TIssueOrderByOptions,
+  TIssueGroupByOptions,
 } from "@plane/types";
-import { IssueBlocksList, ListQuickAddIssueForm } from "@/components/issues";
 // hooks
 import { EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 // utils
-import { getGroupByColumns, isWorkspaceLevel } from "../utils";
-import { HeaderGroupByCard } from "./headers/group-by-card";
+import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
+import { ListGroup } from "./list-group";
 import { TRenderQuickActions } from "./list-view-types";
 
 export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
-  group_by: string | null;
+  group_by: TIssueGroupByOptions | null;
+  orderBy: TIssueOrderByOptions | undefined;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -36,6 +40,7 @@ export interface IGroupByList {
   ) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
   storeType: EIssuesStoreType;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   viewId?: string;
   isCompletedCycle?: boolean;
@@ -46,6 +51,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     issueIds,
     issuesMap,
     group_by,
+    orderBy,
     updateIssue,
     quickActions,
     displayProperties,
@@ -56,6 +62,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     viewId,
     disableIssueCreation,
     storeType,
+    handleOnDrop,
     addIssuesToView,
     isCompletedCycle = false,
   } = props;
@@ -81,36 +88,20 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     isWorkspaceLevel(storeType)
   );
 
+  // Enable Auto Scroll for Main Kanban
+  useEffect(() => {
+    const element = containerRef.current;
+
+    if (!element) return;
+
+    return combine(
+      autoScrollForElements({
+        element,
+      })
+    );
+  }, [containerRef]);
+
   if (!groups) return null;
-
-  const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
-    const defaultState = projectState.projectStates?.find((state) => state.default);
-    let preloadedData: object = { state_id: defaultState?.id };
-
-    if (groupByKey === null) {
-      preloadedData = { ...preloadedData };
-    } else {
-      if (groupByKey === "state") {
-        preloadedData = { ...preloadedData, state_id: value };
-      } else if (groupByKey === "priority") {
-        preloadedData = { ...preloadedData, priority: value };
-      } else if (groupByKey === "labels" && value != "None") {
-        preloadedData = { ...preloadedData, label_ids: [value] };
-      } else if (groupByKey === "assignees" && value != "None") {
-        preloadedData = { ...preloadedData, assignee_ids: [value] };
-      } else if (groupByKey === "cycle" && value != "None") {
-        preloadedData = { ...preloadedData, cycle_id: value };
-      } else if (groupByKey === "module" && value != "None") {
-        preloadedData = { ...preloadedData, module_ids: [value] };
-      } else if (groupByKey === "created_by") {
-        preloadedData = { ...preloadedData };
-      } else {
-        preloadedData = { ...preloadedData, [groupByKey]: value };
-      }
-    }
-
-    return preloadedData;
-  };
 
   const validateEmptyIssueGroups = (issues: TIssue[]) => {
     const issuesCount = issues?.length || 0;
@@ -118,9 +109,9 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     return true;
   };
 
-  const is_list = group_by === null ? true : false;
+  const getGroupIndex = (groupId: string | undefined) => groups.findIndex(({ id }) => id === groupId);
 
-  const isGroupByCreatedBy = group_by === "created_by";
+  const is_list = group_by === null ? true : false;
 
   return (
     <div
@@ -130,43 +121,30 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
       {groups &&
         groups.length > 0 &&
         groups.map(
-          (_list: IGroupByColumn) =>
-            validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
-              <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
-                  <HeaderGroupByCard
-                    icon={_list.icon}
-                    title={_list.name || ""}
-                    count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
-                    issuePayload={_list.payload}
-                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
-                    storeType={storeType}
-                    addIssuesToView={addIssuesToView}
-                  />
-                </div>
-
-                {issueIds && (
-                  <IssueBlocksList
-                    issueIds={is_list ? issueIds || 0 : issueIds?.[_list.id] || 0}
-                    issuesMap={issuesMap}
-                    updateIssue={updateIssue}
-                    quickActions={quickActions}
-                    displayProperties={displayProperties}
-                    canEditProperties={canEditProperties}
-                    containerRef={containerRef}
-                  />
-                )}
-
-                {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
-                  <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
-                    <ListQuickAddIssueForm
-                      prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}
-                      quickAddCallback={quickAddCallback}
-                      viewId={viewId}
-                    />
-                  </div>
-                )}
-              </div>
+          (group: IGroupByColumn) =>
+            validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[group.id]) && (
+              <ListGroup
+                key={group.id}
+                group={group}
+                getGroupIndex={getGroupIndex}
+                issueIds={issueIds}
+                issuesMap={issuesMap}
+                group_by={group_by}
+                orderBy={orderBy}
+                updateIssue={updateIssue}
+                quickActions={quickActions}
+                displayProperties={displayProperties}
+                enableIssueQuickAdd={enableIssueQuickAdd}
+                canEditProperties={canEditProperties}
+                storeType={storeType}
+                containerRef={containerRef}
+                quickAddCallback={quickAddCallback}
+                disableIssueCreation={disableIssueCreation}
+                addIssuesToView={addIssuesToView}
+                handleOnDrop={handleOnDrop}
+                viewId={viewId}
+                isCompletedCycle={isCompletedCycle}
+              />
             )
         )}
     </div>
@@ -176,7 +154,8 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
 export interface IList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
-  group_by: string | null;
+  group_by: TIssueGroupByOptions | null;
+  orderBy: TIssueOrderByOptions | undefined;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -192,6 +171,7 @@ export interface IList {
   viewId?: string;
   disableIssueCreation?: boolean;
   storeType: EIssuesStoreType;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isCompletedCycle?: boolean;
 }
@@ -201,6 +181,7 @@ export const List: React.FC<IList> = (props) => {
     issueIds,
     issuesMap,
     group_by,
+    orderBy,
     updateIssue,
     quickActions,
     quickAddCallback,
@@ -211,6 +192,7 @@ export const List: React.FC<IList> = (props) => {
     canEditProperties,
     disableIssueCreation,
     storeType,
+    handleOnDrop,
     addIssuesToView,
     isCompletedCycle = false,
   } = props;
@@ -221,6 +203,7 @@ export const List: React.FC<IList> = (props) => {
         issueIds={issueIds as TUnGroupedIssues}
         issuesMap={issuesMap}
         group_by={group_by}
+        orderBy={orderBy}
         updateIssue={updateIssue}
         quickActions={quickActions}
         displayProperties={displayProperties}
@@ -231,6 +214,7 @@ export const List: React.FC<IList> = (props) => {
         viewId={viewId}
         disableIssueCreation={disableIssueCreation}
         storeType={storeType}
+        handleOnDrop={handleOnDrop}
         addIssuesToView={addIssuesToView}
         isCompletedCycle={isCompletedCycle}
       />

@@ -21,7 +21,7 @@ export const InboxIssueAppliedFiltersState: FC = observer(() => {
   if (filteredValues.length === 0) return <></>;
   return (
     <div className="relative flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1">
-      <div className="text-xs text-custom-text-200">Status</div>
+      <div className="text-xs text-custom-text-200">State</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;

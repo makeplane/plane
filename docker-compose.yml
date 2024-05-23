@@ -7,10 +7,22 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: /usr/local/bin/start.sh web/server.js web
+    command: node web/server.js web
     depends_on:
       - api
-      - worker
+
+  admin:
+    container_name: admin
+    build:
+      context: .
+      dockerfile: ./admin/Dockerfile.admin
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: node admin/server.js admin
+    depends_on:
+      - api
+      - web
 
   space:
     container_name: space
@@ -20,10 +32,9 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: /usr/local/bin/start.sh space/server.js space
+    command: node space/server.js space
     depends_on:
       - api
-      - worker
       - web
 
   api:
@@ -34,7 +45,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: ./bin/takeoff
+    command: ./bin/docker-entrypoint-api.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -49,7 +60,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: ./bin/worker
+    command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -65,11 +76,26 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: ./bin/beat
+    command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apiserver/.env
     depends_on:
       - api
+      - plane-db
+      - plane-redis
+
+  migrator:
+    container_name: plane-migrator
+    build:
+      context: ./apiserver
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: no
+    command: ./bin/docker-entrypoint-migrator.sh
+    env_file:
+      - ./apiserver/.env
+    depends_on:
       - plane-db
       - plane-redis
 
@@ -83,9 +109,9 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${PGUSER}
-      POSTGRES_DB: ${PGDATABASE}
-      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data
 
   plane-redis:
@@ -122,6 +148,7 @@ services:
       - web
       - api
       - space
+      - admin
 
 volumes:
   pgdata:

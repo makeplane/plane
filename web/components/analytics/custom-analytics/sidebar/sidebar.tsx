@@ -1,23 +1,23 @@
 import { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
-// services
-// hooks
-// components
-// ui
-import { CalendarDays, Download, RefreshCw } from "lucide-react";
-import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
-import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "@/components/analytics";
-// helpers
+import { CalendarDays, Download, RefreshCw } from "lucide-react";
 // types
-// fetch-keys
+import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
+// ui
+import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "@/components/analytics";
+// constants
 import { ANALYTICS } from "@/constants/fetch-keys";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { useCycle, useModule, useProject, useUser, useWorkspace } from "@/hooks/store";
+// hooks
+import { useCycle, useModule, useProject, useWorkspace, useUser } from "@/hooks/store";
+// services
 import { AnalyticsService } from "@/services/analytics.service";
 
 type Props = {
@@ -34,7 +34,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { workspaceProjectIds, getProjectById } = useProject();
   const { getWorkspaceById } = useWorkspace();
 
@@ -160,8 +160,8 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
               (cycleId
                 ? cycleDetails?.created_at
                 : moduleId
-                  ? moduleDetails?.created_at
-                  : projectDetails?.created_at) ?? ""
+                ? moduleDetails?.created_at
+                : projectDetails?.created_at) ?? ""
             )}
           </div>
         )}

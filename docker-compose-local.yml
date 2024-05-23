@@ -6,7 +6,6 @@ volumes:
   redisdata:
   uploads:
   pgdata:
-  
 
 services:
   plane-redis:
@@ -16,7 +15,7 @@ services:
       - dev_env
     volumes:
       - redisdata:/data
- 
+
   plane-minio:
     image: minio/minio
     restart: unless-stopped
@@ -30,7 +29,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
- 
+
   plane-db:
     image: postgres:15.2-alpine
     restart: unless-stopped
@@ -73,6 +72,20 @@ services:
       - worker
       - web
 
+  admin:
+    build:
+      context: .
+      dockerfile: ./admin/Dockerfile.dev
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - ./admin:/app/admin
+    depends_on:
+      - api
+      - worker
+      - web
+
   api:
     build:
       context: ./apiserver
@@ -84,13 +97,13 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/takeoff.local
+    command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apiserver/.env
     depends_on:
       - plane-db
       - plane-redis
-  
+
   worker:
     build:
       context: ./apiserver
@@ -102,7 +115,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/worker
+    command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -121,7 +134,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/beat
+    command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -140,9 +153,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: >
-        sh -c "python manage.py wait_for_db --settings=plane.settings.local &&
-             python manage.py migrate --settings=plane.settings.local"
+    command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -167,3 +178,4 @@ services:
       - web
       - api
       - space
+      - admin

@@ -1,6 +1,6 @@
 {
   "name": "@plane/rich-text-editor",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "description": "Rich Text Editor that powers Plane",
   "private": true,
   "main": "./dist/index.mjs",
@@ -32,14 +32,14 @@
     "@plane/editor-core": "*",
     "@plane/editor-extensions": "*",
     "@tiptap/core": "^2.1.13",
-    "lucide-react": "^0.294.0"
+    "lucide-react": "^0.378.0"
   },
   "devDependencies": {
     "@types/node": "18.15.3",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
     "eslint-config-custom": "*",
-    "postcss": "^8.4.29",
+    "postcss": "^8.4.38",
     "react": "^18.2.0",
     "tailwind-config-custom": "*",
     "tsconfig": "*",

@@ -1,22 +1,23 @@
-import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { Fragment, ReactNode, useRef, useState } from "react";
+import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// types
 import { IProject } from "@plane/types";
-// hooks
+// components
 import { ProjectLogo } from "@/components/project";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useProject } from "@/hooks/store";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
-// helpers
-// types
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
-import { TDropdownProps } from "./types";
 // constants
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
+// types
+import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -96,36 +97,20 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
 
   const selectedProject = value ? getProjectById(value) : null;
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    onClose && onClose();
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-  };
+  const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
+    dropdownRef,
+    inputRef,
+    isOpen,
+    onClose,
+    query,
+    setIsOpen,
+    setQuery,
+  });
 
   const dropdownOnChange = (val: string) => {
     onChange(val);
     handleClose();
   };
-
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
-
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]);
 
   return (
     <Combobox
@@ -203,6 +188,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

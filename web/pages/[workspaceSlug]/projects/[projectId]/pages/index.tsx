@@ -8,7 +8,7 @@ import { PageHead } from "@/components/core";
 import { PagesHeader } from "@/components/headers";
 import { PagesListRoot, PagesListView } from "@/components/pages";
 // hooks
-import { useApplication, useProject } from "@/hooks/store";
+import { useAppRouter, useProject } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // lib
@@ -19,9 +19,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { type } = router.query;
   // store hooks
-  const {
-    router: { workspaceSlug, projectId },
-  } = useApplication();
+  const { workspaceSlug, projectId } = useAppRouter();
   const { getProjectById } = useProject();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;

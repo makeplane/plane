@@ -158,7 +158,7 @@ export async function startImageUpload(
     const transaction = view.state.tr.insert(pos - 1, node).setMeta(uploadKey, { remove: { id } });
 
     view.dispatch(transaction);
-    view.focus();
+    if (view.hasFocus()) view.focus();
     editor.storage.image.uploadInProgress = false;
   } catch (error) {
     removePlaceholder(editor, view, id);

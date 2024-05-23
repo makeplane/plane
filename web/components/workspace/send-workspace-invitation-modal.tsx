@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -121,7 +121,10 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
 
                     <div className="mb-3 space-y-4">
                       {fields.map((field, index) => (
-                        <div key={field.id} className="group relative flex items-start gap-4">
+                        <div
+                          key={field.id}
+                          className="relative group mb-1 flex items-start justify-between gap-x-4 text-sm w-full"
+                        >
                           <div className="w-full">
                             <Controller
                               control={control}
@@ -155,39 +158,43 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                               )}
                             />
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Controller
-                              control={control}
-                              name={`emails.${index}.role`}
-                              rules={{ required: true }}
-                              render={({ field: { value, onChange } }) => (
-                                <CustomSelect
-                                  value={value}
-                                  label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
-                                  onChange={onChange}
-                                  optionsClassName="w-full"
-                                  className="flex-grow"
-                                  input
-                                >
-                                  {Object.entries(ROLE).map(([key, value]) => {
-                                    if (currentWorkspaceRole && currentWorkspaceRole >= parseInt(key))
-                                      return (
-                                        <CustomSelect.Option key={key} value={parseInt(key)}>
-                                          {value}
-                                        </CustomSelect.Option>
-                                      );
-                                  })}
-                                </CustomSelect>
-                              )}
-                            />
+                          <div className="flex items-center justify-between gap-2 flex-shrink-0 ">
+                            <div className="flex flex-col gap-1">
+                              <Controller
+                                control={control}
+                                name={`emails.${index}.role`}
+                                rules={{ required: true }}
+                                render={({ field: { value, onChange } }) => (
+                                  <CustomSelect
+                                    value={value}
+                                    label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
+                                    onChange={onChange}
+                                    optionsClassName="w-full"
+                                    className="flex-grow w-24"
+                                    input
+                                  >
+                                    {Object.entries(ROLE).map(([key, value]) => {
+                                      if (currentWorkspaceRole && currentWorkspaceRole >= parseInt(key))
+                                        return (
+                                          <CustomSelect.Option key={key} value={parseInt(key)}>
+                                            {value}
+                                          </CustomSelect.Option>
+                                        );
+                                    })}
+                                  </CustomSelect>
+                                )}
+                              />
+                            </div>
                             {fields.length > 1 && (
-                              <button
-                                type="button"
-                                className="grid place-items-center self-center rounded flex-shrink-0"
-                                onClick={() => remove(index)}
-                              >
-                                <X className="h-3.5 w-3.5 text-custom-text-200" />
-                              </button>
+                              <div className="flex-item flex w-6">
+                                <button
+                                  type="button"
+                                  className="place-items-center self-center rounded"
+                                  onClick={() => remove(index)}
+                                >
+                                  <X className="h-4 w-4 text-custom-text-200" />
+                                </button>
+                              </div>
                             )}
                           </div>
                         </div>

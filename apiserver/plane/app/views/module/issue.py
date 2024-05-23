@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .. import BaseViewSet, WebhookMixin
+from .. import BaseViewSet
 from plane.app.serializers import (
     ModuleIssueSerializer,
     IssueSerializer,
@@ -33,7 +33,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.user_timezone_converter import user_timezone_converter
 
-class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
+class ModuleIssueViewSet(BaseViewSet):
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
     webhook_event = "module_issue"
@@ -198,46 +198,66 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         ]
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
-    # create multiple module inside an issue
+    # add multiple module inside an issue and remove multiple modules from an issue
     def create_issue_modules(self, request, slug, project_id, issue_id):
         modules = request.data.get("modules", [])
-        if not modules:
-            return Response(
-                {"error": "Modules are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
+        removed_modules = request.data.get("removed_modules", [])
         project = Project.objects.get(pk=project_id)
-        _ = ModuleIssue.objects.bulk_create(
-            [
-                ModuleIssue(
+
+
+        if modules:
+            _ = ModuleIssue.objects.bulk_create(
+                [
+                    ModuleIssue(
+                        issue_id=issue_id,
+                        module_id=module,
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for module in modules
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+            # Bulk Update the activity
+            _ = [
+                issue_activity.delay(
+                    type="module.activity.created",
+                    requested_data=json.dumps({"module_id": module}),
+                    actor_id=str(request.user.id),
                     issue_id=issue_id,
-                    module_id=module,
                     project_id=project_id,
-                    workspace_id=project.workspace_id,
-                    created_by=request.user,
-                    updated_by=request.user,
+                    current_instance=None,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
                 )
                 for module in modules
-            ],
-            batch_size=10,
-            ignore_conflicts=True,
-        )
-        # Bulk Update the activity
-        _ = [
-            issue_activity.delay(
-                type="module.activity.created",
-                requested_data=json.dumps({"module_id": module}),
-                actor_id=str(request.user.id),
-                issue_id=issue_id,
+            ]
+
+        for module_id in removed_modules:
+            module_issue = ModuleIssue.objects.get(
+                workspace__slug=slug,
                 project_id=project_id,
-                current_instance=None,
+                module_id=module_id,
+                issue_id=issue_id,
+            )
+            issue_activity.delay(
+                type="module.activity.deleted",
+                requested_data=json.dumps({"module_id": str(module_id)}),
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=json.dumps(
+                    {"module_name": module_issue.module.name}
+                ),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            for module in modules
-        ]
+            module_issue.delete()
 
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 

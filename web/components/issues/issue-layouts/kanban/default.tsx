@@ -19,22 +19,22 @@ import { useCycle, useKanbanView, useLabel, useMember, useModule, useProject, us
 // types
 // parent components
 import { TRenderQuickActions } from "../list/list-view-types";
-import { getGroupByColumns, isWorkspaceLevel } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
 // components
 import { KanbanStoreType } from "./base-kanban-root";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
-import { KanbanDropLocation } from "./utils";
 
-export interface IGroupByKanBan {
+export interface IKanBan {
   issuesMap: IIssueMap;
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
   orderBy: TIssueOrderByOptions | undefined;
-  sub_group_id: string;
-  isDragDisabled: boolean;
+  isDropDisabled?: boolean;
+  dropErrorMessage?: string | undefined;
+  sub_group_id?: string;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
@@ -52,12 +52,12 @@ export interface IGroupByKanBan {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
   subGroupIssueHeaderCount?: (listId: string) => number;
 }
 
-const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
+export const KanBan: React.FC<IKanBan> = observer((props) => {
   const {
     issuesMap,
     issueIds,
@@ -65,7 +65,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     sub_group_by,
     group_by,
     sub_group_id = "null",
-    isDragDisabled,
     updateIssue,
     quickActions,
     kanbanFilters,
@@ -82,6 +81,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     showEmptyGroup = true,
     subGroupIssueHeaderCount,
     orderBy,
+    isDropDisabled,
+    dropErrorMessage,
   } = props;
 
   const member = useMember();
@@ -90,6 +91,9 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const cycle = useCycle();
   const moduleInfo = useModule();
   const projectState = useProjectState();
+  const issueKanBanView = useKanbanView();
+
+  const isDragDisabled = !issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by);
 
   const list = getGroupByColumns(
     group_by as GroupByColumnTypes,
@@ -142,7 +146,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
           return (
             <div
               key={subList.id}
-              className={`relative flex flex-shrink-0 flex-col group ${
+              className={`group relative flex flex-shrink-0 flex-col ${
                 groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
               } `}
             >
@@ -176,6 +180,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   orderBy={orderBy}
                   sub_group_id={sub_group_id}
                   isDragDisabled={isDragDisabled}
+                  isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
+                  dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
                   updateIssue={updateIssue}
                   quickActions={quickActions}
                   enableQuickIssueCreate={enableQuickIssueCreate}
@@ -191,92 +197,5 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
           );
         })}
     </div>
-  );
-});
-
-export interface IKanBan {
-  issuesMap: IIssueMap;
-  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
-  displayProperties: IIssueDisplayProperties | undefined;
-  sub_group_by: TIssueGroupByOptions | undefined;
-  group_by: TIssueGroupByOptions | undefined;
-  orderBy: TIssueOrderByOptions | undefined;
-  sub_group_id?: string;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  quickActions: TRenderQuickActions;
-  kanbanFilters: TIssueKanbanFilters;
-  handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  showEmptyGroup: boolean;
-  enableQuickIssueCreate?: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
-  disableIssueCreation?: boolean;
-  storeType: KanbanStoreType;
-  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  canEditProperties: (projectId: string | undefined) => boolean;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
-  subGroupIssueHeaderCount?: (listId: string) => number;
-}
-
-export const KanBan: React.FC<IKanBan> = observer((props) => {
-  const {
-    issuesMap,
-    issueIds,
-    displayProperties,
-    sub_group_by,
-    group_by,
-    sub_group_id = "null",
-    updateIssue,
-    quickActions,
-    kanbanFilters,
-    handleKanbanFilters,
-    enableQuickIssueCreate,
-    quickAddCallback,
-    viewId,
-    disableIssueCreation,
-    storeType,
-    addIssuesToView,
-    canEditProperties,
-    scrollableContainerRef,
-    handleOnDrop,
-    showEmptyGroup,
-    subGroupIssueHeaderCount,
-    orderBy,
-  } = props;
-
-  const issueKanBanView = useKanbanView();
-
-  return (
-    <GroupByKanBan
-      issuesMap={issuesMap}
-      issueIds={issueIds}
-      displayProperties={displayProperties}
-      group_by={group_by}
-      sub_group_by={sub_group_by}
-      orderBy={orderBy}
-      sub_group_id={sub_group_id}
-      isDragDisabled={!issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by)}
-      updateIssue={updateIssue}
-      quickActions={quickActions}
-      kanbanFilters={kanbanFilters}
-      handleKanbanFilters={handleKanbanFilters}
-      enableQuickIssueCreate={enableQuickIssueCreate}
-      quickAddCallback={quickAddCallback}
-      viewId={viewId}
-      disableIssueCreation={disableIssueCreation}
-      storeType={storeType}
-      addIssuesToView={addIssuesToView}
-      canEditProperties={canEditProperties}
-      scrollableContainerRef={scrollableContainerRef}
-      handleOnDrop={handleOnDrop}
-      showEmptyGroup={showEmptyGroup}
-      subGroupIssueHeaderCount={subGroupIssueHeaderCount}
-    />
   );
 });

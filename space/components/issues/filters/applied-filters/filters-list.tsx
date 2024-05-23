@@ -1,32 +1,34 @@
-// components
+"use client";
+
 // icons
+import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
-// helpers
-import { IIssueFilterOptions } from "@/store/issues/types";
-import { IIssueLabel, IIssueState } from "types/issue";
+// types
+import { IIssueLabel, IIssueState, TFilters } from "@/types/issue";
+// components
 import { AppliedPriorityFilters } from "./priority";
 import { AppliedStateFilters } from "./state";
-// types
 
 type Props = {
-  appliedFilters: IIssueFilterOptions;
+  appliedFilters: TFilters;
   handleRemoveAllFilters: () => void;
-  handleRemoveFilter: (key: keyof IIssueFilterOptions, value: string | null) => void;
+  handleRemoveFilter: (key: keyof TFilters, value: string | null) => void;
   labels?: IIssueLabel[] | undefined;
   states?: IIssueState[] | undefined;
 };
 
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
 
-export const AppliedFiltersList: React.FC<Props> = (props) => {
+export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters = {}, handleRemoveAllFilters, handleRemoveFilter, states } = props;
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2">
       {Object.entries(appliedFilters).map(([key, value]) => {
-        const filterKey = key as keyof IIssueFilterOptions;
+        const filterKey = key as keyof TFilters;
+        const filterValue = value as TFilters[keyof TFilters];
 
-        if (!value) return;
+        if (!filterValue) return;
 
         return (
           <div
@@ -36,7 +38,10 @@ export const AppliedFiltersList: React.FC<Props> = (props) => {
             <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "priority" && (
-                <AppliedPriorityFilters handleRemove={(val) => handleRemoveFilter("priority", val)} values={value} />
+                <AppliedPriorityFilters
+                  handleRemove={(val) => handleRemoveFilter("priority", val)}
+                  values={filterValue ?? []}
+                />
               )}
 
               {/* {filterKey === "labels" && labels && (
@@ -51,7 +56,7 @@ export const AppliedFiltersList: React.FC<Props> = (props) => {
                 <AppliedStateFilters
                   handleRemove={(val) => handleRemoveFilter("state", val)}
                   states={states}
-                  values={value}
+                  values={filterValue ?? []}
                 />
               )}
 
@@ -76,4 +81,4 @@ export const AppliedFiltersList: React.FC<Props> = (props) => {
       </button>
     </div>
   );
-};
+});

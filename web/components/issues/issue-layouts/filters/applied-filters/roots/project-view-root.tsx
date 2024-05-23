@@ -1,6 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
@@ -95,25 +95,24 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   };
 
   return (
-    <div className="flex items-center justify-between gap-4 p-4">
-      <AppliedFiltersList
-        appliedFilters={appliedFilters ?? {}}
-        handleClearAllFilters={handleClearAllFilters}
-        handleRemoveFilter={handleRemoveFilter}
-        labels={projectLabels ?? []}
-        states={projectStates}
-        alwaysAllowEditing
-      />
+    <div className="flex justify-between gap-4 p-4">
+      <div>
+        <AppliedFiltersList
+          appliedFilters={appliedFilters ?? {}}
+          handleClearAllFilters={handleClearAllFilters}
+          handleRemoveFilter={handleRemoveFilter}
+          labels={projectLabels ?? []}
+          states={projectStates}
+          alwaysAllowEditing
+        />
+      </div>
 
       {!areFiltersEqual && (
-        <>
-          <div />
-          <div className="flex flex-shrink-0 items-center justify-center">
-            <Button variant="primary" size="sm" onClick={handleUpdateView}>
-              Update view
-            </Button>
-          </div>
-        </>
+        <div>
+          <Button variant="primary" size="sm" className="flex-shrink-0" onClick={handleUpdateView}>
+            Update view
+          </Button>
+        </div>
       )}
     </div>
   );

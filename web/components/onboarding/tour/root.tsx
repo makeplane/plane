@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
-import Image from "next/image";
+import { observer } from "mobx-react";
+import Image, { StaticImageData } from "next/image";
 import { X } from "lucide-react";
-// hooks
-import { Button } from "@plane/ui";
-import { TourSidebar } from "@/components/onboarding";
-import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
-import { useApplication, useEventTracker, useUser } from "@/hooks/store";
-// components
 // ui
+import { Button } from "@plane/ui";
+// components
+import { TourSidebar } from "@/components/onboarding";
+// constants
+import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
+// hooks
+import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
 import CyclesTour from "public/onboarding/cycles.webp";
 import IssuesTour from "public/onboarding/issues.webp";
@@ -16,6 +17,7 @@ import ModulesTour from "public/onboarding/modules.webp";
 import PagesTour from "public/onboarding/pages.webp";
 import ViewsTour from "public/onboarding/views.webp";
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
+
 // constants
 
 type Props = {
@@ -28,7 +30,7 @@ const TOUR_STEPS: {
   key: TTourSteps;
   title: string;
   description: string;
-  image: any;
+  image: StaticImageData;
   prevStep?: TTourSteps;
   nextStep?: TTourSteps;
 }[] = [
@@ -80,9 +82,9 @@ export const TourRoot: React.FC<Props> = observer((props) => {
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement, captureEvent } = useEventTracker();
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
 
   const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
   const currentStep = TOUR_STEPS[currentStepIndex];
@@ -169,7 +171,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     onClick={() => {
                       setTrackElement("Product tour");
                       onComplete();
-                      commandPaletteStore.toggleCreateProjectModal(true);
+                      toggleCreateProjectModal(true);
                     }}
                   >
                     Create my first project

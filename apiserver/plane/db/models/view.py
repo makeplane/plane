@@ -1,9 +1,11 @@
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 # Module import
-from . import ProjectBaseModel, BaseModel, WorkspaceBaseModel
+from .base import BaseModel
+from .project import ProjectBaseModel
+from .workspace import WorkspaceBaseModel
 
 
 def get_default_filters():
@@ -50,6 +52,7 @@ def get_default_display_properties():
     }
 
 
+# DEPRECATED TODO: - Remove in next release
 class GlobalView(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="global_views"
@@ -62,6 +65,7 @@ class GlobalView(BaseModel):
     )
     query_data = models.JSONField(default=dict)
     sort_order = models.FloatField(default=65535)
+    logo_props = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Global View"
@@ -97,6 +101,7 @@ class IssueView(WorkspaceBaseModel):
         default=1, choices=((0, "Private"), (1, "Public"))
     )
     sort_order = models.FloatField(default=65535)
+    logo_props = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Issue View"

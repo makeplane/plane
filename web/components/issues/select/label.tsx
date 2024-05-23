@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
@@ -57,6 +57,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const handleClose = () => {
     if (isDropdownOpen) setIsDropdownOpen(false);
     if (referenceElement) referenceElement.blur();
+    setQuery("");
   };
 
   const toggleDropdown = () => {
@@ -106,7 +107,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
           {label ? (
             label
           ) : value && value.length > 0 ? (
-            <span className="flex items-center justify-center gap-2 text-xs">
+            <span className="flex items-center justify-center gap-2 text-xs h-full">
               <IssueLabelsList
                 labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
                 length={3}

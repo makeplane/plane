@@ -1,7 +1,7 @@
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { FileText, Plus } from "lucide-react";
+import { FileText } from "lucide-react";
 // hooks
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
@@ -9,7 +9,7 @@ import { Breadcrumbs, Button } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // components
 import { ProjectLogo } from "@/components/project";
-import { useApplication, usePage, useProject } from "@/hooks/store";
+import { useCommandPalette, usePage, useProject } from "@/hooks/store";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -17,11 +17,11 @@ export interface IPagesHeaderProps {
 
 export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   const { showButton = false } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, pageId } = router.query;
-
-  const { commandPalette: commandPaletteStore } = useApplication();
+  // store hooks
+  const { toggleCreatePageModal } = useCommandPalette();
   const { currentProjectDetails } = useProject();
 
   const { name } = usePage(pageId?.toString() ?? "");
@@ -41,7 +41,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
                       label={currentProjectDetails?.name ?? "Project"}
                       icon={
                         currentProjectDetails && (
-                          <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                          <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                             <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                           </span>
                         )
@@ -79,13 +79,8 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
       </div>
       {showButton && (
         <div className="flex items-center gap-2">
-          <Button
-            variant="primary"
-            prependIcon={<Plus />}
-            size="sm"
-            onClick={() => commandPaletteStore.toggleCreatePageModal(true)}
-          >
-            Create Page
+          <Button variant="primary" size="sm" onClick={() => toggleCreatePageModal(true)}>
+            Add Page
           </Button>
         </div>
       )}

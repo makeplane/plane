@@ -2,8 +2,15 @@
 from rest_framework import serializers
 
 # Module import
+from plane.db.models import (
+    Account,
+    Profile,
+    User,
+    Workspace,
+    WorkspaceMemberInvite,
+)
+
 from .base import BaseSerializer
-from plane.db.models import User, Workspace, WorkspaceMemberInvite
 
 
 class UserSerializer(BaseSerializer):
@@ -23,10 +30,10 @@ class UserSerializer(BaseSerializer):
             "last_logout_ip",
             "last_login_uagent",
             "token_updated_at",
-            "is_onboarded",
             "is_bot",
             "is_password_autoset",
             "is_email_verified",
+            "is_active",
         ]
         extra_kwargs = {"password": {"write_only": True}}
 
@@ -50,19 +57,11 @@ class UserMeSerializer(BaseSerializer):
             "is_active",
             "is_bot",
             "is_email_verified",
-            "is_managed",
-            "is_onboarded",
-            "is_tour_completed",
-            "mobile_number",
-            "role",
-            "onboarding_step",
             "user_timezone",
             "username",
-            "theme",
-            "last_workspace_id",
-            "use_case",
             "is_password_autoset",
             "is_email_verified",
+            "last_login_medium",
         ]
         read_only_fields = fields
 
@@ -83,25 +82,28 @@ class UserMeSettingsSerializer(BaseSerializer):
         workspace_invites = WorkspaceMemberInvite.objects.filter(
             email=obj.email
         ).count()
+
+        # profile
+        profile = Profile.objects.get(user=obj)
         if (
-            obj.last_workspace_id is not None
+            profile.last_workspace_id is not None
             and Workspace.objects.filter(
-                pk=obj.last_workspace_id,
+                pk=profile.last_workspace_id,
                 workspace_member__member=obj.id,
                 workspace_member__is_active=True,
             ).exists()
         ):
             workspace = Workspace.objects.filter(
-                pk=obj.last_workspace_id,
+                pk=profile.last_workspace_id,
                 workspace_member__member=obj.id,
                 workspace_member__is_active=True,
             ).first()
             return {
-                "last_workspace_id": obj.last_workspace_id,
+                "last_workspace_id": profile.last_workspace_id,
                 "last_workspace_slug": (
                     workspace.slug if workspace is not None else ""
                 ),
-                "fallback_workspace_id": obj.last_workspace_id,
+                "fallback_workspace_id": profile.last_workspace_id,
                 "fallback_workspace_slug": (
                     workspace.slug if workspace is not None else ""
                 ),
@@ -200,3 +202,15 @@ class ResetPasswordSerializer(serializers.Serializer):
     """
 
     new_password = serializers.CharField(required=True, min_length=8)
+
+
+class ProfileSerializer(BaseSerializer):
+    class Meta:
+        model = Profile
+        fields = "__all__"
+
+
+class AccountSerializer(BaseSerializer):
+    class Meta:
+        model = Account
+        fields = "__all__"

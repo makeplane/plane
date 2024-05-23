@@ -9,7 +9,7 @@ import { satisfiesDateFilter } from "@/helpers/filter.helper";
  * @param {ICycle[]} cycles
  * @returns {ICycle[]}
  */
-export const orderCycles = (cycles: ICycle[]): ICycle[] => {
+export const orderCycles = (cycles: ICycle[], sortByManual: boolean): ICycle[] => {
   if (cycles.length === 0) return [];
 
   const acceptedStatuses = ["current", "upcoming", "draft"];
@@ -22,10 +22,12 @@ export const orderCycles = (cycles: ICycle[]): ICycle[] => {
   };
 
   let filteredCycles = cycles.filter((c) => acceptedStatuses.includes(c.status?.toLowerCase() ?? ""));
-  filteredCycles = sortBy(filteredCycles, [
-    (c) => STATUS_ORDER[c.status?.toLowerCase() ?? ""],
-    (c) => (c.status?.toLowerCase() === "upcoming" ? c.start_date : c.name.toLowerCase()),
-  ]);
+  if (sortByManual) filteredCycles = sortBy(filteredCycles, [(c) => c.sort_order]);
+  else
+    filteredCycles = sortBy(filteredCycles, [
+      (c) => STATUS_ORDER[c.status?.toLowerCase() ?? ""],
+      (c) => (c.status?.toLowerCase() === "upcoming" ? c.start_date : c.name.toLowerCase()),
+    ]);
 
   return filteredCycles;
 };

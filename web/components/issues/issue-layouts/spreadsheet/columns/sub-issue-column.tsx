@@ -1,12 +1,12 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { TIssue } from "@plane/types";
-// hooks
-import { cn } from "@/helpers/common.helper";
-import { useApplication } from "@/hooks/store";
 // types
+import { TIssue } from "@plane/types";
 // helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useAppRouter } from "@/hooks/store";
 
 type Props = {
   issue: TIssue;
@@ -17,9 +17,9 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
   // router
   const router = useRouter();
   // hooks
-  const {
-    router: { workspaceSlug },
-  } = useApplication();
+  const { workspaceSlug } = useAppRouter();
+  // derived values
+  const subIssueCount = issue.sub_issues_count;
 
   const redirectToIssueDetail = () => {
     router.push({
@@ -32,15 +32,15 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
 
   return (
     <div
-      onClick={issue?.sub_issues_count ? redirectToIssueDetail : () => {}}
+      onClick={subIssueCount ? redirectToIssueDetail : () => {}}
       className={cn(
-        "flex h-11 w-full items-center px-2.5 py-1 text-xs border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80",
+        "flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 px-2.5 py-1 text-xs hover:bg-custom-background-80",
         {
-          "cursor-pointer": issue?.sub_issues_count,
+          "cursor-pointer": subIssueCount,
         }
       )}
     >
-      {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
+      {subIssueCount} {subIssueCount === 1 ? "sub-issue" : "sub-issues"}
     </div>
   );
 });

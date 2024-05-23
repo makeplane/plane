@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
@@ -28,5 +28,11 @@ export const GlobalViewsList: React.FC<Props> = observer((props) => {
 
   const filteredViewsList = getSearchedViews(searchQuery);
 
-  return <>{filteredViewsList?.map((viewId) => <GlobalViewListItem key={viewId} viewId={viewId} />)}</>;
+  return (
+    <>
+      {filteredViewsList?.map((viewId) => (
+        <GlobalViewListItem key={viewId} viewId={viewId} />
+      ))}
+    </>
+  );
 });

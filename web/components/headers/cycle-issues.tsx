@@ -1,22 +1,27 @@
 import { useCallback, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-// components
-import { ArrowRight, Plus, PanelRight } from "lucide-react";
+// icons
+import { ArrowRight, PanelRight } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+// ui
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/ui";
+// components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 import { ProjectLogo } from "@/components/project";
+// constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
 import { cn } from "@/helpers/common.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
+// hooks
 import {
-  useApplication,
   useEventTracker,
   useCycle,
   useLabel,
@@ -25,14 +30,10 @@ import {
   useProjectState,
   useUser,
   useIssues,
+  useCommandPalette,
 } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
-// ui
-// icons
-// helpers
-// types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// constants
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
@@ -69,11 +70,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
+    issues: { issuesCount },
   } = useIssues(EIssuesStoreType.CYCLE);
   const { currentProjectCycleIds, getCycleById } = useCycle();
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
@@ -146,11 +146,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const issueCount = cycleDetails
-    ? !issueFilters?.displayFilters?.sub_issue && cycleDetails?.sub_issues
-      ? cycleDetails.total_issues - cycleDetails?.sub_issues
-      : cycleDetails.total_issues
-    : undefined;
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <>
@@ -173,7 +169,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                         href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                         icon={
                           currentProjectDetails && (
-                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                            <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                               <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
@@ -182,7 +178,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     </span>
                     <Link
                       href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                      className="block md:hidden pl-2 text-custom-text-300"
+                      className="block pl-2 text-custom-text-300 md:hidden"
                     >
                       ...
                     </Link>
@@ -206,18 +202,18 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     label={
                       <>
                         <ContrastIcon className="h-3 w-3" />
-                        <div className="flex items-center gap-2 w-auto max-w-[70px] sm:max-w-[200px] truncate">
+                        <div className="flex w-auto max-w-[70px] items-center gap-2 truncate sm:max-w-[200px]">
                           <p className="truncate">{cycleDetails?.name && cycleDetails.name}</p>
-                          {issueCount && issueCount > 0 ? (
+                          {issuesCount && issuesCount > 0 ? (
                             <Tooltip
                               isMobile={isMobile}
-                              tooltipContent={`There are ${issueCount} ${
-                                issueCount > 1 ? "issues" : "issue"
+                              tooltipContent={`There are ${issuesCount} ${
+                                issuesCount > 1 ? "issues" : "issue"
                               } in this cycle`}
                               position="bottom"
                             >
-                              <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                                {issueCount}
+                              <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
+                                {issuesCount}
                               </span>
                             </Tooltip>
                           ) : null}
@@ -233,13 +229,13 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               />
             </Breadcrumbs>
           </div>
-          <div className="hidden md:flex items-center gap-2 ">
+          <div className="hidden items-center gap-2 md:flex ">
             <LayoutSelection
               layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />
-            <FiltersDropdown title="Filters" placement="bottom-end">
+            <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
               <FilterSelection
                 filters={issueFilters?.filters ?? {}}
                 handleFiltersUpdate={handleFiltersUpdate}
@@ -280,7 +276,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
                     size="sm"
-                    prependIcon={<Plus />}
                   >
                     Add Issue
                   </Button>
@@ -297,10 +292,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           </div>
           <button
             type="button"
-            className="grid md:hidden h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+            className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 md:hidden"
             onClick={toggleSidebar}
           >
-            <PanelRight className={cn("w-4 h-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
+            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
         </div>
       </div>

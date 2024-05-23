@@ -2,20 +2,17 @@ import { Fragment, ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronDown } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// hooks
+// ui
 import { ContrastIcon } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
-import { useCycle } from "@/hooks/store";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-// components
-import { DropdownButton } from "../buttons";
-// icons
 // helpers
-// types
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useCycle } from "@/hooks/store";
+import { useDropdown } from "@/hooks/use-dropdown";
+// local components and constants
+import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { TDropdownProps } from "../types";
-// constants
 import { CycleOptions } from "./cycle-options";
 
 type Props = TDropdownProps & {
@@ -59,31 +56,17 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
 
   const selectedName = value ? getCycleNameById(value) : null;
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    onClose && onClose();
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-    if (isOpen) onClose && onClose();
-  };
+  const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
+    dropdownRef,
+    isOpen,
+    onClose,
+    setIsOpen,
+  });
 
   const dropdownOnChange = (val: string | null) => {
     onChange(val);
     handleClose();
   };
-
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
 
   return (
     <Combobox
@@ -133,7 +116,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
             >
               {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
-                <span className="flex-grow truncate max-w-40">{selectedName ?? placeholder}</span>
+                <span className="max-w-40 flex-grow truncate">{selectedName ?? placeholder}</span>
               )}
               {dropdownArrow && (
                 <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />

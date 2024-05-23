@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import Router from "next/router";
 import { useTheme } from "next-themes";
@@ -12,9 +12,9 @@ import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers
 import { resolveGeneralTheme } from "@/helpers/theme.helper";
 // hooks
-import { useApplication, useUser, useWorkspace } from "@/hooks/store";
-// layouts
-import InstanceLayout from "@/layouts/instance-layout";
+import { useInstance, useWorkspace, useUser } from "@/hooks/store";
+// wrappers
+import { InstanceWrapper } from "@/lib/wrappers";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });
@@ -32,14 +32,12 @@ export interface IAppProvider {
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
   // store hooks
+  const { config } = useInstance();
   const {
-    currentUser,
+    data: currentUser,
     membership: { currentProjectRole, currentWorkspaceRole },
   } = useUser();
   const { currentWorkspace } = useWorkspace();
-  const {
-    config: { envConfig },
-  } = useApplication();
   // themes
   const { resolvedTheme } = useTheme();
 
@@ -47,7 +45,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
     <>
       {/* TODO: Need to handle custom themes for toast */}
       <Toast theme={resolveGeneralTheme(resolvedTheme)} />
-      <InstanceLayout>
+      <InstanceWrapper>
         <StoreWrapper>
           <CrispWrapper user={currentUser}>
             <PostHogProvider
@@ -55,14 +53,14 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
               currentWorkspaceId={currentWorkspace?.id}
               workspaceRole={currentWorkspaceRole}
               projectRole={currentProjectRole}
-              posthogAPIKey={envConfig?.posthog_api_key || null}
-              posthogHost={envConfig?.posthog_host || null}
+              posthogAPIKey={config?.posthog_api_key || undefined}
+              posthogHost={config?.posthog_host || undefined}
             >
               <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
             </PostHogProvider>
           </CrispWrapper>
         </StoreWrapper>
-      </InstanceLayout>
+      </InstanceWrapper>
     </>
   );
 });

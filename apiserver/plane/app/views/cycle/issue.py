@@ -23,7 +23,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .. import BaseViewSet, WebhookMixin
+from .. import BaseViewSet
 from plane.app.serializers import (
     IssueSerializer,
     CycleIssueSerializer,
@@ -40,7 +40,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.user_timezone_converter import user_timezone_converter
 
-class CycleIssueViewSet(WebhookMixin, BaseViewSet):
+class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
     model = CycleIssue
 
@@ -254,6 +254,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
         update_cycle_issue_activity = []
         # Iterate over each cycle_issue in cycle_issues
         for cycle_issue in cycle_issues:
+            old_cycle_id = cycle_issue.cycle_id
             # Update the cycle_issue's cycle_id
             cycle_issue.cycle_id = cycle_id
             # Add the modified cycle_issue to the records_to_update list
@@ -261,7 +262,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             # Record the update activity
             update_cycle_issue_activity.append(
                 {
-                    "old_cycle_id": str(cycle_issue.cycle_id),
+                    "old_cycle_id": str(old_cycle_id),
                     "new_cycle_id": str(cycle_id),
                     "issue_id": str(cycle_issue.issue_id),
                 }

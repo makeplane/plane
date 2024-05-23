@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // components
 import { StateGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";

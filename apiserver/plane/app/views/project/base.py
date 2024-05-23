@@ -1,5 +1,6 @@
 # Python imports
 import boto3
+import json
 
 # Django imports
 from django.db import IntegrityError
@@ -14,6 +15,7 @@ from django.db.models import (
 )
 from django.conf import settings
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from rest_framework.response import Response
@@ -22,11 +24,10 @@ from rest_framework import serializers
 from rest_framework.permissions import AllowAny
 
 # Module imports
-from plane.app.views.base import BaseViewSet, BaseAPIView, WebhookMixin
+from plane.app.views.base import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
     ProjectSerializer,
     ProjectListSerializer,
-    ProjectFavoriteSerializer,
     ProjectDeployBoardSerializer,
 )
 
@@ -40,7 +41,7 @@ from plane.db.models import (
     ProjectMember,
     Workspace,
     State,
-    ProjectFavorite,
+    UserFavorite,
     ProjectIdentifier,
     Module,
     Cycle,
@@ -50,9 +51,10 @@ from plane.db.models import (
     Issue,
 )
 from plane.utils.cache import cache_response
+from plane.bgtasks.webhook_task import model_activity
 
 
-class ProjectViewSet(WebhookMixin, BaseViewSet):
+class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
     webhook_event = "project"
@@ -87,10 +89,11 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 is_favorite=Exists(
-                    ProjectFavorite.objects.filter(
+                    UserFavorite.objects.filter(
                         user=self.request.user,
+                        entity_identifier=OuterRef("pk"),
+                        entity_type="project",
                         project_id=OuterRef("pk"),
-                        workspace__slug=self.kwargs.get("slug"),
                     )
                 )
             )
@@ -334,6 +337,17 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     .filter(pk=serializer.data["id"])
                     .first()
                 )
+
+                model_activity.delay(
+                    model_name="project",
+                    model_id=str(project.id),
+                    requested_data=request.data,
+                    current_instance=None,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 serializer = ProjectListSerializer(project)
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
@@ -364,7 +378,9 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             workspace = Workspace.objects.get(slug=slug)
 
             project = Project.objects.get(pk=pk)
-
+            current_instance = json.dumps(
+                ProjectSerializer(project).data, cls=DjangoJSONEncoder
+            )
             if project.archived_at:
                 return Response(
                     {"error": "Archived projects cannot be updated"},
@@ -401,6 +417,16 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
                     .first()
+                )
+
+                model_activity.delay(
+                    model_name="project",
+                    model_id=str(project.id),
+                    requested_data=request.data,
+                    current_instance=current_instance,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
                 )
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -534,8 +560,7 @@ class ProjectUserViewsEndpoint(BaseAPIView):
 
 
 class ProjectFavoritesViewSet(BaseViewSet):
-    serializer_class = ProjectFavoriteSerializer
-    model = ProjectFavorite
+    model = UserFavorite
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -553,15 +578,21 @@ class ProjectFavoritesViewSet(BaseViewSet):
         serializer.save(user=self.request.user)
 
     def create(self, request, slug):
-        serializer = ProjectFavoriteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        _ = UserFavorite.objects.create(
+            user=request.user,
+            entity_type="project",
+            entity_identifier=request.data.get("project"),
+            project_id=request.data.get("project"),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id):
-        project_favorite = ProjectFavorite.objects.get(
-            project=project_id, user=request.user, workspace__slug=slug
+        project_favorite = UserFavorite.objects.get(
+            entity_identifier=project_id,
+            entity_type="project",
+            project=project_id,
+            user=request.user,
+            workspace__slug=slug,
         )
         project_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -576,11 +607,19 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
     @cache_response(60 * 60 * 24, user=False)
     def get(self, request):
         files = []
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
+        if settings.USE_MINIO:
+            s3 = boto3.client(
+                "s3",
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            )
+        else:
+            s3 = boto3.client(
+                "s3",
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            )
         params = {
             "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
             "Prefix": "static/project-cover/",

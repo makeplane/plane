@@ -1,13 +1,13 @@
 {
   "name": "tailwind-config-custom",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "description": "common tailwind configuration across monorepo",
   "main": "index.js",
   "private": true,
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
     "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.21",
+    "postcss": "^8.4.38",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.3.0",
     "tailwindcss": "^3.2.7",

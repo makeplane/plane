@@ -1,26 +1,23 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// icons
-import { Plus } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+import { CyclesViewHeader } from "@/components/cycles";
 import { ProjectLogo } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    commandPalette: { toggleCreateCycleModal },
-  } = useApplication();
+  const { toggleCreateCycleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
@@ -58,12 +55,12 @@ export const CyclesHeader: FC = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
-      {canUserCreateCycle && (
+      {canUserCreateCycle && currentProjectDetails && (
         <div className="flex items-center gap-3">
+          <CyclesViewHeader projectId={currentProjectDetails.id} />
           <Button
             variant="primary"
             size="sm"
-            prependIcon={<Plus />}
             onClick={() => {
               setTrackElement("Cycles page");
               toggleCreateCycleModal(true);

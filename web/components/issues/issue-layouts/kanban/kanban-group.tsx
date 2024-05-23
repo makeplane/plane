@@ -2,6 +2,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
+import { observer } from "mobx-react";
 //types
 import {
   TGroupedIssues,
@@ -13,19 +14,16 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
-import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 //components
+import { GroupDragOverlay } from "../group-drag-overlay";
 import { TRenderQuickActions } from "../list/list-view-types";
-import {
-  KanbanDropLocation,
-  getSourceFromDropPayload,
-  getDestinationFromDropPayload,
-  highlightIssueOnDrop,
-} from "./utils";
+import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {
@@ -37,6 +35,8 @@ interface IKanbanGroup {
   group_by: TIssueGroupByOptions | undefined;
   sub_group_id: string;
   isDragDisabled: boolean;
+  isDropDisabled: boolean;
+  dropErrorMessage: string | undefined;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   enableQuickIssueCreate?: boolean;
@@ -51,11 +51,11 @@ interface IKanbanGroup {
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle?: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  handleOnDrop: (source: KanbanDropLocation, destination: KanbanDropLocation) => Promise<void>;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   orderBy: TIssueOrderByOptions | undefined;
 }
 
-export const KanbanGroup = (props: IKanbanGroup) => {
+export const KanbanGroup = observer((props: IKanbanGroup) => {
   const {
     groupId,
     sub_group_id,
@@ -66,6 +66,8 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     displayProperties,
     issueIds,
     isDragDisabled,
+    isDropDisabled,
+    dropErrorMessage,
     updateIssue,
     quickActions,
     canEditProperties,
@@ -109,16 +111,29 @@ export const KanbanGroup = (props: IKanbanGroup) => {
 
           if (!source || !destination) return;
 
+          if (isDropDisabled) {
+            dropErrorMessage &&
+              setToast({
+                type: TOAST_TYPE.WARNING,
+                title: "Warning!",
+                message: dropErrorMessage,
+              });
+            return;
+          }
+
           handleOnDrop(source, destination);
 
-          highlightIssueOnDrop(payload.source.element.id, orderBy !== "sort_order");
+          highlightIssueOnDrop(
+            getIssueBlockId(source.id, destination?.groupId, destination?.subGroupId),
+            orderBy !== "sort_order"
+          );
         },
       }),
       autoScrollForElements({
         element,
       })
     );
-  }, [columnRef?.current, groupId, sub_group_id, setIsDraggingOverColumn, orderBy]);
+  }, [columnRef, groupId, sub_group_id, setIsDraggingOverColumn, orderBy, isDropDisabled, dropErrorMessage, handleOnDrop]);
 
   const prePopulateQuickAddData = (
     groupByKey: string | undefined,
@@ -172,36 +187,30 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     return preloadedData;
   };
 
-  const shouldOverlay = isDraggingOverColumn && orderBy !== "sort_order";
-  const readableOrderBy = ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.title;
+  const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
+  const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 
   return (
     <div
       id={`${groupId}__${sub_group_id}`}
       className={cn(
-        "relative h-full transition-all min-h-[50px]",
+        "relative h-full transition-all min-h-[120px]",
         { "bg-custom-background-80 rounded": isDraggingOverColumn },
-        { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlay }
+        { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlayBeVisible }
       )}
       ref={columnRef}
     >
-      <div
-        //column overlay when issues are not sorted by manual
-        className={cn(
-          "absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded",
-          {
-            "flex flex-col bg-custom-background-80 border-[1px] border-custom-border-300 z-[2]": shouldOverlay,
-          },
-          { hidden: !shouldOverlay },
-          { "justify-center": !sub_group_by }
-        )}
-      >
-        {readableOrderBy && <span className="pt-6">The layout is ordered by {readableOrderBy}.</span>}
-        <span>Drop here to move the issue.</span>
-      </div>
+      <GroupDragOverlay
+        dragColumnOrientation={sub_group_by ? "justify-start": "justify-center" }
+        canOverlayBeVisible={canOverlayBeVisible}
+        isDropDisabled={isDropDisabled}
+        dropErrorMessage={dropErrorMessage}
+        orderBy={orderBy}
+        isDraggingOverColumn={isDraggingOverColumn}
+      />
       <KanbanIssueBlocksList
         sub_group_id={sub_group_id}
-        columnId={groupId}
+        groupId={groupId}
         issuesMap={issuesMap}
         issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
         displayProperties={displayProperties}
@@ -210,6 +219,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
         quickActions={quickActions}
         canEditProperties={canEditProperties}
         scrollableContainerRef={sub_group_by ? scrollableContainerRef : columnRef}
+        canDropOverIssue={!canOverlayBeVisible}
       />
 
       {enableQuickIssueCreate && !disableIssueCreation && (
@@ -228,4 +238,4 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       )}
     </div>
   );
-};
+});

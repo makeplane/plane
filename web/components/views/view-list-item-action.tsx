@@ -11,7 +11,8 @@ import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useProjectView, useUser } from "@/hooks/store";
+import { useMember, useProjectView, useUser } from "@/hooks/store";
+import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
@@ -31,10 +32,11 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { addViewToFavorites, removeViewFromFavorites } = useProjectView();
+  const { getUserDetails } = useMember();
 
   // derived values
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  // @ts-expect-error key types are not compatible
+
   const totalFilters = calculateTotalFilters(view.filters ?? {});
 
   // handlers
@@ -49,6 +51,8 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
 
     removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
   };
+
+  const createdByDetails = view.created_by ? getUserDetails(view.created_by) : undefined;
 
   return (
     <>
@@ -65,6 +69,10 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
       <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
         {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
       </p>
+
+      {/* created by */}
+      {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
+
       {isEditingAllowed && (
         <FavoriteStar
           onClick={(e) => {

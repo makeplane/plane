@@ -138,7 +138,7 @@ class StateAPIEndpoint(BaseAPIView):
         serializer = StateSerializer(state, data=request.data, partial=True)
         if serializer.is_valid():
             if (
-                str(request.data.get("external_id"))
+                request.data.get("external_id")
                 and (state.external_id != str(request.data.get("external_id")))
                 and State.objects.filter(
                     project_id=project_id,

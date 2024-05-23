@@ -2,7 +2,7 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.19.0",
+  "version": "0.20.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -14,7 +14,10 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --external react --minify",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "postcss": "postcss styles/globals.css -o styles/output.css --watch"
   },
   "dependencies": {
     "@blueprintjs/core": "^4.16.3",
@@ -30,14 +33,30 @@
     "tailwind-merge": "^2.0.0"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^1.4.0",
+    "@storybook/addon-essentials": "^8.1.1",
+    "@storybook/addon-interactions": "^8.1.1",
+    "@storybook/addon-links": "^8.1.1",
+    "@storybook/addon-onboarding": "^8.1.1",
+    "@storybook/addon-styling-webpack": "^1.0.0",
+    "@storybook/addon-webpack5-compiler-swc": "^1.0.2",
+    "@storybook/blocks": "^8.1.1",
+    "@storybook/react": "^8.1.1",
+    "@storybook/react-webpack5": "^8.1.1",
+    "@storybook/test": "^8.1.1",
     "@types/node": "^20.5.2",
     "@types/react": "^18.2.42",
     "@types/react-color": "^3.0.9",
     "@types/react-dom": "^18.2.17",
+    "autoprefixer": "^10.4.19",
     "classnames": "^2.3.2",
     "eslint-config-custom": "*",
+    "postcss-cli": "^11.0.0",
+    "postcss-nested": "^6.0.1",
     "react": "^18.2.0",
+    "storybook": "^8.1.1",
     "tailwind-config-custom": "*",
+    "tailwindcss": "^3.4.3",
     "tsconfig": "*",
     "tsup": "^5.10.1",
     "typescript": "4.7.4"

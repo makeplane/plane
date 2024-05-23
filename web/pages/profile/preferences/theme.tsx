@@ -1,41 +1,39 @@
 import { useEffect, useState, ReactElement } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // ui
-import { Spinner, setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/ui";
 // components
+import { LogoSpinner } from "@/components/common";
 import { CustomThemeSelector, ThemeSwitch, PageHead } from "@/components/core";
 // constants
 import { I_THEME_OPTION, THEME_OPTIONS } from "@/constants/themes";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store";
 // layouts
 import { ProfilePreferenceSettingsLayout } from "@/layouts/settings-layout/profile/preferences";
 // type
 import { NextPageWithLayout } from "@/lib/types";
 
 const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
+  const { setTheme } = useTheme();
   // states
   const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
-  // store hooks
-  const { currentUser, updateCurrentUserTheme } = useUser();
-  // computed
-  const userTheme = currentUser?.theme;
   // hooks
-  const { setTheme } = useTheme();
+  const { data: userProfile, updateUserTheme } = useUserProfile();
 
   useEffect(() => {
-    if (userTheme) {
-      const userThemeOption = THEME_OPTIONS.find((t) => t.value === userTheme?.theme);
+    if (userProfile?.theme?.theme) {
+      const userThemeOption = THEME_OPTIONS.find((t) => t.value === userProfile?.theme?.theme);
       if (userThemeOption) {
         setCurrentTheme(userThemeOption);
       }
     }
-  }, [userTheme]);
+  }, [userProfile?.theme?.theme]);
 
   const handleThemeChange = (themeOption: I_THEME_OPTION) => {
     setTheme(themeOption.value);
-    const updateCurrentUserThemePromise = updateCurrentUserTheme(themeOption.value);
+    const updateCurrentUserThemePromise = updateUserTheme({ theme: themeOption.value });
 
     setPromiseToast(updateCurrentUserThemePromise, {
       loading: "Updating theme...",
@@ -53,7 +51,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title="Profile - Theme Prefrence" />
-      {currentUser ? (
+      {userProfile ? (
         <div className="mx-auto mt-10 h-full w-full overflow-y-auto md:px-6 px-4 pb-8 md:mt-14 lg:px-20 vertical-scrollbar scrollbar-md">
           <div className="flex items-center border-b border-custom-border-100 pb-3.5">
             <h3 className="text-xl font-medium">Preferences</h3>
@@ -67,11 +65,11 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
               <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
             </div>
           </div>
-          {userTheme?.theme === "custom" && <CustomThemeSelector />}
+          {userProfile?.theme?.theme === "custom" && <CustomThemeSelector />}
         </div>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-          <Spinner />
+          <LogoSpinner />
         </div>
       )}
     </>

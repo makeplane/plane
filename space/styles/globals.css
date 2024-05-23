@@ -41,6 +41,8 @@
     --color-text-300: 82, 82, 82; /* tertiary text */
     --color-text-400: 163, 163, 163; /* placeholder text */
 
+    --color-scrollbar: 163, 163, 163; /* scrollbar thumb */
+
     --color-border-100: 245, 245, 245; /* subtle border= 1 */
     --color-border-200: 229, 229, 229; /* subtle border- 2 */
     --color-border-300: 212, 212, 212; /* strong border- 1 */
@@ -99,6 +101,20 @@
     --color-background-100: 255, 255, 255; /* primary bg */
     --color-background-90: 247, 247, 247; /* secondary bg */
     --color-background-80: 232, 232, 232; /* tertiary bg */
+  }
+
+  [data-theme="light"] {
+    --color-text-100: 23, 23, 23; /* primary text */
+    --color-text-200: 58, 58, 58; /* secondary text */
+    --color-text-300: 82, 82, 82; /* tertiary text */
+    --color-text-400: 163, 163, 163; /* placeholder text */
+
+    --color-scrollbar: 163, 163, 163; /* scrollbar thumb */
+
+    --color-border-100: 245, 245, 245; /* subtle border= 1 */
+    --color-border-200: 229, 229, 229; /* subtle border- 2 */
+    --color-border-300: 212, 212, 212; /* strong border- 1 */
+    --color-border-400: 185, 185, 185; /* strong border- 2 */
 
     /* onboarding colors */
     --gradient-onboarding-100: linear-gradient(106deg, #f2f6ff 29.8%, #e1eaff 99.34%);
@@ -121,18 +137,27 @@
     --color-onboarding-border-300: 229, 229, 229, 0.5;
 
     --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(126, 139, 171, 0.1);
-  }
 
-  [data-theme="light"] {
-    --color-text-100: 23, 23, 23; /* primary text */
-    --color-text-200: 58, 58, 58; /* secondary text */
-    --color-text-300: 82, 82, 82; /* tertiary text */
-    --color-text-400: 163, 163, 163; /* placeholder text */
+    /* toast theme */
+    --color-toast-success-text: 62, 155, 79;
+    --color-toast-error-text: 220, 62, 66;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 51, 88, 212;
+    --color-toast-loading-text: 28, 32, 36;
+    --color-toast-secondary-text: 128, 131, 141;
+    --color-toast-tertiary-text: 96, 100, 108;
 
-    --color-border-100: 245, 245, 245; /* subtle border= 1 */
-    --color-border-200: 229, 229, 229; /* subtle border- 2 */
-    --color-border-300: 212, 212, 212; /* strong border- 1 */
-    --color-border-400: 185, 185, 185; /* strong border- 2 */
+    --color-toast-success-background: 253, 253, 254;
+    --color-toast-error-background: 255, 252, 252;
+    --color-toast-warning-background: 254, 253, 251;
+    --color-toast-info-background: 253, 253, 254;
+    --color-toast-loading-background: 253, 253, 254;
+
+    --color-toast-success-border: 218, 241, 219;
+    --color-toast-error-border: 255, 219, 220;
+    --color-toast-warning-border: 255, 247, 194;
+    --color-toast-info-border: 210, 222, 255;
+    --color-toast-loading-border: 224, 225, 230;
   }
 
   [data-theme="light-contrast"] {
@@ -140,6 +165,8 @@
     --color-text-200: 38, 38, 38; /* secondary text */
     --color-text-300: 58, 58, 58; /* tertiary text */
     --color-text-400: 115, 115, 115; /* placeholder text */
+
+    --color-scrollbar: 115, 115, 115; /* scrollbar thumb */
 
     --color-border-100: 34, 34, 34; /* subtle border= 1 */
     --color-border-200: 38, 38, 38; /* subtle border- 2 */
@@ -164,6 +191,20 @@
     --color-shadow-xl: 0px 0px 14px 0px rgba(0, 0, 0, 0.25), 0px 6px 10px 0px rgba(0, 0, 0, 0.55);
     --color-shadow-2xl: 0px 0px 18px 0px rgba(0, 0, 0, 0.25), 0px 8px 12px 0px rgba(0, 0, 0, 0.6);
     --color-shadow-3xl: 0px 4px 24px 0px rgba(0, 0, 0, 0.3), 0px 12px 40px 0px rgba(0, 0, 0, 0.65);
+  }
+
+  [data-theme="dark"] {
+    --color-text-100: 229, 229, 229; /* primary text */
+    --color-text-200: 163, 163, 163; /* secondary text */
+    --color-text-300: 115, 115, 115; /* tertiary text */
+    --color-text-400: 82, 82, 82; /* placeholder text */
+
+    --color-scrollbar: 82, 82, 82; /* scrollbar thumb */
+
+    --color-border-100: 34, 34, 34; /* subtle border= 1 */
+    --color-border-200: 38, 38, 38; /* subtle border- 2 */
+    --color-border-300: 46, 46, 46; /* strong border- 1 */
+    --color-border-400: 58, 58, 58; /* strong border- 2 */
 
     /* onboarding colors */
     --gradient-onboarding-100: linear-gradient(106deg, #18191b 25.17%, #18191b 99.34%);
@@ -185,18 +226,27 @@
     --color-onboarding-border-300: 34, 35, 38, 0.5;
 
     --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(39, 44, 56, 0.1);
-  }
 
-  [data-theme="dark"] {
-    --color-text-100: 229, 229, 229; /* primary text */
-    --color-text-200: 163, 163, 163; /* secondary text */
-    --color-text-300: 115, 115, 115; /* tertiary text */
-    --color-text-400: 82, 82, 82; /* placeholder text */
+    /* toast theme */
+    --color-toast-success-text: 178, 221, 181;
+    --color-toast-error-text: 206, 44, 49;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 141, 164, 239;
+    --color-toast-loading-text: 255, 255, 255;
+    --color-toast-secondary-text: 185, 187, 198;
+    --color-toast-tertiary-text: 139, 141, 152;
 
-    --color-border-100: 34, 34, 34; /* subtle border= 1 */
-    --color-border-200: 38, 38, 38; /* subtle border- 2 */
-    --color-border-300: 46, 46, 46; /* strong border- 1 */
-    --color-border-400: 58, 58, 58; /* strong border- 2 */
+    --color-toast-success-background: 46, 46, 46;
+    --color-toast-error-background: 46, 46, 46;
+    --color-toast-warning-background: 46, 46, 46;
+    --color-toast-info-background: 46, 46, 46;
+    --color-toast-loading-background: 46, 46, 46;
+
+    --color-toast-success-border: 42, 126, 59;
+    --color-toast-error-border: 100, 23, 35;
+    --color-toast-warning-border: 79, 52, 34;
+    --color-toast-info-border: 58, 91, 199;
+    --color-toast-loading-border: 96, 100, 108;
   }
 
   [data-theme="dark-contrast"] {
@@ -204,6 +254,8 @@
     --color-text-200: 241, 241, 241; /* secondary text */
     --color-text-300: 212, 212, 212; /* tertiary text */
     --color-text-400: 115, 115, 115; /* placeholder text */
+
+    --color-scrollbar: 115, 115, 115; /* scrollbar thumb */
 
     --color-border-100: 245, 245, 245; /* subtle border= 1 */
     --color-border-200: 229, 229, 229; /* subtle border- 2 */
@@ -276,4 +328,12 @@
 .hide-both-scrollbars::-webkit-scrollbar {
   height: 0 !important;
   width: 0 !important;
+}
+
+/* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */
+.disable-autofill-style:-webkit-autofill,
+.disable-autofill-style:-webkit-autofill:hover,
+.disable-autofill-style:-webkit-autofill:focus,
+.disable-autofill-style:-webkit-autofill:active {
+  -webkit-background-clip: text;
 }

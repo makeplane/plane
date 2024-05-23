@@ -1,20 +1,22 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// icons
 import { Plus, ChevronRight, Loader, Pencil } from "lucide-react";
+// types
 import { IUser, TIssue } from "@plane/types";
-// hooks
+// ui
 import { CircularProgressIndicator, CustomMenu, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { ExistingIssuesListModal } from "@/components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
+// hooks
 import { useEventTracker, useIssueDetail } from "@/hooks/store";
-// components
+// local components
 import { IssueList } from "./issues-list";
-// ui
-// helpers
-// types
 
 export interface ISubIssuesRoot {
   workspaceSlug: string;
@@ -143,7 +145,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error fetching sub-issues",
+            title: "Error!",
             message: "Error fetching sub-issues",
           });
         }
@@ -153,13 +155,13 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           await createSubIssues(workspaceSlug, projectId, parentIssueId, issueIds);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Sub-issues added successfully",
+            title: "Success!",
             message: "Sub-issues added successfully",
           });
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error adding sub-issue",
+            title: "Error!",
             message: "Error adding sub-issue",
           });
         }
@@ -187,7 +189,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Sub-issue updated successfully",
+            title: "Success!",
             message: "Sub-issue updated successfully",
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
@@ -203,7 +205,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error updating sub-issue",
+            title: "Error!",
             message: "Error updating sub-issue",
           });
         }
@@ -214,7 +216,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           await removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Sub-issue removed successfully",
+            title: "Success!",
             message: "Sub-issue removed successfully",
           });
           captureIssueEvent({
@@ -239,7 +241,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error removing sub-issue",
+            title: "Error!",
             message: "Error removing sub-issue",
           });
         }
@@ -248,11 +250,6 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Issue deleted successfully",
-            message: "Issue deleted successfully",
-          });
           captureIssueEvent({
             eventName: "Sub-issue deleted",
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -267,7 +264,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error deleting issue",
+            title: "Error!",
             message: "Error deleting issue",
           });
         }
@@ -399,6 +396,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     parentIssueId={parentIssueId}
+                    rootIssueId={parentIssueId}
                     spacingLeft={10}
                     disabled={!disabled}
                     handleIssueCrudState={handleIssueCrudState}
@@ -534,6 +532,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     issueCrudState?.delete?.issue?.id as string
                   )
                 }
+                isSubIssue
               />
             )}
         </>

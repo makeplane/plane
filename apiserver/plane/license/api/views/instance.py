@@ -1,32 +1,29 @@
 # Python imports
-import uuid
+import os
 
 # Django imports
-from django.utils import timezone
-from django.contrib.auth.hashers import make_password
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+from django.conf import settings
 
 # Third party imports
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.response import Response
 
 # Module imports
 from plane.app.views import BaseAPIView
-from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
-from plane.license.api.serializers import (
-    InstanceSerializer,
-    InstanceAdminSerializer,
-    InstanceConfigurationSerializer,
-)
+from plane.db.models import Workspace
 from plane.license.api.permissions import (
     InstanceAdminPermission,
 )
-from plane.db.models import User
-from plane.license.utils.encryption import encrypt_data
+from plane.license.api.serializers import (
+    InstanceSerializer,
+)
+from plane.license.models import Instance
+from plane.license.utils.instance_value import (
+    get_configuration_value,
+)
 from plane.utils.cache import cache_response, invalidate_cache
+
 
 class InstanceEndpoint(BaseAPIView):
     def get_permissions(self):
@@ -41,6 +38,7 @@ class InstanceEndpoint(BaseAPIView):
     @cache_response(60 * 60 * 2, user=False)
     def get(self, request):
         instance = Instance.objects.first()
+
         # get the instance
         if instance is None:
             return Response(
@@ -51,7 +49,109 @@ class InstanceEndpoint(BaseAPIView):
         serializer = InstanceSerializer(instance)
         data = serializer.data
         data["is_activated"] = True
-        return Response(data, status=status.HTTP_200_OK)
+        # Get all the configuration
+        (
+            IS_GOOGLE_ENABLED,
+            IS_GITHUB_ENABLED,
+            GITHUB_APP_NAME,
+            EMAIL_HOST,
+            ENABLE_MAGIC_LINK_LOGIN,
+            ENABLE_EMAIL_PASSWORD,
+            SLACK_CLIENT_ID,
+            POSTHOG_API_KEY,
+            POSTHOG_HOST,
+            UNSPLASH_ACCESS_KEY,
+            OPENAI_API_KEY,
+        ) = get_configuration_value(
+            [
+                {
+                    "key": "IS_GOOGLE_ENABLED",
+                    "default": os.environ.get("IS_GOOGLE_ENABLED", "0"),
+                },
+                {
+                    "key": "IS_GITHUB_ENABLED",
+                    "default": os.environ.get("IS_GITHUB_ENABLED", "0"),
+                },
+                {
+                    "key": "GITHUB_APP_NAME",
+                    "default": os.environ.get("GITHUB_APP_NAME", ""),
+                },
+                {
+                    "key": "EMAIL_HOST",
+                    "default": os.environ.get("EMAIL_HOST", ""),
+                },
+                {
+                    "key": "ENABLE_MAGIC_LINK_LOGIN",
+                    "default": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "1"),
+                },
+                {
+                    "key": "ENABLE_EMAIL_PASSWORD",
+                    "default": os.environ.get("ENABLE_EMAIL_PASSWORD", "1"),
+                },
+                {
+                    "key": "SLACK_CLIENT_ID",
+                    "default": os.environ.get("SLACK_CLIENT_ID", None),
+                },
+                {
+                    "key": "POSTHOG_API_KEY",
+                    "default": os.environ.get("POSTHOG_API_KEY", None),
+                },
+                {
+                    "key": "POSTHOG_HOST",
+                    "default": os.environ.get("POSTHOG_HOST", None),
+                },
+                {
+                    "key": "UNSPLASH_ACCESS_KEY",
+                    "default": os.environ.get("UNSPLASH_ACCESS_KEY", ""),
+                },
+                {
+                    "key": "OPENAI_API_KEY",
+                    "default": os.environ.get("OPENAI_API_KEY", ""),
+                },
+            ]
+        )
+
+        data = {}
+        # Authentication
+        data["is_google_enabled"] = IS_GOOGLE_ENABLED == "1"
+        data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
+        data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
+        data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
+
+        # Github app name
+        data["github_app_name"] = str(GITHUB_APP_NAME)
+
+        # Slack client
+        data["slack_client_id"] = SLACK_CLIENT_ID
+
+        # Posthog
+        data["posthog_api_key"] = POSTHOG_API_KEY
+        data["posthog_host"] = POSTHOG_HOST
+
+        # Unsplash
+        data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
+
+        # Open AI settings
+        data["has_openai_configured"] = bool(OPENAI_API_KEY)
+
+        # File size settings
+        data["file_size_limit"] = float(
+            os.environ.get("FILE_SIZE_LIMIT", 5242880)
+        )
+
+        # is smtp configured
+        data["is_smtp_configured"] = bool(EMAIL_HOST)
+
+        # Base URL
+        data["admin_base_url"] = settings.ADMIN_BASE_URL
+        data["space_base_url"] = settings.SPACE_BASE_URL
+        data["app_base_url"] = settings.APP_BASE_URL
+
+        instance_data = serializer.data
+        instance_data["workspaces_exist"] = Workspace.objects.count() > 1
+
+        response_data = {"config": data, "instance": instance_data}
+        return Response(response_data, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="/api/instances/", user=False)
     def patch(self, request):
@@ -64,196 +164,6 @@ class InstanceEndpoint(BaseAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class InstanceAdminEndpoint(BaseAPIView):
-    permission_classes = [
-        InstanceAdminPermission,
-    ]
-
-    @invalidate_cache(path="/api/instances/", user=False)
-    # Create an instance admin
-    def post(self, request):
-        email = request.data.get("email", False)
-        role = request.data.get("role", 20)
-
-        if not email:
-            return Response(
-                {"error": "Email is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        instance = Instance.objects.first()
-        if instance is None:
-            return Response(
-                {"error": "Instance is not registered yet"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        # Fetch the user
-        user = User.objects.get(email=email)
-
-        instance_admin = InstanceAdmin.objects.create(
-            instance=instance,
-            user=user,
-            role=role,
-        )
-        serializer = InstanceAdminSerializer(instance_admin)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @cache_response(60 * 60 * 2)
-    def get(self, request):
-        instance = Instance.objects.first()
-        if instance is None:
-            return Response(
-                {"error": "Instance is not registered yet"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        instance_admins = InstanceAdmin.objects.filter(instance=instance)
-        serializer = InstanceAdminSerializer(instance_admins, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @invalidate_cache(path="/api/instances/", user=False)
-    def delete(self, request, pk):
-        instance = Instance.objects.first()
-        InstanceAdmin.objects.filter(instance=instance, pk=pk).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class InstanceConfigurationEndpoint(BaseAPIView):
-    permission_classes = [
-        InstanceAdminPermission,
-    ]
-
-    @cache_response(60 * 60 * 2, user=False)
-    def get(self, request):
-        instance_configurations = InstanceConfiguration.objects.all()
-        serializer = InstanceConfigurationSerializer(
-            instance_configurations, many=True
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @invalidate_cache(path="/api/configs/", user=False)
-    @invalidate_cache(path="/api/mobile-configs/", user=False)
-    def patch(self, request):
-        configurations = InstanceConfiguration.objects.filter(
-            key__in=request.data.keys()
-        )
-
-        bulk_configurations = []
-        for configuration in configurations:
-            value = request.data.get(configuration.key, configuration.value)
-            if configuration.is_encrypted:
-                configuration.value = encrypt_data(value)
-            else:
-                configuration.value = value
-            bulk_configurations.append(configuration)
-
-        InstanceConfiguration.objects.bulk_update(
-            bulk_configurations, ["value"], batch_size=100
-        )
-
-        serializer = InstanceConfigurationSerializer(configurations, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-def get_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
-    return (
-        str(refresh.access_token),
-        str(refresh),
-    )
-
-
-class InstanceAdminSignInEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
-
-    @invalidate_cache(path="/api/instances/", user=False)
-    def post(self, request):
-        # Check instance first
-        instance = Instance.objects.first()
-        if instance is None:
-            return Response(
-                {"error": "Instance is not configured"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # check if the instance is already activated
-        if InstanceAdmin.objects.first():
-            return Response(
-                {"error": "Admin for this instance is already registered"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Get the email and password from all the user
-        email = request.data.get("email", False)
-        password = request.data.get("password", False)
-
-        # return error if the email and password is not present
-        if not email or not password:
-            return Response(
-                {"error": "Email and password are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Validate the email
-        email = email.strip().lower()
-        try:
-            validate_email(email)
-        except ValidationError:
-            return Response(
-                {"error": "Please provide a valid email address."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Check if already a user exists or not
-        user = User.objects.filter(email=email).first()
-
-        # Existing user
-        if user:
-            # Check user password
-            if not user.check_password(password):
-                return Response(
-                    {
-                        "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                    },
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-        else:
-            user = User.objects.create(
-                email=email,
-                username=uuid.uuid4().hex,
-                password=make_password(password),
-                is_password_autoset=False,
-            )
-
-        # settings last active for the user
-        user.is_active = True
-        user.last_active = timezone.now()
-        user.last_login_time = timezone.now()
-        user.last_login_ip = request.META.get("REMOTE_ADDR")
-        user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-        user.token_updated_at = timezone.now()
-        user.save()
-
-        # Register the user as an instance admin
-        _ = InstanceAdmin.objects.create(
-            user=user,
-            instance=instance,
-        )
-        # Make the setup flag True
-        instance.is_setup_done = True
-        instance.save()
-
-        # get tokens for user
-        access_token, refresh_token = get_tokens_for_user(user)
-        data = {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-        }
-        return Response(data, status=status.HTTP_200_OK)
 
 
 class SignUpScreenVisitedEndpoint(BaseAPIView):

@@ -1,108 +1,54 @@
-// axios
-import axios from "axios";
-// js cookie
-import Cookies from "js-cookie";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import axios, { AxiosInstance } from "axios";
+// store
+// import { rootStore } from "@/lib/store-context";
 
-abstract class APIService {
-  protected baseURL: string;
-  protected headers: any = {};
+export abstract class APIService {
+  protected baseURL: string | undefined;
+  private axiosInstance: AxiosInstance;
 
-  constructor(_baseURL: string) {
-    this.baseURL = _baseURL;
-  }
-
-  setRefreshToken(token: string) {
-    Cookies.set("refreshToken", token);
-  }
-
-  getRefreshToken() {
-    return Cookies.get("refreshToken");
-  }
-
-  purgeRefreshToken() {
-    Cookies.remove("refreshToken", { path: "/" });
-  }
-
-  setAccessToken(token: string) {
-    Cookies.set("accessToken", token);
-  }
-
-  getAccessToken() {
-    return Cookies.get("accessToken");
-  }
-
-  purgeAccessToken() {
-    Cookies.remove("accessToken", { path: "/" });
-  }
-
-  getHeaders() {
-    return {
-      Authorization: `Bearer ${this.getAccessToken()}`,
-    };
-  }
-
-  get(url: string, config = {}): Promise<any> {
-    return axios({
-      method: "get",
-      url: this.baseURL + url,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
-      ...config,
+  constructor(baseURL: string | undefined) {
+    this.baseURL = baseURL;
+    this.axiosInstance = axios.create({
+      baseURL: baseURL || "",
+      withCredentials: true,
     });
+
+    this.setupInterceptors();
   }
 
-  post(url: string, data = {}, config = {}): Promise<any> {
-    return axios({
-      method: "post",
-      url: this.baseURL + url,
-      data,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
-      ...config,
-    });
+  private setupInterceptors() {
+    // this.axiosInstance.interceptors.response.use(
+    //   (response) => response,
+    //   (error) => {
+    //     const store = rootStore;
+    //     if (error.response && error.response.status === 401 && store.user.data) store.user.reset();
+    //     return Promise.reject(error);
+    //   }
+    // );
   }
 
-  put(url: string, data = {}, config = {}): Promise<any> {
-    return axios({
-      method: "put",
-      url: this.baseURL + url,
-      data,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
-      ...config,
-    });
+  get(url: string, params = {}) {
+    return this.axiosInstance.get(url, params);
   }
 
-  patch(url: string, data = {}, config = {}): Promise<any> {
-    return axios({
-      method: "patch",
-      url: this.baseURL + url,
-      data,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
-      ...config,
-    });
+  post(url: string, data: any, config = {}) {
+    return this.axiosInstance.post(url, data, config);
   }
 
-  delete(url: string, data?: any, config = {}): Promise<any> {
-    return axios({
-      method: "delete",
-      url: this.baseURL + url,
-      data: data,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
-      ...config,
-    });
+  put(url: string, data: any, config = {}) {
+    return this.axiosInstance.put(url, data, config);
   }
 
-  mediaUpload(url: string, data = {}, config = {}): Promise<any> {
-    return axios({
-      method: "post",
-      url: this.baseURL + url,
-      data,
-      headers: this.getAccessToken() ? { ...this.getHeaders(), "Content-Type": "multipart/form-data" } : {},
-      ...config,
-    });
+  patch(url: string, data: any, config = {}) {
+    return this.axiosInstance.patch(url, data, config);
+  }
+
+  delete(url: string, data?: any, config = {}) {
+    return this.axiosInstance.delete(url, { data, ...config });
   }
 
   request(config = {}) {
-    return axios(config);
+    return this.axiosInstance(config);
   }
 }
-
-export default APIService;

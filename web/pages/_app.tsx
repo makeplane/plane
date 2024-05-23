@@ -12,9 +12,8 @@ import "@/styles/react-day-picker.css";
 import { SITE_TITLE } from "@/constants/seo-variables";
 import { THEMES } from "@/constants/themes";
 // mobx store provider
-import { StoreProvider } from "@/contexts/store-context";
-
 import { AppProvider } from "@/lib/app-provider";
+import { StoreProvider } from "@/lib/store-context";
 // types
 import { NextPageWithLayout } from "@/lib/types";
 
@@ -22,7 +21,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+function MyApp({ Component, pageProps: { ...pageProps } }: AppPropsWithLayout) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page: ReactElement) => page);
 

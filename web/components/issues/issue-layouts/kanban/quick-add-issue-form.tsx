@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
@@ -151,11 +151,11 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
         </div>
       ) : (
         <div
-          className="flex w-full cursor-pointer items-center gap-2 p-3 py-1.5 text-custom-primary-100"
+          className="flex w-full cursor-pointer items-center gap-2 p-3 py-1.5 text-custom-text-350 hover:text-custom-text-300"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-          <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+          <span className="text-sm font-medium">New Issue</span>
         </div>
       )}
     </>

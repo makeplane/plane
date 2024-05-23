@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
@@ -10,7 +10,7 @@ import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
-import { useApplication, useUser } from "@/hooks/store";
+import { useUser, useInstance } from "@/hooks/store";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
@@ -18,8 +18,6 @@ import { IntegrationService } from "@/services/integrations";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
-// types
-// fetch-keys
 
 type Props = {
   integration: IAppIntegration;
@@ -48,9 +46,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    config: { envConfig },
-  } = useApplication();
+  const { config } = useInstance();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -59,8 +55,8 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const { isMobile } = usePlatformOS();
   const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
     provider: integration.provider,
-    github_app_name: envConfig?.github_app_name || "",
-    slack_client_id: envConfig?.slack_client_id || "",
+    github_app_name: config?.github_app_name || "",
+    slack_client_id: config?.slack_client_id || "",
   });
 
   const { data: workspaceIntegrations } = useSWR(

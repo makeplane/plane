@@ -1,16 +1,20 @@
 import concat from "lodash/concat";
 import pull from "lodash/pull";
+import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
-// base class
+// types
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
+// helpers
+import { issueCountBasedOnFilters } from "@/helpers/issue.helper";
 // services
 import { IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
-// types
-import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
+// helpers
 import { IssueHelperStore } from "../helpers/issue-helper.store";
+// store
 import { IIssueRootStore } from "../root.store";
 
 export interface IModuleIssues {
@@ -19,6 +23,7 @@ export interface IModuleIssues {
   issues: { [module_id: string]: string[] };
   viewFlags: ViewFlags;
   // computed
+  issuesCount: number;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
@@ -62,14 +67,13 @@ export interface IModuleIssues {
     moduleId: string,
     issueIds: string[]
   ) => Promise<void>;
-  addModulesToIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
-  removeModulesFromIssue: (
+  changeModulesInIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    moduleIds: string[]
+    addModuleIds: string[],
+    removeModuleIds: string[]
   ) => Promise<void>;
-  removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
 }
 
 export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
@@ -94,6 +98,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       loader: observable.ref,
       issues: observable,
       // computed
+      issuesCount: computed,
       groupedIssueIds: computed,
       // action
       fetchIssues: action,
@@ -104,14 +109,28 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       quickAddIssue: action,
       addIssuesToModule: action,
       removeIssuesFromModule: action,
-      addModulesToIssue: action,
-      removeModulesFromIssue: action,
-      removeIssueFromModule: action,
+      changeModulesInIssue: action,
     });
 
     this.rootIssueStore = _rootStore;
     this.issueService = new IssueService();
     this.moduleService = new ModuleService();
+  }
+
+  get issuesCount() {
+    let issuesCount = 0;
+
+    const displayFilters = this.rootIssueStore?.moduleIssuesFilter?.issueFilters?.displayFilters;
+    const groupedIssueIds = this.groupedIssueIds;
+    if (!displayFilters || !groupedIssueIds) return issuesCount;
+
+    const layout = displayFilters?.layout || undefined;
+    const groupBy = displayFilters?.group_by || undefined;
+    const subGroupBy = displayFilters?.sub_group_by || undefined;
+
+    if (!layout) return issuesCount;
+    issuesCount = issueCountBasedOnFilters(groupedIssueIds, layout, groupBy, subGroupBy);
+    return issuesCount;
   }
 
   get groupedIssueIds() {
@@ -301,27 +320,39 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     fetchAddedIssues = true
   ) => {
     try {
-      await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
-        issues: issueIds,
-      });
-
-      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
-
+      // add the new issue ids to the module issues map
       runInAction(() => {
         update(this.issues, moduleId, (moduleIssueIds = []) => {
           if (!moduleIssueIds) return [...issueIds];
           else return uniq(concat(moduleIssueIds, issueIds));
         });
       });
-
+      // update the root issue map with the new module ids
       issueIds.forEach((issueId) => {
         update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) => {
           if (issueModuleIds.includes(moduleId)) return issueModuleIds;
           else return uniq(concat(issueModuleIds, [moduleId]));
         });
       });
+
+      await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+        issues: issueIds,
+      });
+
+      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
+
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
     } catch (error) {
+      issueIds.forEach((issueId) => {
+        runInAction(() => {
+          // remove the new issue ids from the module issues map
+          pull(this.issues[moduleId], issueId);
+          // remove the new module ids from the root issue map
+          update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
+            pull(issueModuleIds, moduleId)
+          );
+        });
+      });
       throw error;
     }
   };
@@ -357,70 +388,72 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     }
   };
 
-  addModulesToIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
+  /**
+   * change modules array in issue
+   * @param workspaceSlug
+   * @param projectId
+   * @param issueId
+   * @param addModuleIds array of modules to be added
+   * @param removeModuleIds array of modules to be removed
+   */
+  changeModulesInIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    addModuleIds: string[],
+    removeModuleIds: string[]
+  ) => {
+    // keep a copy of the original module ids
+    const originalModuleIds = this.rootStore.issues.issuesMap[issueId]?.module_ids
+      ? [...this.rootStore.issues.issuesMap[issueId].module_ids!]
+      : [];
     try {
-      const issueToModule = await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
-        modules: moduleIds,
-      });
-
       runInAction(() => {
-        moduleIds.forEach((moduleId) => {
+        // remove the new issue id to the module issues map
+        removeModuleIds.forEach((moduleId) => {
+          update(this.issues, moduleId, (moduleIssueIds = []) => {
+            if (moduleIssueIds.includes(issueId)) return pull(moduleIssueIds, issueId);
+            else return moduleIssueIds;
+          });
+        });
+        // add the new issue id to the module issues map
+        addModuleIds.forEach((moduleId) => {
           update(this.issues, moduleId, (moduleIssueIds = []) => {
             if (moduleIssueIds.includes(issueId)) return moduleIssueIds;
             else return uniq(concat(moduleIssueIds, [issueId]));
           });
         });
-        update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
-          uniq(concat(issueModuleIds, moduleIds))
-        );
       });
+      if (originalModuleIds) {
+        // update the root issue map with the new module ids
+        let currentModuleIds = concat([...originalModuleIds], addModuleIds);
+        currentModuleIds = pull(currentModuleIds, ...removeModuleIds);
+        this.rootStore.issues.updateIssue(issueId, { module_ids: uniq(currentModuleIds) });
+      }
 
-      return issueToModule;
+      //Perform API call
+      await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
+        modules: addModuleIds,
+        removed_modules: removeModuleIds,
+      });
     } catch (error) {
-      throw error;
-    }
-  };
-
-  removeModulesFromIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-    try {
-      runInAction(() => {
-        moduleIds.forEach((moduleId) => {
-          update(this.issues, moduleId, (moduleIssueIds = []) => {
-            if (moduleIssueIds.includes(issueId)) return pull(moduleIssueIds, issueId);
-            else return uniq(concat(moduleIssueIds, [issueId]));
-          });
-          update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
-            pull(issueModuleIds, moduleId)
-          );
+      // revert the issue back to its original module ids
+      set(this.rootStore.issues.issuesMap, [issueId, "module_ids"], originalModuleIds);
+      // add the removed issue id to the module issues map
+      addModuleIds.forEach((moduleId) => {
+        update(this.issues, moduleId, (moduleIssueIds = []) => {
+          if (moduleIssueIds.includes(issueId)) return pull(moduleIssueIds, issueId);
+          else return moduleIssueIds;
+        });
+      });
+      // remove the added issue id to the module issues map
+      removeModuleIds.forEach((moduleId) => {
+        update(this.issues, moduleId, (moduleIssueIds = []) => {
+          if (moduleIssueIds.includes(issueId)) return moduleIssueIds;
+          else return uniq(concat(moduleIssueIds, [issueId]));
         });
       });
 
-      const response = await this.moduleService.removeModulesFromIssueBulk(
-        workspaceSlug,
-        projectId,
-        issueId,
-        moduleIds
-      );
-
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
-    try {
-      runInAction(() => {
-        pull(this.issues[moduleId], issueId);
-        update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
-          pull(issueModuleIds, moduleId)
-        );
-      });
-
-      const response = await this.moduleService.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
-
-      return response;
-    } catch (error) {
       throw error;
     }
   };

@@ -1,22 +1,24 @@
 import { set } from "lodash";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
+// types
+import { IProjectView } from "@plane/types";
 // services
 import { ViewService } from "@/services/view.service";
 import { RootStore } from "@/store/root.store";
-// types
-import { IProjectView } from "@plane/types";
 
 export interface IProjectViewStore {
   //Loaders
   loader: boolean;
   fetchedMap: Record<string, boolean>;
   // observables
+  searchQuery: string;
   viewMap: Record<string, IProjectView>;
   // computed
   projectViewIds: string[] | null;
   // computed actions
   getViewById: (viewId: string) => IProjectView;
+  updateSearchQuery: (query: string) => void;
   // fetch actions
   fetchViews: (workspaceSlug: string, projectId: string) => Promise<undefined | IProjectView[]>;
   fetchViewDetails: (workspaceSlug: string, projectId: string, viewId: string) => Promise<IProjectView>;
@@ -38,6 +40,7 @@ export class ProjectViewStore implements IProjectViewStore {
   // observables
   loader: boolean = false;
   viewMap: Record<string, IProjectView> = {};
+  searchQuery: string = "";
   //loaders
   fetchedMap: Record<string, boolean> = {};
   // root store
@@ -51,6 +54,7 @@ export class ProjectViewStore implements IProjectViewStore {
       loader: observable.ref,
       viewMap: observable,
       fetchedMap: observable,
+      searchQuery: observable.ref,
       // computed
       projectViewIds: computed,
       // fetch actions
@@ -60,6 +64,8 @@ export class ProjectViewStore implements IProjectViewStore {
       createView: action,
       updateView: action,
       deleteView: action,
+      // actions
+      updateSearchQuery: action,
       // favorites actions
       addViewToFavorites: action,
       removeViewFromFavorites: action,
@@ -74,7 +80,7 @@ export class ProjectViewStore implements IProjectViewStore {
    * Returns array of view ids for current project
    */
   get projectViewIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     const viewIds = Object.keys(this.viewMap ?? {})?.filter((viewId) => this.viewMap?.[viewId]?.project === projectId);
     return viewIds;
@@ -84,6 +90,12 @@ export class ProjectViewStore implements IProjectViewStore {
    * Returns view details by id
    */
   getViewById = computedFn((viewId: string) => this.viewMap?.[viewId] ?? null);
+
+  /**
+   * @description update search query
+   * @param {string} query
+   */
+  updateSearchQuery = (query: string) => (this.searchQuery = query);
 
   /**
    * Fetches views for current project

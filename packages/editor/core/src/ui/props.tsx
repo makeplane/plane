@@ -15,7 +15,6 @@ export function CoreEditorProps(editorClassName: string): EditorProps {
         if (["ArrowUp", "ArrowDown", "Enter"].includes(event.key)) {
           const slashCommand = document.querySelector("#slash-command");
           if (slashCommand) {
-            console.log("registered");
             return true;
           }
         }

@@ -1,21 +1,27 @@
 import { useCallback, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-import { ArrowRight, PanelRight, Plus } from "lucide-react";
+// icons
+import { ArrowRight, PanelRight } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+// ui
 import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip } from "@plane/ui";
+// components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 import { ProjectLogo } from "@/components/project";
+// constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
 import { cn } from "@/helpers/common.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
+// hooks
 import {
-  useApplication,
   useEventTracker,
   useLabel,
   useMember,
@@ -24,16 +30,11 @@ import {
   useProjectState,
   useUser,
   useIssues,
+  useCommandPalette,
 } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
-// components
-// ui
-// icons
-// helpers
-// types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// constants
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -70,12 +71,11 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     issuesFilter: { issueFilters },
+    issues: { issuesCount },
   } = useIssues(EIssuesStoreType.MODULE);
   const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
@@ -146,11 +146,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const issueCount = moduleDetails
-    ? !issueFilters?.displayFilters?.sub_issue && moduleDetails.sub_issues
-      ? moduleDetails.total_issues - moduleDetails.sub_issues
-      : moduleDetails.total_issues
-    : undefined;
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <>
@@ -173,7 +169,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                         href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                         icon={
                           currentProjectDetails && (
-                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                            <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                               <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
@@ -182,7 +178,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     </span>
                     <Link
                       href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                      className="block md:hidden pl-2 text-custom-text-300"
+                      className="block pl-2 text-custom-text-300 md:hidden"
                     >
                       ...
                     </Link>
@@ -206,18 +202,18 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     label={
                       <>
                         <DiceIcon className="h-3 w-3" />
-                        <div className="flex items-center gap-2 w-auto max-w-[70px] sm:max-w-[200px] truncate">
+                        <div className="flex w-auto max-w-[70px] items-center gap-2 truncate sm:max-w-[200px]">
                           <p className="truncate">{moduleDetails?.name && moduleDetails.name}</p>
-                          {issueCount && issueCount > 0 ? (
+                          {issuesCount && issuesCount > 0 ? (
                             <Tooltip
                               isMobile={isMobile}
-                              tooltipContent={`There are ${issueCount} ${
-                                issueCount > 1 ? "issues" : "issue"
+                              tooltipContent={`There are ${issuesCount} ${
+                                issuesCount > 1 ? "issues" : "issue"
                               } in this module`}
                               position="bottom"
                             >
-                              <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                                {issueCount}
+                              <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
+                                {issuesCount}
                               </span>
                             </Tooltip>
                           ) : null}
@@ -234,13 +230,13 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             </Breadcrumbs>
           </div>
           <div className="flex items-center gap-2">
-            <div className="hidden md:flex gap-2">
+            <div className="hidden gap-2 md:flex">
               <LayoutSelection
                 layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
                 onChange={(layout) => handleLayoutChange(layout)}
                 selectedLayout={activeLayout}
               />
-              <FiltersDropdown title="Filters" placement="bottom-end">
+              <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
                 <FilterSelection
                   filters={issueFilters?.filters ?? {}}
                   handleFiltersUpdate={handleFiltersUpdate}
@@ -287,7 +283,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                   }}
                   size="sm"
-                  prependIcon={<Plus />}
                 >
                   Add Issue
                 </Button>
@@ -299,11 +294,11 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               onClick={toggleSidebar}
             >
               <ArrowRight
-                className={`h-4 w-4 duration-300 hidden md:block ${isSidebarCollapsed ? "-rotate-180" : ""}`}
+                className={`hidden h-4 w-4 duration-300 md:block ${isSidebarCollapsed ? "-rotate-180" : ""}`}
               />
               <PanelRight
                 className={cn(
-                  "w-4 h-4 block md:hidden",
+                  "block h-4 w-4 md:hidden",
                   !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200"
                 )}
               />

@@ -1,5 +1,5 @@
-import React, { useState, ReactElement } from "react";
-import { observer } from "mobx-react-lite";
+import { ReactElement, useState } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -8,22 +8,24 @@ import { IWorkspace } from "@plane/types";
 // hooks
 import { PageHead } from "@/components/core";
 import { CreateWorkspaceForm } from "@/components/workspace";
-import { useUser } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store";
 // layouts
-import { UserAuthWrapper } from "@/layouts/auth-layout";
 import DefaultLayout from "@/layouts/default-layout";
 // components
 // images
 import { NextPageWithLayout } from "@/lib/types";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 // types
 
 const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   // store hooks
-  const { currentUser, updateCurrentUser } = useUser();
+  const { data: currentUser } = useUser();
+  const { updateUserProfile } = useUserProfile();
   // states
   const [defaultValues, setDefaultValues] = useState({
     name: "",
@@ -31,11 +33,13 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
     organization_size: "",
   });
   // hooks
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   const onSubmit = async (workspace: IWorkspace) => {
-    await updateCurrentUser({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
+    await updateUserProfile({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
   };
+
+  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
 
   return (
     <>
@@ -48,11 +52,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
             href="/"
           >
             <div className="h-[30px] w-[133px]">
-              {theme === "light" ? (
-                <Image src={BlackHorizontalLogo} alt="Plane black logo" />
-              ) : (
-                <Image src={WhiteHorizontalLogo} alt="Plane white logo" />
-              )}
+              <Image src={logo} alt="Plane logo" />
             </div>
           </Link>
           <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
@@ -78,9 +78,9 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
 
 CreateWorkspacePage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserAuthWrapper>
+    <AuthenticationWrapper>
       <DefaultLayout>{page} </DefaultLayout>
-    </UserAuthWrapper>
+    </AuthenticationWrapper>
   );
 };
 
