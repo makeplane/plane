@@ -1,5 +1,7 @@
 import { useCallback, useEffect } from "react";
-import { useBulkIssueOperations } from "./store";
+import { useRouter } from "next/router";
+// hooks
+import { useBulkIssueOperations } from "@/hooks/store";
 
 export type TEntityDetails = {
   entityID: string;
@@ -28,7 +30,9 @@ export type TSelectionHelper = {
 
 export const useMultipleSelect = (props: Props) => {
   const { containerRef, entities, groups } = props;
-
+  // router
+  const router = useRouter();
+  // store hooks
   const {
     selectedEntityDetails,
     updateSelectedEntityDetails,
@@ -122,8 +126,23 @@ export const useMultipleSelect = (props: Props) => {
   );
 
   const handleEntitySelection = useCallback(
-    (entityDetails: TEntityDetails, shouldScroll: boolean = true) => {
+    (
+      entityDetails: TEntityDetails,
+      shouldScroll: boolean = true,
+      forceAction: "force-add" | "force-remove" | null = null
+    ) => {
       const isSelected = isEntitySelected(entityDetails.entityID);
+
+      if (forceAction) {
+        if (forceAction === "force-add") {
+          updateSelectedEntityDetails(entityDetails, "add");
+          handleActiveEntityChange(entityDetails, shouldScroll);
+        }
+        if (forceAction === "force-remove") {
+          updateSelectedEntityDetails(entityDetails, "remove");
+        }
+        return;
+      }
 
       if (isSelected) {
         updateSelectedEntityDetails(entityDetails, "remove");
@@ -180,20 +199,6 @@ export const useMultipleSelect = (props: Props) => {
   );
 
   /**
-   * @description toggle group selection
-   * @param {string} groupID
-   */
-  const handleGroupClick = useCallback(
-    (groupID: string) => {
-      const groupEntities = entities.filter((entity) => entity.groupID === groupID);
-      groupEntities.forEach((entity) => {
-        handleEntitySelection(entity, false);
-      });
-    },
-    [entities, handleEntitySelection]
-  );
-
-  /**
    * @description check if any entity of the group is selected
    * @param {string} groupID
    * @returns {boolean}
@@ -207,6 +212,21 @@ export const useMultipleSelect = (props: Props) => {
       return "partial";
     },
     [entities, isEntitySelected]
+  );
+
+  /**
+   * @description toggle group selection
+   * @param {string} groupID
+   */
+  const handleGroupClick = useCallback(
+    (groupID: string) => {
+      const groupEntities = entities.filter((entity) => entity.groupID === groupID);
+      const groupSelectionStatus = isGroupSelected(groupID);
+      groupEntities.forEach((entity) => {
+        handleEntitySelection(entity, false, groupSelectionStatus === "empty" ? "force-add" : "force-remove");
+      });
+    },
+    [entities, handleEntitySelection, isGroupSelected]
   );
 
   // clear selection on escape key press
@@ -282,6 +302,17 @@ export const useMultipleSelect = (props: Props) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [activeEntityDetails, entities, groups, getPreviousAndNextEntities, handleActiveEntityChange]);
+
+  // clear selection on route change
+  useEffect(() => {
+    const handleRouteChange = () => clearSelection();
+
+    router.events.on("routeChangeComplete", handleRouteChange);
+
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [clearSelection, router.events]);
 
   /**
    * @description snapshot of the current state of selection

@@ -118,12 +118,19 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
 
   const is_list = group_by === null ? true : false;
 
+  // create groupIds array and entities object for bulk ops
   const groupIds = groups.map((g) => g.id);
   const orderedGroups: Record<string, string[]> = {};
   groupIds.forEach((gID) => {
     orderedGroups[gID] = [];
   });
-  const entities = Object.assign(orderedGroups, { ...issueIds });
+  let entities: Record<string, string[]> = {};
+
+  if (is_list) {
+    entities = Object.assign(orderedGroups, { [groupIds[0]]: issueIds });
+  } else {
+    entities = Object.assign(orderedGroups, { ...issueIds });
+  }
 
   return (
     <div
