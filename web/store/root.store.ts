@@ -5,6 +5,7 @@ import { CycleStore, ICycleStore } from "./cycle.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { EstimateStore, IEstimateStore } from "./estimate.store";
+import { IProjectEstimateStore, ProjectEstimateStore } from "./estimates/project-estimate.store";
 import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 import { IProjectInboxStore, ProjectInboxStore } from "./inbox/project-inbox.store";
@@ -48,6 +49,7 @@ export class RootStore {
   instance: IInstanceStore;
   user: IUserStore;
   projectInbox: IProjectInboxStore;
+  projectEstimate: IProjectEstimateStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -74,6 +76,7 @@ export class RootStore {
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.theme = new ThemeStore(this);
+    this.projectEstimate = new ProjectEstimateStore(this);
   }
 
   resetOnSignOut() {

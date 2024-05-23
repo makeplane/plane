@@ -13,4 +13,5 @@ export * from "./loader";
 export * from "./control-link";
 export * from "./toast";
 export * from "./drag-handle";
+export * from "./typography";
 export * from "./drop-indicator";
