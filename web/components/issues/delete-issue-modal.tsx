@@ -13,11 +13,12 @@ type Props = {
   handleClose: () => void;
   dataId?: string | null | undefined;
   data?: TIssue;
+  isSubIssue?: boolean;
   onSubmit?: () => Promise<void>;
 };
 
 export const DeleteIssueModal: React.FC<Props> = (props) => {
-  const { dataId, data, isOpen, handleClose, onSubmit } = props;
+  const { dataId, data, isOpen, handleClose, isSubIssue = false, onSubmit } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
@@ -47,7 +48,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
-            message: "Issue deleted successfully",
+            message: `${isSubIssue ? "Sub-issue" : "Issue"} deleted successfully`,
           });
           onClose();
         })

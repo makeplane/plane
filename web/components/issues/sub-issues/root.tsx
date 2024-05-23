@@ -250,11 +250,6 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Sub-issue deleted successfully",
-          });
           captureIssueEvent({
             eventName: "Sub-issue deleted",
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -537,6 +532,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     issueCrudState?.delete?.issue?.id as string
                   )
                 }
+                isSubIssue
               />
             )}
         </>
