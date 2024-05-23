@@ -87,7 +87,7 @@ jobs:
         uses: docker/build-push-action@v5.1.0
         with:
           context: ./aio
-          file: ./api/Dockerfile.base
+          file: ./aio/Dockerfile.base
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.BASE_IMG_TAG }}
           push: true

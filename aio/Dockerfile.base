@@ -23,7 +23,6 @@ RUN apt-get update && apt-get install -y postgresql postgresql-contrib
 RUN apt-get update && apt-get install -y redis-server
 
 # Install MinIO
-
 ARG TARGETARCH
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
         wget https://dl.min.io/server/minio/release/linux-amd64/minio -O /usr/local/bin/minio; \
