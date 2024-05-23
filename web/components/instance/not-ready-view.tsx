@@ -10,8 +10,8 @@ import PlaneTakeOffImage from "@/public/plane-takeoff.png";
 // assets
 import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 
 export const InstanceNotReady: FC = () => {
   const { resolvedTheme } = useTheme();

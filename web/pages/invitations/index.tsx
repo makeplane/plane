@@ -31,8 +31,8 @@ import { AuthenticationWrapper } from "@/lib/wrappers";
 import { WorkspaceService } from "@/services/workspace.service";
 // images
 import emptyInvitation from "public/empty-state/invitation.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 
 const workspaceService = new WorkspaceService();
 

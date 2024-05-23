@@ -5,6 +5,6 @@ export * from "./profile-setup";
 export * from "./create-workspace";
 export * from "./invitations";
 export * from "./step-indicator";
-export * from "./switch-or-delete-account-dropdown";
-export * from "./switch-delete-account-modal";
+export * from "./switch-account-dropdown";
+export * from "./switch-account-modal";
 export * from "./header";
