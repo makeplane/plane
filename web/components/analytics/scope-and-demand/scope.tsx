@@ -6,19 +6,21 @@ import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // types
 
 type Props = {
-  pendingUnAssignedIssues: IDefaultAnalyticsUser[];
+  pendingUnAssignedIssuesUser: IDefaultAnalyticsUser | undefined;
   pendingAssignedIssues: IDefaultAnalyticsUser[];
 };
 
-export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssues, pendingAssignedIssues }) => (
+export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, pendingAssignedIssues }) => (
   <div className="rounded-[10px] border border-custom-border-200 p-3">
     <div className="divide-y divide-custom-border-200">
       <div>
         <div className="flex items-center justify-between">
           <h6 className=" text-base font-medium">Pending issues</h6>
-          <div className="relative flex items-center py-1 px-3 rounded-md gap-2  text-xs text-custom-primary-100  bg-custom-primary-100/10">
-            Unassigned: {pendingUnAssignedIssues.length}
-          </div>
+          {pendingUnAssignedIssuesUser && (
+            <div className="relative flex items-center py-1 px-3 rounded-md gap-2  text-xs text-custom-primary-100  bg-custom-primary-100/10">
+              Unassigned: {pendingUnAssignedIssuesUser.count}
+            </div>
+          )}
         </div>
 
         {pendingAssignedIssues && pendingAssignedIssues.length > 0 ? (
