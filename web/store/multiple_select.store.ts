@@ -1,14 +1,10 @@
-import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// types
-import { TBulkOperationsPayload } from "@plane/types";
 // hooks
 import { TEntityDetails } from "@/hooks/use-multiple-select";
 // services
 import { IssueService } from "@/services/issue";
-import { IIssueRootStore } from "./root.store";
 
-export type IIssueBulkOperationsStore = {
+export type IMultipleSelectStore = {
   // observables
   selectedEntityDetails: TEntityDetails[];
   lastSelectedEntityDetails: TEntityDetails | null;
@@ -25,23 +21,19 @@ export type IIssueBulkOperationsStore = {
   updateNextActiveEntity: (entityDetails: TEntityDetails | null) => void;
   updateActiveEntityDetails: (entityDetails: TEntityDetails | null) => void;
   clearSelection: () => void;
-  // bulk ops actions
-  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 };
 
-export class IssueBulkOperationsStore implements IIssueBulkOperationsStore {
+export class MultipleSelectStore implements IMultipleSelectStore {
   // observables
   selectedEntityDetails: TEntityDetails[] = [];
   lastSelectedEntityDetails: TEntityDetails | null = null;
   previousActiveEntity: TEntityDetails | null = null;
   nextActiveEntity: TEntityDetails | null = null;
   activeEntityDetails: TEntityDetails | null = null;
-  // root store
-  rootIssueStore: IIssueRootStore;
   // service
   issueService;
 
-  constructor(_rootStore: IIssueRootStore) {
+  constructor() {
     makeObservable(this, {
       // observables
       selectedEntityDetails: observable,
@@ -56,11 +48,8 @@ export class IssueBulkOperationsStore implements IIssueBulkOperationsStore {
       updateNextActiveEntity: action,
       updateActiveEntityDetails: action,
       clearSelection: action,
-      // bulk ops actions
-      bulkUpdateProperties: action,
     });
 
-    this.rootIssueStore = _rootStore;
     this.issueService = new IssueService();
   }
 
@@ -157,48 +146,5 @@ export class IssueBulkOperationsStore implements IIssueBulkOperationsStore {
       this.nextActiveEntity = null;
       this.activeEntityDetails = null;
     });
-  };
-
-  /**
-   * @description bulk update properties of selected issues
-   * @param {TBulkOperationsPayload} data
-   */
-  bulkUpdateProperties = async (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => {
-    const issueIds = data.issue_ids;
-    // keep original data to rollback in case of error
-    const originalData: Record<string, any> = {};
-    try {
-      runInAction(() => {
-        issueIds.forEach((issueId) => {
-          const issueDetails = this.rootIssueStore.issues.getIssueById(issueId);
-          if (!issueDetails) throw new Error("Issue not found");
-          Object.keys(data.properties).forEach((key) => {
-            const property = key as keyof TBulkOperationsPayload["properties"];
-            // update backup data
-            set(originalData, [issueId, property], issueDetails[property]);
-            // update root issue map properties
-            this.rootIssueStore.issues.updateIssue(issueId, {
-              [property]: data.properties[property],
-            });
-          });
-        });
-      });
-      // make request to update issue properties
-      await this.issueService.bulkOperations(workspaceSlug, projectId, data);
-    } catch (error) {
-      // rollback changes
-      runInAction(() => {
-        issueIds.forEach((issueId) => {
-          Object.keys(data.properties).forEach((key) => {
-            const property = key as keyof TBulkOperationsPayload["properties"];
-            // revert root issue map properties
-            this.rootIssueStore.issues.updateIssue(issueId, {
-              [property]: originalData[issueId][property],
-            });
-          });
-        });
-      });
-      throw error;
-    }
   };
 }

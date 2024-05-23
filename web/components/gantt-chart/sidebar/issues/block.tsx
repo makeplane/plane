@@ -2,7 +2,7 @@ import React, { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 import { MoreVertical } from "lucide-react";
 // components
-import { MultipleSelectAction } from "@/components/core";
+import { MultipleSelectEntityAction } from "@/components/core";
 import { useGanttChart } from "@/components/gantt-chart/hooks";
 import { IssueGanttSidebarBlock } from "@/components/issues";
 // helpers
@@ -69,7 +69,7 @@ export const IssuesSidebarBlock = observer((props: Props) => {
             </button>
           )}
           {enableSelection && selectionHelpers && (
-            <MultipleSelectAction
+            <MultipleSelectEntityAction
               className={cn(
                 "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
                 {

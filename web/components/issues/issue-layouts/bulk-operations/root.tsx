@@ -63,7 +63,8 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
       >
         <div className="h-7 pr-3 text-sm flex items-center gap-2">
           <Checkbox
-            className="cursor-pointer outline-0"
+            className="!outline-none size-3.5"
+            iconClassName="size-3"
             onClick={selectionHelpers.handleClearSelection}
             indeterminate
           />

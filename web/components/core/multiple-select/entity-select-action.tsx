@@ -13,7 +13,7 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const MultipleSelectAction: React.FC<Props> = (props) => {
+export const MultipleSelectEntityAction: React.FC<Props> = (props) => {
   const { className, disabled = false, groupId, id, selectionHelpers } = props;
   // derived values
   const isSelected = selectionHelpers.isEntitySelected(id);

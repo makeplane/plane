@@ -4,7 +4,15 @@ import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // types
-import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
+import {
+  TIssue,
+  TGroupedIssues,
+  TSubGroupedIssues,
+  TLoader,
+  TUnGroupedIssues,
+  ViewFlags,
+  TBulkOperationsPayload,
+} from "@plane/types";
 // helpers
 import { issueCountBasedOnFilters } from "@/helpers/issue.helper";
 // base class
@@ -31,6 +39,7 @@ export interface IProjectIssues {
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 }
 
 export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
@@ -65,6 +74,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       archiveIssue: action,
       removeBulkIssues: action,
       archiveBulkIssues: action,
+      bulkUpdateProperties: action,
       quickAddIssue: action,
     });
     // root store
@@ -301,6 +311,49 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
         });
       });
     } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * @description bulk update properties of selected issues
+   * @param {TBulkOperationsPayload} data
+   */
+  bulkUpdateProperties = async (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => {
+    const issueIds = data.issue_ids;
+    // keep original data to rollback in case of error
+    const originalData: Record<string, any> = {};
+    try {
+      runInAction(() => {
+        issueIds.forEach((issueId) => {
+          const issueDetails = this.rootIssueStore.issues.getIssueById(issueId);
+          if (!issueDetails) throw new Error("Issue not found");
+          Object.keys(data.properties).forEach((key) => {
+            const property = key as keyof TBulkOperationsPayload["properties"];
+            // update backup data
+            set(originalData, [issueId, property], issueDetails[property]);
+            // update root issue map properties
+            this.rootIssueStore.issues.updateIssue(issueId, {
+              [property]: data.properties[property],
+            });
+          });
+        });
+      });
+      // make request to update issue properties
+      await this.issueService.bulkOperations(workspaceSlug, projectId, data);
+    } catch (error) {
+      // rollback changes
+      runInAction(() => {
+        issueIds.forEach((issueId) => {
+          Object.keys(data.properties).forEach((key) => {
+            const property = key as keyof TBulkOperationsPayload["properties"];
+            // revert root issue map properties
+            this.rootIssueStore.issues.updateIssue(issueId, {
+              [property]: originalData[issueId][property],
+            });
+          });
+        });
+      });
       throw error;
     }
   };

@@ -1,2 +1,2 @@
-export * from "./select-action";
+export * from "./entity-select-action";
 export * from "./select-group";

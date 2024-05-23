@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 // types
@@ -6,12 +7,15 @@ import { TBulkIssueProperties } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DateDropdown, MemberDropdown, PriorityDropdown, StateDropdown } from "@/components/dropdowns";
+import { IssueLabelSelect } from "@/components/issues/select";
+import { CreateLabelModal } from "@/components/labels";
 // constants
 import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
+import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
-import { useBulkIssueOperations } from "@/hooks/store";
+import { useIssues } from "@/hooks/store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 
 type Props = {
@@ -21,11 +25,15 @@ type Props = {
 
 export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
   const { snapshot } = props;
+  // states
+  const [createLabelModal, setCreateLabelModal] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { bulkUpdateProperties } = useBulkIssueOperations();
+  const {
+    issues: { bulkUpdateProperties },
+  } = useIssues(EIssuesStoreType.PROJECT);
 
   const handleBulkOperation = (data: Partial<TBulkIssueProperties>) => {
     if (!workspaceSlug || !projectId) return;
@@ -85,6 +93,22 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
         icon={<CalendarCheck2 className="size-3 flex-shrink-0" />}
         disabled={isUpdateDisabled}
       />
+      {projectId && (
+        <>
+          <CreateLabelModal
+            isOpen={createLabelModal}
+            handleClose={() => setCreateLabelModal(false)}
+            projectId={projectId.toString()}
+            onSuccess={(response) => handleBulkOperation({ label_ids: [response.id] })}
+          />
+          <IssueLabelSelect
+            value={[]}
+            projectId={projectId.toString()}
+            onChange={(val) => handleBulkOperation({ label_ids: val })}
+            setIsOpen={() => setCreateLabelModal(true)}
+          />
+        </>
+      )}
     </>
   );
 };

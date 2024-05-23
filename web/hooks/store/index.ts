@@ -1,4 +1,3 @@
-export * from "./use-bulk-issue-operations";
 export * from "./use-calendar-view";
 export * from "./use-cycle-filter";
 export * from "./use-cycle";
@@ -10,6 +9,7 @@ export * from "./use-label";
 export * from "./use-member";
 export * from "./use-mention";
 export * from "./use-module";
+export * from "./use-multiple-select-store";
 
 export * from "./pages/use-project-page";
 export * from "./pages/use-page";

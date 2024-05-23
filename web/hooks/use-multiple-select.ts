@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 // hooks
-import { useBulkIssueOperations } from "@/hooks/store";
+import { useMultipleSelectStore } from "@/hooks/store";
 
 export type TEntityDetails = {
   entityID: string;
@@ -46,7 +46,7 @@ export const useMultipleSelect = (props: Props) => {
     clearSelection,
     isEntitySelected,
     isEntityActive,
-  } = useBulkIssueOperations();
+  } = useMultipleSelectStore();
 
   const getPreviousAndNextEntities = useCallback(
     (entityID: string) => {
@@ -170,14 +170,14 @@ export const useMultipleSelect = (props: Props) => {
           for (let i = lastEntityIndex + 1; i <= currentEntityIndex; i++) {
             const entityDetails = entities[i];
             if (entityDetails) {
-              handleEntitySelection(entityDetails);
+              handleEntitySelection(entityDetails, false);
             }
           }
         } else if (lastEntityIndex > currentEntityIndex) {
           for (let i = currentEntityIndex; i <= lastEntityIndex - 1; i++) {
             const entityDetails = entities[i];
             if (entityDetails) {
-              handleEntitySelection(entityDetails);
+              handleEntitySelection(entityDetails, false);
             }
           }
         } else {
@@ -186,14 +186,14 @@ export const useMultipleSelect = (props: Props) => {
           for (let i = startIndex; i <= endIndex; i++) {
             const entityDetails = entities[i];
             if (entityDetails) {
-              handleEntitySelection(entityDetails);
+              handleEntitySelection(entityDetails, false);
             }
           }
         }
         return;
       }
 
-      handleEntitySelection({ entityID, groupID });
+      handleEntitySelection({ entityID, groupID }, false);
     },
     [entities, handleEntitySelection, lastSelectedEntityDetails]
   );

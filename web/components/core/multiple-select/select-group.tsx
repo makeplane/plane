@@ -26,8 +26,6 @@ export const MultipleSelectGroup: React.FC<Props> = observer((props) => {
     [entities, groups]
   );
 
-  console.log("entityDetails", entityDetails);
-
   const { helpers, snapshot } = useMultipleSelect({
     containerRef,
     entities: entityDetails,

@@ -7,7 +7,6 @@ import { RootStore } from "../root.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
-import { IIssueBulkOperationsStore, IssueBulkOperationsStore } from "./bulk_operations.store";
 import { ICycleIssuesFilter, CycleIssuesFilter, ICycleIssues, CycleIssues } from "./cycle";
 import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from "./draft";
 import { IIssueDetail, IssueDetail } from "./issue-details/root.store";
@@ -78,8 +77,6 @@ export interface IIssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
-
-  issueBulkOperations: IIssueBulkOperationsStore;
 }
 
 export class IssueRootStore implements IIssueRootStore {
@@ -135,8 +132,6 @@ export class IssueRootStore implements IIssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
-
-  issueBulkOperations: IIssueBulkOperationsStore;
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
@@ -214,7 +209,5 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new CalendarStore();
-
-    this.issueBulkOperations = new IssueBulkOperationsStore(this);
   }
 }

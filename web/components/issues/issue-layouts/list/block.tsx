@@ -8,7 +8,7 @@ import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
 import { Spinner, Tooltip, ControlLink, DragHandle } from "@plane/ui";
 // components
-import { MultipleSelectAction } from "@/components/core";
+import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -165,7 +165,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 disabled={issue.project_id === projectId}
               >
                 <div className="flex-shrink-0 grid place-items-center w-3.5">
-                  <MultipleSelectAction
+                  <MultipleSelectEntityAction
                     className={cn(
                       "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
                       {
