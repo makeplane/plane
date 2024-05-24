@@ -106,9 +106,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const isIssueActive = selectionHelpers.isEntityActive(issue.id);
   const isSubIssue = nestingLevel !== 0;
 
-  console.log("isIssueSelected", issue.id, isIssueSelected);
-  console.log("isIssueActive", issue.id, isIssueActive);
-
   // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
   // const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
 

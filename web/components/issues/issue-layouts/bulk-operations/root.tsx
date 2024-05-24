@@ -13,16 +13,16 @@ import {
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
+import { useMultipleSelectStore } from "@/hooks/store";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 type Props = {
   className?: string;
   selectionHelpers: TSelectionHelper;
-  snapshot: TSelectionSnapshot;
 };
 
 export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
-  const { className, selectionHelpers, snapshot } = props;
+  const { className, selectionHelpers } = props;
   // states
   const [isBulkArchiveModalOpen, setIsBulkArchiveModalOpen] = useState(false);
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
@@ -30,10 +30,10 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // serviced values
-  const { isSelectionActive, selectedEntityIds } = snapshot;
+  const { isSelectionActive, selectedEntityIds } = useMultipleSelectStore();
   const { handleClearSelection } = selectionHelpers;
 
-  if (!snapshot.isSelectionActive) return null;
+  if (!isSelectionActive) return null;
 
   return (
     <div className="sticky bottom-0 left-0 z-[2] h-14">
@@ -109,7 +109,10 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
           </Tooltip>
         </div>
         <div className="h-7 pl-3 flex-grow">
-          <IssueBulkOperationsProperties selectionHelpers={selectionHelpers} snapshot={snapshot} />
+          <IssueBulkOperationsProperties
+            selectionHelpers={selectionHelpers}
+            snapshot={{ isSelectionActive, selectedEntityIds }}
+          />
         </div>
       </div>
     </div>
