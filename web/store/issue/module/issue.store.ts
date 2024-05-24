@@ -294,17 +294,19 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
       const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
 
-      if (data.cycle_id && data.cycle_id !== "")
-        await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, data.cycle_id, [response.id]);
-
-      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
-
       const quickAddIssueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === data.id);
-      if (quickAddIssueIndex >= 0)
+      if (quickAddIssueIndex >= 0) {
         runInAction(() => {
           this.issues[moduleId].splice(quickAddIssueIndex, 1);
           this.rootIssueStore.issues.removeIssue(data.id);
         });
+      }
+
+      if (data.cycle_id && data.cycle_id !== "") {
+        await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id)
+      }
+
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       return response;
     } catch (error) {

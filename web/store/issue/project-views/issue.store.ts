@@ -239,24 +239,27 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
 
       const response = await this.createIssue(workspaceSlug, projectId, data, viewId);
 
-      if (data.cycle_id && data.cycle_id !== "")
-        await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, data.cycle_id, [response.id]);
+      const quickAddIssueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === data.id);
+      if (quickAddIssueIndex >= 0) {
+        runInAction(() => {
+          this.issues[viewId].splice(quickAddIssueIndex, 1);
+          this.rootIssueStore.issues.removeIssue(data.id);
+        });
+      }
 
-      if (data.module_ids && data.module_ids.length > 0)
+      if (data.cycle_id && data.cycle_id !== "") {
+        await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id)
+      }
+
+      if (data.module_ids && data.module_ids.length > 0) {
         await this.rootStore.moduleIssues.changeModulesInIssue(
           workspaceSlug,
           projectId,
           response.id,
           data.module_ids,
           []
-        );
-
-      const quickAddIssueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === data.id);
-      if (quickAddIssueIndex >= 0)
-        runInAction(() => {
-          this.issues[viewId].splice(quickAddIssueIndex, 1);
-          this.rootIssueStore.issues.removeIssue(data.id);
-        });
+        )
+      }
 
       return response;
     } catch (error) {
