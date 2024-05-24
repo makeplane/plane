@@ -162,7 +162,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
-        message: "Issue created successfully.",
+        message: `${is_draft_issue ? "Draft issue" : "Issue"} created successfully.`,
       });
       captureIssueEvent({
         eventName: ISSUE_CREATED,
@@ -178,7 +178,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Issue could not be created. Please try again.",
+        message: `${is_draft_issue ? "Draft issue" : "Issue"} could not be created. Please try again.`,
       });
       captureIssueEvent({
         eventName: ISSUE_CREATED,

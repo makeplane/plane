@@ -100,6 +100,7 @@ class GitHubOAuthProvider(OauthAdapter):
                     if token_response.get("refresh_token_expired_at")
                     else None
                 ),
+                "id_token": token_response.get("id_token", ""),
             }
         )
 
