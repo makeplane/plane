@@ -55,6 +55,7 @@ type Props = {
     destinationId: string | undefined,
     shouldDropAtEnd: boolean
   ) => void;
+  projectListType: "JOINED" | "FAVORITES";
   disableDrag?: boolean;
   disableDrop?: boolean;
   isLastChild: boolean;
@@ -100,7 +101,8 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { projectId, handleCopyText, disableDrag, disableDrop, isLastChild, handleOnProjectDrop } = props;
+  const { projectId, handleCopyText, disableDrag, disableDrop, isLastChild, handleOnProjectDrop, projectListType } =
+    props;
   // store hooks
   const { sidebarCollapsed: isCollapsed, toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
@@ -258,11 +260,11 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
           handleOnProjectDrop && handleOnProjectDrop(sourceId, destinationId, currentInstruction === "DRAG_BELOW");
 
-          highlightIssueOnDrop(`sidebar-${sourceId}-false`);
+          highlightIssueOnDrop(`sidebar-${sourceId}-${projectListType}`);
         },
       })
     );
-  }, [projectRef?.current, dragHandleRef?.current, projectId, isLastChild, handleOnProjectDrop]);
+  }, [projectRef?.current, dragHandleRef?.current, projectId, isLastChild, projectListType, handleOnProjectDrop]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
@@ -276,7 +278,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
       <Disclosure key={`${project.id}_${URLProjectId}`} ref={projectRef} defaultOpen={URLProjectId === project.id}>
         {({ open }) => (
           <div
-            id={`sidebar-${projectId}-${!!disableDrag}`}
+            id={`sidebar-${projectId}-${projectListType}`}
             className={cn("rounded relative", { "bg-custom-sidebar-background-80 opacity-60": isDragging })}
           >
             <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />

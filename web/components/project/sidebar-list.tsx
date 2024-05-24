@@ -188,6 +188,7 @@ export const ProjectSidebarList: FC = observer(() => {
                           key={projectId}
                           projectId={projectId}
                           handleCopyText={() => handleCopyText(projectId)}
+                          projectListType="FAVORITES"
                           disableDrag
                           disableDrop
                           isLastChild={index === favoriteProjects.length - 1}
@@ -242,6 +243,7 @@ export const ProjectSidebarList: FC = observer(() => {
                         <ProjectSidebarListItem
                           key={projectId}
                           projectId={projectId}
+                          projectListType="JOINED"
                           handleCopyText={() => handleCopyText(projectId)}
                           isLastChild={index === joinedProjects.length - 1}
                           handleOnProjectDrop={handleOnProjectDrop}
