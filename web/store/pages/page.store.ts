@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // types
-import { TPage } from "@plane/types";
+import { TLogoProps, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
@@ -39,6 +39,7 @@ export interface IPageStore extends TPage {
   unlock: () => Promise<void>;
   archive: () => Promise<void>;
   restore: () => Promise<void>;
+  updatePageLogo: (logo_props: TLogoProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removeFromFavorites: () => Promise<void>;
 }
@@ -50,6 +51,7 @@ export class PageStore implements IPageStore {
   // page properties
   id: string | undefined;
   name: string | undefined;
+  logo_props: TLogoProps;
   description_html: string | undefined;
   color: string | undefined;
   labels: string[] | undefined;
@@ -77,6 +79,7 @@ export class PageStore implements IPageStore {
   ) {
     this.id = page?.id || undefined;
     this.name = page?.name;
+    this.logo_props = page?.logo_props || undefined;
     this.description_html = page?.description_html || undefined;
     this.color = page?.color || undefined;
     this.labels = page?.labels || undefined;
@@ -100,6 +103,7 @@ export class PageStore implements IPageStore {
       // page properties
       id: observable.ref,
       name: observable.ref,
+      logo_props: observable.ref,
       description_html: observable.ref,
       color: observable.ref,
       labels: observable,
@@ -139,6 +143,7 @@ export class PageStore implements IPageStore {
       unlock: action,
       archive: action,
       restore: action,
+      updatePageLogo: action,
       addToFavorites: action,
       removeFromFavorites: action,
     });
@@ -202,6 +207,7 @@ export class PageStore implements IPageStore {
       labels: this.labels,
       owned_by: this.owned_by,
       access: this.access,
+      logo_props: this.logo_props,
       is_favorite: this.is_favorite,
       is_locked: this.is_locked,
       archived_at: this.archived_at,
@@ -440,6 +446,22 @@ export class PageStore implements IPageStore {
       await this.pageService.restore(workspaceSlug, projectId, this.id);
       runInAction(() => {
         this.archived_at = null;
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  updatePageLogo = async (logo_props: TLogoProps) => {
+    const { workspaceSlug, projectId } = this.store.router;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
+
+    try {
+      await this.pageService.update(workspaceSlug, projectId, this.id, {
+        logo_props,
+      });
+      runInAction(() => {
+        this.logo_props = logo_props;
       });
     } catch (error) {
       throw error;
