@@ -1,5 +1,6 @@
 "use client";
 
+import { observer } from "mobx-react-lite";
 // components
 import { UserLoggedIn } from "@/components/account";
 import { LogoSpinner } from "@/components/common";
@@ -7,7 +8,7 @@ import { AuthView } from "@/components/views";
 // hooks
 import { useUser } from "@/hooks/store";
 
-export default function HomePage() {
+const HomePage = observer(() => {
   const { data: currentUser, isAuthenticated, isLoading } = useUser();
 
   if (isLoading) return <LogoSpinner />;
@@ -15,4 +16,6 @@ export default function HomePage() {
   if (currentUser && isAuthenticated) return <UserLoggedIn />;
 
   return <AuthView />;
-}
+});
+
+export default HomePage;

@@ -1,3 +1,6 @@
+# Python imports
+# import uuid
+
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
 from django.contrib.auth import logout
@@ -26,6 +29,7 @@ from plane.db.models import (
     User,
     WorkspaceMember,
     WorkspaceMemberInvite,
+    Session,
 )
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.cache import cache_response, invalidate_cache
@@ -160,12 +164,13 @@ class UserEndpoint(BaseViewSet):
             email=user.email,
         ).delete()
 
-        # Deactivate the user
-        user.is_active = False
+        # Delete all sessions
+        Session.objects.filter(user_id=request.user.id).delete()
 
         # Profile updates
         profile = Profile.objects.get(user=user)
 
+        # Reset onboarding
         profile.last_workspace_id = None
         profile.is_tour_completed = False
         profile.is_onboarded = False
@@ -177,7 +182,12 @@ class UserEndpoint(BaseViewSet):
         }
         profile.save()
 
-        # User log out
+        # Reset password
+        # user.is_password_autoset = True
+        # user.set_password(uuid.uuid4().hex)
+
+        # Deactivate the user
+        user.is_active = False
         user.last_logout_ip = user_ip(request=request)
         user.last_logout_time = timezone.now()
         user.save()
