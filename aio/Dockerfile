@@ -54,11 +54,14 @@ RUN yarn turbo run build
 # *****************************************************************************
 # STAGE 3: Copy the project and start it
 # *****************************************************************************
+# FROM makeplane/plane-aio-base AS runner
 FROM makeplane/plane-aio-base:single-docker-image AS runner
+
+USER root
 
 WORKDIR /app
 
-RUN mkdir -p /app/{web,space,admin,api}
+SHELL [ "/bin/bash", "-c" ]
 
 COPY --from=installer /app/web/next.config.js ./web/
 COPY --from=installer /app/web/package.json ./web/
@@ -107,7 +110,13 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 
 COPY apiserver/requirements.txt ./api/
 COPY apiserver/requirements ./api/requirements
-RUN  pip install -r ./api/requirements.txt --compile --no-cache-dir
+
+RUN apt-get install python3.12-venv -y
+
+RUN python3 -m venv /app/venv && \
+    source /app/venv/bin/activate && \
+    /app/venv/bin/pip install --upgrade pip && \
+    /app/venv/bin/pip install -r ./api/requirements.txt --compile --no-cache-dir
 
 # Add in Django deps and generate Django's static files
 COPY apiserver/manage.py ./api/manage.py
@@ -119,7 +128,11 @@ COPY apiserver/bin ./api/bin/
 RUN chmod +x ./api/bin/*
 RUN chmod -R 777 ./api/
 
+COPY aio/supervisord.conf /app/supervisord.conf
 
-COPY aio/supervisor.conf /app/supervisor.conf
+RUN chown -R app-user:app-user /app
 
-CMD ["supervisord","-c","/app/supervisor.conf"]
+USER app-user
+
+
+CMD ["sudo", "/usr/bin/supervisord", "-c", "/app/supervisord.conf"]
