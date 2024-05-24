@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store";
@@ -10,8 +10,7 @@ export type TEntityDetails = {
 
 type Props = {
   containerRef: React.MutableRefObject<HTMLElement | null>;
-  entities: TEntityDetails[]; // { groupID: entityIds[] }
-  groups: string[];
+  entities: Record<string, string[]>; // { groupID: entityIds[] }
 };
 
 export type TSelectionSnapshot = {
@@ -29,7 +28,7 @@ export type TSelectionHelper = {
 };
 
 export const useMultipleSelect = (props: Props) => {
-  const { containerRef, entities, groups } = props;
+  const { containerRef, entities } = props;
   // router
   const router = useRouter();
   // store hooks
@@ -48,13 +47,28 @@ export const useMultipleSelect = (props: Props) => {
     isEntityActive,
   } = useMultipleSelectStore();
 
+  const groups = useMemo(() => Object.keys(entities), [entities]);
+
+  const entitiesList: TEntityDetails[] = useMemo(
+    () =>
+      groups
+        .map((groupID) =>
+          entities[groupID].map((entityID) => ({
+            entityID,
+            groupID,
+          }))
+        )
+        .flat(1),
+    [entities, groups]
+  );
+
   const getPreviousAndNextEntities = useCallback(
     (entityID: string) => {
-      const currentEntityIndex = entities.findIndex((entity) => entity?.entityID === entityID);
+      const currentEntityIndex = entitiesList.findIndex((entity) => entity?.entityID === entityID);
 
       // entity position
       const isFirstEntity = currentEntityIndex === 0;
-      const isLastEntity = currentEntityIndex === entities.length - 1;
+      const isLastEntity = currentEntityIndex === entitiesList.length - 1;
 
       let previousEntity: TEntityDetails | null = null;
       let nextEntity: TEntityDetails | null = null;
@@ -62,13 +76,13 @@ export const useMultipleSelect = (props: Props) => {
       if (isLastEntity) {
         nextEntity = null;
       } else {
-        nextEntity = entities[currentEntityIndex + 1];
+        nextEntity = entitiesList[currentEntityIndex + 1];
       }
 
       if (isFirstEntity) {
         previousEntity = null;
       } else {
-        previousEntity = entities[currentEntityIndex - 1];
+        previousEntity = entitiesList[currentEntityIndex - 1];
       }
 
       return {
@@ -76,7 +90,7 @@ export const useMultipleSelect = (props: Props) => {
         nextEntity,
       };
     },
-    [entities]
+    [entitiesList]
   );
 
   const handleActiveEntityChange = useCallback(
@@ -163,19 +177,21 @@ export const useMultipleSelect = (props: Props) => {
   const handleEntityClick = useCallback(
     (e: React.MouseEvent, entityID: string, groupID: string) => {
       if (e.shiftKey && lastSelectedEntityDetails) {
-        const currentEntityIndex = entities.findIndex((entity) => entity?.entityID === entityID);
+        const currentEntityIndex = entitiesList.findIndex((entity) => entity?.entityID === entityID);
 
-        const lastEntityIndex = entities.findIndex((entity) => entity?.entityID === lastSelectedEntityDetails.entityID);
+        const lastEntityIndex = entitiesList.findIndex(
+          (entity) => entity?.entityID === lastSelectedEntityDetails.entityID
+        );
         if (lastEntityIndex < currentEntityIndex) {
           for (let i = lastEntityIndex + 1; i <= currentEntityIndex; i++) {
-            const entityDetails = entities[i];
+            const entityDetails = entitiesList[i];
             if (entityDetails) {
               handleEntitySelection(entityDetails, false);
             }
           }
         } else if (lastEntityIndex > currentEntityIndex) {
           for (let i = currentEntityIndex; i <= lastEntityIndex - 1; i++) {
-            const entityDetails = entities[i];
+            const entityDetails = entitiesList[i];
             if (entityDetails) {
               handleEntitySelection(entityDetails, false);
             }
@@ -184,7 +200,7 @@ export const useMultipleSelect = (props: Props) => {
           const startIndex = lastEntityIndex + 1;
           const endIndex = currentEntityIndex;
           for (let i = startIndex; i <= endIndex; i++) {
-            const entityDetails = entities[i];
+            const entityDetails = entitiesList[i];
             if (entityDetails) {
               handleEntitySelection(entityDetails, false);
             }
@@ -195,7 +211,7 @@ export const useMultipleSelect = (props: Props) => {
 
       handleEntitySelection({ entityID, groupID }, false);
     },
-    [entities, handleEntitySelection, lastSelectedEntityDetails]
+    [entitiesList, handleEntitySelection, lastSelectedEntityDetails]
   );
 
   /**
@@ -205,13 +221,13 @@ export const useMultipleSelect = (props: Props) => {
    */
   const isGroupSelected = useCallback(
     (groupID: string) => {
-      const groupEntities = entities.filter((entity) => entity.groupID === groupID);
+      const groupEntities = entitiesList.filter((entity) => entity.groupID === groupID);
       const totalSelected = groupEntities.filter((entity) => isEntitySelected(entity.entityID ?? "")).length;
       if (totalSelected === 0) return "empty";
       if (totalSelected === groupEntities.length) return "complete";
       return "partial";
     },
-    [entities, isEntitySelected]
+    [entitiesList, isEntitySelected]
   );
 
   /**
@@ -220,13 +236,13 @@ export const useMultipleSelect = (props: Props) => {
    */
   const handleGroupClick = useCallback(
     (groupID: string) => {
-      const groupEntities = entities.filter((entity) => entity.groupID === groupID);
+      const groupEntities = entitiesList.filter((entity) => entity.groupID === groupID);
       const groupSelectionStatus = isGroupSelected(groupID);
       groupEntities.forEach((entity) => {
         handleEntitySelection(entity, false, groupSelectionStatus === "empty" ? "force-add" : "force-remove");
       });
     },
-    [entities, handleEntitySelection, isGroupSelected]
+    [entitiesList, handleEntitySelection, isGroupSelected]
   );
 
   // clear selection on escape key press
@@ -274,7 +290,7 @@ export const useMultipleSelect = (props: Props) => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // set active entity id to the first entity
       if (["ArrowUp", "ArrowDown"].includes(e.key) && !activeEntityDetails) {
-        const firstElementDetails = entities[0];
+        const firstElementDetails = entitiesList[0];
         if (!firstElementDetails) return;
         handleActiveEntityChange(firstElementDetails);
       }
@@ -301,7 +317,7 @@ export const useMultipleSelect = (props: Props) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeEntityDetails, entities, groups, getPreviousAndNextEntities, handleActiveEntityChange]);
+  }, [activeEntityDetails, entitiesList, groups, getPreviousAndNextEntities, handleActiveEntityChange]);
 
   // clear selection on route change
   useEffect(() => {
@@ -317,25 +333,36 @@ export const useMultipleSelect = (props: Props) => {
   /**
    * @description snapshot of the current state of selection
    */
-  const snapshot: TSelectionSnapshot = {
-    isSelectionActive: selectedEntityDetails.length > 0,
-    selectedEntityIds: selectedEntityDetails.map((en) => en.entityID),
-  };
+  const snapshot: TSelectionSnapshot = useMemo(
+    () => ({
+      isSelectionActive: selectedEntityDetails.length > 0,
+      selectedEntityIds: selectedEntityDetails.map((en) => en.entityID),
+    }),
+    [selectedEntityDetails]
+  );
 
   /**
    * @description helper functions for selection
    */
-  const helpers: TSelectionHelper = {
-    handleClearSelection: clearSelection,
-    handleEntityClick,
-    isEntitySelected,
-    isEntityActive,
-    handleGroupClick,
-    isGroupSelected,
-  };
+  const helpers: TSelectionHelper = useMemo(
+    () => ({
+      handleClearSelection: clearSelection,
+      handleEntityClick,
+      isEntitySelected,
+      isEntityActive,
+      handleGroupClick,
+      isGroupSelected,
+    }),
+    [clearSelection, handleEntityClick, handleGroupClick, isEntityActive, isEntitySelected, isGroupSelected]
+  );
 
-  return {
-    helpers,
-    snapshot,
-  };
+  const returnValue = useMemo(
+    () => ({
+      helpers,
+      snapshot,
+    }),
+    [helpers, snapshot]
+  );
+
+  return returnValue;
 };

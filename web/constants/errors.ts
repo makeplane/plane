@@ -12,7 +12,7 @@ export const ERROR_DETAILS: {
 } = {
   [EErrorCodes.INVALID_ARCHIVE_STATE_GROUP]: {
     title: "Unable to archive issues",
-    message: "Only issues belonging to Completed or Canceled states can be archived.",
+    message: "Only issues belonging to Completed or Canceled state groups can be archived.",
   },
   [EErrorCodes.INVALID_ISSUE_START_DATE]: {
     title: "Unable to update issues",

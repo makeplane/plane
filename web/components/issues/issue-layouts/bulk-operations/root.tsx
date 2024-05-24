@@ -33,8 +33,10 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
   const { isSelectionActive, selectedEntityIds } = snapshot;
   const { handleClearSelection } = selectionHelpers;
 
+  if (!snapshot.isSelectionActive) return null;
+
   return (
-    <>
+    <div className="sticky bottom-0 left-0 z-[2] h-14">
       {workspaceSlug && projectId && (
         <>
           <BulkArchiveConfirmationModal
@@ -61,7 +63,7 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
           className
         )}
       >
-        <div className="h-7 pr-3 text-sm flex items-center gap-2">
+        <div className="h-7 pr-3 text-sm flex items-center gap-2 flex-shrink-0">
           <Checkbox
             className="!outline-none size-3.5"
             iconClassName="size-3"
@@ -78,7 +80,7 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
             selected
           </div>
         </div>
-        <div className="h-7 px-3 flex items-center gap-3">
+        <div className="h-7 px-3 flex items-center gap-3 flex-shrink-0">
           <Tooltip tooltipContent="Archive">
             <button
               type="button"
@@ -106,10 +108,10 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
             </button>
           </Tooltip>
         </div>
-        <div className="h-7 pl-3 flex items-center gap-3">
+        <div className="h-7 pl-3 flex-grow">
           <IssueBulkOperationsProperties selectionHelpers={selectionHelpers} snapshot={snapshot} />
         </div>
       </div>
-    </>
+    </div>
   );
 });

@@ -138,7 +138,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
       className="vertical-scrollbar scrollbar-lg relative size-full overflow-auto vertical-scrollbar-margin-top-md"
     >
       {groups && (
-        <MultipleSelectGroup containerRef={containerRef} groups={groupIds} entities={entities}>
+        <MultipleSelectGroup containerRef={containerRef} entities={entities}>
           {(helpers, snapshot) => (
             <>
               {groups.map(
@@ -169,11 +169,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                     />
                   )
               )}
-              {snapshot.isSelectionActive && (
-                <div className="sticky bottom-0 left-0 z-[2] h-14">
-                  <IssueBulkOperationsRoot selectionHelpers={helpers} snapshot={snapshot} />
-                </div>
-              )}
+              <IssueBulkOperationsRoot selectionHelpers={helpers} snapshot={snapshot} />
             </>
           )}
         </MultipleSelectGroup>
