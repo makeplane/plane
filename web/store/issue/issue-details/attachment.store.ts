@@ -4,10 +4,11 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// services
-import { IssueAttachmentService } from "@/services/issue";
 // types
 import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap } from "@plane/types";
+// services
+import { IssueAttachmentService } from "@/services/issue";
+import { IIssueRootStore } from "../root.store";
 import { IIssueDetail } from "./root.store";
 
 export interface IIssueAttachmentStoreActions {
@@ -43,11 +44,12 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   attachments: TIssueAttachmentIdMap = {};
   attachmentMap: TIssueAttachmentMap = {};
   // root store
+  rootIssueStore: IIssueRootStore;
   rootIssueDetailStore: IIssueDetail;
   // services
   issueAttachmentService;
 
-  constructor(rootStore: IIssueDetail) {
+  constructor(rootStore: IIssueRootStore) {
     makeObservable(this, {
       // observables
       attachments: observable,
@@ -61,7 +63,8 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
       removeAttachment: action,
     });
     // root store
-    this.rootIssueDetailStore = rootStore;
+    this.rootIssueStore = rootStore;
+    this.rootIssueDetailStore = rootStore.issueDetail;
     // services
     this.issueAttachmentService = new IssueAttachmentService();
   }
@@ -87,9 +90,9 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   // actions
   addAttachments = (issueId: string, attachments: TIssueAttachment[]) => {
     if (attachments && attachments.length > 0) {
-      const _attachmentIds = attachments.map((attachment) => attachment.id);
+      const newAttachmentIds = attachments.map((attachment) => attachment.id);
       runInAction(() => {
-        update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, _attachmentIds)));
+        update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, newAttachmentIds)));
         attachments.forEach((attachment) => set(this.attachmentMap, attachment.id, attachment));
       });
     }
@@ -110,12 +113,17 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, data: FormData) => {
     try {
       const response = await this.issueAttachmentService.uploadIssueAttachment(workspaceSlug, projectId, issueId, data);
+      const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 0;
 
-      if (response && response.id)
+      if (response && response.id) {
         runInAction(() => {
           update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, [response.id])));
           set(this.attachmentMap, response.id, response);
+          this.rootIssueStore.issues.updateIssue(issueId, {
+            attachment_count: issueAttachmentsCount + 1, // increment attachment count
+          });
         });
+      }
 
       return response;
     } catch (error) {
@@ -131,6 +139,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         issueId,
         attachmentId
       );
+      const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 1;
 
       runInAction(() => {
         update(this.attachments, [issueId], (attachmentIds = []) => {
@@ -138,6 +147,9 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
           return attachmentIds;
         });
         delete this.attachmentMap[attachmentId];
+        this.rootIssueStore.issues.updateIssue(issueId, {
+          attachment_count: issueAttachmentsCount - 1, // decrement attachment count
+        });
       });
 
       return response;

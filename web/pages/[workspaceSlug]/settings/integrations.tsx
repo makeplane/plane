@@ -6,7 +6,6 @@ import useSWR from "swr";
 import { PageHead } from "@/components/core";
 import { WorkspaceSettingHeader } from "@/components/headers";
 import { SingleIntegrationCard } from "@/components/integration";
-// ui
 import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
 // constants
 import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
@@ -72,7 +71,7 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
 
 WorkspaceIntegrationsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Integrations Settings" />}>
+    <AppLayout header={<WorkspaceSettingHeader />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );
