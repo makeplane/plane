@@ -6,6 +6,7 @@ import type {
   IUserMemberLite,
   IWorkspace,
   IWorkspaceLite,
+  TLogoProps,
   TStateGroups,
 } from "..";
 
@@ -34,7 +35,7 @@ export interface IProject {
   is_deployed: boolean;
   is_favorite: boolean;
   is_member: boolean;
-  logo_props: TProjectLogoProps;
+  logo_props: TLogoProps;
   member_role: EUserProjectRoles | null;
   members: IProjectMemberLite[];
   name: string;
