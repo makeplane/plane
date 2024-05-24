@@ -1,19 +1,21 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // hooks
 import { TEntityDetails } from "@/hooks/use-multiple-select";
 // services
 import { IssueService } from "@/services/issue";
+import { computedFn } from "mobx-utils";
 
 export type IMultipleSelectStore = {
   // observables
-  selectedEntityDetails: TEntityDetails[];
-  lastSelectedEntityDetails: TEntityDetails | null;
-  previousActiveEntity: TEntityDetails | null;
-  nextActiveEntity: TEntityDetails | null;
-  activeEntityDetails: TEntityDetails | null;
+  isSelectionActive: boolean;
+  selectedEntityIds: string[];
   // helper actions
   isEntitySelected: (entityID: string) => boolean;
   isEntityActive: (entityID: string) => boolean;
+  getLastSelectedEntityDetails: () => TEntityDetails | null;
+  getPreviousActiveEntity: () => TEntityDetails | null;
+  getNextActiveEntity: () => TEntityDetails | null;
+  getActiveEntityDetails: () => TEntityDetails | null;
   // entity actions
   updateSelectedEntityDetails: (entityDetails: TEntityDetails, action: "add" | "remove") => void;
   updateLastSelectedEntityDetails: (entityDetails: TEntityDetails | null) => void;
@@ -42,6 +44,8 @@ export class MultipleSelectStore implements IMultipleSelectStore {
       nextActiveEntity: observable,
       activeEntityDetails: observable,
       // entity actions
+      isSelectionActive: computed,
+      selectedEntityIds: computed,
       updateSelectedEntityDetails: action,
       updateLastSelectedEntityDetails: action,
       updatePreviousActiveEntity: action,
@@ -53,20 +57,35 @@ export class MultipleSelectStore implements IMultipleSelectStore {
     this.issueService = new IssueService();
   }
 
+  get isSelectionActive() {
+    return this.selectedEntityDetails.length > 0;
+  }
+
+  get selectedEntityIds() {
+    return this.selectedEntityDetails.map((en) => en.entityID);
+  }
+
   // helper actions
   /**
    * @description returns if the entity is selected or not
    * @param {string} entityID
    * @returns {boolean}
    */
-  isEntitySelected = (entityID: string): boolean => this.selectedEntityDetails.some((en) => en.entityID === entityID);
+  isEntitySelected = computedFn((entityID: string): boolean =>
+    this.selectedEntityDetails.some((en) => en.entityID === entityID)
+  );
 
   /**
    * @description returns if the entity is active or not
    * @param {string} entityID
    * @returns {boolean}
    */
-  isEntityActive = (entityID: string): boolean => this.activeEntityDetails?.entityID === entityID;
+  isEntityActive = computedFn((entityID: string): boolean => this.activeEntityDetails?.entityID === entityID);
+
+  getLastSelectedEntityDetails = computedFn(() => this.lastSelectedEntityDetails);
+  getPreviousActiveEntity = computedFn(() => this.previousActiveEntity);
+  getNextActiveEntity = computedFn(() => this.nextActiveEntity);
+  getActiveEntityDetails = computedFn(() => this.activeEntityDetails);
 
   // entity actions
   /**

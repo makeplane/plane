@@ -139,7 +139,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     >
       {groups && (
         <MultipleSelectGroup containerRef={containerRef} entities={entities}>
-          {(helpers, snapshot) => (
+          {(helpers) => (
             <>
               {groups.map(
                 (group: IGroupByColumn) =>
@@ -169,7 +169,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                     />
                   )
               )}
-              <IssueBulkOperationsRoot selectionHelpers={helpers} snapshot={snapshot} />
+              <IssueBulkOperationsRoot selectionHelpers={helpers} />
             </>
           )}
         </MultipleSelectGroup>
@@ -177,6 +177,8 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     </div>
   );
 });
+
+GroupByList.displayName = "GroupByList";
 
 export interface IList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;

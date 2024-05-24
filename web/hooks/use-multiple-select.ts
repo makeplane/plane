@@ -33,15 +33,14 @@ export const useMultipleSelect = (props: Props) => {
   const router = useRouter();
   // store hooks
   const {
-    selectedEntityDetails,
     updateSelectedEntityDetails,
-    activeEntityDetails,
+    getActiveEntityDetails,
     updateActiveEntityDetails,
-    previousActiveEntity,
+    getPreviousActiveEntity,
     updatePreviousActiveEntity,
-    nextActiveEntity,
+    getNextActiveEntity,
     updateNextActiveEntity,
-    lastSelectedEntityDetails,
+    getLastSelectedEntityDetails,
     clearSelection,
     isEntitySelected,
     isEntityActive,
@@ -176,6 +175,7 @@ export const useMultipleSelect = (props: Props) => {
    */
   const handleEntityClick = useCallback(
     (e: React.MouseEvent, entityID: string, groupID: string) => {
+      const lastSelectedEntityDetails = getLastSelectedEntityDetails();
       if (e.shiftKey && lastSelectedEntityDetails) {
         const currentEntityIndex = entitiesList.findIndex((entity) => entity?.entityID === entityID);
 
@@ -211,7 +211,7 @@ export const useMultipleSelect = (props: Props) => {
 
       handleEntitySelection({ entityID, groupID }, false);
     },
-    [entitiesList, handleEntitySelection, lastSelectedEntityDetails]
+    [entitiesList, handleEntitySelection, getLastSelectedEntityDetails]
   );
 
   /**
@@ -262,6 +262,9 @@ export const useMultipleSelect = (props: Props) => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!e.shiftKey) return;
 
+      const activeEntityDetails = getActiveEntityDetails();
+      const nextActiveEntity = getNextActiveEntity();
+      const previousActiveEntity = getPreviousActiveEntity();
       if (e.key === "ArrowDown" && activeEntityDetails) {
         if (!nextActiveEntity) return;
         // console.log("selected by down", elementDetails.entityID);
@@ -279,15 +282,16 @@ export const useMultipleSelect = (props: Props) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [
-    activeEntityDetails,
+    getActiveEntityDetails,
     handleEntitySelection,
-    lastSelectedEntityDetails?.entityID,
-    nextActiveEntity,
-    previousActiveEntity,
+    getLastSelectedEntityDetails,
+    getNextActiveEntity,
+    getPreviousActiveEntity,
   ]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEntityDetails = getActiveEntityDetails();
       // set active entity id to the first entity
       if (["ArrowUp", "ArrowDown"].includes(e.key) && !activeEntityDetails) {
         const firstElementDetails = entitiesList[0];
@@ -317,7 +321,7 @@ export const useMultipleSelect = (props: Props) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeEntityDetails, entitiesList, groups, getPreviousAndNextEntities, handleActiveEntityChange]);
+  }, [getActiveEntityDetails, entitiesList, groups, getPreviousAndNextEntities, handleActiveEntityChange]);
 
   // clear selection on route change
   useEffect(() => {
@@ -331,17 +335,6 @@ export const useMultipleSelect = (props: Props) => {
   }, [clearSelection, router.events]);
 
   /**
-   * @description snapshot of the current state of selection
-   */
-  const snapshot: TSelectionSnapshot = useMemo(
-    () => ({
-      isSelectionActive: selectedEntityDetails.length > 0,
-      selectedEntityIds: selectedEntityDetails.map((en) => en.entityID),
-    }),
-    [selectedEntityDetails]
-  );
-
-  /**
    * @description helper functions for selection
    */
   const helpers: TSelectionHelper = useMemo(
@@ -353,16 +346,8 @@ export const useMultipleSelect = (props: Props) => {
       handleGroupClick,
       isGroupSelected,
     }),
-    [clearSelection, handleEntityClick, handleGroupClick, isEntityActive, isEntitySelected, isGroupSelected]
+    [handleEntityClick, handleGroupClick, isEntityActive, isEntitySelected, isGroupSelected]
   );
 
-  const returnValue = useMemo(
-    () => ({
-      helpers,
-      snapshot,
-    }),
-    [helpers, snapshot]
-  );
-
-  return returnValue;
+  return helpers;
 };
