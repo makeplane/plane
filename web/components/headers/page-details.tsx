@@ -2,13 +2,11 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { FileText } from "lucide-react";
-// hooks
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
-// helpers
-import { BreadcrumbLink } from "@/components/common";
 // components
-import { ProjectLogo } from "@/components/project";
+import { BreadcrumbLink, Logo } from "@/components/common";
+// hooks
 import { useCommandPalette, usePage, useProject } from "@/hooks/store";
 
 export interface IPagesHeaderProps {
@@ -42,7 +40,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
                       icon={
                         currentProjectDetails && (
                           <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                            <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                            <Logo logo={currentProjectDetails?.logo_props} size={16} />
                           </span>
                         )
                       }

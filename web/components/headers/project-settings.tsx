@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 // ui
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
 // helper
-import { BreadcrumbLink } from "@/components/common";
-import { ProjectLogo } from "@/components/project";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
@@ -44,7 +43,7 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
                     icon={
                       currentProjectDetails && (
                         <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                          <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                          <Logo logo={currentProjectDetails?.logo_props} size={16} />
                         </span>
                       )
                     }

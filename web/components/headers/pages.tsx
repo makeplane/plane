@@ -5,8 +5,7 @@ import { FileText } from "lucide-react";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
-import { BreadcrumbLink } from "@/components/common";
-import { ProjectLogo } from "@/components/project";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { EUserProjectRoles } from "@/constants/project";
 // constants
 // components
@@ -41,7 +40,7 @@ export const PagesHeader = observer(() => {
                   icon={
                     currentProjectDetails && (
                       <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
                       </span>
                     )
                   }

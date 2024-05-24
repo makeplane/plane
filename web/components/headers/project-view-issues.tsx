@@ -7,9 +7,8 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // ui
 import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-import { ProjectLogo } from "@/components/project";
 // constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
@@ -141,7 +140,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 icon={
                   currentProjectDetails && (
                     <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                      <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                      <Logo logo={currentProjectDetails?.logo_props} size={16} />
                     </span>
                   )
                 }
