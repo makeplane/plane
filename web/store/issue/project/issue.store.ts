@@ -252,6 +252,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
         });
       }
 
+      //TODO: error handling needs to be improved for rare cases
       if (data.cycle_id && data.cycle_id !== "") {
         await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id)
       }
