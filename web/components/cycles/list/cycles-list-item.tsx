@@ -76,13 +76,18 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
     }
   };
 
+  // handlers
+  const handleArchivedCycleClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    openCycleOverview(e);
+  };
+
+  const handleItemClick = cycleDetails.archived_at ? handleArchivedCycleClick : undefined;
+
   return (
     <ListItem
       title={cycleDetails?.name ?? ""}
       itemLink={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
-      onItemClick={(e) => {
-        if (cycleDetails.archived_at) openCycleOverview(e);
-      }}
+      onItemClick={handleItemClick}
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
           {isCompleted ? (
