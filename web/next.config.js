@@ -70,6 +70,10 @@ const nextConfig = {
       const ADMIN_BASE_PATH = process.env.NEXT_PUBLIC_ADMIN_BASE_PATH || ""
       const GOD_MODE_BASE_URL = ADMIN_BASE_URL + ADMIN_BASE_PATH
       rewrites.push({
+        source: "/god-mode",
+        destination: `${GOD_MODE_BASE_URL}/`,
+      })
+      rewrites.push({
         source: "/god-mode/:path*",
         destination: `${GOD_MODE_BASE_URL}/:path*`,
       })
