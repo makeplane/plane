@@ -194,6 +194,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
           setIsDragging(false);
         },
         onGenerateDragPreview: ({ nativeSetDragImage }) => {
+          // Add a custom drag image
           setCustomNativeDragPreview({
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
@@ -261,7 +262,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
         },
       })
     );
-  }, [projectRef?.current, dragHandleRef?.current, projectId, isLastChild, handleOnProjectDrop]); //, onDrop]);
+  }, [projectRef?.current, dragHandleRef?.current, projectId, isLastChild, handleOnProjectDrop]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
