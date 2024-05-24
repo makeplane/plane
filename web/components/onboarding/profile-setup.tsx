@@ -13,7 +13,7 @@ import { PasswordStrengthMeter } from "@/components/account";
 import { UserImageUploadModal } from "@/components/core";
 import { OnboardingHeader, SwitchAccountDropdown } from "@/components/onboarding";
 // constants
-import { E_ONBOARDING, USER_DETAILS, E_ONBOARDING_STEP_1,E_ONBOARDING_STEP_2 } from "@/constants/event-tracker";
+import { USER_DETAILS, E_ONBOARDING_STEP_1, E_ONBOARDING_STEP_2 } from "@/constants/event-tracker";
 // helpers
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks

@@ -66,7 +66,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
               captureWorkspaceEvent({
                 eventName: WORKSPACE_CREATED,
                 payload: {
-                  workspace_id: res.id,
+                  ...res,
                   state: "SUCCESS",
                   first_time: true,
                   element: E_ONBOARDING,

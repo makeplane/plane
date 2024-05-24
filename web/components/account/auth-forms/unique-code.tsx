@@ -81,7 +81,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
         setIsSubmitting(true);
         captureEvent(CODE_VERIFIED, {
           state: "SUCCESS",
-          first_time: isExistingEmail,
+          first_time: !isExistingEmail,
         });
       }}
       onError={() => setIsSubmitting(false)}
