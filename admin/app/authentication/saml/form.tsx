@@ -93,20 +93,20 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
       label: "Entity ID / Audience / Metadata Information",
       url: `${originURL}/auth/saml/metadata/`,
       description:
-        "We will auto-generate this. Paste this into your audience URI or SP entity ID section of your identity provider.",
+        "This contains the link to the metadata information. We will auto-generate this.",
     },
     {
       key: "Callback_URI",
       label: "Callback URI",
       url: `${originURL}/auth/saml/callback/`,
       description:
-        "We will auto-generate this. Paste this in the single sign on callback url section of your identity provider.",
+        "This url is a http-post request. Paste this in the single sign-on callback url section of your identity.",
     },
     {
       key: "Logout_URI",
       label: "Logout URI",
       url: `${originURL}/auth/saml/logout/`,
-      description: "We will auto-generate this. Add this as a trusted origin in your identity provider.",
+      description: "This url is a http-redirect request. Add this to your logout URI.",
     },
   ];
 
@@ -206,11 +206,11 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
               ))}
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm text-custom-text-300 font-medium">Name ID format</h4>
+                <h4 className="text-sm text-custom-text-200 font-medium">Name ID format</h4>
                 <p className="text-sm text-custom-text-100">emailAddress</p>
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm text-custom-text-300 font-medium">Attribute mapping</h4>
+                <h4 className="text-sm text-custom-text-200 font-medium">Attribute mapping</h4>
                 <ul className="text-sm text-custom-text-100 list-disc pl-6">
                   <li>first_name to user.firstName</li>
                   <li>last_name to user.lastName</li>
