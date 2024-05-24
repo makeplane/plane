@@ -40,7 +40,7 @@ const EstimatesSettingsPage: NextPageWithLayout = observer(() => {
 
 EstimatesSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ProjectSettingHeader title="Estimates Settings" />} withProjectWrapper>
+    <AppLayout header={<ProjectSettingHeader />} withProjectWrapper>
       <ProjectSettingLayout>{page}</ProjectSettingLayout>
     </AppLayout>
   );

@@ -122,7 +122,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
 
 WorkspaceMembersSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Members Settings" />}>
+    <AppLayout header={<WorkspaceSettingHeader />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );

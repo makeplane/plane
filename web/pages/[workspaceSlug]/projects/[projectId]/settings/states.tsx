@@ -32,7 +32,7 @@ const StatesSettingsPage: NextPageWithLayout = observer(() => {
 
 StatesSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout withProjectWrapper header={<ProjectSettingHeader title="States Settings" />}>
+    <AppLayout withProjectWrapper header={<ProjectSettingHeader />}>
       <ProjectSettingLayout>{page}</ProjectSettingLayout>
     </AppLayout>
   );

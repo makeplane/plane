@@ -2,22 +2,17 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // ui
+import { Settings } from "lucide-react";
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
-// helper
+// components
 import { BreadcrumbLink } from "@/components/common";
 import { ProjectLogo } from "@/components/project";
+// constants
 import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
-// constants
-// components
 
-export interface IProjectSettingHeader {
-  title: string;
-}
-
-export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) => {
-  const { title } = props;
+export const ProjectSettingHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -52,7 +47,12 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
                 }
               />
               <div className="hidden sm:hidden md:block lg:block">
-                <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={title} />} />
+                <Breadcrumbs.BreadcrumbItem
+                  type="text"
+                  link={
+                    <BreadcrumbLink label="Settings" icon={<Settings className="h-4 w-4 text-custom-text-300" />} />
+                  }
+                />
               </div>
             </Breadcrumbs>
           </div>
@@ -62,7 +62,7 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
           maxHeight="lg"
           customButton={
             <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-custom-border-300">
-              {title}
+              Settings
             </span>
           }
           placement="bottom-start"
