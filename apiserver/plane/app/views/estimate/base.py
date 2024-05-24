@@ -224,4 +224,7 @@ class DeleteEstimatePoint(BaseViewSet):
 
         old_estimate_point.delete()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            EstimatePointSerializer(updated_estimate_points, many=True).data,
+            status=status.HTTP_200_OK,
+        )

@@ -38,6 +38,6 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-point/<estimate_point_id>/",
         DeleteEstimatePoint.as_view({"patch": "partial_update"}),
-        name="bulk-create-estimate-points",
+        name="delete-estimate-points",
     ),
 ]
