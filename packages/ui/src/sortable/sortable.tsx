@@ -21,7 +21,7 @@ const moveItems = <T,>(data: T[], source: T, destination: T): T[] => {
   return newData;
 };
 
-const Sortable = <T,>({ data, render, onChange, keyExtractor }: Props<T>) => {
+export const Sortable = <T,>({ data, render, onChange, keyExtractor }: Props<T>) => {
   useEffect(() => {
     const unsubscribe = monitorForElements({
       onDrop({ source, location }) {
@@ -46,4 +46,4 @@ const Sortable = <T,>({ data, render, onChange, keyExtractor }: Props<T>) => {
   );
 };
 
-export { Sortable };
+export default Sortable;

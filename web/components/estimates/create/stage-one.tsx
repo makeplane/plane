@@ -9,7 +9,7 @@ import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
 type TEstimateCreateStageOne = {
   estimateSystem: TEstimateSystemKeys;
   handleEstimateSystem: (value: TEstimateSystemKeys) => void;
-  handleEstimatePoints: (value: TEstimateSystemKeys) => void;
+  handleEstimatePoints: (value: string) => void;
 };
 
 export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
@@ -44,7 +44,7 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
             <button
               key={name}
               className="border border-custom-border-200 rounded-md p-2 text-left"
-              onClick={() => handleEstimatePoints(name as TEstimateSystemKeys)}
+              onClick={() => handleEstimatePoints(name)}
             >
               <p className="block text-sm">{currentEstimateSystem.templates[name]?.title}</p>
               <p className="text-xs text-gray-400">

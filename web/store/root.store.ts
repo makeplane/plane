@@ -4,7 +4,6 @@ import { CommandPaletteStore, ICommandPaletteStore } from "./command-palette.sto
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
-import { EstimateStore, IEstimateStore } from "./estimate.store";
 import { IProjectEstimateStore, ProjectEstimateStore } from "./estimates/project-estimate.store";
 import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
@@ -39,7 +38,6 @@ export class RootStore {
   issue: IIssueRootStore;
   state: IStateStore;
   label: ILabelStore;
-  estimate: IEstimateStore;
   dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
   router: IRouterStore;
@@ -66,7 +64,6 @@ export class RootStore {
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
-    this.estimate = new EstimateStore(this);
     this.dashboard = new DashboardStore(this);
     this.commandPalette = new CommandPaletteStore();
     this.theme = new ThemeStore(this);
@@ -95,7 +92,6 @@ export class RootStore {
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
-    this.estimate = new EstimateStore(this);
     this.dashboard = new DashboardStore(this);
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();

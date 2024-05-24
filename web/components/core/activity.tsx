@@ -24,7 +24,10 @@ import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } 
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
-import { useEstimate, useLabel } from "@/hooks/store";
+import {
+  // useEstimate,
+  useLabel,
+} from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
@@ -97,21 +100,21 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
   );
 });
 
-const EstimatePoint = observer((props: { point: string }) => {
-  const { point } = props;
-  const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
-  const currentPoint = Number(point) + 1;
+// const EstimatePoint = observer((props: { point: string }) => {
+//   const { point } = props;
+//   const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
+//   const currentPoint = Number(point) + 1;
 
-  const estimateValue = getEstimatePointValue(Number(point), null);
+//   const estimateValue = getEstimatePointValue(Number(point), null);
 
-  return (
-    <span className="font-medium text-custom-text-100 whitespace-nowrap">
-      {areEstimatesEnabledForCurrentProject
-        ? estimateValue
-        : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
-    </span>
-  );
-});
+//   return (
+//     <span className="font-medium text-custom-text-100 whitespace-nowrap">
+//       {areEstimatesEnabledForCurrentProject
+//         ? estimateValue
+//         : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
+//     </span>
+//   );
+// });
 
 const inboxActivityMessage = {
   declined: {
@@ -267,7 +270,8 @@ const activityDetails: {
       else
         return (
           <>
-            set the estimate point to <EstimatePoint point={activity.new_value} />
+            set the estimate point to
+            {/* <EstimatePoint point={activity.new_value} /> */}
             {showIssue && (
               <>
                 {" "}

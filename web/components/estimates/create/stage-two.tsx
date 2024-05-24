@@ -3,20 +3,14 @@ import { Plus } from "lucide-react";
 import { Button, Sortable } from "@plane/ui";
 // components
 import { EstimateItem } from "@/components/estimates";
-import {
-  EEstimateSystem,
-  TEstimatePointNumeric,
-  TEstimatePointString,
-  TEstimateSystemKeyObject,
-  TEstimateSystemKeys,
-} from "@/components/estimates/types";
+import { EEstimateSystem, TEstimatePointsObject } from "@/components/estimates/types";
 // constants
 import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
 
 type TEstimateCreateStageTwo = {
   estimateSystem: EEstimateSystem;
-  estimatePoints: TEstimateSystemKeyObject[TEstimateSystemKeys];
-  handleEstimatePoints: (value: TEstimateSystemKeyObject[TEstimateSystemKeys]) => void;
+  estimatePoints: TEstimatePointsObject[];
+  handleEstimatePoints: (value: TEstimatePointsObject[]) => void;
 };
 
 export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = (props) => {
@@ -26,20 +20,12 @@ export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = (props) => {
 
   const addNewEstimationPoint = () => {
     const currentEstimationPoints = estimatePoints;
-    if ([EEstimateSystem.POINTS, EEstimateSystem.TIME].includes(estimateSystem)) {
-      const newEstimationPoint: TEstimatePointNumeric = {
-        key: currentEstimationPoints.length + 1,
-        value: 0,
-      };
-      handleEstimatePoints([...currentEstimationPoints, newEstimationPoint] as TEstimatePointNumeric[]);
-    }
-    if (estimateSystem === EEstimateSystem.CATEGORIES) {
-      const newEstimationPoint: TEstimatePointString = {
-        key: currentEstimationPoints.length + 1,
-        value: "",
-      };
-      handleEstimatePoints([...currentEstimationPoints, newEstimationPoint] as TEstimatePointString[]);
-    }
+
+    const newEstimationPoint: TEstimatePointsObject = {
+      key: currentEstimationPoints.length + 1,
+      value: "0",
+    };
+    handleEstimatePoints([...currentEstimationPoints, newEstimationPoint]);
   };
 
   const deleteEstimationPoint = (index: number) => {
@@ -48,26 +34,21 @@ export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = (props) => {
     handleEstimatePoints(newEstimationPoints);
   };
 
-  const updatedSortedKeys = (updatedEstimatePoints: TEstimateSystemKeyObject[TEstimateSystemKeys]) =>
+  const updatedSortedKeys = (updatedEstimatePoints: TEstimatePointsObject[]) =>
     updatedEstimatePoints.map((item, index) => ({
       ...item,
       key: index + 1,
-    })) as TEstimateSystemKeyObject[TEstimateSystemKeys];
+    })) as TEstimatePointsObject[];
 
   return (
     <div className="space-y-4">
       <Sortable
-        data={estimatePoints as any}
-        render={(value: TEstimatePointString | TEstimatePointNumeric, index: number) => (
+        data={estimatePoints}
+        render={(value: TEstimatePointsObject, index: number) => (
           <EstimateItem item={value} deleteItem={() => deleteEstimationPoint(index)} />
         )}
-        onChange={(data: TEstimateSystemKeyObject[TEstimateSystemKeys]) => {
-          console.log("updatedSortedKeys(data)", updatedSortedKeys(data));
-          handleEstimatePoints(updatedSortedKeys(data));
-        }}
-        keyExtractor={(item: TEstimatePointString | TEstimatePointNumeric, index: number) =>
-          item?.id?.toString() || item.value.toString()
-        }
+        onChange={(data: TEstimatePointsObject[]) => handleEstimatePoints(updatedSortedKeys(data))}
+        keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}
       />
 
       <Button prependIcon={<Plus />} onClick={addNewEstimationPoint}>

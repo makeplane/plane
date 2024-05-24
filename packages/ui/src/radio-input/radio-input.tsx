@@ -14,7 +14,7 @@ type RadioInputProps = {
   className?: string;
 };
 
-const RadioInput = ({
+export const RadioInput = ({
   label: inputLabel,
   labelClassName: inputLabelClassName,
   options,
@@ -63,4 +63,4 @@ const RadioInput = ({
   );
 };
 
-export { RadioInput };
+export default RadioInput;

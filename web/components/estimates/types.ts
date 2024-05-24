@@ -5,25 +5,19 @@ export enum EEstimateSystem {
 }
 export type TEstimateSystemKeys = EEstimateSystem.POINTS | EEstimateSystem.CATEGORIES | EEstimateSystem.TIME;
 
-export type TEstimatePointString = { key: number; value: string; id: string };
-export type TEstimatePointNumeric = { key: number; value: number; id: string };
-export type TEstimateSystemKeyObject = {
-  points: TEstimatePointNumeric[];
-  categories: TEstimatePointString[];
-  time: TEstimatePointNumeric[];
-};
+export type TEstimatePointsObject = { id?: string | undefined; key: number; value: string };
 
-export type TTemplateValues<T extends TEstimateSystemKeys> = {
+export type TTemplateValues = {
   title: string;
-  values: TEstimateSystemKeyObject[T];
+  values: TEstimatePointsObject[];
 };
 
-export type TEstimateSystem<T extends TEstimateSystemKeys> = {
+export type TEstimateSystem = {
   name: string;
-  templates: Record<string, TTemplateValues<T>>;
+  templates: Record<string, TTemplateValues>;
   is_available: boolean;
 };
 
 export type TEstimateSystems = {
-  [K in TEstimateSystemKeys]: TEstimateSystem<K>;
+  [K in TEstimateSystemKeys]: TEstimateSystem;
 };

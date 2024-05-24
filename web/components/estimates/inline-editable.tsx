@@ -7,7 +7,8 @@ type Props = {
   inputType?: HTMLInputTypeAttribute;
   isEditing?: boolean;
 };
-const InlineEdit = ({
+
+export const InlineEdit = ({
   onSave,
   value: defaultValue,
   inputType = "text",
@@ -62,5 +63,3 @@ const InlineEdit = ({
     </div>
   );
 };
-
-export { InlineEdit };

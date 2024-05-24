@@ -1,5 +1,5 @@
 import { action, computed, makeObservable, observable } from "mobx";
-import { IEstimatePoint as IEstimatePointType } from "@plane/types";
+import { IEstimateFormData, IEstimate, IEstimatePoint as IEstimatePointType } from "@plane/types";
 // services
 import { EstimateService } from "@/services/project/estimate.service";
 // store
@@ -16,8 +16,7 @@ export interface IEstimatePoint extends IEstimatePointType {
   // computed
   asJson: IEstimatePointType;
   // actions
-  updateEstimatePoint: () => Promise<void>;
-  deleteEstimatePoint: () => Promise<void>;
+  updateEstimatePoint: (payload: IEstimateFormData) => Promise<void>;
 }
 
 export class EstimatePoint implements IEstimatePoint {
@@ -40,6 +39,7 @@ export class EstimatePoint implements IEstimatePoint {
 
   constructor(
     private store: RootStore,
+    private projectEstimate: IEstimate,
     private data: IEstimatePointType
   ) {
     makeObservable(this, {
@@ -61,7 +61,6 @@ export class EstimatePoint implements IEstimatePoint {
       asJson: computed,
       // actions
       updateEstimatePoint: action,
-      deleteEstimatePoint: action,
     });
     this.id = this.data.id;
     this.key = this.data.key;
@@ -97,19 +96,10 @@ export class EstimatePoint implements IEstimatePoint {
   }
 
   // actions
-  updateEstimatePoint = async () => {
+  updateEstimatePoint = async (payload: IEstimateFormData) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId || !this.id) return undefined;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  deleteEstimatePoint = async () => {
-    try {
-      const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId || !this.id) return;
+      if (!workspaceSlug || !projectId || !this.projectEstimate?.id || !this.id || !payload) return undefined;
     } catch (error) {
       throw error;
     }

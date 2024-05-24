@@ -3,6 +3,7 @@ export * from "./loader-screen";
 
 export * from "./estimate-search";
 export * from "./estimate-disable";
+export * from "./inline-editable";
 
 export * from "./root";
 export * from "./estimate-item";

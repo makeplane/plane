@@ -1,5 +1,7 @@
 import set from "lodash/set";
-import { action, computed, makeObservable, observable } from "mobx";
+import unset from "lodash/unset";
+import update from "lodash/update";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import {
   IEstimate as IEstimateType,
@@ -7,6 +9,7 @@ import {
   IProject,
   IWorkspace,
   TEstimateType,
+  IEstimateFormData,
 } from "@plane/types";
 // services
 import { EstimateService } from "@/services/project/estimate.service";
@@ -27,10 +30,9 @@ export interface IEstimate extends IEstimateType {
   asJson: IEstimateType;
   EstimatePointIds: string[] | undefined;
   estimatePointById: (estimateId: string) => IEstimatePointType | undefined;
-  // helper actions
   // actions
-  updateEstimate: (data: Partial<IEstimateType>) => Promise<IEstimateType | undefined>;
-  deleteEstimatePoint: (data: Partial<IEstimateType>) => Promise<void>;
+  updateEstimatePointSorting: (payload: IEstimateFormData) => Promise<void>;
+  deleteEstimatePoint: (estimatePointId: string) => Promise<void>;
 }
 
 export class Estimate implements IEstimate {
@@ -80,7 +82,7 @@ export class Estimate implements IEstimate {
       asJson: computed,
       EstimatePointIds: computed,
       // actions
-      updateEstimate: action,
+      updateEstimatePointSorting: action,
       deleteEstimatePoint: action,
     });
     this.id = this.data.id;
@@ -99,7 +101,7 @@ export class Estimate implements IEstimate {
 
     this.data.points?.forEach((estimationPoint) => {
       if (estimationPoint.id)
-        set(this.estimatePoints, [estimationPoint.id], new EstimatePoint(this.store, estimationPoint));
+        set(this.estimatePoints, [estimationPoint.id], new EstimatePoint(this.store, this.data, estimationPoint));
     });
     // service
     this.service = new EstimateService();
@@ -141,24 +143,35 @@ export class Estimate implements IEstimate {
   });
 
   // actions
-  updateEstimate = async (estimatePoint: Partial<IEstimateType>) => {
+  updateEstimatePointSorting = async (payload: IEstimateFormData) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId || !this.id) return undefined;
+      if (!workspaceSlug || !projectId || !this.id || !payload) return;
 
-      Object.entries(estimatePoint ?? {}).forEach(([key, value]) => {
-        if (!key || !value) return;
-        set(this, key, value);
-      });
+      // make update estimation request
+
+      // runInAction(() => {
+      //   this.points = payload.estimate_points;
+      //   this.data.points = payload.estimate_points;
+      // });
     } catch (error) {
       throw error;
     }
   };
 
-  deleteEstimatePoint = async () => {
+  deleteEstimatePoint = async (estimatePointId: string) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId || !this.id) return;
+      if (!workspaceSlug || !projectId || !estimatePointId) return;
+
+      // make delete estimation request
+
+      runInAction(() => {
+        update(this, "points", (estimationPoints = []) =>
+          estimationPoints.filter((point: IEstimatePointType) => point.id !== estimatePointId)
+        );
+        unset(this.estimatePoints, [estimatePointId]);
+      });
     } catch (error) {
       throw error;
     }

@@ -1,9 +1,8 @@
 import set from "lodash/set";
-import unset from "lodash/unset";
 import update from "lodash/update";
-import { action, computed, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { IEstimate as IEstimateType } from "@plane/types";
+import { IEstimate as IEstimateType, IEstimateFormData } from "@plane/types";
 // services
 import { EstimateService } from "@/services/project/estimate.service";
 // store
@@ -22,14 +21,23 @@ export interface IProjectEstimateStore {
   estimates: Record<string, IEstimate>;
   error: TErrorCodes | undefined;
   // computed
+  areEstimateEnabledByProjectId: (projectId: string) => boolean;
   projectEstimateIds: string[] | undefined;
+  estimateIdsByProjectId: (projectId: string) => string[] | undefined;
   estimateById: (estimateId: string) => IEstimate | undefined;
   // actions
-  getWorkspaceAllEstimates: () => Promise<IEstimateType[] | undefined>;
-  getAllEstimates: () => Promise<IEstimateType[] | undefined>;
-  getEstimateById: (estimateId: string) => Promise<IEstimateType | undefined>;
-  createEstimate: (data: Partial<IEstimateType>) => Promise<IEstimateType | undefined>;
-  deleteEstimate: (estimateId: string) => Promise<void>;
+  getWorkspaceEstimates: (workspaceSlug: string, loader?: TEstimateLoader) => Promise<IEstimateType[] | undefined>;
+  getProjectEstimates: (
+    workspaceSlug: string,
+    projectId: string,
+    loader?: TEstimateLoader
+  ) => Promise<IEstimateType[] | undefined>;
+  getEstimateById: (workspaceSlug: string, projectId: string, estimateId: string) => Promise<IEstimateType | undefined>;
+  createEstimate: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IEstimateFormData
+  ) => Promise<IEstimateType | undefined>;
 }
 
 export class ProjectEstimateStore implements IProjectEstimateStore {
@@ -49,28 +57,56 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       // computed
       projectEstimateIds: computed,
       // actions
-      getWorkspaceAllEstimates: action,
-      getAllEstimates: action,
+      getWorkspaceEstimates: action,
+      getProjectEstimates: action,
       getEstimateById: action,
       createEstimate: action,
-      deleteEstimate: action,
     });
     // service
     this.service = new EstimateService();
   }
 
   // computed
-  get projectEstimateIds() {
+  /**
+   * @description get estimates are enabled in the project or not
+   * @returns { boolean }
+   */
+  areEstimateEnabledByProjectId = computedFn((projectId: string) => {
+    if (!projectId) return false;
+    const projectDetails = this.store.projectRoot.project.getProjectById(projectId);
+    if (!projectDetails) return false;
+    return Boolean(projectDetails.estimate) || false;
+  });
+
+  /**
+   * @description get all estimate ids for a project
+   * @returns { string[] | undefined }
+   */
+  get projectEstimateIds(): string[] | undefined {
     const { projectId } = this.store.router;
     if (!projectId) return undefined;
-
     const projectEstimatesIds = Object.values(this.estimates || {})
       .filter((p) => p.project === projectId)
       .map((p) => p.id && p != undefined) as string[];
-
     return projectEstimatesIds ?? undefined;
   }
 
+  /**
+   * @description get all estimate ids for a project
+   * @returns { string[] | undefined }
+   */
+  estimateIdsByProjectId = computedFn((projectId: string) => {
+    if (!projectId) return undefined;
+    const projectEstimatesIds = Object.values(this.estimates || {})
+      .filter((p) => p.project === projectId)
+      .map((p) => p.id && p != undefined) as string[];
+    return projectEstimatesIds ?? undefined;
+  });
+
+  /**
+   * @description get estimate by id
+   * @returns { IEstimate | undefined }
+   */
   estimateById = computedFn((estimateId: string) => {
     if (!estimateId) return undefined;
     return this.estimates[estimateId] ?? undefined;
@@ -78,24 +114,29 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
 
   // actions
   /**
-   * @description fetch all estimates for a project
+   * @description fetch all estimates for a workspace
    * @returns { IEstimateType[] | undefined }
    */
-  getWorkspaceAllEstimates = async (): Promise<IEstimateType[] | undefined> => {
+  getWorkspaceEstimates = async (
+    workspaceSlug: string,
+    loader: TEstimateLoader = "mutation-loader"
+  ): Promise<IEstimateType[] | undefined> => {
     try {
-      const { workspaceSlug } = this.store.router;
-      if (!workspaceSlug) return;
-
       this.error = undefined;
-      const estimates = await this.service.fetchWorkspacesList(workspaceSlug);
+      if (!this.projectEstimateIds) this.loader = loader ? loader : "init-loader";
 
-      if (estimates && estimates.length > 0)
-        estimates.forEach((estimate) => {
-          if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+      const estimates = await this.service.fetchWorkspaceEstimates(workspaceSlug);
+      if (estimates && estimates.length > 0) {
+        runInAction(() => {
+          estimates.forEach((estimate) => {
+            if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+          });
         });
+      }
 
       return estimates;
     } catch (error) {
+      this.loader = undefined;
       this.error = {
         status: "error",
         message: "Error fetching estimates",
@@ -103,21 +144,31 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
     }
   };
 
-  getAllEstimates = async (): Promise<IEstimateType[] | undefined> => {
+  /**
+   * @description fetch all estimates for a project
+   * @returns { IEstimateType[] | undefined }
+   */
+  getProjectEstimates = async (
+    workspaceSlug: string,
+    projectId: string,
+    loader: TEstimateLoader = "mutation-loader"
+  ): Promise<IEstimateType[] | undefined> => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId) return;
-
       this.error = undefined;
-      const estimates = await this.service.fetchAll(workspaceSlug, projectId);
+      if (!this.projectEstimateIds) this.loader = loader ? loader : "init-loader";
 
-      if (estimates && estimates.length > 0)
-        estimates.forEach((estimate) => {
-          if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+      const estimates = await this.service.fetchProjectEstimates(workspaceSlug, projectId);
+      if (estimates && estimates.length > 0) {
+        runInAction(() => {
+          estimates.forEach((estimate) => {
+            if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+          });
         });
+      }
 
       return estimates;
     } catch (error) {
+      this.loader = undefined;
       this.error = {
         status: "error",
         message: "Error fetching estimates",
@@ -130,19 +181,24 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
    * @param { string } estimateId
    * @returns IEstimateType | undefined
    */
-  getEstimateById = async (estimateId: string): Promise<IEstimateType | undefined> => {
+  getEstimateById = async (
+    workspaceSlug: string,
+    projectId: string,
+    estimateId: string
+  ): Promise<IEstimateType | undefined> => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId) return;
-
       this.error = undefined;
-      const estimate = await this.service.fetchById(workspaceSlug, projectId, estimateId);
 
-      if (estimate && estimate.id)
-        update(this.estimates, [estimate.id], (estimateStore) => {
-          if (estimateStore) estimateStore.updateEstimate(estimate);
-          else return new Estimate(this.store, estimate);
+      const estimate = await this.service.fetchEstimateById(workspaceSlug, projectId, estimateId);
+      if (estimate) {
+        runInAction(() => {
+          if (estimate.id)
+            update(this.estimates, [estimate.id], (estimateStore) => {
+              if (estimateStore) estimateStore.updateEstimate(estimate);
+              else return new Estimate(this.store, estimate);
+            });
         });
+      }
 
       return estimate;
     } catch (error) {
@@ -155,47 +211,29 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
 
   /**
    * @description create an estimate for a project
-   * @param { Partial<IEstimateType> } data
+   * @param { Partial<IEstimateType> } payload
    * @returns
    */
-  createEstimate = async (data: Partial<IEstimateType>): Promise<IEstimateType | undefined> => {
+  createEstimate = async (
+    workspaceSlug: string,
+    projectId: string,
+    payload: IEstimateFormData
+  ): Promise<IEstimateType | undefined> => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId) return;
-
       this.error = undefined;
-      const estimate = await this.service.create(workspaceSlug, projectId, data);
 
-      if (estimate && estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+      const estimate = await this.service.createEstimate(workspaceSlug, projectId, payload);
+      if (estimate) {
+        runInAction(() => {
+          if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+        });
+      }
 
       return estimate;
     } catch (error) {
-      console.error("Error creating estimate");
       this.error = {
         status: "error",
         message: "Error creating estimate",
-      };
-    }
-  };
-
-  /**
-   * @description delete an estimate for a project
-   * @param { string } estimateId
-   * @returns void
-   */
-  deleteEstimate = async (estimateId: string): Promise<void> => {
-    try {
-      const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId) return;
-
-      this.error = undefined;
-      await this.service.remove(workspaceSlug, projectId, estimateId);
-      unset(this.estimates, [estimateId]);
-    } catch (error) {
-      console.error("Error deleting estimate");
-      this.error = {
-        status: "error",
-        message: "Error deleting estimate",
       };
     }
   };

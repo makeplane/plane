@@ -54,7 +54,13 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
-import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
+import {
+  // useEstimate,
+  useIssueDetail,
+  useProject,
+  useProjectState,
+  useUser,
+} from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import type { TIssueOperations } from "./root";
@@ -82,7 +88,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   // store hooks
   const { getProjectById } = useProject();
   const { data: currentUser } = useUser();
-  const { areEstimatesEnabledForCurrentProject } = useEstimate();
+  // const { areEstimatesEnabledForCurrentProject } = useEstimate();
+  const areEstimatesEnabledForCurrentProject = false;
   const {
     issue: { getIssueById },
   } = useIssueDetail();

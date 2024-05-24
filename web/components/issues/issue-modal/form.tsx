@@ -28,7 +28,14 @@ import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper"
 import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
-import { useAppRouter, useEstimate, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
+import {
+  useAppRouter,
+  useInstance,
+  useIssueDetail,
+  useProject,
+  useWorkspace,
+  useProjectEstimates,
+} from "@/hooks/store";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
 import { AIService } from "@/services/ai.service";
@@ -118,7 +125,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { projectId: routeProjectId } = useAppRouter();
   const { config } = useInstance();
   const { getProjectById } = useProject();
-  const { areEstimatesEnabledForProject } = useEstimate();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
 
   const {
     issue: { getIssueById },
@@ -631,7 +638,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   )}
                 />
               )}
-              {areEstimatesEnabledForProject(projectId) && (
+              {projectId && areEstimateEnabledByProjectId(projectId) && (
                 <Controller
                   control={control}
                   name="estimate_point"

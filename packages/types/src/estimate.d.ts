@@ -31,13 +31,11 @@ export interface IEstimate {
 }
 
 export interface IEstimateFormData {
-  estimate: {
-    name: string;
-    description: string;
+  estimate?: {
     type: string;
   };
   estimate_points: {
-    id?: string;
+    id?: string | undefined;
     key: number;
     value: string;
   }[];

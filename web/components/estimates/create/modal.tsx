@@ -2,32 +2,35 @@ import { FC, useEffect, useMemo, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
-import { IEstimate } from "@plane/types";
-import { Button } from "@plane/ui";
+import { IEstimate, IEstimateFormData } from "@plane/types";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { EstimateCreateStageOne, EstimateCreateStageTwo } from "@/components/estimates";
-import { TEstimateSystemKeys, EEstimateSystem, TEstimateSystemKeyObject } from "@/components/estimates/types";
+import { TEstimateSystemKeys, EEstimateSystem, TEstimatePointsObject } from "@/components/estimates/types";
 // constants
 import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
-// ee components
+// hooks
+import { useProjectEstimates } from "@/hooks/store";
 
-type Props = {
+type TCreateEstimateModal = {
+  workspaceSlug: string;
+  projectId: string;
   isOpen: boolean;
   handleClose: () => void;
   data?: IEstimate;
 };
 
-export const CreateEstimateModal: FC<Props> = observer((props) => {
+export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) => {
   // props
-  const { handleClose, isOpen } = props;
+  const { workspaceSlug, projectId, isOpen, handleClose } = props;
+  // hooks
+  const { createEstimate } = useProjectEstimates();
   // states
   const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.POINTS);
-  const [estimatePoints, setEstimatePoints] = useState<TEstimateSystemKeyObject[TEstimateSystemKeys] | undefined>(
-    undefined
-  );
+  const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
 
-  const handleUpdatePoints = (newPoints: TEstimateSystemKeyObject[TEstimateSystemKeys] | undefined) => {
+  const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => {
     const points = cloneDeep(newPoints);
     setEstimatePoints(points);
   };
@@ -41,6 +44,46 @@ export const CreateEstimateModal: FC<Props> = observer((props) => {
 
   // derived values
   const renderEstimateStepsCount = useMemo(() => (estimatePoints ? "2" : "1"), [estimatePoints]);
+
+  const handleCreateEstimate = async () => {
+    try {
+      const validatedEstimatePoints: TEstimatePointsObject[] = [];
+      if ([EEstimateSystem.POINTS, EEstimateSystem.TIME].includes(estimateSystem)) {
+        estimatePoints?.map((estimatePoint) => {
+          if (estimatePoint.value && Number(estimatePoint.value)) validatedEstimatePoints.push(estimatePoint);
+        });
+      } else {
+        estimatePoints?.map((estimatePoint) => {
+          if (estimatePoint.value) validatedEstimatePoints.push(estimatePoint);
+        });
+      }
+
+      if (validatedEstimatePoints.length === estimatePoints?.length) {
+        const payload: IEstimateFormData = {
+          estimate: {
+            type: estimateSystem,
+          },
+          estimate_points: validatedEstimatePoints,
+        };
+
+        await createEstimate(workspaceSlug, projectId, payload);
+        handleClose();
+      } else {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "something went wrong",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "something went wrong",
+      });
+    }
+  };
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
@@ -70,7 +113,7 @@ export const CreateEstimateModal: FC<Props> = observer((props) => {
             <EstimateCreateStageOne
               estimateSystem={estimateSystem}
               handleEstimateSystem={setEstimateSystem}
-              handleEstimatePoints={(templateType) =>
+              handleEstimatePoints={(templateType: string) =>
                 handleUpdatePoints(ESTIMATE_SYSTEMS[estimateSystem].templates[templateType].values)
               }
             />
@@ -89,7 +132,7 @@ export const CreateEstimateModal: FC<Props> = observer((props) => {
             Cancel
           </Button>
           {estimatePoints && (
-            <Button variant="primary" size="sm" onClick={handleClose}>
+            <Button variant="primary" size="sm" onClick={handleCreateEstimate}>
               Create Estimate
             </Button>
           )}

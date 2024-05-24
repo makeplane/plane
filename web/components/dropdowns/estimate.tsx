@@ -7,7 +7,10 @@ import { Combobox } from "@headlessui/react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppRouter, useEstimate } from "@/hooks/store";
+import {
+  useAppRouter,
+  //  useEstimate
+} from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
@@ -76,8 +79,12 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   });
   // store hooks
   const { workspaceSlug } = useAppRouter();
-  const { fetchProjectEstimates, getProjectActiveEstimateDetails, getEstimatePointValue } = useEstimate();
-  const activeEstimate = getProjectActiveEstimateDetails(projectId);
+  console.log("workspaceSlug", workspaceSlug);
+  console.log("projectId", projectId);
+
+  // const { fetchProjectEstimates, getProjectActiveEstimateDetails, getEstimatePointValue } = useEstimate();
+  // const activeEstimate = getProjectActiveEstimateDetails(projectId);
+  const activeEstimate: any = undefined;
 
   const options: DropdownOptions = sortBy(activeEstimate?.points ?? [], "key")?.map((point) => ({
     value: point.key,
@@ -103,10 +110,14 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  const selectedEstimate = value !== null ? getEstimatePointValue(value, projectId) : null;
+  const selectedEstimate =
+    value !== null
+      ? // getEstimatePointValue(value, projectId)
+        null
+      : null;
 
   const onOpen = async () => {
-    if (!activeEstimate && workspaceSlug) await fetchProjectEstimates(workspaceSlug, projectId);
+    // if (!activeEstimate && workspaceSlug) await fetchProjectEstimates(workspaceSlug, projectId);
   };
 
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({

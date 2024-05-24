@@ -5,7 +5,6 @@ import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 import { EstimateEmptyScreen, EstimateLoaderScreen, CreateEstimateModal } from "@/components/estimates";
-import { DeleteEstimateModal, EstimateListItem } from "@/components/estimates-legacy";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // ee components
@@ -21,29 +20,26 @@ export const EstimateRoot: FC<TEstimateRoot> = (props) => {
   const { workspaceSlug, projectId } = props;
   // hooks
   const { updateProject, currentProjectDetails } = useProject();
-  const { loader, projectEstimateIds, estimateById, getAllEstimates } = useProjectEstimates(projectId);
+  const { loader, projectEstimateIds, estimateById, getProjectEstimates } = useProjectEstimates();
   // states
   const [isEstimateCreateModalOpen, setIsEstimateCreateModalOpen] = useState(false);
-  const [isEstimateDeleteModalOpen, setIsEstimateDeleteModalOpen] = useState<string | null>(null);
+  // const [isEstimateDeleteModalOpen, setIsEstimateDeleteModalOpen] = useState<string | null>(null);
   const [estimateToUpdate, setEstimateToUpdate] = useState<IEstimate | undefined>();
-
-  console.log("workspaceSlug", workspaceSlug);
-  console.log("projectId", projectId);
 
   const { isLoading: isSWRLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
-    async () => workspaceSlug && projectId && getAllEstimates()
+    async () => workspaceSlug && projectId && getProjectEstimates(workspaceSlug, projectId)
   );
 
-  const editEstimate = (estimate: IEstimate) => {
-    setIsEstimateCreateModalOpen(true);
-    console.log("estimate", estimate);
-    // Order the points array by key before updating the estimate to update state
-    // setEstimateToUpdate({
-    //   ...estimate,
-    //   points: orderArrayBy(estimate.points, "key"),
-    // });
-  };
+  // const editEstimate = (estimate: IEstimate) => {
+  //   setIsEstimateCreateModalOpen(true);
+  //   console.log("estimate", estimate);
+  //   // Order the points array by key before updating the estimate to update state
+  //   // setEstimateToUpdate({
+  //   //   ...estimate,
+  //   //   points: orderArrayBy(estimate.points, "key"),
+  //   // });
+  // };
 
   const disableEstimates = () => {
     if (!workspaceSlug || !projectId) return;
@@ -64,6 +60,7 @@ export const EstimateRoot: FC<TEstimateRoot> = (props) => {
     <div className="container mx-auto">
       <EstimateLoaderScreen />
       <EstimateEmptyScreen onButtonClick={() => {}} />
+
       {loader === "init-loader" || isSWRLoading ? (
         <Loader className="mt-5 space-y-5">
           <Loader.Item height="40px" />
@@ -109,12 +106,13 @@ export const EstimateRoot: FC<TEstimateRoot> = (props) => {
                   const estimate = estimateById(estimateId);
                   if (!estimate) return <></>;
                   return (
-                    <EstimateListItem
-                      key={estimateId}
-                      estimate={estimate}
-                      editEstimate={(estimate) => editEstimate(estimate)}
-                      deleteEstimate={(estimateId) => setIsEstimateDeleteModalOpen(estimateId)}
-                    />
+                    <></>
+                    // <EstimateListItem
+                    //   key={estimateId}
+                    //   estimate={estimate}
+                    //   editEstimate={(estimate) => editEstimate(estimate)}
+                    //   deleteEstimate={(estimateId) => setIsEstimateDeleteModalOpen(estimateId)}
+                    // />
                   );
                 })}
             </section>
@@ -122,7 +120,10 @@ export const EstimateRoot: FC<TEstimateRoot> = (props) => {
         </>
       )}
 
+      {/*  */}
       <CreateEstimateModal
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
         isOpen={isEstimateCreateModalOpen}
         data={estimateToUpdate}
         handleClose={() => {
@@ -130,14 +131,12 @@ export const EstimateRoot: FC<TEstimateRoot> = (props) => {
           setEstimateToUpdate(undefined);
         }}
       />
-      <DeleteEstimateModal
+
+      {/* <DeleteEstimateModal
         isOpen={!!isEstimateDeleteModalOpen}
         handleClose={() => setIsEstimateDeleteModalOpen(null)}
-        data={
-          null
-          // getProjectEstimateById(isEstimateDeleteModalOpen!)
-        }
-      />
+        data={}
+      /> */}
     </div>
   );
 };

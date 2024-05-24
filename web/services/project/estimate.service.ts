@@ -1,5 +1,5 @@
 // types
-import { IEstimate } from "@plane/types";
+import { IEstimate, IEstimateFormData } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -11,7 +11,7 @@ export class EstimateService extends APIService {
   }
 
   // fetching the estimates in workspace level
-  async fetchWorkspacesList(workspaceSlug: string): Promise<IEstimate[] | undefined> {
+  async fetchWorkspaceEstimates(workspaceSlug: string): Promise<IEstimate[] | undefined> {
     try {
       const { data } = await this.get(`/api/workspaces/${workspaceSlug}/estimates/`);
       return data || undefined;
@@ -20,7 +20,7 @@ export class EstimateService extends APIService {
     }
   }
 
-  async fetchAll(workspaceSlug: string, projectId: string): Promise<IEstimate[] | undefined> {
+  async fetchProjectEstimates(workspaceSlug: string, projectId: string): Promise<IEstimate[] | undefined> {
     try {
       const { data } = await this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/`);
       return data || undefined;
@@ -29,7 +29,11 @@ export class EstimateService extends APIService {
     }
   }
 
-  async fetchById(workspaceSlug: string, projectId: string, estimateId: string): Promise<IEstimate | undefined> {
+  async fetchEstimateById(
+    workspaceSlug: string,
+    projectId: string,
+    estimateId: string
+  ): Promise<IEstimate | undefined> {
     try {
       const { data } = await this.get(
         `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`
@@ -40,7 +44,11 @@ export class EstimateService extends APIService {
     }
   }
 
-  async create(workspaceSlug: string, projectId: string, payload: Partial<IEstimate>): Promise<IEstimate | undefined> {
+  async createEstimate(
+    workspaceSlug: string,
+    projectId: string,
+    payload: IEstimateFormData
+  ): Promise<IEstimate | undefined> {
     try {
       const { data } = await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/`, payload);
       return data || undefined;
@@ -49,11 +57,11 @@ export class EstimateService extends APIService {
     }
   }
 
-  async update(
+  async updateEstimate(
     workspaceSlug: string,
     projectId: string,
     estimateId: string,
-    payload: Partial<IEstimate>
+    payload: IEstimateFormData
   ): Promise<IEstimate | undefined> {
     try {
       const { data } = await this.patch(
@@ -66,14 +74,20 @@ export class EstimateService extends APIService {
     }
   }
 
-  async remove(workspaceSlug: string, projectId: string, estimateId: string): Promise<void> {
-    try {
-      const { data } = await this.delete(
-        `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`
-      );
-      return data || undefined;
-    } catch (error) {
-      throw error;
-    }
+  async removeEstimatePoint(
+    workspaceSlug: string,
+    projectId: string,
+    estimateId: string,
+    estimatePointId: string,
+    payload: { new_estimate_id: string | undefined }
+  ): Promise<any> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/estimate-point/${estimatePointId}/`,
+      payload
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 }

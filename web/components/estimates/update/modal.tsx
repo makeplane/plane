@@ -5,7 +5,7 @@ import { Button } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 // types
-import { TEstimateSystemKeys, TEstimateSystemKeyObject } from "@/components/estimates/types";
+import { TEstimatePointsObject } from "@/components/estimates/types";
 
 type Props = {
   isOpen: boolean;
@@ -17,9 +17,7 @@ export const UpdateEstimateModal: FC<Props> = observer((props) => {
   // props
   const { handleClose, isOpen } = props;
   // states
-  const [estimatePoints, setEstimatePoints] = useState<TEstimateSystemKeyObject[TEstimateSystemKeys] | undefined>(
-    undefined
-  );
+  const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
 
   useEffect(() => {
     if (!isOpen) {

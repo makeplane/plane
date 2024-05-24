@@ -3,10 +3,10 @@ import { Check, GripVertical, MoveRight, Pencil, Trash2, X } from "lucide-react"
 import { Select } from "@headlessui/react";
 import { Draggable } from "@plane/ui";
 import { InlineEdit } from "./inline-editable";
-import { TEstimatePointNumeric, TEstimatePointString } from "./types";
+import { TEstimatePointsObject } from "./types";
 
 type Props = {
-  item: TEstimatePointNumeric | TEstimatePointString;
+  item: TEstimatePointsObject;
   deleteItem: () => void;
 };
 const EstimateItem = ({ item, deleteItem }: Props) => {

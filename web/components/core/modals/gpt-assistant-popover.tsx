@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useRef, Fragment } from "react";
+import React, { useEffect, useState, useRef, Fragment, Ref } from "react";
 import { Placement } from "@popperjs/core";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
 // ui
 import { AlertCircle } from "lucide-react";
-import { Popover, Transition } from "@headlessui/react";
+import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
 // icons
@@ -173,14 +173,14 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const generateResponseButtonText = isSubmitting
     ? "Generating response..."
     : response === ""
-    ? "Generate response"
-    : "Generate again";
+      ? "Generate response"
+      : "Generate again";
 
   return (
     <Popover as="div" className={`relative w-min text-left`}>
-      <Popover.Button as={Fragment}>
+      <PopoverButton as={Fragment}>
         <button ref={setReferenceElement}>{button}</button>
-      </Popover.Button>
+      </PopoverButton>
       <Transition
         show={isOpen}
         as={React.Fragment}
@@ -191,10 +191,10 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel
+        <PopoverPanel
           as="div"
           className={`fixed z-10 flex w-full min-w-[50rem] max-w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${className}`}
-          ref={setPopperElement}
+          ref={setPopperElement as Ref<HTMLDivElement>}
           style={styles.popper}
           {...attributes.popper}
         >
@@ -261,7 +261,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
               </Button>
             </div>
           </div>
-        </Popover.Panel>
+        </PopoverPanel>
       </Transition>
     </Popover>
   );
