@@ -2,7 +2,7 @@ import { forwardRef, MutableRefObject } from "react";
 import { EditorReadOnlyRefApi, getEditorClassNames, IMentionHighlight, useReadOnlyEditor } from "@plane/editor-core";
 // components
 import { PageRenderer } from "src/ui/components/page-renderer";
-import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
+import { IssueWidget, TReadOnlyEmbedConfig } from "src/ui/extensions";
 
 interface IDocumentReadOnlyEditor {
   initialValue: string;
@@ -14,6 +14,7 @@ interface IDocumentReadOnlyEditor {
     highlights: () => Promise<IMentionHighlight[]>;
   };
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
+  embedHandler?: TReadOnlyEmbedConfig;
 }
 
 const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
@@ -25,6 +26,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     tabIndex,
     handleEditorReady,
     mentionHandler,
+    embedHandler,
   } = props;
   const editor = useReadOnlyEditor({
     initialValue,
@@ -32,7 +34,15 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     mentionHandler,
     forwardedRef,
     handleEditorReady,
-    extensions: [IssueWidgetPlaceholder()],
+    extensions: embedHandler?.issue
+      ? [
+          IssueWidget({
+            widgetCallback: embedHandler?.issue?.widgetCallback,
+          }).configure({
+            issueEmbedConfig: embedHandler?.issue,
+          }),
+        ]
+      : [],
   });
 
   if (!editor) {
