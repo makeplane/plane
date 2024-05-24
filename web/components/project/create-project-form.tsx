@@ -58,6 +58,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
   const { captureProjectEvent } = useEventTracker();
   const { addProjectToFavorites, createProject } = useProject();
   // states
+  const [isOpen, setIsOpen] = useState(false);
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // form info
   const {
@@ -188,6 +189,8 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <CustomEmojiIconPicker
+                isOpen={isOpen}
+                handleToggle={(val: boolean) => setIsOpen(val)}
                 className="flex items-center justify-center"
                 buttonClassName="flex items-center justify-center"
                 label={
@@ -209,6 +212,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                     in_use: val?.type,
                     [val?.type]: logoValue,
                   });
+                  setIsOpen(false);
                 }}
                 defaultIconColor={value.in_use && value.in_use === "icon" ? value.icon?.color : undefined}
                 defaultOpen={

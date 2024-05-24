@@ -40,6 +40,7 @@ const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, projectId, isAdmin } = props;
   // states
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
   const { captureProjectEvent } = useEventTracker();
@@ -149,6 +150,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 name="logo_props"
                 render={({ field: { value, onChange } }) => (
                   <CustomEmojiIconPicker
+                    isOpen={isOpen}
+                    handleToggle={(val: boolean) => setIsOpen(val)}
                     className="flex items-center justify-center"
                     buttonClassName="flex items-center justify-center"
                     label={<Logo logo={value} size={28} />}
@@ -166,6 +169,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                         in_use: val?.type,
                         [val?.type]: logoValue,
                       });
+                      setIsOpen(false);
                     }}
                     defaultIconColor={value?.in_use && value.in_use === "icon" ? value?.icon?.color : undefined}
                     defaultOpen={

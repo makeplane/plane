@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
 import { Popover, Tab } from "@headlessui/react";
@@ -7,6 +7,8 @@ import { Placement } from "@popperjs/core";
 import { IconsList } from "./icons-list";
 // helpers
 import { cn } from "../../helpers";
+// hooks
+import useOutsideClickDetector from "../hooks/use-outside-click-detector";
 
 export enum EmojiIconPickerTypes {
   EMOJI = "emoji",
@@ -27,6 +29,8 @@ type TChangeHandlerProps =
     };
 
 export type TCustomEmojiPicker = {
+  isOpen: boolean;
+  handleToggle: (value: boolean) => void;
   buttonClassName?: string;
   className?: string;
   closeOnSelect?: boolean;
@@ -54,6 +58,8 @@ const TABS_LIST = [
 
 export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
   const {
+    isOpen,
+    handleToggle,
     buttonClassName,
     className,
     closeOnSelect = true,
@@ -68,6 +74,7 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
     theme,
   } = props;
   // refs
+  const containerRef = useRef<HTMLDivElement>(null);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // popper-js
@@ -83,21 +90,25 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
     ],
   });
 
+  // close dropdown on outside click
+  useOutsideClickDetector(containerRef, () => handleToggle(false));
+
   return (
     <Popover as="div" className={cn("relative", className)}>
-      {({ close }) => (
-        <>
-          <Popover.Button as={React.Fragment}>
-            <button
-              type="button"
-              ref={setReferenceElement}
-              className={cn("outline-none", buttonClassName)}
-              disabled={disabled}
-            >
-              {label}
-            </button>
-          </Popover.Button>
-          <Popover.Panel className="fixed z-10">
+      <>
+        <Popover.Button as={React.Fragment}>
+          <button
+            type="button"
+            ref={setReferenceElement}
+            className={cn("outline-none", buttonClassName)}
+            disabled={disabled}
+            onClick={() => handleToggle(!isOpen)}
+          >
+            {label}
+          </button>
+        </Popover.Button>
+        {isOpen && (
+          <Popover.Panel className="fixed z-10" static>
             <div
               ref={setPopperElement}
               style={styles.popper}
@@ -108,6 +119,7 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
               )}
             >
               <Tab.Group
+                ref={containerRef}
                 as="div"
                 className="h-full w-full flex flex-col overflow-hidden"
                 defaultIndex={TABS_LIST.findIndex((tab) => tab.key === defaultOpen)}
@@ -162,8 +174,8 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
               </Tab.Group>
             </div>
           </Popover.Panel>
-        </>
-      )}
+        )}
+      </>
     </Popover>
   );
 };

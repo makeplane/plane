@@ -1,4 +1,4 @@
-import { FC, useRef } from "react";
+import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { FileText } from "lucide-react";
 // types
@@ -26,6 +26,8 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
   const { workspaceSlug, projectId, pageId } = props;
   // refs
   const parentRef = useRef(null);
+  // state
+  const [isOpen, setIsOpen] = useState(false);
   // hooks
   const { name, logo_props, updatePageLogo } = usePage(pageId);
   const { isMobile } = usePlatformOS();
@@ -55,6 +57,8 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
       prependTitleElement={
         <>
           <CustomEmojiIconPicker
+            isOpen={isOpen}
+            handleToggle={(val: boolean) => setIsOpen(val)}
             className="flex items-center justify-center"
             buttonClassName="flex items-center justify-center"
             label={
@@ -79,9 +83,8 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
               handlePageLogoUpdate({
                 in_use: val?.type,
                 [val?.type]: logoValue,
-              });
+              }).finally(() => setIsOpen(false));
             }}
-            closeOnSelect
             defaultIconColor={logo_props?.in_use && logo_props.in_use === "icon" ? logo_props?.icon?.color : undefined}
             defaultOpen={
               logo_props?.in_use && logo_props?.in_use === "emoji"
@@ -98,6 +101,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
       }
       isMobile={isMobile}
       parentRef={parentRef}
+      disableLink={isOpen}
     />
   );
 });
