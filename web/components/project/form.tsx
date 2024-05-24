@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from "@plane/ui";
 // components
+import { Logo } from "@/components/common";
 import { ImagePickerPopover } from "@/components/core";
 // constants
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
@@ -29,7 +30,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
 // types
-import { ProjectLogo } from "./project-logo";
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
@@ -149,11 +149,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 name="logo_props"
                 render={({ field: { value, onChange } }) => (
                   <CustomEmojiIconPicker
-                    label={
-                      <span className="grid h-7 w-7 place-items-center">
-                        <ProjectLogo logo={value} className="text-lg" />
-                      </span>
-                    }
+                    className="flex items-center justify-center"
+                    buttonClassName="flex items-center justify-center"
+                    label={<Logo logo={value} size={28} />}
                     onChange={(val) => {
                       let logoValue = {};
 

@@ -1,13 +1,13 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-// hooks
-import { Button, getButtonStyling } from "@plane/ui";
-import { useProject } from "@/hooks/store";
 // ui
+import { Button, getButtonStyling } from "@plane/ui";
 // components
-import { ProjectLogo } from "./project-logo";
-import { ProjectFeaturesList } from "./settings";
+import { Logo } from "@/components/common";
+import { ProjectFeaturesList } from "@/components/project/settings";
+// hooks
+import { useProject } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -35,7 +35,7 @@ export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
       <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin />
       <div className="flex items-center justify-between gap-2 mt-4 px-4 pt-4 pb-2 border-t border-custom-border-100">
         <div className="text-sm text-custom-text-300 font-medium">
-          Congrats! Project <ProjectLogo logo={currentProjectDetails.logo_props} />{" "}
+          Congrats! Project <Logo logo={currentProjectDetails.logo_props} />{" "}
           <p className="break-all">{currentProjectDetails.name}</p> created.
         </div>
         <div className="flex gap-2">

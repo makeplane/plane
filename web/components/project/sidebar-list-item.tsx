@@ -3,6 +3,7 @@ import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+// icons
 import {
   MoreVertical,
   PenSquare,
@@ -16,8 +17,8 @@ import {
   MoreHorizontal,
   Inbox,
 } from "lucide-react";
+// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
-// icons
 // ui
 import {
   CustomMenu,
@@ -29,16 +30,17 @@ import {
   LayersIcon,
   setPromiseToast,
 } from "@plane/ui";
-import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "@/components/project";
+// components
+import { Logo } from "@/components/common";
+import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
+// constants
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useProject } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// helpers
-
-// components
 
 type Props = {
   projectId: string;
@@ -225,7 +227,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     })}
                   >
                     <div className="h-7 w-7 grid place-items-center flex-shrink-0">
-                      <ProjectLogo logo={project.logo_props} />
+                      <Logo logo={project.logo_props} />
                     </div>
                     {!isCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
                   </div>

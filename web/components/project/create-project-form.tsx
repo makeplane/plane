@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from "@plane/ui";
 // components
+import { Logo } from "@/components/common";
 import { ImagePickerPopover } from "@/components/core";
 import { MemberDropdown } from "@/components/dropdowns";
 // constants
@@ -28,8 +29,6 @@ import { projectIdentifierSanitizer } from "@/helpers/project.helper";
 // hooks
 import { useEventTracker, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// types
-import { ProjectLogo } from "./project-logo";
 
 type Props = {
   setToFavorite?: boolean;
@@ -189,9 +188,11 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <CustomEmojiIconPicker
+                className="flex items-center justify-center"
+                buttonClassName="flex items-center justify-center"
                 label={
                   <span className="grid h-11 w-11 place-items-center rounded-md bg-custom-background-80">
-                    <ProjectLogo logo={value} className="text-xl" />
+                    <Logo logo={value} size={20} />
                   </span>
                 }
                 onChange={(val: any) => {

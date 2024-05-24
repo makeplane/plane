@@ -18,8 +18,9 @@ import {
   TContextMenuItem,
 } from "@plane/ui";
 // components
+import { Logo } from "@/components/common";
 import { FavoriteStar } from "@/components/core";
-import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal, ProjectLogo } from "@/components/project";
+import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
@@ -203,7 +204,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
           <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
               <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/90">
-                <ProjectLogo logo={project.logo_props} />
+                <Logo logo={project.logo_props} size={18} />
               </div>
 
               <div className="flex w-full flex-col justify-between gap-0.5 truncate">
