@@ -14,8 +14,7 @@ export interface IPosthogWrapper {
   currentWorkspaceId: string | undefined;
   posthogAPIKey: string | undefined;
   posthogHost: string | undefined;
-  isCloud: boolean;
-  telemetryEnabled: boolean;
+  isTelemetryEnabled: boolean;
 }
 
 const PostHogProvider: FC<IPosthogWrapper> = (props) => {
@@ -27,8 +26,7 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
     currentWorkspaceId,
     posthogAPIKey,
     posthogHost,
-    isCloud,
-    telemetryEnabled,
+    isTelemetryEnabled,
   } = props;
   // states
   const [lastWorkspaceId, setLastWorkspaceId] = useState(currentWorkspaceId);
@@ -36,26 +34,22 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
+    if (user && isTelemetryEnabled) {
       // Identify sends an event, so you want may want to limit how often you call it
-      posthog?.identify(isCloud ? user.email : user.id, {
+      posthog?.identify(user.email, {
         id: user.id,
-        first_name: isCloud ? user.first_name : undefined,
-        last_name: isCloud ? user.last_name : undefined,
-        email: isCloud ? user.email : undefined,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
         use_case: userProfile?.use_case,
         role: userProfile?.role,
         workspaces: joinedWorkspaceIds,
       });
     }
-  }, [user, joinedWorkspaceIds, isCloud, userProfile]);
+  }, [user, joinedWorkspaceIds, isTelemetryEnabled, userProfile]);
 
   useEffect(() => {
-    if (
-      posthogAPIKey &&
-      (process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost) &&
-      (isCloud || (!isCloud && telemetryEnabled))
-    ) {
+    if (posthogAPIKey && (process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost) && isTelemetryEnabled) {
       posthog.init(posthogAPIKey, {
         api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost || "https://app.posthog.com",
         debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1", // Debug mode based on the environment variable
@@ -64,16 +58,16 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
       });
       posthog?.opt_in_capturing();
     }
-  }, [posthogAPIKey, posthogHost, isCloud, telemetryEnabled]);
+  }, [posthogAPIKey, posthogHost, isTelemetryEnabled]);
 
   useEffect(() => {
     // Join workspace group on workspace change
-    if (lastWorkspaceId !== currentWorkspaceId && currentWorkspaceId && user) {
+    if (lastWorkspaceId !== currentWorkspaceId && currentWorkspaceId && user && isTelemetryEnabled) {
       setLastWorkspaceId(currentWorkspaceId);
-      posthog?.identify(isCloud ? user.email : user.id);
+      posthog?.identify(user.email);
       posthog?.group(GROUP_WORKSPACE, currentWorkspaceId);
     }
-  }, [currentWorkspaceId, lastWorkspaceId, user, isCloud]);
+  }, [currentWorkspaceId, lastWorkspaceId, user, isTelemetryEnabled]);
 
   useEffect(() => {
     // Track page views
@@ -88,7 +82,7 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!isCloud && !telemetryEnabled) {
+  if (!isTelemetryEnabled) {
     posthog?.opt_out_capturing();
     return <>{children}</>;
   }

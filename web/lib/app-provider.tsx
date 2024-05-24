@@ -53,8 +53,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
               userProfile={userProfile}
               currentWorkspaceId={currentWorkspace?.id}
               joinedWorkspaceIds={Object.keys(workspaces)}
-              isCloud={!instance?.is_telemetry_anonymous || false}
-              telemetryEnabled={instance?.is_telemetry_enabled || false}
+              isTelemetryEnabled={instance?.is_telemetry_enabled ?? false}
               posthogAPIKey={config?.posthog_api_key || undefined}
               posthogHost={config?.posthog_host || undefined}
             >
