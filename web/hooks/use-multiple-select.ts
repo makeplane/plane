@@ -265,14 +265,13 @@ export const useMultipleSelect = (props: Props) => {
       const activeEntityDetails = getActiveEntityDetails();
       const nextActiveEntity = getNextActiveEntity();
       const previousActiveEntity = getPreviousActiveEntity();
+
       if (e.key === "ArrowDown" && activeEntityDetails) {
         if (!nextActiveEntity) return;
-        // console.log("selected by down", elementDetails.entityID);
         handleEntitySelection(nextActiveEntity);
       }
       if (e.key === "ArrowUp" && activeEntityDetails) {
         if (!previousActiveEntity) return;
-        // console.log("selected by up", elementDetails.entityID);
         handleEntitySelection(previousActiveEntity);
       }
     };
@@ -291,6 +290,7 @@ export const useMultipleSelect = (props: Props) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.shiftKey) return;
       const activeEntityDetails = getActiveEntityDetails();
       // set active entity id to the first entity
       if (["ArrowUp", "ArrowDown"].includes(e.key) && !activeEntityDetails) {
@@ -346,7 +346,7 @@ export const useMultipleSelect = (props: Props) => {
       handleGroupClick,
       isGroupSelected,
     }),
-    [handleEntityClick, handleGroupClick, isEntityActive, isEntitySelected, isGroupSelected]
+    [clearSelection, handleEntityClick, handleGroupClick, isEntityActive, isEntitySelected, isGroupSelected]
   );
 
   return helpers;

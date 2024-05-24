@@ -1,9 +1,9 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // hooks
 import { TEntityDetails } from "@/hooks/use-multiple-select";
 // services
 import { IssueService } from "@/services/issue";
-import { computedFn } from "mobx-utils";
 
 export type IMultipleSelectStore = {
   // observables

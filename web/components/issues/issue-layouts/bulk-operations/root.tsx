@@ -13,8 +13,8 @@ import {
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 import { useMultipleSelectStore } from "@/hooks/store";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 type Props = {
   className?: string;
