@@ -11,7 +11,7 @@ import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 import { UserImageUploadModal } from "@/components/core";
-import { OnboardingHeader, SwitchOrDeleteAccountDropdown } from "@/components/onboarding";
+import { OnboardingHeader, SwitchAccountDropdown } from "@/components/onboarding";
 // constants
 import { USER_DETAILS } from "@/constants/event-tracker";
 // helpers
@@ -276,7 +276,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
         <div className="flex items-center justify-between">
           <OnboardingHeader currentStep={isCurrentStepUserPersonalization ? 2 : 1} totalSteps={totalSteps} />
           <div className="shrink-0 lg:hidden">
-            <SwitchOrDeleteAccountDropdown fullName={`${watch("first_name")} ${watch("last_name")}`} />
+            <SwitchAccountDropdown fullName={`${watch("first_name")} ${watch("last_name")}`} />
           </div>
         </div>
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6">
@@ -567,7 +567,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="hidden lg:block relative w-2/5 h-screen overflow-hidden px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
-        <SwitchOrDeleteAccountDropdown fullName={`${watch("first_name")} ${watch("last_name")}`} />
+        <SwitchAccountDropdown fullName={`${watch("first_name")} ${watch("last_name")}`} />
         <div className="absolute inset-0 z-0">
           {profileSetupStep === EProfileSetupSteps.USER_PERSONALIZATION ? (
             <Image

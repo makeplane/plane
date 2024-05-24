@@ -9,16 +9,16 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 // components
-import { SwitchOrDeleteAccountModal } from "./switch-delete-account-modal";
+import { SwitchAccountModal } from "./switch-account-modal";
 
-type TSwithOrDeleteAccountDropdownProps = {
+type TSwitchAccountDropdownProps = {
   fullName?: string;
 };
 
-export const SwitchOrDeleteAccountDropdown: FC<TSwithOrDeleteAccountDropdownProps> = observer((props) => {
+export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((props) => {
   const { fullName } = props;
   // states
-  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
+  const [showSwitchAccountModal, setShowSwitchAccountModal] = useState(false);
   // store hooks
   const { data: user } = useUser();
 
@@ -30,7 +30,7 @@ export const SwitchOrDeleteAccountDropdown: FC<TSwithOrDeleteAccountDropdownProp
 
   return (
     <div className="flex w-full shrink-0 justify-end">
-      <SwitchOrDeleteAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
+      <SwitchAccountModal isOpen={showSwitchAccountModal} onClose={() => setShowSwitchAccountModal(false)} />
       <div className="flex items-center gap-x-2 pr-4 z-10">
         {user?.avatar && (
           <Avatar
@@ -64,7 +64,7 @@ export const SwitchOrDeleteAccountDropdown: FC<TSwithOrDeleteAccountDropdownProp
                     "bg-custom-background-80": active,
                   })
                 }
-                onClick={() => setShowDeleteAccountModal(true)}
+                onClick={() => setShowSwitchAccountModal(true)}
               >
                 Wrong e-mail address?
               </Menu.Item>

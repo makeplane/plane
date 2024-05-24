@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import Link from "next/link";
+// helpers
+import { SUPPORT_EMAIL } from "./common.helper";
 
 export enum EPageTypes {
   PUBLIC = "PUBLIC",
@@ -38,6 +40,7 @@ export enum EAuthenticationErrorCodes {
   ADMIN_AUTHENTICATION_FAILED = "5175",
   ADMIN_USER_ALREADY_EXIST = "5180",
   ADMIN_USER_DOES_NOT_EXIST = "5185",
+  ADMIN_USER_DEACTIVATED = "5190",
 }
 
 export type TAuthErrorInfo = {
@@ -99,6 +102,10 @@ const errorCodeMessages: {
       </div>
     ),
   },
+  [EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED]: {
+    title: `User account deactivated`,
+    message: () => `User account deactivated. Please contact ${!!SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
+  },
 };
 
 export const authErrorHandler = (
@@ -106,6 +113,7 @@ export const authErrorHandler = (
   email?: string | undefined
 ): TAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
+    EAuthenticationErrorCodes.ADMIN_ALREADY_EXIST,
     EAuthenticationErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME,
     EAuthenticationErrorCodes.INVALID_ADMIN_EMAIL,
     EAuthenticationErrorCodes.INVALID_ADMIN_PASSWORD,
@@ -113,6 +121,7 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.ADMIN_AUTHENTICATION_FAILED,
     EAuthenticationErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
+    EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED,
   ];
 
   if (bannerAlertErrorCodes.includes(errorCode))
