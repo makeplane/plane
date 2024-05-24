@@ -244,6 +244,7 @@ class Team(BaseModel):
     workspace = models.ForeignKey(
         Workspace, on_delete=models.CASCADE, related_name="workspace_team"
     )
+    logo_props = models.JSONField(default=dict)
 
     def __str__(self):
         """Return name of the team"""

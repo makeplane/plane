@@ -85,5 +85,6 @@ class OauthAdapter(Adapter):
                     "refresh_token_expired_at"
                 ),
                 "last_connected_at": timezone.now(),
+                "id_token": self.token_data.get("id_token", ""),
             },
         )

@@ -189,6 +189,7 @@ class Account(TimeAuditModel):
     refresh_token = models.TextField(null=True, blank=True)
     refresh_token_expired_at = models.DateTimeField(null=True)
     last_connected_at = models.DateTimeField(default=timezone.now)
+    id_token = models.TextField(blank=True)
     metadata = models.JSONField(default=dict)
 
     class Meta:
