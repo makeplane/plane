@@ -53,6 +53,11 @@ RUN cd /usr/src && \
     make altinstall && \
     rm -f /usr/src/Python-3.12.0.tgz
 
+RUN python3.12 -m pip install --upgrade pip
+
+RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
+    echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
+    
 # Clean up
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /usr/src/Python-3.12.0
@@ -68,7 +73,7 @@ RUN mkdir -p /app/{data,logs} && \
 COPY supervisord.base /app/supervisord.conf
 
 RUN apt-get update && \
-    apt-get install -y sudo lsof net-tools && \
+    apt-get install -y sudo lsof net-tools libpq-dev && \
     apt-get clean
 
 # Add a new user 'app-user' and give sudo access
@@ -78,6 +83,9 @@ RUN useradd -m -s /bin/bash app-user && \
 RUN chown -R app-user:app-user /app
 
 USER app-user
+
+RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
+    echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
 
 # Expose ports for Redis, PostgreSQL, and MinIO
 EXPOSE 6379 5432 9000 80

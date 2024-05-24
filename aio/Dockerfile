@@ -111,12 +111,18 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 COPY apiserver/requirements.txt ./api/
 COPY apiserver/requirements ./api/requirements
 
-RUN apt-get install python3.12-venv -y
+# RUN python3.12 -m pip install --upgrade pip
 
-RUN python3 -m venv /app/venv && \
-    source /app/venv/bin/activate && \
-    /app/venv/bin/pip install --upgrade pip && \
-    /app/venv/bin/pip install -r ./api/requirements.txt --compile --no-cache-dir
+# RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
+#     echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
+
+RUN pip install -r ./api/requirements.txt --compile --no-cache-dir
+# RUN apt-get install python3.12-venv -y
+
+# RUN python3 -m venv /app/venv && \
+#     source /app/venv/bin/activate && \
+#     /app/venv/bin/pip install --upgrade pip && \
+#     /app/venv/bin/pip install -r ./api/requirements.txt --compile --no-cache-dir
 
 # Add in Django deps and generate Django's static files
 COPY apiserver/manage.py ./api/manage.py
@@ -134,5 +140,7 @@ RUN chown -R app-user:app-user /app
 
 USER app-user
 
+# RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
+#     echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
 
 CMD ["sudo", "/usr/bin/supervisord", "-c", "/app/supervisord.conf"]
