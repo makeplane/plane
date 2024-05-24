@@ -128,6 +128,7 @@ class Issue(ProjectBaseModel):
     description = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
+    description_binary = models.BinaryField(null=True)
     priority = models.CharField(
         max_length=30,
         choices=PRIORITY_CHOICES,
