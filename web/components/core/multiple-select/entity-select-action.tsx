@@ -16,7 +16,7 @@ type Props = {
 export const MultipleSelectEntityAction: React.FC<Props> = (props) => {
   const { className, disabled = false, groupId, id, selectionHelpers } = props;
   // derived values
-  const isSelected = selectionHelpers.isEntitySelected(id);
+  const isSelected = selectionHelpers.getIsEntitySelected(id);
 
   return (
     <Checkbox

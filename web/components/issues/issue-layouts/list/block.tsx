@@ -102,8 +102,8 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
-  const isIssueSelected = selectionHelpers.isEntitySelected(issue.id);
-  const isIssueActive = selectionHelpers.isEntityActive(issue.id);
+  const isIssueSelected = selectionHelpers.getIsEntitySelected(issue.id);
+  const isIssueActive = selectionHelpers.getIsEntityActive(issue.id);
   const isSubIssue = nestingLevel !== 0;
 
   // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count

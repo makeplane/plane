@@ -1,3 +1,6 @@
+import differenceWith from "lodash/differenceWith";
+import isEqual from "lodash/isEqual";
+import remove from "lodash/remove";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // hooks
@@ -6,18 +9,19 @@ import { TEntityDetails } from "@/hooks/use-multiple-select";
 import { IssueService } from "@/services/issue";
 
 export type IMultipleSelectStore = {
-  // observables
+  // computed functions
   isSelectionActive: boolean;
   selectedEntityIds: string[];
   // helper actions
-  isEntitySelected: (entityID: string) => boolean;
-  isEntityActive: (entityID: string) => boolean;
+  getIsEntitySelected: (entityID: string) => boolean;
+  getIsEntityActive: (entityID: string) => boolean;
   getLastSelectedEntityDetails: () => TEntityDetails | null;
   getPreviousActiveEntity: () => TEntityDetails | null;
   getNextActiveEntity: () => TEntityDetails | null;
   getActiveEntityDetails: () => TEntityDetails | null;
   // entity actions
   updateSelectedEntityDetails: (entityDetails: TEntityDetails, action: "add" | "remove") => void;
+  bulkUpdateSelectedEntityDetails: (entitiesList: TEntityDetails[], action: "add" | "remove") => void;
   updateLastSelectedEntityDetails: (entityDetails: TEntityDetails | null) => void;
   updatePreviousActiveEntity: (entityDetails: TEntityDetails | null) => void;
   updateNextActiveEntity: (entityDetails: TEntityDetails | null) => void;
@@ -43,10 +47,12 @@ export class MultipleSelectStore implements IMultipleSelectStore {
       previousActiveEntity: observable,
       nextActiveEntity: observable,
       activeEntityDetails: observable,
-      // entity actions
+      // computed functions
       isSelectionActive: computed,
       selectedEntityIds: computed,
+      // actions
       updateSelectedEntityDetails: action,
+      bulkUpdateSelectedEntityDetails: action,
       updateLastSelectedEntityDetails: action,
       updatePreviousActiveEntity: action,
       updateNextActiveEntity: action,
@@ -71,7 +77,7 @@ export class MultipleSelectStore implements IMultipleSelectStore {
    * @param {string} entityID
    * @returns {boolean}
    */
-  isEntitySelected = computedFn((entityID: string): boolean =>
+  getIsEntitySelected = computedFn((entityID: string): boolean =>
     this.selectedEntityDetails.some((en) => en.entityID === entityID)
   );
 
@@ -80,11 +86,30 @@ export class MultipleSelectStore implements IMultipleSelectStore {
    * @param {string} entityID
    * @returns {boolean}
    */
-  isEntityActive = computedFn((entityID: string): boolean => this.activeEntityDetails?.entityID === entityID);
+  getIsEntityActive = computedFn((entityID: string): boolean => this.activeEntityDetails?.entityID === entityID);
 
+  /**
+   * @description get the last selected entity details
+   * @returns {TEntityDetails}
+   */
   getLastSelectedEntityDetails = computedFn(() => this.lastSelectedEntityDetails);
+
+  /**
+   * @description get the details of the entity preceding the active entity
+   * @returns {TEntityDetails}
+   */
   getPreviousActiveEntity = computedFn(() => this.previousActiveEntity);
+
+  /**
+   * @description get the details of the entity succeeding the active entity
+   * @returns {TEntityDetails}
+   */
   getNextActiveEntity = computedFn(() => this.nextActiveEntity);
+
+  /**
+   * @description get the active entity details
+   * @returns {TEntityDetails}
+   */
   getActiveEntityDetails = computedFn(() => this.activeEntityDetails);
 
   // entity actions
@@ -96,11 +121,10 @@ export class MultipleSelectStore implements IMultipleSelectStore {
   updateSelectedEntityDetails = (entityDetails: TEntityDetails, action: "add" | "remove") => {
     if (action === "add") {
       runInAction(() => {
-        if (this.isEntitySelected(entityDetails.entityID)) {
-          this.selectedEntityDetails = this.selectedEntityDetails.filter(
-            (en) => en.entityID !== entityDetails.entityID
-          );
+        if (this.getIsEntitySelected(entityDetails.entityID)) {
+          remove(this.selectedEntityDetails, (en) => en.entityID === entityDetails.entityID);
         }
+        console.log("store adding");
         this.selectedEntityDetails.push(entityDetails);
         this.updateLastSelectedEntityDetails(entityDetails);
       });
@@ -108,8 +132,28 @@ export class MultipleSelectStore implements IMultipleSelectStore {
       let currentSelection = [...this.selectedEntityDetails];
       currentSelection = currentSelection.filter((en) => en.entityID !== entityDetails.entityID);
       runInAction(() => {
-        this.selectedEntityDetails = this.selectedEntityDetails.filter((en) => en.entityID !== entityDetails.entityID);
+        remove(this.selectedEntityDetails, (en) => en.entityID === entityDetails.entityID);
         this.updateLastSelectedEntityDetails(currentSelection[currentSelection.length - 1] ?? null);
+      });
+    }
+  };
+
+  /**
+   * @description add or remove multiple entities
+   * @param {TEntityDetails[]} entitiesList
+   * @param {"add" | "remove"} action
+   */
+  bulkUpdateSelectedEntityDetails = (entitiesList: TEntityDetails[], action: "add" | "remove") => {
+    if (action === "add") {
+      runInAction(() => {
+        let newEntities: TEntityDetails[] = [];
+        newEntities = differenceWith(this.selectedEntityDetails, entitiesList, isEqual);
+        newEntities = newEntities.concat(entitiesList);
+        this.selectedEntityDetails = newEntities;
+      });
+    } else {
+      runInAction(() => {
+        this.selectedEntityDetails = differenceWith(this.selectedEntityDetails, entitiesList, isEqual);
       });
     }
   };

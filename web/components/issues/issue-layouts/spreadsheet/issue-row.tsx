@@ -212,7 +212,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   const disableUserActions = !canEditProperties(issueDetail.project_id);
   const subIssuesCount = issueDetail.sub_issues_count;
-  const isIssueSelected = selectionHelpers.isEntitySelected(issueDetail.id);
+  const isIssueSelected = selectionHelpers.getIsEntitySelected(issueDetail.id);
 
   return (
     <>

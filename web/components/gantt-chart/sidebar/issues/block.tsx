@@ -33,7 +33,7 @@ export const IssuesSidebarBlock = observer((props: Props) => {
 
   const duration = findTotalDaysInRange(block.start_date, block.target_date);
 
-  const isIssueSelected = selectionHelpers?.isEntitySelected(block.id);
+  const isIssueSelected = selectionHelpers?.getIsEntitySelected(block.id);
   const isBlockHoveredOn = isBlockActive(block.id);
 
   return (

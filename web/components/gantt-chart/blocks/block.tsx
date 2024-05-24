@@ -73,7 +73,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     });
   };
 
-  const isBlockSelected = selectionHelpers.isEntitySelected(block.id);
+  const isBlockSelected = selectionHelpers.getIsEntitySelected(block.id);
   const isBlockHoveredOn = isBlockActive(block.id);
 
   return (

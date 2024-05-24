@@ -21,8 +21,8 @@ export type TSelectionSnapshot = {
 export type TSelectionHelper = {
   handleClearSelection: () => void;
   handleEntityClick: (event: React.MouseEvent, entityID: string, groupId: string) => void;
-  isEntitySelected: (entityID: string) => boolean;
-  isEntityActive: (entityID: string) => boolean;
+  getIsEntitySelected: (entityID: string) => boolean;
+  getIsEntityActive: (entityID: string) => boolean;
   handleGroupClick: (groupID: string) => void;
   isGroupSelected: (groupID: string) => "empty" | "partial" | "complete";
 };
@@ -34,6 +34,7 @@ export const useMultipleSelect = (props: Props) => {
   // store hooks
   const {
     updateSelectedEntityDetails,
+    bulkUpdateSelectedEntityDetails,
     getActiveEntityDetails,
     updateActiveEntityDetails,
     getPreviousActiveEntity,
@@ -42,8 +43,8 @@ export const useMultipleSelect = (props: Props) => {
     updateNextActiveEntity,
     getLastSelectedEntityDetails,
     clearSelection,
-    isEntitySelected,
-    isEntityActive,
+    getIsEntitySelected,
+    getIsEntityActive,
   } = useMultipleSelectStore();
 
   const groups = useMemo(() => Object.keys(entities), [entities]);
@@ -140,14 +141,18 @@ export const useMultipleSelect = (props: Props) => {
 
   const handleEntitySelection = useCallback(
     (
-      entityDetails: TEntityDetails,
+      entityDetails: TEntityDetails | TEntityDetails[],
       shouldScroll: boolean = true,
       forceAction: "force-add" | "force-remove" | null = null
     ) => {
-      const isSelected = isEntitySelected(entityDetails.entityID);
+      if (Array.isArray(entityDetails)) {
+        bulkUpdateSelectedEntityDetails(entityDetails, forceAction === "force-add" ? "add" : "remove");
+        return;
+      }
 
       if (forceAction) {
         if (forceAction === "force-add") {
+          console.log("force adding");
           updateSelectedEntityDetails(entityDetails, "add");
           handleActiveEntityChange(entityDetails, shouldScroll);
         }
@@ -157,14 +162,16 @@ export const useMultipleSelect = (props: Props) => {
         return;
       }
 
+      const isSelected = getIsEntitySelected(entityDetails.entityID);
       if (isSelected) {
         updateSelectedEntityDetails(entityDetails, "remove");
+        handleActiveEntityChange(entityDetails, shouldScroll);
       } else {
         updateSelectedEntityDetails(entityDetails, "add");
         handleActiveEntityChange(entityDetails, shouldScroll);
       }
     },
-    [handleActiveEntityChange, isEntitySelected, updateSelectedEntityDetails]
+    [bulkUpdateSelectedEntityDetails, getIsEntitySelected, handleActiveEntityChange, updateSelectedEntityDetails]
   );
 
   /**
@@ -222,12 +229,12 @@ export const useMultipleSelect = (props: Props) => {
   const isGroupSelected = useCallback(
     (groupID: string) => {
       const groupEntities = entitiesList.filter((entity) => entity.groupID === groupID);
-      const totalSelected = groupEntities.filter((entity) => isEntitySelected(entity.entityID ?? "")).length;
+      const totalSelected = groupEntities.filter((entity) => getIsEntitySelected(entity.entityID ?? "")).length;
       if (totalSelected === 0) return "empty";
       if (totalSelected === groupEntities.length) return "complete";
       return "partial";
     },
-    [entitiesList, isEntitySelected]
+    [entitiesList, getIsEntitySelected]
   );
 
   /**
@@ -238,9 +245,11 @@ export const useMultipleSelect = (props: Props) => {
     (groupID: string) => {
       const groupEntities = entitiesList.filter((entity) => entity.groupID === groupID);
       const groupSelectionStatus = isGroupSelected(groupID);
-      groupEntities.forEach((entity) => {
-        handleEntitySelection(entity, false, groupSelectionStatus === "empty" ? "force-add" : "force-remove");
-      });
+      // groupEntities.map((entity) => {
+      //   console.log("group click");
+      //   handleEntitySelection(entity, false, groupSelectionStatus === "empty" ? "force-add" : "force-remove");
+      // });
+      handleEntitySelection(groupEntities, false, groupSelectionStatus === "empty" ? "force-add" : "force-remove");
     },
     [entitiesList, handleEntitySelection, isGroupSelected]
   );
@@ -341,12 +350,12 @@ export const useMultipleSelect = (props: Props) => {
     () => ({
       handleClearSelection: clearSelection,
       handleEntityClick,
-      isEntitySelected,
-      isEntityActive,
+      getIsEntitySelected,
+      getIsEntityActive,
       handleGroupClick,
       isGroupSelected,
     }),
-    [clearSelection, handleEntityClick, handleGroupClick, isEntityActive, isEntitySelected, isGroupSelected]
+    [clearSelection, getIsEntityActive, getIsEntitySelected, handleEntityClick, handleGroupClick, isGroupSelected]
   );
 
   return helpers;
