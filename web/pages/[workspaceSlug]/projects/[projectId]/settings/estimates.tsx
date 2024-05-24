@@ -31,8 +31,8 @@ const EstimatesSettingsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className={`w-full overflow-y-auto py-8 pr-9  ${isAdmin ? "" : "pointer-events-none opacity-60"}`}>
-        <EstimateRoot workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+      <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "pointer-events-none opacity-60"}`}>
+        <EstimateRoot workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} isAdmin={isAdmin} />
       </div>
     </>
   );

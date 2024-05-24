@@ -2,6 +2,9 @@ import { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Button } from "@plane/ui";
+// public images
+import EstimateEmptyDarkImage from "@/public/empty-state/estimates/dark.svg";
+import EstimateEmptyLightImage from "@/public/empty-state/estimates/light.svg";
 
 type TEstimateEmptyScreen = {
   onButtonClick: () => void;
@@ -12,9 +15,7 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
   const { onButtonClick } = props;
   const { resolvedTheme } = useTheme();
 
-  const emptyScreenImage = `/empty-state/project-settings/estimates-${
-    resolvedTheme === "light" ? "light" : "dark"
-  }.webp`;
+  const emptyScreenImage = resolvedTheme === "light" ? EstimateEmptyLightImage : EstimateEmptyDarkImage;
 
   return (
     <div className="relative flex flex-col justify-center items-center text-center gap-8 border border-custom-border-300 rounded bg-custom-background-90 py-10">

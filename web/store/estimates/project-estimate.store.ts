@@ -21,8 +21,9 @@ export interface IProjectEstimateStore {
   estimates: Record<string, IEstimate>;
   error: TErrorCodes | undefined;
   // computed
+  currentActiveEstimateId: string | undefined;
+  archivedEstimateIds: string[] | undefined;
   areEstimateEnabledByProjectId: (projectId: string) => boolean;
-  projectEstimateIds: string[] | undefined;
   estimateIdsByProjectId: (projectId: string) => string[] | undefined;
   estimateById: (estimateId: string) => IEstimate | undefined;
   // actions
@@ -55,6 +56,8 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       estimates: observable,
       error: observable,
       // computed
+      currentActiveEstimateId: computed,
+      archivedEstimateIds: computed,
       projectEstimateIds: computed,
       // actions
       getWorkspaceEstimates: action,
@@ -67,6 +70,45 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   }
 
   // computed
+
+  /**
+   * @description get current active estimate id for a project
+   * @returns { string | undefined }
+   */
+  get currentActiveEstimateId(): string | undefined {
+    const { projectId } = this.store.router;
+    if (!projectId) return undefined;
+    const projectDetails = this.store.projectRoot.project.getProjectById(projectId);
+    if (!projectDetails) return undefined;
+    return projectDetails.estimate ?? undefined;
+  }
+
+  /**
+   * @description get all archived estimate ids for a project
+   * @returns { string[] | undefined }
+   */
+  get archivedEstimateIds(): string[] | undefined {
+    const { projectId } = this.store.router;
+    if (!projectId) return undefined;
+    const archivedEstimateIds = Object.values(this.estimates || {})
+      .filter((p) => p.project === projectId && p.id !== this.currentActiveEstimateId)
+      .map((p) => p.id) as string[];
+    return archivedEstimateIds ?? undefined;
+  }
+
+  /**
+   * @description get all estimate ids for a project
+   * @returns { string[] | undefined }
+   */
+  get projectEstimateIds(): string[] | undefined {
+    const { projectId } = this.store.router;
+    if (!projectId) return undefined;
+    const projectEstimatesIds = Object.values(this.estimates || {})
+      .filter((p) => p.project === projectId)
+      .map((p) => p.id) as string[];
+    return projectEstimatesIds ?? undefined;
+  }
+
   /**
    * @description get estimates are enabled in the project or not
    * @returns { boolean }
@@ -82,24 +124,11 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
    * @description get all estimate ids for a project
    * @returns { string[] | undefined }
    */
-  get projectEstimateIds(): string[] | undefined {
-    const { projectId } = this.store.router;
-    if (!projectId) return undefined;
-    const projectEstimatesIds = Object.values(this.estimates || {})
-      .filter((p) => p.project === projectId)
-      .map((p) => p.id && p != undefined) as string[];
-    return projectEstimatesIds ?? undefined;
-  }
-
-  /**
-   * @description get all estimate ids for a project
-   * @returns { string[] | undefined }
-   */
   estimateIdsByProjectId = computedFn((projectId: string) => {
     if (!projectId) return undefined;
     const projectEstimatesIds = Object.values(this.estimates || {})
       .filter((p) => p.project === projectId)
-      .map((p) => p.id && p != undefined) as string[];
+      .map((p) => p.id) as string[];
     return projectEstimatesIds ?? undefined;
   });
 
@@ -223,11 +252,20 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       this.error = undefined;
 
       const estimate = await this.service.createEstimate(workspaceSlug, projectId, payload);
-      if (estimate) {
-        runInAction(() => {
-          if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+      // FIXME: i am getting different response from the server and once backend changes remove the get request and uncomment the commented code
+      const estimates = await this.getProjectEstimates(workspaceSlug, projectId, "mutation-loader");
+      if (estimates && estimates.length > 0)
+        await this.store.projectRoot.project.updateProject(workspaceSlug, projectId, {
+          estimate: estimates[estimates.length - 1].id,
         });
-      }
+      // if (estimate) {
+      //   await this.store.projectRoot.project.updateProject(workspaceSlug, projectId, {
+      //     estimate: estimate.id,
+      //   });
+      //   runInAction(() => {
+      //     if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+      //   });
+      // }
 
       return estimate;
     } catch (error) {
