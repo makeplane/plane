@@ -4,6 +4,7 @@ from django.urls import path
 from plane.app.views import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
+    DeleteEstimatePoint,
 )
 
 
@@ -32,6 +33,11 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
+        name="bulk-create-estimate-points",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-point/<estimate_point_id>/",
+        DeleteEstimatePoint.as_view({"patch": "partial_update"}),
         name="bulk-create-estimate-points",
     ),
 ]
