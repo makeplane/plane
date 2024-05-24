@@ -107,7 +107,7 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
 
 WebhookDetailsPage.getLayout = function getLayout(page: React.ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Webhook settings" />}>
+    <AppLayout header={<WorkspaceSettingHeader />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );
