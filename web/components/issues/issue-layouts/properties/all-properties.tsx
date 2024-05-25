@@ -63,7 +63,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const currentLayout = `${activeLayout} layout`;
   // derived values
   const stateDetails = getStateById(issue.state_id);
-  const subIssueCount = issue.sub_issues_count;
+  const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const issueOperations = useMemo(
     () => ({

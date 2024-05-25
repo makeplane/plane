@@ -148,7 +148,7 @@ class InstanceEndpoint(BaseAPIView):
         data["app_base_url"] = settings.APP_BASE_URL
 
         instance_data = serializer.data
-        instance_data["workspaces_exist"] = Workspace.objects.count() > 1
+        instance_data["workspaces_exist"] = Workspace.objects.count() >= 1
 
         response_data = {"config": data, "instance": instance_data}
         return Response(response_data, status=status.HTTP_200_OK)
