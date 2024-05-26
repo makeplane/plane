@@ -99,7 +99,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
 
 ApiTokensPage.getLayout = function getLayout(page: React.ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="API Tokens" />}>
+    <AppLayout header={<WorkspaceSettingHeader />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );

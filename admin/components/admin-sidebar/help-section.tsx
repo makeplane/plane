@@ -40,7 +40,7 @@ export const HelpSection: FC = observer(() => {
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
-  const redirectionLink = encodeURI(WEB_BASE_URL + "/create-workspace");
+  const redirectionLink = encodeURI(WEB_BASE_URL + "/");
 
   return (
     <div
