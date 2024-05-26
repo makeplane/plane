@@ -376,7 +376,7 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
             if issue.state.group not in ["completed", "cancelled"]:
                 return Response(
                     {
-                        "error_code": "4091",
+                        "error_code": 4091,
                         "error_message": "INVALID_ARCHIVE_STATE_GROUP"
                     },
                     status=status.HTTP_400_BAD_REQUEST,

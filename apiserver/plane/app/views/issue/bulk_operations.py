@@ -59,6 +59,19 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
         properties = request.data.get("properties", {})
 
+        if properties.get("start_date", False) and properties.get("target_date", False):
+            if (
+                datetime.strptime(properties.get("start_date"), "%Y-%m-%d").date()
+                > datetime.strptime(properties.get("target_date"), "%Y-%m-%d").date()
+            ):
+                return Response(
+                    {
+                        "error_code": 4100,
+                        "error_message": "INVALID_ISSUE_DATES",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         for issue in issues:
 
             # Priority
@@ -103,6 +116,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             if properties.get("start_date", False):
                 if (
                     issue.target_date
+                    and not properties.get("target_date", False)
                     and issue.target_date
                     <= datetime.strptime(
                         properties.get("start_date"), "%Y-%m-%d"
@@ -110,7 +124,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 ):
                     return Response(
                         {
-                            "error_code": "4101",
+                            "error_code": 4101,
                             "error_message": "INVALID_ISSUE_START_DATE",
                         },
                         status=status.HTTP_400_BAD_REQUEST,
@@ -136,6 +150,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             if properties.get("target_date", False):
                 if (
                     issue.start_date
+                    and not properties.get("start_date", False)
                     and issue.start_date
                     >= datetime.strptime(
                         properties.get("target_date"), "%Y-%m-%d"
@@ -143,7 +158,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 ):
                     return Response(
                         {
-                            "error_code": "4102",
+                            "error_code": 4102,
                             "error_message": "INVALID_ISSUE_TARGET_DATE",
                         },
                         status=status.HTTP_400_BAD_REQUEST,
