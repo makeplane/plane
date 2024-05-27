@@ -18,6 +18,7 @@ import {
   ISSUES_LIST_OPENED,
   GROUP_WORKSPACE,
   WORKSPACE_CREATED,
+  IssuesListOpenedEventProps,
 } from "@/constants/event-tracker";
 import { RootStore } from "./root.store";
 
@@ -38,7 +39,7 @@ export interface IEventTrackerStore {
   capturePageEvent: (props: EventProps) => void;
   captureIssueEvent: (props: IssueEventProps) => void;
   captureProjectStateEvent: (props: EventProps) => void;
-  captureIssuesListOpenedEvent: (routePath: string, filters: any) => void;
+  captureIssuesListOpenedEvent: (props: IssuesListOpenedEventProps) => void;
 }
 
 export class EventTrackerStore implements IEventTrackerStore {
@@ -228,15 +229,18 @@ export class EventTrackerStore implements IEventTrackerStore {
    * @param {string} path
    * @param {any} filters
    */
-  captureIssuesListOpenedEvent = (routePath: string, filters: any) => {
-    const eventPayload = {
-      ...getIssuesListOpenedPayload({
-        routePath: routePath,
-        filters: filters,
-      }),
+  captureIssuesListOpenedEvent = (props: IssuesListOpenedEventProps) => {
+    const { element, elementId, filters } = props;
+    const eventPayload = getIssuesListOpenedPayload({
+      filters: filters,
       ...this.requiredProperties,
-    };
-    posthog?.capture(ISSUES_LIST_OPENED, eventPayload);
+    });
+
+    posthog?.capture(ISSUES_LIST_OPENED, {
+      ...eventPayload,
+      element: element,
+      elementId: elementId,
+    });
     this.setTrackElement(undefined);
   };
 }

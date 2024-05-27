@@ -11,6 +11,8 @@ import {
   IssuePeekOverview,
 } from "@/components/issues";
 import { ListLayoutLoader } from "@/components/ui";
+// constants
+import { E_ARCHIVE } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // ui
 import { useIssues, useEventTracker } from "@/hooks/store";
@@ -28,7 +30,11 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
-        captureIssuesListOpenedEvent(router.asPath, issuesFilter?.issueFilters?.filters);
+        captureIssuesListOpenedEvent({
+          filters: issuesFilter?.issueFilters,
+          element: E_ARCHIVE,
+          elementId: projectId.toString(),
+        });
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),

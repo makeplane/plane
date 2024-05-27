@@ -5,15 +5,16 @@ import useSWR from "swr";
 // hooks
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { ActiveLoader } from "@/components/ui";
+// constants
+import { E_DRAFT } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
-import { useIssues } from "@/hooks/store";
+import { useIssues, useEventTracker } from "@/hooks/store";
 // components
 import { ProjectDraftEmptyState } from "../empty-states";
 import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";
 import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
 import { DraftIssueListLayout } from "../list/roots/draft-issue-root";
 // ui
-// constants
 
 export const DraftIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -21,12 +22,18 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(
     workspaceSlug && projectId ? `DRAFT_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     async () => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        captureIssuesListOpenedEvent({
+          filters: issuesFilter?.issueFilters,
+          element: E_DRAFT,
+          elementId: projectId.toString(),
+        });
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),

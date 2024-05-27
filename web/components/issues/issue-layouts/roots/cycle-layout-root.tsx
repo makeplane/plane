@@ -20,8 +20,9 @@ import {
 } from "@/components/issues";
 import { ActiveLoader } from "@/components/ui";
 // constants
+import { E_CYCLE } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useCycle, useIssues } from "@/hooks/store";
+import { useCycle, useIssues, useEventTracker } from "@/hooks/store";
 // types
 
 export const CycleLayoutRoot: React.FC = observer(() => {
@@ -30,6 +31,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { getCycleById } = useCycle();
+  const { captureIssuesListOpenedEvent } = useEventTracker();
   // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
@@ -40,6 +42,11 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && cycleId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
+        captureIssuesListOpenedEvent({
+          filters: issuesFilter?.issueFilters,
+          element: E_CYCLE,
+          elementId: cycleId.toString(),
+        });
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),

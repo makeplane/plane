@@ -1,8 +1,16 @@
+import { IIssueFilters } from "@plane/types";
+
 export type IssueEventProps = {
   eventName: string;
   payload: any;
   updates?: any;
   routePath?: string;
+};
+
+export type IssuesListOpenedEventProps = {
+  element: string;
+  elementId: string;
+  filters: IIssueFilters | undefined;
 };
 
 export type EventProps = {
@@ -129,22 +137,23 @@ export const getProjectStateEventPayload = (payload: any) => ({
 });
 
 export const getIssuesListOpenedPayload = (payload: any) => ({
-  element: elementFromPath(payload.routePath),
   type: payload.project_id ? "Project" : "Workspace",
-  layout: payload?.displayFilters?.layout,
-  filters: payload?.filters,
-  display_properties: payload?.displayProperties,
+  layout: payload?.filters?.displayFilters?.layout,
+  filters: payload?.filters?.filters,
+  display_properties: payload?.filters?.displayProperties,
+  workspace_id: payload.workspace_id,
+  project_id: payload.project_id,
 });
 
 // Returns the element based on the path
 const elementFromPath = (routePath?: string) => {
-  if (routePath?.includes("workspace-views")) return "Workspace view";
-  if (routePath?.includes("cycles")) return "Cycle";
-  if (routePath?.includes("modules")) return "Module";
-  if (routePath?.includes("views")) return "Project view";
-  if (routePath?.includes("inbox")) return "Inbox";
-  if (routePath?.includes("draft")) return "Draft";
-  if (routePath?.includes("archived")) return "Archive";
+  if (routePath?.includes("workspace-views")) return E_WORKSPACE_VIEW;
+  if (routePath?.includes("cycles")) return E_CYCLE;
+  if (routePath?.includes("modules")) return E_MODULE;
+  if (routePath?.includes("views")) return E_PROJECT_VIEW;
+  if (routePath?.includes("inbox")) return E_INBOX;
+  if (routePath?.includes("draft")) return E_DRAFT;
+  if (routePath?.includes("archived")) return E_ARCHIVE;
   return "";
 };
 
@@ -232,3 +241,12 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+// Elements
+export const E_PROJECT = "Project";
+export const E_CYCLE = "Cycle";
+export const E_MODULE = "Module";
+export const E_PROJECT_VIEW = "Project view";
+export const E_WORKSPACE_VIEW = "Workspace view";
+export const E_DRAFT = "Draft";
+export const E_ARCHIVE = "Archives";
+export const E_INBOX = "Inbox";

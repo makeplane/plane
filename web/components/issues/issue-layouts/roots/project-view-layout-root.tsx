@@ -16,8 +16,9 @@ import {
 } from "@/components/issues";
 import { ActiveLoader } from "@/components/ui";
 // constants
+import { E_PROJECT_VIEW } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
-import { useIssues } from "@/hooks/store";
+import { useIssues, useEventTracker } from "@/hooks/store";
 // types
 
 export const ProjectViewLayoutRoot: React.FC = observer(() => {
@@ -26,12 +27,18 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, viewId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(
     workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
     async () => {
       if (workspaceSlug && projectId && viewId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), viewId.toString());
+        captureIssuesListOpenedEvent({
+          filters: issuesFilter?.issueFilters,
+          element: E_PROJECT_VIEW,
+          elementId: viewId.toString(),
+        });
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),
