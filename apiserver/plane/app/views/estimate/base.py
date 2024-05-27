@@ -189,10 +189,9 @@ class EstimatePointEndpoint(BaseViewSet):
             )
         key = request.data.get("key", 0)
         value = request.data.get("value", "")
-        estimate_point = EstimatePoint.objects.get(
+        estimate_point = EstimatePoint.objects.create(
             estimate_id=estimate_id,
             project_id=project_id,
-            workspace__slug=slug,
             key=key,
             value=value,
         )
