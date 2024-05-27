@@ -37,6 +37,7 @@ export type IRichTextEditor = {
   };
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
+  onEnterKeyPress?: (e?: any) => void;
 };
 
 const RichTextEditor = (props: IRichTextEditor) => {
@@ -54,6 +55,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
     placeholder,
     tabIndex,
     mentionHandler,
+    onEnterKeyPress,
   } = props;
 
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
@@ -80,6 +82,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
       uploadFile: fileHandler.upload,
       dragDropEnabled,
       setHideDragHandle: setHideDragHandleFunction,
+      onEnterKeyPress,
     }),
     tabIndex,
     mentionHandler,
