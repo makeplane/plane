@@ -56,14 +56,19 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
 
   // derived values
   const renderEstimateStepsCount = useMemo(() => (estimatePoints ? "2" : "1"), [estimatePoints]);
+  const isNewEstimatePointsToCreate =
+    (estimatePoints || []).filter((point) => point.id === undefined).length > 0 ? true : false;
 
-  const handleCreateEstimate = async () => {
+  const handleUpdateEstimate = async () => {
     try {
       if (!workspaceSlug || !projectId || !estimateId || currentEstimate?.type === undefined) return;
+
+      const currentEstimatePoints = (estimatePoints || []).filter((point) => point.id === undefined);
       const currentEstimationType: TEstimateSystemKeys = currentEstimate?.type;
       const validatedEstimatePoints: TEstimatePointsObject[] = [];
+
       if ([EEstimateSystem.POINTS, EEstimateSystem.TIME].includes(currentEstimationType)) {
-        estimatePoints?.map((estimatePoint) => {
+        currentEstimatePoints?.map((estimatePoint) => {
           if (
             estimatePoint.value &&
             ((estimatePoint.value != "0" && Number(estimatePoint.value)) || estimatePoint.value === "0")
@@ -71,15 +76,13 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
             validatedEstimatePoints.push(estimatePoint);
         });
       } else {
-        estimatePoints?.map((estimatePoint) => {
+        currentEstimatePoints?.map((estimatePoint) => {
           if (estimatePoint.value) validatedEstimatePoints.push(estimatePoint);
         });
       }
-      if (validatedEstimatePoints.length === estimatePoints?.length) {
+
+      if (validatedEstimatePoints.length === currentEstimatePoints?.length) {
         const payload: IEstimateFormData = {
-          estimate: {
-            type: "points",
-          },
           estimate_points: validatedEstimatePoints,
         };
         await updateEstimate(payload);
@@ -144,9 +147,9 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
             Cancel
           </Button>
-          {estimatePoints && (
-            <Button variant="primary" size="sm" onClick={handleCreateEstimate}>
-              Create Estimate
+          {isNewEstimatePointsToCreate && (
+            <Button variant="primary" size="sm" onClick={handleUpdateEstimate}>
+              Update Estimate
             </Button>
           )}
         </div>

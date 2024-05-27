@@ -148,7 +148,7 @@ export class Estimate implements IEstimate {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !this.id || !payload) return;
 
-      // make update estimation request
+      await this.service.updateEstimate(workspaceSlug, projectId, this.id, payload);
 
       // runInAction(() => {
       //   this.points = payload.estimate_points;

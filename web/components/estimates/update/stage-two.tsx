@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { IEstimate, TEstimatePointsObject, TEstimateUpdateStageKeys } from "@plane/types";
 import { Button, Sortable } from "@plane/ui";
@@ -14,7 +15,7 @@ type TEstimateUpdateStageTwo = {
   handleEstimatePoints: (value: TEstimatePointsObject[]) => void;
 };
 
-export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = (props) => {
+export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = observer((props) => {
   const { estimate, estimateEditType, estimatePoints, handleEstimatePoints } = props;
 
   const currentEstimateSystem = estimate || undefined;
@@ -85,4 +86,4 @@ export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = (props) => {
       </div>
     </div>
   );
-};
+});
