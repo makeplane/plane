@@ -189,7 +189,7 @@ from .external.base import (
 from .estimate.base import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
-    DeleteEstimatePoint,
+    EstimatePointEndpoint,
 )
 
 from .inbox.base import InboxViewSet, InboxIssueViewSet

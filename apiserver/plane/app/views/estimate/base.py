@@ -62,9 +62,10 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         path="/api/workspaces/:slug/estimates/", url_params=True, user=False
     )
     def create(self, request, slug, project_id):
-        estimate_name = generate_random_name()
+        estimate_name = request.data.get("name", generate_random_name())
+        last_used = request.data.get("last_used", False)
         estimate = Estimate.objects.create(
-            name=estimate_name, project_id=project_id
+            name=estimate_name, project_id=project_id, last_used=last_used
         )
 
         estimate_points = request.data.get("estimate_points", [])
@@ -174,15 +175,52 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class DeleteEstimatePoint(BaseViewSet):
+class EstimatePointEndpoint(BaseViewSet):
     permission_classes = [
         ProjectEntityPermission,
     ]
 
-    def partial_update(
+    def create(self, request, slug, project_id, estimate_id):
+        #  TODO: add a key validation if the same key already exists
+        if not request.data.get("key") or not request.data.get("value"):
+            return Response(
+                {"error": "Key and value are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        key = request.data.get("key", 0)
+        value = request.data.get("value", "")
+        estimate_point = EstimatePoint.objects.get(
+            estimate_id=estimate_id,
+            project_id=project_id,
+            workspace__slug=slug,
+            key=key,
+            value=value,
+        )
+        serializer = EstimatePointSerializer(estimate_point).data
+        return Response(serializer, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, slug, project_id, estimate_id, estimate_point_id):
+        #  TODO: add a key validation if the same key already exists
+        estimate_point = EstimatePoint.objects.get(
+            pk=estimate_point_id,
+            estimate_id=estimate_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        )
+        serializer = EstimatePointSerializer(
+            estimate_point, data=request.data, partial=True
+        )
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(
         self, request, slug, project_id, estimate_id, estimate_point_id
     ):
-        new_estimate_id = request.data.get("new_estimate_id", None)
+        new_estimate_id = request.GET.get("new_estimate_id", None)
         estimate_points = EstimatePoint.objects.filter(
             estimate_id=estimate_id,
             project_id=project_id,
