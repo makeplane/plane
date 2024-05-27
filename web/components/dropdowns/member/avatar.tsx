@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // icons
-import { SquareUser, Users } from "lucide-react";
+import { LucideIcon, Users } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 // hooks
@@ -9,11 +9,11 @@ import { useMember } from "@/hooks/store";
 type AvatarProps = {
   showTooltip: boolean;
   userIds: string | string[] | null;
-  renderLeadIcon?: boolean;
+  CustomAvatarIcon?: LucideIcon;
 };
 
 export const ButtonAvatars: React.FC<AvatarProps> = observer((props) => {
-  const { showTooltip, userIds, renderLeadIcon = false } = props;
+  const { showTooltip, userIds, CustomAvatarIcon } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
@@ -36,8 +36,8 @@ export const ButtonAvatars: React.FC<AvatarProps> = observer((props) => {
     }
   }
 
-  return renderLeadIcon ? (
-    <SquareUser className="h-3 w-3 flex-shrink-0" />
+  return CustomAvatarIcon ? (
+    <CustomAvatarIcon className="h-3 w-3 flex-shrink-0" />
   ) : (
     <Users className="h-3 w-3 flex-shrink-0" />
   );
