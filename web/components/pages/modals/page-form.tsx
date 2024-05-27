@@ -45,7 +45,7 @@ export const PageForm: React.FC<Props> = (props) => {
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-5 p-5">
         <h3 className="text-xl font-medium text-custom-text-200">Create Page</h3>
-        <div className="flex items-center gap-2 h-9 w-full">
+        <div className="flex items-start gap-2 h-9 w-full">
           <CustomEmojiIconPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}

@@ -163,7 +163,11 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               <CustomMenu
                 label={
                   <>
-                    <PhotoFilterIcon height={12} width={12} />
+                    {viewDetails?.logo_props?.in_use ? (
+                      <Logo logo={viewDetails.logo_props} size={12} />
+                    ) : (
+                      <PhotoFilterIcon height={12} width={12} />
+                    )}
                     {viewDetails?.name && truncateText(viewDetails.name, 40)}
                   </>
                 }
@@ -181,7 +185,11 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                         href={`/${workspaceSlug}/projects/${projectId}/views/${viewId}`}
                         className="flex items-center gap-1.5"
                       >
-                        <PhotoFilterIcon height={12} width={12} />
+                        {view?.logo_props?.in_use ? (
+                          <Logo logo={view.logo_props} size={12} />
+                        ) : (
+                          <PhotoFilterIcon height={12} width={12} />
+                        )}
                         {truncateText(view.name, 40)}
                       </Link>
                     </CustomMenu.MenuItem>

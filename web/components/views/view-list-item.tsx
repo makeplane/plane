@@ -1,12 +1,10 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// icons
-import { FileText } from "lucide-react";
 // types
 import { IProjectView, TLogoProps } from "@plane/types";
 // ui
-import { CustomEmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomEmojiIconPicker, EmojiIconPickerTypes, PhotoFilterIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { ListItem } from "@/components/core/list";
@@ -70,7 +68,7 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
                 {view?.logo_props?.in_use ? (
                   <Logo logo={view?.logo_props} size={16} />
                 ) : (
-                  <FileText className="h-4 w-4 text-custom-text-300" />
+                  <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
                 )}
               </>
             }
