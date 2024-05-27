@@ -68,7 +68,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
 
     const issue = issuesMap[issueId];
-    const subIssuesCount = issue.sub_issues_count;
+    const subIssuesCount = issue?.sub_issues_count ?? 0;
 
   const { isMobile } = usePlatformOS();
 

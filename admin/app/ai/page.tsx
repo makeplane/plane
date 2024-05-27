@@ -19,14 +19,14 @@ const InstanceAIPage = observer(() => {
   return (
     <>
       <PageHeader title="Artificial Intelligence - God Mode" />
-      <div className="relative container mx-auto w-full h-full p-8 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 pb-3 space-y-1 flex-shrink-0">
+      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
+        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="text-xl font-medium text-custom-text-100">AI features for all your workspaces</div>
           <div className="text-sm font-normal text-custom-text-300">
             Configure your AI API credentials so Plane AI features are turned on for all your workspaces.
           </div>
         </div>
-        <div className="flex-grow overflow-hidden overflow-y-auto">
+        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <InstanceAIForm config={formattedConfig} />
           ) : (
