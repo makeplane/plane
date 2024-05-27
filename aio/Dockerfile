@@ -63,23 +63,50 @@ WORKDIR /app
 
 SHELL [ "/bin/bash", "-c" ]
 
+# PYTHON APPLICATION SETUP
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
+
+COPY apiserver/requirements.txt ./api/
+COPY apiserver/requirements ./api/requirements
+
+RUN python3.12 -m venv /app/venv && \
+    source /app/venv/bin/activate && \
+    /app/venv/bin/pip install --upgrade pip && \
+    /app/venv/bin/pip install -r ./api/requirements.txt --compile --no-cache-dir
+
+# Add in Django deps and generate Django's static files
+COPY apiserver/manage.py ./api/manage.py
+COPY apiserver/plane ./api/plane/
+COPY apiserver/templates ./api/templates/
+COPY package.json ./api/package.json
+
+COPY apiserver/bin ./api/bin/
+
+RUN chmod +x ./api/bin/*
+RUN chmod -R 777 ./api/
+
+# NEXTJS BUILDS
+
 COPY --from=installer /app/web/next.config.js ./web/
 COPY --from=installer /app/web/package.json ./web/
 COPY --from=installer /app/web/.next/standalone ./web
-COPY --from=installer /app/web/.next/static ./web/.next/static
-COPY --from=installer /app/web/public ./web/public
+COPY --from=installer /app/web/.next/static ./web/web/.next/static
+COPY --from=installer /app/web/public ./web/web/public
 
 COPY --from=installer /app/space/next.config.js ./space/
 COPY --from=installer /app/space/package.json ./space/
 COPY --from=installer /app/space/.next/standalone ./space
-COPY --from=installer /app/space/.next/static ./space/.next/static
-COPY --from=installer /app/space/public ./space/public
+COPY --from=installer /app/space/.next/static ./space/space/.next/static
+COPY --from=installer /app/space/public ./space/space/public
 
 COPY --from=installer /app/admin/next.config.js ./admin/
 COPY --from=installer /app/admin/package.json ./admin/
 COPY --from=installer /app/admin/.next/standalone ./admin
-COPY --from=installer /app/admin/.next/static ./admin/.next/static
-COPY --from=installer /app/admin/public ./admin/public
+COPY --from=installer /app/admin/.next/static ./admin/admin/.next/static
+COPY --from=installer /app/admin/public ./admin/admin/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
@@ -102,45 +129,23 @@ ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV TURBO_TELEMETRY_DISABLED 1
 
-
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
-
-COPY apiserver/requirements.txt ./api/
-COPY apiserver/requirements ./api/requirements
-
-# RUN python3.12 -m pip install --upgrade pip
-
-# RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
-#     echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
-
-RUN pip install -r ./api/requirements.txt --compile --no-cache-dir
-# RUN apt-get install python3.12-venv -y
-
-# RUN python3 -m venv /app/venv && \
-#     source /app/venv/bin/activate && \
-#     /app/venv/bin/pip install --upgrade pip && \
-#     /app/venv/bin/pip install -r ./api/requirements.txt --compile --no-cache-dir
-
-# Add in Django deps and generate Django's static files
-COPY apiserver/manage.py ./api/manage.py
-COPY apiserver/plane ./api/plane/
-COPY apiserver/templates ./api/templates/
-
-COPY apiserver/bin ./api/bin/
-
-RUN chmod +x ./api/bin/*
-RUN chmod -R 777 ./api/
-
 COPY aio/supervisord.conf /app/supervisord.conf
 
-RUN chown -R app-user:app-user /app
+COPY aio/aio.sh /app/aio.sh
+RUN chmod +x /app/aio.sh
 
-USER app-user
+COPY aio/pg-setup.sh /app/pg-setup.sh
+RUN chmod +x /app/pg-setup.sh 
 
-# RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
-#     echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
+COPY deploy/selfhost/variables.env /app/plane.env
 
-CMD ["sudo", "/usr/bin/supervisord", "-c", "/app/supervisord.conf"]
+# NGINX Conf Copy
+COPY ./aio/nginx.conf.aio /etc/nginx/nginx.conf.template
+COPY ./nginx/env.sh /app/nginx-start.sh
+RUN chmod +x /app/nginx-start.sh
+
+RUN  ./pg-setup.sh
+
+VOLUME [ "/app/data/minio/uploads", "/var/lib/postgresql/data" ]
+
+CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]

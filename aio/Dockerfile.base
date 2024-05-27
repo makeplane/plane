@@ -23,10 +23,13 @@ RUN echo "deb http://deb.debian.org/debian $(lsb_release -cs)-backports main" > 
     apt-get install -y redis-server
 
 # Install PostgreSQL 15
+ENV POSTGRES_VERSION 15
 RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/pgdg-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/pgdg-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
-    apt-get install -y postgresql-15 postgresql-client-15
+    apt-get install -y postgresql-$POSTGRES_VERSION postgresql-client-$POSTGRES_VERSION && \
+    mkdir -p /var/lib/postgresql/data && \
+    chown -R postgres:postgres /var/lib/postgresql
 
 # Install MinIO
 ARG TARGETARCH
@@ -73,16 +76,11 @@ RUN mkdir -p /app/{data,logs} && \
 COPY supervisord.base /app/supervisord.conf
 
 RUN apt-get update && \
-    apt-get install -y sudo lsof net-tools libpq-dev && \
+    apt-get install -y sudo lsof net-tools libpq-dev procps gettext && \
     apt-get clean
 
-# Add a new user 'app-user' and give sudo access
-RUN useradd -m -s /bin/bash app-user && \
-    echo 'app-user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-RUN chown -R app-user:app-user /app
-
-USER app-user
+RUN sudo -u postgres /usr/lib/postgresql/$POSTGRES_VERSION/bin/initdb -D /var/lib/postgresql/data
+COPY postgresql.conf /etc/postgresql/postgresql.conf
 
 RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
     echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
@@ -91,4 +89,4 @@ RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
 EXPOSE 6379 5432 9000 80
 
 # Start Supervisor
-CMD ["sudo", "/usr/bin/supervisord", "-c", "/app/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]
