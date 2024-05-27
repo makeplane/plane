@@ -19,7 +19,7 @@ import { MemberDropdownProps } from "./types";
 
 type Props = {
   projectId?: string;
-  CustomIcon?: LucideIcon;
+  Icon?: LucideIcon;
   onClose?: () => void;
 } & MemberDropdownProps;
 
@@ -44,7 +44,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     showTooltip = false,
     tabIndex,
     value,
-    CustomIcon,
+    Icon,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -117,7 +117,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
               showTooltip={showTooltip}
               variant={buttonVariant}
             >
-              {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} CustomAvatarIcon={CustomIcon} />}
+              {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} Icon={Icon} />}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
                 <span className="flex-grow truncate text-xs leading-5">
                   {Array.isArray(value) && value.length > 0
