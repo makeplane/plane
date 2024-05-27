@@ -1,4 +1,5 @@
 import set from "lodash/set";
+import sortBy from "lodash/sortBy";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -253,7 +254,8 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
 
       const estimate = await this.service.createEstimate(workspaceSlug, projectId, payload);
       // FIXME: i am getting different response from the server and once backend changes remove the get request and uncomment the commented code
-      const estimates = await this.getProjectEstimates(workspaceSlug, projectId, "mutation-loader");
+      let estimates = await this.getProjectEstimates(workspaceSlug, projectId, "mutation-loader");
+      estimates = sortBy(estimates, "created_at");
       if (estimates && estimates.length > 0)
         await this.store.projectRoot.project.updateProject(workspaceSlug, projectId, {
           estimate: estimates[estimates.length - 1].id,

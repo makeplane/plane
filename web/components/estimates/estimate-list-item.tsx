@@ -1,4 +1,5 @@
 import { FC } from "react";
+import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 import { Pen } from "lucide-react";
 // helpers
@@ -31,7 +32,11 @@ export const EstimateListItem: FC<TEstimateListItem> = observer((props) => {
     >
       <div className="space-y-1">
         <h3 className="font-medium text-base">{currentEstimate?.name}</h3>
-        <p className="text-xs">{currentEstimate?.points?.map((estimatePoint) => estimatePoint?.value).join(", ")}</p>
+        <p className="text-xs">
+          {sortBy(currentEstimate?.points, ["key"])
+            ?.map((estimatePoint) => estimatePoint?.value)
+            .join(", ")}
+        </p>
       </div>
       {isAdmin && isEditable && (
         <div

@@ -13,6 +13,9 @@ export * from "./estimate-list-item";
 // create
 export * from "./create";
 
+// create
+export * from "./update";
+
 // estimate points
 export * from "./points/estimate-point-item";
 export * from "./points/inline-editable";

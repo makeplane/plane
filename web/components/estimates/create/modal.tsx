@@ -1,15 +1,13 @@
 import { FC, useEffect, useMemo, useState } from "react";
-import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
-import { IEstimate, IEstimateFormData } from "@plane/types";
+import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { EstimateCreateStageOne, EstimateCreateStageTwo } from "@/components/estimates";
-import { TEstimateSystemKeys, EEstimateSystem, TEstimatePointsObject } from "@/components/estimates/types";
 // constants
-import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
+import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/constants/estimates";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
 
@@ -18,7 +16,6 @@ type TCreateEstimateModal = {
   projectId: string;
   isOpen: boolean;
   handleClose: () => void;
-  data?: IEstimate;
 };
 
 export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) => {
@@ -30,10 +27,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.POINTS);
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
 
-  const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => {
-    const points = cloneDeep(newPoints);
-    setEstimatePoints(points);
-  };
+  const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => setEstimatePoints(newPoints);
 
   useEffect(() => {
     if (!isOpen) {
@@ -47,17 +41,21 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
 
   const handleCreateEstimate = async () => {
     try {
+      if (!workspaceSlug || !projectId) return;
       const validatedEstimatePoints: TEstimatePointsObject[] = [];
       if ([EEstimateSystem.POINTS, EEstimateSystem.TIME].includes(estimateSystem)) {
         estimatePoints?.map((estimatePoint) => {
-          if (estimatePoint.value && Number(estimatePoint.value)) validatedEstimatePoints.push(estimatePoint);
+          if (
+            estimatePoint.value &&
+            ((estimatePoint.value != "0" && Number(estimatePoint.value)) || estimatePoint.value === "0")
+          )
+            validatedEstimatePoints.push(estimatePoint);
         });
       } else {
         estimatePoints?.map((estimatePoint) => {
           if (estimatePoint.value) validatedEstimatePoints.push(estimatePoint);
         });
       }
-
       if (validatedEstimatePoints.length === estimatePoints?.length) {
         const payload: IEstimateFormData = {
           estimate: {
@@ -65,8 +63,12 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
           },
           estimate_points: validatedEstimatePoints,
         };
-
         await createEstimate(workspaceSlug, projectId, payload);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Estimate system created",
+          message: "Created and Enabled successfully",
+        });
         handleClose();
       } else {
         setToast({

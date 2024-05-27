@@ -8,7 +8,7 @@ import {
   IEstimatePoint as IEstimatePointType,
   IProject,
   IWorkspace,
-  TEstimateType,
+  TEstimateSystemKeys,
   IEstimateFormData,
 } from "@plane/types";
 // services
@@ -31,8 +31,8 @@ export interface IEstimate extends IEstimateType {
   EstimatePointIds: string[] | undefined;
   estimatePointById: (estimateId: string) => IEstimatePointType | undefined;
   // actions
-  updateEstimatePointSorting: (payload: IEstimateFormData) => Promise<void>;
-  deleteEstimatePoint: (estimatePointId: string) => Promise<void>;
+  updateEstimate: (payload: IEstimateFormData) => Promise<void>;
+  deleteEstimate: (estimatePointId: string) => Promise<void>;
 }
 
 export class Estimate implements IEstimate {
@@ -40,7 +40,7 @@ export class Estimate implements IEstimate {
   id: string | undefined = undefined;
   name: string | undefined = undefined;
   description: string | undefined = undefined;
-  type: TEstimateType | undefined = undefined;
+  type: TEstimateSystemKeys | undefined = undefined;
   points: IEstimatePointType[] | undefined = undefined;
   workspace: string | undefined = undefined;
   workspace_detail: IWorkspace | undefined = undefined;
@@ -82,8 +82,8 @@ export class Estimate implements IEstimate {
       asJson: computed,
       EstimatePointIds: computed,
       // actions
-      updateEstimatePointSorting: action,
-      deleteEstimatePoint: action,
+      updateEstimate: action,
+      deleteEstimate: action,
     });
     this.id = this.data.id;
     this.name = this.data.name;
@@ -143,7 +143,7 @@ export class Estimate implements IEstimate {
   });
 
   // actions
-  updateEstimatePointSorting = async (payload: IEstimateFormData) => {
+  updateEstimate = async (payload: IEstimateFormData) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !this.id || !payload) return;
@@ -159,7 +159,7 @@ export class Estimate implements IEstimate {
     }
   };
 
-  deleteEstimatePoint = async (estimatePointId: string) => {
+  deleteEstimate = async (estimatePointId: string) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !estimatePointId) return;

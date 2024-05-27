@@ -1,4 +1,17 @@
-import { TEstimateSystems } from "@/components/estimates/types";
+export enum EEstimateSystem {
+  POINTS = "points",
+  CATEGORIES = "categories",
+  TIME = "time",
+}
+
+export enum EEstimateUpdateStages {
+  CREATE = "create",
+  EDIT = "edit",
+  SWITCH = "switch",
+}
+
+// types
+import { TEstimateSystems } from "@plane/types";
 
 export const ESTIMATE_SYSTEMS: TEstimateSystems = {
   points: {
@@ -93,3 +106,16 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
     is_available: false,
   },
 };
+
+export const ESTIMATE_OPTIONS_STAGE_ONE = [
+  {
+    key: EEstimateUpdateStages.EDIT,
+    title: "Add, update or remove estimates",
+    description: "Manage current system either adding, updating or removing the points or categories.",
+  },
+  {
+    key: EEstimateUpdateStages.SWITCH,
+    title: "Change estimate type",
+    description: "Convert your points system to categories system and vice versa.",
+  },
+];

@@ -1,13 +1,13 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { IEstimate } from "@plane/types";
 // components
 import {
   EstimateLoaderScreen,
   EstimateEmptyScreen,
   EstimateDisableSwitch,
   CreateEstimateModal,
+  UpdateEstimateModal,
   EstimateList,
 } from "@/components/estimates";
 // hooks
@@ -22,29 +22,18 @@ type TEstimateRoot = {
 export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
   const { workspaceSlug, projectId, isAdmin } = props;
   // hooks
-  const { loader, currentActiveEstimateId, estimateById, archivedEstimateIds, getProjectEstimates } =
-    useProjectEstimates();
+  const { loader, currentActiveEstimateId, archivedEstimateIds, getProjectEstimates } = useProjectEstimates();
   // states
   const [isEstimateCreateModalOpen, setIsEstimateCreateModalOpen] = useState(false);
-  // const [isEstimateDeleteModalOpen, setIsEstimateDeleteModalOpen] = useState<string | null>(null);
-  const [estimateToUpdate, setEstimateToUpdate] = useState<IEstimate | undefined>();
+  const [estimateToUpdate, setEstimateToUpdate] = useState<string | undefined>();
 
   const { isLoading: isSWRLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
     async () => workspaceSlug && projectId && getProjectEstimates(workspaceSlug, projectId)
   );
 
-  const onEditClick = (estimateId: string) => {
-    const currentEstimate = estimateById(estimateId);
-    setEstimateToUpdate(currentEstimate);
-    setIsEstimateCreateModalOpen(true);
-  };
-
   return (
     <div className="container mx-auto">
-      {/* <EstimateLoaderScreen />
-      <EstimateEmptyScreen onButtonClick={() => {}} /> */}
-
       {loader === "init-loader" || isSWRLoading ? (
         <EstimateLoaderScreen />
       ) : (
@@ -71,7 +60,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
                 estimateIds={[currentActiveEstimateId]}
                 isAdmin={isAdmin}
                 isEditable
-                onEditClick={onEditClick}
+                onEditClick={(estimateId: string) => setEstimateToUpdate(estimateId)}
               />
             </div>
           ) : (
@@ -102,17 +91,21 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         isOpen={isEstimateCreateModalOpen}
-        data={estimateToUpdate}
         handleClose={() => {
           setIsEstimateCreateModalOpen(false);
           setEstimateToUpdate(undefined);
         }}
       />
-      {/* <DeleteEstimateModal
-        isOpen={!!isEstimateDeleteModalOpen}
-        handleClose={() => setIsEstimateDeleteModalOpen(null)}
-        data={}
-      /> */}
+      <UpdateEstimateModal
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        estimateId={estimateToUpdate ? estimateToUpdate : undefined}
+        isOpen={estimateToUpdate ? true : false}
+        handleClose={() => {
+          setIsEstimateCreateModalOpen(false);
+          setEstimateToUpdate(undefined);
+        }}
+      />
     </div>
   );
 });

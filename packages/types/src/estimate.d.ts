@@ -1,3 +1,6 @@
+import { IWorkspace, IProject } from "./";
+import { EEstimateSystem, EEstimateUpdateStages } from "./enums";
+
 export interface IEstimatePoint {
   id: string | undefined;
   key: number | undefined;
@@ -12,13 +15,16 @@ export interface IEstimatePoint {
   updated_by: string | undefined;
 }
 
-export type TEstimateType = "categories" | "points" | "time";
+export type TEstimateSystemKeys =
+  | EEstimateSystem.POINTS
+  | EEstimateSystem.CATEGORIES
+  | EEstimateSystem.TIME;
 
 export interface IEstimate {
   id: string | undefined;
   name: string | undefined;
   description: string | undefined;
-  type: TEstimateType | undefined; // categories, points, time
+  type: TEstimateSystemKeys | undefined; // categories, points, time
   points: IEstimatePoint[] | undefined;
   workspace: string | undefined;
   workspace_detail: IWorkspace | undefined;
@@ -40,3 +46,30 @@ export interface IEstimateFormData {
     value: string;
   }[];
 }
+
+export type TEstimatePointsObject = {
+  id?: string | undefined;
+  key: number;
+  value: string;
+};
+
+export type TTemplateValues = {
+  title: string;
+  values: TEstimatePointsObject[];
+};
+
+export type TEstimateSystem = {
+  name: string;
+  templates: Record<string, TTemplateValues>;
+  is_available: boolean;
+};
+
+export type TEstimateSystems = {
+  [K in TEstimateSystemKeys]: TEstimateSystem;
+};
+
+// update estimates
+export type TEstimateUpdateStageKeys =
+  | EEstimateUpdateStages.CREATE
+  | EEstimateUpdateStages.EDIT
+  | EEstimateUpdateStages.SWITCH;
