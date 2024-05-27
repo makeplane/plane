@@ -36,7 +36,7 @@ urlpatterns = [
         name="bulk-create-estimate-points",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-point/<estimate_point_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-points/",
         EstimatePointEndpoint.as_view(
             {
                 "post": "create",
@@ -45,7 +45,7 @@ urlpatterns = [
         name="estimate-points",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-point/<estimate_point_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-points/<estimate_point_id>/",
         EstimatePointEndpoint.as_view(
             {
                 "patch": "partial_update",
