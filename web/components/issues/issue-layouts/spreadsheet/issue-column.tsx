@@ -17,19 +17,10 @@ type Props = {
   property: keyof IIssueDisplayProperties;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   isEstimateEnabled: boolean;
-  isIssueSelected: boolean;
 };
 
 export const IssueColumn = observer((props: Props) => {
-  const {
-    displayProperties,
-    issueDetail,
-    disableUserActions,
-    property,
-    updateIssue,
-    isEstimateEnabled,
-    isIssueSelected,
-  } = props;
+  const { displayProperties, issueDetail, disableUserActions, property, updateIssue, isEstimateEnabled } = props;
   // router
   const router = useRouter();
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
@@ -69,7 +60,6 @@ export const IssueColumn = observer((props: Props) => {
           }
           disabled={disableUserActions}
           onClose={() => tableCellRef?.current?.focus()}
-          isIssueSelected={isIssueSelected}
         />
       </td>
     </WithDisplayPropertiesHOC>

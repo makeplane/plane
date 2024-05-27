@@ -1,10 +1,9 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// ui
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // types
-import { Checkbox } from "@plane/ui";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
+import { MultipleSelectGroupAction } from "@/components/core";
 import { SpreadsheetHeaderColumn } from "@/components/issues/issue-layouts";
 // constants
 import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
@@ -50,16 +49,15 @@ export const SpreadsheetHeader = observer((props: Props) => {
         >
           {canSelectIssues && (
             <div className="flex-shrink-0 flex items-center w-3.5">
-              <Checkbox
+              <MultipleSelectGroupAction
                 className={cn(
                   "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
                   {
                     "opacity-100 pointer-events-auto": !isGroupSelectionEmpty,
                   }
                 )}
-                iconClassName="size-3"
-                onClick={() => selectionHelpers.handleGroupClick(SPREADSHEET_SELECT_GROUP)}
-                indeterminate={!isGroupSelectionEmpty}
+                groupID={SPREADSHEET_SELECT_GROUP}
+                selectionHelpers={selectionHelpers}
               />
             </div>
           )}

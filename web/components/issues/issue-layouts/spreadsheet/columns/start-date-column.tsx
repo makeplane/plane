@@ -6,7 +6,6 @@ import { TIssue } from "@plane/types";
 // components
 import { DateDropdown } from "@/components/dropdowns";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 
 type Props = {
@@ -14,11 +13,10 @@ type Props = {
   onClose: () => void;
   onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
-  isIssueSelected: boolean;
 };
 
 export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Props) => {
-  const { issue, onChange, disabled, onClose, isIssueSelected } = props;
+  const { issue, onChange, disabled, onClose } = props;
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
@@ -40,9 +38,7 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Prop
         placeholder="Start date"
         icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
-        buttonClassName={cn("text-left rounded-none", {
-          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
-        })}
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
         buttonContainerClassName="w-full"
         onClose={onClose}
       />

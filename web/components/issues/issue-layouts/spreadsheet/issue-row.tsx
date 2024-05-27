@@ -64,6 +64,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   const { subIssues: subIssuesStore } = useIssueDetail();
   // derived values
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+  const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
 
   return (
     <>
@@ -73,7 +74,9 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
         defaultHeight="calc(2.75rem - 1px)"
         root={containerRef}
         placeholderChildren={<td colSpan={100} className="border-b-[0.5px] border-custom-border-200" />}
-        classNames="bg-custom-background-100"
+        classNames={cn("bg-custom-background-100 transition-colors", {
+          "group selected-issue-row": isIssueSelected,
+        })}
       >
         <IssueRowDetails
           issueId={issueId}
@@ -218,19 +221,23 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   return (
     <>
-      <td id={`issue-${issueId}`} ref={cellRef} tabIndex={0} className="sticky left-0 z-10 group/list-block">
+      <td
+        id={`issue-${issueId}`}
+        ref={cellRef}
+        tabIndex={0}
+        className="sticky left-0 z-10 group/list-block bg-custom-background-100"
+      >
         <ControlLink
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className={cn(
-            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent",
+            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
             {
               "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
               "border border-custom-primary-70 hover:border-custom-primary-70":
                 getIsIssuePeeked(issueDetail.id) && nestingLevel === peekIssue?.nestingLevel,
               "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
-              "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
             }
           )}
           disabled={!!issueDetail?.tempId}
@@ -325,7 +332,6 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           property={property}
           updateIssue={updateIssue}
           isEstimateEnabled={isEstimateEnabled}
-          isIssueSelected={isIssueSelected}
         />
       ))}
     </>

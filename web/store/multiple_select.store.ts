@@ -29,6 +29,13 @@ export type IMultipleSelectStore = {
   clearSelection: () => void;
 };
 
+/**
+ * @description the MultipleSelectStore manages multiple selection states by keeping track of the selected entities and providing a bunch of helper functions and actions to maintain the selected states
+ * @description use the useMultipleSelectStore custom hook to access the observables
+ * @description use the useMultipleSelect custom hook for added functionality on top of the store, including-
+ * 1. Keyboard and mouse interaction
+ * 2. Clear state on route change
+ */
 export class MultipleSelectStore implements IMultipleSelectStore {
   // observables
   selectedEntityDetails: TEntityDetails[] = [];

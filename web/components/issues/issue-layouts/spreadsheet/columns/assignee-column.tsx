@@ -4,19 +4,16 @@ import { observer } from "mobx-react-lite";
 import { TIssue } from "@plane/types";
 // components
 import { MemberDropdown } from "@/components/dropdowns";
-// helpers
-import { cn } from "@/helpers/common.helper";
 
 type Props = {
   issue: TIssue;
   onClose: () => void;
   onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
-  isIssueSelected: boolean;
 };
 
 export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props) => {
-  const { issue, onChange, disabled, onClose, isIssueSelected } = props;
+  const { issue, onChange, disabled, onClose } = props;
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
@@ -39,9 +36,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props
         buttonVariant={
           issue?.assignee_ids && issue.assignee_ids.length > 0 ? "transparent-without-text" : "transparent-with-text"
         }
-        buttonClassName={cn("text-left rounded-none", {
-          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
-        })}
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
         buttonContainerClassName="w-full"
         onClose={onClose}
       />

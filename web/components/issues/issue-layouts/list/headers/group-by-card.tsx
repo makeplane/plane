@@ -5,9 +5,9 @@ import { CircleDashed, Plus } from "lucide-react";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
 // ui
-import { Checkbox, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ExistingIssuesListModal } from "@/components/core";
+import { ExistingIssuesListModal, MultipleSelectGroupAction } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
@@ -86,16 +86,15 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
       <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2.5 py-1.5 pl-3.5">
         {canSelectIssues && (
           <div className="flex-shrink-0 flex items-center w-3.5">
-            <Checkbox
+            <MultipleSelectGroupAction
               className={cn(
                 "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
                 {
                   "opacity-100 pointer-events-auto": !isGroupSelectionEmpty,
                 }
               )}
-              iconClassName="size-3"
-              onClick={() => selectionHelpers.handleGroupClick(groupID)}
-              indeterminate={!isGroupSelectionEmpty}
+              groupID={groupID}
+              selectionHelpers={selectionHelpers}
             />
           </div>
         )}

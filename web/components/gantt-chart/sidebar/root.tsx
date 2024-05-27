@@ -1,7 +1,6 @@
 import { observer } from "mobx-react";
-// ui
-import { Checkbox } from "@plane/ui";
 // components
+import { MultipleSelectGroupAction } from "@/components/core";
 import { IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -57,16 +56,15 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
         >
           {enableSelection && (
             <div className="flex-shrink-0 flex items-center w-3.5">
-              <Checkbox
+              <MultipleSelectGroupAction
                 className={cn(
                   "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
                   {
                     "opacity-100 pointer-events-auto": !isGroupSelectionEmpty,
                   }
                 )}
-                iconClassName="size-3"
-                onClick={() => selectionHelpers.handleGroupClick(GANTT_SELECT_GROUP)}
-                indeterminate={!isGroupSelectionEmpty}
+                groupID={GANTT_SELECT_GROUP}
+                selectionHelpers={selectionHelpers}
               />
             </div>
           )}

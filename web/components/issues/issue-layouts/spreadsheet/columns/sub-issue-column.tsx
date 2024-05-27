@@ -10,11 +10,10 @@ import { useAppRouter } from "@/hooks/store";
 
 type Props = {
   issue: TIssue;
-  isIssueSelected: boolean;
 };
 
 export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props) => {
-  const { issue, isIssueSelected } = props;
+  const { issue } = props;
   // router
   const router = useRouter();
   // hooks
@@ -35,10 +34,9 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
     <div
       onClick={subIssueCount ? redirectToIssueDetail : () => {}}
       className={cn(
-        "flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 px-2.5 py-1 text-xs hover:bg-custom-background-80",
+        "flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 px-2.5 py-1 text-xs hover:bg-custom-background-80 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
         {
           "cursor-pointer": subIssueCount,
-          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
         }
       )}
     >

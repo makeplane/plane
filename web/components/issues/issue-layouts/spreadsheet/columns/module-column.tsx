@@ -8,8 +8,6 @@ import { TIssue } from "@plane/types";
 import { ModuleDropdown } from "@/components/dropdowns";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useIssues } from "@/hooks/store";
 
@@ -17,11 +15,10 @@ type Props = {
   issue: TIssue;
   onClose: () => void;
   disabled: boolean;
-  isIssueSelected: boolean;
 };
 
 export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
-  const { issue, disabled, onClose, isIssueSelected } = props;
+  const { issue, disabled, onClose } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -67,10 +64,8 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
         disabled={disabled}
         placeholder="Select modules"
         buttonVariant="transparent-with-text"
-        buttonContainerClassName={cn("w-full relative flex items-center p-2", {
-          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
-        })}
-        buttonClassName="relative leading-4 h-4.5 bg-transparent"
+        buttonContainerClassName="w-full relative flex items-center p-2 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
+        buttonClassName="relative leading-4 h-4.5 bg-transparent hover:bg-transparent"
         onClose={onClose}
         multiple
         showCount
