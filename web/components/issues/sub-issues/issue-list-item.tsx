@@ -61,7 +61,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     undefined;
 
   const subIssueHelpers = subIssueHelpersByIssueId(parentIssueId);
-  const subIssueCount = issue?.sub_issues_count || 0;
+  const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
