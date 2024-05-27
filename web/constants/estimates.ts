@@ -57,6 +57,14 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
           { id: undefined, key: 6, value: "36" },
         ],
       },
+      custom: {
+        title: "Custom",
+        values: [
+          { id: undefined, key: 1, value: "1" },
+          { id: undefined, key: 2, value: "2" },
+        ],
+        hide: true,
+      },
     },
     is_available: true,
   },
@@ -82,6 +90,14 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
           { id: undefined, key: 3, value: "Hard" },
           { id: undefined, key: 4, value: "Very Hard" },
         ],
+      },
+      custom: {
+        title: "Custom",
+        values: [
+          { id: undefined, key: 1, value: "1" },
+          { id: undefined, key: 2, value: "2" },
+        ],
+        hide: true,
       },
     },
     is_available: true,

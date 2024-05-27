@@ -37,20 +37,34 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
         />
       </div>
       <div className="space-y-3">
-        <div className="text-sm font-medium text-custom-text-200 mb-3">Choose a template</div>
+        <div className="text-sm font-medium text-custom-text-200">Start from scratch</div>
+
+        <button
+          className="border border-custom-border-200 rounded-md p-2 text-left flex-1 w-full block"
+          onClick={() => handleEstimatePoints("custom")}
+        >
+          <p className="block text-sm">Custom</p>
+          <p className="text-xs text-gray-400">
+            Add your own <span className="lowercase">{currentEstimateSystem.name}</span> from scratch
+          </p>
+        </button>
+
+        <div className="text-sm font-medium text-custom-text-200">Choose a template</div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {Object.keys(currentEstimateSystem.templates).map((name) => (
-            <button
-              key={name}
-              className="border border-custom-border-200 rounded-md p-2 text-left"
-              onClick={() => handleEstimatePoints(name)}
-            >
-              <p className="block text-sm">{currentEstimateSystem.templates[name]?.title}</p>
-              <p className="text-xs text-gray-400">
-                {currentEstimateSystem.templates[name]?.values?.map((template) => template?.value)?.join(", ")}
-              </p>
-            </button>
-          ))}
+          {Object.keys(currentEstimateSystem.templates).map((name) =>
+            currentEstimateSystem.templates[name]?.hide ? null : (
+              <button
+                key={name}
+                className="border border-custom-border-200 rounded-md p-2 text-left"
+                onClick={() => handleEstimatePoints(name)}
+              >
+                <p className="block text-sm">{currentEstimateSystem.templates[name]?.title}</p>
+                <p className="text-xs text-gray-400">
+                  {currentEstimateSystem.templates[name]?.values?.map((template) => template?.value)?.join(", ")}
+                </p>
+              </button>
+            )
+          )}
         </div>
       </div>
     </div>
