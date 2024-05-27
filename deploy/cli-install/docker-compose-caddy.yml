@@ -119,7 +119,7 @@ services:
   migrator:
     <<: *app-env
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
-    restart: no
+    restart: "no"
     command: ./bin/docker-entrypoint-migrator.sh
     volumes:
       - ${INSTALL_DIR}/logs/migrator:/code/plane/logs

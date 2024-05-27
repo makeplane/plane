@@ -1,21 +1,15 @@
 import { FC } from "react";
-import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { observer } from "mobx-react";;
 import { Settings } from "lucide-react";
 // ui
 import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+// hooks
+import { useWorkspace } from "@/hooks/store";
 
-export interface IWorkspaceSettingHeader {
-  title: string;
-}
-
-export const WorkspaceSettingHeader: FC<IWorkspaceSettingHeader> = observer((props) => {
-  const { title } = props;
-  const router = useRouter();
-
-  const { workspaceSlug } = router.query;
+export const WorkspaceSettingHeader: FC = observer(() => {
+  const { currentWorkspace } = useWorkspace();
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -26,13 +20,13 @@ export const WorkspaceSettingHeader: FC<IWorkspaceSettingHeader> = observer((pro
               type="text"
               link={
                 <BreadcrumbLink
-                  href={`/${workspaceSlug}/settings`}
-                  label="Settings"
+                  href={`/${currentWorkspace?.slug}/settings`}
+                  label={currentWorkspace?.name ?? "Workspace"}
                   icon={<Settings className="h-4 w-4 text-custom-text-300" />}
                 />
               }
             />
-            <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={title} />} />
+            <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label="Settings" />} />
           </Breadcrumbs>
         </div>
       </div>
