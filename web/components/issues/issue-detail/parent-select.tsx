@@ -103,7 +103,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
           <div className="flex items-center gap-1 bg-green-500/20 text-green-700 rounded px-1.5 py-1">
             <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name} isMobile={isMobile}>
               <Link
-                href={`/${workspaceSlug}/projects/${projectId}/issues/${parentIssue?.id}`}
+                href={`/${workspaceSlug}/projects/${parentIssue.project_id}/issues/${parentIssue?.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs font-medium"
