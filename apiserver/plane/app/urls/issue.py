@@ -19,6 +19,7 @@ from plane.app.views import (
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
+    IssueDescriptionViewSet,
 )
 
 urlpatterns = [
@@ -48,6 +49,16 @@ urlpatterns = [
             }
         ),
         name="project-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/description/",
+        IssueDescriptionViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+            }
+        ),
+        name="issue-description",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",

@@ -1,5 +1,6 @@
 # Python imports
 import json
+import base64
 
 # Django import
 from django.utils import timezone
@@ -9,6 +10,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Value, UUIDField
 from django.db.models.functions import Coalesce
+from django.http import StreamingHttpResponse
 
 # Third party imports
 from rest_framework import status
@@ -578,3 +580,48 @@ class InboxIssueViewSet(BaseViewSet):
 
         inbox_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class InboxIssueDescriptionViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectLitePermission,
+    ]
+
+    def retrieve(self, request, slug, project_id, pk):
+        issue = Issue.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+        binary_data = issue.description_binary
+
+        def stream_data():
+            if binary_data:
+                yield binary_data
+            else:
+                yield b""
+
+        response = StreamingHttpResponse(
+            stream_data(), content_type="application/octet-stream"
+        )
+        response["Content-Disposition"] = (
+            'attachment; filename="issue_description.bin"'
+        )
+        return response
+
+    def partial_update(self, request, slug, project_id, pk):
+        issue = Issue.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+
+        base64_data = request.data.get("description_binary")
+
+        if base64_data:
+            # Decode the base64 data to bytes
+            new_binary_data = base64.b64decode(base64_data)
+
+            # Store the updated binary data
+            issue.description_binary = new_binary_data
+            issue.description_html = request.data.get("description_html")
+            issue.save()
+            return Response({"message": "Updated successfully"})
+        else:
+            return Response({"error": "No binary data provided"})

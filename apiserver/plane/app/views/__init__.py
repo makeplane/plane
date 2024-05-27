@@ -106,6 +106,7 @@ from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
     IssueUserDisplayPropertyEndpoint,
+    IssueDescriptionViewSet,
     BulkDeleteIssuesEndpoint,
 )
 
@@ -192,7 +193,11 @@ from .estimate.base import (
     BulkEstimatePointEndpoint,
 )
 
-from .inbox.base import InboxViewSet, InboxIssueViewSet
+from .inbox.base import (
+    InboxViewSet,
+    InboxIssueViewSet,
+    InboxIssueDescriptionViewSet,
+)
 
 from .analytic.base import (
     AnalyticsEndpoint,
