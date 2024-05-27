@@ -59,7 +59,9 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
       if (validatedEstimatePoints.length === estimatePoints?.length) {
         const payload: IEstimateFormData = {
           estimate: {
+            name: ESTIMATE_SYSTEMS[estimateSystem]?.name,
             type: estimateSystem,
+            last_used: true,
           },
           estimate_points: validatedEstimatePoints,
         };
@@ -122,6 +124,8 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
           )}
           {estimatePoints && (
             <EstimateCreateStageTwo
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
               estimateSystem={estimateSystem}
               estimatePoints={estimatePoints}
               handleEstimatePoints={handleUpdatePoints}

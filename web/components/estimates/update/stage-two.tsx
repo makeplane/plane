@@ -1,4 +1,5 @@
 import { FC } from "react";
+import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { IEstimate, TEstimatePointsObject, TEstimateUpdateStageKeys } from "@plane/types";
@@ -9,6 +10,8 @@ import { EstimatePointItem } from "@/components/estimates";
 import { EEstimateUpdateStages, maxEstimatesCount } from "@/constants/estimates";
 
 type TEstimateUpdateStageTwo = {
+  workspaceSlug: string;
+  projectId: string;
   estimate: IEstimate;
   estimateEditType: TEstimateUpdateStageKeys | undefined;
   estimatePoints: TEstimatePointsObject[];
@@ -16,15 +19,15 @@ type TEstimateUpdateStageTwo = {
 };
 
 export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = observer((props) => {
-  const { estimate, estimateEditType, estimatePoints, handleEstimatePoints } = props;
+  const { workspaceSlug, projectId, estimate, estimateEditType, estimatePoints, handleEstimatePoints } = props;
 
   const currentEstimateSystem = estimate || undefined;
 
   const addNewEstimationPoint = () => {
-    const currentEstimationPoints = estimatePoints;
+    const currentEstimationPoints = cloneDeep(estimatePoints);
     const newEstimationPoint: TEstimatePointsObject = {
       key: currentEstimationPoints.length + 1,
-      value: "0",
+      value: "",
     };
     handleEstimatePoints([...currentEstimationPoints, newEstimationPoint]);
   };
@@ -64,11 +67,15 @@ export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = observer((pro
           data={estimatePoints}
           render={(value: TEstimatePointsObject, index: number) => (
             <EstimatePointItem
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
               estimateId={estimate?.id || undefined}
               mode={estimateEditType}
               item={value}
+              estimatePoints={estimatePoints}
               editItem={(value: string) => editEstimationPoint(index, value)}
               deleteItem={() => deleteEstimationPoint(index)}
+              handleEstimatePoints={handleEstimatePoints}
             />
           )}
           onChange={(data: TEstimatePointsObject[]) => handleEstimatePoints(updatedSortedKeys(data))}

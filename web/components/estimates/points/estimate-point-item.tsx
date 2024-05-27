@@ -8,22 +8,37 @@ import { Draggable, Spinner } from "@plane/ui";
 import { EEstimateUpdateStages } from "@/constants/estimates";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { useEstimate } from "@/hooks/store";
+import { useEstimate, useEstimatePoint } from "@/hooks/store";
 
 type TEstimatePointItem = {
+  workspaceSlug: string;
+  projectId: string;
   estimateId: string | undefined;
   mode: EEstimateUpdateStages;
   item: TEstimatePointsObject;
+  estimatePoints: TEstimatePointsObject[];
   editItem: (value: string) => void;
   deleteItem: () => void;
+  handleEstimatePoints: (value: TEstimatePointsObject[]) => void;
 };
 
 export const EstimatePointItem: FC<TEstimatePointItem> = observer((props) => {
   // props
-  const { estimateId, mode, item, editItem, deleteItem } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    estimateId,
+    mode,
+    item,
+    estimatePoints,
+    editItem,
+    deleteItem,
+    handleEstimatePoints,
+  } = props;
   const { id, key, value } = item;
   // hooks
-  const { asJson: estimate, updateEstimate, deleteEstimate } = useEstimate(estimateId);
+  const { asJson: estimate, creteEstimatePoint, deleteEstimatePoint } = useEstimate(estimateId);
+  const { updateEstimatePoint } = useEstimatePoint(estimateId, id);
   // ref
   const inputRef = useRef<HTMLInputElement>(null);
   // states
@@ -35,7 +50,7 @@ export const EstimatePointItem: FC<TEstimatePointItem> = observer((props) => {
   const [isEstimateDeleting, setIsEstimateDeleting] = useState(false);
 
   useEffect(() => {
-    if (inputValue === undefined || inputValue != value) setInputValue(value);
+    if (value && inputValue === undefined) setInputValue(value);
   }, [value, inputValue]);
 
   const handleCreateEdit = (value: string) => {
@@ -43,11 +58,26 @@ export const EstimatePointItem: FC<TEstimatePointItem> = observer((props) => {
     editItem(value);
   };
 
+  const handleNewEstimatePoint = async () => {
+    if (inputValue) {
+      try {
+        setEstimateEditLoader(true);
+        const estimatePoint = await creteEstimatePoint(workspaceSlug, projectId, { key: key, value: inputValue });
+        if (estimatePoint)
+          handleEstimatePoints([...estimatePoints, { id: estimatePoint.id, key: key, value: inputValue }]);
+        setIsEstimateEditing(false);
+        setEstimateEditLoader(false);
+      } catch (error) {
+        setEstimateEditLoader(false);
+      }
+    }
+  };
+
   const handleEdit = async () => {
     if (id) {
       try {
         setEstimateEditLoader(true);
-        await updateEstimate({ estimate_points: [{ id: id, key: key, value: value }] });
+        await updateEstimatePoint(workspaceSlug, projectId, { key: key, value: inputValue });
         setIsEstimateEditing(false);
         setEstimateEditLoader(false);
       } catch (error) {
@@ -62,7 +92,7 @@ export const EstimatePointItem: FC<TEstimatePointItem> = observer((props) => {
     if (id) {
       try {
         setEstimateEditLoader(true);
-        await deleteEstimate(deletedEstimateValue);
+        await deleteEstimatePoint(workspaceSlug, projectId, id, deletedEstimateValue);
         setIsEstimateDeleting(false);
         setEstimateEditLoader(false);
       } catch (error) {
@@ -78,24 +108,65 @@ export const EstimatePointItem: FC<TEstimatePointItem> = observer((props) => {
   return (
     <Draggable data={item}>
       {!id && (
-        <div className="border border-custom-border-200 rounded relative flex items-center px-2.5 gap-2">
-          <div className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer">
-            <GripVertical size={14} className="text-custom-text-200" />
-          </div>
-          <input
-            ref={inputRef}
-            type="text"
-            value={inputValue}
-            onChange={(e) => handleCreateEdit(e.target.value)}
-            className="flex-grow border-none bg-transparent focus:ring-0 focus:border-0 focus:outline-none py-2.5 w-full"
-          />
-          <div
-            className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
-            onClick={handleDelete}
-          >
-            <Trash2 size={14} className="text-custom-text-200" />
-          </div>
-        </div>
+        <>
+          {mode === EEstimateUpdateStages.CREATE && (
+            <div className="border border-custom-border-200 rounded relative flex items-center px-2.5 gap-2">
+              <div className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer">
+                <GripVertical size={14} className="text-custom-text-200" />
+              </div>
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={(e) => handleCreateEdit(e.target.value)}
+                className="flex-grow border-none bg-transparent focus:ring-0 focus:border-0 focus:outline-none py-2.5 w-full"
+              />
+              <div
+                className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+                onClick={handleDelete}
+              >
+                <Trash2 size={14} className="text-custom-text-200" />
+              </div>
+            </div>
+          )}
+
+          {mode === EEstimateUpdateStages.EDIT && (
+            <div className="relative flex items-center gap-2">
+              <div className="w-full border border-custom-border-200 rounded">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  className={cn(
+                    "border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full",
+                    isEstimateDeleting ? `bg-custom-background-90` : `bg-transparent`
+                  )}
+                  disabled={isEstimateDeleting}
+                />
+              </div>
+              {estimateEditLoader ? (
+                <div className="w-6 h-6 flex-shrink-0 relative flex justify-center items-center rota">
+                  <Spinner className="w-4 h-4" />
+                </div>
+              ) : (
+                <div
+                  className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
+                  onClick={handleNewEstimatePoint}
+                >
+                  <Check size={14} />
+                </div>
+              )}
+
+              <div
+                className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+                onClick={handleDelete}
+              >
+                <X size={14} className="text-custom-text-200" />
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {id && (

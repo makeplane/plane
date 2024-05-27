@@ -1,4 +1,3 @@
-import { IWorkspace, IProject } from "./";
 import { EEstimateSystem, EEstimateUpdateStages } from "./enums";
 
 export interface IEstimatePoint {
@@ -27,9 +26,8 @@ export interface IEstimate {
   type: TEstimateSystemKeys | undefined; // categories, points, time
   points: IEstimatePoint[] | undefined;
   workspace: string | undefined;
-  workspace_detail: IWorkspace | undefined;
   project: string | undefined;
-  project_detail: IProject | undefined;
+  last_used: boolean | undefined;
   created_at: Date | undefined;
   updated_at: Date | undefined;
   created_by: string | undefined;
@@ -38,7 +36,9 @@ export interface IEstimate {
 
 export interface IEstimateFormData {
   estimate?: {
-    type: string;
+    name?: string;
+    type?: string;
+    last_used?: boolean;
   };
   estimate_points: {
     id?: string | undefined;

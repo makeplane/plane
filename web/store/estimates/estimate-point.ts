@@ -1,5 +1,6 @@
-import { action, computed, makeObservable, observable } from "mobx";
-import { IEstimateFormData, IEstimate, IEstimatePoint as IEstimatePointType } from "@plane/types";
+import set from "lodash/set";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { IEstimate, IEstimatePoint as IEstimatePointType } from "@plane/types";
 // services
 import { EstimateService } from "@/services/project/estimate.service";
 // store
@@ -16,7 +17,11 @@ export interface IEstimatePoint extends IEstimatePointType {
   // computed
   asJson: IEstimatePointType;
   // actions
-  updateEstimatePoint: (payload: IEstimateFormData) => Promise<void>;
+  updateEstimatePoint: (
+    workspaceSlug: string,
+    projectId: string,
+    payload: Partial<IEstimatePointType>
+  ) => Promise<IEstimatePointType | undefined>;
 }
 
 export class EstimatePoint implements IEstimatePoint {
@@ -73,7 +78,6 @@ export class EstimatePoint implements IEstimatePoint {
     this.updated_at = this.data.updated_at;
     this.created_by = this.data.created_by;
     this.updated_by = this.data.updated_by;
-
     // service
     this.service = new EstimateService();
   }
@@ -96,10 +100,36 @@ export class EstimatePoint implements IEstimatePoint {
   }
 
   // actions
-  updateEstimatePoint = async (payload: IEstimateFormData) => {
+  /**
+   * @description updating an estimate point
+   * @param { Partial<IEstimatePointType> } payload
+   * @returns { IEstimatePointType | undefined }
+   */
+  updateEstimatePoint = async (
+    workspaceSlug: string,
+    projectId: string,
+    payload: Partial<IEstimatePointType>
+  ): Promise<IEstimatePointType | undefined> => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId || !this.projectEstimate?.id || !this.id || !payload) return undefined;
+      if (!this.projectEstimate?.id || !this.id || !payload) return undefined;
+
+      const estimatePoint = await this.service.updateEstimatePoint(
+        workspaceSlug,
+        projectId,
+        this.projectEstimate?.id,
+        this.id,
+        payload
+      );
+      if (estimatePoint) {
+        runInAction(() => {
+          Object.keys(payload).map((key) => {
+            const estimatePointKey = key as keyof IEstimatePointType;
+            set(this, estimatePointKey, estimatePoint[estimatePointKey]);
+          });
+        });
+      }
+
+      return estimatePoint;
     } catch (error) {
       throw error;
     }

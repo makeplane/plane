@@ -1,5 +1,5 @@
 // types
-import { IEstimate, IEstimateFormData } from "@plane/types";
+import { IEstimate, IEstimateFormData, IEstimatePoint } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -10,7 +10,6 @@ export class EstimateService extends APIService {
     super(API_BASE_URL);
   }
 
-  // fetching the estimates in workspace level
   async fetchWorkspaceEstimates(workspaceSlug: string): Promise<IEstimate[] | undefined> {
     try {
       const { data } = await this.get(`/api/workspaces/${workspaceSlug}/estimates/`);
@@ -61,11 +60,46 @@ export class EstimateService extends APIService {
     workspaceSlug: string,
     projectId: string,
     estimateId: string,
-    payload: IEstimateFormData
+    payload: Partial<IEstimate>
   ): Promise<IEstimate | undefined> {
     try {
       const { data } = await this.patch(
         `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`,
+        payload
+      );
+      return data || undefined;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createEstimatePoint(
+    workspaceSlug: string,
+    projectId: string,
+    estimateId: string,
+    payload: Partial<IEstimatePoint>
+  ): Promise<IEstimatePoint | undefined> {
+    try {
+      const { data } = await this.post(
+        `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/estimate-points/`,
+        payload
+      );
+      return data || undefined;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateEstimatePoint(
+    workspaceSlug: string,
+    projectId: string,
+    estimateId: string,
+    estimatePointId: string,
+    payload: Partial<IEstimatePoint>
+  ): Promise<IEstimatePoint | undefined> {
+    try {
+      const { data } = await this.post(
+        `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/estimate-points/${estimatePointId}/`,
         payload
       );
       return data || undefined;
@@ -79,11 +113,11 @@ export class EstimateService extends APIService {
     projectId: string,
     estimateId: string,
     estimatePointId: string,
-    payload: { new_estimate_id: string | undefined }
-  ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/estimate-point/${estimatePointId}/`,
-      payload
+    params?: { new_estimate_id: string | undefined }
+  ): Promise<void> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/estimate-points/${estimatePointId}/`,
+      params
     )
       .then((response) => response?.data)
       .catch((error) => {

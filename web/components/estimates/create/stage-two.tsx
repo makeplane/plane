@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { TEstimatePointsObject } from "@plane/types";
 import { Button, Sortable } from "@plane/ui";
@@ -8,13 +9,15 @@ import { EstimatePointItem } from "@/components/estimates";
 import { EEstimateSystem, EEstimateUpdateStages, ESTIMATE_SYSTEMS, maxEstimatesCount } from "@/constants/estimates";
 
 type TEstimateCreateStageTwo = {
+  workspaceSlug: string;
+  projectId: string;
   estimateSystem: EEstimateSystem;
   estimatePoints: TEstimatePointsObject[];
   handleEstimatePoints: (value: TEstimatePointsObject[]) => void;
 };
 
-export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = (props) => {
-  const { estimateSystem, estimatePoints, handleEstimatePoints } = props;
+export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = observer((props) => {
+  const { workspaceSlug, projectId, estimateSystem, estimatePoints, handleEstimatePoints } = props;
 
   const currentEstimateSystem = ESTIMATE_SYSTEMS[estimateSystem] || undefined;
 
@@ -22,7 +25,7 @@ export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = (props) => {
     const currentEstimationPoints = estimatePoints;
     const newEstimationPoint: TEstimatePointsObject = {
       key: currentEstimationPoints.length + 1,
-      value: "0",
+      value: "",
     };
     handleEstimatePoints([...currentEstimationPoints, newEstimationPoint]);
   };
@@ -59,11 +62,15 @@ export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = (props) => {
           data={estimatePoints}
           render={(value: TEstimatePointsObject, index: number) => (
             <EstimatePointItem
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
               estimateId={undefined}
               mode={EEstimateUpdateStages.CREATE}
               item={value}
+              estimatePoints={estimatePoints}
               editItem={(value: string) => editEstimationPoint(index, value)}
               deleteItem={() => deleteEstimationPoint(index)}
+              handleEstimatePoints={handleEstimatePoints}
             />
           )}
           onChange={(data: TEstimatePointsObject[]) => handleEstimatePoints(updatedSortedKeys(data))}
@@ -77,4 +84,4 @@ export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = (props) => {
       </div>
     </div>
   );
-};
+});

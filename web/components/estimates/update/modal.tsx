@@ -1,13 +1,12 @@
 import { FC, useEffect, useMemo, useState } from "react";
+import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
-import { IEstimateFormData, TEstimatePointsObject, TEstimateUpdateStageKeys, TEstimateSystemKeys } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { TEstimatePointsObject, TEstimateUpdateStageKeys } from "@plane/types";
+import { Button } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { EstimateUpdateStageOne, EstimateUpdateStageTwo } from "@/components/estimates";
-// constants
-import { EEstimateSystem } from "@/constants/estimates";
 // hooks
 import {
   useEstimate,
@@ -26,18 +25,19 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
   // props
   const { workspaceSlug, projectId, estimateId, isOpen, handleClose } = props;
   // hooks
-  const { asJson: currentEstimate, updateEstimate } = useEstimate(estimateId);
+  const { asJson: currentEstimate } = useEstimate(estimateId);
   // states
   const [estimateEditType, setEstimateEditType] = useState<TEstimateUpdateStageKeys | undefined>(undefined);
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
 
   const handleEstimateEditType = (type: TEstimateUpdateStageKeys) => {
     if (currentEstimate?.points && currentEstimate?.points.length > 0) {
-      const estimateValidatePoints: TEstimatePointsObject[] = [];
+      let estimateValidatePoints: TEstimatePointsObject[] = [];
       currentEstimate?.points.map(
         (point) =>
           point.key && point.value && estimateValidatePoints.push({ id: point.id, key: point.key, value: point.value })
       );
+      estimateValidatePoints = orderBy(estimateValidatePoints, ["key"], ["asc"]);
       if (estimateValidatePoints.length > 0) {
         setEstimateEditType(type);
         setEstimatePoints(estimateValidatePoints);
@@ -56,57 +56,6 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
 
   // derived values
   const renderEstimateStepsCount = useMemo(() => (estimatePoints ? "2" : "1"), [estimatePoints]);
-  const isNewEstimatePointsToCreate =
-    (estimatePoints || []).filter((point) => point.id === undefined).length > 0 ? true : false;
-
-  const handleUpdateEstimate = async () => {
-    try {
-      if (!workspaceSlug || !projectId || !estimateId || currentEstimate?.type === undefined) return;
-
-      const currentEstimatePoints = (estimatePoints || []).filter((point) => point.id === undefined);
-      const currentEstimationType: TEstimateSystemKeys = currentEstimate?.type;
-      const validatedEstimatePoints: TEstimatePointsObject[] = [];
-
-      if ([EEstimateSystem.POINTS, EEstimateSystem.TIME].includes(currentEstimationType)) {
-        currentEstimatePoints?.map((estimatePoint) => {
-          if (
-            estimatePoint.value &&
-            ((estimatePoint.value != "0" && Number(estimatePoint.value)) || estimatePoint.value === "0")
-          )
-            validatedEstimatePoints.push(estimatePoint);
-        });
-      } else {
-        currentEstimatePoints?.map((estimatePoint) => {
-          if (estimatePoint.value) validatedEstimatePoints.push(estimatePoint);
-        });
-      }
-
-      if (validatedEstimatePoints.length === currentEstimatePoints?.length) {
-        const payload: IEstimateFormData = {
-          estimate_points: validatedEstimatePoints,
-        };
-        await updateEstimate(payload);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Estimate system created",
-          message: "Created and Enabled successfully",
-        });
-        handleClose();
-      } else {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "something went wrong",
-        });
-      }
-    } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "something went wrong",
-      });
-    }
-  };
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
@@ -135,6 +84,8 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
           {!estimateEditType && <EstimateUpdateStageOne handleEstimateEditType={handleEstimateEditType} />}
           {estimateEditType && estimatePoints && (
             <EstimateUpdateStageTwo
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
               estimate={currentEstimate}
               estimateEditType={estimateEditType}
               estimatePoints={estimatePoints}
@@ -147,11 +98,6 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
             Cancel
           </Button>
-          {isNewEstimatePointsToCreate && (
-            <Button variant="primary" size="sm" onClick={handleUpdateEstimate}>
-              Update Estimate
-            </Button>
-          )}
         </div>
       </div>
     </ModalCore>

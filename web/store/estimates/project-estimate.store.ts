@@ -1,5 +1,5 @@
+import orderBy from "lodash/orderBy";
 import set from "lodash/set";
-import sortBy from "lodash/sortBy";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -59,7 +59,6 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       // computed
       currentActiveEstimateId: computed,
       archivedEstimateIds: computed,
-      projectEstimateIds: computed,
       // actions
       getWorkspaceEstimates: action,
       getProjectEstimates: action,
@@ -79,9 +78,10 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   get currentActiveEstimateId(): string | undefined {
     const { projectId } = this.store.router;
     if (!projectId) return undefined;
-    const projectDetails = this.store.projectRoot.project.getProjectById(projectId);
-    if (!projectDetails) return undefined;
-    return projectDetails.estimate ?? undefined;
+    const currentActiveEstimateId = Object.values(this.estimates || {}).find(
+      (p) => p.project === projectId && p.last_used
+    );
+    return currentActiveEstimateId?.id ?? undefined;
   }
 
   /**
@@ -91,23 +91,13 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   get archivedEstimateIds(): string[] | undefined {
     const { projectId } = this.store.router;
     if (!projectId) return undefined;
-    const archivedEstimateIds = Object.values(this.estimates || {})
-      .filter((p) => p.project === projectId && p.id !== this.currentActiveEstimateId)
-      .map((p) => p.id) as string[];
+    const archivedEstimates = orderBy(
+      Object.values(this.estimates || {}).filter((p) => p.project === projectId && !p.last_used),
+      ["created_at"],
+      "desc"
+    );
+    const archivedEstimateIds = archivedEstimates.map((p) => p.id) as string[];
     return archivedEstimateIds ?? undefined;
-  }
-
-  /**
-   * @description get all estimate ids for a project
-   * @returns { string[] | undefined }
-   */
-  get projectEstimateIds(): string[] | undefined {
-    const { projectId } = this.store.router;
-    if (!projectId) return undefined;
-    const projectEstimatesIds = Object.values(this.estimates || {})
-      .filter((p) => p.project === projectId)
-      .map((p) => p.id) as string[];
-    return projectEstimatesIds ?? undefined;
   }
 
   /**
@@ -145,6 +135,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   // actions
   /**
    * @description fetch all estimates for a workspace
+   * @param { string } workspaceSlug
    * @returns { IEstimateType[] | undefined }
    */
   getWorkspaceEstimates = async (
@@ -153,7 +144,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   ): Promise<IEstimateType[] | undefined> => {
     try {
       this.error = undefined;
-      if (!this.projectEstimateIds) this.loader = loader ? loader : "init-loader";
+      if (Object.keys(this.estimates || {}).length <= 0) this.loader = loader ? loader : "init-loader";
 
       const estimates = await this.service.fetchWorkspaceEstimates(workspaceSlug);
       if (estimates && estimates.length > 0) {
@@ -176,6 +167,8 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
 
   /**
    * @description fetch all estimates for a project
+   * @param { string } workspaceSlug
+   * @param { string } projectId
    * @returns { IEstimateType[] | undefined }
    */
   getProjectEstimates = async (
@@ -185,7 +178,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   ): Promise<IEstimateType[] | undefined> => {
     try {
       this.error = undefined;
-      if (!this.projectEstimateIds) this.loader = loader ? loader : "init-loader";
+      if (!this.estimateIdsByProjectId(projectId)) this.loader = loader ? loader : "init-loader";
 
       const estimates = await this.service.fetchProjectEstimates(workspaceSlug, projectId);
       if (estimates && estimates.length > 0) {
@@ -208,6 +201,8 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
 
   /**
    * @description update an estimate for a project
+   * @param { string } workspaceSlug
+   * @param { string } projectId
    * @param { string } estimateId
    * @returns IEstimateType | undefined
    */
@@ -241,7 +236,9 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
 
   /**
    * @description create an estimate for a project
-   * @param { Partial<IEstimateType> } payload
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @param { Partial<IEstimateFormData> } payload
    * @returns
    */
   createEstimate = async (
@@ -253,21 +250,15 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       this.error = undefined;
 
       const estimate = await this.service.createEstimate(workspaceSlug, projectId, payload);
-      // FIXME: i am getting different response from the server and once backend changes remove the get request and uncomment the commented code
-      let estimates = await this.getProjectEstimates(workspaceSlug, projectId, "mutation-loader");
-      estimates = sortBy(estimates, "created_at");
-      if (estimates && estimates.length > 0)
+      console.log("estimate", estimate);
+      if (estimate) {
         await this.store.projectRoot.project.updateProject(workspaceSlug, projectId, {
-          estimate: estimates[estimates.length - 1].id,
+          estimate: estimate.id,
         });
-      // if (estimate) {
-      //   await this.store.projectRoot.project.updateProject(workspaceSlug, projectId, {
-      //     estimate: estimate.id,
-      //   });
-      //   runInAction(() => {
-      //     if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
-      //   });
-      // }
+        runInAction(() => {
+          if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+        });
+      }
 
       return estimate;
     } catch (error) {
