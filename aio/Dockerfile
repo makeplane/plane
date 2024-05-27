@@ -57,8 +57,6 @@ RUN yarn turbo run build
 # FROM makeplane/plane-aio-base AS runner
 FROM makeplane/plane-aio-base:develop AS runner
 
-USER root
-
 WORKDIR /app
 
 SHELL [ "/bin/bash", "-c" ]
