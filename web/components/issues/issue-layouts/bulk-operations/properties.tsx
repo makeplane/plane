@@ -26,7 +26,8 @@ type Props = {
 
 const defaultValues: TBulkIssueProperties = {
   state_id: "",
-  priority: "urgent",
+  // @ts-expect-error priority should not be undefined, but it should be, in this case
+  priority: undefined,
   assignee_ids: [],
   start_date: null,
   target_date: null,
@@ -192,7 +193,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
       </div>
       {isDirty && (
         <Button type="submit" variant="primary" size="sm" className="py-1" loading={isSubmitting}>
-          {isSubmitting ? "Saving" : "Save"}
+          {isSubmitting ? "Updating" : "Update"}
         </Button>
       )}
     </form>

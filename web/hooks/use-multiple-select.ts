@@ -147,6 +147,9 @@ export const useMultipleSelect = (props: Props) => {
     ) => {
       if (Array.isArray(entityDetails)) {
         bulkUpdateSelectedEntityDetails(entityDetails, forceAction === "force-add" ? "add" : "remove");
+        if (forceAction === "force-add" && entityDetails.length > 0) {
+          handleActiveEntityChange(entityDetails[entityDetails.length - 1], shouldScroll);
+        }
         return;
       }
 

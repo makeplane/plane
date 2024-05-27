@@ -10,10 +10,12 @@ import {
   BulkDeleteConfirmationModal,
   IssueBulkOperationsProperties,
 } from "@/components/issues";
+// constants
+import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useMultipleSelectStore } from "@/hooks/store";
+import { useIssueDetail, useMultipleSelectStore, useProjectState } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 type Props = {
@@ -29,14 +31,26 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // serviced values
+  // store hooks
   const { isSelectionActive, selectedEntityIds } = useMultipleSelectStore();
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const { getStateById } = useProjectState();
+  // derived values
   const { handleClearSelection } = selectionHelpers;
+  const canAllIssuesBeArchived = selectedEntityIds.every((issueId) => {
+    const issueDetails = getIssueById(issueId);
+    if (!issueDetails) return false;
+    const stateDetails = getStateById(issueDetails.state_id);
+    if (!stateDetails) return false;
+    return ARCHIVABLE_STATE_GROUPS.includes(stateDetails.group);
+  });
 
   if (!isSelectionActive) return null;
 
   return (
-    <div className="sticky bottom-0 left-0 z-[2] h-14">
+    <div className={cn("sticky bottom-0 left-0 z-[2] h-14", className)}>
       {workspaceSlug && projectId && (
         <>
           <BulkArchiveConfirmationModal
@@ -57,12 +71,7 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
           />
         </>
       )}
-      <div
-        className={cn(
-          "size-full bg-custom-background-100 border-t border-custom-border-200 py-4 px-3.5 flex items-center divide-x-[0.5px] divide-custom-border-200 text-custom-text-300",
-          className
-        )}
-      >
+      <div className="size-full bg-custom-background-100 border-t border-custom-border-200 py-4 px-3.5 flex items-center divide-x-[0.5px] divide-custom-border-200 text-custom-text-300">
         <div className="h-7 pr-3 text-sm flex items-center gap-2 flex-shrink-0">
           <Checkbox
             className="!outline-none size-3.5"
@@ -81,28 +90,29 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
           </div>
         </div>
         <div className="h-7 px-3 flex items-center gap-3 flex-shrink-0">
-          <Tooltip tooltipContent="Archive">
+          <Tooltip
+            tooltipHeading="Archive"
+            tooltipContent={
+              canAllIssuesBeArchived ? "" : "The selected issues are not in the right state group to archive"
+            }
+          >
             <button
               type="button"
               className={cn("outline-none grid place-items-center", {
-                "cursor-not-allowed text-custom-text-400": !isSelectionActive,
+                "cursor-not-allowed text-custom-text-400": !canAllIssuesBeArchived,
               })}
               onClick={() => {
-                if (isSelectionActive) setIsBulkArchiveModalOpen(true);
+                if (canAllIssuesBeArchived) setIsBulkArchiveModalOpen(true);
               }}
             >
               <ArchiveIcon className="size-4" />
             </button>
           </Tooltip>
-          <Tooltip tooltipContent="Delete">
+          <Tooltip tooltipHeading="Delete" tooltipContent="">
             <button
               type="button"
-              className={cn("outline-none grid place-items-center", {
-                "cursor-not-allowed text-custom-text-400": !isSelectionActive,
-              })}
-              onClick={() => {
-                if (isSelectionActive) setIsBulkDeleteModalOpen(true);
-              }}
+              className="outline-none grid place-items-center"
+              onClick={() => setIsBulkDeleteModalOpen(true)}
             >
               <Trash2 className="size-4" />
             </button>

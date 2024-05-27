@@ -256,7 +256,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       const response = await this.createIssue(workspaceSlug, projectId, data);
 
       const quickAddIssueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === data.id);
-      
+
       if (quickAddIssueIndex >= 0) {
         runInAction(() => {
           this.issues[projectId].splice(quickAddIssueIndex, 1);
@@ -266,7 +266,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
       //TODO: error handling needs to be improved for rare cases
       if (data.cycle_id && data.cycle_id !== "") {
-        await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id)
+        await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id);
       }
 
       if (data.module_ids && data.module_ids.length > 0) {
@@ -276,7 +276,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
           response.id,
           data.module_ids,
           []
-        )
+        );
       }
       return response;
     } catch (error) {
@@ -326,17 +326,16 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
    */
   bulkUpdateProperties = async (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => {
     const issueIds = data.issue_ids;
-    // keep original data to rollback in case of error
-    const originalData: Record<string, any> = {};
     try {
+      // make request to update issue properties
+      await this.issueService.bulkOperations(workspaceSlug, projectId, data);
+      // update issues in the store
       runInAction(() => {
         issueIds.forEach((issueId) => {
           const issueDetails = this.rootIssueStore.issues.getIssueById(issueId);
           if (!issueDetails) throw new Error("Issue not found");
           Object.keys(data.properties).forEach((key) => {
             const property = key as keyof TBulkOperationsPayload["properties"];
-            // update backup data
-            set(originalData, [issueId, property], issueDetails[property]);
             const propertyValue = data.properties[property];
             // update root issue map properties
             if (Array.isArray(propertyValue)) {
@@ -356,21 +355,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
           });
         });
       });
-      // make request to update issue properties
-      await this.issueService.bulkOperations(workspaceSlug, projectId, data);
     } catch (error) {
-      // rollback changes
-      runInAction(() => {
-        issueIds.forEach((issueId) => {
-          Object.keys(data.properties).forEach((key) => {
-            const property = key as keyof TBulkOperationsPayload["properties"];
-            // revert root issue map properties
-            this.rootIssueStore.issues.updateIssue(issueId, {
-              [property]: originalData[issueId][property],
-            });
-          });
-        });
-      });
       throw error;
     }
   };

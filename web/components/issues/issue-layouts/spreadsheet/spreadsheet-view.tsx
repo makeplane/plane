@@ -76,12 +76,11 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
       <div ref={portalRef} className="spreadsheet-menu-portal" />
       <MultipleSelectGroup
         containerRef={containerRef}
-        groups={[SPREADSHEET_SELECT_GROUP]}
         entities={{
           [SPREADSHEET_SELECT_GROUP]: issueIds,
         }}
       >
-        {(helpers, snapshot) => (
+        {(helpers) => (
           <>
             <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
               <SpreadsheetTable
@@ -106,11 +105,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 )}
               </div>
             </div>
-            {snapshot.isSelectionActive && (
-              <div className="sticky bottom-0 left-0 z-[2] h-14">
-                <IssueBulkOperationsRoot selectionHelpers={helpers} snapshot={snapshot} />
-              </div>
-            )}
+            <IssueBulkOperationsRoot selectionHelpers={helpers} />
           </>
         )}
       </MultipleSelectGroup>

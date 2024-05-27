@@ -58,10 +58,11 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     spacingLeft = 6,
     selectionHelpers,
   } = props;
-
+  // states
   const [isExpanded, setExpanded] = useState<boolean>(false);
+  // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail();
-
+  // derived values
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
 
   return (
@@ -72,6 +73,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
         defaultHeight="calc(2.75rem - 1px)"
         root={containerRef}
         placeholderChildren={<td colSpan={100} className="border-b-[0.5px] border-custom-border-200" />}
+        classNames="bg-custom-background-100"
       >
         <IssueRowDetails
           issueId={issueId}
@@ -216,18 +218,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   return (
     <>
-      <td
-        id={`issue-${issueId}`}
-        ref={cellRef}
-        tabIndex={0}
-        className="sticky left-0 z-10 group/list-block bg-custom-background-100"
-      >
+      <td id={`issue-${issueId}`} ref={cellRef} tabIndex={0} className="sticky left-0 z-10 group/list-block">
         <ControlLink
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className={cn(
-            "group clickable cursor-pointer h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
+            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent",
             {
               "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
               "border border-custom-primary-70 hover:border-custom-primary-70":
@@ -279,6 +276,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                     className={cn("size-4", {
                       "rotate-90": isExpanded,
                     })}
+                    strokeWidth={2.5}
                   />
                 </button>
               )}
