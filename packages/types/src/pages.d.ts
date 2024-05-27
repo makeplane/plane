@@ -18,7 +18,7 @@ export type TPage = {
   updated_at: Date | undefined;
   updated_by: string | undefined;
   workspace: string | undefined;
-  logo_props: TLogoProps;
+  logo_props: TLogoProps | undefined;
 };
 
 // page filters
