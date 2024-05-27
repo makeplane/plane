@@ -129,14 +129,14 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Gantt quick add" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         });
     }

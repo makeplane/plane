@@ -13,7 +13,7 @@ import {
 import { ListLayoutLoader } from "@/components/ui";
 import { EIssuesStoreType } from "@/constants/issue";
 // ui
-import { useIssues } from "@/hooks/store";
+import { useIssues, useEventTracker } from "@/hooks/store";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -21,12 +21,14 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(
     workspaceSlug && projectId ? `ARCHIVED_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     async () => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        captureIssuesListOpenedEvent(router.asPath, issuesFilter?.issueFilters?.filters);
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),

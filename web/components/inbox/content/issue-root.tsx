@@ -87,7 +87,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           setToast({
@@ -102,7 +102,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         }
       },

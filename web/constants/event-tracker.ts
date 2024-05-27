@@ -2,7 +2,7 @@ export type IssueEventProps = {
   eventName: string;
   payload: any;
   updates?: any;
-  path?: string;
+  routePath?: string;
 };
 
 export type EventProps = {
@@ -77,7 +77,7 @@ export const getPageEventPayload = (payload: any) => ({
 });
 
 export const getIssueEventPayload = (props: IssueEventProps) => {
-  const { eventName, payload, updates, path } = props;
+  const { eventName, payload, updates, routePath } = props;
   let eventPayload: any = {
     issue_id: payload.id,
     estimate_point: payload.estimate_point,
@@ -102,26 +102,14 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
     module_id: payload.module_id,
     archived_at: payload.archived_at,
     state: payload.state,
-    view_id: path?.includes("workspace-views") || path?.includes("views") ? path.split("/").pop() : "",
+    view_id: routePath?.includes("workspace-views") || routePath?.includes("views") ? routePath.split("/").pop() : "",
   };
 
   if (eventName === ISSUE_UPDATED) {
     eventPayload = {
       ...eventPayload,
       ...updates,
-      updated_from: props.path?.includes("workspace-views")
-        ? "All views"
-        : props.path?.includes("cycles")
-          ? "Cycle"
-          : props.path?.includes("modules")
-            ? "Module"
-            : props.path?.includes("views")
-              ? "Project view"
-              : props.path?.includes("inbox")
-                ? "Inbox"
-                : props.path?.includes("draft")
-                  ? "Draft"
-                  : "Project",
+      updated_from: elementFromPath(routePath),
     };
   }
   return eventPayload;
@@ -139,6 +127,26 @@ export const getProjectStateEventPayload = (payload: any) => ({
   state: payload.state,
   element: payload.element,
 });
+
+export const getIssuesListOpenedPayload = (payload: any) => ({
+  element: elementFromPath(payload.routePath),
+  type: payload.project_id ? "Project" : "Workspace",
+  layout: payload?.displayFilters?.layout,
+  filters: payload?.filters,
+  display_properties: payload?.displayProperties,
+});
+
+// Returns the element based on the path
+const elementFromPath = (routePath?: string) => {
+  if (routePath?.includes("workspace-views")) return "Workspace view";
+  if (routePath?.includes("cycles")) return "Cycle";
+  if (routePath?.includes("modules")) return "Module";
+  if (routePath?.includes("views")) return "Project view";
+  if (routePath?.includes("inbox")) return "Inbox";
+  if (routePath?.includes("draft")) return "Draft";
+  if (routePath?.includes("archived")) return "Archive";
+  return "";
+};
 
 // Workspace crud Events
 export const WORKSPACE_CREATED = "Workspace created";
@@ -169,6 +177,8 @@ export const ISSUE_UPDATED = "Issue updated";
 export const ISSUE_DELETED = "Issue deleted";
 export const ISSUE_ARCHIVED = "Issue archived";
 export const ISSUE_RESTORED = "Issue restored";
+// Issue Checkout Events
+export const ISSUES_LIST_OPENED = "Issues list opened";
 export const ISSUE_OPENED = "Issue opened";
 // Project State Events
 export const STATE_CREATED = "State created";

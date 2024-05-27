@@ -98,7 +98,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         captureIssueEvent({
           eventName: "Draft issue created",
           payload: { ...res, state: "SUCCESS" },
-          path: router.asPath,
+          routePath: router.asPath,
         });
         onChange(null);
         setIssueDiscardModal(false);
@@ -113,7 +113,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         captureIssueEvent({
           eventName: "Draft issue created",
           payload: { ...payload, state: "FAILED" },
-          path: router.asPath,
+          routePath: router.asPath,
         });
       });
   };

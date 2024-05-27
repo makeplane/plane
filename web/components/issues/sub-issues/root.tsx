@@ -185,7 +185,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               changed_property: Object.keys(issueData).join(","),
               change_details: Object.values(issueData).join(","),
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -201,7 +201,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               changed_property: Object.keys(issueData).join(","),
               change_details: Object.values(issueData).join(","),
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -226,7 +226,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               changed_property: "parent_id",
               change_details: parentIssueId,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
@@ -237,7 +237,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               changed_property: "parent_id",
               change_details: parentIssueId,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -253,14 +253,14 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           captureIssueEvent({
             eventName: "Sub-issue deleted",
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
           captureIssueEvent({
             eventName: "Sub-issue removed",
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
           setToast({
             type: TOAST_TYPE.ERROR,

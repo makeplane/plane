@@ -120,14 +120,14 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "List quick add" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "List quick add" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         });
     }

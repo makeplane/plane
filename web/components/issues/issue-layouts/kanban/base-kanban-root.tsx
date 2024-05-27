@@ -176,7 +176,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       captureIssueEvent({
         eventName: ISSUE_DELETED,
         payload: { id: draggedIssueId, state: "FAILED", element: "Kanban layout drag & drop" },
-        path: router.asPath,
+        routePath: router.asPath,
       });
     });
   };
