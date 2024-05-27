@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // ui
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
@@ -22,7 +23,7 @@ interface Props {
   selectionHelpers: TSelectionHelper;
 }
 
-export const SpreadsheetHeader = (props: Props) => {
+export const SpreadsheetHeader = observer((props: Props) => {
   const {
     displayProperties,
     displayFilters,
@@ -79,4 +80,4 @@ export const SpreadsheetHeader = (props: Props) => {
       </tr>
     </thead>
   );
-};
+});

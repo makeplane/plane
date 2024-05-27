@@ -93,7 +93,7 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
 
 GeneralSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ProjectSettingHeader title="General Settings" />} withProjectWrapper>
+    <AppLayout header={<ProjectSettingHeader />} withProjectWrapper>
       <ProjectSettingLayout>{page}</ProjectSettingLayout>
     </AppLayout>
   );

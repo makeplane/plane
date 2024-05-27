@@ -20,7 +20,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
   // hooks
   const { workspaceSlug } = useAppRouter();
   // derived values
-  const subIssueCount = issue.sub_issues_count;
+  const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const redirectToIssueDetail = () => {
     router.push({

@@ -224,9 +224,9 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
             )}
           />
           <p className="text-sm text-onboarding-text-300">You can only edit the slug of the URL</p>
-          {slugError && <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>}
+          {slugError && <p className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</p>}
           {invalidSlug && (
-            <span className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</span>
+            <p className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</p>
           )}
         </div>
         <hr className="w-full border-onboarding-border-100" />

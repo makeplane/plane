@@ -133,42 +133,44 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="vertical-scrollbar scrollbar-lg relative size-full overflow-auto vertical-scrollbar-margin-top-md"
-    >
+    <div className="relative size-full flex flex-col">
       {groups && (
         <MultipleSelectGroup containerRef={containerRef} entities={entities}>
           {(helpers) => (
             <>
-              {groups.map(
-                (group: IGroupByColumn) =>
-                  validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[group.id]) && (
-                    <ListGroup
-                      key={group.id}
-                      group={group}
-                      getGroupIndex={getGroupIndex}
-                      issueIds={issueIds}
-                      issuesMap={issuesMap}
-                      group_by={group_by}
-                      orderBy={orderBy}
-                      updateIssue={updateIssue}
-                      quickActions={quickActions}
-                      displayProperties={displayProperties}
-                      enableIssueQuickAdd={enableIssueQuickAdd}
-                      canEditProperties={canEditProperties}
-                      storeType={storeType}
-                      containerRef={containerRef}
-                      quickAddCallback={quickAddCallback}
-                      disableIssueCreation={disableIssueCreation}
-                      addIssuesToView={addIssuesToView}
-                      handleOnDrop={handleOnDrop}
-                      viewId={viewId}
-                      isCompletedCycle={isCompletedCycle}
-                      selectionHelpers={helpers}
-                    />
-                  )
-              )}
+              <div
+                ref={containerRef}
+                className="size-full overflow-auto vertical-scrollbar scrollbar-lg vertical-scrollbar-margin-top-md"
+              >
+                {groups.map(
+                  (group: IGroupByColumn) =>
+                    validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[group.id]) && (
+                      <ListGroup
+                        key={group.id}
+                        group={group}
+                        getGroupIndex={getGroupIndex}
+                        issueIds={issueIds}
+                        issuesMap={issuesMap}
+                        group_by={group_by}
+                        orderBy={orderBy}
+                        updateIssue={updateIssue}
+                        quickActions={quickActions}
+                        displayProperties={displayProperties}
+                        enableIssueQuickAdd={enableIssueQuickAdd}
+                        canEditProperties={canEditProperties}
+                        storeType={storeType}
+                        containerRef={containerRef}
+                        quickAddCallback={quickAddCallback}
+                        disableIssueCreation={disableIssueCreation}
+                        addIssuesToView={addIssuesToView}
+                        handleOnDrop={handleOnDrop}
+                        viewId={viewId}
+                        isCompletedCycle={isCompletedCycle}
+                        selectionHelpers={helpers}
+                      />
+                    )
+                )}
+              </div>
               <IssueBulkOperationsRoot selectionHelpers={helpers} />
             </>
           )}

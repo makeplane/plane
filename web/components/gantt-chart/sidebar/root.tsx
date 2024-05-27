@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 // ui
 import { Checkbox } from "@plane/ui";
 // components
@@ -20,7 +21,7 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const GanttChartSidebar: React.FC<Props> = (props) => {
+export const GanttChartSidebar: React.FC<Props> = observer((props) => {
   const {
     blocks,
     blockUpdateHandler,
@@ -81,4 +82,4 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
       {quickAdd ? quickAdd : null}
     </div>
   );
-};
+});

@@ -30,6 +30,7 @@ export const MultipleSelectEntityAction: React.FC<Props> = (props) => {
       data-entity-group-id={groupId}
       data-entity-id={id}
       disabled={disabled}
+      readOnly
     />
   );
 };

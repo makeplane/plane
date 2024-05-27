@@ -115,12 +115,11 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
   return (
     <MultipleSelectGroup
       containerRef={ganttContainerRef}
-      groups={[GANTT_SELECT_GROUP]}
       entities={{
         [GANTT_SELECT_GROUP]: chartBlocks?.map((block) => block.id) ?? [],
       }}
     >
-      {(helpers, snapshot) => (
+      {(helpers) => (
         <>
           <div
             // DO NOT REMOVE THE ID
@@ -163,11 +162,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
               )}
             </div>
           </div>
-          {snapshot.isSelectionActive && (
-            <div className="sticky bottom-0 left-0 z-[2] h-14">
-              <IssueBulkOperationsRoot selectionHelpers={helpers} snapshot={snapshot} />
-            </div>
-          )}
+          <IssueBulkOperationsRoot selectionHelpers={helpers} />
         </>
       )}
     </MultipleSelectGroup>

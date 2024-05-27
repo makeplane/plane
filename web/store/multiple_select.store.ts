@@ -124,7 +124,6 @@ export class MultipleSelectStore implements IMultipleSelectStore {
         if (this.getIsEntitySelected(entityDetails.entityID)) {
           remove(this.selectedEntityDetails, (en) => en.entityID === entityDetails.entityID);
         }
-        console.log("store adding");
         this.selectedEntityDetails.push(entityDetails);
         this.updateLastSelectedEntityDetails(entityDetails);
       });
@@ -150,6 +149,7 @@ export class MultipleSelectStore implements IMultipleSelectStore {
         newEntities = differenceWith(this.selectedEntityDetails, entitiesList, isEqual);
         newEntities = newEntities.concat(entitiesList);
         this.selectedEntityDetails = newEntities;
+        if (entitiesList.length > 0) this.updateLastSelectedEntityDetails(entitiesList[entitiesList.length - 1]);
       });
     } else {
       runInAction(() => {
