@@ -147,11 +147,14 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                 estimate_point.value = estimate_point_data[0].get(
                     "value", estimate_point.value
                 )
+                estimate_point.key = estimate_point_data[0].get(
+                    "key", estimate_point.key
+                )
                 updated_estimate_points.append(estimate_point)
 
         EstimatePoint.objects.bulk_update(
             updated_estimate_points,
-            ["value"],
+            ["key", "value"],
             batch_size=10,
         )
 
