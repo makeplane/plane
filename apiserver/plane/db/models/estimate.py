@@ -12,6 +12,7 @@ class Estimate(ProjectBaseModel):
         verbose_name="Estimate Description", blank=True
     )
     type = models.CharField(max_length=255, default="Categories")
+    last_used = models.BooleanField(default=False)
 
     def __str__(self):
         """Return name of the estimate"""
