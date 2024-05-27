@@ -128,22 +128,26 @@ export const EstimatePointItem: FC<TEstimatePointItem> = observer((props) => {
               {(isEstimateEditing || isEstimateDeleting) && (
                 <div className="relative flex items-center gap-2">
                   <div className="flex-grow relative flex items-center gap-3">
-                    <div className="flex-grow border border-custom-border-200 rounded">
+                    <div className="w-full border border-custom-border-200 rounded">
                       <input
                         ref={inputRef}
                         type="text"
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         className={cn(
-                          "flex-grow border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full",
+                          "border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full",
                           isEstimateDeleting ? `bg-custom-background-90` : `bg-transparent`
                         )}
                         disabled={isEstimateDeleting}
                       />
                     </div>
-                    {isEstimateDeleting && <MoveRight size={14} />}
                     {isEstimateDeleting && (
-                      <div className="relative flex-grow rounded border border-custom-border-200 flex items-center gap-3 p-2.5">
+                      <div className="text-xs relative flex justify-center items-center gap-2 whitespace-nowrap">
+                        Mark as <MoveRight size={14} />
+                      </div>
+                    )}
+                    {isEstimateDeleting && (
+                      <div className="relative w-full rounded border border-custom-border-200 flex items-center gap-3 p-2.5">
                         <Select
                           className="bg-transparent flex-grow focus:ring-0 focus:border-0 focus:outline-none"
                           value={deletedEstimateValue}
