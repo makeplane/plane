@@ -370,7 +370,7 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
 
         issues = Issue.objects.filter(
             workspace__slug=slug, project_id=project_id, pk__in=issue_ids
-        )
+        ).select_related("state")
         bulk_archive_issues = []
         for issue in issues:
             if issue.state.group not in ["completed", "cancelled"]:
