@@ -46,6 +46,12 @@ export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = observer((pro
     handleEstimatePoints(newEstimationPoints);
   };
 
+  const replaceEstimateItem = (index: number, value: TEstimatePointsObject) => {
+    const newEstimationPoints = estimatePoints;
+    newEstimationPoints[index] = value;
+    handleEstimatePoints(newEstimationPoints);
+  };
+
   const updatedSortedKeys = (updatedEstimatePoints: TEstimatePointsObject[]) => {
     const sortedEstimatePoints = updatedEstimatePoints.map((item, index) => ({
       ...item,
@@ -67,10 +73,9 @@ export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = observer((pro
               estimateId={undefined}
               mode={EEstimateUpdateStages.CREATE}
               item={value}
-              estimatePoints={estimatePoints}
               editItem={(value: string) => editEstimationPoint(index, value)}
+              replaceEstimateItem={(value: TEstimatePointsObject) => replaceEstimateItem(index, value)}
               deleteItem={() => deleteEstimationPoint(index)}
-              handleEstimatePoints={handleEstimatePoints}
             />
           )}
           onChange={(data: TEstimatePointsObject[]) => handleEstimatePoints(updatedSortedKeys(data))}

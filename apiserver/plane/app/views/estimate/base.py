@@ -62,8 +62,9 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         path="/api/workspaces/:slug/estimates/", url_params=True, user=False
     )
     def create(self, request, slug, project_id):
-        estimate_name = request.data.get("name", generate_random_name())
-        last_used = request.data.get("last_used", False)
+        estimate = request.data.get('estimate')
+        estimate_name = estimate.get("name", generate_random_name())
+        last_used = estimate.get("last_used", False)
         estimate = Estimate.objects.create(
             name=estimate_name, project_id=project_id, last_used=last_used
         )

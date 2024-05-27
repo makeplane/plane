@@ -2,7 +2,12 @@ import set from "lodash/set";
 import unset from "lodash/unset";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { IEstimate as IEstimateType, IEstimatePoint as IEstimatePointType, TEstimateSystemKeys } from "@plane/types";
+import {
+  IEstimate as IEstimateType,
+  IEstimatePoint as IEstimatePointType,
+  TEstimateSystemKeys,
+  IEstimateFormData,
+} from "@plane/types";
 // services
 import { EstimateService } from "@/services/project/estimate.service";
 // store
@@ -26,7 +31,7 @@ export interface IEstimate extends IEstimateType {
   updateEstimate: (
     workspaceSlug: string,
     projectId: string,
-    payload: Partial<IEstimateType>
+    payload: Partial<IEstimateFormData>
   ) => Promise<IEstimateType | undefined>;
   creteEstimatePoint: (
     workspaceSlug: string,
@@ -149,13 +154,13 @@ export class Estimate implements IEstimate {
    * @description update an estimate
    * @param { string } workspaceSlug
    * @param { string } projectId
-   * @param { Partial<IEstimateType> } payload
+   * @param { Partial<IEstimateFormData> } payload
    * @returns { IEstimateType | undefined }
    */
   updateEstimate = async (
     workspaceSlug: string,
     projectId: string,
-    payload: Partial<IEstimateType>
+    payload: Partial<IEstimateFormData>
   ): Promise<IEstimateType | undefined> => {
     try {
       if (!this.id || !payload) return;

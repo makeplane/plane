@@ -16,25 +16,14 @@ type TEstimatePointItem = {
   estimateId: string | undefined;
   mode: EEstimateUpdateStages;
   item: TEstimatePointsObject;
-  estimatePoints: TEstimatePointsObject[];
   editItem: (value: string) => void;
+  replaceEstimateItem: (value: TEstimatePointsObject) => void;
   deleteItem: () => void;
-  handleEstimatePoints: (value: TEstimatePointsObject[]) => void;
 };
 
 export const EstimatePointItem: FC<TEstimatePointItem> = observer((props) => {
   // props
-  const {
-    workspaceSlug,
-    projectId,
-    estimateId,
-    mode,
-    item,
-    estimatePoints,
-    editItem,
-    deleteItem,
-    handleEstimatePoints,
-  } = props;
+  const { workspaceSlug, projectId, estimateId, mode, item, editItem, replaceEstimateItem, deleteItem } = props;
   const { id, key, value } = item;
   // hooks
   const { asJson: estimate, creteEstimatePoint, deleteEstimatePoint } = useEstimate(estimateId);
@@ -63,8 +52,9 @@ export const EstimatePointItem: FC<TEstimatePointItem> = observer((props) => {
       try {
         setEstimateEditLoader(true);
         const estimatePoint = await creteEstimatePoint(workspaceSlug, projectId, { key: key, value: inputValue });
-        if (estimatePoint)
-          handleEstimatePoints([...estimatePoints, { id: estimatePoint.id, key: key, value: inputValue }]);
+        if (estimatePoint && estimatePoint.key && estimatePoint.value) {
+          replaceEstimateItem({ id: estimatePoint.id, key: estimatePoint.key, value: estimatePoint.value });
+        }
         setIsEstimateEditing(false);
         setEstimateEditLoader(false);
       } catch (error) {
@@ -77,7 +67,11 @@ export const EstimatePointItem: FC<TEstimatePointItem> = observer((props) => {
     if (id) {
       try {
         setEstimateEditLoader(true);
-        await updateEstimatePoint(workspaceSlug, projectId, { key: key, value: inputValue });
+        const estimatePoint = await updateEstimatePoint(workspaceSlug, projectId, {
+          key: key,
+          value: inputValue || "",
+        });
+        if (estimatePoint) if (estimatePoint) editItem(inputValue || "");
         setIsEstimateEditing(false);
         setEstimateEditLoader(false);
       } catch (error) {
@@ -93,6 +87,7 @@ export const EstimatePointItem: FC<TEstimatePointItem> = observer((props) => {
       try {
         setEstimateEditLoader(true);
         await deleteEstimatePoint(workspaceSlug, projectId, id, deletedEstimateValue);
+        deleteItem();
         setIsEstimateDeleting(false);
         setEstimateEditLoader(false);
       } catch (error) {

@@ -8,6 +8,7 @@ import { Button, Sortable } from "@plane/ui";
 import { EstimatePointItem } from "@/components/estimates";
 // constants
 import { EEstimateUpdateStages, maxEstimatesCount } from "@/constants/estimates";
+import { useEstimate } from "@/hooks/store";
 
 type TEstimateUpdateStageTwo = {
   workspaceSlug: string;
@@ -20,6 +21,8 @@ type TEstimateUpdateStageTwo = {
 
 export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = observer((props) => {
   const { workspaceSlug, projectId, estimate, estimateEditType, estimatePoints, handleEstimatePoints } = props;
+  // hooks
+  const { updateEstimate: updateEstimateRequest } = useEstimate(estimate?.id);
 
   const currentEstimateSystem = estimate || undefined;
 
@@ -39,7 +42,7 @@ export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = observer((pro
   };
 
   const deleteEstimationPoint = (index: number) => {
-    let newEstimationPoints = estimatePoints;
+    let newEstimationPoints = cloneDeep(estimatePoints);
     newEstimationPoints.splice(index, 1);
     newEstimationPoints = newEstimationPoints.map((item, index) => ({
       ...item,
@@ -48,12 +51,25 @@ export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = observer((pro
     handleEstimatePoints(newEstimationPoints);
   };
 
+  const replaceEstimateItem = (index: number, value: TEstimatePointsObject) => {
+    const newEstimationPoints = cloneDeep(estimatePoints);
+    newEstimationPoints[index].id = value.id;
+    newEstimationPoints[index].key = value.key;
+    newEstimationPoints[index].value = value.value;
+    handleEstimatePoints(newEstimationPoints);
+  };
+
   const updatedSortedKeys = (updatedEstimatePoints: TEstimatePointsObject[]) => {
-    const sortedEstimatePoints = updatedEstimatePoints.map((item, index) => ({
-      ...item,
-      key: index + 1,
-    })) as TEstimatePointsObject[];
-    return sortedEstimatePoints;
+    try {
+      const sortedEstimatePoints = cloneDeep(updatedEstimatePoints).map((item, index) => ({
+        ...item,
+        key: index + 1,
+      })) as TEstimatePointsObject[];
+      handleEstimatePoints(sortedEstimatePoints);
+      updateEstimateRequest(workspaceSlug, projectId, { estimate_points: sortedEstimatePoints });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (!estimateEditType) return <></>;
@@ -72,13 +88,12 @@ export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = observer((pro
               estimateId={estimate?.id || undefined}
               mode={estimateEditType}
               item={value}
-              estimatePoints={estimatePoints}
               editItem={(value: string) => editEstimationPoint(index, value)}
+              replaceEstimateItem={(value: TEstimatePointsObject) => replaceEstimateItem(index, value)}
               deleteItem={() => deleteEstimationPoint(index)}
-              handleEstimatePoints={handleEstimatePoints}
             />
           )}
-          onChange={(data: TEstimatePointsObject[]) => handleEstimatePoints(updatedSortedKeys(data))}
+          onChange={(data: TEstimatePointsObject[]) => updatedSortedKeys(data)}
           keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}
         />
         {estimateEditType === EEstimateUpdateStages.EDIT && (
