@@ -2,21 +2,24 @@ import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // types
-import { TIssue } from "@plane/types";
+import { IIssueFilters, TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { IssueView } from "@/components/issues";
 // constants
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED, ISSUE_OPENED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { getElementFromPath, getElementIdFromPath } from "@/helpers/event-tracker.helper";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
 
 interface IIssuePeekOverview {
   is_archived?: boolean;
   is_draft?: boolean;
+  issuesFilter?: IIssueFilters;
 }
 
 export type TIssuePeekOperations = {
@@ -43,9 +46,10 @@ export type TIssuePeekOperations = {
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { is_archived = false, is_draft = false } = props;
+  const { is_archived = false, is_draft = false, issuesFilter } = props;
   // router
   const router = useRouter();
+  const { userId } = router.query;
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
@@ -67,7 +71,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     removeIssueFromModule,
     removeModulesFromIssue,
   } = useIssueDetail();
-  const { captureIssueEvent } = useEventTracker();
+  const { captureIssueEvent, captureEvent } = useEventTracker();
   // state
   const [loader, setLoader] = useState(false);
 
@@ -386,6 +390,20 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       });
     }
   }, [peekIssue, issueOperations]);
+
+  useEffect(() => {
+    if (peekIssue && issuesFilter) {
+      captureEvent(ISSUE_OPENED, {
+        layout: issuesFilter?.displayFilters?.layout,
+        display_properties: issuesFilter?.displayFilters,
+        filters: issuesFilter?.filters,
+        mode: "peek",
+        profile_id: userId,
+        element: getElementFromPath(router.asPath),
+        elementId: getElementIdFromPath(router.asPath),
+      });
+    }
+  }, [peekIssue, userId, captureEvent, router.asPath]);
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 

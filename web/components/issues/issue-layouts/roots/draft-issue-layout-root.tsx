@@ -68,7 +68,7 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
             <DraftKanBanLayout />
           ) : null}
           {/* issue peek overview */}
-          <IssuePeekOverview is_draft />
+          <IssuePeekOverview is_draft issuesFilter={issuesFilter.issueFilters}/>
         </div>
       )}
     </div>

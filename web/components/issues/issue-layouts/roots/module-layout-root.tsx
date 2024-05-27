@@ -118,7 +118,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
             ) : null}
           </div>
           {/* peek overview */}
-          <IssuePeekOverview />
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters}/>
         </Fragment>
       )}
     </div>

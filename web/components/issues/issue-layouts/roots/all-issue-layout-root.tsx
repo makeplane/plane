@@ -188,7 +188,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
               isWorkspaceLevel
             />
             {/* peek overview */}
-            <IssuePeekOverview />
+            <IssuePeekOverview issuesFilter={issueFilters} />
           </Fragment>
         )}
       </div>

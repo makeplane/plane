@@ -18,145 +18,6 @@ export type EventProps = {
   payload: any;
 };
 
-export const getWorkspaceEventPayload = (payload: any) => ({
-  workspace_id: payload.id,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  organization_size: payload.organization_size,
-  first_time: payload.first_time,
-  state: payload.state,
-  element: payload.element,
-});
-
-export const getProjectEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.id,
-  identifier: payload.identifier,
-  project_visibility: payload.network == 2 ? "Public" : "Private",
-  changed_properties: payload.changed_properties,
-  lead_id: payload.project_lead,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  state: payload.state,
-  element: payload.element,
-});
-
-export const getCycleEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
-  cycle_id: payload.id,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  start_date: payload.start_date,
-  target_date: payload.target_date,
-  cycle_status: payload.status,
-  changed_properties: payload.changed_properties,
-  state: payload.state,
-  element: payload.element,
-});
-
-export const getModuleEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
-  module_id: payload.id,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  start_date: payload.start_date,
-  target_date: payload.target_date,
-  module_status: payload.status,
-  lead_id: payload.lead,
-  changed_properties: payload.changed_properties,
-  member_ids: payload.members,
-  state: payload.state,
-  element: payload.element,
-});
-
-export const getPageEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  access: payload.access === 0 ? "Public" : "Private",
-  is_locked: payload.is_locked,
-  archived_at: payload.archived_at,
-  created_by: payload.created_by,
-  state: payload.state,
-  element: payload.element,
-});
-
-export const getIssueEventPayload = (props: IssueEventProps) => {
-  const { eventName, payload, updates, routePath } = props;
-  let eventPayload: any = {
-    issue_id: payload.id,
-    estimate_point: payload.estimate_point,
-    link_count: payload.link_count,
-    target_date: payload.target_date,
-    is_draft: payload.is_draft,
-    label_ids: payload.label_ids,
-    assignee_ids: payload.assignee_ids,
-    created_at: payload.created_at,
-    updated_at: payload.updated_at,
-    sequence_id: payload.sequence_id,
-    module_ids: payload.module_ids,
-    sub_issues_count: payload.sub_issues_count,
-    parent_id: payload.parent_id,
-    project_id: payload.project_id,
-    workspace_id: payload.workspace_id,
-    priority: payload.priority,
-    state_id: payload.state_id,
-    start_date: payload.start_date,
-    attachment_count: payload.attachment_count,
-    cycle_id: payload.cycle_id,
-    module_id: payload.module_id,
-    archived_at: payload.archived_at,
-    state: payload.state,
-    view_id: routePath?.includes("workspace-views") || routePath?.includes("views") ? routePath.split("/").pop() : "",
-  };
-
-  if (eventName === ISSUE_UPDATED) {
-    eventPayload = {
-      ...eventPayload,
-      ...updates,
-      updated_from: elementFromPath(routePath),
-    };
-  }
-  return eventPayload;
-};
-
-export const getProjectStateEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.id,
-  state_id: payload.id,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  group: payload.group,
-  color: payload.color,
-  default: payload.default,
-  state: payload.state,
-  element: payload.element,
-});
-
-export const getIssuesListOpenedPayload = (payload: any) => ({
-  type: payload.project_id ? "Project" : "Workspace",
-  layout: payload?.filters?.displayFilters?.layout,
-  filters: payload?.filters?.filters,
-  display_properties: payload?.filters?.displayProperties,
-  workspace_id: payload.workspace_id,
-  project_id: payload.project_id,
-});
-
-// Returns the element based on the path
-const elementFromPath = (routePath?: string) => {
-  if (routePath?.includes("workspace-views")) return E_WORKSPACE_VIEW;
-  if (routePath?.includes("cycles")) return E_CYCLE;
-  if (routePath?.includes("modules")) return E_MODULE;
-  if (routePath?.includes("views")) return E_PROJECT_VIEW;
-  if (routePath?.includes("inbox")) return E_INBOX;
-  if (routePath?.includes("draft")) return E_DRAFT;
-  if (routePath?.includes("archived")) return E_ARCHIVE;
-  return "";
-};
-
 // Workspace crud Events
 export const WORKSPACE_CREATED = "Workspace created";
 export const WORKSPACE_UPDATED = "Workspace updated";
@@ -189,6 +50,8 @@ export const ISSUE_RESTORED = "Issue restored";
 // Issue Checkout Events
 export const ISSUES_LIST_OPENED = "Issues list opened";
 export const ISSUE_OPENED = "Issue opened";
+// Layout & Filter Events
+export const LAYOUT_CHANGED = "Layout changed";
 // Project State Events
 export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";
@@ -244,9 +107,13 @@ export const GROUP_WORKSPACE = "Workspace_metrics";
 // Elements
 export const E_PROJECT = "Project";
 export const E_CYCLE = "Cycle";
+export const E_ACYCLE = "Active cycle";
 export const E_MODULE = "Module";
 export const E_PROJECT_VIEW = "Project view";
 export const E_WORKSPACE_VIEW = "Workspace view";
 export const E_DRAFT = "Draft";
 export const E_ARCHIVE = "Archives";
 export const E_INBOX = "Inbox";
+export const E_NOTIFICATION = "Notification";
+export const E_DASHBOARD= "Dashboard";
+export const E_PROFILE = "Profile";

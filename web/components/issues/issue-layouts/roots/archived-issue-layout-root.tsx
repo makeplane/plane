@@ -62,7 +62,7 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
           <div className="relative h-full w-full overflow-auto">
             <ArchivedIssueListLayout />
           </div>
-          <IssuePeekOverview is_archived />
+          <IssuePeekOverview is_archived issuesFilter={issuesFilter.issueFilters} />
         </Fragment>
       )}
     </>

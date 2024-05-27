@@ -10,6 +10,7 @@ import type { IUserNotification, NotificationType } from "@plane/types";
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import {
+  E_NOTIFICATION,
   ISSUE_OPENED,
   NOTIFICATIONS_READ,
   NOTIFICATION_ARCHIVED,
@@ -27,6 +28,8 @@ type NotificationCardProps = {
   selectedTab: NotificationType;
   notification: IUserNotification;
   isSnoozedTabOpen: boolean;
+  isArchivedTabOpen: boolean;
+  isUnreadTabOpen: boolean;
   closePopover: () => void;
   markNotificationReadStatus: (notificationId: string) => Promise<void>;
   markNotificationReadStatusToggle: (notificationId: string) => Promise<void>;
@@ -40,6 +43,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
     selectedTab,
     notification,
     isSnoozedTabOpen,
+    isArchivedTabOpen,
+    isUnreadTabOpen,
     closePopover,
     markNotificationReadStatus,
     markNotificationReadStatusToggle,
@@ -131,7 +136,14 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         markNotificationReadStatus(notification.id);
         captureEvent(ISSUE_OPENED, {
           issue_id: notification.data.issue.id,
-          element: "notification",
+          element: E_NOTIFICATION,
+          element_id: isArchivedTabOpen
+            ? "archived"
+            : isSnoozedTabOpen
+              ? "snoozed"
+              : isUnreadTabOpen
+                ? "unread"
+                : selectedTab,
         });
         closePopover();
       }}

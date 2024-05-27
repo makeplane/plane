@@ -15,13 +15,14 @@ import { StateDropdown } from "@/components/dropdowns";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { ISSUE_OPENED, E_ACYCLE } from "@/constants/event-tracker";
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 import { EIssuesStoreType } from "@/constants/issue";
 // helper
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks
-import { useIssues, useProject } from "@/hooks/store";
+import { useIssues, useProject, useEventTracker } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 export type ActiveCycleStatsProps = {
@@ -50,6 +51,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const {
     issues: { fetchActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
+  const { captureEvent } = useEventTracker();
 
   const { currentProjectDetails } = useProject();
 
@@ -140,6 +142,13 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                       className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
+                      onClick={() =>
+                        captureEvent(ISSUE_OPENED, {
+                          element: E_ACYCLE,
+                          element_id: tab?.toLowerCase(),
+                          mode: "detail",
+                        })
+                      }
                     >
                       <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
                         <PriorityIcon priority={issue.priority} withContainer size={12} />

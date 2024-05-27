@@ -2,10 +2,15 @@ import { action, computed, makeObservable, observable } from "mobx";
 import posthog from "posthog-js";
 // stores
 import {
-  //types
   EventProps,
   IssueEventProps,
-  // payload helpers
+  IssuesListOpenedEventProps,
+  ISSUES_LIST_OPENED,
+  GROUP_WORKSPACE,
+  WORKSPACE_CREATED,
+} from "@/constants/event-tracker";
+// helpers
+import {
   getCycleEventPayload,
   getIssueEventPayload,
   getModuleEventPayload,
@@ -14,12 +19,7 @@ import {
   getWorkspaceEventPayload,
   getPageEventPayload,
   getIssuesListOpenedPayload,
-  // event constants
-  ISSUES_LIST_OPENED,
-  GROUP_WORKSPACE,
-  WORKSPACE_CREATED,
-  IssuesListOpenedEventProps,
-} from "@/constants/event-tracker";
+} from "@/helpers/event-tracker.helper";
 import { RootStore } from "./root.store";
 
 export interface IEventTrackerStore {

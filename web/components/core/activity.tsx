@@ -21,17 +21,22 @@ import {
 } from "lucide-react";
 import { IIssueActivity } from "@plane/types";
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
+// constants
+import { ISSUE_OPENED } from "constants/event-tracker";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { getElementFromPath } from "@/helpers/event-tracker.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
-import { useEstimate, useLabel } from "@/hooks/store";
+import { useEstimate, useLabel, useEventTracker } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
 export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // hooks
   const { isMobile } = usePlatformOS();
+  const { captureEvent } = useEventTracker();
 
   return (
     <Tooltip
@@ -47,6 +52,13 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
           className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+          onClick={() =>
+            captureEvent(ISSUE_OPENED, {
+              element: getElementFromPath(router.asPath),
+              element_id: "activity",
+              mode: "detail",
+            })
+          }
         >
           <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
           <span className="font-normal break-all">{activity.issue_detail?.name}</span>

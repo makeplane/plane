@@ -83,7 +83,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
           </div>
 
           {/* peek overview */}
-          <IssuePeekOverview />
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters}/>
         </Fragment>
       )}
     </div>
