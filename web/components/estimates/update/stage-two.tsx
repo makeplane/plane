@@ -4,6 +4,8 @@ import { IEstimate, TEstimatePointsObject, TEstimateUpdateStageKeys } from "@pla
 import { Button, Sortable } from "@plane/ui";
 // components
 import { EstimatePointItem } from "@/components/estimates";
+// constants
+import { EEstimateUpdateStages, maxEstimatesCount } from "@/constants/estimates";
 
 type TEstimateUpdateStageTwo = {
   estimate: IEstimate;
@@ -19,7 +21,6 @@ export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = (props) => {
 
   const addNewEstimationPoint = () => {
     const currentEstimationPoints = estimatePoints;
-
     const newEstimationPoint: TEstimatePointsObject = {
       key: currentEstimationPoints.length + 1,
       value: "0",
@@ -27,32 +28,61 @@ export const EstimateUpdateStageTwo: FC<TEstimateUpdateStageTwo> = (props) => {
     handleEstimatePoints([...currentEstimationPoints, newEstimationPoint]);
   };
 
-  const deleteEstimationPoint = (index: number) => {
+  const editEstimationPoint = (index: number, value: string) => {
     const newEstimationPoints = estimatePoints;
-    newEstimationPoints.splice(index, 1);
+    newEstimationPoints[index].value = value;
     handleEstimatePoints(newEstimationPoints);
   };
 
-  const updatedSortedKeys = (updatedEstimatePoints: TEstimatePointsObject[]) =>
-    updatedEstimatePoints.map((item, index) => ({
+  const deleteEstimationPoint = (index: number) => {
+    let newEstimationPoints = estimatePoints;
+    newEstimationPoints.splice(index, 1);
+    newEstimationPoints = newEstimationPoints.map((item, index) => ({
+      ...item,
+      key: index + 1,
+    }));
+    handleEstimatePoints(newEstimationPoints);
+  };
+
+  const updatedSortedKeys = (updatedEstimatePoints: TEstimatePointsObject[]) => {
+    const sortedEstimatePoints = updatedEstimatePoints.map((item, index) => ({
       ...item,
       key: index + 1,
     })) as TEstimatePointsObject[];
+    return sortedEstimatePoints;
+  };
 
+  if (!estimateEditType) return <></>;
   return (
-    <div className="space-y-4">
-      <Sortable
-        data={estimatePoints}
-        render={(value: TEstimatePointsObject, index: number) => (
-          <EstimatePointItem item={value} deleteItem={() => deleteEstimationPoint(index)} />
+    <div className="space-y-1">
+      <div className="text-sm font-medium text-custom-text-300">
+        {estimateEditType === EEstimateUpdateStages.SWITCH ? "Estimate type switching" : currentEstimateSystem?.type}
+      </div>
+      <div className="space-y-3">
+        <Sortable
+          data={estimatePoints}
+          render={(value: TEstimatePointsObject, index: number) => (
+            <EstimatePointItem
+              estimateId={estimate?.id || undefined}
+              mode={estimateEditType}
+              item={value}
+              editItem={(value: string) => editEstimationPoint(index, value)}
+              deleteItem={() => deleteEstimationPoint(index)}
+            />
+          )}
+          onChange={(data: TEstimatePointsObject[]) => handleEstimatePoints(updatedSortedKeys(data))}
+          keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}
+        />
+        {estimateEditType === EEstimateUpdateStages.EDIT && (
+          <>
+            {estimatePoints && estimatePoints.length <= maxEstimatesCount && (
+              <Button size="sm" prependIcon={<Plus />} onClick={addNewEstimationPoint}>
+                Add {currentEstimateSystem?.type}
+              </Button>
+            )}
+          </>
         )}
-        onChange={(data: TEstimatePointsObject[]) => handleEstimatePoints(updatedSortedKeys(data))}
-        keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}
-      />
-
-      <Button prependIcon={<Plus />} onClick={addNewEstimationPoint}>
-        Add {currentEstimateSystem?.name}
-      </Button>
+      </div>
     </div>
   );
 };

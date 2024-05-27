@@ -5,7 +5,7 @@ import { Button, Sortable } from "@plane/ui";
 // components
 import { EstimatePointItem } from "@/components/estimates";
 // constants
-import { EEstimateSystem, EEstimateUpdateStages, ESTIMATE_SYSTEMS } from "@/constants/estimates";
+import { EEstimateSystem, EEstimateUpdateStages, ESTIMATE_SYSTEMS, maxEstimatesCount } from "@/constants/estimates";
 
 type TEstimateCreateStageTwo = {
   estimateSystem: EEstimateSystem;
@@ -17,7 +17,6 @@ export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = (props) => {
   const { estimateSystem, estimatePoints, handleEstimatePoints } = props;
 
   const currentEstimateSystem = ESTIMATE_SYSTEMS[estimateSystem] || undefined;
-  const maxEstimatesCount = 11;
 
   const addNewEstimationPoint = () => {
     const currentEstimationPoints = estimatePoints;
@@ -60,6 +59,7 @@ export const EstimateCreateStageTwo: FC<TEstimateCreateStageTwo> = (props) => {
           data={estimatePoints}
           render={(value: TEstimatePointsObject, index: number) => (
             <EstimatePointItem
+              estimateId={undefined}
               mode={EEstimateUpdateStages.CREATE}
               item={value}
               editItem={(value: string) => editEstimationPoint(index, value)}

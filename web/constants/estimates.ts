@@ -1,3 +1,6 @@
+// types
+import { TEstimateSystems } from "@plane/types";
+
 export enum EEstimateSystem {
   POINTS = "points",
   CATEGORIES = "categories",
@@ -10,8 +13,7 @@ export enum EEstimateUpdateStages {
   SWITCH = "switch",
 }
 
-// types
-import { TEstimateSystems } from "@plane/types";
+export const maxEstimatesCount = 11;
 
 export const ESTIMATE_SYSTEMS: TEstimateSystems = {
   points: {

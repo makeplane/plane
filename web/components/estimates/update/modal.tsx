@@ -1,5 +1,4 @@
 import { FC, useEffect, useMemo, useState } from "react";
-import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
 import { IEstimateFormData, TEstimatePointsObject, TEstimateUpdateStageKeys, TEstimateSystemKeys } from "@plane/types";
@@ -46,10 +45,7 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
     }
   };
 
-  const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => {
-    const points = cloneDeep(newPoints);
-    setEstimatePoints(points);
-  };
+  const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => setEstimatePoints(newPoints);
 
   useEffect(() => {
     if (!isOpen) {
@@ -108,8 +104,6 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
       });
     }
   };
-
-  console.log("estimateStage", estimateEditType);
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>

@@ -28,11 +28,11 @@ export interface IEstimate extends IEstimateType {
   estimatePoints: Record<string, IEstimatePoint>;
   // computed
   asJson: IEstimateType;
-  EstimatePointIds: string[] | undefined;
+  estimatePointIds: string[] | undefined;
   estimatePointById: (estimateId: string) => IEstimatePointType | undefined;
   // actions
   updateEstimate: (payload: IEstimateFormData) => Promise<void>;
-  deleteEstimate: (estimatePointId: string) => Promise<void>;
+  deleteEstimate: (estimatePointId: string | undefined) => Promise<void>;
 }
 
 export class Estimate implements IEstimate {
@@ -80,7 +80,7 @@ export class Estimate implements IEstimate {
       estimatePoints: observable,
       // computed
       asJson: computed,
-      EstimatePointIds: computed,
+      estimatePointIds: computed,
       // actions
       updateEstimate: action,
       deleteEstimate: action,
@@ -126,7 +126,7 @@ export class Estimate implements IEstimate {
     };
   }
 
-  get EstimatePointIds() {
+  get estimatePointIds() {
     const { estimatePoints } = this;
     if (!estimatePoints) return undefined;
 
@@ -159,7 +159,7 @@ export class Estimate implements IEstimate {
     }
   };
 
-  deleteEstimate = async (estimatePointId: string) => {
+  deleteEstimate = async (estimatePointId: string | undefined) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !estimatePointId) return;
