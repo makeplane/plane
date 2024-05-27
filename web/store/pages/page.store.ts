@@ -51,7 +51,7 @@ export class PageStore implements IPageStore {
   // page properties
   id: string | undefined;
   name: string | undefined;
-  logo_props: TLogoProps;
+  logo_props: TLogoProps | undefined;
   description_html: string | undefined;
   color: string | undefined;
   labels: string[] | undefined;
