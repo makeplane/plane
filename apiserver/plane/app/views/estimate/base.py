@@ -95,16 +95,8 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             ignore_conflicts=True,
         )
 
-        estimate_point_serializer = EstimatePointSerializer(
-            estimate_points, many=True
-        )
-
-        return Response(
-            {
-                "estimate_points": estimate_point_serializer.data,
-            },
-            status=status.HTTP_200_OK,
-        )
+        serializer = EstimateReadSerializer(estimate)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, estimate_id):
         estimate = Estimate.objects.get(
@@ -166,7 +158,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         )
         return Response(
             {
-                "estimate_points": estimate_point_serializer.data,
+                "points": estimate_point_serializer.data,
             },
             status=status.HTTP_200_OK,
         )

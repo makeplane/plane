@@ -48,10 +48,6 @@ class EstimatePointSerializer(BaseSerializer):
 
 class EstimateReadSerializer(BaseSerializer):
     points = EstimatePointSerializer(read_only=True, many=True)
-    workspace_detail = WorkspaceLiteSerializer(
-        read_only=True, source="workspace"
-    )
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
 
     class Meta:
         model = Estimate
