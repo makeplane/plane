@@ -1,0 +1,92 @@
+FROM --platform=$BUILDPLATFORM tonistiigi/binfmt as binfmt
+
+FROM debian:12-slim
+
+# Set environment variables to non-interactive for apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+SHELL [ "/bin/bash", "-c" ]
+
+# Update the package list and install prerequisites
+RUN apt-get update && \
+    apt-get install -y \
+    gnupg2 curl ca-certificates lsb-release software-properties-common \
+    build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+    libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils \
+    tk-dev libffi-dev liblzma-dev supervisor nginx nano vim ncdu
+
+# Install Redis 7.2
+RUN echo "deb http://deb.debian.org/debian $(lsb_release -cs)-backports main" > /etc/apt/sources.list.d/backports.list && \
+    curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" > /etc/apt/sources.list.d/redis.list && \
+    apt-get update && \
+    apt-get install -y redis-server
+
+# Install PostgreSQL 15
+ENV POSTGRES_VERSION 15
+RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/pgdg-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/pgdg-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update && \
+    apt-get install -y postgresql-$POSTGRES_VERSION postgresql-client-$POSTGRES_VERSION && \
+    mkdir -p /var/lib/postgresql/data && \
+    chown -R postgres:postgres /var/lib/postgresql
+
+# Install MinIO
+ARG TARGETARCH
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+        curl -fSl https://dl.min.io/server/minio/release/linux-amd64/minio -o /usr/local/bin/minio; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        curl -fSl https://dl.min.io/server/minio/release/linux-arm64/minio -o /usr/local/bin/minio; \
+    else \
+        echo "Unsupported architecture: $TARGETARCH"; exit 1; \
+    fi && \
+    chmod +x /usr/local/bin/minio
+
+
+# Install Node.js 18
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
+# Install Python 3.12 from source
+RUN cd /usr/src && \
+    wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz && \
+    tar xzf Python-3.12.0.tgz && \
+    cd Python-3.12.0 && \
+    ./configure --enable-optimizations && \
+    make altinstall && \
+    rm -f /usr/src/Python-3.12.0.tgz
+
+RUN python3.12 -m pip install --upgrade pip
+
+RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
+    echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
+    
+# Clean up
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /usr/src/Python-3.12.0
+    
+WORKDIR /app
+
+RUN mkdir -p /app/{data,logs} && \
+    mkdir -p /app/data/{redis,pg,minio,nginx} && \
+    mkdir -p /app/logs/{access,error} && \
+    mkdir -p /etc/supervisor/conf.d
+
+# Create Supervisor configuration file
+COPY supervisord.base /app/supervisord.conf
+
+RUN apt-get update && \
+    apt-get install -y sudo lsof net-tools libpq-dev procps gettext && \
+    apt-get clean
+
+RUN sudo -u postgres /usr/lib/postgresql/$POSTGRES_VERSION/bin/initdb -D /var/lib/postgresql/data
+COPY postgresql.conf /etc/postgresql/postgresql.conf
+
+RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
+    echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
+
+# Expose ports for Redis, PostgreSQL, and MinIO
+EXPOSE 6379 5432 9000 80
+
+# Start Supervisor
+CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]

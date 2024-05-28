@@ -109,6 +109,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
+  const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -470,6 +471,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           onChange(description_html);
                           handleFormChange();
                         }}
+                        onEnterKeyPress={() => submitBtnRef?.current?.click()}
                         ref={editorRef}
                         tabIndex={getTabIndex("description_html")}
                         placeholder={getDescriptionPlaceholder}
@@ -770,6 +772,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               variant="primary"
               type="submit"
               size="sm"
+              ref={submitBtnRef}
               loading={isSubmitting}
               tabIndex={isDraft ? getTabIndex("submit_button") : getTabIndex("draft_button")}
             >

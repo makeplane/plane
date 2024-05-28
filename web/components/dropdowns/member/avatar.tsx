@@ -1,16 +1,19 @@
 import { observer } from "mobx-react";
-// hooks
-import { Avatar, AvatarGroup, UserGroupIcon } from "@plane/ui";
-import { useMember } from "@/hooks/store";
+// icons
+import { LucideIcon, Users } from "lucide-react";
 // ui
+import { Avatar, AvatarGroup } from "@plane/ui";
+// hooks
+import { useMember } from "@/hooks/store";
 
 type AvatarProps = {
   showTooltip: boolean;
   userIds: string | string[] | null;
+  icon?: LucideIcon;
 };
 
 export const ButtonAvatars: React.FC<AvatarProps> = observer((props) => {
-  const { showTooltip, userIds } = props;
+  const { showTooltip, userIds, icon: Icon } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
@@ -33,5 +36,9 @@ export const ButtonAvatars: React.FC<AvatarProps> = observer((props) => {
     }
   }
 
-  return <UserGroupIcon className="h-3 w-3 flex-shrink-0" />;
+  return Icon ? (
+    <Icon className="h-3 w-3 flex-shrink-0" />
+  ) : (
+    <Users className="h-3 w-3 flex-shrink-0" />
+  );
 });

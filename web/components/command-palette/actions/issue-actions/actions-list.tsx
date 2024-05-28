@@ -1,10 +1,10 @@
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
+import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-react";
 import { TIssue } from "@plane/types";
 // hooks
-import { DoubleCircleIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { DoubleCircleIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
 // helpers
@@ -115,7 +115,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         className="focus:outline-none"
       >
         <div className="flex items-center gap-2 text-custom-text-200">
-          <UserGroupIcon className="h-3.5 w-3.5" />
+          <Users className="h-3.5 w-3.5" />
           Assign to...
         </div>
       </Command.Item>

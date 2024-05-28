@@ -88,7 +88,6 @@ export const CycleEmptyState: React.FC = observer(() => {
     ? EmptyStateType.PROJECT_EMPTY_FILTER
     : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
   const additionalPath = isCompletedAndEmpty ? undefined : activeLayout ?? "list";
-  const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
@@ -104,7 +103,6 @@ export const CycleEmptyState: React.FC = observer(() => {
         <EmptyState
           type={emptyStateType}
           additionalPath={additionalPath}
-          size={emptyStateSize}
           primaryButtonOnClick={
             !isCompletedAndEmpty && !isEmptyFilters
               ? () => {

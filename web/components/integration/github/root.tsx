@@ -10,9 +10,9 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 // services
 // components
-import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
+import { ArrowLeft, Check, List, Settings, UploadCloud, Users } from "lucide-react";
 import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
-import { UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import {
   GithubImportConfigure,
   GithubImportData,
@@ -72,7 +72,7 @@ const integrationWorkflowData = [
   {
     title: "Users",
     key: "import-users",
-    icon: UserGroupIcon,
+    icon: Users,
   },
   {
     title: "Confirm",

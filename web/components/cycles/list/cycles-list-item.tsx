@@ -22,10 +22,11 @@ type TCyclesListItem = {
   handleRemoveFromFavorites?: () => void;
   workspaceSlug: string;
   projectId: string;
+  className?: string;
 };
 
 export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
-  const { cycleId, workspaceSlug, projectId } = props;
+  const { cycleId, workspaceSlug, projectId, className = "" } = props;
   // refs
   const parentRef = useRef(null);
   // router
@@ -83,6 +84,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
       onItemClick={(e) => {
         if (cycleDetails.archived_at) openCycleOverview(e);
       }}
+      className={className}
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
           {isCompleted ? (

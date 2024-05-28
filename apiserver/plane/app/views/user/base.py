@@ -1,5 +1,5 @@
 # Python imports
-# import uuid
+import uuid
 
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
@@ -183,8 +183,8 @@ class UserEndpoint(BaseViewSet):
         profile.save()
 
         # Reset password
-        # user.is_password_autoset = True
-        # user.set_password(uuid.uuid4().hex)
+        user.is_password_autoset = True
+        user.set_password(uuid.uuid4().hex)
 
         # Deactivate the user
         user.is_active = False
