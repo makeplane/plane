@@ -18,6 +18,3 @@ export * from "./properties";
 
 // save view
 export * from "./save-filter-view";
-
-// bulk operations
-export * from "./bulk-operations";

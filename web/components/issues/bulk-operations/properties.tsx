@@ -8,6 +8,7 @@ import { TBulkIssueProperties } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DateDropdown, MemberDropdown, PriorityDropdown, StateDropdown } from "@/components/dropdowns";
+import { BulkOperationsExtraProperties } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 // constants
@@ -190,6 +191,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
             )}
           />
         )}
+        <BulkOperationsExtraProperties />
       </div>
       {isDirty && (
         <Button type="submit" variant="primary" size="sm" className="py-1" loading={isSubmitting}>
