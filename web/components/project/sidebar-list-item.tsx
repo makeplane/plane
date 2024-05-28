@@ -186,7 +186,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     return combine(
       draggable({
         element,
-        canDrag: () => !disableDrag,
+        canDrag: () => !disableDrag && !isCollapsed,
         dragHandle: dragHandleElement ?? undefined,
         getInitialData: () => ({ id: projectId, dragInstanceId: "PROJECTS" }),
         onDragStart: () => {
@@ -306,6 +306,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                         "group-hover:opacity-100": !isCollapsed,
                         "cursor-not-allowed opacity-60": project.sort_order === null,
                         flex: isMenuActive,
+                        hidden: isCollapsed,
                       }
                     )}
                     ref={dragHandleRef}
