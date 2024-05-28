@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
+import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
@@ -9,10 +10,10 @@ import {
   ChevronDown,
   LinkIcon,
   Trash2,
-  UserCircle2,
   AlertCircle,
   ChevronRight,
   CalendarClock,
+  SquareUser,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
@@ -199,14 +200,18 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
+      let newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
+        if (key === "state") {
+          if (isEqual(newValues, value)) newValues = [];
+          else newValues = value;
+        } else {
+          value.forEach((val) => {
+            if (!newValues.includes(val)) newValues.push(val);
+            else newValues.splice(newValues.indexOf(val), 1);
+          });
+        }
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
@@ -427,7 +432,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <UserCircle2 className="h-4 w-4" />
+              <SquareUser className="h-4 w-4" />
               <span className="text-base">Lead</span>
             </div>
             <div className="flex w-3/5 items-center rounded-sm">

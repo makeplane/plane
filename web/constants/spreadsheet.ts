@@ -1,9 +1,19 @@
 import { FC } from "react";
-import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip, CalendarCheck2, CalendarClock } from "lucide-react";
+import {
+  CalendarDays,
+  Link2,
+  Signal,
+  Tag,
+  Triangle,
+  Paperclip,
+  CalendarCheck2,
+  CalendarClock,
+  Users,
+} from "lucide-react";
 // types
 import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
 // ui
-import { LayersIcon, DoubleCircleIcon, UserGroupIcon, DiceIcon, ContrastIcon } from "@plane/ui";
+import { LayersIcon, DoubleCircleIcon, DiceIcon, ContrastIcon } from "@plane/ui";
 import { ISvgIcons } from "@plane/ui/src/icons/type";
 import {
   SpreadsheetAssigneeColumn,
@@ -44,7 +54,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "A",
     descendingOrderKey: "-assignees__first_name",
     descendingOrderTitle: "Z",
-    icon: UserGroupIcon,
+    icon: Users,
     Column: SpreadsheetAssigneeColumn,
   },
   created_on: {

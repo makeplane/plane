@@ -23,11 +23,11 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   // store hooks
   const { removePage } = useProjectPages(projectId);
   const { capturePageEvent } = useEventTracker();
-  const pageStore = usePage(pageId);
+  const page = usePage(pageId);
 
-  if (!pageStore) return null;
+  if (!page) return null;
 
-  const { name } = pageStore;
+  const { name } = page;
 
   const handleClose = () => {
     setIsDeleting(false);
@@ -41,7 +41,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
         capturePageEvent({
           eventName: PAGE_DELETED,
           payload: {
-            ...pageStore,
+            ...page,
             state: "SUCCESS",
           },
         });
@@ -56,7 +56,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
         capturePageEvent({
           eventName: PAGE_DELETED,
           payload: {
-            ...pageStore,
+            ...page,
             state: "FAILED",
           },
         });

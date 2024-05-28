@@ -3,6 +3,7 @@ import { EditorMenuItemNames } from "src/ui/menus/menu-items";
 
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
+  getHTML: () => string;
   clearEditor: () => void;
   setEditorValue: (content: string) => void;
   scrollSummary: (marking: IMarking) => void;

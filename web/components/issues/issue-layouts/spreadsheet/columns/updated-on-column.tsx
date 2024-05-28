@@ -7,7 +7,6 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 
 type Props = {
   issue: TIssue;
-  isIssueSelected: boolean;
 };
 
 export const SpreadsheetUpdatedOnColumn: React.FC<Props> = observer((props: Props) => {

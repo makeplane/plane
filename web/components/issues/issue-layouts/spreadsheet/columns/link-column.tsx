@@ -5,7 +5,6 @@ import { TIssue } from "@plane/types";
 
 type Props = {
   issue: TIssue;
-  isIssueSelected: boolean;
 };
 
 export const SpreadsheetLinkColumn: React.FC<Props> = observer((props: Props) => {
