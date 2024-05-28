@@ -96,7 +96,7 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
             state: "SUCCESS",
             element: "Inbox page",
           },
-          path: router.pathname,
+          routePath: router.pathname,
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -115,7 +115,7 @@ export const InboxIssueEditRoot: FC<TInboxIssueEditRoot> = observer((props) => {
             state: "FAILED",
             element: "Inbox page",
           },
-          path: router.pathname,
+          routePath: router.pathname,
         });
         setToast({
           type: TOAST_TYPE.ERROR,

@@ -403,6 +403,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         elementId: getElementIdFromPath(router.asPath),
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [peekIssue, userId, captureEvent, router.asPath]);
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
