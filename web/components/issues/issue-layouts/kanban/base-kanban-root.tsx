@@ -182,14 +182,14 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   };
 
   const handleKanbanFilters = (toggle: "group_by" | "sub_group_by", value: string) => {
-    if (workspaceSlug && projectId) {
+    if (workspaceSlug) {
       let kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
       if (kanbanFilters.includes(value)) {
         kanbanFilters = kanbanFilters.filter((_value) => _value != value);
       } else {
         kanbanFilters.push(value);
       }
-      updateFilters(projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
+      updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
         [toggle]: kanbanFilters,
       });
     }

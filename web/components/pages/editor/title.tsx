@@ -33,7 +33,6 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
       ) : (
         <>
           <TextArea
-            onChange={(e) => updateTitle(e.target.value)}
             className="w-full bg-custom-background text-[1.75rem] font-semibold outline-none p-0 border-none resize-none rounded-none"
             style={{
               lineHeight: "1.2",
@@ -46,6 +45,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
               }
             }}
             value={title}
+            onChange={(e) => updateTitle(e.target.value)}
             maxLength={255}
             onFocus={() => setIsLengthVisible(true)}
             onBlur={() => setIsLengthVisible(false)}

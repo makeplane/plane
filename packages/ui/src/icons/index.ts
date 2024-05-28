@@ -19,4 +19,3 @@ export * from "./priority-icon";
 export * from "./related-icon";
 export * from "./side-panel-icon";
 export * from "./transfer-icon";
-export * from "./user-group-icon";
