@@ -59,7 +59,7 @@ const BillingSettingsPage: NextPageWithLayout = observer(() => {
 
 BillingSettingsPage.getLayout = function getLayout(page: React.ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Billing & Plans Settings" />}>
+    <AppLayout header={<WorkspaceSettingHeader />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );

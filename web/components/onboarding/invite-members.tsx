@@ -34,7 +34,7 @@ import InviteMembersDark from "public/onboarding/invite-members-dark.svg";
 import InviteMembersLight from "public/onboarding/invite-members-light.svg";
 // components
 import { OnboardingHeader } from "./header";
-import { SwitchOrDeleteAccountDropdown } from "./switch-or-delete-account-dropdown";
+import { SwitchAccountDropdown } from "./switch-account-dropdown";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
@@ -366,7 +366,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
           {/* Since this will always be the last step */}
           <OnboardingHeader currentStep={totalSteps} totalSteps={totalSteps} />
           <div className="shrink-0 lg:hidden">
-            <SwitchOrDeleteAccountDropdown />
+            <SwitchAccountDropdown />
           </div>
         </div>
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6 md:w-4/5 mx-auto">
@@ -433,7 +433,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="hidden lg:block relative w-2/5 h-screen overflow-hidden px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
-        <SwitchOrDeleteAccountDropdown />
+        <SwitchAccountDropdown />
         <div className="absolute inset-0 z-0">
           <Image
             src={resolvedTheme === "dark" ? InviteMembersDark : InviteMembersLight}

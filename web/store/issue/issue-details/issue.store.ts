@@ -111,8 +111,8 @@ export class IssueStore implements IIssueStore {
 
       // store handlers from issue detail
       // parent
-      if (issue && issue?.parent && issue?.parent?.id) {
-        const parentIssue = await this.issueService.retrieve(workspaceSlug, projectId, issue?.parent?.id);
+      if (issue && issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
+        const parentIssue = await this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id);
         this.rootIssueDetailStore.rootIssueStore.issues.addIssue([parentIssue]);
       }
       // assignees

@@ -66,6 +66,8 @@ export interface IIssue {
   votes: IVote[];
 }
 
+export type IPeekMode = "side" | "modal" | "full";
+
 export interface IIssueState {
   id: string;
   name: string;

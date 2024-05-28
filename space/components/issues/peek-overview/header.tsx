@@ -3,16 +3,15 @@ import { observer } from "mobx-react-lite";
 import { MoveRight } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // ui
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { Icon } from "@/components/ui";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetails } from "@/hooks/store";
-import useToast from "@/hooks/use-toast";
-// store
-import { IPeekMode } from "@/store/issue-detail.store";
+import useClipboardWritePermission from "@/hooks/use-clipboard-write-permission";
 // types
-import { IIssue } from "@/types/issue";
+import { IIssue, IPeekMode } from "@/types/issue";
 
 type Props = {
   handleClose: () => void;
@@ -41,15 +40,14 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
   const { handleClose } = props;
 
   const { peekMode, setPeekMode } = useIssueDetails();
-
-  const { setToastAlert } = useToast();
+  const isClipboardWriteAllowed = useClipboardWritePermission();
 
   const handleCopyLink = () => {
     const urlToCopy = window.location.href;
 
     copyTextToClipboard(urlToCopy).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.INFO,
         title: "Link copied!",
         message: "Issue link copied to clipboard",
       });
@@ -62,7 +60,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
         <div className="flex items-center gap-4">
           {peekMode === "side" && (
             <button type="button" onClick={handleClose}>
-              <MoveRight className="h-3.5 w-3.5" strokeWidth={2} />
+              <MoveRight className="h-4 w-4" strokeWidth={2} />
             </button>
           )}
           <Listbox
@@ -72,7 +70,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
             className="relative flex-shrink-0 text-left"
           >
             <Listbox.Button className={`grid place-items-center ${peekMode === "full" ? "rotate-45" : ""}`}>
-              <Icon iconName={peekModes.find((m) => m.key === peekMode)?.icon ?? ""} />
+              <Icon iconName={peekModes.find((m) => m.key === peekMode)?.icon ?? ""} className="text-[1rem]" />
             </Listbox.Button>
 
             <Transition
@@ -117,10 +115,10 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
             </Transition>
           </Listbox>
         </div>
-        {(peekMode === "side" || peekMode === "modal") && (
+        {isClipboardWriteAllowed && (peekMode === "side" || peekMode === "modal") && (
           <div className="flex flex-shrink-0 items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45 focus:outline-none" tabIndex={1}>
-              <Icon iconName="link" />
+              <Icon iconName="link" className="text-[1rem]" />
             </button>
           </div>
         )}

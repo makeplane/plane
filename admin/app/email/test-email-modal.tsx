@@ -51,7 +51,7 @@ export const SendTestEmailModal: FC<Props> = (props) => {
         setSendEmailStep(ESendEmailSteps.SUCCESS);
       })
       .catch((error) => {
-        setError(error?.message || "Failed to send email");
+        setError(error?.error || "Failed to send email");
         setSendEmailStep(ESendEmailSteps.FAILED);
       })
       .finally(() => {

@@ -7,6 +7,8 @@ import update from "lodash/update";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // types
 import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
+// helpers
+import { issueCountBasedOnFilters } from "@/helpers/issue.helper";
 // services
 import { IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
@@ -21,6 +23,7 @@ export interface IModuleIssues {
   issues: { [module_id: string]: string[] };
   viewFlags: ViewFlags;
   // computed
+  issuesCount: number;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
@@ -95,6 +98,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       loader: observable.ref,
       issues: observable,
       // computed
+      issuesCount: computed,
       groupedIssueIds: computed,
       // action
       fetchIssues: action,
@@ -111,6 +115,22 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     this.rootIssueStore = _rootStore;
     this.issueService = new IssueService();
     this.moduleService = new ModuleService();
+  }
+
+  get issuesCount() {
+    let issuesCount = 0;
+
+    const displayFilters = this.rootIssueStore?.moduleIssuesFilter?.issueFilters?.displayFilters;
+    const groupedIssueIds = this.groupedIssueIds;
+    if (!displayFilters || !groupedIssueIds) return issuesCount;
+
+    const layout = displayFilters?.layout || undefined;
+    const groupBy = displayFilters?.group_by || undefined;
+    const subGroupBy = displayFilters?.sub_group_by || undefined;
+
+    if (!layout) return issuesCount;
+    issuesCount = issueCountBasedOnFilters(groupedIssueIds, layout, groupBy, subGroupBy);
+    return issuesCount;
   }
 
   get groupedIssueIds() {
@@ -274,17 +294,19 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
       const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
 
-      if (data.cycle_id && data.cycle_id !== "")
-        await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, data.cycle_id, [response.id]);
-
-      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
-
       const quickAddIssueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === data.id);
-      if (quickAddIssueIndex >= 0)
+      if (quickAddIssueIndex >= 0) {
         runInAction(() => {
           this.issues[moduleId].splice(quickAddIssueIndex, 1);
           this.rootIssueStore.issues.removeIssue(data.id);
         });
+      }
+
+      if (data.cycle_id && data.cycle_id !== "") {
+        await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id)
+      }
+
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       return response;
     } catch (error) {
@@ -370,9 +392,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
   /**
    * change modules array in issue
-   * @param workspaceSlug 
-   * @param projectId 
-   * @param issueId 
+   * @param workspaceSlug
+   * @param projectId
+   * @param issueId
    * @param addModuleIds array of modules to be added
    * @param removeModuleIds array of modules to be removed
    */
@@ -404,23 +426,18 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
           });
         });
       });
-      if(originalModuleIds){
+      if (originalModuleIds) {
         // update the root issue map with the new module ids
         let currentModuleIds = concat([...originalModuleIds], addModuleIds);
         currentModuleIds = pull(currentModuleIds, ...removeModuleIds);
         this.rootStore.issues.updateIssue(issueId, { module_ids: uniq(currentModuleIds) });
       }
 
-      //Perform API calls
-      if (!isEmpty(addModuleIds)) {
-        await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
-          modules: addModuleIds,
-        });
-      }
-      if (!isEmpty(removeModuleIds)) {
-        await this.moduleService.removeModulesFromIssueBulk(workspaceSlug, projectId, issueId, removeModuleIds);
-      }
-
+      //Perform API call
+      await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
+        modules: addModuleIds,
+        removed_modules: removeModuleIds,
+      });
     } catch (error) {
       // revert the issue back to its original module ids
       set(this.rootStore.issues.issuesMap, [issueId, "module_ids"], originalModuleIds);

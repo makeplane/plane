@@ -55,6 +55,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
 
   const emptyStateType = isEmptyFilters ? EmptyStateType.PROJECT_EMPTY_FILTER : EmptyStateType.PROJECT_MODULE_ISSUES;
   const additionalPath = activeLayout ?? "list";
+  const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
     <>
@@ -70,6 +71,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
         <EmptyState
           type={emptyStateType}
           additionalPath={additionalPath}
+          size={emptyStateSize}
           primaryButtonOnClick={
             isEmptyFilters
               ? undefined

@@ -2,12 +2,11 @@ import { MutableRefObject, useRef, useState } from "react";
 import { LucideIcon, X } from "lucide-react";
 import { IIssueLabel } from "@plane/types";
 //ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, DragHandle } from "@plane/ui";
 //types
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 //hooks
 //components
-import { DragHandle } from "./drag-handle";
 import { LabelName } from "./label-name";
 
 //types

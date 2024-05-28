@@ -10,7 +10,7 @@ from django.utils import timezone
 
 # Module imports
 from plane.license.models import Instance, InstanceAdmin
-from plane.db.models import User
+from plane.db.models import User, Profile
 
 
 class Command(BaseCommand):
@@ -39,6 +39,7 @@ class Command(BaseCommand):
                 username=uuid.uuid4().hex,
                 password=make_password(uuid.uuid4().hex),
             )
+            _ = Profile.objects.create(user=user)
 
         try:
             # Check if the instance is registered
@@ -60,12 +61,16 @@ class Command(BaseCommand):
 
             # Get or create an instance admin
             _, created = InstanceAdmin.objects.get_or_create(
-                user=user, instance=instance, role=20, is_verified=True
+                user=user,
+                instance=instance,
+                defaults={"role": 20, "is_verified": True},
             )
 
             if not created:
                 self.stdout.write(
-                    self.style.WARNING("given email is already an instance admin")
+                    self.style.WARNING(
+                        "given email is already an instance admin"
+                    )
                 )
 
             self.stdout.write(self.style.SUCCESS("Successful"))

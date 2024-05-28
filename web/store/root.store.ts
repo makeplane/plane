@@ -96,7 +96,6 @@ export class RootStore {
     this.dashboard = new DashboardStore(this);
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();
-    this.theme = new ThemeStore(this);
     this.eventTracker = new EventTrackerStore(this);
     this.instance = new InstanceStore();
     this.user = new UserStore(this);
