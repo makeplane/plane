@@ -23,7 +23,7 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
   // hooks
   const { asJson: estimate, estimatePointIds, estimatePointById, updateEstimateSortOrder } = useEstimate(estimateId);
   // states
-  const [estimatePointCreateToggle, setEstimatePointCreateToggle] = useState(false);
+  const [estimatePointCreate, setEstimatePointCreate] = useState<TEstimatePointsObject[] | undefined>(undefined);
 
   const estimatePoints: TEstimatePointsObject[] =
     estimatePointIds && estimatePointIds.length > 0
@@ -32,6 +32,25 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
           if (estimatePoint) return { id: estimatePointId, key: estimatePoint.key, value: estimatePoint.value };
         }) as TEstimatePointsObject[])
       : ([] as TEstimatePointsObject[]);
+
+  const handleEstimatePointCreate = (mode: "add" | "remove", value: TEstimatePointsObject) => {
+    switch (mode) {
+      case "add":
+        setEstimatePointCreate((prevValue) => {
+          prevValue = prevValue ? [...prevValue] : [];
+          return [...prevValue, value];
+        });
+        break;
+      case "remove":
+        setEstimatePointCreate((prevValue) => {
+          prevValue = prevValue ? [...prevValue] : [];
+          return prevValue.filter((item) => item.key !== value.key);
+        });
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleDragEstimatePoints = (updatedEstimatedOrder: TEstimatePointsObject[]) => {
     const updatedEstimateKeysOrder = updatedEstimatedOrder.map((item, index) => ({ ...item, key: index + 1 }));
@@ -60,21 +79,28 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
         keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}
       />
 
-      {estimatePointCreateToggle && (
-        <EstimatePointCreate
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          estimateId={estimateId}
-          callback={() => setEstimatePointCreateToggle(false)}
-        />
-      )}
-      {estimatePoints && estimatePoints.length <= maxEstimatesCount && (
+      {estimatePointCreate &&
+        estimatePointCreate.map((estimatePoint) => (
+          <EstimatePointCreate
+            key={estimatePoint?.key}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            estimateId={estimateId}
+            callback={() => handleEstimatePointCreate("remove", estimatePoint)}
+          />
+        ))}
+      {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= maxEstimatesCount && (
         <Button
           variant="link-primary"
           size="sm"
           prependIcon={<Plus />}
-          onClick={() => setEstimatePointCreateToggle(true)}
-          disabled={estimatePointCreateToggle}
+          onClick={() =>
+            handleEstimatePointCreate("add", {
+              id: undefined,
+              key: estimatePoints.length + (estimatePointCreate?.length || 0) + 1,
+              value: "",
+            })
+          }
         >
           Add {estimate?.type}
         </Button>

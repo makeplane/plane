@@ -50,7 +50,7 @@ export interface IEstimate extends IEstimateType {
     projectId: string,
     estimatePointId: string,
     newEstimatePointId: string | undefined
-  ) => Promise<void>;
+  ) => Promise<IEstimatePointType[] | undefined>;
 }
 
 export class Estimate implements IEstimate {
@@ -252,7 +252,7 @@ export class Estimate implements IEstimate {
     projectId: string,
     estimatePointId: string,
     newEstimatePointId: string | undefined
-  ) => {
+  ): Promise<IEstimatePointType[] | undefined> => {
     try {
       if (!this.id) return;
 
@@ -267,6 +267,14 @@ export class Estimate implements IEstimate {
       runInAction(() => {
         unset(this.estimatePoints, [estimatePointId]);
       });
+      if (deleteEstimatePoint && deleteEstimatePoint.length > 0) {
+        runInAction(() => {
+          deleteEstimatePoint.map((estimatePoint) => {
+            if (estimatePoint.id)
+              set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
+          });
+        });
+      }
 
       return deleteEstimatePoint;
     } catch (error) {

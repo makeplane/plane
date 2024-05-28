@@ -114,7 +114,7 @@ export class EstimateService extends APIService {
     estimateId: string,
     estimatePointId: string,
     params?: { new_estimate_id: string | undefined }
-  ): Promise<void> {
+  ): Promise<IEstimatePoint[] | undefined> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/estimate-points/${estimatePointId}/`,
       params

@@ -36,7 +36,7 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
     try {
       setLoader(true);
       setError(undefined);
-      await deleteEstimatePoint(workspaceSlug, projectId, estimateId, estimateInputValue);
+      await deleteEstimatePoint(workspaceSlug, projectId, estimatePointId, estimateInputValue);
       setLoader(false);
       setError(undefined);
       handleClose();
