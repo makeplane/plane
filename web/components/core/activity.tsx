@@ -22,7 +22,7 @@ import {
 import { IIssueActivity } from "@plane/types";
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 // constants
-import { ISSUE_OPENED } from "constants/event-tracker";
+import { ISSUE_OPENED } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getElementFromPath } from "@/helpers/event-tracker.helper";

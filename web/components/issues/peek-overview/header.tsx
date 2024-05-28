@@ -16,9 +16,9 @@ import {
 } from "@plane/ui";
 // components
 import { IssueSubscription, IssueUpdateStatus } from "@/components/issues";
-import { STATE_GROUPS } from "@/constants/state";
 // constants
-import { ISSUE_OPENED } from "constants/event-tracker";
+import { ISSUE_OPENED } from "@/constants/event-tracker";
+import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getElementIdFromPath } from "@/helpers/event-tracker.helper";
