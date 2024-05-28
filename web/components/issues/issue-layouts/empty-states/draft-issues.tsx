@@ -41,14 +41,12 @@ export const ProjectDraftEmptyState: React.FC = observer(() => {
   const emptyStateType =
     issueFilterCount > 0 ? EmptyStateType.PROJECT_DRAFT_EMPTY_FILTER : EmptyStateType.PROJECT_DRAFT_NO_ISSUES;
   const additionalPath = issueFilterCount > 0 ? activeLayout ?? "list" : undefined;
-  const emptyStateSize = issueFilterCount > 0 ? "lg" : "sm";
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
       <EmptyState
         type={emptyStateType}
         additionalPath={additionalPath}
-        size={emptyStateSize}
         secondaryButtonOnClick={issueFilterCount > 0 ? handleClearAllFilters : undefined}
       />
     </div>
