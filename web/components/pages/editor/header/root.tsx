@@ -13,9 +13,8 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleDuplicatePage: () => void;
-  isSyncing: boolean;
   markings: IMarking[];
-  pageStore: IPageStore;
+  page: IPageStore;
   projectId: string;
   sidePeekVisible: boolean;
   setSidePeekVisible: (sidePeekState: boolean) => void;
@@ -31,14 +30,13 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     markings,
     readOnlyEditorReady,
     handleDuplicatePage,
-    isSyncing,
-    pageStore,
+    page,
     projectId,
     sidePeekVisible,
     setSidePeekVisible,
   } = props;
   // derived values
-  const { isContentEditable } = pageStore;
+  const { isContentEditable } = page;
   // page filters
   const { isFullWidth } = usePageFilters();
 
@@ -67,8 +65,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
         <PageExtraOptions
           editorRef={editorRef}
           handleDuplicatePage={handleDuplicatePage}
-          isSyncing={isSyncing}
-          pageStore={pageStore}
+          page={page}
           projectId={projectId}
           readOnlyEditorRef={readOnlyEditorRef}
         />
@@ -81,8 +78,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           readOnlyEditorReady={readOnlyEditorReady}
           markings={markings}
           handleDuplicatePage={handleDuplicatePage}
-          isSyncing={isSyncing}
-          pageStore={pageStore}
+          page={page}
           projectId={projectId}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}
