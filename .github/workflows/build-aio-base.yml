@@ -2,11 +2,6 @@ name: Build AIO Base Image
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-      - preview
-      - develop
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
