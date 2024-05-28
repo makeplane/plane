@@ -75,7 +75,9 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (posthogAPIKey) return <PHProvider client={posthog}>{children}</PHProvider>;
+  if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST)
+    return <PHProvider client={posthog}>{children}</PHProvider>;
+
   return <>{children}</>;
 };
 
