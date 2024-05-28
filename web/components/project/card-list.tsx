@@ -16,8 +16,10 @@ export const ProjectCardList = observer(() => {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const { workspaceProjectIds, filteredProjectIds, getProjectById } = useProject();
+  const { workspaceProjectIds, filteredProjectIds, getProjectById, loader } = useProject();
   const { searchQuery, currentWorkspaceDisplayFilters } = useProjectFilter();
+
+  if (!filteredProjectIds || !workspaceProjectIds || loader) return <ProjectsLoader />;
 
   if (workspaceProjectIds?.length === 0 && !currentWorkspaceDisplayFilters?.archived_projects)
     return (
@@ -29,8 +31,6 @@ export const ProjectCardList = observer(() => {
         }}
       />
     );
-
-  if (!filteredProjectIds) return <ProjectsLoader />;
 
   if (filteredProjectIds.length === 0)
     return (
