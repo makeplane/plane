@@ -18,7 +18,7 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
 
   if (!currentEstimateSystem) return <></>;
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0 gap-2 mb-2">
         <RadioInput
           options={Object.keys(ESTIMATE_SYSTEMS).map((system) => {
@@ -36,7 +36,8 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
           className="mb-4"
         />
       </div>
-      <div className="space-y-3">
+
+      <div className="space-y-2">
         <div className="text-sm font-medium text-custom-text-200">Start from scratch</div>
         <button
           className="border border-custom-border-200 rounded-md p-2 text-left flex-1 w-full block"
@@ -47,7 +48,9 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
             Add your own <span className="lowercase">{currentEstimateSystem.name}</span> from scratch
           </p>
         </button>
+      </div>
 
+      <div className="space-y-2">
         <div className="text-sm font-medium text-custom-text-200">Choose a template</div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {Object.keys(currentEstimateSystem.templates).map((name) =>

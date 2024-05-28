@@ -1,9 +1,11 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Check, X } from "lucide-react";
-import { Spinner } from "@plane/ui";
+import { Check, Info, X } from "lucide-react";
+import { Spinner, Tooltip } from "@plane/ui";
 // constants
 import { EEstimateSystem } from "@/constants/estimates";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEstimate, useEstimatePoint } from "@/hooks/store";
 
@@ -11,71 +13,94 @@ type TEstimatePointUpdate = {
   workspaceSlug: string;
   projectId: string;
   estimateId: string;
-  estimatePointId: string | undefined;
+  estimatePointId: string;
+  callback: () => void;
 };
 
 export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) => {
-  const { workspaceSlug, projectId, estimateId, estimatePointId } = props;
+  const { workspaceSlug, projectId, estimateId, estimatePointId, callback } = props;
   // hooks
   const { asJson: estimate, estimatePointIds } = useEstimate(estimateId);
   const { asJson: estimatePoint, updateEstimatePoint } = useEstimatePoint(estimateId, estimatePointId);
   // states
   const [loader, setLoader] = useState(false);
-  const [estimateValue, setEstimateValue] = useState<string | undefined>(undefined);
+  const [estimateInputValue, setEstimateInputValue] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (estimateValue === undefined) setEstimateValue(estimatePoint?.value || "");
-  }, [estimateValue, estimatePoint]);
+    if (estimateInputValue === undefined && estimatePoint) setEstimateInputValue(estimatePoint?.value || "");
+  }, [estimateInputValue, estimatePoint]);
+
+  const handleClose = () => {
+    setEstimateInputValue("");
+    callback();
+  };
 
   const handleCreate = async () => {
-    if (estimatePointId) {
-      if (!workspaceSlug || !projectId || !projectId || !estimatePointIds) return;
+    if (!workspaceSlug || !projectId || !projectId || !estimatePointIds) return;
+    if (estimateInputValue)
       try {
+        setLoader(true);
+        setError(undefined);
+
         const estimateType: EEstimateSystem | undefined = estimate?.type;
         let isEstimateValid = false;
+
         if (estimateType && [(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(estimateType)) {
-          if (estimateValue && Number(estimateValue) && Number(estimateValue) >= 0) {
+          if (estimateInputValue && Number(estimateInputValue) && Number(estimateInputValue) >= 0) {
             isEstimateValid = true;
           }
         } else if (estimateType && estimateType === EEstimateSystem.CATEGORIES) {
-          if (estimateValue && estimateValue.length > 0) {
+          if (estimateInputValue && estimateInputValue.length > 0) {
             isEstimateValid = true;
           }
         }
 
         if (isEstimateValid) {
-          setLoader(true);
           const payload = {
-            key: estimatePointIds?.length + 1,
-            value: estimateValue,
+            value: estimateInputValue,
           };
           await updateEstimatePoint(workspaceSlug, projectId, payload);
           setLoader(false);
+          setError(undefined);
           handleClose();
         } else {
-          console.log("please enter a valid estimate value");
+          setLoader(false);
+          setError("please enter a valid estimate value");
         }
       } catch {
         setLoader(false);
-        console.log("something went wrong. please try again later");
+        setError("something went wrong. please try again later");
       }
-    } else {
+    else {
+      setError("Please fill the input field");
     }
   };
 
-  const handleClose = () => {
-    setEstimateValue("");
-  };
-
   return (
-    <div className="relative flex items-center gap-2">
-      <div className="w-full border border-custom-border-200 rounded">
+    <div className="relative flex items-center gap-2 text-base">
+      <div
+        className={cn(
+          "relative w-full border rounded flex items-center",
+          error ? `border-red-500` : `border-custom-border-200`
+        )}
+      >
         <input
           type="text"
-          value={estimateValue}
-          onChange={(e) => setEstimateValue(e.target.value)}
+          value={estimateInputValue}
+          onChange={(e) => setEstimateInputValue(e.target.value)}
           className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
+          autoFocus
         />
+        {error && (
+          <>
+            <Tooltip tooltipContent={error} position="bottom">
+              <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-red-500">
+                <Info size={14} />
+              </div>
+            </Tooltip>
+          </>
+        )}
       </div>
       {loader ? (
         <div className="w-6 h-6 flex-shrink-0 relative flex justify-center items-center rota">

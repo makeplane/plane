@@ -1,3 +1,4 @@
+import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import unset from "lodash/unset";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
@@ -7,6 +8,7 @@ import {
   IEstimatePoint as IEstimatePointType,
   TEstimateSystemKeys,
   IEstimateFormData,
+  TEstimatePointsObject,
 } from "@plane/types";
 // services
 import { EstimateService } from "@/services/project/estimate.service";
@@ -26,13 +28,18 @@ export interface IEstimate extends IEstimateType {
   // computed
   asJson: IEstimateType;
   estimatePointIds: string[] | undefined;
-  estimatePointById: (estimateId: string) => IEstimatePointType | undefined;
+  estimatePointById: (estimatePointId: string) => IEstimatePointType | undefined;
   // actions
   updateEstimate: (
     workspaceSlug: string,
     projectId: string,
     payload: Partial<IEstimateFormData>
   ) => Promise<IEstimateType | undefined>;
+  updateEstimateSortOrder: (
+    workspaceSlug: string,
+    projectId: string,
+    payload: TEstimatePointsObject[]
+  ) => Promise<void>;
   creteEstimatePoint: (
     workspaceSlug: string,
     projectId: string,
@@ -92,6 +99,7 @@ export class Estimate implements IEstimate {
       estimatePointIds: computed,
       // actions
       updateEstimate: action,
+      updateEstimateSortOrder: action,
       creteEstimatePoint: action,
       deleteEstimatePoint: action,
     });
@@ -136,11 +144,11 @@ export class Estimate implements IEstimate {
   get estimatePointIds() {
     const { estimatePoints } = this;
     if (!estimatePoints) return undefined;
-
-    const estimatePointIds = Object.values(estimatePoints)
-      .map((point) => point.estimate && this.id)
-      .filter((id) => id) as string[];
-
+    let currentEstimatePoints = Object.values(estimatePoints).filter(
+      (estimatePoint) => estimatePoint?.estimate === this.id
+    );
+    currentEstimatePoints = orderBy(currentEstimatePoints, ["key"], "asc");
+    const estimatePointIds = currentEstimatePoints.map((estimatePoint) => estimatePoint.id) as string[];
     return estimatePointIds ?? undefined;
   }
 
@@ -166,16 +174,38 @@ export class Estimate implements IEstimate {
       if (!this.id || !payload) return;
 
       const estimate = await this.service.updateEstimate(workspaceSlug, projectId, this.id, payload);
-      if (estimate) {
+      return estimate as any;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * @description update an estimate sort order
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @param { Partial<IEstimateFormData> } payload
+   * @returns { void }
+   */
+  updateEstimateSortOrder = async (
+    workspaceSlug: string,
+    projectId: string,
+    payload: TEstimatePointsObject[]
+  ): Promise<void> => {
+    try {
+      if (!this.id || !payload) return;
+
+      const estimatePoints = await this.service.updateEstimate(workspaceSlug, projectId, this.id, {
+        estimate_points: payload,
+      });
+      if (estimatePoints?.points && estimatePoints?.points.length > 0) {
         runInAction(() => {
-          Object.keys(payload).map((key) => {
-            const estimateKey = key as keyof IEstimateType;
-            set(this, estimateKey, estimate[estimateKey]);
+          estimatePoints?.points.map((estimatePoint) => {
+            if (estimatePoint.id)
+              set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
           });
         });
       }
-
-      return estimate;
     } catch (error) {
       throw error;
     }

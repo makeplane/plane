@@ -44,6 +44,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
             Estimates
           </div>
 
+          {/* current active estimate section */}
           {currentActiveEstimateId ? (
             <div className="space-y-4">
               {/* estimates activated deactivated section */}
@@ -88,7 +89,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
         </div>
       )}
 
-      {/* modals for create and update */}
+      {/* CRUD modals */}
       <CreateEstimateModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}

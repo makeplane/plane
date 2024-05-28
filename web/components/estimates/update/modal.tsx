@@ -1,17 +1,11 @@
-import { FC, useEffect, useMemo, useState } from "react";
-import orderBy from "lodash/orderBy";
+import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
-import { TEstimatePointsObject, TEstimateUpdateStageKeys } from "@plane/types";
+import { TEstimateUpdateStageKeys } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
-import { EstimateUpdateStageOne, EstimateUpdateStageTwo } from "@/components/estimates";
-// hooks
-import {
-  useEstimate,
-  // useProjectEstimates
-} from "@/hooks/store";
+import { EstimatePointEditRoot, EstimateUpdateStageOne } from "@/components/estimates";
 
 type TUpdateEstimateModal = {
   workspaceSlug: string;
@@ -24,38 +18,14 @@ type TUpdateEstimateModal = {
 export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) => {
   // props
   const { workspaceSlug, projectId, estimateId, isOpen, handleClose } = props;
-  // hooks
-  const { asJson: currentEstimate } = useEstimate(estimateId);
   // states
   const [estimateEditType, setEstimateEditType] = useState<TEstimateUpdateStageKeys | undefined>(undefined);
-  const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
 
-  const handleEstimateEditType = (type: TEstimateUpdateStageKeys) => {
-    if (currentEstimate?.points && currentEstimate?.points.length > 0) {
-      let estimateValidatePoints: TEstimatePointsObject[] = [];
-      currentEstimate?.points.map(
-        (point) =>
-          point.key && point.value && estimateValidatePoints.push({ id: point.id, key: point.key, value: point.value })
-      );
-      estimateValidatePoints = orderBy(estimateValidatePoints, ["key"], ["asc"]);
-      if (estimateValidatePoints.length > 0) {
-        setEstimateEditType(type);
-        setEstimatePoints(estimateValidatePoints);
-      }
-    }
-  };
-
-  const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => setEstimatePoints(newPoints);
+  const handleEstimateEditType = (type: TEstimateUpdateStageKeys) => setEstimateEditType(type);
 
   useEffect(() => {
-    if (!isOpen) {
-      setEstimateEditType(undefined);
-      setEstimatePoints(undefined);
-    }
+    if (!isOpen) setEstimateEditType(undefined);
   }, [isOpen]);
-
-  // derived values
-  const renderEstimateStepsCount = useMemo(() => (estimatePoints ? "2" : "1"), [estimatePoints]);
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
@@ -65,10 +35,7 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
           <div className="relative flex items-center gap-1">
             {estimateEditType && (
               <div
-                onClick={() => {
-                  setEstimateEditType(undefined);
-                  handleUpdatePoints(undefined);
-                }}
+                onClick={() => setEstimateEditType(undefined)}
                 className="flex-shrink-0 cursor-pointer w-5 h-5 flex justify-center items-center"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -76,28 +43,16 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
             )}
             <div className="text-xl font-medium text-custom-text-200">Edit estimate system</div>
           </div>
-          <div className="text-xs text-gray-400">Step {renderEstimateStepsCount}/2</div>
-        </div>
-
-        {/* estimate steps */}
-        <div className="px-5">
-          {!estimateEditType && <EstimateUpdateStageOne handleEstimateEditType={handleEstimateEditType} />}
-          {estimateEditType && estimatePoints && (
-            <EstimateUpdateStageTwo
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              estimate={currentEstimate}
-              estimateEditType={estimateEditType}
-              estimatePoints={estimatePoints}
-              handleEstimatePoints={handleUpdatePoints}
-            />
-          )}
-        </div>
-
-        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-100">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-            Cancel
+          <Button variant="primary" size="sm" onClick={handleClose}>
+            Done
           </Button>
+        </div>
+
+        <div className="px-5 pb-1">
+          {!estimateEditType && <EstimateUpdateStageOne handleEstimateEditType={handleEstimateEditType} />}
+          {estimateEditType && estimateId && (
+            <EstimatePointEditRoot workspaceSlug={workspaceSlug} projectId={projectId} estimateId={estimateId} />
+          )}
         </div>
       </div>
     </ModalCore>

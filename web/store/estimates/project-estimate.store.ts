@@ -162,6 +162,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         status: "error",
         message: "Error fetching estimates",
       };
+      throw error;
     }
   };
 
@@ -196,6 +197,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         status: "error",
         message: "Error fetching estimates",
       };
+      throw error;
     }
   };
 
@@ -231,6 +233,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         status: "error",
         message: "Error fetching estimate by id",
       };
+      throw error;
     }
   };
 
@@ -250,7 +253,6 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       this.error = undefined;
 
       const estimate = await this.service.createEstimate(workspaceSlug, projectId, payload);
-      console.log("estimate", estimate);
       if (estimate) {
         await this.store.projectRoot.project.updateProject(workspaceSlug, projectId, {
           estimate: estimate.id,
@@ -266,6 +268,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         status: "error",
         message: "Error creating estimate",
       };
+      throw error;
     }
   };
 }

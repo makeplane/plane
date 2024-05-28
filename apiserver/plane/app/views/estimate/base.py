@@ -64,9 +64,10 @@ class BulkEstimatePointEndpoint(BaseViewSet):
     def create(self, request, slug, project_id):
         estimate = request.data.get('estimate')
         estimate_name = estimate.get("name", generate_random_name())
+        estimate_type = estimate.get("type", 'categories')
         last_used = estimate.get("last_used", False)
         estimate = Estimate.objects.create(
-            name=estimate_name, project_id=project_id, last_used=last_used
+            name=estimate_name, project_id=project_id, last_used=last_used, type=estimate_type
         )
 
         estimate_points = request.data.get("estimate_points", [])

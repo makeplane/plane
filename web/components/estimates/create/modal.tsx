@@ -31,7 +31,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
 
   useEffect(() => {
     if (!isOpen) {
-      setEstimateSystem(EEstimateSystem.POINTS);
+      setEstimateSystem(EEstimateSystem.CATEGORIES);
       setEstimatePoints(undefined);
     }
   }, [isOpen]);
@@ -42,6 +42,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   const handleCreateEstimate = async () => {
     try {
       if (!workspaceSlug || !projectId) return;
+
       const validatedEstimatePoints: TEstimatePointsObject[] = [];
       if ([EEstimateSystem.POINTS, EEstimateSystem.TIME].includes(estimateSystem)) {
         estimatePoints?.map((estimatePoint) => {
@@ -56,6 +57,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
           if (estimatePoint.value) validatedEstimatePoints.push(estimatePoint);
         });
       }
+
       if (validatedEstimatePoints.length === estimatePoints?.length) {
         const payload: IEstimateFormData = {
           estimate: {
@@ -80,7 +82,6 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
         });
       }
     } catch (error) {
-      console.log(error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
