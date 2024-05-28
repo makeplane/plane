@@ -12,7 +12,7 @@ from plane.app.views import (
     ProjectFavoritesViewSet,
     UserProjectInvitationsViewset,
     ProjectPublicCoverImagesEndpoint,
-    ProjectDeployBoardViewSet,
+    DeployBoardViewSet,
     UserProjectRolesEndpoint,
     ProjectArchiveUnarchiveEndpoint,
 )
@@ -157,7 +157,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/",
-        ProjectDeployBoardViewSet.as_view(
+        DeployBoardViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -167,7 +167,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/<uuid:pk>/",
-        ProjectDeployBoardViewSet.as_view(
+        DeployBoardViewSet.as_view(
             {
                 "get": "retrieve",
                 "patch": "partial_update",
