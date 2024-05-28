@@ -5,7 +5,9 @@ import { TEstimateUpdateStageKeys } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
-import { EstimatePointEditRoot, EstimateUpdateStageOne } from "@/components/estimates";
+import { EstimateUpdateStageOne, EstimatePointEditRoot, EstimatePointSwitchRoot } from "@/components/estimates";
+// constants
+import { EEstimateUpdateStages } from "@/constants/estimates";
 
 type TUpdateEstimateModal = {
   workspaceSlug: string;
@@ -21,11 +23,13 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
   // states
   const [estimateEditType, setEstimateEditType] = useState<TEstimateUpdateStageKeys | undefined>(undefined);
 
-  const handleEstimateEditType = (type: TEstimateUpdateStageKeys) => setEstimateEditType(type);
-
   useEffect(() => {
     if (!isOpen) setEstimateEditType(undefined);
   }, [isOpen]);
+
+  const handleEstimateEditType = (type: TEstimateUpdateStageKeys) => setEstimateEditType(type);
+
+  const handleSwitchEstimate = () => {};
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
@@ -43,17 +47,38 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
             )}
             <div className="text-xl font-medium text-custom-text-200">Edit estimate system</div>
           </div>
-          <Button variant="primary" size="sm" onClick={handleClose}>
-            Done
-          </Button>
-        </div>
 
-        <div className="px-5 pb-1">
-          {!estimateEditType && <EstimateUpdateStageOne handleEstimateEditType={handleEstimateEditType} />}
-          {estimateEditType && estimateId && (
-            <EstimatePointEditRoot workspaceSlug={workspaceSlug} projectId={projectId} estimateId={estimateId} />
+          {estimateEditType === EEstimateUpdateStages.EDIT && (
+            <Button variant="primary" size="sm" onClick={handleClose}>
+              Done
+            </Button>
           )}
         </div>
+
+        <div className="px-5">
+          {!estimateEditType && <EstimateUpdateStageOne handleEstimateEditType={handleEstimateEditType} />}
+          {estimateEditType && estimateId && (
+            <>
+              {estimateEditType === EEstimateUpdateStages.EDIT && (
+                <EstimatePointEditRoot workspaceSlug={workspaceSlug} projectId={projectId} estimateId={estimateId} />
+              )}
+              {estimateEditType === EEstimateUpdateStages.SWITCH && (
+                <EstimatePointSwitchRoot workspaceSlug={workspaceSlug} projectId={projectId} estimateId={estimateId} />
+              )}
+            </>
+          )}
+        </div>
+
+        {estimateEditType === EEstimateUpdateStages.SWITCH && (
+          <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-100">
+            <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleSwitchEstimate}>
+              Update
+            </Button>
+          </div>
+        )}
       </div>
     </ModalCore>
   );
