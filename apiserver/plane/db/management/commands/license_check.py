@@ -18,6 +18,7 @@ class Command(BaseCommand):
             license_key = os.environ.get("LICENSE_KEY", False)
             deploy_platform = os.environ.get("DEPLOY_PLATFORM", False)
             domain = os.environ.get("LICENSE_DOMAIN", False)
+            license_version = os.environ.get("LICENSE_VERSION", False)
 
             # If any of the above is not provided raise a command error
             if not prime_host or not machine_signature or not license_key:
@@ -53,11 +54,14 @@ class Command(BaseCommand):
                         json={
                             "machine_signature": str(machine_signature),
                             "domain": domain,
+                            "version": license_version,
                         },
                     )
+                    response.raise_for_status()
                     self.stdout.write(
                         self.style.SUCCESS("Instance created successfully")
                     )
+
                     return
                 else:
                     raise CommandError("Instance does not exist")
