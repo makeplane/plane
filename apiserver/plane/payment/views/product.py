@@ -10,16 +10,26 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
+from plane.app.permissions.workspace import WorkspaceEntityPermission
+from plane.db.models import WorkspaceMember
 
 
 class ProductEndpoint(BaseAPIView):
 
-    def get(self, request):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
-                quantity = request.GET.get("quantity", 1)
+
+                count = WorkspaceMember.objects.filter(
+                    workspace__slug=slug
+                ).count()
+
                 response = requests.get(
-                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/?quantity={quantity}",
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/?quantity={count}",
                     headers={"content-type": "application/json"},
                 )
                 response = response.json()
